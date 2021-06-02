@@ -17,10 +17,11 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, testValidFinancialDetailsModelJson}
+import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{NewFinancialDetailsApi, TxmEventsApproved}
+import assets.IncomeSourceIntegrationTestConstants.{propertyOnlyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson}
+import config.featureswitch.{ChargeHistory, NewFinancialDetailsApi, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.docDateDetail
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -59,9 +60,15 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
+			And("I wiremock stub a charge history response")
+			IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(OK, testChargeHistoryJson(testMtditid, "1040000123", 2500))
+
       Given("the financial api feature switch is on")
       enable(NewFinancialDetailsApi)
       enable(TxmEventsApproved)
+
+			Given("the charge history feature switch is off")
+			disable(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 

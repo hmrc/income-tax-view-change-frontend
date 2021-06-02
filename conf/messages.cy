@@ -391,6 +391,19 @@ chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
 chargeSummary.overdue                                           = YN HWYR
+chargeSummary.chargeHistory.heading								= Payment history
+chargeSummary.chargeHistory.date								= Date
+chargeSummary.chargeHistory.description							= Description
+chargeSummary.chargeHistory.amount								= Amount
+chargeSummary.chargeHistory.created.paymentOnAccount1.text		= Payment on account 1 of 2 created
+chargeSummary.chargeHistory.created.paymentOnAccount2.text		= Payment on account 2 of 2 created
+chargeSummary.chargeHistory.created.balancingCharge.text		= Remaining balance created
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	= Payment on account 1 of 2 reduced by taxpayer request
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	= Payment on account 2 of 2 reduced by taxpayer request
+chargeSummary.chargeHistory.request.balancingCharge.text	   	= Remaining balance reduced by taxpayer request
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	= Payment on account 1 of 2 reduced due to amended return
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	= Payment on account 2 of 2 reduced due to amended return
+chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	= Remaining balance reduced due to amended return
 
 ## Regimes
 regimes.UK = Y DU

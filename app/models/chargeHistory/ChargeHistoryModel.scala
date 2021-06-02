@@ -16,6 +16,7 @@
 
 package models.chargeHistory
 
+import play.api.Logger
 import play.api.libs.json.{Format, Json}
 
 
@@ -25,7 +26,16 @@ case class ChargeHistoryModel(taxYear: String,
                                documentDescription: String,
                                totalAmount: BigDecimal,
                                reversalDate: String,
-                               reversalReason: String)
+                               reversalReason: String) {
+
+	val reasonCode: String = reversalReason match {
+		case "amended return" => "amend"
+		case "Customer Request" => "request"
+		case error =>
+			Logger.error(s"[ChargeHistoryModel][reasonCode] Missing or non-matching history reason: $error found")
+			"unrecognisedReason"
+	}
+}
 
   object ChargeHistoryModel {
     implicit val format: Format[ChargeHistoryModel] = Json.format[ChargeHistoryModel]
