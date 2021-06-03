@@ -56,7 +56,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val nextPaymentDue: LocalDate = LocalDate.of(2019, 1, 31)
 
   class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left(nextPaymentDue, false)),
-              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false), paymentEnabled: Boolean = true,
+              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false),
               paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               overduePaymentExists: Boolean = false) {
 
@@ -66,7 +66,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
       overduePaymentExists = overduePaymentExists,
-      paymentEnabled = paymentEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       implicitDateFormatter = mockImplicitDateFormatter
@@ -200,13 +199,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     }
 
     "the feature switches are disabled" should {
-      "not have a your income tax returns tile" in new Setup(paymentEnabled = false, ITSASubmissionIntegrationEnabled = false) {
+      "not have a your income tax returns tile" in new Setup(ITSASubmissionIntegrationEnabled = false) {
         getElementById("manage-income-tax-tile") shouldBe None
       }
-      "not have a payments tile" in new Setup(paymentEnabled = false, ITSASubmissionIntegrationEnabled = false) {
-        getElementById("payments-tile") shouldBe None
-      }
-      "not have a link to previous payments in the tax years tile" in new Setup(paymentEnabled = false, ITSASubmissionIntegrationEnabled = false) {
+      "not have a link to previous payments in the tax years tile" in new Setup(ITSASubmissionIntegrationEnabled = false) {
         document.getOptionalSelector("tax-years-tile").flatMap(_.getOptionalSelector("a:nth-of-type(2)")) shouldBe None
       }
     }

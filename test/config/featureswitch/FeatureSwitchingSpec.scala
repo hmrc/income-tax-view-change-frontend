@@ -20,8 +20,7 @@ import testUtils.TestSupport
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 
-  val enabledInConfig: Set[FeatureSwitch] = Set(Payment)
-  val expectedDisabledFeatures: Set[FeatureSwitch] = FeatureSwitch.switches -- enabledInConfig
+  val expectedDisabledFeatures: Set[FeatureSwitch] = FeatureSwitch.switches
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -29,17 +28,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
   }
 
   "Features" should {
-    "be initially enabled as per application config" in {
-      def verifyFeature(expectedState: Boolean)(feature: FeatureSwitch): Unit = {
-        withClue(s"Feature $feature expected state [$expectedState]:") {
-          isEnabled(feature) shouldBe expectedState
-        }
-      }
-
-      enabledInConfig should not be empty
-      enabledInConfig.foreach(verifyFeature(expectedState = true))
-      expectedDisabledFeatures.foreach(verifyFeature(expectedState = false))
-    }
 
     "fold depending on its state, calling the respective branch only" when {
       trait FoldSetup {
@@ -52,12 +40,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
         def unexpectedBranch(): Int = throw new IllegalStateException
       }
 
-      "a feature is enabled" in new FoldSetup {
-        enabledInConfig.head.fold(
-          ifEnabled = expectedBranch(),
-          ifDisabled = unexpectedBranch()) shouldBe aValue
-        hasBeenCalled shouldBe true
-      }
       "a feature is disabled" in new FoldSetup {
         expectedDisabledFeatures.head.fold(
           ifEnabled = unexpectedBranch(),

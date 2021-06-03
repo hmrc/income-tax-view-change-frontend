@@ -20,7 +20,7 @@ case class BillsViewModel(currentBill: BigDecimal,
                           isPaid: Boolean,
                           taxYear: Int) {
 
-  def eligibleForPayment(paymentEnabled: Boolean): Boolean = {
-    paymentEnabled && !isPaid
+  def eligibleForPayment(): Boolean = {
+     !isPaid
   }
 }

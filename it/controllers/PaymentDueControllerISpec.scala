@@ -24,7 +24,7 @@ import assets.OutstandingChargesIntegrationTestConstants._
 import assets.messages.{PaymentsDueMessages => messages}
 import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{NewFinancialDetailsApi, Payment, TxmEventsApproved}
+import config.featureswitch.{NewFinancialDetailsApi, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
@@ -53,9 +53,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a single financial transaction response")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(2000))
 
-          And("the payment feature switch is set to false")
-          disable(Payment)
-
           When("I call GET /report-quarterly/income-and-expenses/view/payments-due")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
@@ -70,7 +67,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(expectedValue = true),
             isElementVisibleById(s"payments-due-on-$testTaxYear")(expectedValue = true),
             isElementVisibleById(s"bills-link-$testTaxYear")(expectedValue = true),
-            isElementVisibleById(s"payment-link-$testTaxYear")(expectedValue = false)
+            isElementVisibleById(s"payment-link-$testTaxYear")(expectedValue = true)
           )
 
         }
@@ -87,8 +84,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsJson(2000, "2017-04-06", "2018-04-05"))
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000, "2018-04-06", "2019-04-05"))
 
-          And("the payment feature switch is set to false")
-          disable(Payment)
 
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -105,12 +100,12 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(expectedValue = true),
             isElementVisibleById(s"payments-due-on-$testTaxYear1")(expectedValue = true),
             isElementVisibleById(s"bills-link-$testTaxYear1")(expectedValue = true),
-            isElementVisibleById(s"payment-link-$testTaxYear1")(expectedValue = false),
+            isElementVisibleById(s"payment-link-$testTaxYear1")(expectedValue = true),
             isElementVisibleById(s"payments-due-$testTaxYear2")(expectedValue = true),
             isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(expectedValue = true),
             isElementVisibleById(s"payments-due-on-$testTaxYear2")(expectedValue = true),
             isElementVisibleById(s"bills-link-$testTaxYear2")(expectedValue = true),
-            isElementVisibleById(s"payment-link-$testTaxYear2")(expectedValue = false)
+            isElementVisibleById(s"payment-link-$testTaxYear2")(expectedValue = true)
           )
 
 
@@ -119,7 +114,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
         "render the payments due page where there is a mix of paid, unpaid and non charge transactions" in {
 
           disable(NewFinancialDetailsApi)
-          disable(Payment)
           val testTaxYear = 2019
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -151,7 +145,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(expectedValue = true),
             isElementVisibleById(s"payments-due-on-$testTaxYear")(expectedValue = true),
             isElementVisibleById(s"bills-link-$testTaxYear")(expectedValue = true),
-            isElementVisibleById(s"payment-link-$testTaxYear")(expectedValue = false)
+            isElementVisibleById(s"payment-link-$testTaxYear")(expectedValue = true)
           )
 
         }
@@ -168,8 +162,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(NOT_FOUND, financialTransactionsSingleErrorJson("400"))
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000, "2018-04-06", "2019-04-05"))
 
-          And("the payment feature switch is set to false")
-          disable(Payment)
 
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -186,7 +178,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(expectedValue = true),
             isElementVisibleById(s"payments-due-on-$testTaxYear2")(expectedValue = true),
             isElementVisibleById(s"bills-link-$testTaxYear2")(expectedValue = true),
-            isElementVisibleById(s"payment-link-$testTaxYear2")(expectedValue = false)
+            isElementVisibleById(s"payment-link-$testTaxYear2")(expectedValue = true)
           )
 
         }
@@ -200,9 +192,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a single financial transaction response")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, emptyFinancialTransaction)
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, emptyFinancialTransaction)
-
-          And("the payment feature switch is set to false")
-          disable(Payment)
 
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -236,9 +225,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK,
             financialTransactionsJson(3000, "2018-04-06", "2019-04-05"))
 
-          And("the payment feature switch is set to false")
-          disable(Payment)
-
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
@@ -271,8 +257,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -311,7 +295,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
           }
 
-          "render the payments due page with a multiple charge, without BCD and ACI charges from CESA and payment disabled" in {
+          "render the payments due page with a multiple charge, without BCD and ACI charges from CESA" in {
             enable(NewFinancialDetailsApi)
             enable(TxmEventsApproved)
             val testTaxYear = LocalDate.now().getYear.toString
@@ -326,8 +310,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-            And("the payment feature switch is set to disbaled")
-            disable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -356,9 +338,9 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById("over-due-type-1")(expectedValue = true),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
               isElementVisibleById("future-payments-heading")(expectedValue = false),
-              isElementVisibleById(s"payment-days-note")(expectedValue = false),
-              isElementVisibleById(s"credit-on-account")(expectedValue = false),
-              isElementVisibleById(s"payment-button")(expectedValue = false),
+              isElementVisibleById(s"payment-days-note")(expectedValue = true),
+              isElementVisibleById(s"credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
               isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false)
             )
@@ -391,8 +373,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -445,9 +425,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
 
-            And("the payment feature switch is set to false")
-            enable(Payment)
-
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
@@ -478,9 +455,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-
-            And("the payment feature switch is set to false")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -514,8 +488,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
 
-            And("the payment feature switch is set to false")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -550,8 +522,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-              And("the payment feature switch is set to enabled")
-              enable(Payment)
 
               When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
               val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -588,7 +558,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             }
 
-            "render the payments due page with a multiple charge, without BCD and ACI charges from CESA and payment disabled" in {
+            "render the payments due page with a multiple charge, without BCD and ACI charges from CESA" in {
               enable(NewFinancialDetailsApi)
               disable(TxmEventsApproved)
               val testTaxYear = LocalDate.now().getYear.toString
@@ -603,8 +573,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-              And("the payment feature switch is set to disbaled")
-              disable(Payment)
 
               When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
               val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -631,9 +599,9 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("over-due-type-1")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
                 isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById(s"payment-days-note")(expectedValue = false),
-                isElementVisibleById(s"credit-on-account")(expectedValue = false),
-                isElementVisibleById(s"payment-button")(expectedValue = false),
+                isElementVisibleById(s"payment-days-note")(expectedValue = true),
+                isElementVisibleById(s"credit-on-account")(expectedValue = true),
+                isElementVisibleById(s"payment-button")(expectedValue = true),
                 isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
                 isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false)
               )
@@ -666,8 +634,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-              And("the payment feature switch is set to enabled")
-              enable(Payment)
 
               When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
               val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -716,8 +682,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06",
               s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -770,8 +734,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -837,8 +799,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -905,8 +865,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -972,8 +930,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -1039,8 +995,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -1093,8 +1047,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -1151,8 +1103,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-            And("the payment feature switch is set to enabled")
-            enable(Payment)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue

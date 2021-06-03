@@ -42,10 +42,10 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
-  class Setup(transactionsModel: List[FinancialTransactionsModel] = List(), charges: List[FinancialDetailsModel] = List(),
-              paymentEnabled: Boolean = false) {
+  class Setup(transactionsModel: List[FinancialTransactionsModel] = List(), charges: List[FinancialDetailsModel] = List()
+              ) {
     val html: HtmlFormat.Appendable = views.html.paymentDue(transactionsModel, charges,
-      paymentEnabled, "testBackURL", mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
+      "testBackURL", mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -105,7 +105,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
       }
 
-      "have a link to payments" in new Setup(unpaidFinancialTransactions, paymentEnabled = true) {
+      "have a link to payments" in new Setup(unpaidFinancialTransactions) {
         val testTaxYearTo = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodTo.get.getYear
         val testTaxYearFrom = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodFrom.get.getYear
 
@@ -171,7 +171,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
       }
 
-      "have a link to payments" in new Setup(charges = unpaidFinancialDetails, paymentEnabled = true) {
+      "have a link to payments" in new Setup(charges = unpaidFinancialDetails) {
         val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.toInt
         val testTaxYearFrom = testTaxYearTo - 1
 

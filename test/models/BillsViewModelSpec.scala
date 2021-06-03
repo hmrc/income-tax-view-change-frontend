@@ -27,19 +27,16 @@ class BillsViewModelSpec extends TestSupport with Matchers with FeatureSwitching
 
     "return a false" when {
 
-      "payments are not enabled" in {
-        BillsViewModel(10000, isPaid = false, 2019).eligibleForPayment(false) shouldBe false
-      }
 
       "bill is paid" in {
-        BillsViewModel(10000, isPaid = true, 2019).eligibleForPayment(true) shouldBe false
+        BillsViewModel(10000, isPaid = true, 2019).eligibleForPayment() shouldBe false
       }
     }
 
     "return a true" when {
 
-      "payments are enabled and the bill is not paid" in {
-        BillsViewModel(10000, isPaid = false, 2019).eligibleForPayment(true) shouldBe true
+      "The bill is not paid" in {
+        BillsViewModel(10000, isPaid = false, 2019).eligibleForPayment() shouldBe true
       }
     }
   }

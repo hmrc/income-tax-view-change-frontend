@@ -66,7 +66,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 	override def beforeEach(): Unit = {
 		super.beforeEach()
 		disable(AgentViewer)
-		disable(Payment)
 	}
 	implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
@@ -163,7 +162,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					"display the page with the next upcoming payment and charge" when {
 						"there are payments upcoming and nothing is overdue with TxmEventsApproved FS enabled" in {
 							enable(AgentViewer)
-							enable(Payment)
 
 							stubAuthorisedAgentUser(authorised = true)
 
@@ -229,7 +227,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						}
 						"there are payments upcoming and nothing is overdue with TxmEventsApproved FS disabled" in {
 							enable(AgentViewer)
-							enable(Payment)
 
 							stubAuthorisedAgentUser(authorised = true)
 
@@ -297,7 +294,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					"display the page with no upcoming payment" when {
 						"there are no upcoming payments for the client with TxmEventsApproved FS enabled" in {
 							enable(AgentViewer)
-							enable(Payment)
 							enable(TxmEventsApproved)
 
 							stubAuthorisedAgentUser(authorised = true)
@@ -364,7 +360,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						"display the page with no upcoming payment with TxmEventsApproved FS disabled" when {
 							"there are no upcoming payments for the client" in {
 								enable(AgentViewer)
-								enable(Payment)
 								disable(TxmEventsApproved)
 
 								stubAuthorisedAgentUser(authorised = true)
@@ -432,7 +427,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						"display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS enabled" when {
 							"there is a single payment overdue and a single obligation overdue" in {
 								enable(AgentViewer)
-								enable(Payment)
 								enable(TxmEventsApproved)
 
 								stubAuthorisedAgentUser(authorised = true)
@@ -500,7 +494,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						"display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS disabled" when {
 							"there is a single payment overdue and a single obligation overdue" in {
 								enable(AgentViewer)
-								enable(Payment)
 								disable(TxmEventsApproved)
 
 								stubAuthorisedAgentUser(authorised = true)
@@ -569,7 +562,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					"display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS enabled" when {
 						"there is more than one payment overdue and more than one obligation overdue" in {
 							enable(AgentViewer)
-							enable(Payment)
 							enable(TxmEventsApproved)
 
 							stubAuthorisedAgentUser(authorised = true)
@@ -651,7 +643,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					"display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS disabled" when {
 						"there is more than one payment overdue and more than one obligation overdue" in {
 							enable(AgentViewer)
-							enable(Payment)
 							disable(TxmEventsApproved)
 
 							stubAuthorisedAgentUser(authorised = true)
@@ -733,7 +724,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 				}
 				"retrieving the client's charges was unsuccessful" in {
 					enable(AgentViewer)
-					enable(Payment)
 					enable(TxmEventsApproved)
 
 					stubAuthorisedAgentUser(authorised = true)
@@ -778,7 +768,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 			}
 			"retrieving the client's obligations was unsuccessful" in {
 				enable(AgentViewer)
-				enable(Payment)
 
 				stubAuthorisedAgentUser(authorised = true)
 
@@ -799,7 +788,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 		}
 		"retrieving the client's income sources was unsuccessful" in {
 			enable(AgentViewer)
-			enable(Payment)
 
 			stubAuthorisedAgentUser(authorised = true)
 

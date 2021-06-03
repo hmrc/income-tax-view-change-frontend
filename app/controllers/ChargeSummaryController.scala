@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
@@ -50,7 +50,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   private def view(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backLocation: Option[String], taxYear: Int)(implicit request: Request[_]) = {
-    chargeSummary(documentDetail, dueDate, dateFormatter, isEnabled(Payment), backUrl(backLocation, taxYear))
+    chargeSummary(documentDetail, dueDate, dateFormatter, backUrl(backLocation, taxYear))
   }
 
   def showChargeSummary(taxYear: Int, id: String): Action[AnyContent] =

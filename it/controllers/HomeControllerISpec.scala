@@ -22,7 +22,7 @@ import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
 import audit.models.{HomeAudit, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{NewFinancialDetailsApi, Payment, TxmEventsApproved}
+import config.featureswitch.{NewFinancialDetailsApi, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
 import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
@@ -38,7 +38,6 @@ class HomeControllerISpec extends ComponentSpecBase {
   )(FakeRequest())
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
-    enable(Payment)
     "Authorised" should {
       "render the home page with the payment due date with TxmEventsApproved FS enabled" in {
         disable(NewFinancialDetailsApi)

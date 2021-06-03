@@ -17,7 +17,7 @@
 package controllers
 
 import assets.MessagesLookUp
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
@@ -78,7 +78,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			disable(NewFinancialDetailsApi)
 			"return ok (200)" which {
 				"there is a next payment due date to display" in new Setup {
-					enable(Payment)
 					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 					when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
@@ -188,7 +187,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			"return ok (200)" which {
 				"there is a next payment due date to display" in new Setup {
 					enable(NewFinancialDetailsApi)
-					enable(Payment)
 					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 					when(financialDetailsService.getFinancialDetails(any(), any())(any()))

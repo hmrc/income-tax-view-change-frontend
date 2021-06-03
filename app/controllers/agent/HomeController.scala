@@ -56,7 +56,6 @@ class HomeController @Inject()(home: Home,
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
       overduePaymentExists = overduePaymentExists,
-      paymentEnabled = isEnabled(Payment),
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       implicitDateFormatter = dateFormatter

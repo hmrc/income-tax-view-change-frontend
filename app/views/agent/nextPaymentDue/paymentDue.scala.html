@@ -23,7 +23,7 @@
 @import models.financialDetails.DocumentDetailWithDueDate
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter, backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, implicitDateFormatter: ImplicitDateFormatter, backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -197,7 +197,7 @@
                 </p>
             }
         </div>
-        @if(paymentEnabled){
+
             <div>
                 @paymentDaysNoteParagraph
                 @creditOnAccountNotePanel
@@ -207,6 +207,6 @@
                                    chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)'>@messages("agent.paymentDue.payNow")</a>
                 </div>
             </div>
-        }
+
     }
 }
