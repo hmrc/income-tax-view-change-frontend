@@ -25,12 +25,13 @@ import org.scalatest.EitherValues
 import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolments}
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
+import scala.concurrent.Future
 
 class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar with ScalaFutures with EitherValues {
 
@@ -66,11 +67,16 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
 
   "arnPredicate" should {
     "return an AuthPredicateSuccess where an arn enrolment already exists" in {
-      arnPredicate(FakeRequest())(userWithArnIdEnrolment).right.value mustBe AuthPredicateSuccess
+      arnPredicate().apply(FakeRequest())(userWithArnIdEnrolment).right.value mustBe AuthPredicateSuccess
     }
 
     "return a MissingAgentReferenceNumber where a user does not have it in their enrolments" in {
-      intercept[MissingAgentReferenceNumber](await(arnPredicate(FakeRequest())(blankUser).left.value))
+      intercept[MissingAgentReferenceNumber](await(arnPredicate().apply(FakeRequest())(blankUser).left.value))
+    }
+
+    "return a custom result when a user does not have AgentReferenceNumber in their enrolments" in {
+      val customResult = mock[Future[Result]]
+      arnPredicate(customResult).apply(FakeRequest())(blankUser).left.value mustBe customResult
     }
   }
 

@@ -33,15 +33,17 @@ object AgentAuthenticationPredicate extends Results {
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show())
 
+  lazy val missingARNFailure: Future[Result] = Future.failed(MissingAgentReferenceNumber())
+
   val timeoutPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
     if (request.session.get(lastRequestTimestamp).nonEmpty && request.session.get(authToken).isEmpty) {
       Left(Future.successful(timeoutRoute))
     }
     else Right(AuthPredicateSuccess)
 
-  val arnPredicate: AuthPredicate[IncomeTaxAgentUser] = _ => user =>
+  def arnPredicate(onMissingARN: Future[Result] = missingARNFailure): AuthPredicate[IncomeTaxAgentUser] = _ => user =>
     if (user.agentReferenceNumber.nonEmpty) Right(AuthPredicateSuccess)
-    else Left(Future.failed(MissingAgentReferenceNumber()))
+    else Left(onMissingARN)
 
   // Redirects to Select Client Page if client details aren't in session
   val detailsPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
@@ -56,7 +58,10 @@ object AgentAuthenticationPredicate extends Results {
     if (request.session.get(SessionKeys.confirmedClient).nonEmpty) Right(AuthPredicateSuccess)
     else Left(Future.successful(noClientDetailsRoute))
 
-  val defaultPredicates: AuthPredicate[IncomeTaxAgentUser] = timeoutPredicate |+| arnPredicate
+  def defaultAgentPredicates(onMissingARN: Future[Result] = missingARNFailure): AuthPredicate[IncomeTaxAgentUser] =
+    timeoutPredicate |+| arnPredicate(onMissingARN)
+
+  val defaultPredicates: AuthPredicate[IncomeTaxAgentUser] = defaultAgentPredicates()
 
   val clientDetailsPredicates: AuthPredicate[IncomeTaxAgentUser] = defaultPredicates |+| detailsPredicate
 

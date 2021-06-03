@@ -46,16 +46,16 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"return $OK with technical difficulties" when {
+    s"redirect ($SEE_OTHER) to ${controllers.errors.routes.AgentErrorController.show().url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
-        Then(s"Technical difficulties are shown with status OK")
+        Then(s"The user is redirected to ${controllers.errors.routes.AgentErrorController.show().url}")
         result should have(
-          httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.errors.routes.AgentErrorController.show().url)
         )
       }
     }

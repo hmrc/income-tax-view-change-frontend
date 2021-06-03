@@ -16,9 +16,7 @@
 
 package controllers.agent
 
-import akka.parboiled2.RuleTrace.Times
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testMtditid, testNino}
-import audit.mocks.MockAuditingService
+import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino}
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
@@ -27,15 +25,14 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.MockClientDetailsService
 import mocks.views.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{times, verify, verifyZeroInteractions}
-import org.mockito.internal.verification.Times
+import org.mockito.Mockito.{times, verify}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.agent.ClientDetailsService._
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment}
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment}
 import uk.gov.hmrc.http.InternalServerException
 
 class EnterClientsUTRControllerSpec extends TestSupport
@@ -83,14 +80,14 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
     }
     "the user does not have an agent reference number" should {
-      "return Ok with technical difficulties" in {
+      "redirect them to the error page" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.AgentErrorController.show().url)
       }
     }
     "the agent viewer feature switch is disabled" should {
