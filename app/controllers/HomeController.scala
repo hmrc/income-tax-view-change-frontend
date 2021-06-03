@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.HomeAudit
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -49,7 +51,8 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                mcc: MessagesControllerComponents,
                                implicit val ec: ExecutionContext,
                                val currentDateProvider: CurrentDateProvider,
-                               dateFormatter: ImplicitDateFormatterImpl) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                               dateFormatter: ImplicitDateFormatterImpl,
+                               auditingService: AuditingService) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])
                   (implicit request: Request[_], user: MtdItUser[_]): Html = {
@@ -95,6 +98,17 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
         allCharges.map(_.sortBy(_.toEpochDay())).map { paymentsDue =>
           val overDuePayments = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate()))
           val overDueUpdates = latestDeadlineDate._2.size
+
+          if (isEnabled(TxmEventsApproved)) {
+            auditingService.extendedAudit(HomeAudit(
+              mtdItUser = user,
+              paymentsDue.headOption,
+              latestDeadlineDate._1,
+              overDuePayments,
+              overDueUpdates
+            ))
+          }
+
           Ok(view(paymentsDue.headOption, latestDeadlineDate._1, Some(overDuePayments), Some(overDueUpdates)))
         }
 

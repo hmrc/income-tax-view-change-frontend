@@ -20,19 +20,29 @@ import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
-import config.featureswitch.{NewFinancialDetailsApi, Payment}
+import audit.models.{HomeAudit, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
+import auth.MtdItUser
+import config.featureswitch.{NewFinancialDetailsApi, Payment, TxmEventsApproved}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
+import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
+import play.api.test.FakeRequest
 
 class HomeControllerISpec extends ComponentSpecBase {
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None,
+    multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+  )(FakeRequest())
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     enable(Payment)
     "Authorised" should {
-      "render the home page with the payment due date" in {
+      "render the home page with the payment due date with TxmEventsApproved FS enabled" in {
         disable(NewFinancialDetailsApi)
+        enable(TxmEventsApproved)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -62,10 +72,18 @@ class HomeControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS")
         )
+
+        verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(4)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
-      "render the home page with the payment due date with NewFinancialDetailsApi FS enabled" in {
-        enable(NewFinancialDetailsApi)
+      "render the home page with the payment due date with TxmEventsApproved FS disabled" in {
+        disable(NewFinancialDetailsApi)
+        disable(TxmEventsApproved)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -77,12 +95,54 @@ class HomeControllerISpec extends ComponentSpecBase {
           singleObligationCrystallisationModel
         )))
 
+        And("I stub a successful financial transactions response")
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsJson(2000.0))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(1000.0))
+
+        When("I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.getHome
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        verifyReportDeadlinesCall(testNino)
+
+        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+        res should have(
+          httpStatus(OK),
+          pageTitle(title),
+          elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
+          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS")
+        )
+
+        verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(4)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
+      }
+
+      "render the home page with the payment due date with NewFinancialDetailsApi FS enabled and with TxmEventsApproved FS enabled" in {
+        enable(NewFinancialDetailsApi)
+        enable(TxmEventsApproved)
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        val currentObligations: ObligationsModel = ObligationsModel(Seq(
+          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+          singleObligationOverdueModel(testPropertyId),
+          singleObligationCrystallisationModel
+        ))
+
+        And("I wiremock stub obligation responses")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, currentObligations)
+
         And("I stub a successful financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2017-04-06", "2018-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 2000.00))
         IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2018-04-06", "2019-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
-
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
@@ -99,6 +159,59 @@ class HomeControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )
         disable(NewFinancialDetailsApi)
+
+        verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
+      }
+
+      "render the home page with the payment due date with NewFinancialDetailsApi FS enabled and with TxmEventsApproved FS disabled" in {
+        enable(NewFinancialDetailsApi)
+        disable(TxmEventsApproved)
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        val currentObligations: ObligationsModel = ObligationsModel(Seq(
+          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+          singleObligationOverdueModel(testPropertyId),
+          singleObligationCrystallisationModel
+        ))
+
+        And("I wiremock stub obligation responses")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, currentObligations)
+
+        And("I stub a successful financial details response")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2017-04-06", "2018-04-05")(OK,
+          testValidFinancialDetailsModelJson(3400.00, 2000.00))
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2018-04-06", "2019-04-05")(OK,
+          testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
+
+        When("I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.getHome
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        verifyReportDeadlinesCall(testNino)
+
+        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+        res should have(
+          httpStatus(OK),
+          pageTitle(title),
+          elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
+          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("6 OVERDUE PAYMENTS")
+        )
+        disable(NewFinancialDetailsApi)
+
+        verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
       "render the ISE page when receive an error from the backend" in {

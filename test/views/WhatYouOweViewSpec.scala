@@ -25,7 +25,10 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
+import models.outstandingCharges.{OutstandingChargesModel, _}
+
 import models.outstandingCharges._
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -39,9 +42,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
@@ -529,6 +531,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
     }
-
+    
   }
 }

@@ -16,13 +16,13 @@
 
 package assets
 
-import java.time.LocalDate
-
-import assets.BaseTestConstants._
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testTimeStampString}
 import models.calculation._
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.financialTransactions.{SubItemModel, TransactionModel}
 import play.api.http.Status
+
+import java.time.LocalDate
 
 object EstimatesTestConstants {
 

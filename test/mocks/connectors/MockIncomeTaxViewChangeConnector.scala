@@ -16,8 +16,6 @@
 
 package mocks.connectors
 
-import java.time.LocalDate
-
 import connectors.IncomeTaxViewChangeConnector
 import models.core.NinoResponse
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
@@ -30,6 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -47,13 +46,7 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
   def setupMockIncomeSourceDetailsResponse(mtditid: String, nino: String,
                                            saUtr: Option[String], credId: Option[String],
                                            userType: Option[String])(response: IncomeSourceDetailsResponse): Unit =
-    when(mockIncomeTaxViewChangeConnector.getIncomeSources(
-      ArgumentMatchers.eq(mtditid),
-      ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(saUtr),
-      ArgumentMatchers.eq(credId),
-      ArgumentMatchers.eq(userType)
-    )(ArgumentMatchers.any()))
+    when(mockIncomeTaxViewChangeConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
   def setupNinoLookupResponse(mtdRef: String)(response: NinoResponse): Unit =

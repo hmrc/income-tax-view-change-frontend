@@ -19,29 +19,30 @@ package controllers.predicates
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
-import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val itvcErrorHandler: ItvcErrorHandler)
                                             (implicit val executionContext: ExecutionContext,
-                                             mcc: MessagesControllerComponents) extends BaseController with ActionRefiner[MtdItUserWithNino, MtdItUser] {
+                                             mcc: MessagesControllerComponents) extends BaseController with
+  ActionRefiner[MtdItUserWithNino, MtdItUser] {
 
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUser[A]]] = {
 
-    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    implicit val req = request
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req: MtdItUserWithNino[A] = request
 
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case sources: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType))
+        Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
       case _ => Left(itvcErrorHandler.showInternalServerError)
     }
   }

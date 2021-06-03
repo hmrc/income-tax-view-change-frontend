@@ -35,12 +35,14 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.agent.nextPaymentDue.paymentDue
 
+import java.time.LocalDate
+
 class PaymentDueViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,

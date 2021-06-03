@@ -22,7 +22,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
-import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.libs.json.JsValue
 import play.api.libs.ws.WSClient
 
 object WiremockHelper extends Eventually with IntegrationPatience {
@@ -30,12 +31,57 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   val wiremockHost = "localhost"
   val url = s"http://$wiremockHost:$wiremockPort"
 
-  def verifyPost(uri: String, jsonBody: String): Unit = {
-      verify(postRequestedFor(urlEqualTo(uri)).withRequestBody(equalToJson(jsonBody)))
+  def verifyPost(uri: String, optBody: Option[String] = None): Unit = {
+    val uriMapping = postRequestedFor(urlEqualTo(uri))
+    val postRequest = optBody match {
+      case Some(body) => uriMapping.withRequestBody(equalTo(body))
+      case None => uriMapping
+    }
+    verify(postRequest)
+  }
+
+  def verifyPostContaining(uri: String, optBody: Option[String] = None): Unit = {
+    val uriMapping = postRequestedFor(urlEqualTo(uri))
+    val postRequest = optBody match {
+      case Some(body) => uriMapping.withRequestBody(containing(body))
+      case None => uriMapping
+    }
+    verify(postRequest)
+  }
+
+  def verifyPostDoesNotContain(uri: String, optBody: Option[String] = None): Unit = {
+    val uriMapping = postRequestedFor(urlEqualTo(uri))
+    val postRequest = optBody match {
+      case Some(body) => uriMapping.withRequestBody(containing(body))
+      case None => uriMapping
+    }
+    verify(0, postRequest)
+  }
+
+  def verifyPostContainingJson(uri:String, bodyPart: Option[JsValue]): Unit = {
+    val uriMapping = postRequestedFor(urlEqualTo(uri))
+    val postRequest = bodyPart match {
+      case Some(js) =>
+        val ignoreArrayOrder, ignoreExtraElements = true
+        uriMapping.withRequestBody(equalToJson(js.toString, ignoreArrayOrder, ignoreExtraElements))
+      case None => uriMapping
+    }
+    verify(postRequest)
+  }
+
+  def verifyPostDoesNotContainJson(uri:String, bodyPart: Option[JsValue]): Unit = {
+    val uriMapping = postRequestedFor(urlEqualTo(uri))
+    val postRequest = bodyPart match {
+      case Some(js) =>
+        val ignoreArrayOrder, ignoreExtraElements = true
+        uriMapping.withRequestBody(equalToJson(js.toString, ignoreArrayOrder, ignoreExtraElements))
+      case None => uriMapping
+    }
+    verify(0, postRequest)
   }
 
   def verifyGet(uri: String): Unit = {
-     verify(getRequestedFor(urlEqualTo(uri)))
+    verify(getRequestedFor(urlEqualTo(uri)))
   }
 
   def verifyGetWithHeader(uri: String, headerKey: String, headerValue: String): Unit = {

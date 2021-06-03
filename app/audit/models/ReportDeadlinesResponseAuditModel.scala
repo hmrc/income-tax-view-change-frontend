@@ -16,48 +16,36 @@
 
 package audit.models
 
+import auth.MtdItUser
 import models.reportDeadlines.ReportDeadlineModel
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import utils.Utilities.JsonUtil
 
-case class ReportDeadlinesResponseAuditModel(mtditid: String,
-                                             nino: String,
+case class ReportDeadlinesResponseAuditModel(mtdItUser: MtdItUser[_],
                                              incomeSourceId: String,
-                                             reportDeadlines: List[ReportDeadlineModel],
-                                             saUtr: Option[String],
-                                             credId: Option[String],
-                                             userType: Option[String]) extends ExtendedAuditModel {
+                                             reportDeadlines: Seq[ReportDeadlineModel]) extends ExtendedAuditModel {
 
   override val transactionName: String = "view-obligations-response"
   override val auditType: String = "ViewObligationsResponse"
 
-  private case class AuditDetail(mtditid: String,
-                                 nationalInsuranceNumber: String,
-                                 incomeSourceId: String,
-                                 saUtr: Option[String],
-                                 credId: Option[String],
-                                 userType: Option[String],
-                                 reportDeadlines: List[ReportDeadlineModel])
+  private def reportDeadineJson(reportDeadline: ReportDeadlineModel): JsObject = Json.obj(
+    "startDate" -> reportDeadline.start,
+    "endDate" -> reportDeadline.end,
+    "dueDate" -> reportDeadline.due,
+    "obligationType" -> reportDeadline.obligationType,
+    "periodKey" -> reportDeadline.periodKey
+  ) ++ ("dateReceived", reportDeadline.dateReceived)
 
-  private implicit val auditDetailWrites: Writes[AuditDetail] = (
-    (__ \ "mtditid").write[String] and
-      (__ \ "nationalInsuranceNumber").write[String] and
-      (__ \ "incomeSourceId").write[String] and
-      (__ \ "saUtr").writeNullable[String] and
-      (__ \ "credId").writeNullable[String] and
-      (__ \ "userType").writeNullable[String] and
-      (__ \ "reportDeadlines").write[List[ReportDeadlineModel]](Writes.list[ReportDeadlineModel](ReportDeadlineModel.auditWrites))
-    )(unlift(AuditDetail.unapply))
+  private val reportDeadlinesJson: Seq[JsObject] = reportDeadlines.map(reportDeadineJson)
 
-  override val detail: JsValue = Json.toJson(
-    AuditDetail(
-      mtditid,
-      nino,
-      incomeSourceId,
-      saUtr,
-      credId,
-      userType,
-      reportDeadlines
-    )
-  )
+  override val detail: JsValue = Json.obj(
+    "mtditid" -> mtdItUser.mtditid,
+    "nationalInsuranceNumber" -> mtdItUser.nino,
+    "incomeSourceId" -> incomeSourceId,
+    "reportDeadlines" -> reportDeadlinesJson
+  ) ++
+    ("saUtr", mtdItUser.saUtr) ++
+    ("credId", mtdItUser.credId) ++
+    ("userType", mtdItUser.userType) ++
+    ("agentReferenceNumber", mtdItUser.arn)
 }

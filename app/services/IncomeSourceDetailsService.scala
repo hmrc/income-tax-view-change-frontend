@@ -18,16 +18,15 @@ package services
 
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
-import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
   def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] =
-    incomeTaxViewChangeConnector.getIncomeSources(mtdUser.mtditid, mtdUser.nino, mtdUser.saUtr, mtdUser.credId, mtdUser.userType)
-
+    incomeTaxViewChangeConnector.getIncomeSources()
 }

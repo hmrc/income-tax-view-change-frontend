@@ -16,8 +16,6 @@
 
 package views.agent
 
-import java.time.LocalDate
-
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
@@ -26,6 +24,7 @@ import play.api.test.FakeRequest
 import testUtils.ViewSpec
 import views.html.agent.AgentsPaymentHistory
 
+import java.time.LocalDate
 
 
 class AgentPaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -39,7 +38,9 @@ class AgentPaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val title = "Payment history - Your client’s Income Tax details - GOV.UK"
     val heading = "Payment history"
     val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment service."
+
     def button(year: Int): String = s"$year payments"
+
     val paymentToHmrc = "Payment made to HMRC"
     val CardRef = "Payment made by debit card ref:"
   }
@@ -50,7 +51,7 @@ class AgentPaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    agentsPaymentHistory(testPayments, mockImplicitDateFormatter,"testBackURL", saUtr)(FakeRequest(), implicitly, mockAppConfig)
+    agentsPaymentHistory(testPayments, mockImplicitDateFormatter, "testBackURL", saUtr)(FakeRequest(), implicitly, mockAppConfig)
   )
 
   "The payments history view with payment response model" should {
@@ -68,9 +69,9 @@ class AgentPaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         content.selectHead("#payment-history-info a").attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
       }
 
-			s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(testPayments, None) {
-				content.select("#payment-history-info").text should not be PaymentHistoryMessages.info
-			}
+      s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(testPayments, None) {
+        content.select("#payment-history-info").text should not be PaymentHistoryMessages.info
+      }
 
       "display payment history by year" in new PaymentHistorySetup(testPayments) {
         testPayments.groupBy { payment => LocalDate.parse(payment.date.get).getYear }.map { case (year, payments) =>
@@ -78,9 +79,9 @@ class AgentPaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           content.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
           val sectionContent = content.selectHead(s"#accordion-default-content-$year")
           val tbody = sectionContent.selectHead("table > tbody")
-          payments.zipWithIndex.foreach{
+          payments.zipWithIndex.foreach {
             case (payment, index) =>
-              val row = tbody.selectNth("tr", index +1 )
+              val row = tbody.selectNth("tr", index + 1)
               row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
               row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString

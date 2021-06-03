@@ -21,8 +21,6 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.agent.ClientDetailsService
@@ -31,12 +29,13 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.{InternalServerException, NotFoundException}
 import views.html.agent.EnterClientsUTR
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
-																					clientDetailsService: ClientDetailsService,
-																					val authorisedFunctions: AuthorisedFunctions)
+                                          clientDetailsService: ClientDetailsService,
+                                          val authorisedFunctions: AuthorisedFunctions)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: ItvcErrorHandler,

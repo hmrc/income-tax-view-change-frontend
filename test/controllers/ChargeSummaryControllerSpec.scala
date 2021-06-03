@@ -17,11 +17,13 @@
 package controllers
 
 import assets.FinancialDetailsTestConstants._
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockIncomeSourceDetailsService
 import models.financialDetails.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -34,8 +36,12 @@ import testUtils.TestSupport
 import scala.concurrent.Future
 
 class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching with TestSupport {
-
+  with MockIncomeSourceDetailsPredicate
+  with ImplicitDateFormatter
+  with MockIncomeSourceDetailsService
+  with MockAuditingService
+  with FeatureSwitching
+  with TestSupport {
   class Setup(financialDetails: FinancialDetailsResponseModel, featureSwitch: Boolean = true) {
     val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 
@@ -53,6 +59,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       financialDetailsService,
+      mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler]
     )(
       app.injector.instanceOf[FrontendAppConfig],

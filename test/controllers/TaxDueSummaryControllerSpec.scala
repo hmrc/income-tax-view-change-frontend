@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.BaseTestConstants.testMtdUserNino
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import config.ItvcErrorHandler
@@ -53,7 +52,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
         "return Status OK (200)" in {
           mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.OK
         }
 
@@ -73,7 +72,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
         "return Status Internal Server Error (500)" in {
           mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -86,7 +85,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
         "return Status Internal Server Error (500)" in {
           mockCalculationError()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -103,7 +102,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
         "return Status NotFound (404)" in {
           disable(TaxDue)
           mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.NOT_FOUND
         }
       }

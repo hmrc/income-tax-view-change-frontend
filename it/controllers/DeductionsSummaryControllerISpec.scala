@@ -16,17 +16,21 @@
 
 package controllers
 
-import java.time.LocalDateTime
-
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{DeductionsSummaryMessages => messages}
-import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
+import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import auth.MtdItUser
+import config.featureswitch.{DeductionBreakdown, TxmEventsApproved}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks._
-import models.calculation.{CalculationItem, ListCalculationItems}
+import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
+import play.api.test.FakeRequest
+
+import java.time.LocalDateTime
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
@@ -51,17 +55,40 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
+        enable(TxmEventsApproved)
         val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
+        Then("I see Allowances and deductions page")
         res should have(
           httpStatus(OK),
           pageTitle(messages.deductionsSummaryTitle),
           elementTextBySelector("h1")(messages.deductionsSummaryHeading)
         )
+
+        val testUser: MtdItUser[_] = MtdItUser(
+          testMtditid, testNino, userName = None, multipleBusinessesAndPropertyResponse,
+          Some("1234567890"), Some("12345-credId"), Some(testUserTypeIndividual), arn = None
+        )(FakeRequest())
+
+        And("Audit TXM events have been fired with TxmApproved FS true")
+        val expectedAllowancesAndDeductionsTrue = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
+        verifyAuditEvent(AllowanceAndDeductionsRequestAuditModel(testUser))
+        verifyAuditEvent(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductionsTrue, true))
+
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
+        disable(TxmEventsApproved)
+
+        val res2 = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
+
+        And("Audit TXM events have been fired with TxmApproved FS false")
+        val expectedAllowancesAndDeductionsFalse = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions.copy(giftOfInvestmentsAndPropertyToCharity = None)
+        verifyAuditEvent(AllowanceAndDeductionsRequestAuditModel(testUser))
+        verifyAuditEvent(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductionsFalse, false))
       }
     }
 

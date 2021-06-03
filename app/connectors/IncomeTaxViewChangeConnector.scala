@@ -16,18 +16,16 @@
 
 package connectors
 
-import java.time.LocalDate
-
 import audit.AuditingService
 import audit.models._
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.FrontendAppConfig
-import javax.inject.Inject
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import models.chargeHistory._
 import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.outstandingCharges._
-import models.chargeHistory._
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
@@ -36,62 +34,64 @@ import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeTaxViewChangeConnectorImpl @Inject()(val http: HttpClient,
                                                  val auditingService: AuditingService,
-                                                 val config: FrontendAppConfig
+                                                 val appConfig: FrontendAppConfig
                                                 )(implicit val ec: ExecutionContext) extends IncomeTaxViewChangeConnector
 
-trait IncomeTaxViewChangeConnector extends RawResponseReads {
+trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitching {
 
   val http: HttpClient
   val auditingService: AuditingService
-  val config: FrontendAppConfig
+  val appConfig: FrontendAppConfig
   implicit val ec: ExecutionContext
 
   def getBusinessDetailsUrl(nino: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
   }
 
   def getIncomeSourcesUrl(mtditid: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
   }
 
   def getNinoLookupUrl(mtdRef: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
 
   def getReportDeadlinesUrl(nino: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
   }
 
   def getPreviousObligationsUrl(nino: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines"
   }
 
   def getPaymentAllocationsUrl(nino: String, paymentLot: String, paymentLotItem: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/payment-allocations/$paymentLot/$paymentLotItem"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/payment-allocations/$paymentLot/$paymentLotItem"
   }
 
   def getPreviousObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
   }
 
   def getChargesUrl(nino: String, from: String, to: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
   }
 
   def getOutstandingChargesUrl(idType: String, idNumber: Long, taxYear: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
   }
 
   def getChargeHistoryUrl(mtdBsa: String, docNumber: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
   }
 
   def getPaymentsUrl(nino: String, from: String, to: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
   }
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
@@ -127,14 +127,13 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     }
   }
 
-  def getIncomeSources(mtditid: String, nino: String,
-                       saUtr: Option[String], credId: Option[String],
-                       userType: Option[String])(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSources()(
+    implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
 
-    val url = getIncomeSourcesUrl(mtditid)
+    val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - GET $url")
 
-    auditingService.extendedAudit(IncomeSourceDetailsRequestAuditModel(mtditid, nino, saUtr, credId, userType))
+    auditingService.extendedAudit(IncomeSourceDetailsRequestAuditModel(mtdItUser))
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
@@ -147,13 +146,11 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => {
               auditingService.extendedAudit(IncomeSourceDetailsResponseAuditModel(
-                mtditid,
-                nino,
+                mtdItUser,
                 valid.businesses.map(_.incomeSourceId),
                 valid.property.map(_.incomeSourceId),
-                saUtr,
-                credId,
-                userType
+                valid.yearOfMigration,
+                isEnabled(TxmEventsApproved)
               ))
               valid
             }
@@ -209,7 +206,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     val url = getReportDeadlinesUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - GET $url")
 
-    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
+    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
@@ -222,9 +219,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => {
               valid.obligations.foreach { data =>
-                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(
-                  mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations, mtdUser.saUtr, mtdUser.credId, mtdUser.userType)
-                )
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser, data.identification, data.obligations))
               }
               valid
             }
@@ -249,7 +244,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     val url = getPreviousObligationsUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
-    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
+    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
@@ -262,8 +257,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => {
               valid.obligations.foreach { data =>
-                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(
-                  mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser, data.identification, data.obligations))
               }
               valid
             }
@@ -290,7 +284,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     val url = getPreviousObligationsUrl(fromDate, toDate, mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
-    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
+    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
@@ -303,8 +297,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => {
               valid.obligations.foreach { data =>
-                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(
-                  mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser, data.identification, data.obligations))
               }
               valid
             }
@@ -430,7 +423,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
   }
 
   def getChargeHistory(mtdBsa: String, docNumber: String)
-                           (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
+                      (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
     val url = getChargeHistoryUrl(mtdBsa, docNumber)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getChargeHistory] - GET $url")
 

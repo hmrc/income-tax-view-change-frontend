@@ -21,7 +21,6 @@ import audit.AuditingService
 import audit.models.NinoLookupAuditing.{NinoLookupAuditModel, NinoLookupErrorAuditModel}
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
-import javax.inject.{Inject, Singleton}
 import models.core.{Nino, NinoResponseError}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
@@ -30,13 +29,14 @@ import services.NinoLookupService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
                               val itvcErrorHandler: ItvcErrorHandler,
                               val auditingService: AuditingService)(
-                              implicit val executionContext: ExecutionContext) extends ActionRefiner[MtdItUserOptionNino, MtdItUserWithNino] {
+                               implicit val executionContext: ExecutionContext) extends ActionRefiner[MtdItUserOptionNino, MtdItUserWithNino] {
 
   override def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
 
@@ -44,7 +44,8 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
     implicit val req: MtdItUserOptionNino[A] = request
 
     def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userName,
-      request.saUtr, request.credId, request.userType)
+      request.saUtr, request.credId, request.userType, None)
+
     (request.nino, request.session.get("nino")) match {
       case (Some(nino), _) =>
         Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from request")
@@ -55,17 +56,18 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
       case (_, _) =>
         Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO not found for user.  Requesting from NinoLookupService")
         ninoLookupService.getNino(request.mtditid).map {
-        case nino: Nino =>
-          Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from NinoLookupService")
-          auditNinoLookup(nino, request.mtditid)
-          Left(Redirect(request.uri).addingToSession("nino" -> nino.nino))
-        case error: NinoResponseError =>
-          Logger.error(s"[NinoPredicate][buildMtdUserWithNino] NINO could not be retrieved from NinoLookupService")
-          auditNinoLookupError(error, request.mtditid)
-          Left(itvcErrorHandler.showInternalServerError)
-      }
+          case nino: Nino =>
+            Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from NinoLookupService")
+            auditNinoLookup(nino, request.mtditid)
+            Left(Redirect(request.uri).addingToSession("nino" -> nino.nino))
+          case error: NinoResponseError =>
+            Logger.error(s"[NinoPredicate][buildMtdUserWithNino] NINO could not be retrieved from NinoLookupService")
+            auditNinoLookupError(error, request.mtditid)
+            Left(itvcErrorHandler.showInternalServerError)
+        }
     }
   }
+
   private def auditNinoLookup(nino: Nino, mtdRef: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(NinoLookupAuditModel(nino, mtdRef))
 

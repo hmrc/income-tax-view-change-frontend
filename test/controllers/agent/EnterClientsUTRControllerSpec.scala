@@ -18,6 +18,7 @@ package controllers.agent
 
 import akka.parboiled2.RuleTrace.Times
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testMtditid, testNino}
+import audit.mocks.MockAuditingService
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm

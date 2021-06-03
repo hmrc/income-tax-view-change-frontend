@@ -16,7 +16,8 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import assets.BaseTestConstants._
+import models.calculation.AllowancesAndDeductions
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
@@ -25,10 +26,23 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
   val transactionName = "allowances-deductions-details-response"
   val auditEvent = "AllowancesDeductionsDetailsResponse"
 
-  "The AllowanceAndDeductionsResponseAuditModel" should {
+  "The AllowanceAndDeductionsResponseAuditModel with TxmApproved FS enabled" should {
 
-    lazy val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtditid, testNino,
-      Some(testSaUtr), Some(testCredId), Some(testUserType), Some(BigDecimal(123.12)), Some(BigDecimal(456.78)))
+    val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtdItAgentUser,
+      AllowancesAndDeductions(
+        personalAllowance = Some(123.12),
+        totalPensionContributions = Some(456.78),
+        lossesAppliedToGeneralIncome = Some(1234.12),
+        giftOfInvestmentsAndPropertyToCharity = Some(4561.78),
+        totalAllowancesAndDeductions = Some(1),
+        totalTaxableIncome = Some(2),
+        totalReliefs = Some(3),
+        grossAnnualPayments = Some(1235.12),
+        qualifyingLoanInterestFromInvestments = Some(4562.78),
+        postCessationTradeReceipts = Some(1236.12),
+        paymentsToTradeUnionsForDeathBenefits = Some(4563.78)
+      ), true
+    )
 
     s"Have the correct transaction name of '$transactionName'" in {
       testAllowanceAndDeductionsResponseAuditModel.transactionName shouldBe transactionName
@@ -38,16 +52,80 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
       testAllowanceAndDeductionsResponseAuditModel.auditType shouldBe auditEvent
     }
 
-    "Have the correct details for the audit event" in {
-      testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
-        "mtditid" -> testMtditid,
-        "nationalInsuranceNumber" -> testNino,
-        "saUtr" -> testSaUtr,
-        "credId" -> testCredId,
-        "userType" -> testUserType,
-        "personalAllowance" -> "123.12",
-        "pensionContributions" -> "456.78"
-      )
+    "Have the correct details for the audit event" when {
+      "information for the audit is complete" in {
+        testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
+          "mtditid" -> testMtditid,
+          "nationalInsuranceNumber" -> testNino,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserTypeAgent,
+          "agentReferenceNumber" -> testArn,
+          "personalAllowance" -> 123.12,
+          "pensionContributions" -> 456.78,
+          "lossRelief" -> 1234.12,
+          "giftsToCharity" -> 4561.78,
+          "annualPayments" -> 1235.12,
+          "qualifyingLoanInterest" -> 4562.78,
+          "postCessationTradeReceipts" -> 1236.12,
+          "tradeUnionPayments" -> 4563.78
+        )
+      }
+
+      "information for the audit has minimal details" in {
+        AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductions(), true).detail shouldBe Json.obj(
+          "mtditid" -> testMtditid,
+          "nationalInsuranceNumber" -> testNino
+        )
+      }
+    }
+  }
+  "The AllowanceAndDeductionsResponseAuditModel with TxmAproved FS disabled" should {
+
+    val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtdItAgentUser,
+      AllowancesAndDeductions(
+        personalAllowance = Some(123.12),
+        totalPensionContributions = Some(456.78),
+        lossesAppliedToGeneralIncome = Some(1234.12),
+        giftOfInvestmentsAndPropertyToCharity = Some(4561.78),
+        totalAllowancesAndDeductions = Some(1),
+        totalTaxableIncome = Some(2),
+        totalReliefs = Some(3),
+        grossAnnualPayments = Some(1235.12),
+        qualifyingLoanInterestFromInvestments = Some(4562.78),
+        postCessationTradeReceipts = Some(1236.12),
+        paymentsToTradeUnionsForDeathBenefits = Some(4563.78)
+      ), false
+    )
+
+    s"Have the correct transaction name of '$transactionName'" in {
+      testAllowanceAndDeductionsResponseAuditModel.transactionName shouldBe transactionName
+    }
+
+    s"Have the correct audit event type of '$auditEvent'" in {
+      testAllowanceAndDeductionsResponseAuditModel.auditType shouldBe auditEvent
+    }
+
+    "Have the correct details for the audit event" when {
+      "information for the audit is complete" in {
+        testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
+          "mtditid" -> testMtditid,
+          "nationalInsuranceNumber" -> testNino,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserTypeAgent,
+          "agentReferenceNumber" -> testArn,
+          "personalAllowance" -> 123.12,
+          "pensionContributions" -> 456.78
+        )
+      }
+
+      "information for the audit has minimal details" in {
+        AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductions(), false).detail shouldBe Json.obj(
+          "mtditid" -> testMtditid,
+          "nationalInsuranceNumber" -> testNino
+        )
+      }
     }
   }
 }

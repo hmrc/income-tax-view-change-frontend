@@ -31,7 +31,7 @@ case class IncomeTaxAgentUser(enrolments: Enrolments,
 
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
 
-  private def getEnrolment(key: String) = enrolments.enrolments.collectFirst {
+  private def getEnrolment(key: String): Option[String] = enrolments.enrolments.collectFirst {
     case Enrolment(`key`, EnrolmentIdentifier(_, value) :: _, _, _) => value
   }
 

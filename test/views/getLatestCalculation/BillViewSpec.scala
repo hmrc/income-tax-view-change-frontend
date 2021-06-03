@@ -28,7 +28,6 @@ import implicits.ImplicitCurrencyFormatter._
 import models.calculation.BillsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -37,11 +36,11 @@ import testUtils.TestSupport
 class BillViewSpec extends TestSupport with FeatureSwitching {
 
   val bizAndPropertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessAndPropertyAligned, Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    businessAndPropertyAligned, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
   val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    singleBusinessIncome, Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    singleBusinessIncome, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    propertyIncomeOnly, Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    propertyIncomeOnly, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
 
   private def pageSetup(model: BillsViewModel, paymentsEnabled: Boolean = false, user: MtdItUser[_]) = new {
@@ -50,7 +49,7 @@ class BillViewSpec extends TestSupport with FeatureSwitching {
   }
 
   "The bill view" should {
-    val setup = pageSetup(unpaidBillsViewModel, paymentsEnabled = false,  bizAndPropertyUser)
+    val setup = pageSetup(unpaidBillsViewModel, paymentsEnabled = false, bizAndPropertyUser)
     import setup._
     val messages = new MessagesLookUp.Calculation(testYear)
     val crysMessages = new MessagesLookUp.Calculation(testYear).Crystallised
@@ -87,7 +86,7 @@ class BillViewSpec extends TestSupport with FeatureSwitching {
       import setup._
       document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
       document.getElementById("payment-button").attr("href") shouldBe
-      controllers.routes.PaymentController.paymentHandoff(unpaidBillsViewModel.currentBill.toPence).url
+        controllers.routes.PaymentController.paymentHandoff(unpaidBillsViewModel.currentBill.toPence).url
     }
   }
 }

@@ -17,11 +17,15 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.{propertyOnlyResponse, testValidFinancialDetailsModelJson}
-import config.featureswitch.NewFinancialDetailsApi
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, testValidFinancialDetailsModelJson}
+import audit.models.ChargeSummaryAudit
+import auth.MtdItUser
+import config.featureswitch.{NewFinancialDetailsApi, TxmEventsApproved}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.DocumentDetailsStub.docDateDetail
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
+import play.api.test.FakeRequest
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
@@ -48,19 +52,61 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page" in {
-      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+    "load the page with right audit events when TxmEventsApproved FS enabled" in {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(2000, 2000))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
       Given("the financial api feature switch is on")
       enable(NewFinancialDetailsApi)
+      enable(TxmEventsApproved)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 
       verifyIncomeSourceDetailsCall(testMtditid)
+
+      AuditStub.verifyAuditContainsDetail(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          Some("12345-credId"), Some("Individual"), None
+        )(FakeRequest()),
+        docDateDetail("2018-02-14", "ITSA- Bal Charge"),
+        None
+      ).detail)
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      res should have(
+        httpStatus(OK),
+        pageTitle("Remaining balance - Business Tax account - GOV.UK")
+      )
+    }
+    "load the page with right audit events when TxmEventsApproved FS disabled" in {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+      Given("the financial api feature switch is on")
+      enable(NewFinancialDetailsApi)
+      disable(TxmEventsApproved)
+
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      AuditStub.verifyAuditDoesNotContainsDetail(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          Some("12345-credId"), Some("Individual"), None
+        )(FakeRequest()),
+        docDateDetail("2018-02-14", "ITSA- Bal Charge"),
+        None
+      ).detail)
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(

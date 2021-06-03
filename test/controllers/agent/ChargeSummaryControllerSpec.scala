@@ -18,11 +18,12 @@ package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullFinancialDetailModel, testFinancialDetailsErrorModelParsing}
+import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
 import implicits.ImplicitDateFormatterImpl
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.MockFinancialDetailsService
+import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
 import mocks.views.MockChargeSummary
 import models.financialDetails.FinancialDetailsModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
@@ -35,8 +36,13 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
-  with FeatureSwitching with MockChargeSummary {
+class ChargeSummaryControllerSpec extends TestSupport
+  with MockFrontendAuthorisedFunctions
+  with MockFinancialDetailsService
+  with MockIncomeSourceDetailsService
+  with MockAuditingService
+  with FeatureSwitching
+  with MockChargeSummary {
 
   class Setup(agentViewerEnabled: Boolean, newFinDetailsApiEnabled: Boolean) {
 
@@ -51,7 +57,9 @@ class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
     val chargeSummaryController: ChargeSummaryController = new ChargeSummaryController(
       chargeSummary,
       mockAuthService,
-      mockFinancialDetailsService
+      mockFinancialDetailsService,
+      mockIncomeSourceDetailsService,
+      mockAuditingService
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],
@@ -77,6 +85,8 @@ class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
                 documentDetails = List(fullDocumentDetailModel.copy(taxYear = currentYear.toString, transactionId = "testid")),
                 financialDetails = List(fullFinancialDetailModel.copy(taxYear = currentYear.toString))
               ))
+
+              mockSingleBusinessIncomeSource()
 
               val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, "testid")
                 .apply(fakeRequestConfirmedClient("AB123456C"))

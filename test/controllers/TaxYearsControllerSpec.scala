@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import assets.MessagesLookUp
@@ -64,7 +63,8 @@ class TaxYearsControllerSpec extends MockCalculationService
 
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(lastTaxCalcWithYearListWithError))
 
@@ -77,7 +77,7 @@ class TaxYearsControllerSpec extends MockCalculationService
         "return an OK (200)" in {
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(lastThreeTaxCalcWithYear))
 
@@ -89,7 +89,8 @@ class TaxYearsControllerSpec extends MockCalculationService
         "return an IST (500)" in {
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenThrow(new RuntimeException)
 

@@ -33,6 +33,7 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
@@ -60,14 +61,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   implicit val environment: Environment = app.injector.instanceOf[Environment]
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  implicit val user: MtdItUser[_] = MtdItUser(
+  implicit val individualUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = businessAndPropertyAligned,
-    saUtr = Some("saUtr"),
-    credId = Some("credId"),
-    userType = Some("individual")
+    saUtr = Some(testSaUtr),
+    credId = Some(testCredId),
+    userType = Some(testUserTypeIndividual),
+    arn = None
   )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")
@@ -76,46 +78,57 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     def toHtmlDocument: Document = Jsoup.parse(bodyOf(x))
   }
 
-  lazy val fakeRequestWithActiveSession = FakeRequest().withSession(
+  lazy val fakeRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
   ).withHeaders(
     HeaderNames.REFERER -> "/test/url"
   )
 
-  lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
+  lazy val fakeRequestWithTimeoutSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
 
-  lazy val fakeRequestWithClientUTR = FakeRequest().withSession(
+  lazy val fakeRequestWithClientUTR: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     utils.SessionKeys.clientUTR -> "1234567890"
   )
 
-  lazy val fakeRequestWithClientDetails = fakeRequestWithActiveSession.withSession(
+  lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",
     utils.SessionKeys.clientUTR -> "1234567890",
-		utils.SessionKeys.clientMTDID -> "XAIT00000000015"
+    utils.SessionKeys.clientMTDID -> "XAIT00000000015"
   )
 
   def fakeRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-    utils.SessionKeys.clientFirstName -> "Test",
-    utils.SessionKeys.clientLastName -> "User",
-    utils.SessionKeys.clientUTR -> "1234567890",
-    utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-    utils.SessionKeys.clientNino -> clientNino,
-    utils.SessionKeys.confirmedClient -> "true"
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true"
     )
 
-  lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
+  def agentUserConfirmedClient(clientNino: String = "AA111111A"): MtdItUser[_] = MtdItUser(
+    mtditid = "XAIT00000000015",
+    nino = clientNino,
+    userName = Some(Name(Some("Test"), Some("User"))),
+    incomeSources = businessesAndPropertyIncome,
+    saUtr = Some("1234567890"),
+    credId = Some(testCredId),
+    userType = Some(testUserTypeAgent),
+    arn = Some(testArn)
+  )(FakeRequest())
 
-  lazy val fakeRequestWithNinoAndCalc = fakeRequestWithActiveSession.withSession(
+  lazy val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino)
+
+  lazy val fakeRequestWithNinoAndCalc: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     forms.utils.SessionKeys.calculationId -> "1234567890",
     "nino" -> testNino
   )
 
-  lazy val fakeRequestNoSession = FakeRequest()
+  lazy val fakeRequestNoSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {

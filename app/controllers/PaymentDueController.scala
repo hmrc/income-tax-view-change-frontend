@@ -17,7 +17,8 @@
 package controllers
 
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
@@ -46,7 +47,7 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      mcc: MessagesControllerComponents,
                                      implicit val ec: ExecutionContext,
                                      dateFormatter: ImplicitDateFormatterImpl
-                                     ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                    ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {
     transactionModels.exists(_.isInstanceOf[FinancialTransactionsErrorModel])
@@ -59,11 +60,20 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      if(isEnabled(NewFinancialDetailsApi)) {
+      if (isEnabled(NewFinancialDetailsApi)) {
+        if (isEnabled(TxmEventsApproved)) {
+          auditingService.extendedAudit(WhatYouOweRequestAuditModel(user))
+        }
+
         paymentDueService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
+            if (isEnabled(TxmEventsApproved)) {
+              auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
+            }
+
             Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear,
-              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter, backUrl = backUrl, user.saUtr)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter, backUrl = backUrl, user.saUtr)
+            ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
         } recover {
           case ex: Exception =>
             Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")
@@ -73,7 +83,8 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         financialTransactionsService.getAllUnpaidFinancialTransactions.map {
           case transactions if hasFinancialTransactionsError(transactions) => itvcErrorHandler.showInternalServerError()
           case transactions: List[FinancialTransactionsModel] => Ok(views.html.paymentDue(financialTransactions = transactions,
-            paymentEnabled = isEnabled(Payment),backUrl = backUrl, implicitDateFormatter = dateFormatter)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+            paymentEnabled = isEnabled(Payment), backUrl = backUrl, implicitDateFormatter = dateFormatter)
+          ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
         }
       }
   }

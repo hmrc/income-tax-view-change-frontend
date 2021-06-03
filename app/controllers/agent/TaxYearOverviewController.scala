@@ -16,8 +16,10 @@
 
 package controllers.agent
 
+import audit.AuditingService
+import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -44,7 +46,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                           calculationService: CalculationService,
                                           financialDetailsService: FinancialDetailsService,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          reportDeadlinesService: ReportDeadlinesService
+                                          reportDeadlinesService: ReportDeadlinesService,
+                                          auditingService: AuditingService
                                          )(implicit val appConfig: FrontendAppConfig,
                                            val languageUtils: LanguageUtils,
                                            mcc: MessagesControllerComponents,
@@ -57,12 +60,23 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     implicit user =>
       if (isEnabled(AgentViewer)) {
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          withCalculation(getClientNino(request), taxYear) { calculation =>
+          if (isEnabled(TxmEventsApproved)) {
+            auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(mtdItUser, user.agentReferenceNumber))
+          }
+          withCalculation(getClientNino(request), taxYear) { calculationOpt =>
             withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
               withObligationsModel(taxYear) { obligations =>
+                calculationOpt.map(calculation =>
+                  if (isEnabled(TxmEventsApproved)) {
+                    auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
+                      mtdItUser, user.agentReferenceNumber, calculation,
+                      documentDetailsWithDueDates, obligations))
+                  }
+                )
+
                 Future.successful(Ok(view(
                   taxYear,
-                  calculation,
+                  calculationOpt.map(calc => CalcOverview(calc, None)),
                   documentDetailsWithDueDates = documentDetailsWithDueDates,
                   obligations = obligations
                 )(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
@@ -94,9 +108,9 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     )
   }
 
-  private def withCalculation(nino: String, taxYear: Int)(f: Option[CalcOverview] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  private def withCalculation(nino: String, taxYear: Int)(f: Option[Calculation] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     calculationService.getCalculationDetail(nino, taxYear) flatMap {
-      case CalcDisplayModel(_, _, calculation, _) => f(Some(CalcOverview(calculation, None)))
+      case CalcDisplayModel(_, _, calculation, _) => f(Some(calculation))
       case CalcDisplayNoDataFound => f(None)
       case _ =>
         Logger.error(s"[TaxYearOverviewController][withCalculation] - Could not retrieve calculation for year: $taxYear")

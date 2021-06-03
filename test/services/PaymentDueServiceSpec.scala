@@ -40,7 +40,8 @@ class PaymentDueServiceSpec extends TestSupport {
     incomeSources = singleBusinessIncomeWithCurrentYear,
     saUtr = Some("1234567890"),
     credId = Some("credId"),
-    userType = Some("individual")
+    userType = Some("Individual"),
+    None
   )(FakeRequest())
 
   val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
