@@ -67,10 +67,9 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 							transaction: Option[TransactionModel] = Some(transactionModel),
 							charge: Option[DocumentDetailWithDueDate] = Some(chargeModel),
 							incomeBreakdown: Boolean = false,
-							deductionBreakdown: Boolean = false,
 							taxDue: Boolean = false) {
 
-		val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, deductionBreakdown, taxDue, mockImplicitDateFormatter, "testBackURL")
+		val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, taxDue, mockImplicitDateFormatter, "testBackURL")
 		val document: Document = Jsoup.parse(page.body)
 		val content: Element = document.selectFirst("#content")
 
@@ -115,16 +114,7 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 				link.map(_.attr("href")) shouldBe Some(controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url)
 				link.map(_.text) shouldBe Some(TaxYearOverview.income)
 			}
-			"has a row but no link for deductions when FS DeductionsBreakdown is disabled " in new Setup {
-
-				val row: Elements = content.select("#income-deductions-table tr:nth-child(2)")
-				row.select("td:nth-child(1)").text shouldBe TaxYearOverview.deductions
-				row.select("td[class=numeric]").text shouldBe completeOverview.deductions.toNegativeCurrencyString
-				val link: Option[Element] =
-					getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
-				link shouldBe None
-			}
-			"has a row and link to view updates when FS DeductionsBreakdown is enabled" in new Setup(deductionBreakdown = true) {
+		 "has a row and link to view updates" in new Setup {
 
 				val link: Option[Element] =
 					getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
@@ -193,16 +183,7 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 				link.map(_.attr("href")) shouldBe Some(controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url)
 				link.map(_.text) shouldBe Some(TaxYearOverview.income)
 			}
-			"has a row but no link for deductions when FS DeductionsBreakdown is disabled " in new Setup {
-
-				val row: Elements = content.select("#income-deductions-table tr:nth-child(2)")
-				row.select("td:nth-child(1)").text shouldBe TaxYearOverview.deductions
-				row.select("td[class=numeric]").text shouldBe completeOverview.deductions.toNegativeCurrencyString
-				val link: Option[Element] =
-					getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
-				link shouldBe None
-			}
-			"has a row and link to view updates when FS DeductionsBreakdown is enabled" in new Setup(deductionBreakdown = true) {
+			"has a row and link to view updates" in new Setup {
 
 				val link: Option[Element] =
 					getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")

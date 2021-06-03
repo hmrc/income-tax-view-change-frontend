@@ -16,12 +16,14 @@
 
 package controllers.agent
 
+
 import audit.AuditingService
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
-import config.featureswitch.{AgentViewer, DeductionBreakdown, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import javax.inject.Inject
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,7 +34,6 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.DeductionBreakdown
 import views.html.errorPages.notFound
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdown,
@@ -53,7 +54,6 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
     Authenticated.async { implicit request =>
       implicit user =>
         if (isEnabled(AgentViewer)) {
-          if (isEnabled(DeductionBreakdown)) {
             getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
               auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(mtdItUser))
               calculationService.getCalculationDetail(getClientNino, taxYear).map {
@@ -71,10 +71,6 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
                   itvcErrorHandler.showInternalServerError()
               }
             }
-          }
-          else {
-            Future.successful(Redirect(controllers.agent.routes.TaxYearOverviewController.show(taxYear).url))
-          }
         }
         else Future.successful(NotFound(notFound()))
     }
