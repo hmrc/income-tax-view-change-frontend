@@ -401,10 +401,10 @@ regimes.Wales = Cymru
 timeoutDialog.minute                                            = munud
 timeoutDialog.minutes                                           = munud
 timeoutDialog.minutes.two                                       = funud
-timeoutDialog.message                                           = Er eich diogelwch, cewch eich allgofnodi mewn:
+timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
 timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
-button.continue                                                 = Yn eich blaen
+button.continue                                                 = Arhoswch wedi arwyddo i mewn
 
 ## Not found
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
