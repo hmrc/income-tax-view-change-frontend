@@ -67,9 +67,10 @@ object ChargeHistoryTestConstants {
     testErrorStatus, "Json Validation Error. Parsing ChargeHistory Data Response")
 
   val testChargeHistoryErrorModel: ChargesHistoryErrorModel = ChargesHistoryErrorModel(testErrorStatus, testErrorMessage)
-  val testChargeHistoryErrorModelJson: JsValue = Json.obj(
+
+  val testChargeHistoryErrorResponseJson: JsValue = Json.obj(
     "code" -> testErrorStatus,
-    "message" -> testErrorMessage
+    "reason" -> testErrorMessage
   )
 
   val testValidChargeHistoryDetailsModelJson: JsValue = Json.obj(

@@ -16,17 +16,17 @@
 
 package services
 
-import java.time.LocalDate
-
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
 import controllers.Assets.NOT_FOUND
-import javax.inject.{Inject, Singleton}
+import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -60,6 +60,17 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
         case (overdueDate :: Nil, _) => Some(Left(overdueDate, true))
         case _ => Some(Right(overdueDates.size))
       }
+    }
+  }
+
+  def getChargeHistoryDetails(mtdBsa: String, docNumber: String)
+                             (implicit hc: HeaderCarrier): Future[Option[List[ChargeHistoryModel]]] = {
+    incomeTaxViewChangeConnector.getChargeHistory(mtdBsa, docNumber) flatMap {
+      case ok: ChargesHistoryModel => Future.successful(ok.chargeHistoryDetails)
+
+      case error: ChargesHistoryErrorModel =>
+        Logger.error(s"[FinancialDetailsService][getChargeHistoryDetails] $error")
+        Future.failed(new InternalServerException("[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"))
     }
   }
 

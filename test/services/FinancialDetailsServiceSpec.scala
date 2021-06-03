@@ -18,18 +18,20 @@ package services
 
 import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import assets.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import assets.FinancialDetailsTestConstants._
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import controllers.Assets.INTERNAL_SERVER_ERROR
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import testUtils.TestSupport
-import uk.gov.hmrc.http.InternalServerException
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -128,7 +130,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         )
 
         setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear, testNino)(
-          FinancialDetailsErrorModel(INTERNAL_SERVER_ERROR, "internal server error")
+          FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
         )
         setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear - 1, testNino)(
           financialDetails
@@ -275,6 +277,48 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           await(result) shouldBe None
         }
+      }
+    }
+  }
+
+  "getChargeHistoryDetails" when {
+
+    "the connector returns a successful ChargesHistoryModel" should {
+      "return the chargeHistoryDetails from connector response" in {
+        val docNumber = "chargeId"
+        val hc = implicitly[HeaderCarrier]
+
+        when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+          .thenReturn(testValidChargeHistoryModel)
+
+        val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, docNumber)(hc)
+
+        await(result) shouldBe testValidChargeHistoryModel.chargeHistoryDetails
+        verify(mockIncomeTaxViewChangeConnector).getChargeHistory(testMtditid, docNumber)(hc)
+      }
+    }
+
+    "the connector returns an erroneous ChargesHistoryErrorModel" should {
+      "generate a failure with InternalServerException" in {
+        when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+          .thenReturn(testChargeHistoryErrorModel)
+
+        val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
+
+        intercept[InternalServerException](await(result))
+          .message shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
+      }
+    }
+
+    "the connector call fails" should {
+      "propagate a failure from the connector" in {
+        val emulatedConnectorFailure = Future.failed(new RuntimeException)
+        when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+          .thenReturn(emulatedConnectorFailure)
+
+        val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
+
+        result shouldBe emulatedConnectorFailure
       }
     }
   }
