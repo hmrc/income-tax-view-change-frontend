@@ -16,13 +16,15 @@
 
 package controllers.agent
 
+import java.time.{LocalDate, LocalDateTime}
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import assets.messages.{DeductionsSummaryMessages => messages}
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, DeductionBreakdown, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -34,13 +36,10 @@ import play.api.http.Status._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-import java.time.{LocalDate, LocalDateTime}
-
 class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(DeductionBreakdown)
     enable(AgentViewer)
   }
 
@@ -72,65 +71,48 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
 
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {
     "return the correct deductions summary page" in {
-        And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
-        enable(AgentViewer)
-        enable(DeductionBreakdown)
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSource
-        )
-
-        And("I stub a successful calculation response for 2017-18")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/$testYear/income")
-        val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear, clientDetails)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-
-        Then("I see Allowances and deductions page")
-        res should have(
-          httpStatus(OK),
-          pageTitle(messages.agentsDeductionsSummaryTitle),
-        )
-        val expectedAllowancesAndDeductions = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
-
-        And("Audit Agent TXM events have been fired with TxmApproved FS true")
-        enable(TxmEventsApproved)
-        verifyAuditContainsDetail(AllowanceAndDeductionsRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, true).detail)
-
-        And("Audit Agent TXM events have been fired with TxmApproved FS false")
-        disable(TxmEventsApproved)
-        verifyAuditContainsDetail(AllowanceAndDeductionsRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, false).detail)
-    }
-    "redirect to Tax Year Overview page when DeductionBreakdown feature switch is disabled" in {
-
       And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
       enable(AgentViewer)
-      disable(DeductionBreakdown)
       stubAuthorisedAgentUser(authorised = true)
 
-      When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/$testYear/deductions")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+        status = OK,
+        response = incomeSource
+      )
+
+      And("I stub a successful calculation response for 2017-18")
+      IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+        status = OK,
+        body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+      )
+      IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+        status = OK,
+        body = estimatedCalculationFullJson
+      )
+
+      When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/$testYear/income")
       val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear, clientDetails)
 
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+      IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-      Then("I am redirected to Tax Year Overview page")
+      Then("I see Allowances and deductions page")
       res should have(
-        httpStatus(SEE_OTHER),
-        redirectURI("/report-quarterly/income-and-expenses/view/agents/calculation/2018"))
+        httpStatus(OK),
+        pageTitle(messages.agentsDeductionsSummaryTitle),
+      )
+      val expectedAllowancesAndDeductions = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
+
+      And("Audit Agent TXM events have been fired with TxmApproved FS true")
+      enable(TxmEventsApproved)
+      verifyAuditContainsDetail(AllowanceAndDeductionsRequestAuditModel(testUser).detail)
+      verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, true).detail)
+
+      And("Audit Agent TXM events have been fired with TxmApproved FS false")
+      disable(TxmEventsApproved)
+      verifyAuditContainsDetail(AllowanceAndDeductionsRequestAuditModel(testUser).detail)
+      verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, false).detail)
     }
   }
 }
