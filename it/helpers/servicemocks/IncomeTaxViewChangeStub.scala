@@ -157,4 +157,13 @@ object IncomeTaxViewChangeStub {
   def verifyGetOutstandingChargesResponse(idType: String, idNumber: Long, taxYear: String): Unit = {
     WiremockHelper.verifyGet(getOutstandingChargesUrl(idType, idNumber, s"${taxYear.toInt}-04-05"))
   }
+
+	//Charge History stubs
+	def getChargeHistoryUrl(mtdBsa: String, docNumber: String): String = {
+		s"/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
+	}
+
+	def stubChargeHistoryResponse(mtdBsa: String, docNumber: String)(status: Int, response: JsValue): StubMapping = {
+		WiremockHelper.stubGet(getChargeHistoryUrl(mtdBsa, docNumber), status, response.toString())
+	}
 }

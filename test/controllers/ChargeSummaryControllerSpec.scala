@@ -18,12 +18,14 @@ package controllers
 
 import assets.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
+import mocks.services.MockIncomeSourceDetailsService
 import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, NewFinancialDetailsApi}
+import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -42,11 +44,20 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   with MockAuditingService
   with FeatureSwitching
   with TestSupport {
-  class Setup(financialDetails: FinancialDetailsResponseModel, featureSwitch: Boolean = true) {
+
+	def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
+
+  class Setup(financialDetails: FinancialDetailsResponseModel,
+							chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel(),
+							featureSwitch: Boolean = true) {
     val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
+		val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
 
     when(financialDetailsService.getFinancialDetails(any(), any())(any()))
       .thenReturn(Future.successful(financialDetails))
+
+		when(incomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+			.thenReturn(Future.successful(chargeHistory))
 
     mockBothIncomeSources()
 
@@ -60,7 +71,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       MockIncomeSourceDetailsPredicate,
       financialDetailsService,
       mockAuditingService,
-      app.injector.instanceOf[ItvcErrorHandler]
+      app.injector.instanceOf[ItvcErrorHandler],
+			incomeTaxViewChangeConnector
     )(
       app.injector.instanceOf[FrontendAppConfig],
       languageUtils,
@@ -77,7 +89,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
     "redirect a user back to the home page" when {
 
-      "the financial api switch is disabled" in new Setup(financialDetailsModel(2018), false) {
+      "the financial api switch is disabled" in new Setup(financialDetailsModel(2018), featureSwitch = false) {
         val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
 
         status(result) shouldBe Status.SEE_OTHER
@@ -95,14 +107,32 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "load the page" when {
 
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+				enable(ChargeHistory)
+				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
       }
+
+			"provided with a matching id with the feature switch disabled" in new Setup(financialDetailsModel(2018)) {
+				disable(ChargeHistory)
+				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+
+				status(result) shouldBe Status.OK
+				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+			}
+
     }
 
     "load an error page" when {
+
+			"the charge history response is an error" in new Setup(financialDetailsModel(2018), chargeHistory = ChargesHistoryErrorModel(500, "Failure")) {
+				enable(ChargeHistory)
+				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+
+				status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+			}
 
       "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
         val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))

@@ -21,7 +21,8 @@
 @import views.html.templates.main_template
 
 @import java.time.LocalDate
-@(documentDetail: DocumentDetail, dueDate: Option[LocalDate], implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@import models.chargeHistory.ChargeHistoryModel
+@(documentDetail: DocumentDetail, dueDate: Option[LocalDate], implicitDateFormatter: ImplicitDateFormatter, backUrl: String, chargeHistory: List[ChargeHistoryModel], chargeHistoryEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
@@ -61,6 +62,39 @@
 		<a href="@controllers.routes.PaymentDueController.viewPaymentsDue().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
 		@messages("chargeSummary.whatYouOwe.textTwo")
 	</p>
+
+	@if(chargeHistoryEnabled){
+		<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
+
+		<table>
+
+			<thead>
+				<tr>
+					<th>@messages("chargeSummary.chargeHistory.date")</th>
+					<th>@messages("chargeSummary.chargeHistory.description")</th>
+					<th>@messages("chargeSummary.chargeHistory.amount")</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@if(chargeHistory.isEmpty) {
+					<tr>
+						<td style="white-space: nowrap;">@{LocalDate.parse(documentDetail.documentDate).toLongDateShort}</td>
+						<td>@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
+						<td class="numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
+					</tr>
+				}
+
+				@for(charge <- chargeHistory) {
+					<tr>
+						<td style="white-space: nowrap;">@{LocalDate.parse(charge.reversalDate).toLongDateShort}</td>
+						<td>@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey}")</td>
+						<td class="numeric">@{charge.totalAmount.toCurrency}</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
 
 	@if(documentDetail.remainingToPay > 0){
 		<div id="payment-link-@{documentDetail.taxYear}">
