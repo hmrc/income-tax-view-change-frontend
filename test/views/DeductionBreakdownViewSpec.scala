@@ -16,7 +16,7 @@
 
 package views
 
-import assets.MessagesLookUp.{DeductionBreakdown, IncomeBreakdown}
+import assets.MessagesLookUp.DeductionBreakdown
 import assets.CalcBreakdownTestConstants
 import enums.Estimate
 import models.calculation.CalcDisplayModel

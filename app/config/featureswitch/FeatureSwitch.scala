@@ -27,7 +27,6 @@ object FeatureSwitch {
   val prefix = "feature-switch"
 
   val switches: Set[FeatureSwitch] = Set(
-    IncomeBreakdown,
     ITSASubmissionIntegration,
     NewFinancialDetailsApi,
     AgentViewer,
@@ -48,11 +47,6 @@ object FeatureSwitch {
 
   def get(str: String): Option[FeatureSwitch] = switches find (_.name == str)
 
-}
-
-case object IncomeBreakdown extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-calculation-income-breakdown"
-  override val displayText: String = "Enable Income Calc Breakdown"
 }
 
 case object ITSASubmissionIntegration extends FeatureSwitch {

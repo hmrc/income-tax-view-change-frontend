@@ -18,7 +18,7 @@ package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import config.featureswitch.{AgentViewer, FeatureSwitching, IncomeBreakdown}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -41,7 +41,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
   override def beforeEach(): Unit = {
     super.beforeEach()
     disable(AgentViewer)
-    disable(IncomeBreakdown)
   }
 
   class Setup {
@@ -66,10 +65,9 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
     }
   }
   "showIncomeSummary" when {
-    "feature switch IncomeBreakdown and AgentViewer are enabled" when {
+    "AgentViewer feature switch is enabled" when {
       "given a tax year which can be found in ETMP" should {
         "return Status OK (200) with html content and right title" in new Setup {
-          enable(IncomeBreakdown)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
@@ -85,7 +83,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       }
       "there was a problem retrieving income source details for the user" should {
         "throw an internal server exception" in new Setup {
-          enable(IncomeBreakdown)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockErrorIncomeSource()
@@ -100,7 +97,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 
       "there is a downstream error" should {
         "return Status Internal Server Error (500)" in new Setup {
-          enable(IncomeBreakdown)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
@@ -118,7 +114,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       "given a tax year which can be found in ETMP" should {
         "return Status NotFound (404)" in new Setup {
           disable(AgentViewer)
-          enable(IncomeBreakdown)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockNotFound()
 
@@ -129,20 +124,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       }
     }
 
-    "feature switch IncomeBreakdown is disabled" when {
-      "given a tax year which can be found in ETMP" should {
-        "return Status NotFound (404)" in new Setup {
-          disable(IncomeBreakdown)
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockNotFound()
-
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
-
-          status(result) shouldBe Status.NOT_FOUND
-        }
-      }
-    }
   }
 }
 

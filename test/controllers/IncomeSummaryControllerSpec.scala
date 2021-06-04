@@ -19,7 +19,7 @@ package controllers
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, IncomeBreakdown}
+import config.featureswitch.FeatureSwitching
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -48,8 +48,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     app.injector.instanceOf[MessagesControllerComponents])
 
   "showIncomeSummary" when {
-    "feature switch IncomeBreakdown is enabled" when {
-      enable(IncomeBreakdown)
 
       "given a tax year which can be found in ETMP" should {
 
@@ -95,24 +93,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
-    }
 
-    "feature switch IncomeBreakdown is disabled" when {
-
-
-      "given a tax year which can be found in ETMP" should {
-
-        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return Status NotFound (404)" in {
-          disable(IncomeBreakdown)
-          mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.NOT_FOUND
-        }
-      }
-    }
   }
 }
 
