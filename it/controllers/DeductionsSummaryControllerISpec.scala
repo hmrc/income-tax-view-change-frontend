@@ -16,13 +16,15 @@
 
 package controllers
 
+import java.time.LocalDateTime
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{DeductionsSummaryMessages => messages}
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{DeductionBreakdown, TxmEventsApproved}
+import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks._
@@ -30,15 +32,11 @@ import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 import play.api.test.FakeRequest
 
-import java.time.LocalDateTime
-
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" when {
 
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch DeductionsBreakdown is enabled" should {
-      enable(DeductionBreakdown)
+    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
       "return the correct income summary page" in {
 
         And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")

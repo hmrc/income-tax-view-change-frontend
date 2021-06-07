@@ -295,6 +295,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
           }
 
+
           "render the payments due page with a multiple charge, without BCD and ACI charges from CESA" in {
             enable(NewFinancialDetailsApi)
             enable(TxmEventsApproved)

@@ -28,7 +28,6 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     IncomeBreakdown,
-    DeductionBreakdown,
     TaxDue,
     ITSASubmissionIntegration,
     NewFinancialDetailsApi,
@@ -38,7 +37,8 @@ object FeatureSwitch {
     PaymentHistory,
 		IvUplift,
 		ChargeHistory,
-    TxmEventsApproved
+    TxmEventsApproved,
+    PaymentAllocation
   )
 
   def apply(str: String): FeatureSwitch =
@@ -54,11 +54,6 @@ object FeatureSwitch {
 case object IncomeBreakdown extends FeatureSwitch {
   override val name: String = s"$prefix.enable-calculation-income-breakdown"
   override val displayText: String = "Enable Income Calc Breakdown"
-}
-
-case object DeductionBreakdown extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-calculation-deduction-breakdown"
-  override val displayText: String = "Enable Deduction Calc Breakdown"
 }
 
 case object TaxDue extends FeatureSwitch {
@@ -104,6 +99,11 @@ case object IvUplift extends FeatureSwitch {
 case object ChargeHistory extends FeatureSwitch {
 	override val name: String = s"$prefix.enable-charge-history"
 	override val displayText: String = "Charge History"
+}
+
+case object PaymentAllocation extends FeatureSwitch {
+  override val name: String = s"$prefix-.enable-payment-allocation"
+  override val displayText: String = "Payment Allocation"
 }
 
 case object TxmEventsApproved extends FeatureSwitch {

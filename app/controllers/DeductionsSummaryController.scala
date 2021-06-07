@@ -19,19 +19,18 @@ package controllers
 import audit.AuditingService
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{DeductionBreakdown, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
+import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, FinancialTransactionsService}
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.errorPages.notFound
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -57,7 +56,6 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
 
     action.async {
       implicit user =>
-        if (isEnabled(DeductionBreakdown)) {
           auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(user))
           calculationService.getCalculationDetail(user.nino, taxYear).map {
             case calcDisplayModel: CalcDisplayModel =>
@@ -73,11 +71,8 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
               Logger.error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }
-        }
-        else Future.successful(NotFound(notFound()))
     }
   }
 
   def backUrl(taxYear: Int): String = controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
-
 }
