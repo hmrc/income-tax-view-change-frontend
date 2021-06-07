@@ -460,11 +460,11 @@ agent.error.enter_clients_utr.length                            = Mae’n rhaid 
 agent.error.enter_clients_utr.non_numeric                       = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr gynnwys rhifau yn unig
 
 ## Agent - Confirm Client
-agent.confirmClient.heading                                     = Confirm your client’s details
-agent.confirmClient.clientName                                  = Client’s name
-agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference
+agent.confirmClient.heading                                     = Cadarnhau manylion eich cleient
+agent.confirmClient.clientName                                  = Enw’r cleient
+agent.confirmClient.clientUtr                                   = Cyfeirnod Unigryw y Trethdalwr eich cleient
 agent.confirmClient.changeClient                                = Newid cleient
-agent.confirmClient.confirmContinue                             = Confirm and continue
+agent.confirmClient.confirmContinue                             = Cadarnhau ac yn eich blaen
 
 ##Tax Years Overview Update Tab##
 updateTab.due                                                   = Ddyledus {0}
