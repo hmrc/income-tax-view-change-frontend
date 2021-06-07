@@ -37,6 +37,7 @@
     <p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
 }
 
+
 @paymentDaysNoteParagraph = {
     <p id ="payment-days-note">@messages("whatYouOwe.payment-days-note")</p>
 }
@@ -106,8 +107,9 @@
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
     } else {
-        <div id="payments-due-note">
+        <div id="payments-due-note" class="panel panel-indent panel-border-wide">
             @saNoteParagraph
+            @outstandingChargesNoteParagraph
         </div>
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero){
