@@ -106,8 +106,10 @@
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
     } else {
-        <div id="payments-due-note">
+        <div id="payments-due-note" class="panel panel-indent panel-border-wide">
             @saNoteParagraph
+            @outstandingChargesNoteParagraph
+
         </div>
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero){
