@@ -24,7 +24,7 @@ import config.ItvcErrorHandler
 import models.core.{Nino, NinoResponseError}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, Request, Result}
 import services.NinoLookupService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -68,9 +68,9 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
     }
   }
 
-  private def auditNinoLookup(nino: Nino, mtdRef: String)(implicit hc: HeaderCarrier): Unit =
+  private def auditNinoLookup(nino: Nino, mtdRef: String)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     auditingService.audit(NinoLookupAuditModel(nino, mtdRef))
 
-  private def auditNinoLookupError(ninoError: NinoResponseError, mtdRef: String)(implicit hc: HeaderCarrier): Unit =
+  private def auditNinoLookupError(ninoError: NinoResponseError, mtdRef: String)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     auditingService.audit(NinoLookupErrorAuditModel(ninoError, mtdRef))
 }
