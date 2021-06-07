@@ -23,6 +23,7 @@ import audit.models.{AuditModel, ExtendedAuditModel}
 import org.mockito.Mockito._
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
+import play.api.mvc.Request
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -43,6 +44,7 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
       AdditionalMatchers.or(ArgumentMatchers.eq(path), ArgumentMatchers.isNull)
     )(
       ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[Request[_]],
       ArgumentMatchers.any[ExecutionContext]
     )
   }
@@ -53,6 +55,7 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
       AdditionalMatchers.or(ArgumentMatchers.eq(path), ArgumentMatchers.isNull)
     )(
       ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[Request[_]],
       ArgumentMatchers.any[ExecutionContext]
     )
 }

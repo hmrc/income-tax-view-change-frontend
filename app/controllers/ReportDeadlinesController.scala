@@ -25,7 +25,7 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import implicits.ImplicitDateFormatterImpl
 import models.reportDeadlines.ObligationsModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.ReportDeadlinesService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -92,7 +92,7 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       case _ => ObligationsModel(Nil)
     }
 
-  private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =
+  private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     auditingService.audit(ReportDeadlinesAuditModel(user), Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url))
 
   lazy val backUrl: String = controllers.routes.HomeController.home().url
