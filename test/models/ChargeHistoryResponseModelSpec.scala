@@ -17,9 +17,10 @@
 package models
 
 import assets.ChargeHistoryTestConstants._
-import models.chargeHistory.{ChargesHistoryErrorModel, ChargesHistoryModel}
+import models.chargeHistory.ChargesHistoryModel
 import org.scalatest.Matchers
-import play.api.libs.json.{JsSuccess, Json}
+import play.api.libs.json.Json
+import play.api.test.Helpers.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ChargeHistoryResponseModelSpec extends UnitSpec with Matchers {
@@ -38,15 +39,29 @@ class ChargeHistoryResponseModelSpec extends UnitSpec with Matchers {
 
   }
 
-  "The ChargeHistoryErrorModel" should {
-
-    "be formatted to JSON correctly" in {
-      Json.toJson[ChargesHistoryErrorModel](testChargeHistoryErrorModel) shouldBe testChargeHistoryErrorModelJson
+  "The predicate ChargeHistoryErrorModel.isNoDataFoundError which" should {
+    "return true" when {
+      "there is a response status 404 and a single API error with code NO_DATA_FOUND" in {
+        testChargesHistoryErrorModelNoDataFound
+          .isNoDataFoundError shouldBe true
+      }
     }
 
-    "be able to parse a JSON into the Model" in {
-      Json.fromJson[ChargesHistoryErrorModel](testChargeHistoryErrorModelJson) shouldBe JsSuccess(testChargeHistoryErrorModel)
+    "return false" when {
+      "there is a non-404 response status and a single API error with code NO_DATA_FOUND" in {
+        testChargesHistoryErrorModelNoDataFound.copy(status = BAD_REQUEST)
+          .isNoDataFoundError shouldBe false
+      }
+
+      "there is a response status 404 and multiple API errors" in {
+        testChargesHistoryErrorModelBadRequestFailures.copy(status = NOT_FOUND)
+          .isNoDataFoundError shouldBe false
+      }
+
+      "there is a non-404 response status and multiple API errors" in {
+        testChargesHistoryErrorModelBadRequestFailures
+          .isNoDataFoundError shouldBe false
+      }
     }
   }
-
 }

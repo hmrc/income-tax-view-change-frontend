@@ -16,23 +16,33 @@
 
 package models.chargeHistory
 
-import play.api.libs.json.{Format, Json}
+import models.chargeHistory.ChargesHistoryErrorModel.CODE_NO_DATA_FOUND
+import play.api.libs.json._
+import play.mvc.Http.Status
+
+import scala.util.Try
 
 sealed trait ChargeHistoryResponseModel
 
 
 case class ChargesHistoryModel(idType: String,
-															 idValue: String,
-															 regimeType: String,
-															 chargeHistoryDetails: Option[List[ChargeHistoryModel]]) extends ChargeHistoryResponseModel
+                               idValue: String,
+                               regimeType: String,
+                               chargeHistoryDetails: Option[List[ChargeHistoryModel]]) extends ChargeHistoryResponseModel
 
 
 object ChargesHistoryModel {
-	implicit val format: Format[ChargesHistoryModel] = Json.format[ChargesHistoryModel]
+  implicit val format: Format[ChargesHistoryModel] = Json.format[ChargesHistoryModel]
 }
 
-case class ChargesHistoryErrorModel(code: Int, message: String) extends ChargeHistoryResponseModel
+case class ChargesHistoryErrorModel(status: Int, message: String) extends ChargeHistoryResponseModel {
+  lazy val isNoDataFoundError: Boolean = {
+    def apiErrorCodeOpt: Option[String] = Try((Json.parse(message) \ "code").as[String]).toOption
+
+    status == Status.NOT_FOUND && apiErrorCodeOpt.contains(CODE_NO_DATA_FOUND)
+  }
+}
 
 object ChargesHistoryErrorModel {
-	implicit val format: Format[ChargesHistoryErrorModel] = Json.format[ChargesHistoryErrorModel]
+  val CODE_NO_DATA_FOUND: String = "NO_DATA_FOUND"
 }

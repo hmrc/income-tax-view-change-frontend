@@ -16,9 +16,10 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import play.api.libs.json.{JsValue, Json}
+import assets.BaseTestConstants.testErrorStatus
 import models.chargeHistory._
+import play.api.libs.json.{JsValue, Json}
+import play.api.test.Helpers._
 
 object ChargeHistoryTestConstants {
 
@@ -66,11 +67,38 @@ object ChargeHistoryTestConstants {
   val testChargeHistoryErrorModelParsing: ChargesHistoryErrorModel = ChargesHistoryErrorModel(
     testErrorStatus, "Json Validation Error. Parsing ChargeHistory Data Response")
 
-  val testChargeHistoryErrorModel: ChargesHistoryErrorModel = ChargesHistoryErrorModel(testErrorStatus, testErrorMessage)
-  val testChargeHistoryErrorModelJson: JsValue = Json.obj(
-    "code" -> testErrorStatus,
-    "message" -> testErrorMessage
+  val chargeHistoryErrorNoDataFoundCode = "NO_DATA_FOUND"
+  val chargeHistoryErrorNoDataFoundReason = "The remote endpoint has indicated that no match found for the reference provided."
+
+  val testChargeHistoryErrorNoDataFoundJson: JsValue = Json.obj(
+    "code" -> chargeHistoryErrorNoDataFoundCode,
+    "reason" -> chargeHistoryErrorNoDataFoundReason
   )
+
+  val testChargesHistoryErrorModelNoDataFound: ChargesHistoryErrorModel =
+    ChargesHistoryErrorModel(status = NOT_FOUND, message = testChargeHistoryErrorNoDataFoundJson.toString)
+
+  val chargeHistoryErrorInvalidIdtypeCode = "INVALID_IDTYPE"
+  val chargeHistoryErrorInvalidIdtypeReason = "Submission has not passed validation. Invalid parameter idType."
+
+  val chargeHistoryErrorInvalidDocNumberCode = "INVALID_DOC_NUMBER"
+  val chargeHistoryErrorInvalidDocNumberReason = "Submission has not passed validation. Invalid parameter docNumber."
+
+  val testChargesHistoryFailuresJson: JsValue = Json.obj(
+    "failures" -> Seq(
+      Json.obj(
+        "code" -> chargeHistoryErrorInvalidIdtypeCode,
+        "reason" -> chargeHistoryErrorInvalidIdtypeReason
+      ),
+      Json.obj(
+        "code" -> chargeHistoryErrorInvalidDocNumberCode,
+        "reason" -> chargeHistoryErrorInvalidDocNumberReason
+      )
+    )
+  )
+
+  val testChargesHistoryErrorModelBadRequestFailures: ChargesHistoryErrorModel =
+    ChargesHistoryErrorModel(status = BAD_REQUEST, message = testChargesHistoryFailuresJson.toString)
 
   val testValidChargeHistoryDetailsModelJson: JsValue = Json.obj(
 		"idType" -> "MTDBSA",
