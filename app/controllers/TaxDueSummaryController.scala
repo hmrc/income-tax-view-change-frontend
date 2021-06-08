@@ -17,18 +17,17 @@
 package controllers
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TaxDue}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.errorPages.notFound
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,22 +49,20 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = {
 
     action.async {
-      implicit user =>
-        if (isEnabled(TaxDue)) {
-          calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
-            case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(views.html.taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+      implicit user => {
+        calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
+          case calcDisplayModel: CalcDisplayModel =>
+            Future.successful(Ok(views.html.taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
-            case CalcDisplayNoDataFound =>
-              Logger.warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
-              Future.successful(itvcErrorHandler.showInternalServerError())
+          case CalcDisplayNoDataFound =>
+            Logger.warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
+            Future.successful(itvcErrorHandler.showInternalServerError())
 
-            case CalcDisplayError =>
-              Logger.error(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
+          case CalcDisplayError =>
+            Logger.error(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
+            Future.successful(itvcErrorHandler.showInternalServerError())
         }
-        else Future.successful(NotFound(notFound()))
+      }
     }
   }
 

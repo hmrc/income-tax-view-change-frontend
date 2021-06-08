@@ -22,7 +22,6 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{TaxDueSummaryMessages => messages}
-import config.featureswitch.{TaxDue, FeatureSwitching}
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -33,8 +32,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase {
   "Calling the TaxDueSummaryController.showTaxDueSummary(taxYear)" when {
 
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch TaxDue is enabled" should {
-      enable(TaxDue)
       "return the correct tax due summary page" in {
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
@@ -67,5 +64,4 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase {
 
     unauthorisedTest("/calculation/" + testYear + "/tax-due")
 
-  }
 }

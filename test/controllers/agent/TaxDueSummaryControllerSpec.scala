@@ -16,10 +16,10 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtdUserNino}
+import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import config.featureswitch.{AgentViewer, FeatureSwitching, TaxDue}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -41,7 +41,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(TaxDue)
     disable(AgentViewer)
   }
 
@@ -69,11 +68,10 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
   }
 
   "showTaxDueSummary" when {
-    "feature switch TaxDue and Agent viewer are enabled" when {
+    "feature switch Agent viewer is enabled" when {
       "given a tax year which can be found in ETMP" should {
         "return Status OK (200) with HTML" in new Setup {
           enable(AgentViewer)
-          enable(TaxDue)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
           setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
@@ -88,7 +86,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       }
       "there was a problem retrieving income source details for the user" should {
         "throw an internal server exception" in new Setup {
-          enable(TaxDue)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockErrorIncomeSource()
@@ -103,7 +100,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       "there is a downstream error" should {
         "return Status Internal Server Error (500)" in new Setup {
           lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
-          enable(TaxDue)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
@@ -121,23 +117,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
         "return Status NotFound (404)" in new Setup {
           lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
 
-          enable(TaxDue)
           disable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          mockNotFound()
-
-          status(result) shouldBe Status.NOT_FOUND
-        }
-      }
-    }
-
-    "feature switch TaxDue is disabled" when {
-      "given a tax year which can be found in ETMP" should {
-        "return Status NotFound (404)" in new Setup {
-          lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
-          disable(TaxDue)
-          enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
           mockNotFound()

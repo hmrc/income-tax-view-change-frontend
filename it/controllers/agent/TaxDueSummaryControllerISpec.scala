@@ -19,7 +19,7 @@ package controllers.agent
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitleAgent}
-import config.featureswitch.{AgentViewer, FeatureSwitching, TaxDue}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks._
@@ -144,10 +144,9 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       }
     }
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch AgentViewer and TaxDue is enabled" should {
+      "feature switch AgentViewer is enabled" should {
       "return the correct tax due page" in {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        enable(TaxDue)
         enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -168,7 +167,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
         enable(AgentViewer)
-        enable(TaxDue)
         val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         res should have(

@@ -23,7 +23,7 @@
 @import views.html.helpers.statusHelper
 @import models.financialDetails.DocumentDetailWithDueDate
 
-@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, charge: Option[DocumentDetailWithDueDate] = None, incomeBreakdown: Boolean = false, taxDue: Boolean = false, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, charge: Option[DocumentDetailWithDueDate] = None, incomeBreakdown: Boolean = false, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter._
 
 @heading = @{
@@ -83,11 +83,7 @@
             <table id="taxdue-payments-table" class="table--spaced-top">
                 <tr>
                     <td class="bold">
-                        @if(taxDue) {
                             <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview-old.tax-due")</a>
-                        } else {
-                            @messages("tax-year-overview-old.tax-due")
-                        }
                     </td>
                     <td  class="bold">@{overview.taxDue.toCurrencyString}</td>
                 </tr>

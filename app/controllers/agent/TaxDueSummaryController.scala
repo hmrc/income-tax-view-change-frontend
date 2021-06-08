@@ -16,10 +16,11 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching, TaxDue}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -29,7 +30,6 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,7 +47,7 @@ class TaxDueSummaryController @Inject()(val taxCalcBreakdown: views.html.agent.T
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (isEnabled(AgentViewer) && isEnabled(TaxDue)) {
+      if (isEnabled(AgentViewer)) {
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
             case calcDisplayModel: CalcDisplayModel =>
