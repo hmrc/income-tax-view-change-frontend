@@ -74,7 +74,6 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       transaction = transaction,
       charge = charge,
       incomeBreakdown = isEnabled(IncomeBreakdown),
-      taxDue = isEnabled(TaxDue),
       dateFormatter,
       backUrl = backUrl
     )

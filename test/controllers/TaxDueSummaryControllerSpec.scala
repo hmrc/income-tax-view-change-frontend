@@ -19,7 +19,7 @@ package controllers
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import config.ItvcErrorHandler
-import config.featureswitch.{FeatureSwitching, TaxDue}
+import config.featureswitch.{FeatureSwitching}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
@@ -42,8 +42,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
 
   "showTaxDueSummary" when {
-    "feature switch TaxDue is enabled" when {
-      enable(TaxDue)
 
       "given a tax year which can be found in ETMP" should {
 
@@ -90,23 +88,5 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
         }
       }
     }
-
-    "feature switch TaxDue is disabled" when {
-
-
-      "given a tax year which can be found in ETMP" should {
-
-        lazy val result = TestTaxDueSummaryController.showTaxDueSummary(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return Status NotFound (404)" in {
-          disable(TaxDue)
-          mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.NOT_FOUND
-        }
-      }
-    }
-  }
 }
 

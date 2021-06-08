@@ -28,7 +28,6 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     IncomeBreakdown,
-    TaxDue,
     ITSASubmissionIntegration,
     NewFinancialDetailsApi,
     AgentViewer,
@@ -54,11 +53,6 @@ object FeatureSwitch {
 case object IncomeBreakdown extends FeatureSwitch {
   override val name: String = s"$prefix.enable-calculation-income-breakdown"
   override val displayText: String = "Enable Income Calc Breakdown"
-}
-
-case object TaxDue extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-tax-due"
-  override val displayText: String = "Enable Tax Due Feature"
 }
 
 case object ITSASubmissionIntegration extends FeatureSwitch {

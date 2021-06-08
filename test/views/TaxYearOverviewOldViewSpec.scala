@@ -66,10 +66,9 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 							overview: CalcOverview = completeOverview,
 							transaction: Option[TransactionModel] = Some(transactionModel),
 							charge: Option[DocumentDetailWithDueDate] = Some(chargeModel),
-							incomeBreakdown: Boolean = false,
-							taxDue: Boolean = false) {
+							incomeBreakdown: Boolean = false) {
 
-		val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, taxDue, mockImplicitDateFormatter, "testBackURL")
+		val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, mockImplicitDateFormatter, "testBackURL")
 		val document: Document = Jsoup.parse(page.body)
 		val content: Element = document.selectFirst("#content")
 
