@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import audit.AuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
@@ -27,7 +25,6 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.{Inject, Singleton}
 import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModel}
@@ -40,6 +37,8 @@ import services.{CalculationService, FinancialDetailsService, FinancialTransacti
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.{taxYearOverview, taxYearOverviewOld}
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -73,7 +72,6 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       overview = CalcOverview(calculation, transaction),
       transaction = transaction,
       charge = charge,
-      incomeBreakdown = isEnabled(IncomeBreakdown),
       dateFormatter,
       backUrl = backUrl
     )

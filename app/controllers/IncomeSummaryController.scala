@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeBreakdown}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
@@ -55,7 +55,6 @@ class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutP
   def showIncomeSummary(taxYear: Int): Action[AnyContent] =
     action.async {
       implicit user =>
-        if (isEnabled(IncomeBreakdown)) {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
               Future.successful(Ok(views.html.incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
@@ -68,8 +67,6 @@ class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutP
               Logger.error(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
               Future.successful(itvcErrorHandler.showInternalServerError())
           }
-        }
-        else Future.successful(NotFound(notFound()))
     }
 
   def backUrl(taxYear: Int): String = controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url

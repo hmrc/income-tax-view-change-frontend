@@ -19,7 +19,7 @@ package controllers.agent
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.messages.IncomeSummaryMessages.{agentTitle, incomeSummaryAgentHeading}
-import config.featureswitch.{AgentViewer, FeatureSwitching, IncomeBreakdown}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks._
@@ -31,7 +31,6 @@ import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-
 import java.time.{LocalDate, LocalDateTime}
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -82,6 +81,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   )
 
   "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
+
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
@@ -109,7 +109,9 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       }
     }
     s"return $NOT_FOUND" when {
+
       "the agent viewer feature switch is disabled" in {
+        disable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
@@ -144,10 +146,9 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       }
     }
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch AgentViewer and IncomeBreakdown is enabled" should {
+      "feature switch AgentViewer is enabled" should {
       "return the correct income summary page" in {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        enable(IncomeBreakdown)
         enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -168,7 +169,6 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         When(s"I call GET ${routes.IncomeSummaryController.showIncomeSummary(getCurrentTaxYearEnd.getYear).url}")
         enable(AgentViewer)
-        enable(IncomeBreakdown)
         val res = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         res should have(

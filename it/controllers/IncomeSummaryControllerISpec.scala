@@ -22,7 +22,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{IncomeSummaryMessages => messages}
-import config.featureswitch.{FeatureSwitching, IncomeBreakdown}
+import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -32,9 +32,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
   "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
 
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch IncomeBreakdown is enabled" should {
-      enable(IncomeBreakdown)
+    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
       "return the correct income summary page" in {
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")

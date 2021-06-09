@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching, IncomeBreakdown}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -46,7 +46,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.In
 
   def showIncomeSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (isEnabled(AgentViewer) && isEnabled(IncomeBreakdown)) {
+      if (isEnabled(AgentViewer)) {
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
             case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
