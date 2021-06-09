@@ -56,12 +56,17 @@
 			}</dd>
 		</div>
 	</dl>
-
 	<p>
 		@messages("chargeSummary.whatYouOwe.textOne")
 		<a href="@controllers.routes.PaymentDueController.viewPaymentsDue().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
 		@messages("chargeSummary.whatYouOwe.textTwo")
 	</p>
+
+	@if(documentDetail.remainingToPay > 0){
+		<div id="payment-link-@{documentDetail.taxYear}">
+		<a class="button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
+		</div>
+	}
 
 	@if(chargeHistoryEnabled){
 		<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
@@ -94,12 +99,5 @@
 				}
 			</tbody>
 		</table>
-	}
-<br>
-
-	@if(documentDetail.remainingToPay > 0){
-		<div id="payment-link-@{documentDetail.taxYear}">
-			<a class="button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
-		</div>
 	}
 }
