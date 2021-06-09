@@ -26,11 +26,12 @@ import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.outstandingCharges._
+import models.paymentAllocationCharges.{PaymentAllocationChargesErrorModel, PaymentAllocationChargesModel, PaymentAllocationChargesResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -93,6 +94,11 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   def getPaymentsUrl(nino: String, from: String, to: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
   }
+
+  def getPaymentAllocationUrl(nino: String, documentNumber: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/docNumber/$documentNumber"
+  }
+
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
 
@@ -480,6 +486,33 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
             Logger.warn(s"[IncomeTaxViewChangeConnector][getPayments] - Status ${response.status}, body: ${response.body}")
           }
           PaymentsError(status, response.body)
+      }
+    }
+  }
+
+  def getPaymentAllocation(nino: String, documentNumber: String)
+                          (implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationChargesResponse] = {
+    http.GET[HttpResponse](getPaymentAllocationUrl(nino, documentNumber))(
+      httpReads,
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
+      ec
+    ) map { response =>
+      response.status match {
+        case OK =>
+          response.json.validate[PaymentAllocationChargesModel].fold(
+            invalid => {
+              Logger.error(s"[PaymentAllocationConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
+              PaymentAllocationChargesErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+            },
+            valid => valid
+          )
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger.error(s"[PaymentAllocationConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[PaymentAllocationConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+          }
+          PaymentAllocationChargesErrorModel(response.status, response.body)
       }
     }
   }
