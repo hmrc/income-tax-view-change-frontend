@@ -75,3 +75,4 @@ GET         /payments/history                       controllers.PaymentHistoryCo
 
 GET        /switch-to-welsh                                 controllers.ItvcLanguageController.switchToWelsh
 GET        /switch-to-english                               controllers.ItvcLanguageController.switchToEnglish
+
