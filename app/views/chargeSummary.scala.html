@@ -82,13 +82,11 @@
 			</thead>
 
 			<tbody>
-				@if(chargeHistory.isEmpty) {
-					<tr>
-						<td style="white-space: nowrap;">@{LocalDate.parse(documentDetail.documentDate).toLongDateShort}</td>
-						<td>@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
-						<td class="numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
-					</tr>
-				}
+				<tr>
+					<td style="white-space: nowrap;">@{LocalDate.parse(documentDetail.documentDate).toLongDateShort}</td>
+					<td>@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
+					<td class="numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
+				</tr>
 
 				@for(charge <- chargeHistory) {
 					<tr>
