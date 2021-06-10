@@ -111,6 +111,11 @@
             @outstandingChargesNoteParagraph
 
         </div>
+
+        <p>
+            @paymentTypesDropdown
+        </p>
+
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero){
                 <h3 id="pre-mtd-payments-heading" class="heading-large">@messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)</h3>
@@ -147,9 +152,6 @@
                         </tbody>
                     </table>
                 </div>
-                <p>
-                    @paymentTypesDropdown
-                </p>
             }
             @if(chargesList.overduePaymentList.nonEmpty){
                 <h2 id="over-due-payments-heading" class="heading-large">@messages("whatYouOwe.over-due-payments")</h2>
