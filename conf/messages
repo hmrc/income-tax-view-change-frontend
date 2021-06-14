@@ -515,6 +515,10 @@ agent.titlePattern.serviceName.govUk = {0} - Your client’s Income Tax details 
 ## Payment History Page ##
 
 paymentHistory.heading                                          = Payment history
+paymentAllocation.heading                                       = Payment made to HMRC
+paymentAllocation.date                                          = Date
+paymentAllocation.amount                                        = Amount
+paymentAllocation.info                                          = Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years.
 paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
