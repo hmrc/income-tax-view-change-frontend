@@ -17,9 +17,9 @@
 package mocks.services
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.{testNino, testTaxYear}
 import assets.FinancialDetailsTestConstants._
+import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -66,6 +66,11 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
 
   def mockGetChargeDueDates(response: Future[Option[Either[(LocalDate, Boolean), Int]]]): Unit = {
     when(mockFinancialDetailsService.getChargeDueDates(any(), any()))
+      .thenReturn(response)
+  }
+
+  def mockGetChargeHistoryDetails(response: Future[Option[List[ChargeHistoryModel]]]): Unit = {
+    when(mockFinancialDetailsService.getChargeHistoryDetails(any(), any())(any()))
       .thenReturn(response)
   }
 }

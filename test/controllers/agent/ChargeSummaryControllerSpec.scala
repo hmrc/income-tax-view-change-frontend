@@ -17,15 +17,18 @@
 package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullFinancialDetailModel, testFinancialDetailsErrorModelParsing}
+import assets.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
-import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
+import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching, NewFinancialDetailsApi}
 import implicits.ImplicitDateFormatterImpl
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
 import mocks.views.MockChargeSummary
+import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.FinancialDetailsModel
+import org.mockito.ArgumentMatchers.{any, eq => ameq}
+import org.mockito.Mockito.{never, verify}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
@@ -52,6 +55,8 @@ class ChargeSummaryControllerSpec extends TestSupport
     if (newFinDetailsApiEnabled) enable(NewFinancialDetailsApi)
     else disable(NewFinancialDetailsApi)
 
+    disable(ChargeHistory)
+
     mockChargeSummary()(Html("<html><head><title>Test title</title></head></html>"))
 
     val chargeSummaryController: ChargeSummaryController = new ChargeSummaryController(
@@ -67,10 +72,12 @@ class ChargeSummaryControllerSpec extends TestSupport
       app.injector.instanceOf[ExecutionContext],
       app.injector.instanceOf[ItvcErrorHandler]
     )
-  }
 
-  val currentYear: Int = LocalDate.now().getYear
-  val errorHeading = "Sorry, there is a problem with the service"
+    val currentYear: Int = LocalDate.now().getYear
+    val errorHeading = "Sorry, there is a problem with the service"
+
+    val currentFinancialDetails: FinancialDetailsModel = financialDetailsModel(currentYear)
+  }
 
   ".showChargeSummary" when {
     "the agent viewer feature switch is enabled" when {
@@ -81,14 +88,11 @@ class ChargeSummaryControllerSpec extends TestSupport
 
               setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-              setupMockGetFinancialDetails(currentYear)(FinancialDetailsModel(
-                documentDetails = List(fullDocumentDetailModel.copy(taxYear = currentYear.toString, transactionId = "testid")),
-                financialDetails = List(fullFinancialDetailModel.copy(taxYear = currentYear.toString))
-              ))
+              setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
 
               mockSingleBusinessIncomeSource()
 
-              val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, "testid")
+              val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
                 .apply(fakeRequestConfirmedClient("AB123456C"))
 
               status(await(result)) shouldBe OK
@@ -102,12 +106,9 @@ class ChargeSummaryControllerSpec extends TestSupport
 
               setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-              setupMockGetFinancialDetails(currentYear)(FinancialDetailsModel(
-                documentDetails = List(fullDocumentDetailModel.copy(taxYear = currentYear.toString, transactionId = "NotTestid")),
-                financialDetails = List(fullFinancialDetailModel.copy(taxYear = currentYear.toString))
-              ))
+              setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
 
-              val result: Result = await(chargeSummaryController.showChargeSummary(currentYear, "testid")
+              val result: Result = await(chargeSummaryController.showChargeSummary(currentYear, id1040000124)
                 .apply(fakeRequestConfirmedClient("AB123456C")))
 
               status(result) shouldBe SEE_OTHER
@@ -151,6 +152,78 @@ class ChargeSummaryControllerSpec extends TestSupport
         }
       }
 
+      "the ChargeHistory feature switch is enabled and the page can be viewed" should {
+        "pass to the view a retrieved charge history list in ascending order" in new Setup(true, true) {
+          val chargeHistoryListInAscendingOrder: List[ChargeHistoryModel] = List(
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, "2017-08-12", "Customer Request"),
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, "2018-07-06", "amended return")
+          )
+
+          enable(ChargeHistory)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+          mockSingleBusinessIncomeSource()
+
+          mockGetChargeHistoryDetails(Some(chargeHistoryListInAscendingOrder.reverse))
+
+          val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe OK
+          verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any())(any(), any(), any(), any())
+          verify(mockFinancialDetailsService).getChargeHistoryDetails(ameq("XAIT00000000015"), ameq(id1040000123))(any())
+        }
+
+        "pass to the view an empty list" when {
+          "charge history list does not exist" in new Setup(true, true) {
+            enable(ChargeHistory)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+            mockSingleBusinessIncomeSource()
+
+            mockGetChargeHistoryDetails(response = None)
+
+            val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
+              .apply(fakeRequestConfirmedClient("AB123456C"))
+
+            status(result) shouldBe OK
+            verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any())(any(), any(), any(), any())
+          }
+        }
+
+        "raise an error" when {
+          "call for charge history list fails" in new Setup(true, true) {
+            enable(ChargeHistory)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+            mockSingleBusinessIncomeSource()
+
+            val emulatedServiceError = new IllegalStateException("Emulated service error")
+            mockGetChargeHistoryDetails(response = Future.failed(emulatedServiceError))
+
+            val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
+              .apply(fakeRequestConfirmedClient("AB123456C"))
+
+            intercept[Throwable](await(result)) shouldBe emulatedServiceError
+          }
+        }
+      }
+
+      "the ChargeHistory feature switch is not enabled and the page can be viewed" should {
+        "not pass any charge history list to the view" in new Setup(true, true) {
+          disable(ChargeHistory)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+          mockSingleBusinessIncomeSource()
+
+          val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe OK
+          verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any())(any(), any(), any(), any())
+          verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
+        }
+      }
 
     }
 

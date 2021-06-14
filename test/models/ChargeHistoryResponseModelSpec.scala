@@ -17,9 +17,9 @@
 package models
 
 import assets.ChargeHistoryTestConstants._
-import models.chargeHistory.{ChargesHistoryErrorModel, ChargesHistoryModel}
+import models.chargeHistory.ChargesHistoryModel
 import org.scalatest.Matchers
-import play.api.libs.json.{JsSuccess, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ChargeHistoryResponseModelSpec extends UnitSpec with Matchers {
@@ -36,17 +36,6 @@ class ChargeHistoryResponseModelSpec extends UnitSpec with Matchers {
         valid => valid) shouldBe testValidChargeHistoryModel
     }
 
-  }
-
-  "The ChargeHistoryErrorModel" should {
-
-    "be formatted to JSON correctly" in {
-      Json.toJson[ChargesHistoryErrorModel](testChargeHistoryErrorModel) shouldBe testChargeHistoryErrorModelJson
-    }
-
-    "be able to parse a JSON into the Model" in {
-      Json.fromJson[ChargesHistoryErrorModel](testChargeHistoryErrorModelJson) shouldBe JsSuccess(testChargeHistoryErrorModel)
-    }
   }
 
 }

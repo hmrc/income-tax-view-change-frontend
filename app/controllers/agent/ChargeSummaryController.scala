@@ -18,11 +18,12 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
+import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -34,10 +35,11 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.ChargeSummary
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
+class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         financialDetailsService: FinancialDetailsService,
                                         incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -50,10 +52,11 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
                                          val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, backLocation: Option[String], taxYear: Int)(implicit request: Request[_]): Html = {
-    chargeSummary(
+  private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
+                   backLocation: Option[String], taxYear: Int)(implicit request: Request[_]): Html = {
+    chargeSummaryView(
       documentDetailWithDueDate = documentDetailWithDueDate,
-      implicitDateFormatter = dateFormatter,
+      chargeHistoryOpt = chargeHistoryOpt,
       backUrl = backUrl(backLocation, taxYear)
     )
   }
@@ -63,7 +66,7 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
       implicit user =>
         if (isEnabled(AgentViewer)) {
           if (isEnabled(NewFinancialDetailsApi)) {
-            financialDetailsService.getFinancialDetails(taxYear, getClientNino).map {
+            financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
               case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == chargeId) =>
                 val backLocation = request.session.get(SessionKeys.chargeSummaryBackPage)
 
@@ -77,13 +80,15 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
                     ))
                   }
                 }
-                Ok(view(success.findDocumentDetailByIdWithDueDate(chargeId).get, backLocation, taxYear))
+                getChargeHistory(chargeId).map { chargeHistoryOpt =>
+                  Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear))
+                }
               case _: FinancialDetailsModel =>
                 Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
-                Redirect(controllers.agent.routes.HomeController.show())
+                Future.successful(Redirect(controllers.agent.routes.HomeController.show()))
               case _ =>
                 Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
-                itvcErrorHandler.showInternalServerError()
+                Future.successful(itvcErrorHandler.showInternalServerError())
             }
           }
           else {
@@ -99,6 +104,18 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
     case Some("taxYearOverview") => controllers.agent.routes.TaxYearOverviewController.show(taxYear).url + "#payments"
     case Some("paymentDue") => controllers.agent.nextPaymentDue.routes.PaymentDueController.show().url
     case _ => controllers.agent.routes.HomeController.show().url
+  }
+
+  private def getChargeHistory(chargeId: String)(implicit req: Request[_]): Future[Option[List[ChargeHistoryModel]]] = {
+    ChargeHistory.fold(
+      ifDisabled = Future.successful(None),
+      ifEnabled = financialDetailsService.getChargeHistoryDetails(getClientMtditid, chargeId)
+        .map(historyListOpt => historyListOpt.map(sortHistory) orElse Some(Nil))
+    )
+  }
+
+  private def sortHistory(list: List[ChargeHistoryModel]): List[ChargeHistoryModel] = {
+    list.sortBy(chargeHistory => LocalDate.parse(chargeHistory.reversalDate))
   }
 
 }

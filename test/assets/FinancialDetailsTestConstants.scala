@@ -25,11 +25,14 @@ import play.api.libs.json.{JsValue, Json}
 
 object FinancialDetailsTestConstants {
 
+  val id1040000123 = "1040000123"
+  val id1040000124 = "1040000124"
+
   val testValidFinancialDetailsModelJson: JsValue = Json.obj(
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> "2019",
-        "transactionId" -> "1040000123",
+        "transactionId" -> id1040000123,
         "documentDescription" -> "ITSA- Bal Charge",
         "outstandingAmount" -> 10.33,
         "originalAmount" -> 10.33,
@@ -37,7 +40,7 @@ object FinancialDetailsTestConstants {
       ),
       Json.obj(
         "taxYear" -> "2020",
-        "transactionId" -> "1040000124",
+        "transactionId" -> id1040000124,
         "documentDescription" -> "ITSA- Bal Charge",
         "outstandingAmount" -> 10.34,
         "originalAmount" -> 10.34,
@@ -69,7 +72,7 @@ object FinancialDetailsTestConstants {
                           originalAmount: Option[BigDecimal] = Some(1400.00)): DocumentDetail =
     DocumentDetail(
       taxYear = taxYear.toString,
-      transactionId = "1040000123",
+      transactionId = id1040000123,
       documentDescription,
       outstandingAmount = outstandingAmount,
       originalAmount = originalAmount,
@@ -89,6 +92,10 @@ object FinancialDetailsTestConstants {
                                      dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetailWithDueDate =
     DocumentDetailWithDueDate(documentDetailModel(taxYear, documentDescription, outstandingAmount, originalAmount), dueDate)
 
+  val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))
+  val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA - POA 2"))
+  val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- Bal Charge"))
+
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
 
@@ -102,8 +109,8 @@ object FinancialDetailsTestConstants {
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     documentDetails = List(
-      DocumentDetail("2019", "1040000123", Some("ITSA- Bal Charge"), Some(10.33), Some(10.33), "2018-03-29"),
-      DocumentDetail("2020", "1040000124", Some("ITSA- Bal Charge"), Some(10.34), Some(10.34), "2018-03-29")
+      DocumentDetail("2019", id1040000123, Some("ITSA- Bal Charge"), Some(10.33), Some(10.33), "2018-03-29"),
+      DocumentDetail("2020", id1040000124, Some("ITSA- Bal Charge"), Some(10.34), Some(10.34), "2018-03-29")
     ),
     financialDetails = List(
       FinancialDetail("2019", Some("SA Balancing Charge"), Some(Seq(SubItem(Some("2019-05-15"))))),
@@ -118,7 +125,7 @@ object FinancialDetailsTestConstants {
                                 taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
       documentDetails = List(
-        DocumentDetail(taxYear, "1040000124", documentDescription.head, outstandingAmount.head, Some(43.21), "2018-03-29"),
+        DocumentDetail(taxYear, id1040000124, documentDescription.head, outstandingAmount.head, Some(43.21), "2018-03-29"),
         DocumentDetail(taxYear, "1040000125", documentDescription(1), outstandingAmount(1), Some(12.34), "2018-03-29")
       ),
       financialDetails = List(
@@ -134,8 +141,8 @@ object FinancialDetailsTestConstants {
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
       documentDetails = List(
-        DocumentDetail(taxYear, "1040000123", documentDescription.head, outstandingAmount.head, Some(43.21), "2018-03-29"),
-        DocumentDetail(taxYear, "1040000124", documentDescription(1), outstandingAmount(1), Some(12.34), "2018-03-29")
+        DocumentDetail(taxYear, id1040000123, documentDescription.head, outstandingAmount.head, Some(43.21), "2018-03-29"),
+        DocumentDetail(taxYear, id1040000124, documentDescription(1), outstandingAmount(1), Some(12.34), "2018-03-29")
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, Some(Seq(SubItem(dueDate.head)))),

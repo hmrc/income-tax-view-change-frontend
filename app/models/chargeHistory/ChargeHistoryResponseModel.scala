@@ -22,17 +22,13 @@ sealed trait ChargeHistoryResponseModel
 
 
 case class ChargesHistoryModel(idType: String,
-															 idValue: String,
-															 regimeType: String,
-															 chargeHistoryDetails: Option[List[ChargeHistoryModel]]) extends ChargeHistoryResponseModel
+                               idValue: String,
+                               regimeType: String,
+                               chargeHistoryDetails: Option[List[ChargeHistoryModel]]) extends ChargeHistoryResponseModel
 
 
 object ChargesHistoryModel {
-	implicit val format: Format[ChargesHistoryModel] = Json.format[ChargesHistoryModel]
+  implicit val format: Format[ChargesHistoryModel] = Json.format[ChargesHistoryModel]
 }
 
 case class ChargesHistoryErrorModel(code: Int, message: String) extends ChargeHistoryResponseModel
-
-object ChargesHistoryErrorModel {
-	implicit val format: Format[ChargesHistoryErrorModel] = Json.format[ChargesHistoryErrorModel]
-}
