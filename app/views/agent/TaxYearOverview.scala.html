@@ -67,7 +67,7 @@
             <td>
                 <a href=@controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
             </td>
-            <td class="numeric">@{overview.deductions.toNegativeCurrencyString}</td>
+            <td class="numeric no-wrap">@{overview.deductions.toNegativeCurrency}</td>
         </tr>
         <tr>
             <td class="total-section">@messages("tax-year-overview.taxable-income")</td>

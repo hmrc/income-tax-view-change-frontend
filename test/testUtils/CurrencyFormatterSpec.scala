@@ -23,15 +23,15 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
 
   "The implicit currency formatter" when {
 
-    "toNegativeCurrencyString" should {
+    "toNegativeCurrency" should {
       "return a value as negative" when {
         "the number is more than 0" in {
           val amount: BigDecimal = 0.01
-          amount.toNegativeCurrencyString shouldBe "-£0.01"
+          amount.toNegativeCurrency shouldBe Html("&minus;&pound;0.01")
         }
         "the number is 0" in {
           val amount: BigDecimal = 0.00
-          amount.toNegativeCurrencyString shouldBe "£0.00"
+          amount.toNegativeCurrency shouldBe Html("&pound;0.00")
         }
       }
     }

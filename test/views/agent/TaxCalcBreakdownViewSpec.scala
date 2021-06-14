@@ -26,6 +26,7 @@ import models.financialTransactions.TransactionModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.exceptions.TestFailedException
+import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.agent.TaxCalcBreakdown
 
@@ -557,73 +558,73 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has a Deficiency Relief line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.deficiencyRelief
-          row.select("td").last().text() shouldBe "-£1,000.00"
+          row.select("td").last().text() shouldBe "−£1,000.00"
         }
 
         "has a Venture Capital Trust relief line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.vctRelief
-          row.select("td").last().text() shouldBe "-£2,000.00"
+          row.select("td").last().text() shouldBe "−£2,000.00"
         }
 
         "has a Enterprise Investment Scheme relief line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.eisRelief
-          row.select("td").last().text() shouldBe "-£3,000.00"
+          row.select("td").last().text() shouldBe "−£3,000.00"
         }
 
         "has a Seed Enterprise Scheme relief line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(3)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.seedRelief
-          row.select("td").last().text() shouldBe "-£4,000.00"
+          row.select("td").last().text() shouldBe "−£4,000.00"
         }
 
         "has a Community Investment Tax Relief line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(4)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.citRelief
-          row.select("td").last().text() shouldBe "-£5,000.00"
+          row.select("td").last().text() shouldBe "−£5,000.00"
         }
 
         "has a Social Investment Tax Relief line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(5)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.sitRelief
-          row.select("td").last().text() shouldBe "-£6,000.00"
+          row.select("td").last().text() shouldBe "−£6,000.00"
         }
 
         "has a Maintenance and alimony paid line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(6)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.maintenanceRelief
-          row.select("td").last().text() shouldBe "-£7,000.00"
+          row.select("td").last().text() shouldBe "−£7,000.00"
         }
 
         "has a Relief for finance costs line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(7)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.reliefForFinanceCosts
-          row.select("td").last().text() shouldBe "-£5,000.00"
+          row.select("td").last().text() shouldBe "−£5,000.00"
         }
 
         "has a Notional tax from gains on life policies etc line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(8)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.notionalTax
-          row.select("td").last().text() shouldBe "-£7,000.00"
+          row.select("td").last().text() shouldBe "−£7,000.00"
         }
 
         "has a Foreign Tax Credit Relief with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(9)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.foreignTaxCreditRelief
-          row.select("td").last().text() shouldBe "-£6,000.00"
+          row.select("td").last().text() shouldBe "−£6,000.00"
         }
 
         "has a Relief claimed on a qualifying distribution line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(10)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.reliefClaimedOnQualifyingDis
-          row.select("td").last().text() shouldBe "-£8,000.00"
+          row.select("td").last().text() shouldBe "−£8,000.00"
         }
 
         "has a non deductible loan interest line with the correct value" in new Setup(view) {
           val row: Element = content.table(7).select("tr").get(11)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.nonDeductibleLoanInterest
-          row.select("td").last().text() shouldBe "-£9,000.00"
+          row.select("td").last().text() shouldBe "−£9,000.00"
         }
 
         "has a Income Tax due after tax reductions with the correct value" in new Setup(view) {
@@ -679,45 +680,45 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has an employments line with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.employments
-          row.select("td").last().text() shouldBe "-£100.00"
+          row.select("td").last().text() shouldBe "−£100.00"
         }
 
         "has a UK pensions line with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.ukPensions
-          row.select("td").last().text() shouldBe "-£200.00"
+          row.select("td").last().text() shouldBe "−£200.00"
         }
         "has a state benefits line with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.stateBenefits
-          row.select("td").last().text() shouldBe "-£300.00"
+          row.select("td").last().text() shouldBe "−£300.00"
         }
 
         "has a CIS line with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(3)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.cis
-          row.select("td").last().text() shouldBe "-£400.00"
+          row.select("td").last().text() shouldBe "−£400.00"
         }
 
         "has a UK land and property line with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(4)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.ukLandAndProperty
-          row.select("td").last().text() shouldBe "-£500.00"
+          row.select("td").last().text() shouldBe "−£500.00"
         }
         "has a Special Withholding Tax with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(5)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.specialWithholdingTax
-          row.select("td").last().text() shouldBe "-£600.00"
+          row.select("td").last().text() shouldBe "−£600.00"
         }
         "has a VoidISAs with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(6)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.voidISAs
-          row.select("td").last().text() shouldBe "-£700.00"
+          row.select("td").last().text() shouldBe "−£700.00"
         }
         "has a UK banks and building societies line with the correct value" in new Setup(view) {
           val row: Element = content.table(10).select("tr").get(7)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.BBSI
-          row.select("td").last().text() shouldBe "-£800.00"
+          row.select("td").last().text() shouldBe "−£800.00"
         }
 
         "has a total deductions line with the correct value" in new Setup(view) {

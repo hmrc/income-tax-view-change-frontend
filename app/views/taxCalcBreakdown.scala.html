@@ -53,8 +53,8 @@
     @if(dataItem.isDefined) {
         <tr id="@messageCode">
             <td>@messages(s"taxCal_breakdown.table.$messageCode")</td>
-            <td class="numeric">@{
-                if(isNegative) dataItem.get.toNegativeCurrencyString
+            <td class="numeric no-wrap">@{
+                if(isNegative) dataItem.get.toNegativeCurrency
                 else dataItem.get.toCurrency
             }
             </td>
@@ -331,8 +331,8 @@
                 @calcModel.calcDataModel.taxDeductedAtSource.allFields.map { mapEntry =>
                     <tr>
                         <td>@messages(s"taxCal_breakdown.table.taxDeductedAtSource.${mapEntry._1}")</td>
-                        <td class="numeric">@{
-                            mapEntry._2.toNegativeCurrencyString
+                        <td class="numeric no-wrap">@{
+                            mapEntry._2.toNegativeCurrency
                         }</td>
                     </tr>
                 }

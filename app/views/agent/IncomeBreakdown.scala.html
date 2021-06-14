@@ -31,8 +31,8 @@
     @if(dataItem.isDefined) {
         <tr id="@messageCode">
             <td>@messages(s"income_breakdown.table.$messageCode")</td>
-            <td class="numeric">@{
-                if(isNegative) dataItem.get.toNegativeCurrencyString
+            <td class="numeric no-wrap">@{
+                if(isNegative) dataItem.get.toNegativeCurrency
                 else dataItem.get.toCurrency
             }</td>
         </tr>
