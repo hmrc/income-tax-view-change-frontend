@@ -42,7 +42,7 @@ object Utilities {
   def getChargeType(docDetail: DocumentDetail): Option[String] = docDetail.documentDescription map {
     case "ITSA- POA 1" => "Payment on account 1 of 2"
     case "ITSA - POA 2" => "Payment on account 2 of 2"
-    case "ITSA- Bal Charge" => "Remaining balance"
+    case "TRM New Charge" | "TRM Amend Charge" => "Remaining balance"
     case other => other
   }
 }

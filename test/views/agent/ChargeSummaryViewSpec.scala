@@ -172,7 +172,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
                 "6 Jul 2018 Payment on account 2 of 2 reduced due to amended return £12,345.00",
                 "12 Aug 2019 Payment on account 2 of 2 reduced by taxpayer request £54,321.00")
             }
-            "balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(fullChargeHistory)) {
+            "balancing charge" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(fullChargeHistory)) {
               verifyChargesHistoryContent(
                 "29 Mar 2018 Remaining balance created £1,400.00",
                 "6 Jul 2018 Remaining balance reduced due to amended return £12,345.00",

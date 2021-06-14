@@ -80,7 +80,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
-        docDateDetail("2018-02-14", "ITSA- Bal Charge"),
+        docDateDetail("2018-02-14", "TRM New Charge"),
         None
       ).detail)
 
@@ -111,7 +111,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
-        docDateDetail("2018-02-14", "ITSA- Bal Charge"),
+        docDateDetail("2018-02-14", "TRM New Charge"),
         None
       ).detail)
 

@@ -57,7 +57,7 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("h1").text() shouldBe Messages.poaHeading(2018, 2)
 		}
 
-		"have the correct heading for a balancing charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("ITSA- Bal Charge"))) {
+		"have the correct heading for a balancing charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"))) {
 			document.select("h1").text() shouldBe Messages.balancingChargeHeading(2019)
 		}
 
@@ -110,7 +110,7 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.paymentOnAccountCreated(2)
 		}
 
-		"display only the charge creation item when no history found for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA- Bal Charge"))) {
+		"display only the charge creation item when no history found for a new balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM New Charge"))) {
 			document.select("tbody tr").size() shouldBe 1
 			document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.balancingChargeCreated
 		}
@@ -134,7 +134,7 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountAmended(2)
 		}
 
-		"display the correct message for an amended charge for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("ITSA- Bal Charge")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "amended return"))) {
+		"display the correct message for an amended charge for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("TRM Amend Charge")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "amended return"))) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeAmended
 		}
@@ -149,7 +149,7 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountRequest(2)
 		}
 
-		"display the correct message for a customer requested change for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("ITSA- Bal Charge")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "Customer Request"))) {
+		"display the correct message for a customer requested change for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("TRM Amend Charge")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "Customer Request"))) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeRequest
 		}
