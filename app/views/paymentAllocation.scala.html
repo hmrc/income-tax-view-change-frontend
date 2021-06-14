@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers.accordionHelper
 @import models.paymentAllocations
 @import views.html.templates.main_template
 @import java.time.LocalDate
@@ -22,18 +21,17 @@
 @import implicits.ImplicitDateFormatter
 @import views.html.helpers.backLinkHelper
 
-@(paymentAllocations: models.paymentAllocations)implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(paymentAllocations: models.paymentAllocations.PaymentAllocations, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 
 @main_template(
-title = messages("paymentAllocation.heading")
+title = messages("paymentAllocation.heading"),
 bodyClasses = None,
 scriptElem = None
 ) {
 
 @backLinkHelper(backUrl)
 
-@if(paymentAllocationEnabled){
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
 
 <table class="govuk-table">
@@ -42,11 +40,11 @@ scriptElem = None
         <td>@messages("paymentAllocation.date")</td>
         <td>@messages("paymentAllocation.amount")</td>
         <div id="payments-allocation-info" class="panel panel-indent panel-border-wide">
-            @messages(paymentAllocation.info)
+            @messages("paymentAllocation.info")
 
         </div>
     </tr>
     </thead>
 </table>
-}
+
 }
