@@ -117,7 +117,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
         "has an allowable expenses line with the correct value" in new Setup(view) {
           val row: Element = content.table().select("tr").get(2)
           row.select("td").first().text() shouldBe IncomeBreakdown.allowableExpenses
-          row.select("td").last().text() shouldBe "-£7,007.07"
+          row.select("td").last().text() shouldBe "−£7,007.07"
         }
 
         "has a total self-employment profit line with the correct value" in new Setup(view) {

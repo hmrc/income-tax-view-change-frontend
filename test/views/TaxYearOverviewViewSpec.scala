@@ -194,7 +194,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       val allowancesLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
       allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
       allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
-      content.selectHead("#income-deductions-table tr:nth-child(2) .numeric").text shouldBe completeOverview(false).deductions.toNegativeCurrencyString
+      content.selectHead("#income-deductions-table tr:nth-child(2) .numeric").text shouldBe "−£2.02"
     }
 
     "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {

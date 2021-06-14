@@ -25,11 +25,11 @@ trait ImplicitCurrencyFormatter {
     val f = new DecimalFormat("#,##0.00")
     def toCurrency: Html = Html("&pound;" + f.format(x))
     def toCurrencyString: String = "£" + f.format(x)
-    def toNegativeCurrencyString: String = {
+    def toNegativeCurrency: Html = {
       if(x > 0) {
-        "-" + toCurrencyString
+        Html("&minus;" + toCurrency)
       } else {
-        toCurrencyString
+        toCurrency
       }
     }
     def toPence: Long = (x * 100).toLong
