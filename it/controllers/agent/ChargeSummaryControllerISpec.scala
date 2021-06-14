@@ -67,21 +67,22 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         currentTaxYearEnd.getYear.toString, "testId", clientDetails
       )
 
-      AuditStub.verifyAuditContainsDetail(ChargeSummaryAudit(
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
         docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
         agentReferenceNumber = Some("1")
-      ).detail)
+      ))
 
       result should have(
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
       )
     }
-    s"return $OK with correct page title and audit events when TxEventsApproved FS is disabled" in {
+
+    s"return $OK with correct page title and no audit events when TxEventsApproved FS is disabled" in {
 
       enable(AgentViewer)
       enable(NewFinancialDetailsApi)
@@ -109,6 +110,35 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
       )
+    }
+
+    s"return $OK with correct page title and audit events when TxEventsApproved and ChargeHistory FSs are enabled" in {
+      enable(AgentViewer)
+      enable(NewFinancialDetailsApi)
+      enable(TxmEventsApproved)
+      enable(ChargeHistory)
+      stubAuthorisedAgentUser(authorised = true)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      stubGetFinancialDetailsSuccess()
+      stubChargeHistorySuccess()
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+      )
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+      )
+
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+        )(FakeRequest()),
+        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        agentReferenceNumber = Some("1")
+      ))
     }
 
     "return a technical difficulties page to the user" when {
@@ -168,6 +198,23 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         )
       ))
     )
+  }
+
+  private def stubChargeHistorySuccess() = {
+    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(OK, Json.obj(
+      "idType" -> "MTDBSA",
+      "idValue" -> testMtditid,
+      "regimeType" -> "ITSA",
+      "chargeHistoryDetails" -> Json.arr(
+        Json.obj(
+          "taxYear" -> currentTaxYearEnd.getYear.toString,
+          "documentId" -> "testId",
+          "documentDate" -> "2018-03-29",
+          "documentDescription" -> "ITSA- POA 1",
+          "totalAmount" -> 123456789012345.67,
+          "reversalDate" -> "2020-02-24",
+          "reversalReason" -> "amended return"
+        ))))
   }
 
 }
