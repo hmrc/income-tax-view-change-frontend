@@ -28,6 +28,9 @@ GET         /tax-years                              controllers.TaxYearsControll
 #Payment
 GET         /payment                                controllers.PaymentController.paymentHandoff(amountInPence: Long)
 
+#Payment Allocation
+GET         /charges/payments-made                  controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
+
 #Payments due
 GET         /payments-owed                           controllers.PaymentDueController.viewPaymentsDue
 
