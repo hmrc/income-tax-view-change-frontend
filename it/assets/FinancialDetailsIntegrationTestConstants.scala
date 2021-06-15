@@ -65,12 +65,12 @@ object FinancialDetailsIntegrationTestConstants {
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     documentDetails = List(
-      DocumentDetail("2019", "1040000123", Some("ITSA- Bal Charge"), Some(10.33), Some(10.33), "2018-03-29"),
-      DocumentDetail("2020", "1040000124", Some("ITSA- Bal Charge"), Some(10.34), Some(10.34), "2018-03-29")
+      DocumentDetail("2019", "1040000123", Some("TRM New Charge"), Some(10.33), Some(10.33), "2018-03-29"),
+      DocumentDetail("2020", "1040000124", Some("TRM New Charge"), Some(10.34), Some(10.34), "2018-03-29")
     ),
     financialDetails = List(
-      FinancialDetail("2019", Some("ITSA- Bal Charge"), Some(Seq(SubItem(Some("2019-05-15"))))),
-      FinancialDetail("2020", Some("ITSA- Bal Charge"), Some(Seq(SubItem(Some("2019-05-18")))))
+      FinancialDetail("2019", Some("TRM New Charge"), Some(Seq(SubItem(Some("2019-05-15"))))),
+      FinancialDetail("2020", Some("TRM New Charge"), Some(Seq(SubItem(Some("2019-05-18")))))
     )
   )
 

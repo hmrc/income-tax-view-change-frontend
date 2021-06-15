@@ -43,7 +43,7 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
   private def getChargeType(chargeType: Option[String]): String = chargeType match {
     case Some("ITSA- POA 1") => "Payment on account 1 of 2"
     case Some("ITSA - POA 2") => "Payment on account 2 of 2"
-    case Some("ITSA- Bal Charge") => "Remaining balance"
+    case Some("TRM New Charge") | Some("TRM Amend Charge") => "Remaining balance"
     case error => {
       Logger.error(s"[TaxYearOverview][getChargeType] Missing or non-matching charge type: $error found")
       "unknownCharge"

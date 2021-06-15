@@ -33,7 +33,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2019",
         "transactionId" -> id1040000123,
-        "documentDescription" -> "ITSA- Bal Charge",
+        "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> 10.33,
         "originalAmount" -> 10.33,
 				"documentDate" -> "2018-03-29"
@@ -41,7 +41,7 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2020",
         "transactionId" -> id1040000124,
-        "documentDescription" -> "ITSA- Bal Charge",
+        "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> 10.34,
         "originalAmount" -> 10.34,
 				"documentDate" -> "2018-03-29"
@@ -94,7 +94,8 @@ object FinancialDetailsTestConstants {
 
   val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))
   val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA - POA 2"))
-  val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- Bal Charge"))
+  val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"))
+  val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
 
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
@@ -109,8 +110,8 @@ object FinancialDetailsTestConstants {
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     documentDetails = List(
-      DocumentDetail("2019", id1040000123, Some("ITSA- Bal Charge"), Some(10.33), Some(10.33), "2018-03-29"),
-      DocumentDetail("2020", id1040000124, Some("ITSA- Bal Charge"), Some(10.34), Some(10.34), "2018-03-29")
+      DocumentDetail("2019", id1040000123, Some("TRM New Charge"), Some(10.33), Some(10.33), "2018-03-29"),
+      DocumentDetail("2020", id1040000124, Some("TRM New Charge"), Some(10.34), Some(10.34), "2018-03-29")
     ),
     financialDetails = List(
       FinancialDetail("2019", Some("SA Balancing Charge"), Some(Seq(SubItem(Some("2019-05-15"))))),

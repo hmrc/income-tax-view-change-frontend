@@ -49,7 +49,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
   val getChargeType: String = docDetail.documentDescription match {
     case Some("ITSA- POA 1") => "Payment on account 1 of 2"
     case Some("ITSA - POA 2") => "Payment on account 2 of 2"
-    case Some("ITSA- Bal Charge") => "Remaining balance"
+    case Some("TRM New Charge") | Some("TRM Amend Charge") => "balancingCharge.text"
     case error =>
       Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"

@@ -29,7 +29,7 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
   val documentDescriptionToFinancialMainType: String => String = {
     case "ITSA- POA 1" => "SA Payment on Account 1"
     case "ITSA - POA 2" => "SA Payment on Account 2"
-    case "ITSA- Bal Charge" => "SA Balancing Charge"
+    case "TRM New Charge" | "TRM Amend Charge" => "SA Balancing Charge"
     case other => other
   }
 
