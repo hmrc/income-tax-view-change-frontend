@@ -20,7 +20,7 @@ import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import connectors.PaymentAllocationConnector
+import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import play.api.i18n.I18nSupport
@@ -34,12 +34,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                         val authenticate: AuthenticationPredicate,
-                                         val retrieveNino: NinoPredicate,
-                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                         itvcErrorHandler: ItvcErrorHandler,
-                                         paymentAllocations: PaymentAllocationConnector,
-                                         dateFormatter: ImplicitDateFormatterImpl)
+                                             val authenticate: AuthenticationPredicate,
+                                             val retrieveNino: NinoPredicate,
+                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                             itvcErrorHandler: ItvcErrorHandler,
+                                             paymentAllocations: IncomeTaxViewChangeConnector,
+                                             dateFormatter: ImplicitDateFormatterImpl)
                                         (implicit mcc: MessagesControllerComponents,
                                          ec: ExecutionContext,
                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
