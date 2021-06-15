@@ -27,6 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import javax.inject.{Inject, Singleton}
+import models.paymentAllocationCharges.PaymentAllocationChargesModel
 import models.paymentAllocations._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,15 +47,17 @@ class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTim
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
+  lazy val backUrl: String = controllers.routes.PaymentHistoryController.viewPaymentHistory().url
+
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = action.async {
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        paymentAllocations.getPaymentAllocation(user.nino, documentNumber) {
-          case paymentAllocations: PaymentAllocations =>
+        paymentAllocations.getPaymentAllocation(user.nino, documentNumber) map  {
+          case paymentAllocations: PaymentAllocationChargesModel =>
             Future.successful(Ok(views.html.paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl)))
           case _ => itvcErrorHandler.showInternalServerError()
         }
       }
-      lazy val backUrl: String = controllers.routes.PaymentHistoryController.viewPaymentHistory().url
+      Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
   }
 }
