@@ -51,7 +51,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
         s"""
            |Date Description Amount
            |${rows.mkString("\n")}
-           |""".stripMargin.trim.lines.mkString(" ")
+           |""".stripMargin.trim.linesIterator.mkString(" ")
     }
   }
 
