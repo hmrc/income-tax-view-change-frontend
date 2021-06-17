@@ -57,7 +57,7 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 			documentDescription = Some("ITSA- POA 1"),
 			outstandingAmount = Some(8.08),
 			originalAmount = Some(100.00),
-			documentDate = "2018-03-29"
+			documentDate = LocalDate.of(2018, 3, 29)
 		),
 		dueDate = Some(LocalDate.now)
 	)

@@ -19,13 +19,15 @@ package models.chargeHistory
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 
+import java.time.LocalDate
+
 
 case class ChargeHistoryModel(taxYear: String,
 															 documentId: String,
                                documentDate: String,
                                documentDescription: String,
                                totalAmount: BigDecimal,
-                               reversalDate: String,
+                               reversalDate: LocalDate,
                                reversalReason: String) {
 
 	val reasonCode: String = reversalReason match {

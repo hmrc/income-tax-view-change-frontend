@@ -24,12 +24,13 @@
 @this(mainTemplate: MainTemplate, backLink: BackLink)
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatter)
 
+@import java.time.LocalDate
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 @import documentDetailWithDueDate.documentDetail
 
-@chargeHistoryRow(dateStr: String, reasonCode: String, amount: Option[BigDecimal]) = {
+@chargeHistoryRow(dateStr: LocalDate, reasonCode: String, amount: Option[BigDecimal]) = {
 	<tr>
-		<td style="white-space: nowrap;">@{java.time.LocalDate.parse(dateStr).toLongDateShort}</td>
+		<td style="white-space: nowrap;">@{dateStr.toLongDateShort}</td>
 		<td>@messages(s"chargeSummary.chargeHistory.$reasonCode.${documentDetail.getChargeTypeKey}")</td>
 		<td class="numeric">@{amount.map(_.toCurrency)}</td>
 	</tr>

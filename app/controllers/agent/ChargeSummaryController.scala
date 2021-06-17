@@ -115,7 +115,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   }
 
   private def sortHistory(list: List[ChargeHistoryModel]): List[ChargeHistoryModel] = {
-    list.sortBy(chargeHistory => LocalDate.parse(chargeHistory.reversalDate))
+    list.sortBy(chargeHistory => chargeHistory.reversalDate)
   }
 
 }

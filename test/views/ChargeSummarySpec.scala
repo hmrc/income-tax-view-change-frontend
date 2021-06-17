@@ -46,6 +46,9 @@ class ChargeSummarySpec extends ViewSpec {
 		def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 		val balancingChargeRequest = "Remaining balance reduced by taxpayer request"
 	}
+	
+	val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "amended return")
+	val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
 
 	"The charge summary view" should {
 
@@ -115,41 +118,41 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.balancingChargeCreated
 		}
 
-		"display the charge creation item when history is found" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "amended return"))) {
+		"display the charge creation item when history is found" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(amendedChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
 			document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountCreated(1)
 			document.select("tbody tr:nth-child(1) td:nth-child(3)").text() shouldBe "£1,400.00"
 		}
 
-		"display the correct message for an amended charge for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "amended return"))) {
+		"display the correct message for an amended charge for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(amendedChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(1)").text() shouldBe "6 Jul 2018"
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountAmended(1)
 			document.select("tbody tr:nth-child(2) td:nth-child(3)").text() shouldBe "£1,500.00"
 		}
 
-		"display the correct message for an amended charge for a payment on account 2 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("ITSA - POA 2")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "amended return"))) {
+		"display the correct message for an amended charge for a payment on account 2 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("ITSA - POA 2")), chargeHistory = List(amendedChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountAmended(2)
 		}
 
-		"display the correct message for an amended charge for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("TRM Amend Charge")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "amended return"))) {
+		"display the correct message for an amended charge for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("TRM Amend Charge")), chargeHistory = List(amendedChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeAmended
 		}
 
-		"display the correct message for a customer requested change for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "Customer Request"))) {
+		"display the correct message for a customer requested change for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(customerRequestChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountRequest(1)
 		}
 
-		"display the correct message for a customer requested change for a payment on account 2 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("ITSA - POA 2")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "Customer Request"))) {
+		"display the correct message for a customer requested change for a payment on account 2 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("ITSA - POA 2")), chargeHistory = List(customerRequestChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountRequest(2)
 		}
 
-		"display the correct message for a customer requested change for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("TRM Amend Charge")), chargeHistory = List(ChargeHistoryModel("", "", "", "", 1500, "2018-07-06", "Customer Request"))) {
+		"display the correct message for a customer requested change for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("TRM Amend Charge")), chargeHistory = List(customerRequestChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeRequest
 		}

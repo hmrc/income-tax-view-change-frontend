@@ -186,7 +186,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             documentDescription = Some("ITSA- POA 1"),
             outstandingAmount = Some(1.2),
             originalAmount = Some(10.34),
-            documentDate = "2018-03-29"
+            documentDate = LocalDate.of(2018, 3, 29)
           )
         ),
         financialDetails = List(

@@ -38,7 +38,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     documentDescription = Some("ITSA- POA 1"),
     originalAmount = Some(10.34),
     outstandingAmount = Some(0),
-    documentDate = "2018-03-29"
+    documentDate = LocalDate.of(2018, 3, 29)
   )
 
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(

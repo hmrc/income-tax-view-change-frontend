@@ -20,10 +20,12 @@ import models.chargeHistory.ChargeHistoryModel
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 
+import java.time.LocalDate
+
 class ChargeHistoryModelSpec extends UnitSpec with Matchers {
 
 	def testChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
-		ChargeHistoryModel("2021", "DOCID01", "2020-07-08", "docDescription", 15000.0, "2021-09-09", reversalReason)
+		ChargeHistoryModel("2021", "DOCID01", "2020-07-08", "docDescription", 15000.0, LocalDate.of(2021, 9,9), reversalReason)
 	}
 
 	"chargeHistoryModel" when {

@@ -52,7 +52,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       taxYear = getCurrentTaxYearEnd.getYear.toString,
       transactionId = "testTransactionId",
       documentDescription = Some("ITSA- POA 1"),
-      documentDate = "2018-03-29",
+      documentDate = LocalDate.of(2018, 3, 29),
       originalAmount = Some(1000.00),
       outstandingAmount = Some(500.00)
     )),

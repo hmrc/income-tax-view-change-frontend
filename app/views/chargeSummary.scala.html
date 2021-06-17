@@ -83,14 +83,14 @@
 
 			<tbody>
 				<tr>
-					<td style="white-space: nowrap;">@{LocalDate.parse(documentDetail.documentDate).toLongDateShort}</td>
+					<td style="white-space: nowrap;">@{documentDetail.documentDate.toLongDateShort}</td>
 					<td>@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
 					<td class="numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
 				</tr>
 
 				@for(charge <- chargeHistory) {
 					<tr>
-						<td style="white-space: nowrap;">@{LocalDate.parse(charge.reversalDate).toLongDateShort}</td>
+						<td style="white-space: nowrap;">@{charge.reversalDate.toLongDateShort}</td>
 						<td>@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey}")</td>
 						<td class="numeric">@{charge.totalAmount.toCurrency}</td>
 					</tr>
