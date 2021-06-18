@@ -95,7 +95,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         documentDescription = Some("ITSA- POA 1"),
         outstandingAmount = Some(500.00),
         originalAmount = Some(1000.00),
-        documentDate = "2018-03-29"
+        documentDate = LocalDate.of(2018, 3, 29)
       )
     ),
     financialDetails = List(

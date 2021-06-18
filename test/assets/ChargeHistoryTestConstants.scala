@@ -20,6 +20,8 @@ import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import play.api.libs.json.{JsValue, Json}
 import models.chargeHistory._
 
+import java.time.LocalDate
+
 object ChargeHistoryTestConstants {
 
 
@@ -61,7 +63,7 @@ object ChargeHistoryTestConstants {
 		idValue = "XAIT000000000000",
 		regimeType = "ITSA",
 		chargeHistoryDetails = Some(List(
-    ChargeHistoryModel("2017", "123456789", "2020-01-29", "Balancing Charge", 123456789012345.67, "2020-02-24", "amended return"))))
+    ChargeHistoryModel("2017", "123456789", "2020-01-29", "Balancing Charge", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))))
 
   val testChargeHistoryErrorModelParsing: ChargesHistoryErrorModel = ChargesHistoryErrorModel(
     testErrorStatus, "Json Validation Error. Parsing ChargeHistory Data Response")

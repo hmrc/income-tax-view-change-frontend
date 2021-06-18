@@ -84,7 +84,7 @@ object EstimatesTestConstants {
 				documentDescription = None,
 				outstandingAmount = Some(outstandingAmount),
 				originalAmount = None,
-				documentDate = "2018-03-29"
+				documentDate = LocalDate.of(2018, 3, 29)
 			),
 			Some(dueDate)
 		)

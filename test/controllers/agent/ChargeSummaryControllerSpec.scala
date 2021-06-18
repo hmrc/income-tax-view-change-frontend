@@ -155,8 +155,8 @@ class ChargeSummaryControllerSpec extends TestSupport
       "the ChargeHistory feature switch is enabled and the page can be viewed" should {
         "pass to the view a retrieved charge history list in ascending order" in new Setup(true, true) {
           val chargeHistoryListInAscendingOrder: List[ChargeHistoryModel] = List(
-            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, "2017-08-12", "Customer Request"),
-            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, "2018-07-06", "amended return")
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, LocalDate.of(2017, 8, 12), "Customer Request"),
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, LocalDate.of(2018, 7, 6), "amended return")
           )
 
           enable(ChargeHistory)

@@ -26,7 +26,12 @@ case class DocumentDetail(taxYear: String,
 													documentDescription: Option[String],
 													outstandingAmount: Option[BigDecimal],
 													originalAmount: Option[BigDecimal],
-													documentDate: String) {
+													documentDate: LocalDate,
+													interestOutstandingAmount: Option[BigDecimal] = None,
+													interestRate: Option[BigDecimal] = None,
+													interestFromDate: Option[LocalDate] = None,
+													interestEndDate: Option[LocalDate] = None,
+													latePaymentInterestAmount: Option[BigDecimal] = None) {
 
 	val isPaid: Boolean = outstandingAmount match {
 		case Some(amount) if amount == 0 => true

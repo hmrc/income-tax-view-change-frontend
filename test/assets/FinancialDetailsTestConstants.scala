@@ -76,7 +76,7 @@ object FinancialDetailsTestConstants {
       documentDescription,
       outstandingAmount = outstandingAmount,
       originalAmount = originalAmount,
-			documentDate = "2018-03-29"
+			documentDate = LocalDate.of(2018, 3, 29)
     )
 
   def financialDetail(taxYear: Int = 2018): FinancialDetail = FinancialDetail(
@@ -110,8 +110,8 @@ object FinancialDetailsTestConstants {
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     documentDetails = List(
-      DocumentDetail("2019", id1040000123, Some("TRM New Charge"), Some(10.33), Some(10.33), "2018-03-29"),
-      DocumentDetail("2020", id1040000124, Some("TRM New Charge"), Some(10.34), Some(10.34), "2018-03-29")
+      DocumentDetail("2019", id1040000123, Some("TRM New Charge"), Some(10.33), Some(10.33), LocalDate.of(2018, 3, 29)),
+      DocumentDetail("2020", id1040000124, Some("TRM New Charge"), Some(10.34), Some(10.34), LocalDate.of(2018, 3, 29))
     ),
     financialDetails = List(
       FinancialDetail("2019", Some("SA Balancing Charge"), Some(Seq(SubItem(Some("2019-05-15"))))),
@@ -126,8 +126,8 @@ object FinancialDetailsTestConstants {
                                 taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
       documentDetails = List(
-        DocumentDetail(taxYear, id1040000124, documentDescription.head, outstandingAmount.head, Some(43.21), "2018-03-29"),
-        DocumentDetail(taxYear, "1040000125", documentDescription(1), outstandingAmount(1), Some(12.34), "2018-03-29")
+        DocumentDetail(taxYear, id1040000124, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29)),
+        DocumentDetail(taxYear, "1040000125", documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, Some(Seq(SubItem(dueDate.head)))),
@@ -142,8 +142,8 @@ object FinancialDetailsTestConstants {
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
       documentDetails = List(
-        DocumentDetail(taxYear, id1040000123, documentDescription.head, outstandingAmount.head, Some(43.21), "2018-03-29"),
-        DocumentDetail(taxYear, id1040000124, documentDescription(1), outstandingAmount(1), Some(12.34), "2018-03-29")
+        DocumentDetail(taxYear, id1040000123, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29)),
+        DocumentDetail(taxYear, id1040000124, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, Some(Seq(SubItem(dueDate.head)))),
@@ -158,7 +158,7 @@ object FinancialDetailsTestConstants {
                                              taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
       documentDetails = List(
-        DocumentDetail(taxYear, "1040000124", documentDescription.head, outstandingAmount.head, Some(43.21), "2018-03-29")
+        DocumentDetail(taxYear, "1040000124", documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, Some(Seq(SubItem(dueDate.head))))

@@ -13,7 +13,7 @@ object DocumentDetailsStub {
     documentDescription = Some(documentDescription),
     originalAmount = Some(10.34),
     outstandingAmount = Some(1.2),
-    documentDate = "2018-03-29"
+    documentDate = LocalDate.of(2018, 3, 29)
   )
 
   def docDateDetail(dueDate: String, chargeType: String): DocumentDetailWithDueDate = DocumentDetailWithDueDate(

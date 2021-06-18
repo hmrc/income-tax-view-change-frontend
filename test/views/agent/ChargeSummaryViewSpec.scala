@@ -28,6 +28,8 @@ import play.twirl.api.Html
 import testUtils.{TestSupport, ViewSpec}
 import views.html.agent.ChargeSummary
 
+import java.time.LocalDate
+
 class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   class Setup(documentDetailWithDueDate: DocumentDetailWithDueDate,
@@ -151,8 +153,8 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
 
         "the list contains records" should {
           val fullChargeHistory = List(
-            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, "2018-07-06", "amended return"),
-            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, "2019-08-12", "Customer Request")
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, LocalDate.of(2018, 7, 6), "amended return"),
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, LocalDate.of(2019, 8, 12), "Customer Request")
           )
 
           "display the charge history heading" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(fullChargeHistory)) {
