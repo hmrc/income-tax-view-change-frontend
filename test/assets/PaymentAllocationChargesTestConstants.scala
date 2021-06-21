@@ -29,8 +29,8 @@ object PaymentAllocationChargesTestConstants {
   taxYear = "2018",
   transactionId = "id",
   documentDescription = Some("documentDescription"),
-  originalAmount = Some(300.00),
-  outstandingAmount = Some(200.00),
+  originalAmount = Some(-300.00),
+  outstandingAmount = Some(-200.00),
   documentDate = LocalDate.of(2018, 3, 29)
  )
 
@@ -38,16 +38,16 @@ object PaymentAllocationChargesTestConstants {
   taxYear = "2019",
   transactionId = "id2",
   documentDescription = Some("documentDescription2"),
-  originalAmount = Some(100.00),
-  outstandingAmount = Some(50.00),
+  originalAmount = Some(-100.00),
+  outstandingAmount = Some(-50.00),
   documentDate = LocalDate.of(2018, 3, 29)
  )
 
 
  val financialDetail: FinancialDetail = FinancialDetail(
   taxYear = "2018",
-  transactionId = Some("transactionId"),
-  transactionDate = Some("transactionDate"),
+  transactionId = "transactionId",
+  transactionDate = Some("2018-03-29"),
   `type` = Some("type"),
   totalAmount = Some(BigDecimal("1000.00")),
   originalAmount = Some(BigDecimal(500.00)),
@@ -59,8 +59,8 @@ object PaymentAllocationChargesTestConstants {
    SubItem(
     subItemId = Some("1"),
     amount = Some(BigDecimal("100.00")),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
+    clearingDate = None,
+    clearingReason = None,
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
     paymentAmount = Some(BigDecimal("2000.00")),
@@ -87,8 +87,8 @@ object PaymentAllocationChargesTestConstants {
    SubItem(
     subItemId = Some("2"),
     amount = Some(BigDecimal("200.00")),
-    clearingDate = Some("clearingDate2"),
-    clearingReason = Some("clearingReason2"),
+    clearingDate = None,
+    clearingReason = None,
     outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
     paymentReference = Some("paymentReference2"),
     paymentAmount = Some(BigDecimal("3000.00")),
@@ -111,8 +111,8 @@ object PaymentAllocationChargesTestConstants {
     |        {
     |            "documentDate": "2018-03-29",
     |            "documentDescription": "documentDescription",
-    |            "originalAmount": 300.0,
-    |            "outstandingAmount": 200.0,
+    |            "originalAmount": -300.0,
+    |            "outstandingAmount": -200.0,
     |            "taxYear": "2018",
     |            "transactionId": "id"
     |        }
@@ -125,8 +125,6 @@ object PaymentAllocationChargesTestConstants {
     |                {
     |                    "subItemId": "1",
     |                    "amount": 100.00,
-    |                    "clearingDate": "clearingDate",
-    |                    "clearingReason": "clearingReason",
     |                    "dueDate": "dueDate",
     |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
     |                    "paymentAmount": 2000.00,
@@ -142,14 +140,12 @@ object PaymentAllocationChargesTestConstants {
     |            "outstandingAmount": 500.00,
     |            "taxYear": "2018",
     |            "totalAmount": 1000.00,
-    |            "transactionDate": "transactionDate",
+    |            "transactionDate": "2018-03-29",
     |            "transactionId": "transactionId",
     |            "type": "type"
     |        }
     |    ]
     |}
 		|""".stripMargin)
-
-
 
 }
