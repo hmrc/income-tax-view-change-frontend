@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -28,7 +27,6 @@ import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerCompon
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 import models.paymentAllocationCharges.PaymentAllocationChargesModel
-import models.paymentAllocations._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,12 +50,11 @@ class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTim
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = action.async {
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        paymentAllocations.getPaymentAllocation(user.nino, documentNumber) map  {
+        paymentAllocations.getPaymentAllocation(user.nino, documentNumber) map {
           case paymentAllocations: PaymentAllocationChargesModel =>
-            Future.successful(Ok(views.html.paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl)))
+            Ok(views.html.paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
         }
-      }
-      Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
+      } else Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
   }
 }

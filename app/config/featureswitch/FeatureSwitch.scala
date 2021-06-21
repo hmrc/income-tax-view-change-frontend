@@ -90,7 +90,7 @@ case object ChargeHistory extends FeatureSwitch {
 }
 
 case object PaymentAllocation extends FeatureSwitch {
-  override val name: String = s"$prefix-.enable-payment-allocation"
+  override val name: String = s"$prefix.enable-payment-allocation"
   override val displayText: String = "Payment Allocation"
 }
 
