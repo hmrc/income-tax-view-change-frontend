@@ -165,6 +165,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
 
     def getPaymentHistory: WSResponse = get(s"/payments/history")
+
+    def getPaymentAllocationCharges(docNumber: String): WSResponse = get(s"/charges/payments-made?documentNumber=$docNumber")
   }
 
   def unauthorisedTest(uri: String): Unit = {
@@ -185,6 +187,5 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       }
     }
   }
-
 }
 

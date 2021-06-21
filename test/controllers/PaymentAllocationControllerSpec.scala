@@ -16,34 +16,38 @@
 
 package controllers
 
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+
+
+import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail}
 import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.paymentAllocationCharges.{PaymentAllocationChargesErrorModel, PaymentAllocationChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.redirectLocation
-import connectors.IncomeTaxViewChangeConnector
-import models.paymentAllocationCharges.DocumentDetail
-
+import testUtils.TestSupport
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import scala.concurrent.Future
 
 class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching with TestSupport  {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(PaymentAllocation)
   }
 
-  val testPaymentAllocation: List[DocumentDetail] = List(
-    DocumentDetail(Some("2019") ,Some("1040000872"), Some("1482"), Some(10.90), Some(5.90),Some("2019-09-28"))
+  val singleTestPaymentAllocationCharge: PaymentAllocationChargesModel = PaymentAllocationChargesModel(
+    List(documentDetail),
+    List(financialDetail)
   )
 
   trait Setup {
+    val docNumber = "docNumber1"
 
     val paymentAllocation: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
 
@@ -61,38 +65,49 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
   }
 
-  "The PaymentAllocationsControllerSpec.viewPaymentAllocation function" when {
+  "The PaymentAllocationsControllerSpec.viewPaymentAllocation function" should {
 
-    "obtaining a users payments allocations" should {
-      "send the user to the paymentAllocation page with data" in new Setup {
+    "behave appropriately when the feature switch is on" when {
+      "Successfully retrieveing a user's payment allocation" in new Setup {
+        enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(any(), any()))
-          .thenReturn(Future.successful(Right(testPaymentAllocation)))
+        when(paymentAllocation.getPaymentAllocation(any(), any())(any()))
+          .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
 
-        val result = await(controller.viewPaymentAllocation(fakeRequestWithActiveSession))
+        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
         status(result) shouldBe Status.OK
       }
 
-    }
-
-    "Failing to retrieve a user's payment allocation" should {
-      "send the user to the internal service error page" in new Setup {
+      "Failing to retrieve a user's payment allocation" in new Setup {
+        enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(any(), any()))
-          .thenReturn(Future.successful(Left()))
+        when(paymentAllocation.getPaymentAllocation(any(), any())(any()))
+          .thenReturn(Future.successful(PaymentAllocationChargesErrorModel(500, """"Error message"""")))
 
-        val result = await(controller.viewPaymentAllocation(fakeRequestWithActiveSession))
+        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+    }
 
+    "behave appropriately when the feature switch is off" when {
+      "trying to access payments allocation " in new Setup {
+        disable(PaymentAllocation)
+        mockSingleBusinessIncomeSource()
+        when(paymentAllocation.getPaymentAllocation(any(), any())(any()))
+          .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
+
+        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+
+        status(result) shouldBe Status.NOT_FOUND
+      }
     }
 
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
         mockErrorIncomeSource()
-        val result = await(controller.viewPaymentAllocation(fakeRequestWithActiveSession))
+        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -101,7 +116,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
     "User fails to be authorised" should {
       "redirect the user to the login page" in new Setup {
         setupMockAuthorisationException()
-        val result = await(controller.viewPaymentAllocation(fakeRequestWithActiveSession))
+        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
         status(result) shouldBe Status.SEE_OTHER
 
@@ -109,5 +124,4 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       }
     }
   }
-
 }

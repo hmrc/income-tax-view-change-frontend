@@ -44,7 +44,7 @@ object PaymentAllocationChargesTestConstants {
  val financialDetail: FinancialDetail = FinancialDetail(
   taxYear = "2018",
   transactionId = "transactionId",
-  transactionDate = Some("2018-03-29"),
+  transactionDate = Some("transactionDate"),
   `type` = Some("type"),
   totalAmount = Some(BigDecimal("1000.00")),
   originalAmount = Some(BigDecimal(500.00)),
@@ -138,12 +138,14 @@ object PaymentAllocationChargesTestConstants {
     |            "outstandingAmount": 500.00,
     |            "taxYear": "2018",
     |            "totalAmount": 1000.00,
-    |            "transactionDate": "2018-03-29",
+    |            "transactionDate": "transactionDate",
     |            "transactionId": "transactionId",
     |            "type": "type"
     |        }
     |    ]
     |}
 		|""".stripMargin)
+
+
 
 }

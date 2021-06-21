@@ -22,8 +22,7 @@
 @import views.html.helpers.backLinkHelper
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationChargesModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
-
-
+@import implicitDateFormatter._
 @main_template(
 title = messages("paymentAllocation.heading"),
 bodyClasses = None,
@@ -35,16 +34,19 @@ scriptElem = None
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
 
 <table class="govuk-table">
-    <thead>
-    <tr>
-        <td>@messages("paymentAllocation.date")</td>
-        <td>@messages("paymentAllocation.amount")</td>
-        <div id="payments-allocation-info" class="panel panel-indent panel-border-wide">
-            @messages("paymentAllocation.info")
 
-        </div>
-    </tr>
-    </thead>
+    <table id="payment-allocation-charge-table">
+        <tr>
+            <td class="total-section">@messages("paymentAllocation.date")</td>
+            <td>@{paymentAllocations.financialDetails.head.transactionDate.get.toLocalDate.toLongDate}</td>
+        </tr>
+        <tr>
+            <td class="total-section">@messages("paymentAllocation.amount")</td>
+            <td>@{ paymentAllocations.financialDetails.head.totalAmount.get.toCurrencyString}</td>
+        </tr>
+    </table>
+    <div id="payments-allocation-info" class="panel panel-indent panel-border-wide">
+        @messages("paymentAllocation.info")
+    </div>
 </table>
-
 }

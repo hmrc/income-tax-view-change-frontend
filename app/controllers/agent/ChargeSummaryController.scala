@@ -39,6 +39,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+
 class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         financialDetailsService: FinancialDetailsService,
@@ -80,6 +81,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                     ))
                   }
                 }
+
                 getChargeHistory(chargeId).map { chargeHistoryOpt =>
                   Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear))
                 }
