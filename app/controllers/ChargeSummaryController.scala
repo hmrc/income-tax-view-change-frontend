@@ -58,7 +58,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
     chargeSummary(documentDetail, dueDate, dateFormatter, backUrl(backLocation, taxYear), chargesHistory, chargeHistoryEnabled)
   }
 
-  def showChargeSummary(taxYear: Int, id: String): Action[AnyContent] =
+  def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
       implicit user =>
         if (isEnabled(NewFinancialDetailsApi)) {

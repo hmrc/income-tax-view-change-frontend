@@ -162,6 +162,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 
+    def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true")
+
     def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
 
     def getPaymentHistory: WSResponse = get(s"/payments/history")

@@ -38,7 +38,7 @@ GET         /payment                                controllers.PaymentControlle
 GET         /payments-owed                           controllers.PaymentDueController.viewPaymentsDue
 
 #Charge summary
-GET			/tax-years/:taxYear/charge				controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)
+GET			/tax-years/:taxYear/charge				controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
 
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show
