@@ -121,5 +121,27 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         pageTitle("Remaining balance - Business Tax account - GOV.UK")
       )
     }
+
+		"load the page when the late payment interest flag is true" in {
+			Given("I wiremock stub a successful Income Source Details response with property only")
+			IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+			And("I wiremock stub a single financial transaction response")
+			IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+			Given("the financial api feature switch is on")
+			enable(NewFinancialDetailsApi)
+			disable(TxmEventsApproved)
+
+			val res = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment("2018", "1040000123")
+
+			verifyIncomeSourceDetailsCall(testMtditid)
+
+			Then("the result should have a HTTP status of OK (200) and load the correct page")
+			res should have(
+				httpStatus(OK),
+				pageTitle("Remaining balance - Business Tax account - GOV.UK")
+			)
+		}
   }
 }

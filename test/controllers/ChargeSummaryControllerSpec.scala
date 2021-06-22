@@ -114,6 +114,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
       }
 
+			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
+				enable(ChargeHistory)
+				val result: Result = await(controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession))
+
+				status(result) shouldBe Status.OK
+				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+			}
+
 			"provided with a matching id with the feature switch disabled" in new Setup(financialDetailsModel(2018)) {
 				disable(ChargeHistory)
 				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
