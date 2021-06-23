@@ -166,6 +166,69 @@ object IncomeSourceIntegrationTestConstants {
 		)
 	)
 
+	def testValidFinancialDetailsModelJsonAccruingInterest(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
+                                                         taxYear: String = "2018", dueDate: String = "2018-02-14",
+                                                         latePaymentInterestAmount: BigDecimal = 0): JsValue = Json.obj(
+		"documentDetails" -> Json.arr(
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000123",
+				"documentDescription" -> "TRM New Charge",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29",
+				"interestOutstandingAmount" -> "42.50",
+				"interestRate" -> "3",
+				"interestFromDate" -> "2018-02-14",
+				"interestEndDate" -> "2019-01-01",
+				"latePaymentInterestAmount" -> latePaymentInterestAmount
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000123",
+				"documentDescription" -> "ITSA- POA 1",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29",
+				"interestOutstandingAmount" -> "42.50",
+				"interestRate" -> "3",
+				"interestFromDate" -> "2018-02-14",
+				"interestEndDate" -> "2019-01-01",
+				"latePaymentInterestAmount" -> latePaymentInterestAmount
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000123",
+				"documentDescription" -> "ITSA - POA 2",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29",
+				"interestOutstandingAmount" -> "42.50",
+				"interestRate" -> "3",
+				"interestFromDate" -> "2018-02-14",
+				"interestEndDate" -> "2019-01-01",
+				"latePaymentInterestAmount" -> latePaymentInterestAmount
+			)
+		),
+		"financialDetails" -> Json.arr(
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Balancing Charge",
+				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Payment on Account 1",
+				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Payment on Account 2",
+				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+			)
+		)
+	)
+
 	def documentDetailJson(originalAmount: BigDecimal,
 												 outstandingAmount: BigDecimal,
 												 taxYear: String = "2018",

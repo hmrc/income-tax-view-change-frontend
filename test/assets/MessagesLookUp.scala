@@ -563,6 +563,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val dueInThirtyDays = "Due within 30 days"
     val futurePayments = "Future payments"
 
+    def interestFromToDate(from: String, to: String, rate: String) = s"Interest for late payment $from to $to at $rate%"
+
+    val interestRatesLink = "current interest rate for late and early payments (opens in new tab)"
+    val interestRatesPara = s"Any overdue payment interest is at the $interestRatesLink. The rate may have changed since the interest was first charged."
+
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
 
     val dueDate = "Due date"

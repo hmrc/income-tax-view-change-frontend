@@ -138,7 +138,7 @@
                                 <tr id="balancing-charge-type-1">
                                     <td></td>
                                     <td>
-                                        @messages(s"whatYouOwe.balancingCharge.interest.line1.text")
+                                        @messages("whatYouOwe.balancingCharge.interest.line1.text")
                                         <div>
                                         @messages(s"whatYouOwe.balancingCharge.interest.line2.text",
                                             LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).toLongDateShort,
@@ -161,13 +161,34 @@
                         <tbody>
                             @for((charge, index) <- chargesList.overduePaymentList.zipWithIndex) {
                                 @tableRow(s"over-due-type-$index", charge, isOverduePayment = true)
+                                @if(charge.documentDetail.interestOutstandingAmount.isDefined && charge.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0) {
+                                    <tr id=@(s"overdue-charge-interest-$index")>
+                                        <td></td>
+                                        <td>
+                                            @messages("whatYouOwe.over-due.interest.line1")
+                                            <div>
+                                                @messages(s"whatYouOwe.over-due.interest.line2",
+                                                charge.documentDetail.interestFromDate.get.toLongDateShort,
+                                                charge.documentDetail.interestEndDate.get.toLongDateShort,
+                                                charge.documentDetail.interestRate.get
+                                                )
+                                            </div>
+                                        </td>
+                                        <td class="numeric">@{charge.documentDetail.interestOutstandingAmount.get.toCurrency}</td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
                 </div>
-                <p>
-                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {@paymentTypesDropdown}
-                </p>
+                @if(chargesList.interestOnOverdueCharges) {
+                    <p id="interest-rate-para" class="interest-rate">
+                        @Html(messages("whatYouOwe.over-due.interest-rate",
+                        <a id="interest-rate-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates" target="_blank">
+                            {messages("whatYouOwe.over-due.interest-rate.link")}</a>
+                        ))
+                    </p>
+                }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty){
                 <h3 id="due-in-thirty-days-payments-heading" class="heading-large">@messages("whatYouOwe.due-in-thirty-days-payments")</h3>
@@ -181,10 +202,12 @@
                         </tbody>
                     </table>
                 </div>
-                <p>
-                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
-                        && chargesList.overduePaymentList.isEmpty) { @paymentTypesDropdown }
-                </p>
+                <div>
+                    <p>
+                        @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
+                            && chargesList.overduePaymentList.isEmpty) { @paymentTypesDropdown }
+                    </p>
+                </div>
             }
             @if(chargesList.futurePayments.nonEmpty){
                 <h3 id="future-payments-heading" class="heading-large">@messages("whatYouOwe.future-payments")</h3>
