@@ -51,20 +51,60 @@ object FinancialDetailsTestConstants {
       Json.obj(
         "taxYear" -> "2019",
         "mainType" -> "SA Balancing Charge",
+        "transactionId" -> "transactionId",
+        "transactionDate" -> "transactionDate",
+        "type" -> "type",
+        "totalAmount" -> 100,
+        "originalAmount" -> 100,
+        "outstandingAmount" -> 100,
+        "clearedAmount" -> 100,
+        "chargeType" -> "POA1",
         "items" -> Json.arr(
-          Json.obj("dueDate" -> "2019-05-15")
+          Json.obj(
+            "dueDate" -> "2019-05-15",
+          "subItemId" -> "1",
+          "amount" -> 100,
+          "clearingDate" -> "clearingDate",
+          "clearingReason" -> "clearingReason",
+            "outgoingPaymentMethod" -> "outgoingPaymentMethod",
+            "paymentReference" -> "paymentReference",
+            "paymentAmount" -> 100,
+            "paymentMethod" -> "paymentMethod",
+            "paymentLot" -> "paymentLot",
+            "paymentLotItem" -> "paymentLotItem",
+            "paymentId" -> "paymentLot-paymentLotItem"
+          )
         )
       ),
       Json.obj(
         "taxYear" -> "2020",
         "mainType" -> "SA Balancing Charge",
+        "transactionId" -> "transactionId",
+        "transactionDate" -> "transactionDate",
+        "type" -> "type",
+        "totalAmount" -> 100,
+        "originalAmount" -> 100,
+        "outstandingAmount" -> 100,
+        "clearedAmount" -> 100,
+        "chargeType" -> "POA1",
         "items" -> Json.arr(
-          Json.obj("dueDate" -> "2019-05-18")
+          Json.obj("dueDate" -> "2019-05-15",
+            "subItemId" -> "1",
+            "amount" -> 100,
+            "clearingDate" -> "clearingDate",
+            "clearingReason" -> "clearingReason",
+            "outgoingPaymentMethod" -> "outgoingPaymentMethod",
+            "paymentReference" -> "paymentReference",
+            "paymentAmount" -> 100,
+            "paymentMethod" -> "paymentMethod",
+            "paymentLot" -> "paymentLot",
+            "paymentLotItem" -> "paymentLotItem",
+            "paymentId" -> "paymentLot-paymentLotItem"
+          )
         )
       )
     )
   )
-
 
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
@@ -82,8 +122,33 @@ object FinancialDetailsTestConstants {
   def financialDetail(taxYear: Int = 2018): FinancialDetail = FinancialDetail(
     taxYear = taxYear.toString,
     mainType = Some("SA Payment on Account 1"),
-    items = Some(List(SubItem(dueDate = Some(LocalDate.of(2019, 5, 15).toString))))
+    transactionId = Some("transactionId"),
+    transactionDate = Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(100),
+    outstandingAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some("POA1"),
+    items =
+      Some(Seq(
+        SubItem(
+          dueDate = Some(LocalDate.of(2019, 5, 15).toString),
+          subItemId = Some("1"),
+          amount = Some(100),
+          clearingDate = Some("clearingDate"),
+          clearingReason = Some("clearingReason"),
+          outgoingPaymentMethod= Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount =  Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem")
+        )
+      ))
   )
+
 
   def documentDetailWithDueDateModel(taxYear: Int = 2018,
                                      documentDescription: Option[String] = Some("ITSA- POA 1"),
@@ -114,14 +179,34 @@ object FinancialDetailsTestConstants {
       DocumentDetail("2020", id1040000124, Some("TRM New Charge"), Some(10.34), Some(10.34), LocalDate.of(2018, 3, 29))
     ),
     financialDetails = List(
-      FinancialDetail("2019", Some("SA Balancing Charge"), Some(Seq(SubItem(Some("2019-05-15"))))),
-      FinancialDetail("2020", Some("SA Balancing Charge"), Some(Seq(SubItem(Some("2019-05-18")))))
+      FinancialDetail("2019", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
+        Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentLot-paymentLotItem"))))),
+      FinancialDetail("2020", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
+        Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentLot-paymentLotItem")))))
     )
   )
 
   def testFinancialDetailsModel(documentDescription: List[Option[String]],
                                 mainType: List[Option[String]],
+                                transactionId: Option[String],
+                                transactionDate: Option[String],
+                                `type`: Option[String],
+                                totalAmount: Option[BigDecimal],
+                                originalAmount: Option[BigDecimal],
+                                clearedAmount: Option[BigDecimal],
+                                chargeType: Option[String],
                                 dueDate: List[Option[String]],
+                                subItemId: Option[String],
+                                amount: Option[BigDecimal],
+                                clearingDate: Option[String],
+                                clearingReason: Option[String],
+                                outgoingPaymentMethod: Option[String],
+                                paymentReference: Option[String],
+                                paymentAmount: Option[BigDecimal],
+                                paymentMethod: Option[String],
+                                paymentLot: Option[String],
+                                paymentLotItem: Option[String],
+                                paymentId: Option[String],
                                 outstandingAmount: List[Option[BigDecimal]],
                                 taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
@@ -130,14 +215,32 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear, "1040000125", documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
                                                      mainType: List[Option[String]],
+                                                     transactionId: Option[String],
+                                                     transactionDate: Option[String],
+                                                     `type`: Option[String],
+                                                     totalAmount: Option[BigDecimal],
+                                                     originalAmount: Option[BigDecimal],
+                                                     clearedAmount: Option[BigDecimal],
+                                                     chargeType: Option[String],
                                                      dueDate: List[Option[String]],
+                                                     subItemId: Option[String],
+                                                     amount: Option[BigDecimal],
+                                                     clearingDate: Option[String],
+                                                     clearingReason: Option[String],
+                                                     outgoingPaymentMethod: Option[String],
+                                                     paymentReference: Option[String],
+                                                     paymentAmount: Option[BigDecimal],
+                                                     paymentMethod: Option[String],
+                                                     paymentLot: Option[String],
+                                                     paymentLotItem: Option[String],
+                                                     paymentId: Option[String],
                                                      outstandingAmount: List[Option[BigDecimal]],
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
@@ -146,14 +249,32 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear, id1040000124, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, Some("transactionId") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1),Some("transactionId") ,  Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelOneItemInList(documentDescription: List[Option[String]],
                                              mainType: List[Option[String]],
+                                             transactionId: Option[String],
+                                             transactionDate: Option[String],
+                                             `type`: Option[String],
+                                             totalAmount: Option[BigDecimal],
+                                             originalAmount: Option[BigDecimal],
+                                             clearedAmount: Option[BigDecimal],
+                                             chargeType: Option[String],
                                              dueDate: List[Option[String]],
+                                             subItemId: Option[String],
+                                             amount: Option[BigDecimal],
+                                             clearingDate: Option[String],
+                                             clearingReason: Option[String],
+                                             outgoingPaymentMethod: Option[String],
+                                             paymentReference: Option[String],
+                                             paymentAmount: Option[BigDecimal],
+                                             paymentMethod: Option[String],
+                                             paymentLot: Option[String],
+                                             paymentLotItem: Option[String],
+                                             paymentId: Option[String],
                                              outstandingAmount: List[Option[BigDecimal]],
                                              taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
@@ -161,7 +282,7 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear, "1040000124", documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(Seq(SubItem(dueDate.head))))
+        FinancialDetail(taxYear, mainType.head,Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate.head))))
       )
     )
 
@@ -196,7 +317,25 @@ object FinancialDetailsTestConstants {
   val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    transactionId= Some("transactionId"),
+    transactionDate= Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some("POA1"),
     dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
+    subItemId = Some("1"),
+    amount = Some(100),
+    clearingDate = Some("clearingDate"),
+    clearingReason = Some("clearingReason"),
+    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+    paymentReference = Some("paymentReference"),
+    paymentAmount =  Some(100),
+    paymentMethod = Some("paymentMethod"),
+    paymentLot = Some("paymentLot"),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentId = Some("paymentId"),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString
   )
@@ -204,7 +343,25 @@ object FinancialDetailsTestConstants {
   val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    transactionId= Some("transactionId"),
+    transactionDate= Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some("POA1"),
     dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
+    subItemId = Some("1"),
+    amount = Some(100),
+    clearingDate = Some("clearingDate"),
+    clearingReason = Some("clearingReason"),
+    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+    paymentReference = Some("paymentReference"),
+    paymentAmount =  Some(100),
+    paymentMethod = Some("paymentMethod"),
+    paymentLot = Some("paymentLot"),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentId = Some("paymentId"),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString
   )
@@ -212,7 +369,25 @@ object FinancialDetailsTestConstants {
   val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    transactionId= Some("transactionId"),
+    transactionDate= Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some("POA1"),
     dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+    subItemId = Some("1"),
+    amount = Some(100),
+    clearingDate = Some("clearingDate"),
+    clearingReason = Some("clearingReason"),
+    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+    paymentReference = Some("paymentReference"),
+    paymentAmount =  Some(100),
+    paymentMethod = Some("paymentMethod"),
+    paymentLot = Some("paymentLot"),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentId = Some("paymentId"),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString
   )
@@ -220,7 +395,25 @@ object FinancialDetailsTestConstants {
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    transactionId= Some("transactionId"),
+    transactionDate= Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some("POA1"),
     dueDate = List(Some(LocalDate.now().plusDays(35).toString), Some(LocalDate.now().minusDays(1).toString)),
+    subItemId = Some("1"),
+    amount = Some(100),
+    clearingDate = Some("clearingDate"),
+    clearingReason = Some("clearingReason"),
+    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+    paymentReference = Some("paymentReference"),
+    paymentAmount =  Some(100),
+    paymentMethod = Some("paymentMethod"),
+    paymentLot = Some("paymentLot"),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentId = Some("paymentId"),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString
   )
@@ -228,7 +421,25 @@ object FinancialDetailsTestConstants {
   val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    transactionId= Some("transactionId"),
+    transactionDate= Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some("POA1"),
     dueDate = List(Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(1).toString)),
+    subItemId = Some("1"),
+    amount = Some(100),
+    clearingDate = Some("clearingDate"),
+    clearingReason = Some("clearingReason"),
+    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+    paymentReference = Some("paymentReference"),
+    paymentAmount =  Some(100),
+    paymentMethod = Some("paymentMethod"),
+    paymentLot = Some("paymentLot"),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentId = Some("paymentId"),
     outstandingAmount = List(Some(25), Some(50)),
     taxYear = LocalDate.now().getYear.toString
   )
@@ -266,19 +477,73 @@ object FinancialDetailsTestConstants {
     overduePaymentList =
       testFinancialDetailsModelOneItemInList(documentDescription = List(Some("ITSA- POA 1")),
         mainType = List(Some("SA Payment on Account 1")),
+        transactionId= Some("transactionId"),
+        transactionDate= Some("transactionDate"),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        clearedAmount = Some(100),
+        chargeType = Some("POA1"),
         dueDate = List(Some(LocalDate.now().minusDays(10).toString)),
+        subItemId = Some("1"),
+        amount = Some(100),
+        clearingDate = Some("clearingDate"),
+        clearingReason = Some("clearingReason"),
+        outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+        paymentReference = Some("paymentReference"),
+        paymentAmount =  Some(100),
+        paymentMethod = Some("paymentMethod"),
+        paymentLot = Some("paymentLot"),
+        paymentLotItem = Some("paymentLotItem"),
+        paymentId = Some("paymentId"),
         outstandingAmount = List(Some(50)),
         taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates,
     dueInThirtyDaysList =
       testFinancialDetailsModelOneItemInList(documentDescription = List(Some("ITSA - POA 2")),
         mainType = List(Some("SA Payment on Account 2")),
+        transactionId= Some("transactionId"),
+        transactionDate= Some("transactionDate"),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        clearedAmount = Some(100),
+        chargeType = Some("POA1"),
         dueDate = List(Some(LocalDate.now().plusDays(1).toString)),
+        subItemId = Some("1"),
+        amount = Some(100),
+        clearingDate = Some("clearingDate"),
+        clearingReason = Some("clearingReason"),
+        outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+        paymentReference = Some("paymentReference"),
+        paymentAmount =  Some(100),
+        paymentMethod = Some("paymentMethod"),
+        paymentLot = Some("paymentLot"),
+        paymentLotItem = Some("paymentLotItem"),
+        paymentId = Some("paymentId"),
         outstandingAmount = List(Some(75)),
         taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates,
     futurePayments =
       testFinancialDetailsModelOneItemInList(documentDescription = List(Some("ITSA- POA 1")),
         mainType = List(Some("SA Payment on Account 1")),
+        transactionId= Some("transactionId"),
+        transactionDate= Some("transactionDate"),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        clearedAmount = Some(100),
+        chargeType = Some("POA1"),
         dueDate = List(Some(LocalDate.now().plusDays(45).toString)),
+        subItemId = Some("1"),
+        amount = Some(100),
+        clearingDate = Some("clearingDate"),
+        clearingReason = Some("clearingReason"),
+        outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+        paymentReference = Some("paymentReference"),
+        paymentAmount =  Some(100),
+        paymentMethod = Some("paymentMethod"),
+        paymentLot = Some("paymentLot"),
+        paymentLotItem = Some("paymentLotItem"),
+        paymentId = Some("paymentId"),
         outstandingAmount = List(Some(50)),
         taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)

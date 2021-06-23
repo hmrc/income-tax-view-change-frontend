@@ -17,13 +17,39 @@
 package models.financialDetails
 
 import play.api.libs.json.{Format, Json}
-import java.time.LocalDate
-
-import play.api.Logger
 
 case class FinancialDetail(taxYear: String,
                            mainType: Option[String] = None,
-                           items: Option[Seq[SubItem]] = None)
+                           transactionId: Option[String] = None,
+                           transactionDate: Option[String] = None,
+                           `type`: Option[String] = None,
+                           totalAmount: Option[BigDecimal] = None,
+                           originalAmount: Option[BigDecimal] = None,
+                           outstandingAmount: Option[BigDecimal] = None,
+                           clearedAmount: Option[BigDecimal] = None,
+                           chargeType: Option[String] = None,
+                           items: Option[Seq[SubItem]]
+                          )
+{
+
+  val payments: Seq[Payment] = items match {
+    case Some(subItems) => subItems.map { subItem =>
+      Payment(
+        reference = subItem.paymentReference,
+        amount = subItem.paymentAmount,
+        method = subItem.paymentMethod,
+        lot = subItem.paymentLot,
+        lotItem = subItem.paymentLotItem,
+        date = subItem.clearingDate
+      )
+    }.filter(_.reference.isDefined)
+    case None => Seq.empty[Payment]
+  }
+
+}
+
+
+
 
 object FinancialDetail {
   implicit val format: Format[FinancialDetail] = Json.format[FinancialDetail]

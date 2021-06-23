@@ -123,8 +123,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             DocumentDetail("testYear2", "testTransactionId", None, Some(100.00), None, LocalDate.of(2018, 3, 29))
           ),
           financialDetails = List(
-            FinancialDetail("testYear", None, Some(Seq(SubItem(Some(LocalDate.now.toString))))),
-            FinancialDetail("testYear2", None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(2).toString))
+            FinancialDetail("testYear", None,None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.toString))))),
+            FinancialDetail("testYear2", None, None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(2).toString))
             )))
           )
         )
@@ -153,8 +153,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear1", "testTransactionId", Some("ITSA - POA 2"), Some(200.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
-              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
+              FinancialDetail("testYear1", Some("SA Payment on Account 1"),Some("TransactionId") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"),Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
+              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("TransactionId") ,Some("transactionDate"), Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"),Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
             )
           )
 
@@ -164,8 +164,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear2", "testTransactionId", None, None, None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-              FinancialDetail("testYear2", None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+              FinancialDetail("testYear2", None,None , None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
+              FinancialDetail("testYear2", None, None ,None,None,None,None,None,None,None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
             )
           )
 
@@ -191,8 +191,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear1", "testTransactionId", None, Some(100.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(7).toString))))),
-              FinancialDetail("testYear1", None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
+              FinancialDetail("testYear1", None,None, None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(7).toString))))),
+              FinancialDetail("testYear1", None,None , None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
             )
           )
 
@@ -202,8 +202,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear2", "testTransactionId", Some("ITSA- POA 1"), Some(100.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("TransactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
+              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("TransactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
             )
           )
 
@@ -229,8 +229,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear1", "testTransactionId", Some("ITSA - POA 2"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
-              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
+              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some("TransactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
+              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("TransactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
             )
           )
 
@@ -240,8 +240,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear2", "testTransactionId", Some("ITSA - POA 2"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString)))))
+              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("TransactionId") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"),Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
+              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("TransactionId"),Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"),Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString)))))
             )
           )
 
