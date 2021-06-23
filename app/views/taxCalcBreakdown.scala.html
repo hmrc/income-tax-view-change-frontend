@@ -112,7 +112,7 @@
     @if(calcModel.calcDataModel.payPensionsProfit.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")</h3>
+                <h2 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")</h2>
                 <p>
                 @if(calcModel.calcDataModel.nationalRegime.contains("Scotland")) {
                     @messages("taxCal-breakdown.scotlandRate")
@@ -132,7 +132,7 @@
     @if(calcModel.calcDataModel.savingsAndGains.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.savings")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.savings")</h2>
             </caption>
             <tbody>
             @for(band <- calcModel.calcDataModel.savingsAndGains.bands.filter(_.income > 0)
@@ -148,7 +148,7 @@
     @if(calcModel.calcDataModel.dividends.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.dividends")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.dividends")</h2>
             </caption>
             <tbody>
             @for(band <- calcModel.calcDataModel.dividends.bands.filter(_.income > 0)
@@ -164,7 +164,7 @@
     @if(calcModel.calcDataModel.lumpSums.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")</h3>
+                <h2 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")</h2>
                 <p>
                 @if(calcModel.calcDataModel.nationalRegime.contains("Scotland")) {
                     @messages("taxCal-breakdown.scotlandRate")
@@ -184,7 +184,7 @@
     @if(calcModel.calcDataModel.gainsOnLifePolicies.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.gains_life_policies")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.gains_life_policies")</h2>
             </caption>
             <tbody>
             @for(band <- calcModel.calcDataModel.gainsOnLifePolicies.bands.filter(_.income > 0).sortBy(_.rate)) {
@@ -197,7 +197,7 @@
     @if(calcModel.calcDataModel.nic.class4Bands.nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.class4_national_insurance")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.class4_national_insurance")</h2>
             </caption>
             <tbody>
             @calcModel.calcDataModel.nic.class4Bands.map { nicBands =>
@@ -226,7 +226,7 @@
             calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h2>
             </caption>
             @taxReductionsTableRow("deficiencyRelief")
             @taxReductionsTableRow("vctSubscriptions")
@@ -255,7 +255,7 @@
     @if(calcModel.calcDataModel.nic.class2.nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.additional_charges")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.additional_charges")</h2>
             </caption>
 
             <tbody>
@@ -306,7 +306,7 @@
     @if(calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.table.other_charges")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.table.other_charges")</h2>
             </caption>
 
             <tbody>
@@ -325,7 +325,7 @@
     @if(calcModel.calcDataModel.taxDeductedAtSource.nonEmpty) {
         <table>
             <caption>
-                <h3 class="heading-medium">@messages("taxCal_breakdown.taxDeductedAtSource")</h3>
+                <h2 class="heading-medium">@messages("taxCal_breakdown.taxDeductedAtSource")</h2>
             </caption>
             <tbody>
                 @calcModel.calcDataModel.taxDeductedAtSource.allFields.map { mapEntry =>
