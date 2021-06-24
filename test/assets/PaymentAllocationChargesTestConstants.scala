@@ -16,7 +16,10 @@
 
 package assets
 
-import models.paymentAllocationCharges.{DocumentDetail, FinancialDetail, PaymentAllocationChargesModel, SubItem}
+import java.time.LocalDate
+
+import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
+import models.paymentAllocationCharges._
 import play.api.libs.json.{JsValue, Json}
 
 object PaymentAllocationChargesTestConstants {
@@ -28,7 +31,7 @@ object PaymentAllocationChargesTestConstants {
   documentDescription = Some("documentDescription"),
   originalAmount = Some(300.00),
   outstandingAmount = Some(200.00),
-  documentDate = "2018-03-29"
+  documentDate = LocalDate.of(2018, 3, 29)
  )
 
  val documentDetail2: DocumentDetail = DocumentDetail(
@@ -37,13 +40,13 @@ object PaymentAllocationChargesTestConstants {
   documentDescription = Some("documentDescription2"),
   originalAmount = Some(100.00),
   outstandingAmount = Some(50.00),
-  documentDate = "2018-03-29"
+  documentDate = LocalDate.of(2018, 3, 29)
  )
 
 
  val financialDetail: FinancialDetail = FinancialDetail(
   taxYear = "2018",
-  transactionId = "transactionId",
+  transactionId = Some("transactionId"),
   transactionDate = Some("transactionDate"),
   `type` = Some("type"),
   totalAmount = Some(BigDecimal("1000.00")),
@@ -71,7 +74,7 @@ object PaymentAllocationChargesTestConstants {
 
  val financialDetail2: FinancialDetail = FinancialDetail(
   taxYear = "2019",
-  transactionId = "transactionId2",
+  transactionId = Some("transactionId2"),
   transactionDate = Some("transactionDate2"),
   `type` = Some("type2"),
   totalAmount = Some(BigDecimal("2000.00")),
@@ -97,10 +100,9 @@ object PaymentAllocationChargesTestConstants {
    )))
  )
 
+ val paymentAllocationChargesModel: PaymentAllocationChargesModel = PaymentAllocationChargesModel(List(documentDetail), List(financialDetail))
 
- val paymentAllocationChargesModel = PaymentAllocationChargesModel(List(documentDetail), List(financialDetail))
-
- val paymentAllocationChargesModelMultiplePayments = PaymentAllocationChargesModel(List(documentDetail, documentDetail2),
+ val paymentAllocationChargesModelMultiplePayments: PaymentAllocationChargesModel = PaymentAllocationChargesModel(List(documentDetail, documentDetail2),
   List(financialDetail, financialDetail2))
 
  val validPaymentAllocationChargesJson: JsValue = Json.parse(

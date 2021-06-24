@@ -15,6 +15,8 @@
  */
 
 package models.paymentAllocationCharges
+
+import models.financialDetails.{DocumentDetail, FinancialDetail}
 import play.api.libs.json.{Format, Json}
 
 sealed trait PaymentAllocationChargesResponse
