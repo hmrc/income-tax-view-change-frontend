@@ -245,6 +245,25 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]],
+                                mainType: List[Option[String]],
+                                dueDate: List[Option[String]],
+                                outstandingAmount: List[Option[BigDecimal]],
+                                taxYear: String,
+                                interestOutstandingAmount: List[Option[BigDecimal]],
+                                interestRate: List[Option[BigDecimal]],
+                                latePaymentInterestAmount: List[Option[BigDecimal]]): FinancialDetailsModel =
+    FinancialDetailsModel(
+      documentDetails = List(
+        DocumentDetail(taxYear, id1040000124, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount.head),
+        DocumentDetail(taxYear, "1040000125", documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1))
+      ),
+      financialDetails = List(
+        FinancialDetail(taxYear, mainType.head, Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate(1)))))
+      )
+    )
+
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
                                                      mainType: List[Option[String]],
                                                      transactionId: Option[String],

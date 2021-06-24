@@ -335,7 +335,10 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = true),
               isElementVisibleById("over-due-payments-heading")(expectedValue = true),
               isElementVisibleById("over-due-type-0")(expectedValue = true),
+              isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
               isElementVisibleById("over-due-type-1")(expectedValue = true),
+              isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+              isElementVisibleById("interest-rate-para")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
               isElementVisibleById("future-payments-heading")(expectedValue = false),
               isElementVisibleById(s"payment-days-note")(expectedValue = true),
@@ -596,7 +599,10 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("payment-details-content-1")(expectedValue = true),
                 isElementVisibleById("over-due-payments-heading")(expectedValue = true),
                 isElementVisibleById("over-due-type-0")(expectedValue = true),
+                isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
                 isElementVisibleById("over-due-type-1")(expectedValue = true),
+                isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+                isElementVisibleById("interest-rate-para")(expectedValue = false),
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
                 isElementVisibleById("future-payments-heading")(expectedValue = false),
                 isElementVisibleById(s"payment-days-note")(expectedValue = true),
@@ -607,6 +613,111 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               )
 
             }
+
+            "render the what you owe page with interest accruing on overdue charges" in {
+              enable(NewFinancialDetailsApi)
+              disable(TxmEventsApproved)
+              val testTaxYear = LocalDate.now().getYear.toString
+
+              Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+
+              And("I wiremock stub a multiple financial details response")
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+                testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString))
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+
+              When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+              val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+              AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+
+              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+              IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
+
+              Then("the result should have a HTTP status of OK (200) and the payments due page")
+              res should have(
+                httpStatus(OK),
+                pageTitle("What you owe - Business Tax account - GOV.UK"),
+                isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+                isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+                isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+                isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+                isElementVisibleById("payment-details-content-0")(expectedValue = true),
+                isElementVisibleById("payment-details-content-1")(expectedValue = true),
+                isElementVisibleById("over-due-payments-heading")(expectedValue = true),
+                isElementVisibleById("over-due-type-0")(expectedValue = true),
+                isElementVisibleById("overdue-charge-interest-0")(expectedValue = true),
+                isElementVisibleById("over-due-type-1")(expectedValue = true),
+                isElementVisibleById("overdue-charge-interest-1")(expectedValue = true),
+                isElementVisibleById("interest-rate-para")(expectedValue = true),
+                isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+                isElementVisibleById("future-payments-heading")(expectedValue = false),
+                isElementVisibleById(s"payment-days-note")(expectedValue = true),
+                isElementVisibleById(s"credit-on-account")(expectedValue = true),
+                isElementVisibleById(s"payment-button")(expectedValue = true),
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              )
+            }
+
+            "render the what you owe page with no interest accruing on overdue charges when there is late payment interest" in {
+              enable(NewFinancialDetailsApi)
+              disable(TxmEventsApproved)
+              val testTaxYear = LocalDate.now().getYear.toString
+
+              Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+
+              And("I wiremock stub a multiple financial details response")
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+                testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, 55.50))
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+
+              When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+              val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+              AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+
+              verifyIncomeSourceDetailsCall(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+              IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
+
+              Then("the result should have a HTTP status of OK (200) and the payments due page")
+              res should have(
+                httpStatus(OK),
+                pageTitle("What you owe - Business Tax account - GOV.UK"),
+                isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+                isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+                isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+                isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+                isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+                isElementVisibleById("payment-details-content-0")(expectedValue = true),
+                isElementVisibleById("payment-details-content-1")(expectedValue = true),
+                isElementVisibleById("over-due-payments-heading")(expectedValue = true),
+                isElementVisibleById("over-due-type-0")(expectedValue = true),
+                isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
+                isElementVisibleById("over-due-type-1")(expectedValue = true),
+                isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+                isElementVisibleById("interest-rate-para")(expectedValue = false),
+                isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+                isElementVisibleById("future-payments-heading")(expectedValue = false),
+                isElementVisibleById(s"payment-days-note")(expectedValue = true),
+                isElementVisibleById(s"credit-on-account")(expectedValue = true),
+                isElementVisibleById(s"payment-button")(expectedValue = true),
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              )
+            }
+
             "render the payments due page with multiple charges and one charge equals zero" in {
               val testTaxYear = LocalDate.now().getYear
               enable(NewFinancialDetailsApi)

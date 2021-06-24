@@ -32,6 +32,11 @@ case class WhatYouOweChargesList(overduePaymentList: List[DocumentDetailWithDueD
 
   def isChargesListEmpty: Boolean = getAllCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
+  def interestOnOverdueCharges: Boolean =
+    if (overduePaymentList.exists(_.documentDetail.interestOutstandingAmount.isDefined)
+      && overduePaymentList.exists(_.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
+    else false
+
 
   def getEarliestTaxYearAndAmountByDueDate: (Int, BigDecimal) = {
 
