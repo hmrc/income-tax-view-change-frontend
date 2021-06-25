@@ -24,7 +24,11 @@ sealed trait PaymentAllocationChargesResponse
 
 
 case class PaymentAllocationChargesModel(documentDetails: List[DocumentDetail],
-                                         financialDetails: List[FinancialDetail]) extends PaymentAllocationChargesResponse
+                                         financialDetails: List[FinancialDetail]) extends PaymentAllocationChargesResponse {
+  val filteredDocumentDetails = documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
+    .filter(_.paymentLotItem == financialDetails.head.items.get.head.paymentLotItem)
+
+}
 
 
 object PaymentAllocationChargesModel {

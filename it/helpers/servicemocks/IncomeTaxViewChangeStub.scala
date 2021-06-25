@@ -170,7 +170,7 @@ object IncomeTaxViewChangeStub {
 
   //Payment Allocation Charges stubs
 
-  def paymentAllocationCharegsUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/docNumber/$documentNumber"
+  def paymentAllocationCharegsUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
 
   def stubGetPaymentAllocationResponse(nino: String, docNumber: String)(status: Int, response: PaymentAllocationChargesModel): Unit =
     WiremockHelper.stubGet(paymentAllocationCharegsUrl(nino, docNumber), status, Json.toJson(response).toString())
