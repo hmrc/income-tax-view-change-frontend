@@ -66,7 +66,7 @@ title = messages("paymentHistory.heading"),bodyClasses = None
                 <tr>
                     <td>@LocalDate.parse(payment.date.get).toLongDate</td>
                     <td>@messages("paymentHistory.paymentToHmrc")</td>
-                    <td class="numeric"> @payment.amount.map(_.toCurrency) </td>
+                    <td class="numeric"> @payment.amount.map(_.abs.toCurrency) </td>
                 </tr>
                 }
                 </tbody>
