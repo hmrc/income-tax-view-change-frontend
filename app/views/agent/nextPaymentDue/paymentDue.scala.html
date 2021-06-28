@@ -27,13 +27,13 @@
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
-    <p id ="sa-note-migrated">@messages("agent.paymentDue.sa-note")
-        <a href="@{appConfig.saViewLandPService(utr.get)}" target="_blank">@messages("agent.paymentDue.sa-link")</a>.
-    </p>
-}
 
-@outstandingChargesNoteParagraph = {
-    <p id ="outstanding-charges-note-migrated">@messages("agent.paymentDue.outstanding-charges-note")</p>
+    <div id="payments-due-note" class="panel panel-indent panel-border-wide">
+        <p id ="sa-note-migrated">@messages("agent.paymentDue.sa-note")
+            <a href="@{appConfig.saViewLandPService(utr.get)}" target="_blank">@messages("agent.paymentDue.sa-link")</a>.
+        </p>
+        <p id ="outstanding-charges-note-migrated">@messages("agent.paymentDue.outstanding-charges-note")</p>
+    </div>
 }
 
 @paymentDaysNoteParagraph = {
@@ -97,18 +97,16 @@
     @if(chargesList.isChargesListEmpty){
         <p id="no-payments-due">@messages("agent.paymentDue.no-payments-due")</p>
         @saNoteParagraph
-        @outstandingChargesNoteParagraph
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
     } else {
-        <div id="payments-due-note" class="panel panel-indent panel-border-wide">
             @saNoteParagraph
-            @outstandingChargesNoteParagraph
-        </div>
 
-<p>
-    @paymentTypesDropdown
-</p>
+
+        <p>
+            @paymentTypesDropdown
+        </p>
+
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero){
                 <h3 id="pre-mtd-payments-heading" class="heading-large">@messages("agent.paymentDue.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)</h3>
