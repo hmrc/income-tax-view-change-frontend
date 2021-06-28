@@ -27,15 +27,20 @@
 
 @saNoteParagraph = {
 	@if(utr.isDefined) {
-		<p id ="sa-note-migrated">@messages("whatYouOwe.sa-note")
-			<a href="@{appConfig.saViewLandPService(utr.get)}" target="_blank">@messages("whatYouOwe.sa-link")</a>.
-		</p>
+
+        <div id="payments-due-note" class="panel panel-indent panel-border-wide">
+
+		    <p id ="sa-note-migrated">@messages("whatYouOwe.sa-note")
+			    <a href="@{appConfig.saViewLandPService(utr.get)}" target="_blank">@messages("whatYouOwe.sa-link")</a>.
+		    </p>
+
+            <p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
+
+        </div>
 	}
 }
 
-@outstandingChargesNoteParagraph = {
-    <p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
-}
+
 
 @paymentDaysNoteParagraph = {
     <p id ="payment-days-note">@messages("whatYouOwe.payment-days-note")</p>
@@ -102,15 +107,11 @@
     @if(chargesList.isChargesListEmpty){
         <p id="no-payments-due">@messages("whatYouOwe.no-payments-due")</p>
         @saNoteParagraph
-        @outstandingChargesNoteParagraph
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
     } else {
-        <div id="payments-due-note" class="panel panel-indent panel-border-wide">
-            @saNoteParagraph
-            @outstandingChargesNoteParagraph
 
-        </div>
+            @saNoteParagraph
 
         <p>
             @paymentTypesDropdown
