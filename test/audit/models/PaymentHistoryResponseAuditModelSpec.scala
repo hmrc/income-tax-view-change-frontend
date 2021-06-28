@@ -41,14 +41,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
     payments = Seq(
-      Payment(
-        reference = Some("reference"),
-        amount = Some(100.00),
-        method = Some("method"),
-        lot = Some("lot"),
-        lotItem = Some("lotItem"),
-        date = Some("2018-02-01")
-      )
+      Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None)
     )
   )
 

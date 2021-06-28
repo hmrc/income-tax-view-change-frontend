@@ -62,7 +62,7 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
      @yearPayments.map{payment =>
      <tr>
       <td>@LocalDate.parse(payment.date.get).toLongDate</td>
-      <td>@messages("paymentHistory.paymentToHmrc")</td>
+      <td><a href="@controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)">@messages("paymentHistory.paymentToHmrc")</a></td>
       <td class="numeric"> @payment.amount.map(_.abs.toCurrency) </td>
      </tr>
      }

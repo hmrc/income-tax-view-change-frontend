@@ -3,7 +3,7 @@ package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
 import assets.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
-import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail}
+import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail, validPaymentAllocationChargesJson}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import helpers.ComponentSpecBase
@@ -41,7 +41,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, singleTestPaymentAllocationCharge)
+        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
@@ -61,7 +61,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, singleTestPaymentAllocationCharge)
+        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
@@ -80,7 +80,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, singleTestPaymentAllocationCharge)
+        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
