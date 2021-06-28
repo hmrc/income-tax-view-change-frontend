@@ -42,8 +42,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   val testPayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25")),
-    Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"))
+    Payment(Some("AAAAA"), Some(10000), Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
@@ -80,6 +80,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               val row = tbody.selectNth("tr", index + 1)
               row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
               row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc
+              row.selectNth("td", 2).childNode(0).attr("href") shouldBe s"/report-quarterly/income-and-expenses/view/charges/payments-made?documentNumber=${payment.transactionId.get}"
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }
         }

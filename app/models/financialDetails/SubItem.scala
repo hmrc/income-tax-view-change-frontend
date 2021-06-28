@@ -31,7 +31,8 @@ case class SubItem(dueDate: Option[String] = None,
                    paymentMethod: Option[String] = None,
                    paymentLot: Option[String] = None,
                    paymentLotItem: Option[String] = None,
-                   paymentId: Option[String] = None)
+                   paymentId: Option[String] = None,
+                   transactionId: Option[String] = None)
 
 object SubItem {
 

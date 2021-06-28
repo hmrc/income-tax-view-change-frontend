@@ -33,17 +33,23 @@ scriptElem = None
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
 
+<div>
     <table id="payment-allocation-charge-table" class="govuk-table">
-        <tr>
-            <td class="total-section">@messages("paymentAllocation.date")</td>
-            <td>@{paymentAllocations.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
-        </tr>
-        <tr>
-            <td class="total-section">@messages("paymentAllocation.amount")</td>
-            <td>@{ paymentAllocations.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
-        </tr>
+        <tbody>
+            <tr>
+                <td class="govuk-summary-list__key">@messages("paymentAllocation.date")</td>
+                <td>@{paymentAllocations.paymentDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
+            </tr>
+            <tr>
+                <td class="govuk-summary-list__key">@messages("paymentAllocation.amount")</td>
+                <td>@{ paymentAllocations.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
+            </tr>
+        </tbody>
     </table>
+</div>
+<br>
     <div id="payments-allocation-info" class="panel panel-indent panel-border-wide">
-        @messages("paymentAllocation.info")
+        <p>@messages("paymentAllocation.info")</p>
     </div>
+
 }

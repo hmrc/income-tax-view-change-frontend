@@ -42,7 +42,9 @@ object PaymentAllocationChargesTestConstants {
   documentDescription = Some("documentDescription2"),
   originalAmount = Some(-100.00),
   outstandingAmount = Some(-50.00),
-  documentDate = LocalDate.of(2018, 3, 29)
+  documentDate = LocalDate.of(2018, 3, 29),
+  paymentLot = Some("paymentLot2"),
+  paymentLotItem = Some("paymentLotItem2")
  )
 
 
@@ -152,4 +154,129 @@ object PaymentAllocationChargesTestConstants {
     |}
 		|""".stripMargin)
 
+ val validWrittenPaymentAllocationChargesJson: JsValue = Json.parse(
+  """{
+    |    "documentDetails": [
+    |        {
+    |            "documentDate": "2018-03-29",
+    |            "documentDescription": "documentDescription",
+    |            "originalAmount": -300.0,
+    |            "outstandingAmount": -200.0,
+    |            "taxYear": "2018",
+    |            "transactionId": "id",
+    |            "paymentLot": "paymentLot",
+    |            "paymentLotItem": "paymentLotItem"
+    |        }
+    |    ],
+    |    "paymentDetails": [
+    |        {
+    |            "chargeType": "POA1",
+    |            "clearedAmount": 500.0,
+    |            "items": [
+    |                {
+    |                    "subItemId": "1",
+    |                    "amount": 100.00,
+    |                    "dueDate": "2021-01-31",
+    |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
+    |                    "paymentAmount": 2000.00,
+    |                    "paymentId": "paymentLot-paymentLotItem",
+    |                    "paymentLot": "paymentLot",
+    |                    "paymentLotItem": "paymentLotItem",
+    |                    "paymentMethod": "paymentMethod",
+    |                    "paymentReference": "paymentReference"
+    |                }
+    |            ],
+    |            "mainType": "4920",
+    |            "originalAmount": 500.0,
+    |            "outstandingAmount": 500.00,
+    |            "taxYear": "2018",
+    |            "totalAmount": 1000.00,
+    |            "transactionDate": "2018-03-29",
+    |            "transactionId": "transactionId",
+    |            "type": "type"
+    |        }
+    |    ]
+    |}
+		|""".stripMargin)
+
+ val validMultiplePaymentAllocationChargesJson: JsValue = Json.parse(
+  """{
+    |    "documentDetails": [
+    |        {
+    |            "documentDate": "2018-03-29",
+    |            "documentDescription": "documentDescription",
+    |            "originalAmount": -300.0,
+    |            "outstandingAmount": -200.0,
+    |            "taxYear": "2018",
+    |            "transactionId": "id",
+    |            "paymentLot": "paymentLot",
+    |            "paymentLotItem": "paymentLotItem"
+    |        },
+    |        {
+    |            "documentDate": "2018-03-29",
+    |            "documentDescription": "documentDescription2",
+    |            "originalAmount": -100.0,
+    |            "outstandingAmount": -50.0,
+    |            "taxYear": "2019",
+    |            "transactionId": "id2",
+    |            "paymentLot": "paymentLot2",
+    |            "paymentLotItem": "paymentLotItem2"
+    |        }
+    |    ],
+    |    "financialDetails": [
+    |        {
+    |            "chargeType": "POA1",
+    |            "clearedAmount": 500.0,
+    |            "items": [
+    |                {
+    |                    "subItemId": "1",
+    |                    "amount": 100.00,
+    |                    "dueDate": "2021-01-31",
+    |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
+    |                    "paymentAmount": 2000.00,
+    |                    "paymentId": "paymentLot-paymentLotItem",
+    |                    "paymentLot": "paymentLot",
+    |                    "paymentLotItem": "paymentLotItem",
+    |                    "paymentMethod": "paymentMethod",
+    |                    "paymentReference": "paymentReference"
+    |                }
+    |            ],
+    |            "mainType": "4920",
+    |            "originalAmount": 500.0,
+    |            "outstandingAmount": 500.00,
+    |            "taxYear": "2018",
+    |            "totalAmount": 1000.00,
+    |            "transactionDate": "2018-03-29",
+    |            "transactionId": "transactionId",
+    |            "type": "type"
+    |        },
+    |        {
+    |            "chargeType": "POA1",
+    |            "clearedAmount": 500.0,
+    |            "items": [
+    |                {
+    |                    "subItemId": "2",
+    |                    "amount": 200.00,
+    |                    "dueDate": "2021-01-31",
+    |                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
+    |                    "paymentAmount": 3000.00,
+    |                    "paymentId": "paymentLot2-paymentLotItem2",
+    |                    "paymentLot": "paymentLot2",
+    |                    "paymentLotItem": "paymentLotItem2",
+    |                    "paymentMethod": "paymentMethod2",
+    |                    "paymentReference": "paymentReference2"
+    |                }
+    |            ],
+    |            "mainType": "4920",
+    |            "originalAmount": 500.0,
+    |            "outstandingAmount": 200.00,
+    |            "taxYear": "2019",
+    |            "totalAmount": 2000.00,
+    |            "transactionDate": "transactionDate2",
+    |            "transactionId": "transactionId2",
+    |            "type": "type2"
+    |        }
+    |    ]
+    |}
+		|""".stripMargin)
 }
