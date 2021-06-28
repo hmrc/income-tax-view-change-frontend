@@ -128,7 +128,11 @@ object IncomeSourceIntegrationTestConstants {
 				"documentDescription" -> "TRM New Charge",
 				"outstandingAmount" -> outstandingAmount,
 				"originalAmount" -> originalAmount,
-				"documentDate" -> "2018-03-29"
+				"documentDate" -> "2018-03-29",
+				"interestFromDate" -> "2018-03-29",
+				"interestEndDate" -> "2018-03-29",
+				"latePaymentInterestAmount" -> 100.0,
+				"interestOutstandingAmount" -> 80.0
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
