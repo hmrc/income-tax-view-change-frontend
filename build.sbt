@@ -11,17 +11,15 @@ import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "1.7.0"
+val bootstrapPlayVersion      = "4.0.0"
 val govTemplateVersion        = "5.61.0-play-26"
 val playPartialsVersion       = "6.10.0-play-26"
-val authClientVersion         = "3.2.0-play-26"
 val playUiVersion             = "8.15.0-play-26"
 val playLanguageVersion       = "4.10.0-play-26"
 val catsVersion               = "0.9.0"
 
 val scalaTestPlusVersion      = "3.1.3"
 val hmrcTestVersion           = "3.9.0-play-26"
-val scalatestVersion          = "3.0.8"
 val pegdownVersion            = "1.6.0"
 val jsoupVersion              = "1.11.3"
 val mockitoVersion            = "2.27.0"
@@ -34,7 +32,6 @@ val compile = Seq(
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
-  "uk.gov.hmrc" %% "auth-client" % authClientVersion,
   "org.typelevel" %% "cats" % catsVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % "4.8.0",
@@ -46,8 +43,6 @@ val compile = Seq(
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0" % Test classifier "tests",
-  "org.scalatest" %% "scalatest" % scalatestVersion % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,

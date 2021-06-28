@@ -26,9 +26,10 @@ import uk.gov.hmrc.http.HttpResponse
 
 class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
-  val successResponse = HttpResponse(Status.CREATED, Some(Json.toJson(PaymentJourneyModel("journeyId", "http://www.redirect-url.com"))))
-  val successResponseBadJson = HttpResponse(Status.CREATED, Some(Json.parse("{}")))
-  val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+  val successResponse = HttpResponse(status = Status.CREATED,
+    json = Json.toJson(PaymentJourneyModel("journeyId", "http://www.redirect-url.com")), headers = Map.empty)
+  val successResponseBadJson = HttpResponse(status = Status.CREATED, json = Json.parse("{}"), headers = Map.empty)
+  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
   object TestPayApiConnector extends PayApiConnector(mockHttpGet, mockAuditingService, appConfig)
 

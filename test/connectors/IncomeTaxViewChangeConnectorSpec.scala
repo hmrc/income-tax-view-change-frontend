@@ -108,9 +108,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getBusinessDetails" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(Json.toJson(singleBusinessIncome)))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = Json.toJson(singleBusinessIncome), headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getBusinessDetailsTestUrl = s"http://localhost:9999/income-tax-view-change/get-business-details/nino/$testNino"
 
@@ -136,7 +136,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getBusinessDetailsTestUrl)(badResponse)
+      setupMockFailedHttpGet(getBusinessDetailsTestUrl)
 
       val result: Future[IncomeSourceDetailsResponse] = getBusinessDetails(testNino)
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
@@ -146,9 +146,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getIncomeSources" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(Json.toJson(singleBusinessAndPropertyMigrat2019)))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = Json.toJson(singleBusinessAndPropertyMigrat2019), headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getIncomeSourcesTestUrl = s"http://localhost:9999/income-tax-view-change/income-sources/$testMtditid"
 
@@ -182,7 +182,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getIncomeSourcesTestUrl)(badResponse)
+      setupMockFailedHttpGet(getIncomeSourcesTestUrl)
 
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
@@ -193,9 +193,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getNino" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(testNinoModelJson))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = testNinoModelJson, headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+    val badResponse = HttpResponse(Status.BAD_REQUEST, body = "Error Message")
 
     val getNinoTestUrl = s"http://localhost:9999/income-tax-view-change/nino-lookup/$testMtditid"
 
@@ -221,7 +221,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return NinoResponseError model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getNinoTestUrl)(badResponse)
+      setupMockFailedHttpGet(getNinoTestUrl)
 
       val result: Future[NinoResponse] = getNino(testMtditid)
       await(result) shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
@@ -231,9 +231,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getReportDeadlines" should {
 
-    val successResponse = HttpResponse(Status.OK, responseJson = Some(obligationsDataFromJson))
-    val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = obligationsDataFromJson, headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getReportDeadlinesTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/report-deadlines"
 
@@ -266,7 +266,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getReportDeadlinesTestUrl)(badResponse)
+      setupMockFailedHttpGet(getReportDeadlinesTestUrl)
 
       val result: Future[ReportDeadlinesResponseModel] = getReportDeadlines()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
@@ -278,9 +278,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getPreviousObligations" should {
 
-    val successResponse = HttpResponse(Status.OK, responseJson = Some(obligationsDataFromJson))
-    val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = obligationsDataFromJson, headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getPreviousObligationsTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/fulfilled-report-deadlines"
 
@@ -313,7 +313,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getPreviousObligationsTestUrl)(badResponse)
+      setupMockFailedHttpGet(getPreviousObligationsTestUrl)
 
       val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
@@ -325,9 +325,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getPaymentAllocations" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(testValidPaymentAllocationsModelJson))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidPaymentAllocationsModelJson))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = testValidPaymentAllocationsModelJson, headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidPaymentAllocationsModelJson, headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getPaymentAllocationTestUrl =
       s"http://localhost:9999/income-tax-view-change/$testNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
@@ -354,7 +354,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return PaymentAllocationsErrorModel model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getPaymentAllocationTestUrl)(badResponse)
+      setupMockFailedHttpGet(getPaymentAllocationTestUrl)
 
       val result: Future[PaymentAllocationsResponse] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
       await(result) shouldBe PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
@@ -364,9 +364,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getFinancialDetails" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(testValidFinancialDetailsModelJson))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidFinancialDetailsJson))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJson, headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getChargesTestUrl =
       s"http://localhost:9999/income-tax-view-change/$testNino/financial-details/charges/from/$testFrom/to/$testTo"
@@ -393,7 +393,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return FinancialDetailsErrorModel model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getChargesTestUrl)(badResponse)
+      setupMockFailedHttpGet(getChargesTestUrl)
 
       val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testYear2017, testNino)
       await(result) shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
@@ -403,9 +403,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getOutstandingCharges" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(testValidOutStandingChargeModelJson))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidOutstandingChargesJson))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = testValidOutStandingChargeModelJson, headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidOutstandingChargesJson, headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getOutstandingChargesTestUrl =
       s"http://localhost:9999/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
@@ -419,7 +419,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return a OutstandingCharges model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getOutstandingChargesTestUrl)(badResponse)
+      setupMockFailedHttpGet(getOutstandingChargesTestUrl)
 
       val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear2020)
       await(result) shouldBe OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
@@ -444,9 +444,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getChargeHistory" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(testValidChargeHistoryDetailsModelJson))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidChargeHistoryDetailsModelJson))
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+    val successResponse = HttpResponse(status = Status.OK, json = testValidChargeHistoryDetailsModelJson, headers = Map.empty)
+    val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidChargeHistoryDetailsModelJson, headers = Map.empty)
+    val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getChargeHistoryUrlTestUrl =
       s"http://localhost:9999/income-tax-view-change/charge-history/$testMtditid/docId/$docNumber"
@@ -460,7 +460,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     "return a ChargeHistory model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getChargeHistoryUrlTestUrl)(badResponse)
+      setupMockFailedHttpGet(getChargeHistoryUrlTestUrl)
       val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
       await(result) shouldBe ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
     }
@@ -498,23 +498,25 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     ))
 
     val successResponse: HttpResponse = HttpResponse(
-      responseStatus = OK,
-      responseJson = Some(Json.toJson(payments))
+      status = OK,
+      json = Json.toJson(payments),
+      headers = Map.empty
     )
 
     val successResponseInvalidJson: HttpResponse = HttpResponse(
-      responseStatus = OK,
-      responseJson = Some(Json.toJson("test"))
+      status = OK,
+      json = Json.toJson("test"),
+      headers = Map.empty
     )
 
     val notFoundResponse: HttpResponse = HttpResponse(
-      responseStatus = NOT_FOUND,
-      responseString = Some("Not Found")
+      status = NOT_FOUND,
+      body = "Not Found"
     )
 
     val internalServerErrorResponse: HttpResponse = HttpResponse(
-      responseStatus = INTERNAL_SERVER_ERROR,
-      responseString = Some("Internal Server Error")
+      status = INTERNAL_SERVER_ERROR,
+      body = "Internal Server Error"
     )
 
     "return Payments" when {
@@ -555,8 +557,8 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
   ".getPaymentAllocation" should {
 
     "a payment allocation" when {
-      val successResponse = HttpResponse(OK, Some(Json.toJson(paymentAllocationChargesModel)))
-      val successResponseMultiplePayments = HttpResponse(OK, Some(Json.toJson(paymentAllocationChargesModelMultiplePayments)))
+      val successResponse = HttpResponse(status = OK, json = Json.toJson(paymentAllocationChargesModel), headers = Map.empty)
+      val successResponseMultiplePayments = HttpResponse(status = OK, json = Json.toJson(paymentAllocationChargesModelMultiplePayments), headers = Map.empty)
 
       "receiving an OK with only one valid data item" in new Setup {
         setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(successResponse)
@@ -576,7 +578,8 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a NOT FOUND payment allocation error" when {
 
       "receiving a not found response" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(Status.NOT_FOUND, Some(Json.toJson("Error message"))))
+        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(status = Status.NOT_FOUND,
+          json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[PaymentAllocationChargesResponse] = getPaymentAllocation(testNino, docNumber)
         await(result) shouldBe PaymentAllocationChargesErrorModel(404, """"Error message"""")
@@ -586,14 +589,16 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return an INTERNAL_SERVER_ERROR payment allocation error" when {
 
       "receiving a 500+ response" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(Status.SERVICE_UNAVAILABLE, Some(Json.toJson("Error message"))))
+        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
+          json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[PaymentAllocationChargesResponse] = getPaymentAllocation(testNino, docNumber)
         await(result) shouldBe PaymentAllocationChargesErrorModel(503, """"Error message"""")
       }
 
       "receiving a 400- response" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(Status.BAD_REQUEST,Some(Json.toJson("Error message"))))
+        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(status = Status.BAD_REQUEST,
+          json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[PaymentAllocationChargesResponse] = getPaymentAllocation(testNino, docNumber)
         await(result) shouldBe PaymentAllocationChargesErrorModel(400, """"Error message"""")

@@ -53,17 +53,17 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
     "return the id of the most recent calculation" when {
 
       "receiving an OK with only one valid data item" in new LatestCalculationIdTest(nino, taxYear,
-        HttpResponse(OK, Some(Json.toJson(ListCalculationItems(Seq(CalculationItem("testId", LocalDateTime.now()))))))) {
+        HttpResponse(status = OK, json = Json.toJson(ListCalculationItems(Seq(CalculationItem("testId", LocalDateTime.now())))), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
         await(result) shouldBe Right("testId")
       }
 
       "receiving an OK with multiple valid data items" in new LatestCalculationIdTest(nino, taxYear,
-        HttpResponse(OK, Some(Json.toJson(ListCalculationItems(Seq(
+        HttpResponse(status = OK, json = Json.toJson(ListCalculationItems(Seq(
           CalculationItem("correctId", LocalDateTime.now()),
           CalculationItem("invalidId", LocalDateTime.now().minusSeconds(1))
-        )))))) {
+        ))), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
         await(result) shouldBe Right("correctId")
@@ -72,7 +72,7 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
 
     "return a NOT FOUND calculation error" when {
 
-      "receiving a not found response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(NOT_FOUND)) {
+      "receiving a not found response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(status = NOT_FOUND, body = "")) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
         await(result) shouldBe Left(CalculationErrorModel(NOT_FOUND, "No calculation found for tax year 2019/20"))
@@ -81,19 +81,22 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
 
     "return an INTERNAL_SERVER_ERROR calculation error" when {
 
-      "receiving a 500+ response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(INTERNAL_SERVER_ERROR, Some(Json.toJson("Error message")))) {
+      "receiving a 500+ response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(status = INTERNAL_SERVER_ERROR,
+        json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
         await(result) shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message""""))
       }
 
-      "receiving a 499- response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(499, Some(Json.toJson("Error message")))) {
+      "receiving a 499- response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(status = 499,
+        json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
         await(result) shouldBe Left(CalculationErrorModel(499, """"Error message""""))
       }
 
-      "receiving an OK with invalid json" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(OK, Some(Json.toJson("")))) {
+      "receiving an OK with invalid json" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(status = OK,
+        json = Json.toJson(""), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
         await(result) shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response"))
@@ -103,24 +106,26 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
 
   "IndividualCalculationsConnector .getCalculation" should {
     "return a calculation" when {
-      "receiving an OK with valid Calculation json" in new GetCalculationTest(nino, calculationId, HttpResponse(OK, Some(calculationJson))) {
+      "receiving an OK with valid Calculation json" in new GetCalculationTest(nino, calculationId, HttpResponse(status = OK,
+        json = calculationJson, headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
         await(result) shouldBe calculation
       }
     }
     "return an error" when {
-      "receiving a 500+ response" in new GetCalculationTest(nino, calculationId, HttpResponse(INTERNAL_SERVER_ERROR, Some(Json.toJson("Error message")))) {
+      "receiving a 500+ response" in new GetCalculationTest(nino, calculationId, HttpResponse(status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
         await(result) shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message"""")
       }
-      "receiving a 499- response" in new GetCalculationTest(nino, calculationId, HttpResponse(499, Some(Json.toJson("Error message")))) {
+      "receiving a 499- response" in new GetCalculationTest(nino, calculationId, HttpResponse(status = 499,
+        json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
         await(result) shouldBe CalculationErrorModel(499, """"Error message"""")
       }
-      "receiving OK with invalid json" in new GetCalculationTest(nino, calculationId, HttpResponse(OK, Some(Json.toJson("")))) {
+      "receiving OK with invalid json" in new GetCalculationTest(nino, calculationId, HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
         await(result) shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")

@@ -36,7 +36,7 @@ class BaseControllerSpec extends TestSupport with MockAuthenticationPredicate {
 
       "include the Referrer as part of the HeaderCarrier" in {
         val hc = TestBaseController.hc(fakeRequestWithActiveSession)
-        hc.headers.find(_._1 == HeaderNames.REFERER).map(_._2) shouldBe Some("/test/url")
+        hc.headers(Seq(HeaderNames.REFERER)).map(_._2) shouldBe List("/test/url")
       }
     }
 
@@ -44,7 +44,7 @@ class BaseControllerSpec extends TestSupport with MockAuthenticationPredicate {
 
       "NOT include the Referrer as part of the HeaderCarrier" in {
         val hc = TestBaseController.hc(fakeRequestNoSession)
-        hc.headers.find(_._1 == HeaderNames.REFERER).map(_._2) shouldBe None
+        hc.headers(Seq(HeaderNames.REFERER)).map(_._2) shouldBe List()
       }
     }
   }

@@ -27,11 +27,11 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
+class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(financialTransactionsModel())))
-  val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
-  val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+  val successResponse = HttpResponse(status = Status.OK, json = Json.toJson(financialTransactionsModel()), headers = Map.empty)
+  val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
 
   object TestFinancialTransactionsConnector extends FinancialTransactionsConnector(mockHttpGet, appConfig)

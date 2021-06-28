@@ -17,6 +17,7 @@
 package mocks
 
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.matches
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
@@ -40,32 +41,33 @@ trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
   }
 
   def setupMockHttpPost(url: String, body: JsValue)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.POST[JsValue, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.any())
+    when(mockHttpGet.POST[JsValue, HttpResponse](matches(url), ArgumentMatchers.eq(body), ArgumentMatchers.any())
     (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
   def setupMockHttpGet(url: String)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](ArgumentMatchers.eq(url))
+    when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def setupAgentMockHttpGet(url: Option[String] = None)(status: Int, response: Option[JsValue]): Unit = {
-    lazy val urlMatcher = url.fold(ArgumentMatchers.any[String]())(x => ArgumentMatchers.eq(x))
+  def setupAgentMockHttpGet(url: Option[String] = None)(status: Int, response: JsValue): Unit = {
+    lazy val urlMatcher = url.fold(ArgumentMatchers.any[String]())(x => matches(x))
     when(mockHttpGet.GET[HttpResponse](urlMatcher)
-      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(status, response)))
+      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(
+      status = status, json = response, headers = Map.empty)))
   }
 
   def setupMockHttpGetWithParams(url: String, params: Seq[(String, String)])(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](ArgumentMatchers.eq(url),ArgumentMatchers.eq(params))
+    when(mockHttpGet.GET[HttpResponse](matches(url),ArgumentMatchers.eq(params), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def setupMockFailedHttpGet(url: String)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](ArgumentMatchers.eq(url))
+  def setupMockFailedHttpGet(url: String): OngoingStubbing[Future[HttpResponse]] =
+    when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("unknown error")))
 
   def setupMockFailedHttpGetWithParams(url: String, params: Seq[(String, String)])(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](ArgumentMatchers.eq(url),ArgumentMatchers.eq(params))
+    when(mockHttpGet.GET[HttpResponse](matches(url),ArgumentMatchers.eq(params), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("unknown error")))
 
   def setupMockHttpGetPartial(url:String)(response: HtmlPartial): OngoingStubbing[Future[HtmlPartial]] =
-    when(mockHttpGet.GET[HtmlPartial](ArgumentMatchers.eq(url))
+    when(mockHttpGet.GET[HtmlPartial](matches(url))
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 }
