@@ -48,7 +48,7 @@ object PaymentAllocationChargesTestConstants {
 
  val financialDetail: FinancialDetail = FinancialDetail(
   taxYear = "2018",
-  transactionId = "transactionId",
+  transactionId = Some("transactionId"),
   transactionDate = Some("2018-03-29"),
   `type` = Some("type"),
   totalAmount = Some(BigDecimal("1000.00")),
