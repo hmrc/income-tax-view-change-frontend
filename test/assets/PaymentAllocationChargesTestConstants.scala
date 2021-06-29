@@ -31,7 +31,9 @@ object PaymentAllocationChargesTestConstants {
   documentDescription = Some("documentDescription"),
   originalAmount = Some(-300.00),
   outstandingAmount = Some(-200.00),
-  documentDate = LocalDate.of(2018, 3, 29)
+  documentDate = LocalDate.of(2018, 3, 29),
+  paymentLot = Some("paymentLot"),
+  paymentLotItem = Some("paymentLotItem")
  )
 
  val documentDetail2: DocumentDetail = DocumentDetail(
@@ -66,7 +68,7 @@ object PaymentAllocationChargesTestConstants {
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
     paymentAmount = Some(BigDecimal("2000.00")),
-    dueDate = Some("dueDate"),
+    dueDate = Some("2021-01-31"),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),
@@ -94,7 +96,7 @@ object PaymentAllocationChargesTestConstants {
     outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
     paymentReference = Some("paymentReference2"),
     paymentAmount = Some(BigDecimal("3000.00")),
-    dueDate = Some("dueDate2"),
+    dueDate = Some("2021-01-31"),
     paymentMethod = Some("paymentMethod2"),
     paymentLot = Some("paymentLot2"),
     paymentLotItem = Some("paymentLotItem2"),
@@ -116,7 +118,9 @@ object PaymentAllocationChargesTestConstants {
     |            "originalAmount": -300.0,
     |            "outstandingAmount": -200.0,
     |            "taxYear": "2018",
-    |            "transactionId": "id"
+    |            "transactionId": "id",
+    |            "paymentLot": "paymentLot",
+    |            "paymentLotItem": "paymentLotItem"
     |        }
     |    ],
     |    "financialDetails": [
@@ -127,7 +131,7 @@ object PaymentAllocationChargesTestConstants {
     |                {
     |                    "subItemId": "1",
     |                    "amount": 100.00,
-    |                    "dueDate": "dueDate",
+    |                    "dueDate": "2021-01-31",
     |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
     |                    "paymentAmount": 2000.00,
     |                    "paymentId": "paymentLot-paymentLotItem",

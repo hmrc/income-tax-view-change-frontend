@@ -16,8 +16,11 @@
 
 package assets
 
-import models.paymentAllocationCharges.{DocumentDetail, FinancialDetail, PaymentAllocationChargesModel, SubItem}
+import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
+import models.paymentAllocationCharges.PaymentAllocationChargesModel
 import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDate
 
 object PaymentAllocationChargesTestConstants {
 
@@ -28,7 +31,9 @@ object PaymentAllocationChargesTestConstants {
   documentDescription = Some("documentDescription"),
   originalAmount = Some(-300.00),
   outstandingAmount = Some(-200.00),
-  documentDate = "2018-03-29"
+  documentDate = LocalDate.of(2018, 3, 29),
+  paymentLot = Some("paymentLot"),
+  paymentLotItem = Some("paymentLotItem")
  )
 
  val documentDetail2: DocumentDetail = DocumentDetail(
@@ -37,13 +42,15 @@ object PaymentAllocationChargesTestConstants {
   documentDescription = Some("documentDescription2"),
   originalAmount = Some(-100.00),
   outstandingAmount = Some(-50.00),
-  documentDate = "2018-03-29"
+  documentDate = LocalDate.of(2018, 3, 29),
+  paymentLot = Some("paymentLot"),
+  paymentLotItem = Some("paymentLotItem")
  )
 
 
  val financialDetail: FinancialDetail = FinancialDetail(
   taxYear = "2018",
-  transactionId = "transactionId",
+  transactionId = Some("transactionId"),
   transactionDate = Some("transactionDate"),
   `type` = Some("type"),
   totalAmount = Some(BigDecimal("1000.00")),
@@ -61,7 +68,7 @@ object PaymentAllocationChargesTestConstants {
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
     paymentAmount = Some(BigDecimal("2000.00")),
-    dueDate = Some("dueDate"),
+    dueDate = Some("2021-01-31"),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),
@@ -71,7 +78,7 @@ object PaymentAllocationChargesTestConstants {
 
  val financialDetail2: FinancialDetail = FinancialDetail(
   taxYear = "2019",
-  transactionId = "transactionId2",
+  transactionId = Some("transactionId2"),
   transactionDate = Some("transactionDate2"),
   `type` = Some("type2"),
   totalAmount = Some(BigDecimal("2000.00")),
@@ -89,7 +96,7 @@ object PaymentAllocationChargesTestConstants {
     outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
     paymentReference = Some("paymentReference2"),
     paymentAmount = Some(BigDecimal("3000.00")),
-    dueDate = Some("dueDate2"),
+    dueDate = Some("2021-01-31"),
     paymentMethod = Some("paymentMethod2"),
     paymentLot = Some("paymentLot2"),
     paymentLotItem = Some("paymentLotItem2"),
@@ -112,7 +119,9 @@ object PaymentAllocationChargesTestConstants {
     |            "originalAmount": -300.0,
     |            "outstandingAmount": -200.0,
     |            "taxYear": "2018",
-    |            "transactionId": "id"
+    |            "transactionId": "id",
+    |            "paymentLot": "paymentLot",
+    |            "paymentLotItem": "paymentLotItem"
     |        }
     |    ],
     |    "financialDetails": [
@@ -123,7 +132,7 @@ object PaymentAllocationChargesTestConstants {
     |                {
     |                    "subItemId": "1",
     |                    "amount": 100.00,
-    |                    "dueDate": "dueDate",
+    |                    "dueDate": "2021-01-31",
     |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
     |                    "paymentAmount": 2000.00,
     |                    "paymentId": "paymentLot-paymentLotItem",

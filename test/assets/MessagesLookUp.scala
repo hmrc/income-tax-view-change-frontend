@@ -639,8 +639,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
   object PaymentAllocation {
     val heading = "Payment made to HMRC"
-    val date = "29 March 2018"
-    val amount = "£1,000.00"
+    val date = "31 January 2021"
+    val amount = "£300.00"
     val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
   }
 
