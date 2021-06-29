@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
@@ -60,7 +60,6 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      if (isEnabled(NewFinancialDetailsApi)) {
         if (isEnabled(TxmEventsApproved)) {
           auditingService.extendedAudit(WhatYouOweRequestAuditModel(user))
         }
@@ -79,14 +78,6 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
         }
-      } else {
-        financialTransactionsService.getAllUnpaidFinancialTransactions.map {
-          case transactions if hasFinancialTransactionsError(transactions) => itvcErrorHandler.showInternalServerError()
-          case transactions: List[FinancialTransactionsModel] => Ok(views.html.paymentDue(financialTransactions = transactions,
-             backUrl = backUrl, implicitDateFormatter = dateFormatter)
-          ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
-        }
-      }
   }
 
 

@@ -72,12 +72,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
 
       reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
         val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYears.map { taxYear =>
-          if (isEnabled(NewFinancialDetailsApi)) {
             financialDetailsService.getFinancialDetails(taxYear, user.nino)
-          }
-          else {
-            financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear)
-          }
         }) map {
           _.filter(_ match {
             case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty =>

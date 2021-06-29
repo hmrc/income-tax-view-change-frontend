@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{ChargeHistory, FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -61,7 +61,6 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
   def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
       implicit user =>
-        if (isEnabled(NewFinancialDetailsApi)) {
           financialDetailsService.getFinancialDetails(taxYear, user.nino).flatMap {
             case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == id) =>
 							val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
@@ -115,8 +114,6 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
               Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
               Future.successful(itvcErrorHandler.showInternalServerError())
           }
-        }
-        else Future.successful(Redirect(controllers.routes.HomeController.home().url))
     }
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {

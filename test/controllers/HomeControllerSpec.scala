@@ -17,14 +17,12 @@
 package controllers
 
 import assets.MessagesLookUp
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.calculation.Calculation
 import models.financialDetails._
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.{any, eq => matches}
@@ -34,10 +32,10 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import utils.CurrentDateProvider
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.LocalDate
 import scala.concurrent.Future
 
-class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
 	val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2018, 1, 1), Seq.empty[LocalDate])
 	val nextPaymentDate: LocalDate = LocalDate.of(2019, 1, 31)
@@ -74,119 +72,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 	}
 
 	"navigating to the home page" should {
-		"NewFinancialDetailsApi FS is disabled" when {
-			disable(NewFinancialDetailsApi)
 			"return ok (200)" which {
 				"there is a next payment due date to display" in new Setup {
-					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-					mockSingleBusinessIncomeSource()
-					when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
-
-					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
-
-					status(result) shouldBe Status.OK
-					val document: Document = Jsoup.parse(bodyOf(result))
-					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2019"
-				}
-
-				"display the oldest next payment due day when there multiple payment due" in new Setup {
-					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-					mockSingleBusinessIncomeSource()
-					when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2018, 4, 5)), outstandingAmount = Some(0), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
-					when(financialTransactionsService.getFinancialTransactions(any(), matches(2018))(any()))
-						.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2018, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate2))))))))))
-					when(financialTransactionsService.getFinancialTransactions(any(), matches(2019))(any()))
-						.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
-
-					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
-
-					status(result) shouldBe Status.OK
-					val document: Document = Jsoup.parse(bodyOf(result))
-					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2018"
-				}
-
-				"Not display the next payment due date" when {
-					"there is a problem getting financial transaction" in new Setup {
-						when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-						mockSingleBusinessIncomeSource()
-						when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-							.thenReturn(Future.successful(FinancialTransactionsErrorModel(1, "testString")))
-
-						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
-
-						status(result) shouldBe Status.OK
-						val document: Document = Jsoup.parse(bodyOf(result))
-						document.title shouldBe MessagesLookUp.HomePage.title
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-
-					}
-
-					"There are no financial transaction" in new Setup {
-						when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-						mockSingleBusinessIncomeSource()
-						when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-							.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), None)))
-
-						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
-
-						status(result) shouldBe Status.OK
-						val document: Document = Jsoup.parse(bodyOf(result))
-						document.title shouldBe MessagesLookUp.HomePage.title
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-					}
-
-					"All financial transaction bill are paid" in new Setup {
-						when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-						mockSingleBusinessIncomeSource()
-						when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-							.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(0), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
-
-						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
-
-						status(result) shouldBe Status.OK
-						val document: Document = Jsoup.parse(bodyOf(result))
-						document.title shouldBe MessagesLookUp.HomePage.title
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-					}
-				}
-
-				"return ISE (500)" when {
-					"A calculation error model has returned from the service" in new Setup {
-						when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-						mockSingleBusinessIncomeSource()
-
-						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
-
-						status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-					}
-				}
-
-			}
-			"return OK (200)" when {
-				"there is a update date to display" in new Setup {
-					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-					mockSingleBusinessIncomeSource()
-					when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
-
-					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
-
-					status(result) shouldBe Status.OK
-					val document: Document = Jsoup.parse(bodyOf(result))
-					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#updates-tile > div > p:nth-child(2)").text() shouldBe "1 January 2018"
-				}
-			}
-
-		}
-		"NewFinancialDetailsApi FS is enabled" when {
-			"return ok (200)" which {
-				"there is a next payment due date to display" in new Setup {
-					enable(NewFinancialDetailsApi)
 					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 					when(financialDetailsService.getFinancialDetails(any(), any())(any()))
@@ -206,7 +93,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 				}
 
 				"display the oldest next payment due day when there multiple payment due" in new Setup {
-					enable(NewFinancialDetailsApi)
 					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 
@@ -240,7 +126,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
 				"Not display the next payment due date" when {
 					"there is a problem getting financial detalis" in new Setup {
-						enable(NewFinancialDetailsApi)
 						when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getFinancialDetails(any(), any())(any()))
@@ -256,7 +141,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					}
 
 					"There are no financial detail" in new Setup {
-						enable(NewFinancialDetailsApi)
 						when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getFinancialDetails(any(), any())(any()))
@@ -271,7 +155,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					}
 
 					"All financial detail bill are paid" in new Setup {
-						enable(NewFinancialDetailsApi)
 						when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getFinancialDetails(any(), any())(any()))
@@ -291,7 +174,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			}
 			"return OK (200)" when {
 				"there is a update date to display" in new Setup {
-					enable(NewFinancialDetailsApi)
 					when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 					when(financialDetailsService.getFinancialDetails(any(), any())(any()))
@@ -308,7 +190,5 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					document.select("#updates-tile > div > p:nth-child(2)").text() shouldBe "1 January 2018"
 				}
 			}
-			disable(NewFinancialDetailsApi)
-		}
 	}
 }

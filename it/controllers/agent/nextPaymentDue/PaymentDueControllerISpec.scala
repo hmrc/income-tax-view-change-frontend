@@ -5,7 +5,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.OutstandingChargesIntegrationTestConstants._
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
+import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
 import controllers.Assets.INTERNAL_SERVER_ERROR
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
@@ -26,7 +26,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(NewFinancialDetailsApi)
     enable(AgentViewer)
   }
 
@@ -134,7 +133,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
   "YearOfMigration exists and with TxmEventsApproved FS enabled" when {
     "with a multiple charge from financial details and BCD and ACI charges from CESA" in {
       enable(AgentViewer)
-      enable(NewFinancialDetailsApi)
 
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
@@ -184,7 +182,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "with a multiple charge, without BCD and ACI charges from CESA" in {
       enable(AgentViewer)
-      enable(NewFinancialDetailsApi)
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -229,7 +226,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
 
     "with multiple charges and one charge equals zero" in {
-      enable(NewFinancialDetailsApi)
       enable(AgentViewer)
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
@@ -289,7 +285,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
 
     "redirect to an internal server error page when both connectors return internal server error" in {
-      enable(NewFinancialDetailsApi)
       enable(AgentViewer)
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
@@ -322,7 +317,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
 
     "redirect to an internal server error page when financial connector return internal server error" in {
-      enable(NewFinancialDetailsApi)
       enable(AgentViewer)
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
@@ -355,7 +349,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
 
     "redirect to an internal server error page when Outstanding charges connector return internal server error" in {
-      enable(NewFinancialDetailsApi)
       enable(AgentViewer)
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
@@ -393,7 +386,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
   "YearOfMigration exists and with TxmEventsApproved FS disabled" when {
     "with a multiple charge from financial details and BCD and ACI charges from CESA" in {
       enable(AgentViewer)
-      enable(NewFinancialDetailsApi)
       disable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -440,7 +432,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "with a multiple charge, without BCD and ACI charges from CESA" in {
       enable(AgentViewer)
-      enable(NewFinancialDetailsApi)
       disable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -483,7 +474,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
 
     "with multiple charges and one charge equals zero" in {
-      enable(NewFinancialDetailsApi)
       enable(AgentViewer)
       disable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
@@ -544,7 +534,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
   s"return $OK with TxmEventsApproved FS enabled" when {
     "YearOfMigration does not exists" when {
       "with a no charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -591,7 +580,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     "YearOfMigration exists but not the first year" when {
       "with a no charge" in {
         val testTaxYear = LocalDate.now().getYear - 3
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -637,7 +625,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "YearOfMigration exists and No valid charges exists" when {
       "with a no charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -695,7 +682,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "YearOfMigration exists with Invalid financial details charges and valid outstanding charges" when {
       "only BCD charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -756,7 +742,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "YearOfMigration exists with valid financial details charges and invalid outstanding charges" when {
       "only BCD charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -815,7 +800,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     disable(TxmEventsApproved)
     "YearOfMigration does not exists" when {
       "with a no charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         disable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -860,7 +844,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     "YearOfMigration exists but not the first year" when {
       "with a no charge" in {
         val testTaxYear = LocalDate.now().getYear - 3
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         disable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -904,7 +887,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "YearOfMigration exists and No valid charges exists" when {
       "with a no charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         disable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -960,7 +942,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "YearOfMigration exists with Invalid financial details charges and valid outstanding charges" when {
       "only BCD charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         disable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
@@ -1019,7 +1000,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     "YearOfMigration exists with valid financial details charges and invalid outstanding charges" when {
       "only BCD charge" in {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         disable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)

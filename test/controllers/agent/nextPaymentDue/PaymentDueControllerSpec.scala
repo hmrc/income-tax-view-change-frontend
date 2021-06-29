@@ -16,11 +16,10 @@
 
 package controllers.agent.nextPaymentDue
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testArn, testMtdItAgentUser, testMtditidAgent, testNinoAgent, testSaUtrId}
+import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
-import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
-import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -108,7 +107,6 @@ class PaymentDueControllerSpec extends TestSupport
 
     "obtaining a users charge" should {
       "send the user to the paymentsOwe page with full data of charges" in new Setup {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -126,7 +124,6 @@ class PaymentDueControllerSpec extends TestSupport
       }
 
       "return success page with empty data in WhatYouOwe model" in new Setup {
-        enable(NewFinancialDetailsApi)
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -145,7 +142,6 @@ class PaymentDueControllerSpec extends TestSupport
 
       "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
         enable(AgentViewer)
-        enable(NewFinancialDetailsApi)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -169,6 +165,5 @@ class PaymentDueControllerSpec extends TestSupport
       status(result) shouldBe Status.SEE_OTHER
 
     }
-    disable(NewFinancialDetailsApi)
   }
 }

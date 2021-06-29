@@ -20,7 +20,7 @@ import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
-import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching, NewFinancialDetailsApi}
+import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching}
 import implicits.ImplicitDateFormatterImpl
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
@@ -47,13 +47,10 @@ class ChargeSummaryControllerSpec extends TestSupport
   with FeatureSwitching
   with MockChargeSummary {
 
-  class Setup(agentViewerEnabled: Boolean, newFinDetailsApiEnabled: Boolean) {
+  class Setup(agentViewerEnabled: Boolean) {
 
     if (agentViewerEnabled) enable(AgentViewer)
     else disable(AgentViewer)
-
-    if (newFinDetailsApiEnabled) enable(NewFinancialDetailsApi)
-    else disable(NewFinancialDetailsApi)
 
     disable(ChargeHistory)
 
@@ -81,10 +78,9 @@ class ChargeSummaryControllerSpec extends TestSupport
 
   ".showChargeSummary" when {
     "the agent viewer feature switch is enabled" when {
-      "the NewFinancialDetailsApi feature switch is enabled" when {
         "getFinancialDetails returns a FinancialDetailsModel" when {
           "the model contains a transaction for the charge provided" should {
-            "show a charge summary with the correct title" in new Setup(true, true) {
+            "show a charge summary with the correct title" in new Setup(true) {
 
               setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -102,7 +98,7 @@ class ChargeSummaryControllerSpec extends TestSupport
           }
 
           "the model does not contains a transaction for the charge provided" should {
-            "redirect to home page" in new Setup(true, true) {
+            "redirect to home page" in new Setup(true) {
 
               setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -120,7 +116,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 
         "getFinancialDetails does not returns a successful FinancialDetailsModel" when {
 
-          "show an internal server error with the correct title" in new Setup(true, true) {
+          "show an internal server error with the correct title" in new Setup(true) {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -136,24 +132,9 @@ class ChargeSummaryControllerSpec extends TestSupport
 
         }
 
-      }
-
-      "the NewFinancialDetailsApi feature switch is not enabled" should {
-        "redirect to home page with the correct title" in new Setup(true, false) {
-
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-          val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, "testid")
-            .apply(fakeRequestConfirmedClient("AB123456C"))
-
-          status(await(result)) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/income-tax-account")
-
-        }
-      }
 
       "the ChargeHistory feature switch is enabled and the page can be viewed" should {
-        "pass to the view a retrieved charge history list in ascending order" in new Setup(true, true) {
+        "pass to the view a retrieved charge history list in ascending order" in new Setup(true) {
           val chargeHistoryListInAscendingOrder: List[ChargeHistoryModel] = List(
             ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, LocalDate.of(2017, 8, 12), "Customer Request"),
             ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, LocalDate.of(2018, 7, 6), "amended return")
@@ -175,7 +156,7 @@ class ChargeSummaryControllerSpec extends TestSupport
         }
 
         "pass to the view an empty list" when {
-          "charge history list does not exist" in new Setup(true, true) {
+          "charge history list does not exist" in new Setup(true) {
             enable(ChargeHistory)
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
@@ -192,7 +173,7 @@ class ChargeSummaryControllerSpec extends TestSupport
         }
 
         "raise an error" when {
-          "call for charge history list fails" in new Setup(true, true) {
+          "call for charge history list fails" in new Setup(true) {
             enable(ChargeHistory)
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
@@ -210,7 +191,7 @@ class ChargeSummaryControllerSpec extends TestSupport
       }
 
       "the ChargeHistory feature switch is not enabled and the page can be viewed" should {
-        "not pass any charge history list to the view" in new Setup(true, true) {
+        "not pass any charge history list to the view" in new Setup(true) {
           disable(ChargeHistory)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
@@ -229,7 +210,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 
     "the agent viewer feature switch is not enabled" should {
 
-      "return a not found" in new Setup(false, true) {
+      "return a not found" in new Setup(false) {
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -245,7 +226,7 @@ class ChargeSummaryControllerSpec extends TestSupport
   ".backUrl" when {
 
     "the user comes from what you owe page" should {
-      "return what you owe page url string result" in new Setup(true, true) {
+      "return what you owe page url string result" in new Setup(true) {
 
         val result: String = chargeSummaryController.backUrl(backLocation = Some("paymentDue"), currentYear)
 
@@ -255,7 +236,7 @@ class ChargeSummaryControllerSpec extends TestSupport
     }
 
     "the user comes from tax overview page payment tab" should {
-      "return payment tab url string result" in new Setup(true, true) {
+      "return payment tab url string result" in new Setup(true) {
 
         val result: String = chargeSummaryController.backUrl(backLocation = Some("taxYearOverview"), currentYear)
 
@@ -265,7 +246,7 @@ class ChargeSummaryControllerSpec extends TestSupport
     }
 
     "the user comes is not from tax overview payment tab and is not from what you owe page" should {
-      "return agent home page url string result" in new Setup(true, true) {
+      "return agent home page url string result" in new Setup(true) {
 
         val result: String = chargeSummaryController.backUrl(backLocation = Some("_"), currentYear)
 
