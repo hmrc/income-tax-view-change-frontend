@@ -63,7 +63,7 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
      <tr>
       <td>@LocalDate.parse(payment.date.get).toLongDate</td>
       <td>@messages("paymentHistory.paymentToHmrc")</td>
-      <td class="numeric"> @payment.amount.map(_.toCurrency) </td>
+      <td class="numeric"> @payment.amount.map(_.abs.toCurrency) </td>
      </tr>
      }
      </tbody>

@@ -133,7 +133,7 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(documentDetails, _) =>
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-          documentDetails.map(documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail)))
+          documentDetails.filter(_.paymentLot.isEmpty).map(documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail)))
         }
         f(documentDetailsWithDueDates)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)

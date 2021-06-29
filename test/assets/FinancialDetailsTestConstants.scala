@@ -123,7 +123,9 @@ object FinancialDetailsTestConstants {
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
                           outstandingAmount: Option[BigDecimal] = Some(1400.00),
-                          originalAmount: Option[BigDecimal] = Some(1400.00)): DocumentDetail =
+                          originalAmount: Option[BigDecimal] = Some(1400.00),
+													paymentLotItem: Option[String] = Some("paymentLotItem"),
+													paymentLot: Option[String] = Some("paymentLot")): DocumentDetail =
     DocumentDetail(
       taxYear = taxYear.toString,
       transactionId = id1040000123,
@@ -136,14 +138,14 @@ object FinancialDetailsTestConstants {
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
       interestEndDate = Some(LocalDate.of(2018, 3, 29)),
       latePaymentInterestAmount = Some(100),
-      paymentLotItem = Some("paymentLotItem"),
-      paymentLot = Some("paymentLot")
+      paymentLotItem = paymentLotItem,
+      paymentLot = paymentLot
     )
 
   def financialDetail(taxYear: Int = 2018): FinancialDetail = FinancialDetail(
     taxYear = taxYear.toString,
     mainType = Some("SA Payment on Account 1"),
-    transactionId = Some("transactionId"),
+    transactionId = Some("id1040000123"),
     transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
@@ -190,7 +192,7 @@ object FinancialDetailsTestConstants {
 
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
     FinancialDetailsModel(
-      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount)),
+      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None)),
       financialDetails = List(financialDetail(taxYear))
     )
 
