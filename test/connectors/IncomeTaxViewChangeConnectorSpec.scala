@@ -22,7 +22,7 @@ import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
 import assets.OutstandingChargesTestConstants._
-import assets.PaymentAllocationChargesTestConstants.{paymentAllocationChargesModel, paymentAllocationChargesModelMultiplePayments}
+import assets.PaymentAllocationChargesTestConstants.{paymentAllocationChargesModel, paymentAllocationChargesModelMultiplePayments, validMultiplePaymentAllocationChargesJson, validPaymentAllocationChargesJson}
 import assets.PaymentAllocationsTestConstants._
 import assets.ReportDeadlinesTestConstants._
 import audit.AuditingService
@@ -488,14 +488,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       s"http://localhost:9999/income-tax-view-change/$testNino/financial-details/payments/from/$testFrom/to/$testTo"
     }
 
-    val payments: Seq[Payment] = Seq(Payment(
-      reference = Some("reference"),
-      amount = Some(100.00),
-      method = Some("method"),
-      lot = Some("lot"),
-      lotItem = Some("lotItem"),
-      date = Some("date")
-    ))
+    val payments: Seq[Payment] = Seq(Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("date"), Some("DOCID01")))
 
     val successResponse: HttpResponse = HttpResponse(
       responseStatus = OK,
@@ -555,8 +548,8 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
   ".getPaymentAllocation" should {
 
     "a payment allocation" when {
-      val successResponse = HttpResponse(OK, Some(Json.toJson(paymentAllocationChargesModel)))
-      val successResponseMultiplePayments = HttpResponse(OK, Some(Json.toJson(paymentAllocationChargesModelMultiplePayments)))
+      val successResponse = HttpResponse(OK, Some(validPaymentAllocationChargesJson))
+      val successResponseMultiplePayments = HttpResponse(OK, Some(validMultiplePaymentAllocationChargesJson))
 
       "receiving an OK with only one valid data item" in new Setup {
         setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(successResponse)

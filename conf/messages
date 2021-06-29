@@ -525,6 +525,12 @@ paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 
+## Payment Allocation ##
+paymentAllocation.heading                                       = Payment made to HMRC
+paymentAllocation.date                                          = Date
+paymentAllocation.amount                                        = Amount
+paymentAllocation.info                                          = Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years.
+
 ##Tax Years Overview Update Tab##
 updateTab.due                                                   = Due {0}
 updateTab.updateType                                            = Update type

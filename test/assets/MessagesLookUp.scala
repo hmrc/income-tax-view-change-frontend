@@ -637,4 +637,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val errorMessage = "Try again later."
   }
 
+  object PaymentAllocation {
+    val heading = "Payment made to HMRC"
+    val date = "31 January 2021"
+    val amount = "£300.00"
+    val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
+  }
+
 }

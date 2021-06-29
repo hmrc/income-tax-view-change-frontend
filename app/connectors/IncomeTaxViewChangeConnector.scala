@@ -96,7 +96,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def getPaymentAllocationUrl(nino: String, documentNumber: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/docNumber/$documentNumber"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
   }
 
 

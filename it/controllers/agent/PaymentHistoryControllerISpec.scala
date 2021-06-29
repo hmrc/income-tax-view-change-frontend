@@ -54,14 +54,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val paymentsFull: Seq[Payment] = Seq(
-    Payment(
-      reference = Some("reference"),
-      amount = Some(100.00),
-      method = Some("method"),
-      lot = Some("lot"),
-      lotItem = Some("lotItem"),
-      date = Some("2018-04-25")
-    )
+    Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01"))
   )
 
   val testArn: String = "1"
