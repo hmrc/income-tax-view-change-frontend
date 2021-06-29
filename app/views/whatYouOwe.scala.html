@@ -234,7 +234,7 @@
                 @paymentDaysNoteParagraph
                 @creditOnAccountNotePanel
                 <div id="payment-button">
-                    <a id="payment-button-link" class="button" href="@controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence)"
+                    <a id="payment-button-link" class="button"  role="button" href="@controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence)"
                        aria-label='@messages("whatYouOwe.pay-now-aria", (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
                        chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)'>@messages("whatYouOwe.payNow")</a>
                 </div>
