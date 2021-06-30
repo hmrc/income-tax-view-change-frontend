@@ -20,7 +20,6 @@ import assets.BaseTestConstants
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import audit.mocks.MockAuditingService
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
@@ -39,7 +38,7 @@ import services.{FinancialTransactionsService, PaymentDueService}
 import scala.concurrent.Future
 
 class PaymentDueControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockIncomeTaxViewChangeConnector with ImplicitDateFormatter with FeatureSwitching with MockAuditingService {
+  with MockIncomeSourceDetailsPredicate with MockIncomeTaxViewChangeConnector with ImplicitDateFormatter with MockAuditingService {
 
 
   trait Setup {
@@ -102,48 +101,8 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
 
 
   "The PaymentDueControllerSpec.viewPaymentsDue function" when {
-    "NewFinancialDetailsApi FS is disbaled" when {
-      disable(NewFinancialDetailsApi)
-      "obtaining a users transaction" should {
-        "send the user to the paymentsDue page with transactions" in new Setup {
-          mockSingleBusinessIncomeSource()
-          when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
-            .thenReturn(Future.successful(noFinancialTransactionErrors))
-
-
-          val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
-
-          status(result) shouldBe Status.OK
-          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
-
-        }
-
-        "send the user to the Internal error page with internal server errors" in new Setup {
-          mockSingleBusinessIncomeSource()
-          when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
-            .thenReturn(Future.successful(hasAFinancialTransactionError))
-
-          val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-        "send the user to the Internal error page with internal server errors and transactions" in new Setup {
-          mockBothIncomeSources()
-          when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
-            .thenReturn(Future.successful(hasFinancialTransactionErrors))
-
-          val result: Future[Result] = controller.viewPaymentsDue(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-
-        }
-      }
-    }
-    "NewFinancialDetailsApi FS is enabled" when {
       "obtaining a users charge" should {
         "send the user to the paymentsOwe page with full data of charges" in new Setup {
-          enable(NewFinancialDetailsApi)
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
@@ -159,7 +118,6 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
 
         "return success page with empty data in WhatYouOwe model" in new Setup {
 
-          enable(NewFinancialDetailsApi)
           mockSingleBISWithCurrentYearAsMigrationYear()
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -176,7 +134,6 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
 
         "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
 
-          enable(NewFinancialDetailsApi)
           mockSingleBISWithCurrentYearAsMigrationYear()
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -189,8 +146,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
-      disable(NewFinancialDetailsApi)
-    }
+
   }
 
 }

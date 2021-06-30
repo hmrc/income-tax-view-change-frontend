@@ -20,7 +20,7 @@ import assets.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import mocks.services.MockIncomeSourceDetailsService
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.{ChargeHistory, FeatureSwitching, NewFinancialDetailsApi}
+import config.featureswitch.{ChargeHistory, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -48,8 +48,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 	def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
-							chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel(),
-							featureSwitch: Boolean = true) {
+							chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel()) {
     val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 		val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
 
@@ -60,9 +59,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 			.thenReturn(Future.successful(chargeHistory))
 
     mockBothIncomeSources()
-
-    if (featureSwitch) enable(NewFinancialDetailsApi)
-    else disable(NewFinancialDetailsApi)
 
     val controller = new ChargeSummaryController(
       MockAuthenticationPredicate,
@@ -88,13 +84,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   "The ChargeSummaryController" should {
 
     "redirect a user back to the home page" when {
-
-      "the financial api switch is disabled" in new Setup(financialDetailsModel(2018), featureSwitch = false) {
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
-      }
 
       "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(2018)) {
         val result: Result = await(controller.showChargeSummary(2018, "fakeId")(fakeRequestWithActiveSession))

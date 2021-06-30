@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
+import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -66,7 +66,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     Authenticated.async { implicit request =>
       implicit user =>
         if (isEnabled(AgentViewer)) {
-          if (isEnabled(NewFinancialDetailsApi)) {
             financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
               case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == chargeId) =>
                 val backLocation = request.session.get(SessionKeys.chargeSummaryBackPage)
@@ -92,10 +91,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                 Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
                 Future.successful(itvcErrorHandler.showInternalServerError())
             }
-          }
-          else {
-            Future.successful(Redirect(controllers.agent.routes.HomeController.show().url))
-          }
         } else {
           Future.failed(new NotFoundException("[HomeController][home] - Agent viewer is disabled"))
         }

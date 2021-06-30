@@ -29,7 +29,7 @@ import audit.mocks.MockAuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import auth.MtdItUser
 import config.ItvcErrorHandler
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, TaxYearOverviewUpdate}
+import config.featureswitch.{FeatureSwitching, TaxYearOverviewUpdate}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
@@ -53,7 +53,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     MockAuthenticationPredicate,
     mockCalculationService,
     app.injector.instanceOf[SessionTimeoutPredicate],
-    mockFinancialTransactionsService,
     mockFinancialDetailsService,
     app.injector.instanceOf[ItvcErrorHandler],
     MockIncomeSourceDetailsPredicate,
@@ -76,7 +75,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   override def beforeEach(): Unit = {
     super.beforeEach()
     disable(TaxYearOverviewUpdate)
-    disable(NewFinancialDetailsApi)
   }
 
 
@@ -256,8 +254,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         contentType(result) shouldBe Some("text/html")
       }
 
-
-      "NewFinancialDetailsApi FS is disabled" when {
         "Called with an Unauthenticated User" should {
           "return redirect SEE_OTHER (303)" in {
             setupMockAuthorisationException()
@@ -303,112 +299,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
           "the calculation returned from the calculation service is not crystallised" should {
             "return OK (200) with the correct view" in {
-              mockSingleBusinessIncomeSource()
-              mockCalculationSuccess()
-
-              val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
-              val expectedContent: String = views.html.taxYearOverviewOld(
-                testYear, calcOverview, None, None, mockImplicitDateFormatter, taxYearsBackLink).toString
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.OK
-              contentAsString(result) shouldBe expectedContent
-              contentType(result) shouldBe Some("text/html")
-
-              lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
-
-              verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
-            }
-          }
-
-          "the calculation returned from the calculation service is crystallised" when {
-            "the financial transaction returned from the service was an error" should {
-              "return the internal server error page" in {
-                mockSingleBusinessIncomeSource()
-                mockCalculationCrystalisationSuccess()
-                mockFinancialTransactionFailed()
-
-                val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-                contentType(result) shouldBe Some("text/html")
-              }
-            }
-
-            "the financial transaction returned from the service is successful" should {
-              "return OK (200) with the correct view" in {
-                mockSingleBusinessIncomeSource()
-                mockCalculationCrystalisationSuccess()
-                mockFinancialTransactionSuccess()
-
-                val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
-                val expectedContent: String = views.html.taxYearOverviewOld(
-                  testYear, calcOverview, Some(transactionModel()), None, mockImplicitDateFormatter, taxYearsBackLink).toString
-
-                val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-                status(result) shouldBe Status.OK
-                contentAsString(result) shouldBe expectedContent
-                contentType(result) shouldBe Some("text/html")
-              }
-            }
-          }
-        }
-      }
-
-      "NewFinancialDetailsApi FS is enabled" when {
-        "Called with an Unauthenticated User" should {
-          "return redirect SEE_OTHER (303)" in {
-            enable(NewFinancialDetailsApi)
-            setupMockAuthorisationException()
-            val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-            status(result) shouldBe Status.SEE_OTHER
-          }
-        }
-
-        "Called with an Authenticated HMRC-MTD-IT User" when {
-          "provided with a negative tax year" should {
-            "return Status Bad Request Error (400)" in {
-              enable(NewFinancialDetailsApi)
-              mockPropertyIncomeSource()
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(-testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-          }
-
-          "the calculation returned from the calculation service was not found" should {
-            "return the internal server error page" in {
-              enable(NewFinancialDetailsApi)
-              mockSingleBusinessIncomeSource()
-              mockCalculationNotFound()
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-              contentType(result) shouldBe Some("text/html")
-            }
-          }
-
-          "the calculation returned from the calculation service was an error" should {
-            "return the internal server error page" in {
-              enable(NewFinancialDetailsApi)
-              mockSingleBusinessIncomeSource()
-              mockCalculationError()
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-              contentType(result) shouldBe Some("text/html")
-            }
-          }
-
-          "the calculation returned from the calculation service is not crystallised" should {
-            "return OK (200) with the correct view" in {
-              enable(NewFinancialDetailsApi)
               mockSingleBusinessIncomeSource()
               mockCalculationSuccess()
 
@@ -432,7 +322,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "the calculation returned from the calculation service is crystallised" when {
             "the financial details returned from the service was an error" should {
               "return the internal server error page" in {
-                enable(NewFinancialDetailsApi)
                 mockSingleBusinessIncomeSource()
                 mockCalculationCrystalisationSuccess()
                 mockFinancialDetailsFailed()
@@ -446,7 +335,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
             "the financial details returned from the service is successful" should {
               "return OK (200) with the correct view" in {
-                enable(NewFinancialDetailsApi)
                 mockSingleBusinessIncomeSource()
                 mockCalculationCrystalisationSuccess()
                 mockFinancialDetailsSuccess()
@@ -464,7 +352,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             }
           }
         }
-      }
     }
   }
 }

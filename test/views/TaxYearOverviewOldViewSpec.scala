@@ -19,7 +19,6 @@ package views
 import java.time.LocalDate
 
 import assets.MessagesLookUp.TaxYearOverview
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import implicits.ImplicitCurrencyFormatter._
 import models.calculation.CalcOverview
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
@@ -31,7 +30,7 @@ import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.taxYearOverviewOld
 
-class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
+class TaxYearOverviewOldViewSpec extends TestSupport {
 
 	val testYear: Int = 2020
 	val completeOverview: CalcOverview = CalcOverview(
@@ -78,69 +77,8 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 		def getElementByCss(selector: String): Option[Element] = Option(document.select(selector).first())
 	}
 
-	"taxYearOverviewOld with NewFinancialDetailsApi disabled" must {
-		disable(NewFinancialDetailsApi)
-		"have the correct title" in new Setup {
-			document.title shouldBe TaxYearOverview.title(testYear - 1, testYear)
-		}
 
-		"have the correct heading" in new Setup(taxYear = testYear) {
-			content.select("h1").text shouldBe TaxYearOverview.heading(testYear - 1, testYear)
-		}
-
-		"have a status of the tax year" in new Setup {
-			val status: Elements = content.select("#tax-year-status")
-			status.text shouldBe TaxYearOverview.status("ONGOING")
-			status.select("span").hasClass("govUk-tag") shouldBe true
-		}
-
-
-		"have a table of income and deductions" which {
-
-			"has a row and link to view income updates" in new Setup() {
-
-				val link: Option[Element] =
-					getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
-				link.map(_.attr("href")) shouldBe Some(controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url)
-				link.map(_.text) shouldBe Some(TaxYearOverview.income)
-			}
-		 "has a row and link to view deductions updates" in new Setup {
-
-				val link: Option[Element] =
-					getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
-				link.map(_.text) shouldBe Some(TaxYearOverview.deductions)
-				link.map(_.attr("href")) shouldBe Some(controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url)
-			}
-			"has a total row for total taxable income" in new Setup {
-				val row: Elements = content.select("#income-deductions-table tr:nth-child(3)")
-				row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxableIncome
-				row.select("td:nth-child(2)").text shouldBe completeOverview.totalTaxableIncome.toCurrencyString
-			}
-		}
-
-		"have a table for tax due and payments" which {
-			"has a row for tax due" in new Setup {
-				val row: Elements = content.select("#taxdue-payments-table tr:nth-child(1)")
-				row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxDue
-				row.select("td:nth-child(2)").text shouldBe completeOverview.taxDue.toCurrencyString
-			}
-		}
-
-		"a timestamp is present in the calculation" must {
-			"display the date of the calculation" in new Setup {
-				content.select("#calculation-date").text shouldBe TaxYearOverview.calculationDate("1 January 2020")
-			}
-		}
-
-		"a timestamp is not present in the calculation" must {
-			"not show any calculation date" in new Setup(overview = completeOverview.copy(timestamp = None)) {
-				content.select("#calculation-date").isEmpty shouldBe true
-			}
-		}
-	}
-
-	"taxYearOverview with NewFinancialDetailsApi FS enabled" must {
-		enable(NewFinancialDetailsApi)
+	"taxYearOverviewOld" must {
 		"have the correct title" in new Setup {
 			document.title shouldBe TaxYearOverview.title(testYear - 1, testYear)
 		}
@@ -198,7 +136,6 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 			}
 		}
 
-		disable(NewFinancialDetailsApi)
 	}
 
 }
