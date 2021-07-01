@@ -133,10 +133,10 @@ object FinancialDetailsTestConstants {
       outstandingAmount = outstandingAmount,
       originalAmount = originalAmount,
 			documentDate = LocalDate.of(2018, 3, 29),
-      interestOutstandingAmount = Some(100),
+      interestOutstandingAmount = Some(80),
       interestRate = Some(100),
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
-      interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+      interestEndDate = Some(LocalDate.of(2018, 6, 15)),
       latePaymentInterestAmount = Some(100),
       paymentLotItem = paymentLotItem,
       paymentLot = paymentLot

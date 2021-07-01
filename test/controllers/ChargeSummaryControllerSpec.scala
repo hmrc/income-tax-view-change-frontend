@@ -80,6 +80,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   val errorHeading = "Sorry, there is a problem with the service"
   val successHeading = "Tax year 6 April 2017 to 5 April 2018 Payment on account 1 of 2"
+  val lateInterestSuccessHeading = "Tax year 6 April 2017 to 5 April 2018 Late payment interest on payment on account 1 of 2"
 
   "The ChargeSummaryController" should {
 
@@ -108,7 +109,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 				val result: Result = await(controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession))
 
 				status(result) shouldBe Status.OK
-				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
 			}
 
 			"provided with a matching id with the feature switch disabled" in new Setup(financialDetailsModel(2018)) {

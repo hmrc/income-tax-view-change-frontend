@@ -115,7 +115,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 			Then("the result should have a HTTP status of OK (200) and load the correct page")
 			res should have(
 				httpStatus(OK),
-				pageTitle("Remaining balance - Business Tax account - GOV.UK")
+				pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK")
 			)
 		}
   }

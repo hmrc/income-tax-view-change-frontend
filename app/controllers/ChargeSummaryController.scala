@@ -54,8 +54,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         dateFormatter: ImplicitDateFormatterImpl)
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  private def view(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backLocation: Option[String], taxYear: Int, chargesHistory: List[ChargeHistoryModel], chargeHistoryEnabled: Boolean)(implicit request: Request[_]) = {
-    chargeSummary(documentDetail, dueDate, dateFormatter, backUrl(backLocation, taxYear), chargesHistory, chargeHistoryEnabled)
+  private def view(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backLocation: Option[String], taxYear: Int, chargesHistory: List[ChargeHistoryModel], chargeHistoryEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit request: Request[_]) = {
+    chargeSummary(documentDetail, dueDate, dateFormatter, backUrl(backLocation, taxYear), chargesHistory, chargeHistoryEnabled, latePaymentInterestCharge)
   }
 
   def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
@@ -65,7 +65,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
             case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == id) =>
 							val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
 							val documentDetail = success.documentDetails.find(_.transactionId == id).get
-							if (isEnabled(ChargeHistory)) {
+							if (isEnabled(ChargeHistory) && !isLatePaymentCharge) {
 								incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
 									case chargeHistory: ChargesHistoryModel =>
 										val documentDetailWithDueDate: DocumentDetailWithDueDate = success.findDocumentDetailByIdWithDueDate(id).get
@@ -82,7 +82,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 											backLocation = backLocation,
 											taxYear = taxYear,
 											chargesHistory = chargeHistory.chargeHistoryDetails.getOrElse(List()),
-											chargeHistoryEnabled = true
+											chargeHistoryEnabled = true,
+											latePaymentInterestCharge = isLatePaymentCharge
 										))
 									case _ =>
 										Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
@@ -103,7 +104,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 									backLocation = backLocation,
 									taxYear = taxYear,
 									chargesHistory = List(),
-									chargeHistoryEnabled = false
+									chargeHistoryEnabled = false,
+									latePaymentInterestCharge = isLatePaymentCharge
 								)))
 							}
             //Should not happen unless url is changed manually so redirect to home

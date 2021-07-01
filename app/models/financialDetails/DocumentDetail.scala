@@ -41,11 +41,26 @@ case class DocumentDetail(taxYear: String,
 		case _ => false
 	}
 
+	val interestIsPaid: Boolean = interestOutstandingAmount match {
+		case Some(amount) if amount == 0 => true
+		case _ => false
+	}
+
+	def checkIsPaid(isInterestCharge: Boolean): Boolean = {
+		if (isInterestCharge) interestIsPaid
+		else isPaid
+	}
+
 	val isPartPaid: Boolean = outstandingAmount.getOrElse[BigDecimal](0) != originalAmount.getOrElse[BigDecimal](0)
 
 	def remainingToPay: BigDecimal = {
 		if (isPaid) BigDecimal(0)
 		else outstandingAmount.getOrElse(originalAmount.get)
+	}
+
+	def interestRemainingToPay: BigDecimal = {
+		if (interestIsPaid) BigDecimal(0)
+		else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
 	}
 
 	def getChargePaidStatus: String = {
@@ -62,6 +77,7 @@ case class DocumentDetail(taxYear: String,
 			Logger.error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
 			"unknownCharge"
 	}
+
 
 }
 
