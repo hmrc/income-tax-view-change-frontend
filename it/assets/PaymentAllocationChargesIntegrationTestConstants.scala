@@ -22,7 +22,7 @@ import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
-object PaymentAllocationChargesTestConstants {
+object PaymentAllocationChargesIntegrationTestConstants {
 
 
  val documentDetail: DocumentDetail = DocumentDetail(
