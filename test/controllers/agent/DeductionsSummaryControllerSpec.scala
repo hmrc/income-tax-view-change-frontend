@@ -19,7 +19,7 @@ package controllers.agent
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import audit.mocks.MockAuditingService
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -62,7 +62,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     "feature switch AgentViewer is enabled" should {
       "return Status OK when income sources and calculations come back with success" in new Setup {
 
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
@@ -74,7 +73,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
       "return calcDisplay error case scenario" in new Setup {
 
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
@@ -87,11 +85,9 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
       "return internal server error when Error from both Calc and Income sources" in new Setup {
 
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
         mockCalculationNotFound()
-
 
         val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
 

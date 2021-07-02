@@ -64,22 +64,18 @@ class HomeController @Inject()(home: Home,
 
   def show(): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (isEnabled(AgentViewer)) {
-        for {
-          mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
-          dueObligationDetails <- reportDeadlinesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
-          dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
-        } yield {
-          if (isEnabled(TxmEventsApproved)) {
-            auditingService.extendedAudit(HomeAudit(
-              mtdItUser, dueChargesDetails, dueObligationDetails
-            ))
-          }
-          Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails))(implicitly, mtdItUser))
-        }
-      } else {
-        Future.failed(new NotFoundException("[HomeController][home] - Agent viewer is disabled"))
-      }
+			for {
+				mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
+				dueObligationDetails <- reportDeadlinesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
+				dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
+			} yield {
+				if (isEnabled(TxmEventsApproved)) {
+					auditingService.extendedAudit(HomeAudit(
+						mtdItUser, dueChargesDetails, dueObligationDetails
+					))
+				}
+				Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails))(implicitly, mtdItUser))
+			}
   }
 
   private def overduePaymentExists(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]]): Boolean = {

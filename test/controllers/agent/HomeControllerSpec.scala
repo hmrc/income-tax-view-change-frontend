@@ -46,11 +46,6 @@ class HomeControllerSpec extends TestSupport
   with MockHome
   with FeatureSwitching {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
-
   trait Setup {
     val controller = new HomeController(
       app.injector.instanceOf[views.html.agent.Home],
@@ -98,81 +93,64 @@ class HomeControllerSpec extends TestSupport
         contentType(result) shouldBe Some(HTML)
       }
     }
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockNotFound()
+		"the call to retrieve income sources for the client returns an error" should {
+			"return an internal server exception" in new Setup {
 
-        val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockErrorIncomeSource()
 
-        status(result) shouldBe NOT_FOUND
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
-    "the agent viewer feature switch is enabled" when {
-      "the call to retrieve income sources for the client returns an error" should {
-        "return an internal server exception" in new Setup {
-          enable(AgentViewer)
+				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockErrorIncomeSource()
+				intercept[InternalServerException](await(result))
+					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+			}
+		}
+		"the call to retrieve income sources for the client is successful" when {
+			"retrieving their obligation due date details had a failure" should {
+				"return an internal server exception" in new Setup {
 
-          val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+					mockSingleBusinessIncomeSource()
+					mockGetObligationDueDates(Future.failed(new InternalServerException("obligation test exception")))
 
-          intercept[InternalServerException](await(result))
-            .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
-        }
-      }
-      "the call to retrieve income sources for the client is successful" when {
-        "retrieving their obligation due date details had a failure" should {
-          "return an internal server exception" in new Setup {
-            enable(AgentViewer)
+					val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            mockSingleBusinessIncomeSource()
-            mockGetObligationDueDates(Future.failed(new InternalServerException("obligation test exception")))
+					intercept[InternalServerException](await(result))
+						.message shouldBe "obligation test exception"
+				}
+			}
+			"retrieving their obligation due date details was successful" when {
+				"retrieving their charge due date details had a failure" should {
+					"return an internal server exception" in new Setup {
 
-            val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						mockSingleBusinessIncomeSource()
+						mockGetObligationDueDates(Future.successful(Right(2)))
+						mockGetChargeDueDates(Future.failed(new InternalServerException("charge test exception")))
 
-            intercept[InternalServerException](await(result))
-              .message shouldBe "obligation test exception"
-          }
-        }
-        "retrieving their obligation due date details was successful" when {
-          "retrieving their charge due date details had a failure" should {
-            "return an internal server exception" in new Setup {
-              enable(AgentViewer)
+						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-              setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-              mockSingleBusinessIncomeSource()
-              mockGetObligationDueDates(Future.successful(Right(2)))
-              mockGetChargeDueDates(Future.failed(new InternalServerException("charge test exception")))
+						intercept[InternalServerException](await(result))
+							.message shouldBe "charge test exception"
+					}
+				}
+				"retrieving their charge due date details was successful" should {
+					"display the home page with those details" in new Setup {
 
-              val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						mockSingleBusinessIncomeSource()
+						mockGetObligationDueDates(Future.successful(Right(2)))
+						mockGetChargeDueDates(Future.successful(Some(Left(LocalDate.now -> true))))
+						mockHome(Some(Left(LocalDate.now -> true)), Right(2))(HtmlFormat.empty)
 
-              intercept[InternalServerException](await(result))
-                .message shouldBe "charge test exception"
-            }
-          }
-          "retrieving their charge due date details was successful" should {
-            "display the home page with those details" in new Setup {
-              enable(AgentViewer)
+						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-              setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-              mockSingleBusinessIncomeSource()
-              mockGetObligationDueDates(Future.successful(Right(2)))
-              mockGetChargeDueDates(Future.successful(Some(Left(LocalDate.now -> true))))
-              mockHome(Some(Left(LocalDate.now -> true)), Right(2))(HtmlFormat.empty)
-
-              val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
-
-              status(result) shouldBe OK
-              contentType(result) shouldBe Some(HTML)
-            }
-          }
-        }
-      }
-    }
+						status(result) shouldBe OK
+						contentType(result) shouldBe Some(HTML)
+					}
+				}
+			}
+		}
   }
 
 }

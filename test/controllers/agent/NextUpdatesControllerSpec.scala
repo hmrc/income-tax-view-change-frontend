@@ -18,7 +18,7 @@ package controllers.agent
 
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import config.FrontendAppConfig
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -41,11 +41,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockItvcErrorHandler
   with MockIncomeSourceDetailsService with MockReportDeadlinesService with FeatureSwitching {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   trait Setup {
     val controller = new NextUpdatesController(
@@ -108,23 +103,9 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
         contentType(result) shouldBe Some(HTML)
       }
     }
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in new Setup {
-        disable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSource()
-        mockNotFound()
 
-        val result: Future[Result] = controller.getNextUpdates()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe NOT_FOUND
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
-
-    "the Agent viewer feature switch is enabled" should {
+    "the user has all correct details" should {
       "return Status OK (200) when we have obligations" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockObligations
@@ -135,7 +116,6 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
         contentType(result) shouldBe Some(HTML)
       }
       "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockNoObligations
@@ -145,7 +125,6 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
-      disable(AgentViewer)
     }
   }
 

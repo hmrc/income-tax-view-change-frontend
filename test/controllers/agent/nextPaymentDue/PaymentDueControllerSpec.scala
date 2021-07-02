@@ -19,7 +19,7 @@ package controllers.agent.nextPaymentDue
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -44,11 +44,6 @@ class PaymentDueControllerSpec extends TestSupport
   with ImplicitDateFormatter
   with MockItvcErrorHandler
   with FeatureSwitching {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   trait Setup {
 
@@ -92,7 +87,6 @@ class PaymentDueControllerSpec extends TestSupport
 
     "obtaining a users charge" should {
       "send the user to the paymentsOwe page with full data of charges" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -109,7 +103,6 @@ class PaymentDueControllerSpec extends TestSupport
       }
 
       "return success page with empty data in WhatYouOwe model" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -126,7 +119,6 @@ class PaymentDueControllerSpec extends TestSupport
       }
 
       "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -142,7 +134,6 @@ class PaymentDueControllerSpec extends TestSupport
     }
 
     "User fails to be authorised" in new Setup {
-      enable(AgentViewer)
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
       val result: Result = await(controller.show()(fakeRequestWithActiveSession))

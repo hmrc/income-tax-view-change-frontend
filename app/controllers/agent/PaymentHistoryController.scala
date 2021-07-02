@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
-import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -49,24 +49,20 @@ class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHist
   def viewPaymentHistory(): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-        if (isEnabled(AgentViewer)) {
-          for {
-            mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
-            _ = if (isEnabled(TxmEventsApproved)) auditingService.extendedAudit(PaymentHistoryRequestAuditModel(mtdItUser))
-            paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
-          } yield {
-            paymentHistoryResponse match {
-              case Right(payments) =>
-                if (isEnabled(TxmEventsApproved)) {
-                  auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
-                }
-                Ok(agentsPaymentHistory(payments, dateFormatter, backUrl, mtdItUser.saUtr))
-              case Left(_) => itvcErrorHandler.showInternalServerError()
-            }
-          }
-        } else {
-          Future.failed(new NotFoundException("[PaymentHistoryController] - Agent viewer is disabled"))
-        }
+				for {
+					mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
+					_ = if (isEnabled(TxmEventsApproved)) auditingService.extendedAudit(PaymentHistoryRequestAuditModel(mtdItUser))
+					paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
+				} yield {
+					paymentHistoryResponse match {
+						case Right(payments) =>
+							if (isEnabled(TxmEventsApproved)) {
+								auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
+							}
+							Ok(agentsPaymentHistory(payments, dateFormatter, backUrl, mtdItUser.saUtr))
+						case Left(_) => itvcErrorHandler.showInternalServerError()
+					}
+				}
     }
 
   def backUrl: String = controllers.agent.routes.HomeController.show().url

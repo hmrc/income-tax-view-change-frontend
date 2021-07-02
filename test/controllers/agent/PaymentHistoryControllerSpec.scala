@@ -19,7 +19,7 @@ package controllers.agent
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -44,11 +44,6 @@ class PaymentHistoryControllerSpec extends TestSupport
   with FeatureSwitching
   with MockItvcErrorHandler
   with MockAuditingService {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    enable(AgentViewer)
-  }
 
   val testPayments: List[Payment] = List(
     Payment(Some("AAAAA"), Some(10000), Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
@@ -78,7 +73,6 @@ class PaymentHistoryControllerSpec extends TestSupport
 
     "obtaining a users payments - right" should {
       "send the user to the paymentsHistory page with data" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
@@ -94,7 +88,6 @@ class PaymentHistoryControllerSpec extends TestSupport
 
     "Failing to retrieve a user's payments - left" should {
       "send the user to the internal service error page" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
         when(paymentHistoryService.getPaymentHistory(any(), any()))
@@ -110,7 +103,6 @@ class PaymentHistoryControllerSpec extends TestSupport
 
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
-        enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
 
@@ -121,7 +113,6 @@ class PaymentHistoryControllerSpec extends TestSupport
     }
 
     "User fails to be authorised" in new Setup {
-      enable(AgentViewer)
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
       val result = await(controller.viewPaymentHistory()(fakeRequestWithActiveSession))

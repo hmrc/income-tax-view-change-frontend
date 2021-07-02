@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
@@ -39,17 +39,14 @@ class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: A
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (!isEnabled(AgentViewer)) {
-        Future.failed(new NotFoundException("[RemoveClientDetailsSessionsController][show] - Agent viewer is disabled"))
-      } else {
-        Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show().url)
-          .removingFromSession(
-            SessionKeys.clientFirstName,
-            SessionKeys.clientLastName,
-            SessionKeys.clientMTDID,
-            SessionKeys.clientUTR,
-            SessionKeys.clientNino
-          ))
-      }
+			Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show().url)
+				.removingFromSession(
+					SessionKeys.clientFirstName,
+					SessionKeys.clientLastName,
+					SessionKeys.clientMTDID,
+					SessionKeys.clientUTR,
+					SessionKeys.clientNino
+				))
+
   }
 }

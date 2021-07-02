@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ConfirmClientController
 import controllers.agent.utils.SessionKeys
@@ -40,29 +40,21 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-    if (isEnabled(AgentViewer)) {
       Future.successful(Ok(confirmClient(
         clientName = fetchClientName,
         clientUtr = fetchClientUTR,
         postAction = routes.ConfirmClientUTRController.submit(),
         backUrl = backUrl
       )))
-    } else {
-      Future.failed(new NotFoundException("[ConfirmClientsUTRController][show] - Agent viewer is disabled"))
-    }
   }
 
   def submit: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-    if (isEnabled(AgentViewer)){
       Future.successful(
         Redirect(routes.HomeController.show()).addingToSession(
         SessionKeys.confirmedClient -> "true"
         )
       )
-    } else {
-      Future.failed(new NotFoundException("[ConfirmClientsUTRController][submit] - Agent viewer is disabled"))
-    }
   }
 
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url

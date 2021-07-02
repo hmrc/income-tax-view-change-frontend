@@ -19,7 +19,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
-import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -53,26 +53,23 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-        if (isEnabled(AgentViewer)) {
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(mtdItUser))
-              calculationService.getCalculationDetail(getClientNino, taxYear).map {
-                case calcDisplayModel: CalcDisplayModel =>
-                  auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(mtdItUser,
-                    calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
-                  Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear)))
+				getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+					auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(mtdItUser))
+					calculationService.getCalculationDetail(getClientNino, taxYear).map {
+						case calcDisplayModel: CalcDisplayModel =>
+							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(mtdItUser,
+								calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
+							Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear)))
 
-                case CalcDisplayNoDataFound =>
-                  Logger.warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
-                  itvcErrorHandler.showInternalServerError()
+						case CalcDisplayNoDataFound =>
+							Logger.warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
+							itvcErrorHandler.showInternalServerError()
 
-                case CalcDisplayError =>
-                  Logger.error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
-                  itvcErrorHandler.showInternalServerError()
-              }
-            }
-        }
-        else Future.successful(NotFound(notFound()))
+						case CalcDisplayError =>
+							Logger.error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+							itvcErrorHandler.showInternalServerError()
+					}
+				}
     }
 
   def backUrl(taxYear: Int): String = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url

@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -47,25 +47,20 @@ class TaxDueSummaryController @Inject()(val taxCalcBreakdown: views.html.agent.T
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (isEnabled(AgentViewer)) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
-            case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+				calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
+					case calcDisplayModel: CalcDisplayModel =>
+						Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
-            case CalcDisplayNoDataFound =>
-              Logger.warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
-              Future.successful(itvcErrorHandler.showInternalServerError())
+					case CalcDisplayNoDataFound =>
+						Logger.warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
+						Future.successful(itvcErrorHandler.showInternalServerError())
 
-            case CalcDisplayError =>
-              Logger.error(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
-        }
-      }
-      else {
-        Future.failed(new NotFoundException("[Agent][TaxDueSummaryController][showTaxDueSummary] - Agent viewer is disabled"))
-      }
+					case CalcDisplayError =>
+						Logger.error(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
+						Future.successful(itvcErrorHandler.showInternalServerError())
+				}
+			}
   }
 
   def backUrl(taxYear: Int): String = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url

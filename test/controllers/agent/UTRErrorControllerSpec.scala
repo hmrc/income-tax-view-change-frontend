@@ -17,7 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -36,11 +36,6 @@ class UTRErrorControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
   with MockItvcErrorHandler{
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   object TestUTRErrorController extends UTRErrorController(
     utrError,
@@ -87,42 +82,27 @@ class UTRErrorControllerSpec extends TestSupport
       }
     }
 
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess,  withClientPredicate = false)
-        mockNotFound()
+		"redirect to the Enter Client UTR page when there is no client UTR in session" in {
+			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+			mockUTRError(HtmlFormat.empty)
 
-        val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
+			val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe NOT_FOUND
-      }
-    }
+			status(result) shouldBe SEE_OTHER
+			redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+		}
 
-    "the agent viewer feature switch is enabled" should {
-      "redirect to the Enter Client UTR page when there is no client UTR in session" in {
-        enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        mockUTRError(HtmlFormat.empty)
+		"return OK and display the UTR Error page" in {
+			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+			mockUTRError(HtmlFormat.empty)
 
-        val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
+			val result = TestUTRErrorController.show()(fakeRequestWithClientUTR)
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
-      }
-
-      "return OK and display the UTR Error page" in {
-        enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        mockUTRError(HtmlFormat.empty)
-
-        val result = TestUTRErrorController.show()(fakeRequestWithClientUTR)
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-				verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-				verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
-			}
-    }
+			status(result) shouldBe OK
+			contentType(result) shouldBe Some(HTML)
+			verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+			verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+		}
   }
 
   "submit" when {
@@ -160,31 +140,17 @@ class UTRErrorControllerSpec extends TestSupport
       }
     }
 
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        mockNotFound()
+		"redirect to the Enter Client UTR page and remove the clientUTR from session" in {
+			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
 
-        val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
+			val result = TestUTRErrorController.submit()(fakeRequestWithClientUTR)
 
-        status(result) shouldBe NOT_FOUND
-      }
-    }
-
-    "the agent viewer feature switch is enabled" should {
-      "redirect to the Enter Client UTR page and remove the clientUTR from session" in {
-        enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-
-        val result = TestUTRErrorController.submit()(fakeRequestWithClientUTR)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
-        result.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
-				verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-				verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
-      }
-    }
+			status(result) shouldBe SEE_OTHER
+			redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+			result.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
+			verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+			verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+		}
   }
 
 }

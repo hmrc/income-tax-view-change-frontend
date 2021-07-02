@@ -24,7 +24,7 @@ import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import assets.messages.{DeductionsSummaryMessages => messages}
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -37,11 +37,6 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    enable(AgentViewer)
-  }
 
   val clientDetails: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
@@ -72,7 +67,6 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {
     "return the correct deductions summary page" in {
       And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
-      enable(AgentViewer)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

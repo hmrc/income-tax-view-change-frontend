@@ -17,7 +17,7 @@
 package controllers.agent
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -56,18 +56,13 @@ class NextUpdatesController @Inject()(val incomeSourceDetailsService: IncomeSour
 
   def getNextUpdates: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (isEnabled(AgentViewer)) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          mtdItUser =>
-            reportDeadlinesService.getReportDeadlines()(implicitly, mtdItUser).map {
-              case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl)(implicitly, mtdItUser))
-              case _ => itvcErrorHandler.showInternalServerError()
-            }
-        }
-			} else {
-        Logger.info("[NextUpdatesController][getNextUpdates] - Agent viewer is disabled")
-        Future.failed(new NotFoundException("[NextUpdatesController][getNextUpdates] - Agent viewer is disabled"))
-      }
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+				mtdItUser =>
+					reportDeadlinesService.getReportDeadlines()(implicitly, mtdItUser).map {
+						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl)(implicitly, mtdItUser))
+						case _ => itvcErrorHandler.showInternalServerError()
+					}
+			}
   }
 
   lazy val backUrl: String = controllers.agent.routes.HomeController.show().url

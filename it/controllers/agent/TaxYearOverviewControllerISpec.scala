@@ -168,7 +168,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(AgentViewer)
   }
 
   val testUser: MtdItUser[_] = MtdItUser(
@@ -203,19 +202,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        Then(s"A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
     s"return $SEE_OTHER" when {
       "the agent does not have client details in session" in {
         stubAuthorisedAgentUser(authorised = true)
@@ -243,7 +229,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   s"GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
     "return the tax year overview page with TxmEventsApproved FS enabled" when {
       "all calls were successful and returned data" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -327,7 +312,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
       }
       "Calculation List was not found" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -377,7 +361,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
       "Calculation data was not found" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -435,7 +418,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
       }
       "financial details data was not found" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -514,7 +496,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
       "previous obligations data was not found" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -592,7 +573,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     }
     "return the tax year overview page with TxmEventsApproved FS disabled" when {
       "all calls were successful and returned data" in {
-        enable(AgentViewer)
         disable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -675,7 +655,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
       }
       "previous obligations data was not found" in {
-        enable(AgentViewer)
         disable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -752,7 +731,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     }
     "return a technical difficulties page to the user" when {
       "there was a problem retrieving the client's income sources" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -772,7 +750,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
       }
       "there was a problem retrieving the calculation list for the tax year" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -797,7 +774,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
       }
       "there was a problem retrieving the calculation for the tax year" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -830,7 +806,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
       }
       "there was a problem retrieving financial details for the tax year" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -872,7 +847,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
       }
       "there was a problem retrieving current obligations" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -918,7 +892,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
       }
       "there was a problem retrieving previous obligations" in {
-        enable(AgentViewer)
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 

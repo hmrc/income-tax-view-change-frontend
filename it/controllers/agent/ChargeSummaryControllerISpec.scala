@@ -21,7 +21,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.docDateDetail
@@ -54,7 +54,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   s"GET ${routes.ChargeSummaryController.showChargeSummary(currentYear, "testId").url}" should {
     s"return $OK with correct page title and audit events when TxEventsApproved FS is enabled" in {
 
-      enable(AgentViewer)
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -83,7 +82,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     s"return $OK with correct page title and no audit events when TxEventsApproved FS is disabled" in {
 
-      enable(AgentViewer)
       disable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -111,7 +109,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
 
     s"return $OK with correct page title and audit events when TxEventsApproved and ChargeHistory FSs are enabled" in {
-      enable(AgentViewer)
       enable(TxmEventsApproved)
       enable(ChargeHistory)
       stubAuthorisedAgentUser(authorised = true)
@@ -141,7 +138,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "return a technical difficulties page to the user" when {
       "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
         enable(ChargeHistory)
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         stubGetFinancialDetailsSuccess()
