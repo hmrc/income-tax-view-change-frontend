@@ -23,7 +23,7 @@ import config.featureswitch.{AgentViewer, FeatureSwitching}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.{MockCalculationService, MockFinancialTransactionsService, MockIncomeSourceDetailsService}
+import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
 import models.calculation.CalcDisplayError
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockFrontendAuthorisedFunctions with MockIncomeSourceDetailsService
-  with MockFinancialTransactionsService with FeatureSwitching with MockItvcErrorHandler with MockAuditingService{
+  with FeatureSwitching with MockItvcErrorHandler with MockAuditingService{
 
   class Setup {
 

@@ -16,21 +16,20 @@
 
 package controllers
 
-import java.time.LocalDate
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
-import assets.FinancialTransactionsIntegrationTestConstants._
+import assets.FinancialDetailsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.OutstandingChargesIntegrationTestConstants._
-import assets.messages.{PaymentsDueMessages => messages}
 import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
-import assets.FinancialDetailsIntegrationTestConstants._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+
+import java.time.LocalDate
 
 class PaymentDueControllerISpec extends ComponentSpecBase {
 

@@ -27,7 +27,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Request, Result}
 import services.NinoLookupService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
 
   override def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserOptionNino[A] = request
 
     def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userName,

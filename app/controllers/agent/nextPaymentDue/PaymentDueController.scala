@@ -25,12 +25,11 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.WhatYouOweChargesList
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
-import services.{FinancialTransactionsService, IncomeSourceDetailsService, PaymentDueService}
+import services.{IncomeSourceDetailsService, PaymentDueService}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.nextPaymentDue.paymentDue
@@ -40,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentDueController @Inject()(paymentDue: paymentDue,
-                                     val financialTransactionsService: FinancialTransactionsService,
                                      val paymentDueService: PaymentDueService,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
@@ -53,11 +51,6 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
                                       implicit val ec: ExecutionContext,
                                       val itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
-
-
-  def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {
-    transactionModels.exists(_.isInstanceOf[FinancialTransactionsErrorModel])
-  }
 
   private def view(charge: WhatYouOweChargesList, taxYear: Int)(implicit request: Request[_], user: MtdItUser[_]): Html = {
     paymentDue.apply(

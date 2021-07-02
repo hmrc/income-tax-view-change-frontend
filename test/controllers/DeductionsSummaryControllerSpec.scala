@@ -27,7 +27,7 @@ import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
+import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
@@ -36,7 +36,7 @@ import testUtils.TestSupport
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with MockFinancialTransactionsService with FeatureSwitching with MockAuditingService {
+  with FeatureSwitching with MockAuditingService {
 
   object TestDeductionsSummaryController extends DeductionsSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -46,7 +46,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     mockAuditingService,
-    mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler]
   )(
     appConfig,

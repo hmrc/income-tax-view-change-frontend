@@ -55,7 +55,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock[ItvcHeaderCarrierForPartialsConverter]
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
-  implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier, "")
+  implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier)
 
   implicit val conf: Configuration = app.configuration
   implicit val environment: Environment = app.injector.instanceOf[Environment]

@@ -14,14 +14,13 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
+@import config.{FormPartialProvider, FrontendAppConfig}
 @import views.html.templates.main_template
-@import config.FrontendAppConfig
 
-@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialRetriever: FormPartialRetriever,
-partialRetriever: CachedStaticHtmlPartialRetriever, messages: Messages, appConfig: FrontendAppConfig)
+@import scala.concurrent.ExecutionContext
+
+@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], ec: ExecutionContext, formPartialProvider: FormPartialProvider, messages: Messages, appConfig: FrontendAppConfig)
 
 @main_template(title = messages("feedback.title"), showBtaHeader = false) {
-  @formBody.getOrElse(formPartialRetriever.getPartialContent(partialUrl))
+  @formBody.getOrElse(formPartialProvider.getPartialContent(partialUrl))
 }

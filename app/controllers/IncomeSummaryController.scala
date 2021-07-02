@@ -22,15 +22,14 @@ import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
-import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, FinancialTransactionsService}
+import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.errorPages.notFound
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,7 +40,6 @@ class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutP
                                         val calculationService: CalculationService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                         val auditingService: AuditingService,
-                                        val financialTransactionsService: FinancialTransactionsService,
                                         val itvcErrorHandler: ItvcErrorHandler)
                                        (implicit val executionContext: ExecutionContext,
                                         val languageUtils: LanguageUtils,

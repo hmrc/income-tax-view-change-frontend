@@ -23,14 +23,14 @@ import config.featureswitch.FeatureSwitching
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
+import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
 
 class IncomeSummaryControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestIncomeSummaryController extends IncomeSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -40,7 +40,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
-    mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler])(
     ec,
     languageUtils,

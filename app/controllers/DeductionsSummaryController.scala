@@ -23,15 +23,15 @@ import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
-import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, FinancialTransactionsService}
+import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -41,7 +41,6 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val calculationService: CalculationService,
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
-                                            val financialTransactionsService: FinancialTransactionsService,
                                             val itvcErrorHandler: ItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
