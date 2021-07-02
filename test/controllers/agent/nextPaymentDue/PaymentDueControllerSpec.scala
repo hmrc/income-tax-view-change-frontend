@@ -32,7 +32,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import services.{FinancialTransactionsService, PaymentDueService}
+import services.PaymentDueService
 import testUtils.TestSupport
 
 import scala.concurrent.Future
@@ -52,12 +52,10 @@ class PaymentDueControllerSpec extends TestSupport
 
   trait Setup {
 
-    val financialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
     val paymentDueService: PaymentDueService = mock[PaymentDueService]
 
     val controller = new PaymentDueController(
       app.injector.instanceOf[views.html.agent.nextPaymentDue.paymentDue],
-      financialTransactionsService,
       paymentDueService,
       mockIncomeSourceDetailsService,
       mockItvcHeaderCarrierForPartialsConverter,
@@ -88,19 +86,6 @@ class PaymentDueControllerSpec extends TestSupport
 
   val noFinancialTransactionErrors = List(testFinancialTransaction(2018))
   val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
-
-  "The PaymentDueControllerSpec.hasFinancialTransactionsError function" when {
-    "checking the list of transactions" should {
-      "produce false if there are no errors are present" in new Setup {
-        val result: Boolean = controller.hasFinancialTransactionsError(noFinancialTransactionErrors)
-        result shouldBe false
-      }
-      "produce true if any errors are present" in new Setup {
-        val result: Boolean = controller.hasFinancialTransactionsError(hasFinancialTransactionErrors)
-        result shouldBe true
-      }
-    }
-  }
 
 
   "The PaymentDueControllerSpec.show function" when {

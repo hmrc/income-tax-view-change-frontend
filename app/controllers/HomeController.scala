@@ -29,7 +29,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
+import services.{FinancialDetailsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CurrentDateProvider
 
@@ -44,7 +44,6 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                val reportDeadlinesService: ReportDeadlinesService,
                                val itvcErrorHandler: ItvcErrorHandler,
-                               val financialTransactionsService: FinancialTransactionsService,
                                val financialDetailsService: FinancialDetailsService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                implicit val appConfig: FrontendAppConfig,

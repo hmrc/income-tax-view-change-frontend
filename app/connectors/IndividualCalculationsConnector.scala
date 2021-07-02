@@ -17,12 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
+
 import javax.inject.{Inject, Singleton}
 import models.calculation.{Calculation, CalculationErrorModel, CalculationResponseModel, ListCalculationItems}
 import play.api.Logger
 import play.api.http.Status._
 import testOnly.models.TestHeadersModel
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,11 +38,10 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
   def getLatestCalculationId(nino: String, taxYear: String)(implicit headerCarrier: HeaderCarrier,
                                                             ec: ExecutionContext): Future[Either[CalculationResponseModel, String]] = {
 
-    val headerCarrierVal = {
-      if (headerCarrier.headers.exists(header => header._1 == "Gov-Test-Scenario" && !TestHeadersModel.validCalcIdHeaders.contains(header._2)))
-        headerCarrier.withExtraHeaders("Gov-Test-Scenario" -> "DEFAULT")
+    val headerCarrierVal =
+      if (headerCarrier.headers(Seq("Gov-Test-Scenario")).exists(header => !TestHeadersModel.validCalcIdHeaders.contains(header._2)))
+        headerCarrier.copy(otherHeaders = headerCarrier.otherHeaders.filterNot(_._1 == "Gov-Test-Scenario")).withExtraHeaders("Gov-Test-Scenario" -> "DEFAULT")
       else headerCarrier
-    }
 
     http.GET[HttpResponse](listCalculationsUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
       headerCarrierVal.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"), ec) map {
@@ -76,6 +76,7 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
 
   def getCalculation(nino: String, calculationId: String)(implicit headerCarrier: HeaderCarrier,
                                                           ec: ExecutionContext): Future[CalculationResponseModel] = {
+
     http.GET[HttpResponse](getCalculationUrl(nino, calculationId))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),

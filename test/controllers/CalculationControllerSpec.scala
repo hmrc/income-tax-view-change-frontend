@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
@@ -34,7 +32,7 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService, MockReportDeadlinesService}
+import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockReportDeadlinesService}
 import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
@@ -44,10 +42,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
+import java.time.LocalDate
+
 class CalculationControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with MockFinancialTransactionsService with MockFinancialDetailsService
-  with FeatureSwitching with MockAuditingService with MockReportDeadlinesService {
+  with MockFinancialDetailsService with FeatureSwitching
+  with MockAuditingService with MockReportDeadlinesService {
 
   object TestCalculationController extends CalculationController(
     MockAuthenticationPredicate,

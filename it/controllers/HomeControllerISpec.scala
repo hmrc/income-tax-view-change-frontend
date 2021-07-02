@@ -16,7 +16,6 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants._
-import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
@@ -25,7 +24,7 @@ import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
-import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest

@@ -24,11 +24,11 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FinancialTransactionsService, PaymentDueService}
+import services.PaymentDueService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import javax.inject.Inject
@@ -38,7 +38,6 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val authenticate: AuthenticationPredicate,
                                      val retrieveNino: NinoPredicate,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                     val financialTransactionsService: FinancialTransactionsService,
                                      val paymentDueService: PaymentDueService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
@@ -48,10 +47,6 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      implicit val ec: ExecutionContext,
                                      dateFormatter: ImplicitDateFormatterImpl
                                     ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
-
-  def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {
-    transactionModels.exists(_.isInstanceOf[FinancialTransactionsErrorModel])
-  }
 
   def hasFinancialDetailsError(financialDetails: List[FinancialDetailsResponseModel]): Boolean = {
     financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel])

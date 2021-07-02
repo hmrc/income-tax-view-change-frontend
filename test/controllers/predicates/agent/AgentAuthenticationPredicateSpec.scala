@@ -46,7 +46,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
   private def testUser(affinityGroup: Option[AffinityGroup], enrolments: Enrolment*): IncomeTaxAgentUser =
     testUser(affinityGroup, testConfidenceLevel, enrolments: _*)
 
-  val blankUser: IncomeTaxAgentUser = testUser(None, confidenceLevel = ConfidenceLevel.L0)
+  val blankUser: IncomeTaxAgentUser = testUser(None, confidenceLevel = ConfidenceLevel.L50)
 
   val userWithArnIdEnrolment: IncomeTaxAgentUser = testUser(None, arnEnrolment)
 

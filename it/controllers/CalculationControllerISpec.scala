@@ -19,7 +19,6 @@ package controllers
 import assets.BaseIntegrationTestConstants._
 import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import assets.CalcDataIntegrationTestConstants._
-import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.TaxYearOverviewMessages
 import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
@@ -29,7 +28,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.financialDetails._
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.http.Status._
 import play.api.libs.json.Json

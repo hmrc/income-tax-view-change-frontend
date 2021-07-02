@@ -20,8 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import controllers.BaseController
 
 
@@ -37,7 +36,7 @@ class SessionTimeoutPredicate @Inject()(implicit mcc: MessagesControllerComponen
 
   override def invokeBlock[A](request: Request[A], f: Request[A] => Future[Result]): Future[Result] = {
 
-    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     //Add test headers if found in session
     val updatedHeaders = request.session.get("Gov-Test-Scenario") match {

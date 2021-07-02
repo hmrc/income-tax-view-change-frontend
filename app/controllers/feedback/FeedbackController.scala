@@ -16,54 +16,38 @@
 
 package controllers.feedback
 
-import java.net.URLEncoder
-
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import javax.inject.{Inject, Singleton}
+import config.{FormPartialProvider, FrontendAppConfig}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import uk.gov.hmrc.crypto.PlainText
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
 import views.html.feedback.feedback_thankyou
 
+import java.net.URLEncoder
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
-                                   val wsHttp: HttpClient,
+                                   httpClient: HttpClient,
                                    val sessionCookieCrypto: SessionCookieCrypto,
-                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                   val formPartialRetriever: FormPartialProvider,
+                                   val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter,
                                    mcc: MessagesControllerComponents
-                                  ) extends FrontendController(mcc) with PartialRetriever with I18nSupport {
-  override val httpGet = wsHttp
-  val httpPost = wsHttp
+                                  ) extends FrontendController(mcc) with I18nSupport {
 
   private val TICKET_ID = "ticketId"
-
-  implicit val cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
-    override val httpGet: HttpGet = wsHttp
-  }
-
-
-  implicit val formPartialRetriever: FormPartialRetriever = new FormPartialRetriever {
-    override def httpGet: HttpGet = wsHttp
-
-    override def crypto: (String) => String = cookie => sessionCookieCrypto.crypto.encrypt(PlainText(cookie)).value
-  }
 
   def contactFormReferer(implicit request: Request[AnyContent]): String = request.headers.get(REFERER).getOrElse("")
 
   def localSubmitUrl(implicit request: Request[AnyContent]): String = routes.FeedbackController.submit().url
-
-  protected def loadPartial(url: String)(implicit request: RequestHeader): HtmlPartial = ???
 
 
   private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =
@@ -87,7 +71,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   def submit: Action[AnyContent] = Action.async {
     implicit request =>
       request.body.asFormUrlEncoded.map { formData =>
-        httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
+        httpClient.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
           rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec).map {
           resp =>
             resp.status match {

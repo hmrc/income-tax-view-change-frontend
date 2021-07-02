@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
+import services.{FinancialDetailsService, ReportDeadlinesService}
 import utils.CurrentDateProvider
 
 import java.time.LocalDate
@@ -48,7 +48,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
 	trait Setup {
 		val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
-		val financialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
 		val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 		val currentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
 		val controller = new HomeController(
@@ -58,7 +57,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			MockIncomeSourceDetailsPredicate,
 			reportDeadlinesService,
 			app.injector.instanceOf[ItvcErrorHandler],
-			financialTransactionsService,
 			financialDetailsService,
 			app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
 			app.injector.instanceOf[FrontendAppConfig],

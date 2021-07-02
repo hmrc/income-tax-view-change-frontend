@@ -62,10 +62,4 @@ trait GenericStubMethods extends CustomMatchers {
   def verifyReportDeadlinesCall(nino: String): Unit = {
     IncomeTaxViewChangeStub.verifyGetReportDeadlines(nino)
   }
-
-  def verifyFinancialTransactionsCall(mtditid: String, from: String = "2017-04-06", to: String = "2018-04-05"): Unit = {
-    Then("Verify that Financial Transactions has been called")
-    FinancialTransactionsStub.verifyGetFinancialTransactions(mtditid, from, to)
-  }
-
 }

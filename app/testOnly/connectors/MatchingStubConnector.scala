@@ -17,13 +17,13 @@
 package testOnly.connectors
 
 import connectors.RawResponseReads
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, SchemaModel, StubClientDetailsModel}
+import testOnly.models.StubClientDetailsModel
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

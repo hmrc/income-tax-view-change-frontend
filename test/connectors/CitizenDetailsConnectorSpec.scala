@@ -30,9 +30,9 @@ import scala.concurrent.Future
 
 class CitizenDetailsConnectorSpec extends TestSupport with MockHttp{
 
-  val successResponse = HttpResponse(Status.OK, Some(testValidCitizenDetailsModelJson))
-  val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidCitizenDetailsJson))
-  val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+  val successResponse = HttpResponse(status = Status.OK, json = testValidCitizenDetailsModelJson, headers = Map.empty)
+  val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidCitizenDetailsJson, headers = Map.empty)
+  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body ="Error Message")
 
 
   object TestCitizenDetailsConnector extends CitizenDetailsConnector(mockHttpGet, appConfig)
@@ -58,7 +58,7 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp{
     }
 
     "return CitizenDetailErrorModel when GET fails" in {
-      setupMockFailedHttpGet(testUrl)(badResponse)
+      setupMockFailedHttpGet(testUrl)
       await(result) shouldBe CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed, unknown error")
     }
 
