@@ -3,7 +3,7 @@ package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
 import assets.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
-import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail, validPaymentAllocationChargesJson}
+import assets.PaymentAllocationChargesIntegrationTestConstants.{documentDetail, financialDetail, validPaymentAllocationChargesJson}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import helpers.ComponentSpecBase

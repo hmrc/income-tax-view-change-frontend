@@ -65,7 +65,7 @@ title = messages("paymentHistory.heading"),bodyClasses = None
                 @yearPayments.map{payment =>
                 <tr>
                     <td>@LocalDate.parse(payment.date.get).toLongDate</td>
-                    <td>@messages("paymentHistory.paymentToHmrc")</td>
+                    <td><a href="@controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)">@messages("paymentHistory.paymentToHmrc")</a></td>
                     <td class="numeric"> @payment.amount.map(_.abs.toCurrency) </td>
                 </tr>
                 }

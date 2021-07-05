@@ -32,6 +32,9 @@ GET			/tax-years/:taxYear/charge          controllers.agent.ChargeSummaryControl
 #Payment
 GET         /payment                            controllers.agent.PaymentController.paymentHandoff(amountInPence: Long)
 
+#Payment Allocation
+GET         /charges/payments-made              controllers.agent.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
+
 # Tax Year Overview
 GET         /calculation/:taxYear               controllers.agent.TaxYearOverviewController.show(taxYear: Int)
 
