@@ -63,7 +63,7 @@ object PaymentAllocationChargesTestConstants {
    SubItem(
     subItemId = Some("1"),
     amount = Some(BigDecimal("100.00")),
-    clearingDate = None,
+    clearingDate = Some("2021-01-31"),
     clearingReason = None,
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
@@ -145,6 +145,7 @@ object PaymentAllocationChargesTestConstants {
     |                {
     |                    "subItemId": "1",
     |                    "amount": 100.00,
+    |                    "clearingDate": "2021-01-31",
     |                    "dueDate": "2021-01-31",
     |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
     |                    "paymentAmount": 2000.00,
@@ -201,6 +202,7 @@ object PaymentAllocationChargesTestConstants {
     |                {
     |                    "subItemId": "1",
     |                    "amount": 100.00,
+    |                    "clearingDate": "2021-01-31",
     |                    "dueDate": "2021-01-31",
     |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
     |                    "paymentAmount": 2000.00,
@@ -267,6 +269,7 @@ object PaymentAllocationChargesTestConstants {
     |                {
     |                    "subItemId": "1",
     |                    "amount": 100.00,
+    |                    "clearingDate": "2021-01-31",
     |                    "dueDate": "2021-01-31",
     |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
     |                    "paymentAmount": 2000.00,
