@@ -28,6 +28,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolments}
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
@@ -37,16 +38,18 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
 
   private def testUser(affinityGroup: Option[AffinityGroup],
                        confidenceLevel: ConfidenceLevel,
+                       credentials: Option[Credentials],
                        enrolments: Enrolment*): IncomeTaxAgentUser = IncomeTaxAgentUser(
     enrolments = Enrolments(enrolments.toSet),
     affinityGroup = affinityGroup,
-    confidenceLevel: ConfidenceLevel
+    confidenceLevel: ConfidenceLevel,
+    credentials = credentials
   )
 
   private def testUser(affinityGroup: Option[AffinityGroup], enrolments: Enrolment*): IncomeTaxAgentUser =
-    testUser(affinityGroup, testConfidenceLevel, enrolments: _*)
+    testUser(affinityGroup, testConfidenceLevel, testCredentials, enrolments: _*)
 
-  val blankUser: IncomeTaxAgentUser = testUser(None, confidenceLevel = ConfidenceLevel.L50)
+  val blankUser: IncomeTaxAgentUser = testUser(None, confidenceLevel = ConfidenceLevel.L50, credentials = None)
 
   val userWithArnIdEnrolment: IncomeTaxAgentUser = testUser(None, arnEnrolment)
 

@@ -93,9 +93,10 @@ object BaseTestConstants {
   )
 
   val testConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
+  val testCredentials: Option[Credentials] = Some(Credentials(testCredId, ""))
 
-  val testAgentAuthRetrievalSuccess = new ~(new ~(Enrolments(Set(arnEnrolment)), Some(AffinityGroup.Agent)), testConfidenceLevel)
-  val testAgentAuthRetrievalSuccessNoEnrolment = new ~(new ~(Enrolments(Set()), Some(AffinityGroup.Agent)), testConfidenceLevel)
+  val testAgentAuthRetrievalSuccess = new ~(new ~(new ~(Enrolments(Set(arnEnrolment)), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
+  val testAgentAuthRetrievalSuccessNoEnrolment = new ~(new ~(new ~(Enrolments(Set()), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
 
   val testReferrerUrl = "/test/url"
 

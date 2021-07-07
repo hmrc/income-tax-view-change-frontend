@@ -18,6 +18,7 @@ package controllers.predicates
 
 import controllers.predicates.agent.Constants
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 trait IncomeTaxUser {
   val enrolments: Enrolments
@@ -27,9 +28,12 @@ trait IncomeTaxUser {
 
 case class IncomeTaxAgentUser(enrolments: Enrolments,
                               affinityGroup: Option[AffinityGroup],
-                              confidenceLevel: ConfidenceLevel) extends IncomeTaxUser {
+                              confidenceLevel: ConfidenceLevel,
+                              credentials: Option[Credentials]) extends IncomeTaxUser {
 
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
+
+  lazy val credId = credentials.map(credential => credential.providerId)
 
   private def getEnrolment(key: String): Option[String] = enrolments.enrolments.collectFirst {
     case Enrolment(`key`, EnrolmentIdentifier(_, value) :: _, _, _) => value
