@@ -27,7 +27,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -61,7 +61,7 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
 
   protected trait AuthenticatedActions[User <: IncomeTaxUser] {
 
-    def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => User
+    def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel, Option[Credentials]) => User
 
     def apply(action: Request[AnyContent] => User => Result): Action[AnyContent] = async(action andThen (_ andThen Future.successful))
 
@@ -75,9 +75,9 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
           case _ => EmptyPredicate
         }
 
-        authorisedFunctions.authorised(authPredicate).retrieve(allEnrolments and affinityGroup and confidenceLevel) {
-          case enrolments ~ affinity ~ confidence =>
-            implicit val user: User = userApply(enrolments, affinity, confidence)
+        authorisedFunctions.authorised(authPredicate).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
+          case enrolments ~ affinity ~ confidence ~ credentials =>
+            implicit val user: User = userApply(enrolments, affinity, confidence, credentials)
             predicate.apply(request)(user) match {
               case Right(AuthPredicateSuccess) if requireClientSelected && clientMtd.isEmpty =>
                 Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show()))

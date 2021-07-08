@@ -20,6 +20,7 @@ import auth.BaseFrontendController
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
 
 trait BaseAgentController extends BaseFrontendController {
@@ -28,7 +29,7 @@ trait BaseAgentController extends BaseFrontendController {
 
   object Authenticated extends AuthenticatedActions[IncomeTaxAgentUser] {
 
-    override def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => IncomeTaxAgentUser = IncomeTaxAgentUser.apply
+    override def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel, Option[Credentials]) => IncomeTaxAgentUser = IncomeTaxAgentUser.apply
 
     override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates, requireClientSelected = true)
 

@@ -73,14 +73,14 @@ class PaymentControllerSpec extends TestSupport
     "redirect the user to the payments page" when {
 
       "a successful payments journey is started with audit events" in new SetupTestPaymentController(Future.successful(
-        PaymentJourneyModel("id", "redirect-url"))){
+        PaymentJourneyModel("id", "redirect-url"))) {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("redirect-url")
         verifyExtendedAudit(InitiatePayNowAuditModel(testMtditidAgent, Some(testNinoAgent), Some(testSaUtrId.toString),
-          None, Some(testUserTypeAgent)))
+          Some(testCredId), Some(testUserTypeAgent)))
       }
     }
 

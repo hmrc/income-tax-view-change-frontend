@@ -18,6 +18,7 @@ package controllers.predicates.agent
 
 import controllers.predicates.IncomeTaxAgentUser
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class IncomeTaxAgentUserSpec extends UnitSpec with WithFakeApplication {
@@ -26,6 +27,7 @@ class IncomeTaxAgentUserSpec extends UnitSpec with WithFakeApplication {
 
   "IncomeTaxSAUser" should {
     val confidenceLevel = ConfidenceLevel.L50
+    val credentials = Some(Credentials("testCredId", ""))
 
     lazy val user = IncomeTaxAgentUser(
       Enrolments(Set(
@@ -35,11 +37,16 @@ class IncomeTaxAgentUserSpec extends UnitSpec with WithFakeApplication {
         )
       )),
       None,
-      confidenceLevel
+      confidenceLevel,
+      credentials
     )
 
-    s"have the expected ARN '${testArn}'" in {
+    s"have the expected ARN '$testArn'" in {
       user.agentReferenceNumber shouldBe Some(testArn)
+    }
+
+    s"have the expected credId '$testArn'" in {
+      user.credId shouldBe Some("testCredId")
     }
 
   }
