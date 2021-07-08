@@ -37,6 +37,8 @@ case class WhatYouOweChargesList(overduePaymentList: List[DocumentDetailWithDueD
       && overduePaymentList.exists(_.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
     else false
 
+  def sortedOverduePaymentLists: List[DocumentDetailWithDueDate] = overduePaymentList.sortWith((charge1, charge2) =>
+    charge1.currentDueDate.exists(date1 => charge2.currentDueDate.exists(_.isAfter(date1))))
 
   def getEarliestTaxYearAndAmountByDueDate: (Int, BigDecimal) = {
 
