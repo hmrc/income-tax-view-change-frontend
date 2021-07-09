@@ -443,6 +443,10 @@ whatYouOwe.tableHead.payment-type                                  = Payment typ
 whatYouOwe.tableHead.amount-due                                    = Amount due
 whatYouOwe.paymentOnAccount1.text							       = Payment on account 1 of 2
 whatYouOwe.paymentOnAccount2.text							       = Payment on account 2 of 2
+whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on payment on account 1 of 2
+whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on payment on account 2 of 2
+whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on remaining balance
+
 whatYouOwe.balancingCharge.text  							       = Remaining balance
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on remaining balance
 whatYouOwe.balancingCharge.interest.line2.text                     = From {0} to {1}

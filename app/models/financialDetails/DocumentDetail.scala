@@ -83,6 +83,7 @@ case class DocumentDetail(taxYear: String,
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate]) {
 	val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
+	val currentDueDate: Option[LocalDate] = if (documentDetail.latePaymentInterestAmount.isDefined) documentDetail.interestEndDate else dueDate
 }
 
 object DocumentDetail {
