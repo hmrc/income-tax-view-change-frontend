@@ -76,7 +76,7 @@
 @insideHeader = {
     @headerNav(
       navTitle = Some(Messages("agent.base.service_name")),
-      navTitleLink = None,
+      navTitleLink = Some(controllers.agent.routes.HomeController.show()),
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
 }

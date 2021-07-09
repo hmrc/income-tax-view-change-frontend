@@ -51,7 +51,7 @@
 @insideHeader = {
     @uiLayouts.header_nav(
       navTitle = Some(Messages("base.service_name")),
-      navTitleLink = None,
+      navTitleLink = Some(routes.HomeController.home()),
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
 }
