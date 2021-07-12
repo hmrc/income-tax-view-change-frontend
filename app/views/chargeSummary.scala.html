@@ -46,7 +46,10 @@
 				@if(dueDate.exists(_.isBefore(LocalDate.now)) && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
 					<span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
 				}
-				@{dueDate.map(_.toLongDate)}
+				@{
+					if(latePaymentInterestCharge) documentDetail.interestEndDate.get.toLongDate
+					else dueDate.get.toLongDate
+				}
 			</dd>
 		</div>
 		@if(latePaymentInterestCharge) {
