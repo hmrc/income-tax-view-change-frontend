@@ -111,7 +111,10 @@
 
         <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
     </td>
-    <td class="numeric">@{documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency}</td>
+    <td class="numeric">@{
+		if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
+		else documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency
+	}</td>
 </tr>
 }
 
