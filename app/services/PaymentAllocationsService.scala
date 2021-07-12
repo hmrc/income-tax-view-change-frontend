@@ -40,13 +40,14 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel =>
         incomeTaxViewChangeConnector.getPaymentAllocations(documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.get,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.get) flatMap {
-          case paymentAllocations: PaymentAllocations => createPaymentAllocationWithClearingDate(nino, paymentAllocations) map {
-            case paymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[String])] if paymentAllocationWithClearingDate.find(_._2 == None) == None =>
+          case paymentAllocations: PaymentAllocations =>
+            createPaymentAllocationWithClearingDate(nino, paymentAllocations, documentDetailsWithFinancialDetailsModel) map {
+            case paymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[String])] if paymentAllocationWithClearingDate.find(_._2 == None).isEmpty =>
               Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, paymentAllocationWithClearingDate))
             case _ =>
               Logger.error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment allocations")
               Left(PaymentAllocationError)
-          }
+            }
           case _ =>
             Logger.error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve payment allocations with document details")
             Future.successful(Left(PaymentAllocationError))
@@ -58,13 +59,19 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
   }
 
 
-  def createPaymentAllocationWithClearingDate(nino: String, paymentCharge: PaymentAllocations)
+  def createPaymentAllocationWithClearingDate(nino: String, paymentCharge: PaymentAllocations,
+                                              documentDetailsWithFinancialDetails: FinancialDetailsWithDocumentDetailsModel)
                                              (implicit hc: HeaderCarrier): Future[Seq[(PaymentAllocations, Option[String])]] = {
     Future.sequence(paymentCharge.allocations map {
       allocations =>
         incomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(nino, allocations.transactionId.get) map {
           case paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel =>
-            (paymentCharge, paymentAllocationChargesModel.paymentDetails.head.items.get.head.clearingDate)
+            (paymentCharge, paymentAllocationChargesModel.paymentDetails.find(_.chargeType == paymentCharge.allocations.head.`type`).head.items.get
+              .find(paymentAllocation =>
+                paymentAllocation.paymentLot == documentDetailsWithFinancialDetails.documentDetails.head.paymentLot
+                  && paymentAllocation.paymentLotItem == documentDetailsWithFinancialDetails.documentDetails.head.paymentLotItem
+              ).head.clearingDate
+            )
           case _ => (paymentCharge, None)
         }
     })
@@ -74,7 +81,4 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
 object PaymentAllocationsService {
 
   case object PaymentAllocationError
-
 }
-
-
