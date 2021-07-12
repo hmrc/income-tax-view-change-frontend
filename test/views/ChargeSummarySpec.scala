@@ -85,6 +85,11 @@ class ChargeSummarySpec extends ViewSpec {
 				.text() shouldBe "OVERDUE 15 May 2019"
 		}
 
+		"display the correct due date for an interest charge" in new Setup(documentDetailModel(), latePaymentInterestCharge = true) {
+			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(1) .govuk-summary-list__value")
+				.text() shouldBe "OVERDUE 15 June 2018"
+		}
+
 		"display an interest period for a late interest charge" in new Setup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
 			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(2) .govuk-summary-list__value")
 				.text() shouldBe "29 Mar 2018 to 15 Jun 2018"
