@@ -493,7 +493,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
           whatYouOwe.latePoa1Text + " " + whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-        overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
+        overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
         pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124",latePaymentCharge = true).url
@@ -763,6 +763,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
     }
-    
+
   }
 }
