@@ -8,7 +8,7 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
@@ -20,7 +20,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     enable(PaymentAllocation)
   }
 
-  val singleTestPaymentAllocationCharge: PaymentAllocationChargesModel = PaymentAllocationChargesModel(
+  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),
     List(financialDetail)
   )

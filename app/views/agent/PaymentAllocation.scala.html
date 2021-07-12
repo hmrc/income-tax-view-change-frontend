@@ -16,7 +16,7 @@
 
 @import views.html.templates.agent.MainTemplate
 @import views.html.helpers.injected.BackLink
-@import models.paymentAllocationCharges.PaymentAllocationChargesModel
+@import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
 @import java.time.LocalDate
@@ -24,7 +24,7 @@
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
 
-@(paymentAllocations: PaymentAllocationChargesModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(paymentAllocations: FinancialDetailsWithDocumentDetailsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter._
 

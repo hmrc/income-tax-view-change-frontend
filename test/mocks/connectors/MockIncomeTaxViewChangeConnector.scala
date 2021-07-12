@@ -20,7 +20,7 @@ import connectors.IncomeTaxViewChangeConnector
 import models.core.NinoResponse
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.paymentAllocationCharges.PaymentAllocationChargesResponse
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
 import models.reportDeadlines.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
@@ -95,9 +95,9 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
     ).thenReturn(Future.successful(response))
   }
 
-  def setupGetPaymentAllocationCharges(nino: String, documentId: String)(response: PaymentAllocationChargesResponse): Unit = {
+  def setupGetPaymentAllocationCharges(nino: String, documentId: String)(response: FinancialDetailsWithDocumentDetailsResponse): Unit = {
     when(
-      mockIncomeTaxViewChangeConnector.getPaymentAllocation(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(documentId))(any())
+      mockIncomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(documentId))(any())
     ).thenReturn(Future.successful(response))
   }
 }

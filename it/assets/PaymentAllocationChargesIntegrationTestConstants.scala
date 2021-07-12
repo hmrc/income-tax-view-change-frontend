@@ -17,7 +17,7 @@
 package assets
 
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
@@ -105,9 +105,9 @@ object PaymentAllocationChargesIntegrationTestConstants {
  )
 
 
- val paymentAllocationChargesModel = PaymentAllocationChargesModel(List(documentDetail), List(financialDetail))
+ val paymentAllocationChargesModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
 
- val paymentAllocationChargesModelMultiplePayments = PaymentAllocationChargesModel(List(documentDetail, documentDetail2),
+ val paymentAllocationChargesModelMultiplePayments = FinancialDetailsWithDocumentDetailsModel(List(documentDetail, documentDetail2),
   List(financialDetail, financialDetail2))
 
  val validPaymentAllocationChargesJson: JsValue = Json.parse(

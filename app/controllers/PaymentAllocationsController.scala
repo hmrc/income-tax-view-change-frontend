@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import javax.inject.{Inject, Singleton}
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,8 +50,8 @@ class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTim
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = action.async {
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        paymentAllocations.getPaymentAllocation(user.nino, documentNumber) map {
-          case paymentAllocations: PaymentAllocationChargesModel =>
+        paymentAllocations.getFinancialDataWithDocumentDetails(user.nino, documentNumber) map {
+          case paymentAllocations: FinancialDetailsWithDocumentDetailsModel =>
             Ok(views.html.paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
         }

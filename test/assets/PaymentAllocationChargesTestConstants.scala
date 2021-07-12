@@ -118,9 +118,9 @@ object PaymentAllocationChargesTestConstants {
    )))
  )
 
- val paymentAllocationChargesModel: PaymentAllocationChargesModel = PaymentAllocationChargesModel(List(documentDetail), List(financialDetail))
+ val paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
 
- val paymentAllocationChargesModelMultiplePayments: PaymentAllocationChargesModel = PaymentAllocationChargesModel(List(documentDetail, documentDetail2),
+ val paymentAllocationChargesModelMultiplePayments: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail, documentDetail2),
   List(financialDetail, financialDetail2))
 
  val validPaymentAllocationChargesJson: JsValue = Json.parse(

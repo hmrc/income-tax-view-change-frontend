@@ -18,5 +18,5 @@ package models.paymentAllocationCharges
 
 import models.paymentAllocations.PaymentAllocations
 
-case class PaymentAllocationViewModel(paymentAllocationChargeModel: PaymentAllocationChargesModel,
+case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDetailsWithDocumentDetailsModel,
                                       originalPaymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[String])])
