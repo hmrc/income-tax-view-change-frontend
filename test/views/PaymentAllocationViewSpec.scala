@@ -52,20 +52,37 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   "Payment Allocation Page" should {
-    "have a heading" in new Setup(){
-      document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+    "check that the first section information is present" when {
+      "checking the heading" in new Setup() {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+      }
+
+      "checking there is a correct date" in new Setup() {
+        document.getElementsByTag("td").eq(1).text shouldBe paymentAllocationMessages.date
+      }
+
+      "checking there is a correct Amount" in new Setup() {
+        document.getElementsByTag("td").last.text shouldBe paymentAllocationMessages.amount
+      }
+
+      "checking there is the info text" in new Setup() {
+        document.getElementById("payments-allocation-info").text shouldBe paymentAllocationMessages.info
+      }
     }
 
-    "have a the correct date" in new Setup(){
-      document.getElementsByTag("td").eq(1).text shouldBe paymentAllocationMessages.date
-    }
+    "check that the second section information is present" when {
+      "has a main heading" in {
 
-    "have a the correct Amount" in new Setup(){
-      document.getElementsByTag("td").last.text shouldBe paymentAllocationMessages.amount
-    }
+      }
 
-    "have info text" in new Setup(){
-      document.getElementById("payments-allocation-info").text shouldBe paymentAllocationMessages.info
+      "has table headers" in {
+
+      }
+
+      "has a payment within the table" in {
+
+
+      }
     }
   }
 }

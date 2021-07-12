@@ -21,7 +21,7 @@
 @import implicits.ImplicitDateFormatter
 @import views.html.helpers.backLinkHelper
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationChargesModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter._
 @main_template(
 title = messages("paymentAllocation.heading"),
@@ -38,11 +38,11 @@ scriptElem = None
         <tbody>
             <tr>
                 <td class="govuk-summary-list__key">@messages("paymentAllocation.date")</td>
-                <td>@{paymentAllocations.paymentDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
+                <td>@{paymentAllocations.paymentAllocationChargeModel.paymentDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
             </tr>
             <tr>
                 <td class="govuk-summary-list__key">@messages("paymentAllocation.amount")</td>
-                <td>@{ paymentAllocations.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
+                <td>@{ paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
             </tr>
         </tbody>
     </table>
