@@ -197,7 +197,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   }
 
   private def stubGetFinancialDetailsSuccess(): Unit = {
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
       from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
       to = currentTaxYearEnd.toString

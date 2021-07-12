@@ -21,7 +21,7 @@
 @import implicits.ImplicitDateFormatter
 @import views.html.helpers.backLinkHelper
 
-@(paymentAllocations: models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter._
 @main_template(
 title = messages("paymentAllocation.heading"),
@@ -38,18 +38,45 @@ scriptElem = None
         <tbody>
             <tr>
                 <td class="govuk-summary-list__key">@messages("paymentAllocation.date")</td>
-                <td>@{paymentAllocations.paymentDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
+                <td>@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
             </tr>
             <tr>
                 <td class="govuk-summary-list__key">@messages("paymentAllocation.amount")</td>
-                <td>@{ paymentAllocations.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
+                <td>@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
             </tr>
         </tbody>
     </table>
 </div>
 <br>
-    <div id="payments-allocation-info" class="panel panel-indent panel-border-wide">
-        <p>@messages("paymentAllocation.info")</p>
-    </div>
+<div id="payments-allocation-info" class="panel panel-indent panel-border-wide">
+    <p>@messages("paymentAllocation.info")</p>
+</div>
+<h2>@messages("paymentAllocation.tableSection.heading")</h2>
+<div>
+    <table id="payment-allocation-table">
+        <thead id="payment-allocation-table-head">
+            <tr>
+                <th>@messages("paymentAllocation.tableHead.allocation")</th>
+                <th>@messages("paymentAllocation.tableHead.allocated-date")</th>
+                <th>@messages("paymentAllocation.tableHead.amount")</th>
+            </tr>
+        </thead>
+        @paymentAllocations.originalPaymentAllocationWithClearingDate.map { paymentAllocation =>
+        <tbody>
+            <tr>
+                <td>
+					<a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation._2.get.getTaxYear(implicitDateFormatter), paymentAllocation._2.get.transactionId.get)}">
+						@messages(paymentAllocation._2.get.getPaymentAllocationTextInChargeSummary)
+					</a>
+					<br>
+					<span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation._2.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation._2.get.getTaxYear(implicitDateFormatter).toString)</span>
+				</td>
+                <td>@paymentAllocation._3.get.toLocalDate.toLongDateShort</td>
+                <td>@paymentAllocation._2.get.amount.get.toCurrencyString</td>
+            </tr>
+        </tbody>
+        }
+    </table>
+</div>
 
 }

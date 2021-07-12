@@ -54,9 +54,9 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, currentObligations)
 
         And("I stub a successful financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2017-04-06", "2018-04-05")(OK,
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 2000.00))
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2018-04-06", "2019-04-05")(OK,
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2018-04-06", "2019-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
 
         When("I call GET /report-quarterly/income-and-expenses/view")
@@ -98,9 +98,9 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, currentObligations)
 
         And("I stub a successful financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2017-04-06", "2018-04-05")(OK,
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 2000.00))
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2018-04-06", "2019-04-05")(OK,
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2018-04-06", "2019-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
 
         When("I call GET /report-quarterly/income-and-expenses/view")

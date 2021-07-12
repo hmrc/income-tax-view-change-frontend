@@ -165,7 +165,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								deadlines =currentObligations
 							)
 
-							IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+							IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 								nino = testNino,
 								from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 								to = getCurrentTaxYearEnd.toString
@@ -229,7 +229,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								deadlines =currentObligations
 							)
 
-							IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+							IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 								nino = testNino,
 								from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 								to = getCurrentTaxYearEnd.toString
@@ -296,7 +296,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								deadlines = currentObligations
 							)
 
-							IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+							IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 								nino = testNino,
 								from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 								to = getCurrentTaxYearEnd.toString
@@ -361,7 +361,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									deadlines = currentObligations
 								)
 
-								IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+								IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 									nino = testNino,
 									from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 									to = getCurrentTaxYearEnd.toString
@@ -427,7 +427,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									deadlines = currentObligations
 								)
 
-								IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+								IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 									nino = testNino,
 									from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 									to = getCurrentTaxYearEnd.toString
@@ -493,7 +493,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									deadlines = currentObligations
 								)
 
-								IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+								IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 									nino = testNino,
 									from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 									to = getCurrentTaxYearEnd.toString
@@ -561,7 +561,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								deadlines = currentObligations
 							)
 
-							IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+							IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 								nino = testNino,
 								from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 								to = getCurrentTaxYearEnd.toString
@@ -641,7 +641,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								deadlines = currentObligations
 							)
 
-							IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+							IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 								nino = testNino,
 								from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 								to = getCurrentTaxYearEnd.toString
@@ -720,7 +720,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						deadlines = currentObligations
 					)
 
-					IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+					IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
 						nino = testNino,
 						from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
 						to = getCurrentTaxYearEnd.toString

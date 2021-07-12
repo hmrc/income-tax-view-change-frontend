@@ -22,7 +22,6 @@ import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
 import assets.OutstandingChargesTestConstants._
-import assets.PaymentAllocationChargesTestConstants.{paymentAllocationChargesModel, paymentAllocationChargesModelMultiplePayments, validMultiplePaymentAllocationChargesJson, validPaymentAllocationChargesJson}
 import assets.PaymentAllocationsTestConstants._
 import assets.ReportDeadlinesTestConstants._
 import audit.AuditingService
@@ -555,16 +554,16 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val successResponseMultiplePayments = HttpResponse(status = OK, json = validMultiplePaymentAllocationChargesJson, headers = Map.empty)
 
       "receiving an OK with only one valid data item" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(successResponse)
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(successResponse)
 
-        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDataWithDocumentDetails(testNino, docNumber)
+        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testNino, docNumber)
         await(result) shouldBe paymentAllocationChargesModel
       }
 
       "receiving an OK with multiple valid data items" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(successResponseMultiplePayments)
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(successResponseMultiplePayments)
 
-        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDataWithDocumentDetails(testNino, docNumber)
+        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testNino, docNumber)
         await(result) shouldBe paymentAllocationChargesModelMultiplePayments
       }
     }
@@ -572,10 +571,10 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a NOT FOUND payment allocation error" when {
 
       "receiving a not found response" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(status = Status.NOT_FOUND,
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(HttpResponse(status = Status.NOT_FOUND,
           json = Json.toJson("Error message"), headers = Map.empty))
 
-        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDataWithDocumentDetails(testNino, docNumber)
+        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testNino, docNumber)
         await(result) shouldBe FinancialDetailsWithDocumentDetailsErrorModel(404, """"Error message"""")
       }
     }
@@ -583,18 +582,18 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return an INTERNAL_SERVER_ERROR payment allocation error" when {
 
       "receiving a 500+ response" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
           json = Json.toJson("Error message"), headers = Map.empty))
 
-        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDataWithDocumentDetails(testNino, docNumber)
+        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testNino, docNumber)
         await(result) shouldBe FinancialDetailsWithDocumentDetailsErrorModel(503, """"Error message"""")
       }
 
       "receiving a 400- response" in new Setup {
-        setupMockHttpGet(getPaymentAllocationUrl(testNino,docNumber))(HttpResponse(status = Status.BAD_REQUEST,
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(HttpResponse(status = Status.BAD_REQUEST,
           json = Json.toJson("Error message"), headers = Map.empty))
 
-        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDataWithDocumentDetails(testNino, docNumber)
+        val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testNino, docNumber)
         await(result) shouldBe FinancialDetailsWithDocumentDetailsErrorModel(400, """"Error message"""")
       }
     }

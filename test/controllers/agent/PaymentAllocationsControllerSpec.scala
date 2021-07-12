@@ -17,7 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail}
+import assets.PaymentAllocationsTestConstants._
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -140,7 +140,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
-        when(mockIncomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(any(), any())(any()))
+        when(mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(any(), any())(any()))
           .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
 
         mockPaymentAllocation(
@@ -158,7 +158,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
-        when(mockIncomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(any(), any())(any()))
+        when(mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(any(), any())(any()))
           .thenReturn(Future.successful(FinancialDetailsWithDocumentDetailsErrorModel(500, """"Error message"""")))
         mockShowInternalServerError()
 

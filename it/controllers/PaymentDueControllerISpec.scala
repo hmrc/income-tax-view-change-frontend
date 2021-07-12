@@ -52,7 +52,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a multiple financial details and outstanding charges response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().toString))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
@@ -66,7 +66,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -104,7 +104,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a multiple financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -118,7 +118,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -170,7 +170,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               )
             )
 
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
@@ -183,7 +183,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -219,7 +219,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a single financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
               s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
@@ -231,7 +231,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
 
             Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
             res should have(
@@ -249,7 +249,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a single financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
               s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
@@ -261,7 +261,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
 
             Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
             res should have(
@@ -280,7 +280,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a single financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().toString))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
@@ -292,7 +292,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
 
             Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
             res should have(
@@ -314,7 +314,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
               And("I wiremock stub a multiple financial details and outstanding charges response")
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
                 testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().toString))
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
@@ -326,7 +326,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days).detail)
 
               verifyIncomeSourceDetailsCall(testMtditid)
-              IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+              IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
               IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
               Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -364,7 +364,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
               And("I wiremock stub a multiple financial details response")
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
                 testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString))
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -376,7 +376,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
 
               verifyIncomeSourceDetailsCall(testMtditid)
-              IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+              IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
               IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
               Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -416,7 +416,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
               And("I wiremock stub a multiple financial details response")
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
                 testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString))
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -428,7 +428,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
 
               verifyIncomeSourceDetailsCall(testMtditid)
-              IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+              IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
               IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
               Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -467,7 +467,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
               And("I wiremock stub a multiple financial details response")
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
                 testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, 55.50))
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -479,7 +479,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
 
               verifyIncomeSourceDetailsCall(testMtditid)
-              IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+              IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
               IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
               Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -531,7 +531,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
                 )
               )
 
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
@@ -542,7 +542,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail)
 
               verifyIncomeSourceDetailsCall(testMtditid)
-              IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+              IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
               IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
               Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -579,7 +579,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, None))
 
             And("I wiremock stub a single financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06",
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06",
               s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
 
@@ -627,7 +627,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a single financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
               s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -696,14 +696,14 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
@@ -762,14 +762,14 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
@@ -827,7 +827,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
@@ -838,7 +838,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -892,7 +892,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
@@ -901,7 +901,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -940,7 +940,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a mixed financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears( 1).toString))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -955,7 +955,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -996,7 +996,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a mixed financial details response")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears( 1).toString))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -1011,7 +1011,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")

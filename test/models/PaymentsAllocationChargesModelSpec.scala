@@ -16,7 +16,7 @@
 
 package models
 
-import assets.PaymentAllocationChargesTestConstants.{paymentAllocationChargesModel, validPaymentAllocationChargesJson, validWrittenPaymentAllocationChargesJson, variedFinancialDetailsJson}
+import assets.PaymentAllocationsTestConstants._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
@@ -39,15 +39,15 @@ class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
     "contain only payments" in {
       val result = Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson)
 
-      result.get.paymentDetails.head.payments.length shouldBe 1
+      result.get.financialDetails.head.payments.length shouldBe 1
 
     }
 
     "contain only payment allocations with a defined message file" in {
       val result = Json.fromJson[FinancialDetailsWithDocumentDetailsModel](variedFinancialDetailsJson)
 
-      result.get.paymentDetails.head.allocation.get.payments.length shouldBe 1
-      result.get.paymentDetails(1).allocation shouldBe None
+      result.get.financialDetails.head.allocation.get.payments.length shouldBe 1
+      result.get.financialDetails(1).allocation shouldBe None
 
     }
 

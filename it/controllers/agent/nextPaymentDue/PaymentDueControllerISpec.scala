@@ -76,7 +76,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           )
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$currentTaxYearEnd - 1-04-06", s"$currentTaxYearEnd-04-05")(OK,
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$currentTaxYearEnd - 1-04-06", s"$currentTaxYearEnd-04-05")(OK,
           testValidFinancialDetailsModelJson(
             2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -104,7 +104,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         )
       )
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK,
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK,
         testValidFinancialDetailsModelJson(
           2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
 
@@ -148,7 +148,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         OK, propertyOnlyResponseWithMigrationData(previousTaxYearEnd.toInt, Some(currentTaxYearEnd.toString)))
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
       )(OK, testValidFinancialDetailsModelJson(
         2000, 2000, currentTaxYearEnd.toString, LocalDate.now().minusDays(15).toString))
 
@@ -210,7 +210,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
         ))
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
         OK, mixedJson)
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -259,7 +259,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         )
       )
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
         s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
         INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
@@ -272,7 +272,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
 
       Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
       result should have(
@@ -290,7 +290,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         )
       )
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
         s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
         INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
@@ -303,7 +303,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
 
       Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
       result should have(
@@ -321,7 +321,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         )
       )
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
         testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
         OK, testValidFinancialDetailsModelJson(
           2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
@@ -335,7 +335,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
 
       Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
       result should have(
@@ -356,7 +356,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         )
       )
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK,
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK,
         testValidFinancialDetailsModelJson(
           2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
 
@@ -398,7 +398,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         OK, propertyOnlyResponseWithMigrationData(previousTaxYearEnd.toInt, Some(currentTaxYearEnd.toString)))
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
       )(OK, testValidFinancialDetailsModelJson(
         2000, 2000, currentTaxYearEnd.toString, LocalDate.now().minusDays(15).toString))
 
@@ -458,7 +458,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
         ))
 
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
         OK, mixedJson)
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -507,7 +507,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
     And("I wiremock stub a multiple financial details response")
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
       testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString))
     IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
       "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -519,7 +519,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
 
     verifyIncomeSourceDetailsCall(testMtditid)
-    IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
     IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -559,7 +559,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
     And("I wiremock stub a multiple financial details response")
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
       testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, 55.50))
     IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
       "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -571,7 +571,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
 
     verifyIncomeSourceDetailsCall(testMtditid)
-    IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
     IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -610,7 +610,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(previousTaxYearEnd, None))
 
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06",
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06",
           s"$currentTaxYearEnd-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -655,7 +655,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
           s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -712,7 +712,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           )
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -767,7 +767,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
             financialDetailJson(currentTaxYearEnd.toString, "4444")
           ))
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
@@ -779,7 +779,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
         IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -816,7 +816,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
         )(OK, testValidFinancialDetailsModelJson(
           2000, 2000, testTaxYear.toString, LocalDate.now().plusYears( 1).toString))
 
@@ -830,7 +830,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
         IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -871,7 +871,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(previousTaxYearEnd, None))
 
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06",
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06",
           s"$currentTaxYearEnd-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -914,7 +914,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
           s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -969,7 +969,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           )
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -1022,7 +1022,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
             financialDetailJson(currentTaxYearEnd.toString, "4444")
           ))
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
@@ -1032,7 +1032,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
         IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -1069,7 +1069,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
         )(OK, testValidFinancialDetailsModelJson(
           2000, 2000, testTaxYear.toString, LocalDate.now().plusYears( 1).toString))
 
@@ -1081,7 +1081,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
         IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")

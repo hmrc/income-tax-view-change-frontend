@@ -95,7 +95,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
   }
 
-  def getPaymentAllocationUrl(nino: String, documentNumber: String): String = {
+  def getFinancialDetailsByDocumentIdUrl(nino: String, documentNumber: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
   }
 
@@ -490,9 +490,9 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     }
   }
 
-  def getFinancialDataWithDocumentDetails(nino: String, documentNumber: String)
-                                         (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
-    http.GET[HttpResponse](getPaymentAllocationUrl(nino, documentNumber))(
+  def getFinancialDetailsByDocumentId(nino: String, documentNumber: String)
+																		 (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
+    http.GET[HttpResponse](getFinancialDetailsByDocumentIdUrl(nino, documentNumber))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
@@ -501,16 +501,16 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
         case OK =>
           response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
             invalid => {
-              Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDataWithDocumentDetails] - Json validation error parsing calculation response, error $invalid")
+              Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDetailsByDocumentId] - Json validation error parsing calculation response, error $invalid")
               FinancialDetailsWithDocumentDetailsErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDataWithDocumentDetails] - Response status: ${response.status}, body: ${response.body}")
+            Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDetailsByDocumentId] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger.warn(s"[IncomeTaxViewChangeConnector][getFinancialDataWithDocumentDetails] - Response status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getFinancialDetailsByDocumentId] - Response status: ${response.status}, body: ${response.body}")
           }
           FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
       }

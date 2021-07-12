@@ -17,8 +17,7 @@
 package services
 
 import assets.BaseTestConstants._
-import assets.PaymentAllocationChargesTestConstants.paymentAllocationChargesModel
-import assets.PaymentAllocationsTestConstants.testValidPaymentAllocationsModel
+import assets.PaymentAllocationsTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationViewModel}
 import models.paymentAllocations.PaymentAllocationsError
@@ -39,14 +38,7 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
 
         val result = await(TestPaymentAllocationsService.getPaymentAllocation(testNino, docNumber))
 
-        result shouldBe Right(
-            PaymentAllocationViewModel(paymentAllocationChargesModel,
-              Seq(
-                (testValidPaymentAllocationsModel, Some("2021-01-31")),
-                (testValidPaymentAllocationsModel, Some("2021-01-31"))
-              )
-            )
-          )
+        result shouldBe Right(paymentAllocationViewModel)
       }
     }
 

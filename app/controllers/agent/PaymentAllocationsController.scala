@@ -46,7 +46,7 @@ class PaymentAllocationsController @Inject()(paymentAllocation: PaymentAllocatio
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        incomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(getClientNino(request), documentNumber) map {
+        incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(getClientNino(request), documentNumber) map {
           case paymentAllocations: FinancialDetailsWithDocumentDetailsModel =>
             Ok(paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
