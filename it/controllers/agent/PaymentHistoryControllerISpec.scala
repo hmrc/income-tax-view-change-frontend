@@ -21,7 +21,7 @@ import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, PaymentHistory, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
@@ -32,7 +32,6 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.LocalDate
 
 
@@ -41,7 +40,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   override def beforeEach(): Unit = {
     super.beforeEach()
     WireMock.reset()
-    enable(AgentViewer)
   }
 
   val clientDetails: Map[String, String] = Map(
@@ -102,30 +100,9 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
   }
 
-  s"return $NOT_FOUND" when {
-    "the payment history feature switch is disabled" in {
-      disable(AgentViewer)
-      stubAuthorisedAgentUser(authorised = true)
-
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetailsModel
-      )
-
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
-
-      val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
-
-      Then(s"A not found page is returned to the user")
-      result should have(
-        httpStatus(NOT_FOUND)
-      )
-    }
-  }
-
   s"return $OK with the enter client utr page" when {
-    "the payment history feature switch is enabled and with TxmEventsApproved FS enabled" in {
-      enable(AgentViewer)
+    "the TxmEventsApproved FS enabled" in {
+      enable(PaymentHistory)
       enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -146,8 +123,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       verifyAuditContainsDetail(PaymentHistoryRequestAuditModel(testUser).detail)
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
     }
-    "the payment history feature switch is enabled and with TxmEventsApproved FS disabled" in {
-      enable(AgentViewer)
+    "the TxmEventsApproved FS disabled" in {
+      enable(PaymentHistory)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

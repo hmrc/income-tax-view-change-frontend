@@ -17,7 +17,7 @@
 package controllers.agent
 
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, FeatureSwitching, ITSASubmissionIntegration}
+import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
@@ -42,19 +42,15 @@ class TaxYearsController @Inject()(taxYears: TaxYears,
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if(isEnabled(AgentViewer)) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdUser =>
-          withCalculationYears { years =>
-            Ok(taxYears(
-              taxYears = years,
-              backUrl = backUrl,
-              itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration)
-            ))
-          }
-        }
-      } else {
-        Future.failed(new NotFoundException("[TaxYearsController][show] - Agent viewer is disabled"))
-      }
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdUser =>
+				withCalculationYears { years =>
+					Ok(taxYears(
+						taxYears = years,
+						backUrl = backUrl,
+						itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration)
+					))
+				}
+			}
   }
 
   def backUrl: String = controllers.agent.routes.HomeController.show().url

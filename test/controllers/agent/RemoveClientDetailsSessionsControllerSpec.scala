@@ -17,7 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.views.MockConfirmClient
@@ -32,11 +32,6 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
   with MockItvcErrorHandler {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   object TestRemoveClientDetailsSessionsController extends RemoveClientDetailsSessionsController(
     mockAuthService
@@ -70,43 +65,25 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
       }
     }
 
+		"remove client details session keys and redirect to the enter client UTR page" in {
+			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockNotFound()
+			val result = await(TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient()))
 
-        val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestWithClientDetails)
+			val removedSessionKeys: List[String] =
+				List(
+					"SessionKeys.clientLastName",
+					"SessionKeys.clientFirstName",
+					"SessionKeys.clientNino",
+					"SessionKeys.clientUTR",
+					"SessionKeys.confirmedClient"
+				)
 
-        status(result) shouldBe NOT_FOUND
-      }
-    }
+			removedSessionKeys.foreach(key => result.header.headers.get(key) shouldBe None)
 
+			status(result) shouldBe SEE_OTHER
+			redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
 
-    "the agent viewer feature switch is enabled" should {
-      "remove client details session keys and redirect to the enter client UTR page" in {
-        enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result = await(TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient()))
-
-        val removedSessionKeys: List[String] =
-          List(
-            "SessionKeys.clientLastName",
-            "SessionKeys.clientFirstName",
-            "SessionKeys.clientNino",
-            "SessionKeys.clientUTR",
-            "SessionKeys.confirmedClient"
-          )
-
-        removedSessionKeys.foreach(key => result.header.headers.get(key) shouldBe None)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
-
-      }
-    }
+		}
   }
-
-
 }

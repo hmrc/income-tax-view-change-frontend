@@ -22,7 +22,7 @@ import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRet
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import assets.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
 import audit.mocks.MockAuditingService
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -44,11 +44,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
   with FeatureSwitching with MockTaxYearOverview with MockCalculationService with MockIncomeSourceDetailsService
   with MockReportDeadlinesService with MockItvcErrorHandler with MockAuditingService {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   class Setup {
 
@@ -109,125 +104,106 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
         contentType(result) shouldBe Some(HTML)
       }
     }
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockNotFound()
+		"there was a problem retrieving income source details for the user" should {
+			"throw an internal server exception" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockErrorIncomeSource()
+				mockShowInternalServerError()
 
-        val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				intercept[InternalServerException](await(controller.show(taxYear = testYear)(fakeRequestConfirmedClient())))
+					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+			}
+		}
+		"there was a problem retrieving the calculation for the user" should {
+			"return technical difficulties" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
+				mockShowInternalServerError()
 
-        status(result) shouldBe NOT_FOUND
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
-    "the agent viewer feature switch is enabled" when {
-      "there was a problem retrieving income source details for the user" should {
-        "throw an internal server exception" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockErrorIncomeSource()
-          mockShowInternalServerError()
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-          intercept[InternalServerException](await(controller.show(taxYear = testYear)(fakeRequestConfirmedClient())))
-            .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
-        }
-      }
-      "there was a problem retrieving the calculation for the user" should {
-        "return technical difficulties" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
-          mockShowInternalServerError()
+				status(result) shouldBe INTERNAL_SERVER_ERROR
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
+		"there was a problem retrieving the charges for the user" should {
+			"return technical difficulties" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+				setupMockGetFinancialDetails(testYear, "AA111111A")(testFinancialDetailsErrorModel)
+				mockShowInternalServerError()
 
-          val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
-      "there was a problem retrieving the charges for the user" should {
-        "return technical difficulties" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-          setupMockGetFinancialDetails(testYear, "AA111111A")(testFinancialDetailsErrorModel)
-          mockShowInternalServerError()
+				status(result) shouldBe INTERNAL_SERVER_ERROR
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
+		"there was a problem retrieving the updaes for the user" should {
+			"return technical difficulties" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
+				mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+					ReportDeadlinesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
+				)
+				mockShowInternalServerError()
 
-          val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
-      "there was a problem retrieving the updaes for the user" should {
-        "return technical difficulties" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-          setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
-          mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-            ReportDeadlinesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
-          )
-          mockShowInternalServerError()
+				status(result) shouldBe INTERNAL_SERVER_ERROR
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
+		"no calculation data was returned" should {
+			"show the tax year overview page" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayNoDataFound)
+				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
+				mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+					ObligationsModel(Nil)
+				)
+				mockTaxYearOverview(
+					taxYear = testYear,
+					calcOverview = None,
+					documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
+					obligations = ObligationsModel(Nil),
+					backUrl = controllers.agent.routes.TaxYearsController.show().url
+				)(HtmlFormat.empty)
 
-          val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
-      "no calculation data was returned" should {
-        "show the tax year overview page" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetCalculation("AA111111A", testYear)(CalcDisplayNoDataFound)
-          setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
-          mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-            ObligationsModel(Nil)
-          )
-          mockTaxYearOverview(
-            taxYear = testYear,
-            calcOverview = None,
-            documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
-            obligations = ObligationsModel(Nil),
-            backUrl = controllers.agent.routes.TaxYearsController.show().url
-          )(HtmlFormat.empty)
+				status(result) shouldBe OK
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
 
-          val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+		"all calls to retrieve data were successful" should {
+			"show the tax year overview page" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
+				mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+					ObligationsModel(Nil)
+				)
+				mockTaxYearOverview(
+					taxYear = testYear,
+					calcOverview = Some(CalcOverview(calculationDataSuccessModel, None)),
+					documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
+					obligations = ObligationsModel(Nil),
+					backUrl = controllers.agent.routes.TaxYearsController.show().url
+				)(HtmlFormat.empty)
 
-          status(result) shouldBe OK
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-      "all calls to retrieve data were successful" should {
-        "show the tax year overview page" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-          setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
-          mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-            ObligationsModel(Nil)
-          )
-          mockTaxYearOverview(
-            taxYear = testYear,
-            calcOverview = Some(CalcOverview(calculationDataSuccessModel, None)),
-            documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
-            obligations = ObligationsModel(Nil),
-            backUrl = controllers.agent.routes.TaxYearsController.show().url
-          )(HtmlFormat.empty)
-
-          val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
-
-          status(result) shouldBe OK
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
-    }
+				status(result) shouldBe OK
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
   }
 }

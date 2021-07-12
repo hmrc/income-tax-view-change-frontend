@@ -19,7 +19,6 @@ package controllers.agent
 import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
-import config.featureswitch.AgentViewer
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -63,7 +62,6 @@ class PaymentControllerISpec extends ComponentSpecBase {
     "redirect the user correctly" when {
 
       "the payments api responds with a 200 and valid json" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -94,7 +92,6 @@ class PaymentControllerISpec extends ComponentSpecBase {
 
     "return an internal server error" when {
       "the payments api responds with a 500" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

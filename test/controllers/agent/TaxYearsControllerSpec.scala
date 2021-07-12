@@ -43,11 +43,6 @@ class TaxYearsControllerSpec extends TestSupport
   with MockTaxYears
   with FeatureSwitching {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
-
   trait Setup {
     val controller = new TaxYearsController(taxYears, mockAuthService, mockCalculationService, mockIncomeSourceDetailsService)(
       app.injector.instanceOf[FrontendAppConfig],
@@ -89,87 +84,70 @@ class TaxYearsControllerSpec extends TestSupport
         contentType(result) shouldBe Some(HTML)
       }
     }
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockNotFound()
+		"there was a problem retrieving income source details for the user" should {
+			"throw an internal server exception" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockErrorIncomeSource()
+				mockShowInternalServerError()
 
-        val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+				intercept[InternalServerException](await(controller.show()(fakeRequestConfirmedClient())))
+					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+			}
+		}
+		"there was a problem retrieving a list of calculations and their years" should {
+			"return technical difficulties" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetAllLatestCalculations("AA111111A", (2018 to getCurrentTaxYearEnd.getYear).toList)(
+					List(
+						CalculationResponseModelWithYear(CalculationErrorModel(INTERNAL_SERVER_ERROR, "ERROR"), 2018),
+						CalculationResponseModelWithYear(CalculationErrorModel(INTERNAL_SERVER_ERROR, "ERROR"), 2019)
+					)
+				)
+				mockShowInternalServerError()
 
-        status(result) shouldBe NOT_FOUND
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
-    "the agent viewer feature switch is enabled" when {
-      "there was a problem retrieving income source details for the user" should {
-        "throw an internal server exception" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockErrorIncomeSource()
-          mockShowInternalServerError()
+				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-          intercept[InternalServerException](await(controller.show()(fakeRequestConfirmedClient())))
-            .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
-        }
-      }
-      "there was a problem retrieving a list of calculations and their years" should {
-        "return technical difficulties" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetAllLatestCalculations("AA111111A", (2018 to getCurrentTaxYearEnd.getYear).toList)(
-            List(
-              CalculationResponseModelWithYear(CalculationErrorModel(INTERNAL_SERVER_ERROR, "ERROR"), 2018),
-              CalculationResponseModelWithYear(CalculationErrorModel(INTERNAL_SERVER_ERROR, "ERROR"), 2019)
-            )
-          )
-          mockShowInternalServerError()
+				status(result) shouldBe INTERNAL_SERVER_ERROR
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
+		"all data is returned successfully" should {
+			"show the tax years page" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetAllLatestCalculations("AA111111A", (2018 to getCurrentTaxYearEnd.getYear).toList)(
+					List(
+						CalculationResponseModelWithYear(Calculation(crystallised = false), 2018),
+						CalculationResponseModelWithYear(Calculation(crystallised = true), 2019)
+					)
+				)
+				mockTaxYears(years = List(2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
 
-          val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
-      "all data is returned successfully" should {
-        "show the tax years page" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetAllLatestCalculations("AA111111A", (2018 to getCurrentTaxYearEnd.getYear).toList)(
-            List(
-              CalculationResponseModelWithYear(Calculation(crystallised = false), 2018),
-              CalculationResponseModelWithYear(Calculation(crystallised = true), 2019)
-            )
-          )
-          mockTaxYears(years = List(2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
+				status(result) shouldBe OK
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
+		"calculations were not found" should {
+			"show the tax years page" in new Setup {
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetAllLatestCalculations("AA111111A", (2018 to getCurrentTaxYearEnd.getYear).toList)(
+					List(
+						CalculationResponseModelWithYear(CalculationErrorModel(NOT_FOUND, "NOT FOUND"), 2018),
+						CalculationResponseModelWithYear(Calculation(crystallised = true), 2019)
+					)
+				)
+				mockTaxYears(years = List(2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
 
-          val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-          status(result) shouldBe OK
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
-      "calculations were not found" should {
-        "show the tax years page" in new Setup {
-          enable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetAllLatestCalculations("AA111111A", (2018 to getCurrentTaxYearEnd.getYear).toList)(
-            List(
-              CalculationResponseModelWithYear(CalculationErrorModel(NOT_FOUND, "NOT FOUND"), 2018),
-              CalculationResponseModelWithYear(Calculation(crystallised = true), 2019)
-            )
-          )
-          mockTaxYears(years = List(2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
-
-          val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
-
-          status(result) shouldBe OK
-          contentType(result) shouldBe Some(HTML)
-        }
-      }
-    }
+				status(result) shouldBe OK
+				contentType(result) shouldBe Some(HTML)
+			}
+		}
   }
 
 }

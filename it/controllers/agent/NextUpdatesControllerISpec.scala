@@ -18,7 +18,7 @@ package controllers.agent
 import assets.BaseIntegrationTestConstants._
 import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -35,11 +35,6 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
@@ -85,116 +80,96 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   "Calling the NextUpdatesController" when {
-    "the Agent viewer Feature is enabled" when {
-      "the user is unauthorised" in {
-        enable(AgentViewer)
+		"the user is unauthorised" in {
 
-        stubAuthorisedAgentUser(authorised = false)
+			stubAuthorisedAgentUser(authorised = false)
 
-        val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithoutConfirmation)
+			val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithoutConfirmation)
 
-        Then("the page redirects to clients UTR page")
-        res should have(
-          httpStatus(SEE_OTHER)
-          //          pageTitle("What is your client’s Unique Taxpayer Reference?") //need to add this check when page title is fixed
-        )
-      }
-      "the user does not have confirmed client" in {
-        enable(AgentViewer)
+			Then("the page redirects to clients UTR page")
+			res should have(
+				httpStatus(SEE_OTHER)
+				//          pageTitle("What is your client’s Unique Taxpayer Reference?") //need to add this check when page title is fixed
+			)
+		}
+		"the user does not have confirmed client" in {
 
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetails
-        )
+			stubAuthorisedAgentUser(authorised = true)
+			IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+				status = OK,
+				response = incomeSourceDetails
+			)
 
-        val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithoutConfirmation)
+			val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithoutConfirmation)
 
-        Then("the page redirects to clients UTR page")
-        res should have(
-          httpStatus(SEE_OTHER)
+			Then("the page redirects to clients UTR page")
+			res should have(
+				httpStatus(SEE_OTHER)
 //          pageTitle("What is your client’s Unique Taxpayer Reference?") //need to add this check when page title is fixed
-        )
-      }
+			)
+		}
 
-      "the user has obligations" in {
-        enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
+		"the user has obligations" in {
+			stubAuthorisedAgentUser(authorised = true)
 
-        val currentObligations: ObligationsModel = ObligationsModel(Seq(
-          ReportDeadlinesModel(
-            identification = "testId",
-            obligations = List(
-              ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
-            ))
-        ))
+			val currentObligations: ObligationsModel = ObligationsModel(Seq(
+				ReportDeadlinesModel(
+					identification = "testId",
+					obligations = List(
+						ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+					))
+			))
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetails
-        )
+			IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+				status = OK,
+				response = incomeSourceDetails
+			)
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
-          nino = testNino,
-          deadlines = currentObligations
-        )
+			IncomeTaxViewChangeStub.stubGetReportDeadlines(
+				nino = testNino,
+				deadlines = currentObligations
+			)
 
-        val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+			val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+			verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyReportDeadlinesCall(testNino)
+			verifyReportDeadlinesCall(testNino)
 
-        Then("the next update view displays the correct title")
-        res should have(
-          httpStatus(OK),
-          pageTitle("Next updates - Business Tax account - GOV.UK")
-        )
+			Then("the next update view displays the correct title")
+			res should have(
+				httpStatus(OK),
+				pageTitle("Next updates - Business Tax account - GOV.UK")
+			)
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-      }
+			verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+			verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+		}
 
-      "the user has no obligations" in {
-        enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetails
-        )
+		"the user has no obligations" in {
+			stubAuthorisedAgentUser(authorised = true)
+			IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+				status = OK,
+				response = incomeSourceDetails
+			)
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
-          nino = testNino,
-          deadlines = ObligationsModel(Seq())
-        )
+			IncomeTaxViewChangeStub.stubGetReportDeadlines(
+				nino = testNino,
+				deadlines = ObligationsModel(Seq())
+			)
 
-        val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
+			val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+			verifyIncomeSourceDetailsCall(testMtditid)
 
-        IncomeTaxViewChangeStub.verifyGetReportDeadlines(testNino)
+			IncomeTaxViewChangeStub.verifyGetReportDeadlines(testNino)
 
-        Then("then Internal server error is returned")
-        res should have(
-          httpStatus(INTERNAL_SERVER_ERROR)
-        )
+			Then("then Internal server error is returned")
+			res should have(
+				httpStatus(INTERNAL_SERVER_ERROR)
+			)
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-      }
-    }
-    "the Agent viewer Feature is disabled" when {
-      "the user is trying to access next updates page when AgentViewer is disabled" in {
-        disable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-
-        val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
-
-        Then(s"A not found page is returned to the user")
-        res should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
+			verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+		}
   }
 }

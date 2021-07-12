@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{AgentViewer, ChargeHistory, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -65,35 +65,31 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   def showChargeSummary(taxYear: Int, chargeId: String): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-        if (isEnabled(AgentViewer)) {
-            financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
-              case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == chargeId) =>
-                val backLocation = request.session.get(SessionKeys.chargeSummaryBackPage)
+				financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
+					case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == chargeId) =>
+						val backLocation = request.session.get(SessionKeys.chargeSummaryBackPage)
 
-                val docDateDetail: DocumentDetailWithDueDate = success.findDocumentDetailByIdWithDueDate(chargeId).get
-                getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
-                  if (isEnabled(TxmEventsApproved)) {
-                    auditingService.extendedAudit(ChargeSummaryAudit(
-                      mtdItUser = mtdItUser,
-                      docDateDetail = docDateDetail,
-                      agentReferenceNumber = user.agentReferenceNumber
-                    ))
-                  }
-                }
+						val docDateDetail: DocumentDetailWithDueDate = success.findDocumentDetailByIdWithDueDate(chargeId).get
+						getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
+							if (isEnabled(TxmEventsApproved)) {
+								auditingService.extendedAudit(ChargeSummaryAudit(
+									mtdItUser = mtdItUser,
+									docDateDetail = docDateDetail,
+									agentReferenceNumber = user.agentReferenceNumber
+								))
+							}
+						}
 
-                getChargeHistory(chargeId).map { chargeHistoryOpt =>
-                  Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear))
-                }
-              case _: FinancialDetailsModel =>
-                Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
-                Future.successful(Redirect(controllers.agent.routes.HomeController.show()))
-              case _ =>
-                Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
-                Future.successful(itvcErrorHandler.showInternalServerError())
-            }
-        } else {
-          Future.failed(new NotFoundException("[HomeController][home] - Agent viewer is disabled"))
-        }
+						getChargeHistory(chargeId).map { chargeHistoryOpt =>
+							Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear))
+						}
+					case _: FinancialDetailsModel =>
+						Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
+						Future.successful(Redirect(controllers.agent.routes.HomeController.show()))
+					case _ =>
+						Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
+						Future.successful(itvcErrorHandler.showInternalServerError())
+				}
     }
   }
 

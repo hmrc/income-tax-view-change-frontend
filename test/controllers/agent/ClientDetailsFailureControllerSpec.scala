@@ -17,7 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.views.MockClientRelationshipFailure
@@ -36,7 +36,6 @@ class ClientDetailsFailureControllerSpec extends TestSupport
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(AgentViewer)
   }
 
   object TestClientRelationshipFailureController extends ClientRelationshipFailureController(
@@ -84,29 +83,15 @@ class ClientDetailsFailureControllerSpec extends TestSupport
       }
     }
 
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        mockNotFound()
+		"return OK and display the client relationship failure page" in {
+			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+			mockClientRelationshipFailure(HtmlFormat.empty)
 
-        val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
+			val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
 
-        status(result) shouldBe NOT_FOUND
-      }
-    }
-
-    "the agent viewer feature switch is enabled" should {
-      "return OK and display the client relationship failure page" in {
-        enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        mockClientRelationshipFailure(HtmlFormat.empty)
-
-        val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
+			status(result) shouldBe OK
+			contentType(result) shouldBe Some(HTML)
+		}
   }
 
 }

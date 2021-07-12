@@ -63,10 +63,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 	}
 	val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
 
-	override def beforeEach(): Unit = {
-		super.beforeEach()
-		disable(AgentViewer)
-	}
 	implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val testArn: String = "1"
@@ -118,19 +114,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 				)
 			}
 		}
-		s"return $NOT_FOUND" when {
-			"the agent viewer feature switch is disabled" in {
-				stubAuthorisedAgentUser(authorised = true)
-
-				val result: WSResponse = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
-
-				Then(s"A not found page is returned to the user")
-				result should have(
-					httpStatus(NOT_FOUND),
-					pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-				)
-			}
-		}
 		s"return $SEE_OTHER" when {
 			"the agent does not have client details in session" in {
 				stubAuthorisedAgentUser(authorised = true)
@@ -161,7 +144,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 				"retrieving the client's charges was successful" should {
 					"display the page with the next upcoming payment and charge" when {
 						"there are payments upcoming and nothing is overdue with TxmEventsApproved FS enabled" in {
-							enable(AgentViewer)
 
 							stubAuthorisedAgentUser(authorised = true)
 
@@ -226,7 +208,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 						"there are payments upcoming and nothing is overdue with TxmEventsApproved FS disabled" in {
-							enable(AgentViewer)
 
 							stubAuthorisedAgentUser(authorised = true)
 
@@ -293,7 +274,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					}
 					"display the page with no upcoming payment" when {
 						"there are no upcoming payments for the client with TxmEventsApproved FS enabled" in {
-							enable(AgentViewer)
 							enable(TxmEventsApproved)
 
 							stubAuthorisedAgentUser(authorised = true)
@@ -359,7 +339,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						}
 						"display the page with no upcoming payment with TxmEventsApproved FS disabled" when {
 							"there are no upcoming payments for the client" in {
-								enable(AgentViewer)
 								disable(TxmEventsApproved)
 
 								stubAuthorisedAgentUser(authorised = true)
@@ -426,7 +405,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						}
 						"display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS enabled" when {
 							"there is a single payment overdue and a single obligation overdue" in {
-								enable(AgentViewer)
 								enable(TxmEventsApproved)
 
 								stubAuthorisedAgentUser(authorised = true)
@@ -493,7 +471,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						}
 						"display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS disabled" when {
 							"there is a single payment overdue and a single obligation overdue" in {
-								enable(AgentViewer)
 								disable(TxmEventsApproved)
 
 								stubAuthorisedAgentUser(authorised = true)
@@ -561,7 +538,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					}
 					"display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS enabled" when {
 						"there is more than one payment overdue and more than one obligation overdue" in {
-							enable(AgentViewer)
 							enable(TxmEventsApproved)
 
 							stubAuthorisedAgentUser(authorised = true)
@@ -642,7 +618,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					}
 					"display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS disabled" when {
 						"there is more than one payment overdue and more than one obligation overdue" in {
-							enable(AgentViewer)
 							disable(TxmEventsApproved)
 
 							stubAuthorisedAgentUser(authorised = true)
@@ -723,7 +698,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					}
 				}
 				"retrieving the client's charges was unsuccessful" in {
-					enable(AgentViewer)
 					enable(TxmEventsApproved)
 
 					stubAuthorisedAgentUser(authorised = true)
@@ -767,7 +741,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 				}
 			}
 			"retrieving the client's obligations was unsuccessful" in {
-				enable(AgentViewer)
 
 				stubAuthorisedAgentUser(authorised = true)
 
@@ -787,7 +760,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 			}
 		}
 		"retrieving the client's income sources was unsuccessful" in {
-			enable(AgentViewer)
 
 			stubAuthorisedAgentUser(authorised = true)
 

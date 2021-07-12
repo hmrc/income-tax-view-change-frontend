@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
@@ -40,7 +40,6 @@ class UTRErrorController @Inject()(utrError: UTRError,
 
   def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
-    if (isEnabled(AgentViewer)) {
       val clientUTR: Option[String] = request.session.get(SessionKeys.clientUTR)
       clientUTR match {
         case Some(clientUtr) =>
@@ -50,22 +49,12 @@ class UTRErrorController @Inject()(utrError: UTRError,
           )))
         case None => Future.successful(Redirect(routes.EnterClientsUTRController.show()))
       }
-    } else {
-      Future.failed(new NotFoundException("[UTRErrorPageController][show] - Agent viewer is disabled"))
-    }
   }
 
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
-    if (isEnabled(AgentViewer)) {
       Future.successful(
         Redirect(routes.EnterClientsUTRController.show().url).removingFromSession(SessionKeys.clientUTR)
       )
-    } else {
-      Future.failed(new NotFoundException("[UTRErrorPageController][submit] - Agent viewer is disabled"))
-    }
   }
-
-
-
 }

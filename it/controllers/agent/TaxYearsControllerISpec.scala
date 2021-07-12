@@ -37,7 +37,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(AgentViewer)
     disable(ITSASubmissionIntegration)
   }
 
@@ -112,19 +111,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         )
       }
     }
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
-
-        Then(s"A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
     s"return $SEE_OTHER" when {
       "the agent does not have client details in session" in {
         stubAuthorisedAgentUser(authorised = true)
@@ -152,7 +138,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
   s"GET ${routes.TaxYearsController.show().url}" should {
     "return the tax years page" when {
       "all calls were successful and returned data and the submission integration feature switch is enabled" in {
-        enable(AgentViewer)
         enable(ITSASubmissionIntegration)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -193,7 +178,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
       }
       "all calls were successful and returned data and the submission integration feature switch is disabled" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -232,7 +216,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     }
     "return a technical difficulties page to the user" when {
       "there was a problem retrieving the client's income sources" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -248,7 +231,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         )
       }
       "there was a problem retrieving the calculation list for a year" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -271,7 +253,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         )
       }
       "there was a problem retrieving a calculation for a year" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

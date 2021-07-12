@@ -18,7 +18,7 @@ package controllers.agent
 import assets.BaseIntegrationTestConstants._
 import assets.BusinessDetailsIntegrationTestConstants.testMtdItId
 import assets.IncomeSourceIntegrationTestConstants._
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
@@ -26,11 +26,6 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   s"GET ${controllers.agent.routes.EnterClientsUTRController.show().url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
@@ -59,32 +54,16 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
+    s"return $OK with the enter client utr page" in {
+			stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
+			val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
-        Then(s"A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
-    s"return $OK with the enter client utr page" when {
-      "the agent viewer feature switch is enabled" in {
-        enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
-
-        Then("The enter client's utr page is returned to the user")
-        result should have(
-          httpStatus(OK),
-          pageTitle("What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
-        )
-      }
+			Then("The enter client's utr page is returned to the user")
+			result should have(
+				httpStatus(OK),
+				pageTitle("What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
+			)
     }
   }
 
@@ -115,22 +94,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(None)
-
-        Then(s"A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
     s"return $BAD_REQUEST" when {
       "no utr is submitted" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(None)
@@ -142,7 +107,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "an empty utr string is submitted" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(""))
@@ -154,7 +118,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "a utr containing non-digits is submitted" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some("abc"))
@@ -166,7 +129,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "a utr which has less than 10 digits is submitted" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some("123456789"))
@@ -178,7 +140,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
       "a utr which has more than 10 digits is submitted" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some("12345678901"))
@@ -193,7 +154,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
     s"redirect ($SEE_OTHER) to the next page" when {
       "the utr submitted is valid" in {
         val validUTR: String = "1234567890"
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
@@ -222,7 +182,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "the client details could not be found" in {
         val validUTR: String = "1234567890"
 
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = NOT_FOUND,
@@ -241,7 +200,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "the business details could not be found" in {
         val validUTR: String = "1234567890"
 
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
@@ -270,7 +228,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "there was an unexpected response retrieving the client details" in {
         val validUTR: String = "1234567890"
 
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = INTERNAL_SERVER_ERROR,
@@ -288,7 +245,6 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       "there was an unexpected response retrieving the business details" in {
         val validUTR: String = "1234567890"
 
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,

@@ -17,7 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -34,11 +34,6 @@ class ConfirmClientUTRControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
   with MockItvcErrorHandler {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   object TestConfirmClientUTRController extends ConfirmClientUTRController(
     confirmClient,
@@ -107,29 +102,15 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 			}
 		}
 
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockNotFound()
+		"return OK and display confirm Client details page" in {
+			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+			mockConfirmClient(HtmlFormat.empty)
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
+			val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
-        status(result) shouldBe NOT_FOUND
-      }
-    }
-
-    "the agent viewer feature switch is enabled" should {
-      "return OK and display confirm Client details page" in {
-        enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockConfirmClient(HtmlFormat.empty)
-
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
-
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
-      }
-    }
+			status(result) shouldBe OK
+			contentType(result) shouldBe Some(HTML)
+		}
   }
 
   "submit" when {
@@ -178,32 +159,17 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       }
     }
 
-    "the agent viewer feature switch is disabled" should {
-      "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockNotFound()
+		lazy val request = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
+		"redirect to Home page and add confirmedClient: true flag to session" in {
+			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        status(result) shouldBe NOT_FOUND
-      }
-    }
+			val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
-    "the agent viewer feature switch is enabled" should {
-
-      lazy val request = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
-
-      "redirect to Home page and add confirmedClient: true flag to session" in {
-        enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
-        result.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
-      }
-    }
+			status(result) shouldBe SEE_OTHER
+			redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
+			result.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
+		}
   }
 
 }

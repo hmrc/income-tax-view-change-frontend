@@ -1,7 +1,7 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import play.api.http.Status._
@@ -11,7 +11,6 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(AgentViewer)
   }
 
   val clientUTR = Map(
@@ -47,23 +46,8 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
       }
     }
 
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
-
-        Then("A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
-
     s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" when {
-      "the agent viewer feature switch is enabled and the client's UTR is not in session" in {
-        enable(AgentViewer)
+      "the client's UTR is not in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
@@ -77,8 +61,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
     }
 
     s"return $OK with the UTR Error page" when {
-      "the agent viewer feature switch is enabled and the client's UTR is in session" in {
-        enable(AgentViewer)
+      "the client's UTR is in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError(clientUTR)
@@ -121,33 +104,16 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
       }
     }
 
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
+    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" in {
+			stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
+			val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
 
-        Then("A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
-
-    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" when {
-      "the agent viewer feature switch is enabled" in {
-        enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
-
-        Then(s"The user is redirected to ${controllers.agent.routes.EnterClientsUTRController.show().url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
-        )
-      }
+			Then(s"The user is redirected to ${controllers.agent.routes.EnterClientsUTRController.show().url}")
+			result should have(
+				httpStatus(SEE_OTHER),
+				redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+			)
     }
   }
 

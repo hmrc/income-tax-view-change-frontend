@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -46,24 +46,19 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.In
 
   def showIncomeSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (isEnabled(AgentViewer)) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
-            case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+				calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
+					case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
-            case CalcDisplayNoDataFound =>
-              Logger.warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
-              Future.successful(itvcErrorHandler.showInternalServerError())
+					case CalcDisplayNoDataFound =>
+						Logger.warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
+						Future.successful(itvcErrorHandler.showInternalServerError())
 
-            case CalcDisplayError =>
-              Logger.error(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
-        }
-      }
-      else {
-        Future.failed(new NotFoundException("[IncomeSummaryController][showIncomeSummary] - Agent viewer is disabled"))
-      }
+					case CalcDisplayError =>
+						Logger.error(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
+						Future.successful(itvcErrorHandler.showInternalServerError())
+				}
+			}
   }
 
   def backUrl(taxYear: Int): String = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url

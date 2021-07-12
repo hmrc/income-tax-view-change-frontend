@@ -19,7 +19,7 @@ package controllers.agent
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.messages.IncomeSummaryMessages.{agentTitle, incomeSummaryAgentHeading}
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks._
@@ -108,21 +108,6 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         )
       }
     }
-    s"return $NOT_FOUND" when {
-
-      "the agent viewer feature switch is disabled" in {
-        disable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        Then(s"A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
     s"return $SEE_OTHER" when {
       "the agent does not have client details in session" in {
         stubAuthorisedAgentUser(authorised = true)
@@ -149,7 +134,6 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "feature switch AgentViewer is enabled" should {
       "return the correct income summary page" in {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
@@ -168,7 +152,6 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         )
 
         When(s"I call GET ${routes.IncomeSummaryController.showIncomeSummary(getCurrentTaxYearEnd.getYear).url}")
-        enable(AgentViewer)
         val res = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         res should have(

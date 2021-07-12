@@ -19,7 +19,7 @@ package controllers.agent.nextPaymentDue
 import audit.AuditingService
 import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -67,28 +67,24 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           mtdItUser =>
-            if (isEnabled(AgentViewer)) {
-              if (isEnabled(TxmEventsApproved)) {
-                auditingService.extendedAudit(WhatYouOweRequestAuditModel(mtdItUser))
-              }
+						if (isEnabled(TxmEventsApproved)) {
+							auditingService.extendedAudit(WhatYouOweRequestAuditModel(mtdItUser))
+						}
 
-              paymentDueService.getWhatYouOweChargesList()(implicitly, mtdItUser).map {
-                whatYouOweChargesList => {
-                  if (isEnabled(TxmEventsApproved)) {
-                    auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
-                  }
+						paymentDueService.getWhatYouOweChargesList()(implicitly, mtdItUser).map {
+							whatYouOweChargesList => {
+								if (isEnabled(TxmEventsApproved)) {
+									auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
+								}
 
-                  Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
-                  ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
-                }
-              } recover {
-                case ex: Exception =>
-                  Logger.error(s"Error received while getting agent what you page details: ${ex.getMessage}")
-                  itvcErrorHandler.showInternalServerError()
-              }
-            } else {
-              Future.failed(new NotFoundException("[NextPaymentDueController][show] - Agent viewer is disabled"))
-            }
+								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
+								).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+							}
+						} recover {
+							case ex: Exception =>
+								Logger.error(s"Error received while getting agent what you page details: ${ex.getMessage}")
+								itvcErrorHandler.showInternalServerError()
+						}
         }
   }
 

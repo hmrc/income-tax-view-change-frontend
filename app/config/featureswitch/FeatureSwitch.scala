@@ -28,7 +28,6 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     ITSASubmissionIntegration,
-    AgentViewer,
     NextUpdates,
     TaxYearOverviewUpdate,
     PaymentHistory,
@@ -51,12 +50,6 @@ object FeatureSwitch {
 case object ITSASubmissionIntegration extends FeatureSwitch {
   override val name = s"$prefix.enable-itsa-submission-integration"
   override val displayText = "ITSA Submission Integration"
-}
-
-
-case object AgentViewer extends FeatureSwitch {
-  override val name = s"$prefix.enable-agent-viewer"
-  override val displayText = "Enable Agent Viewer"
 }
 
 case object NextUpdates extends FeatureSwitch {

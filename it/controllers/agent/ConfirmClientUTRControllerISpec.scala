@@ -1,18 +1,13 @@
 
 package controllers.agent
 
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.{FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
 class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   val clientDetails = Map(
     SessionKeys.clientFirstName -> "Test",
@@ -52,7 +47,6 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
 
     s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" when {
       "the client's name and UTR are not in session" in {
-        enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR()
@@ -65,33 +59,16 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       }
     }
 
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
+    s"return $OK with the confirm client utr page" in {
+			stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetails)
+			val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetails)
 
-        Then(s"A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
-    }
-
-    s"return $OK with the confirm client utr page" when {
-      "the agent viewer feature switch is enabled" in {
-        enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetails)
-
-        Then("The confirm client's utr page is returned to the user")
-        result should have(
-          httpStatus(OK),
-          pageTitle("Confirm your client’s details - Your client’s Income Tax details - GOV.UK")
-        )
-      }
+			Then("The confirm client's utr page is returned to the user")
+			result should have(
+				httpStatus(OK),
+				pageTitle("Confirm your client’s details - Your client’s Income Tax details - GOV.UK")
+			)
     }
   }
 
@@ -124,34 +101,16 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       }
     }
 
-    s"return $NOT_FOUND" when {
-      "the agent viewer feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
+    s"redirect ($SEE_OTHER) to the next page" in {
+			stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetails)
+			val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetails)
 
-        Then(s"A not found page is returned to the user")
-        result should have(
-          httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
-        )
-      }
+			Then("The user is redirected to the next page")
+			result should have(
+				httpStatus(SEE_OTHER),
+				redirectURI(controllers.agent.routes.HomeController.show().url)
+			)
     }
-
-    s"redirect ($SEE_OTHER) to the next page" when {
-      "the agent viewer feature switch is enabled" in {
-        enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetails)
-
-        Then("The user is redirected to the next page")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.HomeController.show().url)
-        )
-      }
-    }
-
   }
 }

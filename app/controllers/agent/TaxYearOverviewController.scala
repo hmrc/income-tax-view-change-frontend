@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -58,35 +58,31 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      if (isEnabled(AgentViewer)) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          if (isEnabled(TxmEventsApproved)) {
-            auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(mtdItUser, user.agentReferenceNumber))
-          }
-          withCalculation(getClientNino(request), taxYear) { calculationOpt =>
-            withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
-              withObligationsModel(taxYear) { obligations =>
-                calculationOpt.map(calculation =>
-                  if (isEnabled(TxmEventsApproved)) {
-                    auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-                      mtdItUser, user.agentReferenceNumber, calculation,
-                      documentDetailsWithDueDates, obligations))
-                  }
-                )
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+				if (isEnabled(TxmEventsApproved)) {
+					auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(mtdItUser, user.agentReferenceNumber))
+				}
+				withCalculation(getClientNino(request), taxYear) { calculationOpt =>
+					withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
+						withObligationsModel(taxYear) { obligations =>
+							calculationOpt.map(calculation =>
+								if (isEnabled(TxmEventsApproved)) {
+									auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
+										mtdItUser, user.agentReferenceNumber, calculation,
+										documentDetailsWithDueDates, obligations))
+								}
+							)
 
-                Future.successful(Ok(view(
-                  taxYear,
-                  calculationOpt.map(calc => CalcOverview(calc, None)),
-                  documentDetailsWithDueDates = documentDetailsWithDueDates,
-                  obligations = obligations
-                )(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
-              }
-            }
-          }
-        }
-      } else {
-        Future.failed(new NotFoundException("[TaxYearOverviewController][show] - Agent viewer is disabled"))
-      }
+							Future.successful(Ok(view(
+								taxYear,
+								calculationOpt.map(calc => CalcOverview(calc, None)),
+								documentDetailsWithDueDates = documentDetailsWithDueDates,
+								obligations = obligations
+							)(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
+						}
+					}
+				}
+			}
   }
 
   def backUrl(): String = {

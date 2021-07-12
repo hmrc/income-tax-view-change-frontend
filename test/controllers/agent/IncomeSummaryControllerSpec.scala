@@ -18,7 +18,7 @@ package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -37,11 +37,6 @@ import scala.concurrent.ExecutionContext
 
 class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with FeatureSwitching
   with MockIncomeSummary with MockCalculationService with MockIncomeSourceDetailsService with MockItvcErrorHandler {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(AgentViewer)
-  }
 
   class Setup {
     val testYear: Int = 2020
@@ -68,7 +63,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
     "AgentViewer feature switch is enabled" when {
       "given a tax year which can be found in ETMP" should {
         "return Status OK (200) with html content and right title" in new Setup {
-          enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
           setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
@@ -83,7 +77,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       }
       "there was a problem retrieving income source details for the user" should {
         "throw an internal server exception" in new Setup {
-          enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockErrorIncomeSource()
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
@@ -97,7 +90,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 
       "there is a downstream error" should {
         "return Status Internal Server Error (500)" in new Setup {
-          enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
@@ -109,21 +101,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
         }
       }
     }
-
-    "feature switch AgentViewer is disabled" when {
-      "given a tax year which can be found in ETMP" should {
-        "return Status NotFound (404)" in new Setup {
-          disable(AgentViewer)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockNotFound()
-
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
-
-          status(result) shouldBe Status.NOT_FOUND
-        }
-      }
-    }
-
   }
 }
 
