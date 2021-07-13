@@ -17,21 +17,38 @@
 package views
 
 import assets.FinancialDetailsTestConstants._
-import models.financialDetails.DocumentDetail
+import models.financialDetails.{DocumentDetail, Payment, PaymentsWithChargeType}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import java.time.LocalDate
 
+import java.time.LocalDate
 import models.chargeHistory.ChargeHistoryModel
+import org.scalatest.Assertion
 import views.html.chargeSummary
 
 class ChargeSummarySpec extends ViewSpec {
 
-	class Setup(documentDetail: DocumentDetail, dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)), chargeHistory: List[ChargeHistoryModel] = List(), latePaymentInterestCharge: Boolean = false) {
-		val view: Html = chargeSummary(documentDetail, dueDate, mockImplicitDateFormatter, "testBackURL", chargeHistory, chargeHistoryEnabled = true, latePaymentInterestCharge = latePaymentInterestCharge)
+	class Setup(documentDetail: DocumentDetail,
+							dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+							chargeHistory: List[ChargeHistoryModel] = List(),
+							paymentAllocations: List[PaymentsWithChargeType] = List(),
+							chargeHistoryEnabled: Boolean = true,
+							paymentAllocationEnabled: Boolean = false,
+							latePaymentInterestCharge: Boolean = false) {
+		val view: Html = chargeSummary(documentDetail, dueDate, mockImplicitDateFormatter, "testBackURL",
+			chargeHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
 		val document: Document = Jsoup.parse(view.toString())
+
+		def verifyPaymentHistoryContent(rows: String*): Assertion = {
+			document select Selectors.table text() shouldBe
+				s"""
+					 |Date Description Amount
+					 |${rows.mkString("\n")}
+					 |""".stripMargin.trim.linesIterator.mkString(" ")
+		}
+
 	}
 
 	object Messages {
@@ -171,7 +188,8 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.balancingChargeInterestCreated
 		}
 
-		"display the charge creation item when history is found" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(amendedChargeHistoryModel)) {
+		"display the charge creation item when history is found and allocations are disabled" in new Setup(documentDetailModel(outstandingAmount = Some(0)),
+			chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock[PaymentsWithChargeType])) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
 			document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountCreated(1)
@@ -208,6 +226,73 @@ class ChargeSummarySpec extends ViewSpec {
 		"display the correct message for a customer requested change for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0),documentDescription = Some("TRM Amend Charge")), chargeHistory = List(customerRequestChargeHistoryModel)) {
 			document.select("tbody tr").size() shouldBe 2
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeRequest
+		}
+
+		"show payment allocations in history table with Charge creation in the first row" when {
+
+			"allocations enabled but list is empty" when {
+				"chargeHistory enabled" in new Setup(documentDetailModel(), paymentAllocations = Nil,
+					chargeHistoryEnabled = true, paymentAllocationEnabled = true) {
+					verifyPaymentHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
+				}
+
+				"chargeHistory disabled" in new Setup(documentDetailModel(), paymentAllocations = Nil,
+					chargeHistoryEnabled = false, paymentAllocationEnabled = true) {
+					verifyPaymentHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
+				}
+			}
+
+			"allocations are enabled and present in the list" when {
+				val typePOA1 = "SA Payment on Account 1"
+				val typePOA2 = "SA Payment on Account 2"
+				val typeBalCharge = "SA Balancing Charge"
+
+				def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
+					PaymentsWithChargeType(
+						payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
+							lot = Some("lot"), lotItem = Some("lotItem"), date = Some(date), transactionId = None)),
+						mainType = Some(mainType), chargeType = Some(chargeType))
+
+				val paymentAllocations = List(
+					paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0),
+					paymentsForCharge(typePOA1, "NIC4 Scotland", "2018-03-31", 1600.0),
+
+					paymentsForCharge(typePOA2, "ITSA Wales", "2018-04-01", 2400.0),
+					paymentsForCharge(typePOA2, "NIC4-GB", "2018-04-15", 2500.0),
+
+					paymentsForCharge(typeBalCharge, "ITSA England & NI", "2019-12-10", 3400.0),
+					paymentsForCharge(typeBalCharge, "NIC4-NI", "2019-12-11", 3500.0),
+					paymentsForCharge(typeBalCharge, "NIC2 Wales", "2019-12-12", 3600.0),
+					paymentsForCharge(typeBalCharge, "CGT", "2019-12-13", 3700.0),
+					paymentsForCharge(typeBalCharge, "SL", "2019-12-14", 3800.0),
+					paymentsForCharge(typeBalCharge, "Voluntary NIC2-GB", "2019-12-15", 3900.0),
+				)
+
+				val expectedHistoryTableRows = Seq(
+					"29 Mar 2018 Payment on account 1 of 2 created £1,400.00",
+					"30 Mar 2018 Income Tax for payment on account 1 of 2 £1,500.00",
+					"31 Mar 2018 Class 4 National Insurance for payment on account 1 of 2 £1,600.00",
+					"1 Apr 2018 Income Tax for payment on account 2 of 2 £2,400.00",
+					"15 Apr 2018 Class 4 National Insurance for payment on account 2 of 2 £2,500.00",
+					"10 Dec 2019 Income Tax for remaining balance £3,400.00",
+					"11 Dec 2019 Class 4 National Insurance for remaining balance £3,500.00",
+					"12 Dec 2019 Class 2 National Insurance for remaining balance £3,600.00",
+					"13 Dec 2019 Capital Gains Tax for remaining balance £3,700.00",
+					"14 Dec 2019 Student Loans for remaining balance £3,800.00",
+					"15 Dec 2019 Voluntary Class 2 National Insurance for remaining balance £3,900.00"
+				)
+
+				"chargeHistory enabled" in new Setup(documentDetailModel(), paymentAllocations = paymentAllocations,
+					chargeHistoryEnabled = true, paymentAllocationEnabled = true) {
+					verifyPaymentHistoryContent(expectedHistoryTableRows: _*)
+				}
+
+				"chargeHistory disabled" in new Setup(documentDetailModel(), paymentAllocations = paymentAllocations,
+					chargeHistoryEnabled = false, paymentAllocationEnabled = true) {
+					verifyPaymentHistoryContent(expectedHistoryTableRows: _*)
+				}
+			}
+
 		}
 	}
 }

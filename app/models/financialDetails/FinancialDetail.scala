@@ -33,16 +33,18 @@ case class FinancialDetail(taxYear: String,
 
   val payments: Seq[Payment] = items match {
     case Some(subItems) => subItems.map { subItem =>
-      Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, method = subItem.paymentMethod, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate, transactionId = subItem.transactionId)
+      Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, method = subItem.paymentMethod,
+        lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate, transactionId = subItem.transactionId)
     }.filter(_.reference.isDefined)
     case None => Seq.empty[Payment]
   }
 
-  val allocation: Seq[Payment] = items match {
+  lazy val allocation: Seq[Payment] = items match {
     case Some(subItems) => subItems
       .collect {
         case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
-          Payment(reference = subItem.paymentReference, amount = subItem.amount, method = subItem.paymentMethod, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate, transactionId = subItem.transactionId)
+          Payment(reference = subItem.paymentReference, amount = subItem.amount, method = subItem.paymentMethod,
+            lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate, transactionId = subItem.transactionId)
       }
     case None => Seq.empty[Payment]
   }

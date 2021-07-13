@@ -87,7 +87,7 @@
 		</div>
 	}
 
-	@if(chargeHistoryEnabled){
+	@if(chargeHistoryEnabled || paymentAllocationEnabled){
 		<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
 
 		<table>
@@ -137,7 +137,7 @@
 					@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
 					<tr>
 						<td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
-						<td><a href="@controllers.routes.PaymentAllocationsController.viewPaymentAllocation("payment.transactionId.get")">@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))</a></td>
+						<td>@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))</td>
 						<td class="numeric">@payment.amount.map(_.abs.toCurrency)</td>
 					</tr>
 					}
