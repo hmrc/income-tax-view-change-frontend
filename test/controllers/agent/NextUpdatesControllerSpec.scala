@@ -33,17 +33,20 @@ import play.api.test.Helpers._
 import services.ReportDeadlinesService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import java.time.LocalDate
 
+import java.time.LocalDate
 import assets.BaseTestConstants
+import mocks.views.MockNextUpdates
+import play.twirl.api.HtmlFormat
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockItvcErrorHandler
-  with MockIncomeSourceDetailsService with MockReportDeadlinesService with FeatureSwitching {
+  with MockIncomeSourceDetailsService with MockNextUpdates with MockReportDeadlinesService with FeatureSwitching {
 
   trait Setup {
     val controller = new NextUpdatesController(
+      agentNextUpdates,
       mockIncomeSourceDetailsService,
       mockReportDeadlinesService,
       mockAuthService
@@ -55,14 +58,16 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
       mockItvcErrorHandler)
   }
 
+  val obligationsModel = ObligationsModel(Seq(
+    ReportDeadlinesModel(BaseTestConstants.testSelfEmploymentId, List(ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001"))),
+    ReportDeadlinesModel(BaseTestConstants.testPropertyIncomeId, List(ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS")))
+  ))
+
   val date: LocalDate = LocalDate.now
 
   def mockObligations: OngoingStubbing[Future[ReportDeadlinesResponseModel]] = {
     when(mockReportDeadlinesService.getReportDeadlines(matches(false))(any(), any()))
-      .thenReturn(Future.successful(ObligationsModel(Seq(
-        ReportDeadlinesModel(BaseTestConstants.testSelfEmploymentId, List(ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001"))),
-        ReportDeadlinesModel(BaseTestConstants.testPropertyIncomeId, List(ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS")))
-      ))))
+      .thenReturn(Future.successful(obligationsModel))
   }
 
   def mockNoObligations: OngoingStubbing[Future[ReportDeadlinesResponseModel]] = {
@@ -109,6 +114,7 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockObligations
+        mockAgentNextUpdates(obligationsModel, controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.getNextUpdates()(fakeRequestConfirmedClient())
 

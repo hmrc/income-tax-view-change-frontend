@@ -139,7 +139,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 			Then("the next update view displays the correct title")
 			res should have(
 				httpStatus(OK),
-				pageTitle("Next updates - Business Tax account - GOV.UK")
+				pageTitle("Next updates - Your client’s Income Tax details - GOV.UK")
 			)
 
 			verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
