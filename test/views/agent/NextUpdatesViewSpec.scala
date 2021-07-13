@@ -27,19 +27,21 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.contentAsString
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
+import views.html.agent.NextUpdates
 
 class NextUpdatesViewSpec extends TestSupport {
 
 	lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+	val agentNextUpdates: NextUpdates = app.injector.instanceOf[NextUpdates]
 
 	class Setup(currentObligations: ObligationsModel) {
-		val html: HtmlFormat.Appendable = views.html.agent.nextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL")(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-		val pageDocument: Document = Jsoup.parse(contentAsString(views.html.agent.nextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL"))(defaultTimeout))
+		val html: HtmlFormat.Appendable = agentNextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL")(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+		val pageDocument: Document = Jsoup.parse(contentAsString(agentNextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL"))(defaultTimeout))
 	}
 
 	object obligationsMessages {
 		val heading: String = "Next updates"
-		val title: String = s"$heading - Business Tax account - GOV.UK"
+		val title: String = s"$heading - Your client’s Income Tax details - GOV.UK"
 		val summary: String = "What are the update types?"
 		val summaryQuarterly: String = "Quarterly updates"
 		val summaryAnnual: String = "Annual updates"

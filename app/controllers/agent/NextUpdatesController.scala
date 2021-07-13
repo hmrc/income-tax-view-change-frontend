@@ -22,19 +22,18 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.reportDeadlines.ObligationsModel
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, ReportDeadlinesService}
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class NextUpdatesController @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
+class NextUpdatesController @Inject()(val agentNextUpdates: views.html.agent.NextUpdates,
+                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                       val reportDeadlinesService: ReportDeadlinesService,
                                       val authorisedFunctions: FrontendAuthorisedFunctions)
                                      (implicit val appConfig: FrontendAppConfig,
@@ -47,7 +46,7 @@ class NextUpdatesController @Inject()(val incomeSourceDetailsService: IncomeSour
 
   private def view(obligationsModel: ObligationsModel, backUrl: String)
                   (implicit request: Request[_], user: MtdItUser[_]): Html = {
-    views.html.agent.nextUpdates(
+    agentNextUpdates(
       currentObligations = obligationsModel,
       implicitDateFormatter = dateFormatter,
       backUrl = backUrl
