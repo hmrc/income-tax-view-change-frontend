@@ -29,8 +29,7 @@ case class FinancialDetail(taxYear: String,
                            clearedAmount: Option[BigDecimal] = None,
                            chargeType: Option[String] = None,
                            items: Option[Seq[SubItem]]
-                          )
-{
+                          ) {
 
   val payments: Seq[Payment] = items match {
     case Some(subItems) => subItems.map { subItem =>
@@ -39,9 +38,15 @@ case class FinancialDetail(taxYear: String,
     case None => Seq.empty[Payment]
   }
 
+  val allocation: Seq[Payment] = items match {
+    case Some(subItems) => subItems
+      .collect {
+        case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
+          Payment(reference = subItem.paymentReference, amount = subItem.amount, method = subItem.paymentMethod, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate, transactionId = subItem.transactionId)
+      }
+    case None => Seq.empty[Payment]
+  }
 }
-
-
 
 
 object FinancialDetail {
