@@ -99,13 +99,12 @@
     <td>
         @if(isOverduePayment){<span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
         <br>
-        @if(isChargeTypeHyperlinked && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined &&
-        documentDetailWithDueDate.documentDetail.interestOutstandingAmount.isEmpty) {
+        @if(isChargeTypeHyperlinked && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
         <a id="@rowId2-late-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId, latePaymentCharge: Boolean)">
             } else {
             <a id="@rowId2-late-link2" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">
             }
-        @messages(if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined && documentDetailWithDueDate.documentDetail.interestOutstandingAmount.isEmpty) s"whatYouOwe.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}"
+        @messages(if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) s"whatYouOwe.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}"
             else s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
         @if(isChargeTypeHyperlinked){</a>}
 
