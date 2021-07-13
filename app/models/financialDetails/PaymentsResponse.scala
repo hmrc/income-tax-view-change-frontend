@@ -43,9 +43,9 @@ case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[Strin
     case (Some("SA Payment on Account 2"), Some(chargeType)) if chargeType.contains("NIC4") => Some("chargeSummary.paymentAllocations.poa2.nic4")
     case (Some("SA Payment on Account 2"), Some(chargeType)) if chargeType.contains("ITSA") => Some("chargeSummary.paymentAllocations.poa2.incomeTax")
     case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("ITSA") => Some("chargeSummary.paymentAllocations.bcd.incomeTax")
-    case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("NIC2") => Some("chargeSummary.paymentAllocations.bcd.nic2")
-    case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("Voluntary Class 2 NIC") => Some("chargeSummary.paymentAllocations.bcd.vcnic2")
     case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("NIC4") => Some("chargeSummary.paymentAllocations.bcd.nic4")
+    case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("Voluntary NIC2") => Some("chargeSummary.paymentAllocations.bcd.vcnic2")
+    case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("NIC2") => Some("chargeSummary.paymentAllocations.bcd.nic2")
     case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("SL") => Some("chargeSummary.paymentAllocations.bcd.sl")
     case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("CGT") => Some("chargeSummary.paymentAllocations.bcd.cgt")
     case _ => None
