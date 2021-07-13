@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{ChargeHistory, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -28,7 +28,7 @@ import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
@@ -45,8 +45,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         financialDetailsService: FinancialDetailsService,
                                         auditingService: AuditingService,
                                         itvcErrorHandler: ItvcErrorHandler,
-																				incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector
-																			 )
+																				incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
@@ -54,8 +53,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         dateFormatter: ImplicitDateFormatterImpl)
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  private def view(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backLocation: Option[String], taxYear: Int, chargesHistory: List[ChargeHistoryModel], chargeHistoryEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit request: Request[_]) = {
-    chargeSummary(documentDetail, dueDate, dateFormatter, backUrl(backLocation, taxYear), chargesHistory, chargeHistoryEnabled, latePaymentInterestCharge)
+  private def view(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backLocation: Option[String], taxYear: Int, chargesHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit request: Request[_]) = {
+    chargeSummary(documentDetail, dueDate, dateFormatter, backUrl(backLocation, taxYear), chargesHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
   }
 
   def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
@@ -65,6 +64,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
             case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == id) =>
 							val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
 							val documentDetail = success.documentDetails.find(_.transactionId == id).get
+							val financialDetails = success.financialDetails.filter(_.transactionId.contains(id))
+							val paymentAllocations = financialDetails.map(fd => PaymentsWithChargeType(fd.allocation, fd.mainType, fd.chargeType))
 							if (isEnabled(ChargeHistory) && !isLatePaymentCharge) {
 								incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
 									case chargeHistory: ChargesHistoryModel =>
@@ -81,8 +82,10 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 											dueDate = success.getDueDateFor(documentDetail),
 											backLocation = backLocation,
 											taxYear = taxYear,
+											paymentAllocations = paymentAllocations,
 											chargesHistory = chargeHistory.chargeHistoryDetails.getOrElse(List()),
 											chargeHistoryEnabled = true,
+											paymentAllocationEnabled = isEnabled(PaymentAllocation),
 											latePaymentInterestCharge = isLatePaymentCharge
 										))
 									case _ =>
@@ -103,8 +106,10 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 									dueDate = success.getDueDateFor(documentDetail),
 									backLocation = backLocation,
 									taxYear = taxYear,
+									paymentAllocations = paymentAllocations,
 									chargesHistory = List(),
 									chargeHistoryEnabled = false,
+									paymentAllocationEnabled = false,
 									latePaymentInterestCharge = isLatePaymentCharge
 								)))
 							}

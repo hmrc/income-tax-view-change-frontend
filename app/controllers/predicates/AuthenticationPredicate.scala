@@ -85,7 +85,7 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 				Logger.info("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
 				Redirect(controllers.routes.SignInController.signIn())
 			case s =>
-				Logger.error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n${s.getMessage}\n\n$s\n")
+				Logger.error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n${s.getMessage}\n\n$s\n", s)
 				itvcErrorHandler.showInternalServerError
 		}
 	}
