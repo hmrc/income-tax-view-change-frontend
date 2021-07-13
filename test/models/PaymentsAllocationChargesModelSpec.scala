@@ -17,7 +17,7 @@
 package models
 
 import assets.PaymentAllocationChargesTestConstants.{paymentAllocationChargesModel, validPaymentAllocationChargesJson, validWrittenPaymentAllocationChargesJson}
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
@@ -27,24 +27,24 @@ class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
   "PaymentDetails" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[PaymentAllocationChargesModel](paymentAllocationChargesModel) shouldBe validWrittenPaymentAllocationChargesJson
+      Json.toJson[FinancialDetailsWithDocumentDetailsModel](paymentAllocationChargesModel) shouldBe validWrittenPaymentAllocationChargesJson
     }
 
     "find a correspond document detail amount to financial detail" in {
-      val result = Json.fromJson[PaymentAllocationChargesModel](validPaymentAllocationChargesJson)
+      val result = Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson)
 
       result.get.filteredDocumentDetails.head.originalAmount shouldBe Some(-300)
     }
 
     "contain only payments" in {
-      val result = Json.fromJson[PaymentAllocationChargesModel](validPaymentAllocationChargesJson)
+      val result = Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson)
 
       result.get.paymentDetails.head.payments.length shouldBe 1
 
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[PaymentAllocationChargesModel](validPaymentAllocationChargesJson) shouldBe JsSuccess(paymentAllocationChargesModel)
+      Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson) shouldBe JsSuccess(paymentAllocationChargesModel)
     }
   }
 }

@@ -21,12 +21,12 @@ import models.{readNullable, readNullableList}
 import play.api.libs.json.{Json, OWrites, Reads, __}
 import play.api.libs.functional.syntax._
 
-sealed trait PaymentAllocationChargesResponse
+sealed trait FinancialDetailsWithDocumentDetailsResponse
 
 
 
-case class PaymentAllocationChargesModel(documentDetails: List[DocumentDetail],
-                                         paymentDetails: List[FinancialDetail]) extends PaymentAllocationChargesResponse {
+case class FinancialDetailsWithDocumentDetailsModel(documentDetails: List[DocumentDetail],
+                                                    paymentDetails: List[FinancialDetail]) extends FinancialDetailsWithDocumentDetailsResponse {
 
   val filteredDocumentDetails = documentDetails.filter(_.paymentLot == paymentDetails.head.items.get.head.paymentLot)
     .filter(_.paymentLotItem == paymentDetails.head.items.get.head.paymentLotItem)
@@ -34,13 +34,13 @@ case class PaymentAllocationChargesModel(documentDetails: List[DocumentDetail],
 }
 
 
-object PaymentAllocationChargesModel {
-  implicit val writes: OWrites[PaymentAllocationChargesModel] = Json.writes[PaymentAllocationChargesModel]
+object FinancialDetailsWithDocumentDetailsModel {
+  implicit val writes: OWrites[FinancialDetailsWithDocumentDetailsModel] = Json.writes[FinancialDetailsWithDocumentDetailsModel]
 
-  implicit val reads: Reads[PaymentAllocationChargesModel] = (
+  implicit val reads: Reads[FinancialDetailsWithDocumentDetailsModel] = (
     readNullableList[DocumentDetail](__ \ "documentDetails") and
       readNullableList[FinancialDetail](__ \ "financialDetails")
-    ) (PaymentAllocationChargesModel.apply _)
+    ) (FinancialDetailsWithDocumentDetailsModel.apply _)
 }
 
-case class PaymentAllocationChargesErrorModel(code: Int, message: String) extends PaymentAllocationChargesResponse
+case class FinancialDetailsWithDocumentDetailsErrorModel(code: Int, message: String) extends FinancialDetailsWithDocumentDetailsResponse

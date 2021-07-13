@@ -26,7 +26,7 @@ import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.outstandingCharges._
-import models.paymentAllocationCharges.{PaymentAllocationChargesErrorModel, PaymentAllocationChargesModel, PaymentAllocationChargesResponse}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
@@ -490,8 +490,8 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     }
   }
 
-  def getPaymentAllocation(nino: String, documentNumber: String)
-                          (implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationChargesResponse] = {
+  def getFinancialDataWithDocumentDetails(nino: String, documentNumber: String)
+                                         (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
     http.GET[HttpResponse](getPaymentAllocationUrl(nino, documentNumber))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
@@ -499,22 +499,21 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     ) map { response =>
       response.status match {
         case OK =>
-          response.json.validate[PaymentAllocationChargesModel].fold(
+          response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
             invalid => {
-              Logger.error(s"[PaymentAllocationConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
-              PaymentAllocationChargesErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+              Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDataWithDocumentDetails] - Json validation error parsing calculation response, error $invalid")
+              FinancialDetailsWithDocumentDetailsErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger.error(s"[PaymentAllocationConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+            Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDataWithDocumentDetails] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger.warn(s"[PaymentAllocationConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getFinancialDataWithDocumentDetails] - Response status: ${response.status}, body: ${response.body}")
           }
-          PaymentAllocationChargesErrorModel(response.status, response.body)
+          FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
       }
     }
   }
-
 }

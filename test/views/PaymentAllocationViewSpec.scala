@@ -22,7 +22,7 @@ import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDe
 import auth.MtdItUser
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
@@ -38,12 +38,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
-  val singleTestPaymentAllocationCharge: PaymentAllocationChargesModel = PaymentAllocationChargesModel(
+  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),
     List(financialDetail)
   )
 
-  class Setup(paymentAllocationModel: PaymentAllocationChargesModel = singleTestPaymentAllocationCharge) {
+  class Setup(paymentAllocationModel: FinancialDetailsWithDocumentDetailsModel = singleTestPaymentAllocationCharge) {
     val testBackUrl: String = "/test-url"
 
     val page: Html = paymentAllocation(paymentAllocationModel, mockImplicitDateFormatter, "testBackURL")

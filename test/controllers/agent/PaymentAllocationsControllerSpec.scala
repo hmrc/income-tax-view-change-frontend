@@ -24,7 +24,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockIncomeSourceDetailsService
 import mocks.views.MockPaymentAllocation
-import models.paymentAllocationCharges.{PaymentAllocationChargesErrorModel, PaymentAllocationChargesModel}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status._
@@ -44,7 +44,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
     disable(PaymentAllocation)
   }
 
-  lazy val singleTestPaymentAllocationCharge: PaymentAllocationChargesModel = PaymentAllocationChargesModel(
+  lazy val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),
     List(financialDetail)
   )
@@ -140,7 +140,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
-        when(mockIncomeTaxViewChangeConnector.getPaymentAllocation(any(), any())(any()))
+        when(mockIncomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(any(), any())(any()))
           .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
 
         mockPaymentAllocation(
@@ -158,8 +158,8 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
-        when(mockIncomeTaxViewChangeConnector.getPaymentAllocation(any(), any())(any()))
-          .thenReturn(Future.successful(PaymentAllocationChargesErrorModel(500, """"Error message"""")))
+        when(mockIncomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(any(), any())(any()))
+          .thenReturn(Future.successful(FinancialDetailsWithDocumentDetailsErrorModel(500, """"Error message"""")))
         mockShowInternalServerError()
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient()))

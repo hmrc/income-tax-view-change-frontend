@@ -16,7 +16,7 @@
 
 package mocks.views
 
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
@@ -34,7 +34,7 @@ trait MockPaymentAllocation extends BeforeAndAfterEach with MockitoSugar {
     reset(paymentAllocation)
   }
 
-  def mockPaymentAllocation(paymentAllocations: PaymentAllocationChargesModel, backUrl: String)(response: Html): Unit = {
+  def mockPaymentAllocation(paymentAllocations: FinancialDetailsWithDocumentDetailsModel, backUrl: String)(response: Html): Unit = {
     when(paymentAllocation.apply(
       matches(paymentAllocations),
       any(),
