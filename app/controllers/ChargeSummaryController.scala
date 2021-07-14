@@ -66,10 +66,17 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
           case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == id) =>
             val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
             val documentDetail = success.documentDetails.find(_.transactionId == id).get
-            val financialDetails = success.financialDetails.filter(_.transactionId.contains(id))
-            val paymentAllocations = financialDetails collect {
-              case fd if fd.allocation.nonEmpty => PaymentsWithChargeType(fd.allocation, fd.mainType, fd.chargeType)
-            }
+            val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
+            val paymentAllocations: List[PaymentsWithChargeType] =
+              if (paymentAllocationEnabled) {
+                val financialDetails = success.financialDetails.filter(_.transactionId.contains(id))
+                financialDetails collect {
+                  case fd if fd.allocation.nonEmpty => PaymentsWithChargeType(fd.allocation, fd.mainType, fd.chargeType)
+                }
+              } else {
+                Nil
+              }
+
             if (isEnabled(ChargeHistory) && !isLatePaymentCharge) {
               incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
                 case chargeHistory: ChargesHistoryModel =>
@@ -82,7 +89,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                     paymentAllocations = paymentAllocations,
                     chargesHistory = chargeHistory.chargeHistoryDetails.getOrElse(List()),
                     chargeHistoryEnabled = true,
-                    paymentAllocationEnabled = isEnabled(PaymentAllocation),
+                    paymentAllocationEnabled = paymentAllocationEnabled,
                     latePaymentInterestCharge = isLatePaymentCharge
                   ))
                 case _ =>
@@ -99,7 +106,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                 paymentAllocations = paymentAllocations,
                 chargesHistory = List(),
                 chargeHistoryEnabled = false,
-                paymentAllocationEnabled = isEnabled(PaymentAllocation),
+                paymentAllocationEnabled = paymentAllocationEnabled,
                 latePaymentInterestCharge = isLatePaymentCharge
               )))
             }
