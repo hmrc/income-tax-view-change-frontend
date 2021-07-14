@@ -20,7 +20,7 @@ import assets.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import mocks.services.MockIncomeSourceDetailsService
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.{ChargeHistory, FeatureSwitching}
+import config.featureswitch.{ChargeHistory, PaymentAllocation, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -80,6 +80,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   val errorHeading = "Sorry, there is a problem with the service"
   val successHeading = "Tax year 6 April 2017 to 5 April 2018 Payment on account 1 of 2"
+  val paymentHistoryHeading = "Payment history"
   val lateInterestSuccessHeading = "Tax year 6 April 2017 to 5 April 2018 Late payment interest on payment on account 1 of 2"
 
   "The ChargeSummaryController" should {
@@ -98,10 +99,12 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
 				enable(ChargeHistory)
+				enable(PaymentAllocation)
 				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
       }
 
 			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
@@ -112,13 +115,25 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
 			}
 
-			"provided with a matching id with the feature switch disabled" in new Setup(financialDetailsModel(2018)) {
-				disable(ChargeHistory)
-				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled" in new Setup(financialDetailsModel(2018)) {
+        disable(ChargeHistory)
+        enable(PaymentAllocation)
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
 
-				status(result) shouldBe Status.OK
-				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-			}
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
+      }
+
+      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS disabled" in new Setup(financialDetailsModel(2018)) {
+        disable(ChargeHistory)
+        disable(PaymentAllocation)
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe ""
+      }
 
     }
 
