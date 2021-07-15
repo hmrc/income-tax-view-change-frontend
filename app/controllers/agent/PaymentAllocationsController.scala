@@ -21,7 +21,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitDateFormatterImpl
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
@@ -46,8 +46,8 @@ class PaymentAllocationsController @Inject()(paymentAllocation: PaymentAllocatio
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        incomeTaxViewChangeConnector.getPaymentAllocation(getClientNino(request), documentNumber) map {
-          case paymentAllocations: PaymentAllocationChargesModel =>
+        incomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(getClientNino(request), documentNumber) map {
+          case paymentAllocations: FinancialDetailsWithDocumentDetailsModel =>
             Ok(paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
         }

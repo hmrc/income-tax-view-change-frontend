@@ -25,7 +25,7 @@ import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.paymentAllocationCharges.{PaymentAllocationChargesErrorModel, PaymentAllocationChargesModel}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -41,7 +41,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
     super.beforeEach()
   }
 
-  val singleTestPaymentAllocationCharge: PaymentAllocationChargesModel = PaymentAllocationChargesModel(
+  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),
     List(financialDetail)
   )
@@ -71,7 +71,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Successfully retrieveing a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(any(), any())(any()))
+        when(paymentAllocation.getFinancialDataWithDocumentDetails(any(), any())(any()))
           .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
@@ -82,8 +82,8 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Failing to retrieve a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(any(), any())(any()))
-          .thenReturn(Future.successful(PaymentAllocationChargesErrorModel(500, """"Error message"""")))
+        when(paymentAllocation.getFinancialDataWithDocumentDetails(any(), any())(any()))
+          .thenReturn(Future.successful(FinancialDetailsWithDocumentDetailsErrorModel(500, """"Error message"""")))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
@@ -95,7 +95,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "trying to access payments allocation " in new Setup {
         disable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(any(), any())(any()))
+        when(paymentAllocation.getFinancialDataWithDocumentDetails(any(), any())(any()))
           .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))

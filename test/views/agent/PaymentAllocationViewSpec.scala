@@ -19,7 +19,7 @@ package views.agent
 import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.paymentAllocationCharges.PaymentAllocationChargesModel
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import testUtils.ViewSpec
 import views.html.agent.PaymentAllocation
 
@@ -41,7 +41,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
   }
 
-  val singleTestPaymentAllocationCharge: PaymentAllocationChargesModel = PaymentAllocationChargesModel(
+  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),
     List(financialDetail)
   )

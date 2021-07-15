@@ -21,7 +21,7 @@
 @import implicits.ImplicitDateFormatter
 @import views.html.helpers.backLinkHelper
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationChargesModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(paymentAllocations: models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter._
 @main_template(
 title = messages("paymentAllocation.heading"),
