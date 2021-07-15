@@ -132,19 +132,6 @@ taxYears.overdue                                               = OVERDUE
 taxYears.complete                                              = COMPLETE
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 
-## Tax Year Overview Old##
-tax-year-overview-old.heading                                       = 6 April {0} to 5 April {1}
-tax-year-overview-old.heading-secondary                             = Tax year overview
-tax-year-overview-old.status                                        = Tax year status:
-tax-year-overview-old.calculation-date                              = Calculation date:
-tax-year-overview-old.links-summary                                 = Click on each link for more detail about each section.
-tax-year-overview-old.no-links-summary                              = This page shows a summary of your tax year.
-tax-year-overview-old.income                                        = Income
-tax-year-overview-old.deductions                                    = Allowances and deductions
-tax-year-overview-old.taxable-income                                = Total income on which tax is due
-tax-year-overview-old.tax-due                                       = Income Tax and Class 4 National Insurance contributions due
-tax-year-overview-old.total-remaining                               = Total remaining due
-
 ## Tax Year Overview ##
 tax-year-overview.heading                                           = Tax year overview
 tax-year-overview.heading-secondary                                 = 6 April {0} to 5 April {1}
@@ -305,14 +292,6 @@ previous-obligations.obligation-type.crystallised               = Declaration
 previous-obligations.obligation-type.start-to-end               = {0} to {1}
 previous-obligation.obligation-type.was-due-on                  = Was due on {0}
 previous-obligations.submitted-on                               = Submitted on
-
-## Crystalisation Page ##
-crystalisation.heading                                          = Income tax bill for {0} to {1}
-crystalisation.subheading                                       = Bills
-crystalisation.dueBy                                            = You must pay by 31 January {0} to avoid penalties.
-crystalisation.warning                                          = Your payment could take up to 5 days to process. You may be fined if it is late.
-crystalisation.payNow                                           = Pay now
-
 
 ## Statuses ##
 status.received                                                 = Received

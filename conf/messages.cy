@@ -81,19 +81,6 @@ taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 
-## Tax Year Overview Page Old##
-tax-year-overview-old.heading                                   = 6 Ebrill {0} hyd at 5 Ebrill {1}
-tax-year-overview-old.heading-secondary                         = Trosolwg blwyddyn dreth
-tax-year-overview-old.status                                    = Statws y flwyddyn dreth:
-tax-year-overview-old.calculation-date                          = Dyddiad y cyfrifiad:
-tax-year-overview-old.links-summary                             = Cliciwch ar bob cysylltiad i gael rhagor o fanylion am bob adran.
-tax-year-overview-old.no-links-summary                          = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
-tax-year-overview-old.income                                    = Incwm
-tax-year-overview-old.deductions                                = Lwfansau a didyniadau
-tax-year-overview-old.taxable-income                            = Cyfanswm yr incwm y mae treth yn ddyledus ar ei gyfer
-tax-year-overview-old.tax-due                                   = Treth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 sy’n ddyledus
-tax-year-overview-old.total-remaining                           = Cyfanswm sy’n ddyledus sy’n weddill
-
 ## Tax Year Overview Page New##
 tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth
 tax-year-overview.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
@@ -252,13 +239,6 @@ previous-obligations.obligation-type.quarterly                  = Diweddariad ch
 previous-obligations.obligation-type.crystallised               = Datganiad
 previous-obligations.obligation-type.start-to-end               = {0} i {1}
 previous-obligation.obligation-type.was-due-on                  = Roedd yn ddyledus ar {0}
-
-## Crystalisation Page ##
-crystalisation.heading                                          = Blwyddyn dreth {0} i {1}
-crystalisation.subheading                                       = Biliau
-crystalisation.dueBy                                            = erbyn 31 Ionawr {0}
-crystalisation.warning                                          = Gallai eich taliad gymryd hyd at 5 diwrnod i’w brosesu. Gallwn godi dirwy arnoch os yw’n hwyr.
-crystalisation.payNow                                           = Yn eich blaen i dalu
 
 ## Statuses ##
 status.received                                                 = Wedi dod i law

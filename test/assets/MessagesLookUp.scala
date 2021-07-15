@@ -315,16 +315,6 @@ object MessagesLookUp { // scalastyle:off number.of.methods
       def owed(amount: String): String = s"Tax left to pay: $amount"
     }
 
-    object Bills {
-      val billsTitle = "Bills - Business Tax account - GOV.UK"
-      val billsHeading = "Bills"
-      val viewBills = "View your finalised bills:"
-      val billLink = s"${taxYear - 1} to $taxYear tax year"
-      val billsLinkAriaLabel = s"view bill for $billLink"
-      val noBills = "You’ve had no bills since you started reporting through software."
-      val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
-    }
-
   }
 
   // No Estimated Tax Liability Page Messages
@@ -448,22 +438,6 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val heading = "Thank you"
     val line1 = "Your feedback will help us improve this service."
     val signInLink = "Go back to sign in."
-  }
-
-  object Breadcrumbs {
-    val bta = "Business tax account"
-    val it = "Income Tax account"
-    val taxYears = "Tax years"
-    val basicItEstimate: Int => String = taxYear => s"${taxYear - 1} to $taxYear tax year"
-    val itEstimate: Int => String = taxYear => s"Tax estimate for ${taxYear - 1} - $taxYear"
-    val finalisedBill: Int => String = taxYear => s"Income tax bill for ${taxYear - 1} to $taxYear"
-    val obligations = "Report deadlines"
-    val statement = "Income Tax statement"
-    val updates = "Updates"
-    val payementsDue = "Payments due"
-    val whatYouOwe = "What you owe"
-
-    def taxYearOverview(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear"
   }
 
   //ReportDeadlines Page Messages
