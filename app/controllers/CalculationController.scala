@@ -16,8 +16,9 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import audit.AuditingService
-import audit.models.BillsAuditing.BillsAuditModel
 import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
@@ -25,9 +26,9 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import javax.inject.{Inject, Singleton}
 import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.financialTransactions.TransactionModel
 import models.reportDeadlines.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -35,10 +36,8 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.{taxYearOverview, taxYearOverviewOld}
+import views.html.taxYearOverview
 
-import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -59,46 +58,6 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
-
-  private def viewOld(
-                       taxYear: Int,
-                       calculation: Calculation,
-                       transaction: Option[TransactionModel] = None,
-                       charge: Option[DocumentDetailWithDueDate] = None
-                     )(implicit request: Request[_]): Html = {
-    taxYearOverviewOld(
-      taxYear = taxYear,
-      overview = CalcOverview(calculation, transaction),
-      transaction = transaction,
-      charge = charge,
-      dateFormatter,
-      backUrl = backUrl
-    )
-  }
-
-  private def showCalculationForYear(taxYear: Int): Action[AnyContent] = action.async {
-    implicit user =>
-      calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
-        case CalcDisplayModel(_, calcAmount, calculation, _) =>
-          auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
-          if (calculation.crystallised) {
-              financialDetailsService.getFinancialDetails(taxYear, user.nino) map {
-                case _: FinancialDetailsErrorModel =>
-                  Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve financial details model for year: $taxYear")
-                  itvcErrorHandler.showInternalServerError()
-                case financialDetailsModel: FinancialDetailsModel =>
-                  val charge = financialDetailsModel.findDocumentDetailForYearWithDueDate(taxYear)
-                  Ok(viewOld(taxYear, calculation, charge = charge))
-              }
-          } else {
-            Future.successful(Ok(viewOld(taxYear, calculation)))
-          }
-        case CalcDisplayNoDataFound | CalcDisplayError =>
-          Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve calculation for year $taxYear")
-          Future.successful(itvcErrorHandler.showInternalServerError())
-      }
-  }
-
 
   private def view(taxYear: Int,
                    calculationOverview: Option[CalcOverview] = None,
@@ -170,11 +129,7 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
   def renderTaxYearOverviewPage(taxYear: Int): Action[AnyContent] = {
     if (taxYear > 0) {
-      if (isEnabled(TaxYearOverviewUpdate)) {
         showTaxYearOverview(taxYear)
-      } else {
-        showCalculationForYear(taxYear)
-      }
     } else {
       action.async { implicit request =>
         Future.successful(BadRequest(views.html.errorPages.standardError(

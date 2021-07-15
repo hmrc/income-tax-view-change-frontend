@@ -29,7 +29,6 @@ object FeatureSwitch {
   val switches: Set[FeatureSwitch] = Set(
     ITSASubmissionIntegration,
     NextUpdates,
-    TaxYearOverviewUpdate,
     PaymentHistory,
 		IvUplift,
 		ChargeHistory,
@@ -57,11 +56,6 @@ case object NextUpdates extends FeatureSwitch {
   override val displayText = "Enable Next Updates Feature"
 }
 
-case object TaxYearOverviewUpdate extends FeatureSwitch {
-  override val name = s"$prefix.enable-tax-year-overview-update"
-  override val displayText = "Tax Year Overview Update"
-}
-
 case object PaymentHistory extends FeatureSwitch {
 	override val name = s"$prefix.enable-payment-history-page"
 	override val displayText = "Payment History"
@@ -86,3 +80,4 @@ case object TxmEventsApproved extends FeatureSwitch {
   override val name: String = s"$prefix.enable-txm-events-approved"
   override val displayText: String = "Txm Events Approved"
 }
+

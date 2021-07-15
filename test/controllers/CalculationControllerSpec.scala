@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
@@ -27,7 +29,7 @@ import audit.mocks.MockAuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import auth.MtdItUser
 import config.ItvcErrorHandler
-import config.featureswitch.{FeatureSwitching, TaxYearOverviewUpdate}
+import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
@@ -41,8 +43,6 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
-
-import java.time.LocalDate
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
@@ -72,17 +72,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disable(TaxYearOverviewUpdate)
-  }
-
 
   "The CalculationController.renderTaxYearOverviewPage(year) action" when {
 
     "TaxYearOverviewUpdate FS is enabled" should {
       "show the updated Tax Year Overview Page" in {
-        enable(TaxYearOverviewUpdate)
         mockSingleBusinessIncomeSource()
         mockCalculationSuccess()
         mockFinancialDetailsSuccess()
@@ -111,7 +105,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       s"getFinancialDetails returns a $NOT_FOUND" should {
         "show the updated Tax Year Overview Page" in {
-          enable(TaxYearOverviewUpdate)
           mockSingleBusinessIncomeSource()
           mockCalculationSuccess()
           mockFinancialDetailsNotFound()
@@ -141,7 +134,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       "getFinancialDetails returns an error" should {
         "show the internal server error page" in {
-          enable(TaxYearOverviewUpdate)
           mockSingleBusinessIncomeSource()
           mockCalculationCrystalisationSuccess()
           mockFinancialDetailsFailed()
@@ -155,7 +147,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       "getReportDeadlines returns an error" should {
         "show the internal server error page" in {
-          enable(TaxYearOverviewUpdate)
           mockSingleBusinessIncomeSource()
           mockCalculationCrystalisationSuccess()
           mockFinancialDetailsNotFound()
@@ -173,7 +164,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       "Called with an Unauthenticated User" should {
         "return redirect SEE_OTHER (303)" in {
-          enable(TaxYearOverviewUpdate)
           setupMockAuthorisationException()
 
           val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
@@ -185,7 +175,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
       "Called with an Authenticated HMRC-MTD-IT User" when {
         "provided with a negative tax year" should {
           "return Status Bad Request Error (400)" in {
-            enable(TaxYearOverviewUpdate)
             mockPropertyIncomeSource()
 
             val result = TestCalculationController.renderTaxYearOverviewPage(-testYear)(fakeRequestWithActiveSession)
@@ -196,7 +185,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "the calculation returned from the calculation service was not found" should {
           "show tax year overview page with expected content" in {
-            enable(TaxYearOverviewUpdate)
             mockSingleBusinessIncomeSource()
             mockCalculationNotFound()
             mockFinancialDetailsSuccess()
@@ -224,7 +212,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "the calculation returned from the calculation service was an error" should {
           "return the internal server error page" in {
-            enable(TaxYearOverviewUpdate)
             mockSingleBusinessIncomeSource()
             mockCalculationError()
 
@@ -236,122 +223,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
 
-    }
-
-    "TaxYearOverviewUpdate FS is disabled" should {
-      "show the old Tax Year Overview Page" in {
-        mockSingleBusinessIncomeSource()
-        mockCalculationSuccess()
-
-        val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
-        val expectedContent: String = views.html.taxYearOverviewOld(
-          testYear, calcOverview, None, None, mockImplicitDateFormatter, taxYearsBackLink).toString
-
-        val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
-        contentType(result) shouldBe Some("text/html")
-      }
-
-        "Called with an Unauthenticated User" should {
-          "return redirect SEE_OTHER (303)" in {
-            setupMockAuthorisationException()
-            val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-            status(result) shouldBe Status.SEE_OTHER
-          }
-        }
-
-        "Called with an Authenticated HMRC-MTD-IT User" when {
-          "provided with a negative tax year" should {
-            "return Status Bad Request Error (400)" in {
-              mockPropertyIncomeSource()
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(-testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-          }
-
-          "the calculation returned from the calculation service was not found" should {
-            "return the internal server error page" in {
-              mockSingleBusinessIncomeSource()
-              mockCalculationNotFound()
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-              contentType(result) shouldBe Some("text/html")
-            }
-          }
-
-          "the calculation returned from the calculation service was an error" should {
-            "return the internal server error page" in {
-              mockSingleBusinessIncomeSource()
-              mockCalculationError()
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-              contentType(result) shouldBe Some("text/html")
-            }
-          }
-
-          "the calculation returned from the calculation service is not crystallised" should {
-            "return OK (200) with the correct view" in {
-              mockSingleBusinessIncomeSource()
-              mockCalculationSuccess()
-
-              val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
-              val expectedContent: String = views.html.taxYearOverviewOld(
-                testYear, calcOverview, None, None, mockImplicitDateFormatter, taxYearsBackLink).toString
-
-              val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-              status(result) shouldBe Status.OK
-              contentAsString(result) shouldBe expectedContent
-              contentType(result) shouldBe Some("text/html")
-
-              lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
-
-              verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
-            }
-          }
-
-          "the calculation returned from the calculation service is crystallised" when {
-            "the financial details returned from the service was an error" should {
-              "return the internal server error page" in {
-                mockSingleBusinessIncomeSource()
-                mockCalculationCrystalisationSuccess()
-                mockFinancialDetailsFailed()
-
-                val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-                contentType(result) shouldBe Some("text/html")
-              }
-            }
-
-            "the financial details returned from the service is successful" should {
-              "return OK (200) with the correct view" in {
-                mockSingleBusinessIncomeSource()
-                mockCalculationCrystalisationSuccess()
-                mockFinancialDetailsSuccess()
-
-                val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
-                val expectedContent: String = views.html.taxYearOverviewOld(
-                  testYear, calcOverview, None, Some(documentDetailWithDueDateModel()), mockImplicitDateFormatter, taxYearsBackLink).toString
-
-                val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
-
-                status(result) shouldBe Status.OK
-                contentAsString(result) shouldBe expectedContent
-                contentType(result) shouldBe Some("text/html")
-              }
-            }
-          }
-        }
     }
   }
 }

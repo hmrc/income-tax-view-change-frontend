@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.{LocalDate, LocalDateTime}
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import assets.CalcDataIntegrationTestConstants._
@@ -23,7 +25,7 @@ import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.TaxYearOverviewMessages
 import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TaxYearOverviewUpdate, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
@@ -33,8 +35,6 @@ import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDead
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-
-import java.time.{LocalDate, LocalDateTime}
 
 class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -134,7 +134,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
 
     "TaxYearOverviewUpdate FS is enabled" should {
       "should show the updated Tax Year Overview page" in {
-        enable(TaxYearOverviewUpdate)
         enable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
@@ -223,7 +222,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
 
       "financial details service returns a not found" in {
-        enable(TaxYearOverviewUpdate)
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -297,7 +295,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
 
       "financial details service returns an error" in {
-        enable(TaxYearOverviewUpdate)
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -337,7 +334,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
 
       "retrieving a calculation failed" in {
-        enable(TaxYearOverviewUpdate)
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -404,7 +400,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
 
       "retrieving a calculation failed with INTERNAL_SERVER_ERROR" in {
-        enable(TaxYearOverviewUpdate)
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -467,7 +462,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
 
       "retrieving a previous obligations error" in {
-        enable(TaxYearOverviewUpdate)
         enable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
@@ -512,7 +506,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
 
       "retrieving a current obligations error" in {
-        enable(TaxYearOverviewUpdate)
         enable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
@@ -561,7 +554,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
 
     "TaxYearOverviewUpdate FS is enabled and with TxmEventsApproved FS disabled" should {
       "should show the updated Tax Year Overview page" in {
-        enable(TaxYearOverviewUpdate)
         disable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
@@ -645,7 +637,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
 
       "financial details service returns a not found" in {
-        enable(TaxYearOverviewUpdate)
         disable(TxmEventsApproved)
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -714,117 +705,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       }
     }
 
-    "TaxYearOverviewUpdate is disabled" should {
-      "show the old Tax Year Overview page" in {
-        disable(TaxYearOverviewUpdate)
-        Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-
-        And("A non crystallised calculation for 2017-18 is returned")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
-
-        Then("I check all calls expected were made")
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-
-        And("The expected result is returned")
-        res should have(
-          httpStatus(OK),
-          pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
-          elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
-          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric no-wrap]")("−£500.00"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
-        )
-      }
-
-    }
-
-      "the user is authorised with an active enrolment" when {
-        "a non-crystallised calculation is returned" in {
-          Given("Business details returns a successful response back")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-
-          And("A non crystallised calculation for 2017-18 is returned")
-          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
-
-          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
-          val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
-
-          Then("I check all calls expected were made")
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-
-          And("The expected result is returned")
-          res should have(
-            httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
-            elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
-            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
-            elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
-            elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric no-wrap]")("−£500.00"),
-            elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
-          )
-        }
-
-        "a crystallised calculation and financial transaction is returned " in {
-          Given("Business details returns a successful response back")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-
-          And("A non crystallised calculation for 2017-18 is returned")
-          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-            status = OK,
-            body = crystallisedCalculationFullJson
-          )
-
-          And("A financial transaction is returned")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(1000.00, 1000.00))
-
-          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
-          val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
-
-          Then("I check all calls expected were made")
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-          IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino)
-
-          And("The expected result is returned")
-          res should have(
-            httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
-            elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
-            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
-            elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
-            elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric no-wrap]")("−£500.00"),
-            elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
-          )
-        }
-
         "retrieving a calculation failed" in {
           Given("Business details returns a successful response back")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -878,6 +758,4 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           )
         }
       }
-    }
-
 }
