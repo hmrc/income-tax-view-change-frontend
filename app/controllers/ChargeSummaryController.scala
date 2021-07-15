@@ -67,12 +67,10 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
             val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
             val documentDetail = success.documentDetails.find(_.transactionId == id).get
             val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
+
             val paymentAllocations: List[PaymentsWithChargeType] =
               if (paymentAllocationEnabled) {
-                val financialDetails = success.financialDetails.filter(_.transactionId.contains(id))
-                financialDetails collect {
-                  case fd if fd.allocation.nonEmpty => PaymentsWithChargeType(fd.allocation, fd.mainType, fd.chargeType)
-                }
+                success.financialDetails.filter(_.transactionId.contains(id)).flatMap(_.allocation)
               } else {
                 Nil
               }
@@ -105,7 +103,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                 taxYear = taxYear,
                 paymentAllocations = paymentAllocations,
                 chargesHistory = List(),
-                chargeHistoryEnabled = false,
+                chargeHistoryEnabled = isEnabled(ChargeHistory),
                 paymentAllocationEnabled = paymentAllocationEnabled,
                 latePaymentInterestCharge = isLatePaymentCharge
               )))

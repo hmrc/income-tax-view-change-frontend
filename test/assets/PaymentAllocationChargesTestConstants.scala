@@ -85,8 +85,8 @@ object PaymentAllocationChargesTestConstants {
     dueDate = Some("2021-01-31"),
     paymentMethod = Some("paymentMethod2"),
     paymentLot = Some("paymentLot2"),
-    paymentLotItem = Some("paymentLotItem2"),
-    paymentId = Some("paymentLot2-paymentLotItem2")
+    paymentLotItem = None,
+    paymentId = None
    )))
  )
 
@@ -163,7 +163,6 @@ object PaymentAllocationChargesTestConstants {
     |                    "paymentAmount": 3000.00,
     |                    "paymentId": "paymentLot2-paymentLotItem2",
     |                    "paymentLot": "paymentLot2",
-    |                    "paymentLotItem": "paymentLotItem2",
     |                    "paymentMethod": "paymentMethod2"
     |                }
     |            ],
@@ -218,9 +217,7 @@ object PaymentAllocationChargesTestConstants {
     |                    "dueDate": "2021-01-31",
     |                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
     |                    "paymentAmount": 3000.00,
-    |                    "paymentId": "paymentLot2-paymentLotItem2",
     |                    "paymentLot": "paymentLot2",
-    |                    "paymentLotItem": "paymentLotItem2",
     |                    "paymentMethod": "paymentMethod2"
     |                }
     |            ],
@@ -287,7 +284,6 @@ object PaymentAllocationChargesTestConstants {
     |                    "paymentAmount": 3000.00,
     |                    "paymentId": "paymentLot2-paymentLotItem2",
     |                    "paymentLot": "paymentLot2",
-    |                    "paymentLotItem": "paymentLotItem2",
     |                    "paymentMethod": "paymentMethod2"
     |                }
     |            ],

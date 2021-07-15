@@ -39,7 +39,7 @@ case class FinancialDetail(taxYear: String,
     case None => Seq.empty[Payment]
   }
 
-  lazy val allocation: Seq[Payment] = items match {
+  lazy val filterAllocations: Seq[Payment] = items match {
     case Some(subItems) => subItems
       .collect {
         case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
@@ -48,6 +48,12 @@ case class FinancialDetail(taxYear: String,
       }
     case None => Seq.empty[Payment]
   }
+
+  lazy val allocation: Option[PaymentsWithChargeType] = filterAllocations match {
+    case Nil => None
+    case _ => Some(PaymentsWithChargeType(filterAllocations, mainType, chargeType))
+  }
+
 }
 
 

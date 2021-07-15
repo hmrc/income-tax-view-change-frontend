@@ -155,17 +155,38 @@ object IncomeSourceIntegrationTestConstants {
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Balancing Charge",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+				"transactionId" -> "1040000123",
+				"chargeType" -> "ITSA NI",
+				"items" -> Json.arr(
+					Json.obj("amount" -> 10000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 1",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+				"transactionId" -> "1040000123",
+				"chargeType" -> "ITSA NI",
+				"items" -> Json.arr(
+					Json.obj("amount" -> 9000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 2",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+				"transactionId" -> "1040000123",
+				"chargeType" -> "ITSA NI",
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
 			)
 		)
 	)
@@ -218,17 +239,32 @@ object IncomeSourceIntegrationTestConstants {
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Balancing Charge",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 1",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 2",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
 			)
 		)
 	)

@@ -15,7 +15,7 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import models.financialDetails.{FinancialDetail, PaymentsWithChargeType}
+@import models.financialDetails.PaymentsWithChargeType
 @import implicits.ImplicitDateFormatter
 @import models.financialDetails.DocumentDetail
 @import views.html.helpers.backLinkHelper
@@ -87,7 +87,7 @@
 		</div>
 	}
 
-	@if(chargeHistoryEnabled || paymentAllocationEnabled){
+	@if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
 		<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
 
 		<table>
@@ -101,6 +101,7 @@
 			</thead>
 
 			<tbody>
+			@if(chargeHistoryEnabled){
 				@if(!latePaymentInterestCharge) {
 					<tr>
 						<td style="white-space: nowrap;">@{
@@ -132,6 +133,7 @@
 						<td class="numeric">@{charge.totalAmount.toCurrency}</td>
 					</tr>
 				}
+			}
 
 				@if(paymentAllocationEnabled) {
 					@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
