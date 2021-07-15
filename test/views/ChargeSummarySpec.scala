@@ -30,26 +30,26 @@ import views.html.chargeSummary
 
 class ChargeSummarySpec extends ViewSpec {
 
-	class Setup(documentDetail: DocumentDetail,
-							dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
-							chargeHistory: List[ChargeHistoryModel] = List(),
-							paymentAllocations: List[PaymentsWithChargeType] = List(),
-							chargeHistoryEnabled: Boolean = true,
-							paymentAllocationEnabled: Boolean = false,
-							latePaymentInterestCharge: Boolean = false) {
-		val view: Html = chargeSummary(documentDetail, dueDate, mockImplicitDateFormatter, "testBackURL",
-			chargeHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
-		val document: Document = Jsoup.parse(view.toString())
+  class Setup(documentDetail: DocumentDetail,
+              dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+              chargeHistory: List[ChargeHistoryModel] = List(),
+              paymentAllocations: List[PaymentsWithChargeType] = List(),
+              chargeHistoryEnabled: Boolean = true,
+              paymentAllocationEnabled: Boolean = false,
+              latePaymentInterestCharge: Boolean = false) {
+    val view: Html = chargeSummary(documentDetail, dueDate, mockImplicitDateFormatter, "testBackURL",
+    chargeHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
+    val document: Document = Jsoup.parse(view.toString())
 
-		def verifyPaymentHistoryContent(rows: String*): Assertion = {
-			document select Selectors.table text() shouldBe
-				s"""
-					 |Date Description Amount
-					 |${rows.mkString("\n")}
-					 |""".stripMargin.trim.linesIterator.mkString(" ")
-		}
+    def verifyPaymentHistoryContent(rows: String*): Assertion = {
+      document select Selectors.table text() shouldBe
+        s"""
+        |Date Description Amount
+        |${rows.mkString("\n")}
+        |""".stripMargin.trim.linesIterator.mkString(" ")
+    }
 
-	}
+  }
 
 	object Messages {
 		def poaHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Payment on account $number of 2"

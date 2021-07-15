@@ -66,16 +66,16 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
           case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == id) =>
             val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
             val documentDetail = success.documentDetails.find(_.transactionId == id).get
-            val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
 
+            val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
             val paymentAllocations: List[PaymentsWithChargeType] =
               if (paymentAllocationEnabled) {
                 success.financialDetails.filter(_.transactionId.contains(id)).flatMap(_.allocation)
-              } else {
-                Nil
-              }
+              } else Nil
 
-            if (isEnabled(ChargeHistory) && !isLatePaymentCharge) {
+            val chargeHistoryEnabled = isEnabled(ChargeHistory)
+
+            if (chargeHistoryEnabled && !isLatePaymentCharge) {
               incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
                 case chargeHistory: ChargesHistoryModel =>
                   auditChargeSummary(id, success)
@@ -86,7 +86,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                     taxYear = taxYear,
                     paymentAllocations = paymentAllocations,
                     chargesHistory = chargeHistory.chargeHistoryDetails.getOrElse(List()),
-                    chargeHistoryEnabled = true,
+                    chargeHistoryEnabled = chargeHistoryEnabled,
                     paymentAllocationEnabled = paymentAllocationEnabled,
                     latePaymentInterestCharge = isLatePaymentCharge
                   ))
@@ -103,7 +103,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                 taxYear = taxYear,
                 paymentAllocations = paymentAllocations,
                 chargesHistory = List(),
-                chargeHistoryEnabled = isEnabled(ChargeHistory),
+                chargeHistoryEnabled = chargeHistoryEnabled,
                 paymentAllocationEnabled = paymentAllocationEnabled,
                 latePaymentInterestCharge = isLatePaymentCharge
               )))
