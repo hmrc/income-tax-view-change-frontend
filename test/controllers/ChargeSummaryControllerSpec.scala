@@ -117,7 +117,17 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
 			}
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled" in new Setup(financialDetailsModel(2018)) {
+      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled and allocations present" in new Setup(financialDetailsModel(2018)) {
+        disable(ChargeHistory)
+        enable(PaymentAllocation)
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
+      }
+
+      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(financialDetailsModel(2018)) {
         disable(ChargeHistory)
         enable(PaymentAllocation)
         val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))

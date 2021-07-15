@@ -326,7 +326,7 @@ object FinancialDetailsTestConstants {
   def financialDetail(taxYear: Int = 2018): FinancialDetail = FinancialDetail(
     taxYear = taxYear.toString,
     mainType = Some("SA Payment on Account 1"),
-    transactionId = Some("id1040000123"),
+    transactionId = Some(id1040000123),
     transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
@@ -340,7 +340,7 @@ object FinancialDetailsTestConstants {
           dueDate = Some(LocalDate.of(2019, 5, 15).toString),
           subItemId = Some("1"),
           amount = Some(100),
-          clearingDate = Some("clearingDate"),
+          clearingDate = Some("2019-07-23"),
           clearingReason = Some("clearingReason"),
           outgoingPaymentMethod= Some("outgoingPaymentMethod"),
           paymentReference = Some("paymentReference"),

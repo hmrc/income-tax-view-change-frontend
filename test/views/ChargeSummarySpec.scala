@@ -55,9 +55,10 @@ class ChargeSummarySpec extends ViewSpec {
 		def poaHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Payment on account $number of 2"
 		def poaInterestHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
 		def balancingChargeHeading(year: Int) =  s"Tax year 6 April ${year - 1} to 5 April $year Remaining balance"
-		def  balancingChargeInterestHeading(year: Int) =  s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
+		def balancingChargeInterestHeading(year: Int) =  s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
 		val paidToDate = "Paid to date"
 		val chargeHistoryHeading = "Payment history"
+		val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
 		def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 		def paymentOnAccountInterestCreated(number: Int) = s"Created late payment interest on payment on account $number of 2"
 		val balancingChargeCreated = "Remaining balance created"
@@ -228,19 +229,7 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeRequest
 		}
 
-		"show payment allocations in history table with Charge creation in the first row" when {
-
-			"allocations enabled but list is empty" when {
-				"chargeHistory enabled" in new Setup(documentDetailModel(), paymentAllocations = Nil,
-					chargeHistoryEnabled = true, paymentAllocationEnabled = true) {
-					verifyPaymentHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
-				}
-
-				"chargeHistory disabled" in new Setup(documentDetailModel(), paymentAllocations = Nil,
-					chargeHistoryEnabled = false, paymentAllocationEnabled = true) {
-					verifyPaymentHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
-				}
-			}
+		"show payment allocations in history table" when {
 
 			"allocations are enabled and present in the list" when {
 				val typePOA1 = "SA Payment on Account 1"
@@ -268,8 +257,7 @@ class ChargeSummarySpec extends ViewSpec {
 					paymentsForCharge(typeBalCharge, "Voluntary NIC2-GB", "2019-12-15", 3900.0),
 				)
 
-				val expectedHistoryTableRows = Seq(
-					"29 Mar 2018 Payment on account 1 of 2 created £1,400.00",
+				val expectedPaymentAllocationRows = List(
 					"30 Mar 2018 Income Tax for payment on account 1 of 2 £1,500.00",
 					"31 Mar 2018 Class 4 National Insurance for payment on account 1 of 2 £1,600.00",
 					"1 Apr 2018 Income Tax for payment on account 2 of 2 £2,400.00",
@@ -282,17 +270,32 @@ class ChargeSummarySpec extends ViewSpec {
 					"15 Dec 2019 Voluntary Class 2 National Insurance for remaining balance £3,900.00"
 				)
 
-				"chargeHistory enabled" in new Setup(documentDetailModel(), paymentAllocations = paymentAllocations,
-					chargeHistoryEnabled = true, paymentAllocationEnabled = true) {
-					verifyPaymentHistoryContent(expectedHistoryTableRows: _*)
+				"chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
+					chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+					verifyPaymentHistoryContent(Messages.historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
 				}
 
-				"chargeHistory disabled" in new Setup(documentDetailModel(), paymentAllocations = paymentAllocations,
-					chargeHistoryEnabled = false, paymentAllocationEnabled = true) {
-					verifyPaymentHistoryContent(expectedHistoryTableRows: _*)
+				"chargeHistory disabled" in new Setup(documentDetailModel(),
+					chargeHistoryEnabled = false, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+					verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
 				}
 			}
 
 		}
+
+		"hide payment allocations in history table" when {
+			"allocations enabled but list is empty" when {
+				"chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
+					chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = Nil) {
+					verifyPaymentHistoryContent(Messages.historyRowPOA1Created)
+				}
+
+				"chargeHistory disabled, not showing the table at all" in new Setup(documentDetailModel(),
+					chargeHistoryEnabled = false, paymentAllocationEnabled = true, paymentAllocations = Nil) {
+					document select Selectors.table shouldBe empty
+				}
+			}
+		}
+
 	}
 }
