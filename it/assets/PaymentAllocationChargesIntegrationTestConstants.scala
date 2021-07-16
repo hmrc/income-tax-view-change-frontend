@@ -57,7 +57,7 @@ object PaymentAllocationChargesIntegrationTestConstants {
   originalAmount = Some(BigDecimal(500.00)),
   outstandingAmount = Some(BigDecimal("500.00")),
   clearedAmount = Some(BigDecimal(500.00)),
-  chargeType = Some("POA1"),
+  chargeType = Some("NIC4 Wales"),
   mainType = Some("4920"),
   items = Some(Seq(
    SubItem(
@@ -85,7 +85,7 @@ object PaymentAllocationChargesIntegrationTestConstants {
   originalAmount = Some(BigDecimal(500.00)),
   outstandingAmount = Some(BigDecimal("200.00")),
   clearedAmount = Some(BigDecimal(500.00)),
-  chargeType = Some("POA1"),
+  chargeType = Some("NIC4 Wales"),
   mainType = Some("4920"),
   items = Some(Seq(
    SubItem(
@@ -126,7 +126,7 @@ object PaymentAllocationChargesIntegrationTestConstants {
     |    ],
     |    "financialDetails": [
     |        {
-    |            "chargeType": "POA1",
+    |            "chargeType": "NIC4 Wales",
     |            "clearedAmount": 500.0,
     |            "items": [
     |                {
