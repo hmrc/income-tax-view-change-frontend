@@ -44,7 +44,7 @@ class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
     }
 
     "contain only payment allocations" in {
-      val result = Json.fromJson[PaymentAllocationChargesModel](validPaymentAllocationChargesJson)
+      val result = Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson)
 
       result.get.paymentDetails.head.allocation.get.payments.length shouldBe 1
 
