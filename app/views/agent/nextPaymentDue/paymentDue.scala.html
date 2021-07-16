@@ -152,14 +152,35 @@
                         @tableHead("over-due-payments-table-head")
                         <tbody>
                             @for((charge, index) <- chargesList.overduePaymentList.zipWithIndex) {
-                                @tableRow(s"over-due-type-$index", charge, isOverduePayment = true)
+                            @tableRow(s"over-due-type-$index", charge, isOverduePayment = true)
+                            @if(charge.documentDetail.interestOutstandingAmount.isDefined && charge.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0) {
+                            <tr id=@(s"overdue-charge-interest-$index")>
+                                <td></td>
+                                <td>
+                                    @messages("agent.paymentDue.over-due.interest.line1")
+                                    <div>
+                                        @messages(s"agent.paymentDue.over-due.interest.line2",
+                                        charge.documentDetail.interestFromDate.get.toLongDateShort,
+                                        charge.documentDetail.interestEndDate.get.toLongDateShort,
+                                        charge.documentDetail.interestRate.get
+                                        )
+                                    </div>
+                                </td>
+                                <td class="numeric">@{charge.documentDetail.interestOutstandingAmount.get.toCurrency}</td>
+                            </tr>
+                            }
                             }
                         </tbody>
                     </table>
                 </div>
-                <p>
-                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {@paymentTypesDropdown}
-                </p>
+            @if(chargesList.interestOnOverdueCharges) {
+            <p id="interest-rate-para" class="interest-rate">
+                @Html(messages("agent.paymentDue.over-due.interest-rate",
+                <a id="interest-rate-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates" target="_blank">
+                    {messages("agent.paymentDue.over-due.interest-rate.link")}</a>
+                ))
+            </p>
+            }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty){
                 <h3 id="due-in-thirty-days-payments-heading" class="heading-large">@messages("agent.paymentDue.due-in-thirty-days-payments")</h3>
@@ -196,8 +217,8 @@
                     }
                 </p>
             }
-        </div>
 
+        </div>
             <div>
                 @paymentDaysNoteParagraph
                 @creditOnAccountNotePanel

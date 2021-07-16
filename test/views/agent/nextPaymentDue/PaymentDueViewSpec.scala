@@ -18,7 +18,7 @@ package views.agent.nextPaymentDue
 
 import java.time.LocalDate
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import assets.FinancialDetailsTestConstants.{testFinancialDetailsModel, testFinancialDetailsModelWithChargesOfSameType}
+import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.MessagesLookUp.{AgentPaymentDue, WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
@@ -218,6 +218,22 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString
+  )
+
+  def financialDetailsOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): FinancialDetailsModel = testFinancialDetailsModelWithInterest(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+    outstandingAmount = List(Some(50), Some(75)),
+    taxYear = LocalDate.now().getYear.toString,
+    interestOutstandingAmount = List(Some(42.50), Some(24.05)),
+    interestRate = List(Some(2.6), Some(6.2)),
+    latePaymentInterestAmount = latePaymentInterest
+  )
+
+  def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = financialDetailsOverdueInterestData(latePaymentInterest).getAllDocumentDetailsWithDueDates,
+    outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -571,6 +587,38 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
+
+
+      "have accruing interest displayed below each overdue POA" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
+        def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"overdue-charge-interest-$index")
+        overduePaymentsInterestTableRow("0").select("td").get(1).text() shouldBe whatYouOwe.interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
+        overduePaymentsInterestTableRow("0").select("td").last().text() shouldBe "£42.50"
+
+        overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe whatYouOwe.interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
+        overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
+      }
+
+      "only show interest for POA when there is no late Payment Interest" in new Setup(whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
+        def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"overdue-charge-interest-$index")
+        overduePaymentsInterestTableRow("0") shouldBe null
+
+        overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe whatYouOwe.interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
+        overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
+      }
+
+      "have a paragraph explaining interest rates" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
+        pageDocument.getElementsByClass("interest-rate").get(0).text() shouldBe whatYouOwe.interestRatesPara
+
+        val expectedUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
+        pageDocument.getElementById("interest-rate-link").attr("href") shouldBe expectedUrl
+      }
+
+      "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(whatYouOweDataWithOverdueData) {
+        pageDocument.select(".interest-rate").first() shouldBe null
+      }
+
+
+
       s"have due within thirty days header and data with hyperlink and no overdue tag" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(4)
         dueWithInThirtyDaysHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate

@@ -74,6 +74,13 @@ agent.paymentDue.future-payments                                         = Futur
 agent.paymentDue.due-in-thirty-days-payments                             = Due within 30 days
 agent.paymentDue.payment-type.taxYear                                    = Tax year {0} to {1}
 
+agent.paymentDue.over-due.interest.line1                                 = Interest for late payment
+agent.paymentDue.over-due.interest.line2                                 = {0} to {1} at {2}%
+agent.paymentDue.over-due.interest-rate                                  = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
+agent.paymentDue.over-due.interest-rate.link                             = current interest rate for late and early payments (opens in new tab)
+
+
+
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet
 agent-error.note                                               = To use this service, you need to
