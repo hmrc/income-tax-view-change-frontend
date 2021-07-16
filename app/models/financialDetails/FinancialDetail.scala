@@ -50,7 +50,7 @@ case class FinancialDetail(taxYear: String,
     .collect {
       case payments if payments.nonEmpty => PaymentsWithChargeType(payments, mainType, chargeType)
     }
-
+    .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 }
 
 

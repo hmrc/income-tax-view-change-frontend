@@ -56,7 +56,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     outstandingAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("POA1"),
+    chargeType = Some("NIC4 Wales"),
     items =
       Some(Seq(
         SubItem(
@@ -106,9 +106,9 @@ object FinancialDetailsIntegrationTestConstants {
         Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
     ),
     financialDetails = List(
-      FinancialDetail("2019", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
+      FinancialDetail("2019", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
         Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentId"))))),
-      FinancialDetail("2020", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
+      FinancialDetail("2020", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
         Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentId")))))
     )
   )
@@ -144,8 +144,8 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
@@ -180,8 +180,8 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some("transactionId") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1),Some("transactionId") ,  Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("POA1"), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, Some("transactionId") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1),Some("transactionId") ,  Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
@@ -208,7 +208,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("POA1"),
+    chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
     subItemId = Some("1"),
     amount = Some(100),
@@ -234,7 +234,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("POA1"),
+    chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().toString)),
     subItemId = Some("1"),
     amount = Some(100),
@@ -260,7 +260,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("POA1"),
+    chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().minusDays(15).toString), Some(LocalDate.now().minusDays(15).toString)),
     subItemId = Some("1"),
     amount = Some(100),
@@ -286,7 +286,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("POA1"),
+    chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(35).toString), Some(LocalDate.now().minusDays(1).toString)),
     subItemId = Some("1"),
     amount = Some(100),
@@ -312,7 +312,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("POA1"),
+    chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(1).toString)),
     subItemId = Some("1"),
     amount = Some(100),
@@ -338,7 +338,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("POA1"),
+    chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(1).toString), Some(LocalDate.now().toString)),
     subItemId = Some("1"),
     amount = Some(100),

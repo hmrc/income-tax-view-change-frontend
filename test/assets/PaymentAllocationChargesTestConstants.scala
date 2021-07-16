@@ -47,7 +47,6 @@ object PaymentAllocationChargesTestConstants {
   paymentLotItem = Some("paymentLotItem2")
  )
 
-
  val financialDetail: FinancialDetail = FinancialDetail(
   taxYear = "2018",
   transactionId = Some("transactionId"),
@@ -57,8 +56,8 @@ object PaymentAllocationChargesTestConstants {
   originalAmount = Some(BigDecimal(500.00)),
   outstandingAmount = Some(BigDecimal("500.00")),
   clearedAmount = Some(BigDecimal(500.00)),
-  chargeType = Some("POA1"),
-  mainType = Some("4920"),
+  chargeType = Some("NIC4 Wales"),
+  mainType = Some("SA Payment on Account 1"),
   items = Some(Seq(
    SubItem(
     subItemId = Some("1"),
@@ -99,8 +98,8 @@ object PaymentAllocationChargesTestConstants {
   originalAmount = Some(BigDecimal(500.00)),
   outstandingAmount = Some(BigDecimal("200.00")),
   clearedAmount = Some(BigDecimal(500.00)),
-  chargeType = Some("POA1"),
-  mainType = Some("4920"),
+  chargeType = Some("NIC4 Wales"),
+  mainType = Some("SA Payment on Account 1"),
   items = Some(Seq(
    SubItem(
     subItemId = Some("2"),
@@ -123,7 +122,7 @@ object PaymentAllocationChargesTestConstants {
  val paymentAllocationChargesModelMultiplePayments: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail, documentDetail2),
   List(financialDetail, financialDetail2))
 
- val validPaymentAllocationChargesJson: JsValue = Json.parse(
+ val variedFinancialDetailsJson: JsValue = Json.parse(
   """{
     |    "documentDetails": [
     |        {
@@ -139,7 +138,7 @@ object PaymentAllocationChargesTestConstants {
     |    ],
     |    "financialDetails": [
     |        {
-    |            "chargeType": "POA1",
+    |            "chargeType": "NIC4 Wales",
     |            "clearedAmount": 500.0,
     |            "items": [
     |                {
@@ -166,7 +165,90 @@ object PaymentAllocationChargesTestConstants {
     |                    "paymentMethod": "paymentMethod2"
     |                }
     |            ],
-    |            "mainType": "4920",
+    |            "mainType": "SA Payment on Account 1",
+    |            "originalAmount": 500.0,
+    |            "outstandingAmount": 500.00,
+    |            "taxYear": "2018",
+    |            "totalAmount": 1000.00,
+    |            "transactionDate": "2018-03-29",
+    |            "transactionId": "transactionId",
+    |            "type": "type"
+    |        },
+    |        {
+    |            "chargeType": "",
+    |            "clearedAmount": 500.0,
+    |            "items": [
+    |                {
+    |                    "subItemId": "1",
+    |                    "amount": 100.00,
+    |                    "clearingDate": "2021-01-31",
+    |                    "dueDate": "2021-01-31",
+    |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
+    |                    "paymentAmount": 2000.00,
+    |                    "paymentId": "paymentLot-paymentLotItem",
+    |                    "paymentLot": "paymentLot",
+    |                    "paymentLotItem": "paymentLotItem",
+    |                    "paymentMethod": "paymentMethod",
+    |                    "paymentReference": "paymentReference"
+    |                }
+    |            ],
+    |            "mainType": "SA Payment on Account 1",
+    |            "originalAmount": 500.0,
+    |            "outstandingAmount": 500.00,
+    |            "taxYear": "2018",
+    |            "totalAmount": 1000.00,
+    |            "transactionDate": "2018-03-29",
+    |            "transactionId": "transactionId",
+    |            "type": "type"
+    |        }
+    |    ]
+    |}
+		|""".stripMargin)
+
+ val validPaymentAllocationChargesJson: JsValue = Json.parse(
+  """{
+    |    "documentDetails": [
+    |        {
+    |            "documentDate": "2018-03-29",
+    |            "documentDescription": "documentDescription",
+    |            "originalAmount": -300.0,
+    |            "outstandingAmount": -200.0,
+    |            "taxYear": "2018",
+    |            "transactionId": "id",
+    |            "paymentLot": "paymentLot",
+    |            "paymentLotItem": "paymentLotItem"
+    |        }
+    |    ],
+    |    "financialDetails": [
+    |        {
+    |            "chargeType": "NIC4 Wales",
+    |            "clearedAmount": 500.0,
+    |            "items": [
+    |                {
+    |                    "subItemId": "1",
+    |                    "amount": 100.00,
+    |                    "clearingDate": "2021-01-31",
+    |                    "dueDate": "2021-01-31",
+    |                    "outgoingPaymentMethod": "outgoingPaymentMethod",
+    |                    "paymentAmount": 2000.00,
+    |                    "paymentId": "paymentLot-paymentLotItem",
+    |                    "paymentLot": "paymentLot",
+    |                    "paymentLotItem": "paymentLotItem",
+    |                    "paymentMethod": "paymentMethod",
+    |                    "paymentReference": "paymentReference"
+    |                },
+    |                {
+    |                    "subItemId": "2",
+    |                    "amount": 200.00,
+    |                    "dueDate": "2021-01-31",
+    |                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
+    |                    "paymentAmount": 3000.00,
+    |                    "paymentId": "paymentLot2-paymentLotItem2",
+    |                    "paymentLot": "paymentLot2",
+    |                    "paymentMethod": "paymentMethod2"
+    |                }
+    |            ],
+    |            "mainType": "SA Payment on Account 1",
     |            "originalAmount": 500.0,
     |            "outstandingAmount": 500.00,
     |            "taxYear": "2018",
@@ -195,7 +277,7 @@ object PaymentAllocationChargesTestConstants {
     |    ],
     |    "paymentDetails": [
     |        {
-    |            "chargeType": "POA1",
+    |            "chargeType": "NIC4 Wales",
     |            "clearedAmount": 500.0,
     |            "items": [
     |                {
@@ -221,7 +303,7 @@ object PaymentAllocationChargesTestConstants {
     |                    "paymentMethod": "paymentMethod2"
     |                }
     |            ],
-    |            "mainType": "4920",
+    |            "mainType": "SA Payment on Account 1",
     |            "originalAmount": 500.0,
     |            "outstandingAmount": 500.00,
     |            "taxYear": "2018",
@@ -260,7 +342,7 @@ object PaymentAllocationChargesTestConstants {
     |    ],
     |    "financialDetails": [
     |        {
-    |            "chargeType": "POA1",
+    |            "chargeType": "NIC4 Wales",
     |            "clearedAmount": 500.0,
     |            "items": [
     |                {
@@ -287,7 +369,7 @@ object PaymentAllocationChargesTestConstants {
     |                    "paymentMethod": "paymentMethod2"
     |                }
     |            ],
-    |            "mainType": "4920",
+    |            "mainType": "SA Payment on Account 1",
     |            "originalAmount": 500.0,
     |            "outstandingAmount": 500.00,
     |            "taxYear": "2018",
@@ -297,7 +379,7 @@ object PaymentAllocationChargesTestConstants {
     |            "type": "type"
     |        },
     |        {
-    |            "chargeType": "POA1",
+    |            "chargeType": "NIC4 Wales",
     |            "clearedAmount": 500.0,
     |            "items": [
     |                {
@@ -313,7 +395,7 @@ object PaymentAllocationChargesTestConstants {
     |                    "paymentReference": "paymentReference2"
     |                }
     |            ],
-    |            "mainType": "4920",
+    |            "mainType": "SA Payment on Account 1",
     |            "originalAmount": 500.0,
     |            "outstandingAmount": 200.00,
     |            "taxYear": "2019",

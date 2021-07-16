@@ -140,7 +140,7 @@
 					<tr>
 						<td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
 						<td>@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))</td>
-						<td class="numeric">@payment.amount.map(_.abs.toCurrency)</td>
+						<td class="numeric">@payment.amount.get.abs.toCurrency</td>
 					</tr>
 					}
 				}
