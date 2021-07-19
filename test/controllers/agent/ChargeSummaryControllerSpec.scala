@@ -69,7 +69,6 @@ class ChargeSummaryControllerSpec extends TestSupport
 
     val currentYear: Int = LocalDate.now().getYear
     val errorHeading = "Sorry, there is a problem with the service"
-
     val currentFinancialDetails: FinancialDetailsModel = financialDetailsModel(currentYear)
   }
 
@@ -85,6 +84,24 @@ class ChargeSummaryControllerSpec extends TestSupport
 					mockSingleBusinessIncomeSource()
 
 					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
+						.apply(fakeRequestConfirmedClient("AB123456C"))
+
+					status(await(result)) shouldBe OK
+					JsoupParse(result).toHtmlDocument.title() shouldBe "Test title"
+
+				}
+			}
+
+			"the model contains a transaction for the charge with LPI set to true" should {
+				"show a charge summary with the correct title" in new Setup() {
+
+					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+
+					mockSingleBusinessIncomeSource()
+
+					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123, isLatePaymentCharge = true)
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(await(result)) shouldBe OK

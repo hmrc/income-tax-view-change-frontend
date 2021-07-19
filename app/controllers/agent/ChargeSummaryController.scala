@@ -62,7 +62,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     )
   }
 
-  def showChargeSummary(taxYear: Int, chargeId: String): Action[AnyContent] = {
+  def showChargeSummary(taxYear: Int, chargeId: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
 				financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
