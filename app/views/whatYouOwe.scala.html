@@ -228,12 +228,12 @@
                         </tbody>
                     </table>
                 </div>
-                <div>
-                    <p>
-                        @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
-                            && chargesList.overduePaymentList.isEmpty) { @paymentTypesDropdown }
-                    </p>
-                </div>
+            <div>
+                <p>
+                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
+                    && chargesList.overduePaymentList.isEmpty) { @paymentTypesDropdown }
+                </p>
+            </div>
             }
             @if(chargesList.futurePayments.nonEmpty){
                 <h3 id="future-payments-heading" class="heading-large">@messages("whatYouOwe.future-payments")</h3>
