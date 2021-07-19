@@ -142,7 +142,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("Payment history"),
-        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Income Tax for remaining balance")
+        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Payment allocated to Income Tax for remaining balance")
       )
     }
     "load the page when the late payment interest flag is true and both paymentAllocation and chargeHistory FS are disabled" in {
