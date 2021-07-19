@@ -2,6 +2,7 @@
 package controllers.agent
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
+import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, paymentAllocationChargesModel, testValidPaymentAllocationsModelJson, validPaymentAllocationChargesJson}
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
@@ -12,9 +13,8 @@ import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import java.time.LocalDate
 
-import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, validPaymentAllocationChargesJson}
+import java.time.LocalDate
 
 class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -143,6 +143,11 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+      IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino,
+        paymentAllocationChargesModel.documentDetails.head.paymentLot.get,
+        paymentAllocationChargesModel.documentDetails.head.paymentLotItem.get)(OK, testValidPaymentAllocationsModelJson)
+      IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
+      IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
 

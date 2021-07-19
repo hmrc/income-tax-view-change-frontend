@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.core.Nino
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.PaymentAllocationsService
@@ -49,7 +50,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = action.async {
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        paymentAllocations.getPaymentAllocation(user.nino, documentNumber) map {
+        paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
           case Right(paymentAllocations) =>
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()

@@ -21,7 +21,7 @@ import audit.AuditingService
 import audit.models.NinoLookupAuditing.{NinoLookupAuditModel, NinoLookupErrorAuditModel}
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
-import models.core.{Nino, NinoResponseError}
+import models.core.{NinoResponseSuccess, NinoResponseError}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Request, Result}
@@ -56,7 +56,7 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
       case (_, _) =>
         Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO not found for user.  Requesting from NinoLookupService")
         ninoLookupService.getNino(request.mtditid).map {
-          case nino: Nino =>
+          case nino: NinoResponseSuccess =>
             Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from NinoLookupService")
             auditNinoLookup(nino, request.mtditid)
             Left(Redirect(request.uri).addingToSession("nino" -> nino.nino))
@@ -68,7 +68,7 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
     }
   }
 
-  private def auditNinoLookup(nino: Nino, mtdRef: String)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
+  private def auditNinoLookup(nino: NinoResponseSuccess, mtdRef: String)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     auditingService.audit(NinoLookupAuditModel(nino, mtdRef))
 
   private def auditNinoLookupError(ninoError: NinoResponseError, mtdRef: String)(implicit hc: HeaderCarrier, request: Request[_]): Unit =

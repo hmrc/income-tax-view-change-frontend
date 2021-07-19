@@ -17,6 +17,7 @@
 package models.paymentAllocations
 
 import implicits.ImplicitDateFormatter
+import models.core.AccountingPeriodModel
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 
@@ -47,13 +48,11 @@ case class AllocationDetail(transactionId: Option[String],
 	def getTaxYear(implicit implicitDateFormatter: ImplicitDateFormatter): Int = {
 		import implicitDateFormatter.localDate
 
-		to.getOrElse(throw new Exception("Missing tax period end date")).toLocalDate.getYear
+    AccountingPeriodModel.determineTaxYearFromPeriodEnd(
+      to.getOrElse(throw new Exception("Missing tax period end date")).toLocalDate)
 	}
 }
 
 object AllocationDetail {
-
-  val emptyAllocation: AllocationDetail = AllocationDetail(None, None, None, None, None, None, None)
-
   implicit val format: Format[AllocationDetail] = Json.format[AllocationDetail]
 }

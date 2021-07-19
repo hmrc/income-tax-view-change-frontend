@@ -16,17 +16,21 @@
 
 @import views.html.templates.agent.MainTemplate
 @import views.html.helpers.injected.BackLink
-@import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+@import models.core.AccountingPeriodModel.determineTaxYearFromPeriodEnd
+@import models.paymentAllocationCharges.PaymentAllocationViewModel
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
-@import java.time.LocalDate
-
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
 
-@(paymentAllocations: FinancialDetailsWithDocumentDetailsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(viewModel: PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages,
+    implicitDateFormatter: ImplicitDateFormatter, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter._
+@import viewModel.paymentAllocationChargeModel
+@import viewModel.originalPaymentAllocationWithClearingDate
+
+@documentDescription = @{ paymentAllocationChargeModel.filteredDocumentDetails.head.documentDescription }
 
 @mainTemplate(
     title = messages("paymentAllocation.heading")
@@ -41,11 +45,11 @@
             <tbody>
             <tr>
                 <td class="govuk-summary-list__key">@messages("paymentAllocation.date")</td>
-                <td>@{paymentAllocations.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
+                <td>@{paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
             </tr>
             <tr>
                 <td class="govuk-summary-list__key">@messages("paymentAllocation.amount")</td>
-                <td>@{ paymentAllocations.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
+                <td>@{paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
             </tr>
             </tbody>
         </table>
@@ -54,4 +58,33 @@
         <p>@messages("paymentAllocation.info")</p>
     </div>
 
+    <h2>@messages("paymentAllocation.tableSection.heading")</h2>
+    <div>
+        <table id="payment-allocation-table" class="govuk-table-paymentAllocations">
+            <thead id="payment-allocation-table-head">
+                <tr>
+                    <th>@messages("paymentAllocation.tableHead.allocation")</th>
+                    <th>@messages("paymentAllocation.tableHead.allocated-date")</th>
+                    <th>@messages("paymentAllocation.tableHead.amount")</th>
+                </tr>
+            </thead>
+            @originalPaymentAllocationWithClearingDate.map { case (_, allocationDetail, clearingDate) =>
+                @defining(allocationDetail.get.getTaxYear) { allocationTaxYear =>
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocationDetail.get.transactionId.get)">
+                                @messages(allocationDetail.get.getPaymentAllocationTextInChargeSummary)
+                            </a>
+                            <br>
+                            <span class="govuk-body-s">@messages("paymentAllocation.taxYear", s"${allocationTaxYear - 1}", s"$allocationTaxYear")</span>
+                        </td>
+                        <td>@clearingDate.get.toLocalDate.toLongDateShort</td>
+                        <td class="numeric">@allocationDetail.get.amount.get.toCurrencyString</td>
+                    </tr>
+                </tbody>
+                }
+            }
+        </table>
+    </div>
 }

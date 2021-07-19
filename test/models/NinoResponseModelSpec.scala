@@ -18,7 +18,7 @@ package models
 
 import assets.BaseTestConstants._
 import assets.NinoLookupTestConstants._
-import models.core.{Nino, NinoResponseError}
+import models.core.{NinoResponseSuccess, NinoResponseError}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
@@ -27,10 +27,10 @@ class NinoResponseModelSpec  extends UnitSpec with Matchers {
 
   "The NINO model" should {
     "be formatted to JSON correctly" in {
-      Json.toJson[Nino](testNinoModel) shouldBe testNinoModelJson
+      Json.toJson[NinoResponseSuccess](testNinoModel) shouldBe testNinoModelJson
     }
     "be able to parse a JSON input as a string into the model" in {
-      Json.parse(testNinoModelJson.toString).as[Nino] shouldBe testNinoModel
+      Json.parse(testNinoModelJson.toString).as[NinoResponseSuccess] shouldBe testNinoModel
     }
    }
 

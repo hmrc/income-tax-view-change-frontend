@@ -53,5 +53,22 @@ class AllocationDetailSpec extends TestSupport with Matchers {
 				}
 			}
 		}
+
+		"calling .getTaxYear" should {
+
+			"determine the allocation tax year by the period end date in the model" in {
+				def allocationDetailWithDateTo(taxPeriodEndDate: String): AllocationDetail = {
+					AllocationDetail(Some("id"), Some("2018-08-04"), to = Some(taxPeriodEndDate),
+						Some("ITSA"), Some("SA Balancing Charge"), Some(10000.0), Some(5000.0))
+				}
+
+				allocationDetailWithDateTo("2018-03-06").getTaxYear shouldBe 2018
+				allocationDetailWithDateTo("2018-04-05").getTaxYear shouldBe 2018
+				allocationDetailWithDateTo("2018-04-06").getTaxYear shouldBe 2019
+				allocationDetailWithDateTo("2018-04-07").getTaxYear shouldBe 2019
+				allocationDetailWithDateTo("2018-06-01").getTaxYear shouldBe 2019
+			}
+
+		}
 	}
 }

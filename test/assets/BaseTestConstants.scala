@@ -18,6 +18,7 @@ package assets
 
 import IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
+import models.core.Nino
 import play.api.http.Status
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
@@ -29,6 +30,7 @@ object BaseTestConstants {
   val testMtditidAgent = "XAIT00000000015"
   val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
+  val testUserNino: Nino = Nino(testNino)
   val testSaUtrId = 1234567890
   val testSaUtr = "testSaUtr"
   val taxYear: String = "2020-04-05"

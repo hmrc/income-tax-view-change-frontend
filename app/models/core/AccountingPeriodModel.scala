@@ -22,9 +22,15 @@ import java.time.LocalDate
 
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear: Int = if(end isBefore LocalDate.of(end.getYear,4,6)) end.getYear else end.getYear + 1
+  val determineTaxYear: Int = AccountingPeriodModel.determineTaxYearFromPeriodEnd(end)
 }
 
 object AccountingPeriodModel {
   implicit val format: Format[AccountingPeriodModel] = Json.format[AccountingPeriodModel]
+
+  def determineTaxYearFromPeriodEnd(periodEndDate: LocalDate): Int = {
+    val taxYearStartInApril = LocalDate.of(periodEndDate.getYear, 4, 6)
+    if (periodEndDate isBefore taxYearStartInApril) periodEndDate.getYear
+    else periodEndDate.getYear + 1
+  }
 }

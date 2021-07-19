@@ -190,6 +190,41 @@ object PaymentAllocationIntegrationTestConstants {
 			|}
 			|""".stripMargin)
 
+	val testValidPaymentAllocationsModelJson: JsValue = Json.obj(
+		"amount" -> 110.10,
+		"method" -> "Payment by Card",
+		"transactionDate" -> "2019-05-27",
+		"reference" -> "reference",
+		"allocations" -> Json.arr(
+			Json.obj(
+				"transactionId" -> "1040000872",
+				"from" -> "2019-06-27",
+				"to" -> "2019-08-27",
+				"chargeType" -> "NIC4 Wales",
+				"mainType" -> "SA Payment on Account 1",
+				"amount" -> 10.10,
+				"clearedAmount" -> 5.50
+			),
+			Json.obj(
+				"transactionId" -> "1040000873",
+				"from" -> "2019-07-28",
+				"to" -> "2019-09-28",
+				"chargeType" -> "NIC4 Wales",
+				"mainType" -> "SA Payment on Account 1",
+				"amount" -> 10.90,
+				"clearedAmount" -> 5.90
+			)
+		)
+	)
+
+	val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
+		Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
+		Seq(
+			AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50)),
+			AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))
+		)
+	)
+
 	val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
 		Seq(
 			(
@@ -405,12 +440,4 @@ object PaymentAllocationIntegrationTestConstants {
 			|    ]
 			|}
 			|""".stripMargin)
-
-	val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
-		Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
-		Seq(
-			AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50)),
-			AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))
-		)
-	)
 }
