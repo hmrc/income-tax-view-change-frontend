@@ -763,6 +763,5 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
     }
-
   }
 }
