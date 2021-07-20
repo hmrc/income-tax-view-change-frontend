@@ -169,6 +169,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
 
+    def getChargeSummaryLatePayment(taxYear: String, id: String, additionalCookies: Map[String, String]) : WSResponse =
+      getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true", additionalCookies)
+
     def getPay(amountInPence: BigDecimal, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/payment?amountInPence=$amountInPence", additionalCookies)
 

@@ -17,8 +17,9 @@
 package controllers.agent
 
 import java.time.LocalDate
+
 import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, testValidFinancialDetailsModelJson}
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch.{ChargeHistory, FeatureSwitching, TxmEventsApproved}
@@ -117,6 +118,33 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+      )
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+      )
+
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+        )(FakeRequest()),
+        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        agentReferenceNumber = Some("1")
+      ))
+    }
+
+    s"return $OK with correct page title and audit events when TxEventsApproved and ChargeHistory FSs are enabled and LPI set to true" in {
+      enable(TxmEventsApproved)
+      enable(ChargeHistory)
+      stubAuthorisedAgentUser(authorised = true)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      stubGetFinancialDetailsSuccess()
+      stubChargeHistorySuccess()
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment(
         currentTaxYearEnd.getYear.toString, "testId", clientDetails
       )
 

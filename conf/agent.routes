@@ -27,7 +27,7 @@ GET         /remove-client-sessions             controllers.agent.RemoveClientDe
 GET         /payments-owed                      controllers.agent.nextPaymentDue.PaymentDueController.show
 
 #Charge summary
-GET			/tax-years/:taxYear/charge          controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)
+GET			/tax-years/:taxYear/charge          controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
 
 #Payment
 GET         /payment                            controllers.agent.PaymentController.paymentHandoff(amountInPence: Long)
