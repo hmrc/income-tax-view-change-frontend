@@ -487,16 +487,16 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Created late
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Created late payment interest on payment on account 2 of 2
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Created late payment interest on remaining balance
 
-chargeSummary.paymentAllocations.poa1.incomeTax                    = Income Tax for payment on account 1 of 2
-chargeSummary.paymentAllocations.poa1.nic4                         = Class 4 National Insurance for payment on account 1 of 2
-chargeSummary.paymentAllocations.poa2.incomeTax                    = Income Tax for payment on account 2 of 2
-chargeSummary.paymentAllocations.poa2.nic4                         = Class 4 National Insurance for payment on account 2 of 2
-chargeSummary.paymentAllocations.bcd.incomeTax                     = Income Tax for remaining balance
-chargeSummary.paymentAllocations.bcd.nic2                          = Class 2 National Insurance for remaining balance
-chargeSummary.paymentAllocations.bcd.vcnic2                        = Voluntary Class 2 National Insurance for remaining balance
-chargeSummary.paymentAllocations.bcd.nic4                          = Class 4 National Insurance for remaining balance
-chargeSummary.paymentAllocations.bcd.sl                            = Student Loans for remaining balance
-chargeSummary.paymentAllocations.bcd.cgt                           = Capital Gains Tax for remaining balance
+chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for payment on account 1 of 2
+chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for payment on account 1 of 2
+chargeSummary.paymentAllocations.poa2.incomeTax                    = Payment allocated to Income Tax for payment on account 2 of 2
+chargeSummary.paymentAllocations.poa2.nic4                         = Payment allocated to Class 4 National Insurance for payment on account 2 of 2
+chargeSummary.paymentAllocations.bcd.incomeTax                     = Payment allocated to Income Tax for remaining balance
+chargeSummary.paymentAllocations.bcd.nic2                          = Payment allocated to Class 2 National Insurance for remaining balance
+chargeSummary.paymentAllocations.bcd.vcnic2                        = Payment allocated to Voluntary Class 2 National Insurance for remaining balance
+chargeSummary.paymentAllocations.bcd.nic4                          = Payment allocated to Class 4 National Insurance for remaining balance
+chargeSummary.paymentAllocations.bcd.sl                            = Payment allocated to Student Loans for remaining balance
+chargeSummary.paymentAllocations.bcd.cgt                           = Payment allocated to Capital Gains Tax for remaining balance
 
 ## Regimes
 regimes.UK = UK
