@@ -106,19 +106,29 @@
                 <th id="paymentAmountHeading" class="bold">@messages("tax-year-overview.payments.amount")</th>
             </tr>
 
-            @for((documentDetailWithDueDate, index) <- charges.zipWithIndex) {
+            @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
                 <tr>
                     <td>
-                        @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPaid) {
+                        @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                         }
                         <div>
-                            <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear,documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
+                            @if(documentDetailWithDueDate.isLatePaymentInterest) {
+                                <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
+                            } else {
+                                <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
+                            }
                         </div>
                     </td>
-                    <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
-                    <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
-                    <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                    @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
+                        <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
+                        <td>@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
+                    } else {
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
+                        <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
+                        <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                    }
                 </tr>
             }
         </table>

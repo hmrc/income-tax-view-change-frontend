@@ -56,7 +56,13 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     outstandingAmount = Some(8.08)
   )
 
-  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel)
+  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2"), latePaymentInterestAmount = Some(80.0)),
+      dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true),
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0)),
+      dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true),
+    fullDocumentDetailWithDueDateModel)
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
@@ -96,11 +102,15 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val amount: String = "Amount"
     val paymentOnAccount1: String = "Payment on account 1 of 2"
     val unpaid: String = "Unpaid"
+    val paid: String = "Paid"
     val partPaid: String = "Part Paid"
     val noPaymentsDue: String = "No payments currently due."
     val updateType: String = "Update type"
     val updateIncomeSource: String = "Income source"
     val updateDateSubmitted: String = "Date submitted"
+    val lpiPaymentOnAccount1: String = "Late payment interest on payment on account 1 of 2"
+    val lpiPaymentOnAccount2: String = "Late payment interest on payment on account 2 of 2"
+    val lpiRemainingBalance: String = "Late payment interest on remaining balance"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -236,6 +246,63 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
     "display No payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
       content.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
+    }
+
+    "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
+      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) a")
+      paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiPaymentOnAccount1
+      paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        testYear, fullDocumentDetailModel.transactionId, true).url
+    }
+
+    "display the Due date in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 June 2019"
+    }
+
+    "display the Status in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe taxYearOverviewMessages.partPaid
+    }
+
+    "display the Amount in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(4)").text shouldBe "£100.00"
+    }
+
+    "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
+      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(4) td:nth-child(1) a")
+      paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiPaymentOnAccount2
+      paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        testYear, fullDocumentDetailModel.transactionId, true).url
+    }
+
+    "display the Due date in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 July 2019"
+    }
+
+    "display the Status in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
+    }
+
+    "display the Amount in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(4)").text shouldBe "£80.00"
+    }
+
+    "display the payment type as a link to Charge Summary in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(5) td:nth-child(1) a")
+      paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiRemainingBalance
+      paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        testYear, fullDocumentDetailModel.transactionId, true).url
+    }
+
+    "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe "15 August 2019"
+    }
+
+    "display the Status in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(3)").text shouldBe taxYearOverviewMessages.paid
+    }
+
+    "display the Amount in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(4)").text shouldBe "£100.00"
     }
 
     "display updates by due-date" in new Setup(estimateView()) {

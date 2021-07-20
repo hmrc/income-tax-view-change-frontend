@@ -53,7 +53,10 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       documentDescription = Some("ITSA- POA 1"),
       documentDate = LocalDate.of(2018, 3, 29),
       originalAmount = Some(1000.00),
-      outstandingAmount = Some(500.00)
+      outstandingAmount = Some(500.00),
+      interestOutstandingAmount = Some(0.00),
+      interestEndDate = Some(LocalDate.of(2021, 6, 24)),
+      latePaymentInterestAmount = Some(100.00)
     )),
     List(
       FinancialDetail(
@@ -202,6 +205,10 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 April 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Late payment interest on payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("24 June 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
