@@ -46,6 +46,14 @@ case class DocumentDetail(taxYear: String,
 		case _ => false
 	}
 
+	val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+
+	def getInterestPaidStatus: String = {
+		if (interestIsPaid) "paid"
+		else if (interestIsPartPaid) "part-paid"
+		else "unpaid"
+	}
+
 	def checkIsPaid(isInterestCharge: Boolean): Boolean = {
 		if (isInterestCharge) interestIsPaid
 		else isPaid
@@ -77,11 +85,9 @@ case class DocumentDetail(taxYear: String,
 			Logger.error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
 			"unknownCharge"
 	}
-
-
 }
 
-case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate]) {
+case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate], isLatePaymentInterest: Boolean = false) {
 	val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
 	val currentDueDate: Option[LocalDate] = if (documentDetail.latePaymentInterestAmount.isDefined) documentDetail.interestEndDate else dueDate
 }
