@@ -23,7 +23,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockIncomeSourceDetailsService
-import mocks.views.MockPaymentAllocation
+import mocks.views.agent.MockPaymentAllocation
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

@@ -24,7 +24,7 @@ import config.featureswitch.{ChargeHistory, FeatureSwitching}
 import implicits.ImplicitDateFormatterImpl
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
-import mocks.views.MockChargeSummary
+import mocks.views.agent.MockChargeSummary
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.FinancialDetailsModel
 import org.mockito.ArgumentMatchers.{any, eq => ameq}

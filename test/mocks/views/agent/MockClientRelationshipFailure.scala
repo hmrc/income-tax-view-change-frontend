@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package mocks.views
+package mocks.views.agent
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.UTRError
+import views.html.agent.ClientRelationshipFailure
 
-trait MockUTRError extends BeforeAndAfterEach with MockitoSugar {
+trait MockClientRelationshipFailure extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val utrError: UTRError = mock[UTRError]
+  val clientRelationshipFailure: ClientRelationshipFailure = mock[ClientRelationshipFailure]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(utrError)
+    reset(clientRelationshipFailure)
   }
 
-  def mockUTRError(response: Html): Unit = {
-    when(utrError.apply(any(), any())(any(), any(), any()))
+  def mockClientRelationshipFailure(response: Html): Unit = {
+    when(clientRelationshipFailure.apply(any())(any(), any(), any()))
       .thenReturn(response)
   }
 

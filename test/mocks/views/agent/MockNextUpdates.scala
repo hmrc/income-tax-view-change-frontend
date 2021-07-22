@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
-package mocks.views
+package mocks.views.agent
 
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.confirmClient
+import views.html.agent.NextUpdates
 
-trait MockConfirmClient extends BeforeAndAfterEach with MockitoSugar {
+trait MockNextUpdates extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val confirmClient: confirmClient = mock[confirmClient]
+  val agentNextUpdates: NextUpdates = mock[NextUpdates]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(confirmClient)
+    reset(agentNextUpdates)
   }
 
-  def mockConfirmClient(response: Html): Unit = {
-    when(confirmClient.apply(any(), any(), any(), any())(any(), any(), any()))
+  def mockAgentNextUpdates(currentObligations: models.reportDeadlines.ObligationsModel, backUrl: String)
+                          (response: Html): Unit = {
+    when(agentNextUpdates.apply(
+      matches(currentObligations),
+      any(),
+      matches(backUrl)
+    )(any(), any(), any(), any()))
       .thenReturn(response)
   }
-
 }
