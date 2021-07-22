@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mocks.views
+package mocks.views.agent
 
 import models.calculation.CalcDisplayModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
@@ -35,7 +35,7 @@ trait MockIncomeSummary extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockIncomeBreakdown(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String)
-                       (response: Html): Unit = {
+                         (response: Html): Unit = {
     when(incomeBreakdown.apply(
       matches(calcModel),
       matches(taxYear),

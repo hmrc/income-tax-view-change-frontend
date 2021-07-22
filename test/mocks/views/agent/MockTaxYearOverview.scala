@@ -14,27 +14,41 @@
  * limitations under the License.
  */
 
-package mocks.views
+package mocks.views.agent
 
+import models.calculation.CalcOverview
+import models.financialDetails.DocumentDetailWithDueDate
+import models.reportDeadlines.ObligationsModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.TaxYears
+import views.html.agent.TaxYearOverview
 
-trait MockTaxYears extends BeforeAndAfterEach with MockitoSugar {
+trait MockTaxYearOverview extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val taxYears: TaxYears = mock[TaxYears]
+  val taxYearOverview: TaxYearOverview = mock[TaxYearOverview]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(taxYears)
+    reset(taxYearOverview)
   }
 
-  def mockTaxYears(years: List[Int], backUrl: String)(response: Html): Unit = {
-    when(taxYears(matches(years), matches(backUrl), any())(any(), any(), any()))
+  def mockTaxYearOverview(taxYear: Int,
+                          calcOverview: Option[CalcOverview],
+                          documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
+                          obligations: ObligationsModel,
+                          backUrl: String)
+                         (response: Html): Unit = {
+    when(taxYearOverview.apply(
+      matches(taxYear),
+      matches(calcOverview),
+      matches(documentDetailsWithDueDates),
+      matches(obligations),
+      any(), matches(backUrl)
+    )(any(), any(), any(), any()))
       .thenReturn(response)
   }
 

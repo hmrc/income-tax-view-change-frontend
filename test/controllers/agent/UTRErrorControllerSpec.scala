@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.views.MockUTRError
+import mocks.views.agent.MockUTRError
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
 import play.api.mvc.MessagesControllerComponents

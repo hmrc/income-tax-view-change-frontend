@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package mocks.views
+package mocks.views.agent
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.ChargeSummary
+import views.html.agent.EnterClientsUTR
 
-trait MockChargeSummary extends BeforeAndAfterEach with MockitoSugar {
+trait MockEnterClientsUTR extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val chargeSummary: ChargeSummary = mock[ChargeSummary]
+  val enterClientsUTR: EnterClientsUTR = mock[EnterClientsUTR]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(chargeSummary)
+    reset(enterClientsUTR)
   }
 
-  def mockChargeSummary()(response: Html): Unit = {
-    when(chargeSummary.apply(any(), any(), any())(any(), any(), any(), any()))
+  def mockEnterClientsUTR(response: Html): Unit = {
+    when(enterClientsUTR.apply(any(), any())(any(), any(), any()))
       .thenReturn(response)
   }
 

@@ -17,7 +17,6 @@
 package controllers.agent
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import assets.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
@@ -27,7 +26,7 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockReportDeadlinesService}
-import mocks.views.MockTaxYearOverview
+import mocks.views.agent.MockTaxYearOverview
 import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, CalcOverview}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}

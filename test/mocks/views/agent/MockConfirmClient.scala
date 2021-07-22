@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-package mocks.views
+package mocks.views.agent
 
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.PaymentAllocation
+import views.html.agent.confirmClient
 
-trait MockPaymentAllocation extends BeforeAndAfterEach with MockitoSugar {
+trait MockConfirmClient extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val paymentAllocation: PaymentAllocation = mock[PaymentAllocation]
+  val confirmClient: confirmClient = mock[confirmClient]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(paymentAllocation)
+    reset(confirmClient)
   }
 
-  def mockPaymentAllocation(paymentAllocations: FinancialDetailsWithDocumentDetailsModel, backUrl: String)(response: Html): Unit = {
-    when(paymentAllocation.apply(
-      matches(paymentAllocations),
-      any(),
-      matches(backUrl)
-    )(any(), any(), any()))
+  def mockConfirmClient(response: Html): Unit = {
+    when(confirmClient.apply(any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(response)
   }
+
 }

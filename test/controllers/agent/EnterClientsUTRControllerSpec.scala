@@ -23,7 +23,7 @@ import forms.agent.ClientsUTRForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.MockClientDetailsService
-import mocks.views.MockEnterClientsUTR
+import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
 import play.api.mvc.MessagesControllerComponents

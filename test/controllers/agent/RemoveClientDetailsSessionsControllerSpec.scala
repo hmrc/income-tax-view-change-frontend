@@ -20,7 +20,7 @@ import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.views.MockConfirmClient
+import mocks.views.agent.MockConfirmClient
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
