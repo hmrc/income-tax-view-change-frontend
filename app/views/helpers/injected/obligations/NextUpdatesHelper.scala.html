@@ -1,0 +1,62 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitDateFormatterImpl
+@import views.html.helpers.accordionHelper
+@import models.reportDeadlines.ReportDeadlineModelWithIncomeType
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+@(obligations: models.reportDeadlines.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@import implicitDateFormatter.longDate
+
+	@deadlineRow(deadline: ReportDeadlineModelWithIncomeType) = {
+		<tr>
+			<td>@{deadline.obligation.obligationType}</td>
+			<td>@{deadline.incomeType}</td>
+		</tr>
+	}
+
+	<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+
+		@for(collectedObligations <- obligations.obligationsByDate.zipWithIndex) {
+			<div class="govuk-accordion__section">
+				<div class="govuk-accordion__section-header">
+					<h3 class="govuk-accordion__section-heading">
+						<span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@{collectedObligations._2}">
+						@{collectedObligations._1._1.toLongDate}
+						</span>
+					</h3>
+					<div class="govuk-accordion__section-summary govuk-body" id="accordion-with-summary-sections-summary-@{collectedObligations._2}">
+					@{if(collectedObligations._1._2.head.obligation.obligationType == "Quarterly") messages("nextUpdates.section.heading.updates", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
+					@{if(collectedObligations._1._2.head.obligation.obligationType != "Quarterly") messages("nextUpdates.section.heading.taxYear", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
+					</div>
+				</div>
+				<div class="govuk-accordion__section-content" id="accordion-default-content-@{collectedObligations._2}">
+					<table>
+						<thead>
+							<tr>
+								<th>@messages("nextUpdates.table.header.type")</th>
+								<th>@messages("nextUpdates.table.header.source")</th>
+							</tr>
+						</thead>
+						@for(obligation <- collectedObligations._1._2) {
+							@deadlineRow(obligation)
+						}
+					</table>
+				</div>
+			</div>
+		}
+	</div>
