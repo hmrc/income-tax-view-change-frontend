@@ -43,6 +43,7 @@ trait ViewSpec extends TestSupport {
     val h2: String = "h2"
     val h3: String = "h3"
     val backLink: String = ".link-back"
+    val backToHome: String = "back"
     val form: String = "form"
     val summaryError: String = "#error-summary-display ul a"
     val inputError: String = ".error-notification"
@@ -84,6 +85,10 @@ trait ViewSpec extends TestSupport {
 
     def backLink: Element = {
       element.select(Selectors.backLink) getOrElse fail("back link not found")
+    }
+
+    def backToHome: Element = {
+      element.selectById(Selectors.backToHome)
     }
 
     def form: Element = {
