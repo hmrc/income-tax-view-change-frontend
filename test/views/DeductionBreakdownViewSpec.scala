@@ -22,7 +22,7 @@ import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
-import views.html.deductionBreakdown
+import views.html.DeductionBreakdown
 
 class DeductionBreakdownViewSpec extends ViewSpec {
 
@@ -36,12 +36,14 @@ class DeductionBreakdownViewSpec extends ViewSpec {
     val deductions = "Allowances and deductions"
   }
 
+  def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
+
   "The deduction breakdown view" when {
 
     "provided with a calculation without tax deductions for the 2017 tax year" should {
       val taxYear = 2017
 
-      lazy val view = deductionBreakdown(CalcDisplayModel("", 1,
+      lazy val view = deductionBreakdownView(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.calculationNoBillModel,
         Estimate), taxYear, backUrl)
 
@@ -76,7 +78,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
     "provided with a calculation with all tax deductions for the 2018 tax year" should {
       val taxYear = 2018
 
-      lazy val view = deductionBreakdown(CalcDisplayModel("", 1,
+      lazy val view = deductionBreakdownView(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.calculationAllDeductionSources,
         Estimate), taxYear, backUrl)
 

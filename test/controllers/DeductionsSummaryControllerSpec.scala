@@ -46,6 +46,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     mockAuditingService,
+    app.injector.instanceOf[views.html.DeductionBreakdown],
     app.injector.instanceOf[ItvcErrorHandler]
   )(
     appConfig,
