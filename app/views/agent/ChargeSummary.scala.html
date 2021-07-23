@@ -20,9 +20,11 @@
 @import implicits.ImplicitDateFormatter
 @import models.chargeHistory.ChargeHistoryModel
 @import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails.PaymentsWithChargeType
+
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
-@(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatter)
+@(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatter)
 
 @import java.time.LocalDate
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -74,6 +76,7 @@
 		</div>
 	}
 
+
 	@chargeHistoryOpt.map { chargeHistory =>
 		<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
 
@@ -100,6 +103,17 @@
 						amount = Some(charge.totalAmount)
 					)
  				}
+
+				@if(paymentAllocationEnabled && paymentAllocations.nonEmpty) {
+				@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
+				<tr>
+					<td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
+					<td>@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))</td>
+					<td class="numeric">@payment.amount.get.abs.toCurrency</td>
+				</tr>
+				}
+				}
+
  			</tbody>
  		</table>
 	}

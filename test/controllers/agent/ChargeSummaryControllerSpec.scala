@@ -20,7 +20,7 @@ import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
-import config.featureswitch.{ChargeHistory, FeatureSwitching}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
 import implicits.ImplicitDateFormatterImpl
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
@@ -35,8 +35,8 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import play.twirl.api.Html
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
-
 import java.time.LocalDate
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ChargeSummaryControllerSpec extends TestSupport
@@ -50,6 +50,7 @@ class ChargeSummaryControllerSpec extends TestSupport
   class Setup() {
 
     disable(ChargeHistory)
+		disable(PaymentAllocation)
 
     mockChargeSummary()(Html("<html><head><title>Test title</title></head></html>"))
 
@@ -153,6 +154,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 				)
 
 				enable(ChargeHistory)
+				enable(PaymentAllocation)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
 				mockSingleBusinessIncomeSource()
@@ -163,13 +165,14 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any(),any(),any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService).getChargeHistoryDetails(ameq("XAIT00000000015"), ameq(id1040000123))(any())
 			}
 
 			"pass to the view an empty list" when {
 				"charge history list does not exist" in new Setup() {
 					enable(ChargeHistory)
+					enable(PaymentAllocation)
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
 					mockSingleBusinessIncomeSource()
@@ -180,7 +183,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any())(any(), any(), any(), any())
+					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any())(any(), any(), any(), any())
 				}
 			}
 
@@ -205,6 +208,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 		"the ChargeHistory feature switch is not enabled and the page can be viewed" should {
 			"not pass any charge history list to the view" in new Setup() {
 				disable(ChargeHistory)
+				disable(PaymentAllocation)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
 				mockSingleBusinessIncomeSource()
@@ -213,7 +217,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 		}

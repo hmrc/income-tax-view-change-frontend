@@ -19,7 +19,7 @@ package views.agent
 import assets.FinancialDetailsTestConstants._
 import config.featureswitch.FeatureSwitching
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.DocumentDetailWithDueDate
+import models.financialDetails.{DocumentDetailWithDueDate, Payment, PaymentsWithChargeType}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -27,23 +27,29 @@ import org.scalatest.Assertion
 import play.twirl.api.Html
 import testUtils.{TestSupport, ViewSpec}
 import views.html.agent.ChargeSummary
-
 import java.time.LocalDate
 
 class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   class Setup(documentDetailWithDueDate: DocumentDetailWithDueDate,
-              chargeHistoryOpt: Option[List[ChargeHistoryModel]] = None) {
+              chargeHistoryOpt: Option[List[ChargeHistoryModel]] = Some(List()),
+              paymentAllocations: List[PaymentsWithChargeType]= List(),
+              paymentAllocationEnabled: Boolean = false
+             ) {
 
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
 
     val chargeSummaryView: Html = chargeSummary(
       documentDetailWithDueDate = documentDetailWithDueDate,
       chargeHistoryOpt = chargeHistoryOpt,
-      backUrl = "testBackURL"
+      backUrl = "testBackURL",
+      paymentAllocations,
+      paymentAllocationEnabled
     )
 
     val document: Document = Jsoup.parse(chargeSummaryView.toString())
+
+
     lazy val content: Element = document.selectHead("#content")
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
@@ -64,6 +70,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
 
     val paidToDate = "Paid to date"
     val chargeHistoryHeading = "Payment history"
+    val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
   }
 
   "The agent charge summary view" should {
@@ -134,7 +141,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       "charge history list is given" when {
 
         "the list is empty" should {
-          "display the charge history heading" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(Nil)) {
+          "display the charge history heading" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(Nil), paymentAllocations = Nil,paymentAllocationEnabled = false) {
             content select Selectors.h2 text() shouldBe Messages.chargeHistoryHeading
           }
 
@@ -149,6 +156,37 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
             }
           }
+
+
+          "display the Charge creation time (Document date), Name of charge type and Amount of the charge type when paymentAllocations FS disabled" when {
+            "a payment on account 1 of 2" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
+              verifyChargesHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
+            }
+            "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil),paymentAllocationEnabled = false) {
+              verifyChargesHistoryContent("29 Mar 2018 Payment on account 2 of 2 created £1,400.00")
+            }
+            "balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
+              verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
+            }
+          }
+
+          "display the Charge creation time (Document date), Name of charge type and Amount of the charge type " +
+            "when paymentAllocations FS enabled but paymentAllocations are empty" when {
+            "a payment on account 1 of 2" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = true,
+              paymentAllocations = Nil) {
+              verifyChargesHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
+            }
+            "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil),paymentAllocationEnabled = true,
+              paymentAllocations = Nil) {
+              verifyChargesHistoryContent("29 Mar 2018 Payment on account 2 of 2 created £1,400.00")
+            }
+            "balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = true,
+              paymentAllocations = Nil) {
+              verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
+            }
+          }
+
+
         }
 
         "the list contains records" should {
@@ -184,6 +222,79 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
         }
 
       }
+    }
+
+    "show payment allocations in history table" when {
+      "allocations are enabled and present in the list" when {
+        val fullChargeHistory = List(
+          ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, LocalDate.of(2018, 7, 6), "amended return"),
+          ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, LocalDate.of(2019, 8, 12), "Customer Request")
+        )
+
+        val typePOA1 = "SA Payment on Account 1"
+        val typePOA2 = "SA Payment on Account 2"
+        val typeBalCharge = "SA Balancing Charge"
+
+        def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
+          PaymentsWithChargeType(
+            payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
+              lot = Some("lot"), lotItem = Some("lotItem"), date = Some(date), transactionId = None)),
+            mainType = Some(mainType), chargeType = Some(chargeType))
+
+        val paymentAllocationsPOA1 = List(
+          paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0),
+          paymentsForCharge(typePOA1, "NIC4 Scotland", "2018-03-31", 1600.0)
+        )
+
+        val paymentAllocationsPOA2 = List(
+          paymentsForCharge(typePOA2, "ITSA Wales", "2018-04-01", 2400.0),
+          paymentsForCharge(typePOA2, "NIC4-GB", "2018-04-15", 2500.0),
+        )
+
+        val paymentAllocationsBalCharge = List(
+          paymentsForCharge(typeBalCharge, "ITSA England & NI", "2019-12-10", 3400.0),
+          paymentsForCharge(typeBalCharge, "NIC4-NI", "2019-12-11", 3500.0),
+          paymentsForCharge(typeBalCharge, "NIC2 Wales", "2019-12-12", 3600.0),
+          paymentsForCharge(typeBalCharge, "CGT", "2019-12-13", 3700.0),
+          paymentsForCharge(typeBalCharge, "SL", "2019-12-14", 3800.0),
+          paymentsForCharge(typeBalCharge, "Voluntary NIC2-GB", "2019-12-15", 3900.0)
+        )
+
+        "chargeHistory enabled, having Payment created in the first row and payment allocations for POA1" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsPOA1) {
+        verifyChargesHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00",
+          "6 Jul 2018 Payment on account 1 of 2 reduced due to amended return £12,345.00",
+          "12 Aug 2019 Payment on account 1 of 2 reduced by taxpayer request £54,321.00",
+          "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 £1,500.00",
+          "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 £1,600.00"
+        )
+      }
+
+
+        "chargeHistory enabled, having Payment created in the first row and payment allocations for POA2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsPOA2) {
+          verifyChargesHistoryContent(
+            "29 Mar 2018 Payment on account 2 of 2 created £1,400.00",
+            "6 Jul 2018 Payment on account 2 of 2 reduced due to amended return £12,345.00",
+            "12 Aug 2019 Payment on account 2 of 2 reduced by taxpayer request £54,321.00",
+            "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 £2,400.00",
+            "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 £2,500.00"
+          )
+        }
+
+        "chargeHistory enabled, having Payment created in the first row and payment allocations for remaining balance" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsBalCharge) {
+          verifyChargesHistoryContent(
+            "29 Mar 2018 Remaining balance created £1,400.00",
+            "6 Jul 2018 Remaining balance reduced due to amended return £12,345.00",
+            "12 Aug 2019 Remaining balance reduced by taxpayer request £54,321.00",
+            "10 Dec 2019 Payment allocated to Income Tax for remaining balance £3,400.00",
+            "11 Dec 2019 Payment allocated to Class 4 National Insurance for remaining balance £3,500.00",
+            "12 Dec 2019 Payment allocated to Class 2 National Insurance for remaining balance £3,600.00",
+            "13 Dec 2019 Payment allocated to Capital Gains Tax for remaining balance £3,700.00",
+            "14 Dec 2019 Payment allocated to Student Loans for remaining balance £3,800.00",
+            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance £3,900.00"
+          )
+        }
+      }
+
     }
   }
 
