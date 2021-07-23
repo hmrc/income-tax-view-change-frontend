@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
-import views.html.feedback.feedback_thankyou
 
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
@@ -36,6 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
+                                   val feedbackView: views.html.feedback.Feedback,
+                                   val feedbackThankYouView: views.html.feedback.FeedbackThankYou,
                                    httpClient: HttpClient,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val formPartialRetriever: FormPartialProvider,
@@ -63,8 +64,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   def show: Action[AnyContent] = Action {
     implicit request =>
       (request.session.get(REFERER), request.headers.get(REFERER)) match {
-        case (None, Some(ref)) => Ok(views.html.feedback.feedback(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
-        case _ => Ok(views.html.feedback.feedback(feedbackFormPartialUrl, None))
+        case (None, Some(ref)) => Ok(feedbackView(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
+        case _ => Ok(feedbackView(feedbackFormPartialUrl, None))
       }
   }
 
@@ -76,7 +77,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
           resp =>
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
-              case HttpStatus.BAD_REQUEST => BadRequest(views.html.feedback.feedback(feedbackFormPartialUrl, Some(Html(resp.body))))
+              case HttpStatus.BAD_REQUEST => BadRequest(feedbackView(feedbackFormPartialUrl, Some(Html(resp.body))))
               case status => Logger.error(s"Unexpected status code from feedback form: $status"); InternalServerError
             }
         }
@@ -90,7 +91,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     implicit request =>
       val ticketId = request.session.get(TICKET_ID).getOrElse("N/A")
       val referer = request.session.get(REFERER).getOrElse("/")
-      Ok(feedback_thankyou(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
+      Ok(feedbackThankYouView(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
   }
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
