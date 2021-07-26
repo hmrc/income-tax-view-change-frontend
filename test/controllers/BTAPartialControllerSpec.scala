@@ -23,10 +23,12 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import views.html.BtaPartial
 
 class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
   object TestBTAPartialController extends BTAPartialController(
+    app.injector.instanceOf[BtaPartial],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate
     )(

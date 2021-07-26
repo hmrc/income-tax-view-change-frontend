@@ -21,10 +21,12 @@ import org.jsoup.Jsoup
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
+import views.html.BtaPartial
 
 class BtaPartialViewSpec extends TestSupport {
 
-  lazy val page: HtmlFormat.Appendable = views.html.btaPartial()(FakeRequest(), implicitly, appConfig)
+  val btaPartialView = app.injector.instanceOf[BtaPartial]
+  lazy val page: HtmlFormat.Appendable = btaPartialView()(implicitly)
   lazy val document = Jsoup.parse(page.body)
 
   "The BtaPartial view" should {
