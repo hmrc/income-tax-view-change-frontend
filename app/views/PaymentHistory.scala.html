@@ -14,27 +14,33 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers.accordionHelper
 @import models.financialDetails.Payment
-@import views.html.templates.main_template
 @import java.time.LocalDate
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
-@import views.html.helpers.backLinkHelper
+@import views.html.helpers.injected.BackLink
+@import views.html.templates.MainTemplate
+@import implicits.ImplicitDateFormatterImpl
 
+@this(
+      mainTemplate: MainTemplate,
+      backLink: BackLink,
+      appConfig: config.FrontendAppConfig,
+      implicitDateFormatter: ImplicitDateFormatterImpl
+)
 
-@(payments: List[Payment],  implicitDateFormatter: ImplicitDateFormatter, backUrl: String, saUtr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(payments: List[Payment], backUrl: String, saUtr: Option[String])(implicit messages: Messages)
 @import implicitDateFormatter.longDate
 
 @groupedPayments = @{
 payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toList.sortBy(_._1).reverse
 }
 
-@main_template(
+@mainTemplate(
  title = messages("paymentHistory.heading")
 ) {
 
-@backLinkHelper(backUrl)
+@backLink(backUrl)
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentHistory.heading")</h1>
 
