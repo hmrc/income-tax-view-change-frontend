@@ -22,8 +22,9 @@
 @import views.html.helpers.injected.BackLink
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
+@import views.html.partials.taxOverviewBreakdownPartial
 
-@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
 
 @(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -58,41 +59,7 @@
         }
     }
     </h2>
-    <table id="income-deductions-table">
-        <tr>
-            <td>
-                <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
-            </td>
-            <td class="numeric">@{
-                overview.income.toCurrencyString
-            }</td>
-        </tr>
-        <tr>
-            <td>
-                <a href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
-            </td>
-            <td class="numeric no-wrap">@{
-                overview.deductions.toNegativeCurrency
-            }</td>
-        </tr>
-        <tr>
-            <td class="total-section">@messages("tax-year-overview.taxable-income")</td>
-            <td class="numeric total-section">@{
-                overview.totalTaxableIncome.toCurrencyString
-            }</td>
-        </tr>
-    </table>
-
-    <table id="taxdue-payments-table" class="table--spaced-top">
-        <tr>
-            <td class="bold">
-                <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
-            </td>
-            <td class="bold">@{
-                overview.taxDue.toCurrencyString
-            }</td>
-        </tr>
-    </table>
+    @breakdownPartial(overview, taxYear)
 }
 
 @paymentsContent = {

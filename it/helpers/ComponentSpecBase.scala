@@ -140,6 +140,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getCalculationPoller(year: String, additionalCookies: Map[String, String]): WSResponse =
       getWithCalcIdInSession(s"/calculation/$year/submitted", additionalCookies)
+      
+    def getFinalTaxCalculationPoller(taxYear: String, additionalCookies: Map[String, String]): WSResponse =
+      getWithCalcIdInSession(s"/$taxYear/final-tax-overview-and-declaration/calculate", additionalCookies)
 
     def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String]): Future[WSResponse] =
       getWithCalcIdInSessionAndWithoutAwait(s"/calculation/$year/submitted", additionalCookies)

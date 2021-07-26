@@ -1,87 +1,92 @@
 # microservice specific routes
 
 # Play frontend hmrc routes
-->          /govuk-frontend                          govuk.Routes
-->          /hmrc-frontend                           hmrcfrontend.Routes
+->          /govuk-frontend                                               govuk.Routes
+->          /hmrc-frontend                                                hmrcfrontend.Routes
 
 # Play frontend hmrc route for Assets
-GET         /assets/*file                           controllers.Assets.versioned(path = "/public", file: Asset)
+GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file: Asset)
 
 # Assets
-GET        /assets/*file                            controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
 #Home Controller
-GET         /                                       controllers.HomeController.home
+GET         /                                                             controllers.HomeController.home
 
 #ReportDeadlines
-GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines
+GET         /obligations                                                  controllers.ReportDeadlinesController.getReportDeadlines
 
 #Calculation
-GET         /calculation/:taxYear                   controllers.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear: Int)
+GET         /calculation/:taxYear                                         controllers.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear: Int)
 
 #IncomeSummary
-GET         /calculation/:taxYear/income            controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+GET         /calculation/:taxYear/income                                  controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
 
 #Tax Due
-GET         /calculation/:taxYear/tax-due           controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
+GET         /calculation/:taxYear/tax-due                                 controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
 
 #Deductions Summary
-GET         /calculation/:taxYear/deductions        controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
+GET         /calculation/:taxYear/deductions                              controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
 
 #TaxYears
-GET         /tax-years                              controllers.TaxYearsController.viewTaxYears
+GET         /tax-years                                                    controllers.TaxYearsController.viewTaxYears
 
 #Payment
-GET         /payment                                controllers.PaymentController.paymentHandoff(amountInPence: Long)
+GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long)
 
 #Payment Allocation
-GET         /charges/payments-made                  controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
+GET         /charges/payments-made                                        controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
 
 #Payments due
-GET         /payments-owed                           controllers.WhatYouOweController.viewPaymentsDue
+GET         /payments-owed                                                controllers.WhatYouOweController.viewPaymentsDue
 
 #Charge summary
-GET			/tax-years/:taxYear/charge				controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
+GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
 
 #Feedback Routes
-GET         /feedback                               controllers.feedback.FeedbackController.show
-POST        /feedback                               controllers.feedback.FeedbackController.submit
-GET         /thankyou                               controllers.feedback.FeedbackController.thankyou
+GET         /feedback                                                     controllers.feedback.FeedbackController.show
+POST        /feedback                                                     controllers.feedback.FeedbackController.submit
+GET         /thankyou                                                     controllers.feedback.FeedbackController.thankyou
 
 #Timeout Routes
-GET         /session-timeout                        controllers.timeout.SessionTimeoutController.timeout
-GET         /keep-alive                             controllers.timeout.SessionTimeoutController.keepAlive
+GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout
+GET         /keep-alive                                                   controllers.timeout.SessionTimeoutController.keepAlive
 
 #Sign Out Routes
-GET         /sign-out                               controllers.SignOutController.signOut
+GET         /sign-out                                                     controllers.SignOutController.signOut
 
 #Sign In Routes
-GET         /sign-in                                controllers.SignInController.signIn
+GET         /sign-in                                                      controllers.SignInController.signIn
 
 #Agent Error
-GET         /agent-error                            controllers.errors.AgentErrorController.show
+GET         /agent-error                                                  controllers.errors.AgentErrorController.show
 
 #Not Enrolled
-GET         /not-enrolled                           controllers.errors.NotEnrolledController.show
+GET         /not-enrolled                                                 controllers.errors.NotEnrolledController.show
 
 #Uplift Failed
-GET			/uplift-failed							controllers.errors.UpliftFailedController.show
+GET         /uplift-failed                                                controllers.errors.UpliftFailedController.show
 
 #Uplift Success
-GET			/uplift-success							controllers.UpliftSuccessController.success
+GET         /uplift-success                                               controllers.UpliftSuccessController.success
 
 #BTA Partial
-GET         /partial                                controllers.BTAPartialController.setupPartial
+GET         /partial                                                      controllers.BTAPartialController.setupPartial
 
 #Calculationd details poller
-GET         /calculation/:taxYear/submitted         controllers.CalculationPollingController.calculationPoller(taxYear: Int)
+GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false)
 
 #Language Controller
-GET         /language/:lang                         controllers.ItvcLanguageController.switchToLanguage(lang: String)
+GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
 
 #Payment history
-GET         /payments/history                       controllers.PaymentHistoryController.viewPaymentHistory
+GET         /payments/history                                             controllers.PaymentHistoryController.viewPaymentHistory
 
-GET        /switch-to-welsh                                 controllers.ItvcLanguageController.switchToWelsh
-GET        /switch-to-english                               controllers.ItvcLanguageController.switchToEnglish
+#Final Tax URLs
+GET         /:taxYear/final-tax-overview-and-declaration                  controllers.FinalTaxCalculationController.show(taxYear: Int)
+POST        /:taxYear/final-tax-overview-and-declaration                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
+GET         /:taxYear/final-tax-overview-and-declaration/calculate        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
+
+GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh
+GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish
 

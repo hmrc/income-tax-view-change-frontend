@@ -1,0 +1,57 @@
+@*
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+    
+@import implicits.ImplicitCurrencyFormatter._
+@import models.calculation.CalcOverview
+
+@this()
+@(overview: CalcOverview, taxYear: Int)(implicit messages: Messages)
+
+<table id="income-deductions-table">
+    <tr>
+        <td>
+            <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+            </td>
+        <td class="numeric">@{
+            overview.income.toCurrencyString
+        }</td>
+    </tr>
+    <tr>
+        <td>
+            <a href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
+            </td>
+        <td class="numeric no-wrap">@{
+            overview.deductions.toNegativeCurrency
+        }</td>
+    </tr>
+    <tr>
+        <td class="total-section">@messages("tax-year-overview.taxable-income")</td>
+        <td class="numeric total-section">@{
+            overview.totalTaxableIncome.toCurrencyString
+        }</td>
+    </tr>
+</table>
+
+<table id="taxdue-payments-table" class="table--spaced-top">
+    <tr>
+        <td class="bold">
+            <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
+            </td>
+        <td class="bold">@{
+            overview.taxDue.toCurrencyString
+        }</td>
+    </tr>
+</table>

@@ -1,0 +1,62 @@
+@*
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+@import models.calculation.CalcOverview
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import views.html.partials.taxOverviewBreakdownPartial
+@import views.html.templates.agent.MainTemplate
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import config.FrontendAppConfig
+
+@this(breakdownPartial: taxOverviewBreakdownPartial, mainTemplate: MainTemplate, inset: GovukInsetText, form: FormWithCSRF)
+@(overview: CalcOverview, taxYear: Int, isAgent: Boolean = false)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
+
+@headingText = @{
+    val key = s"final-declaration.${if(isAgent) "agent" else "individual"}.heading"
+
+    messages(key)
+}
+
+@subHeadingText = @{
+    val key = s"final-declaration.caption"
+    messages(key, (taxYear - 1).toString, taxYear.toString)
+}
+
+@insetContent = {
+    @messages("final-declaration.inset.1") <a href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear.toString)}>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.inset.2")</a>
+}
+
+@mainTemplate(
+    title = headingText
+) {
+    <h1 class="heading-xlarge">
+        <span class="heading-secondary">@subHeadingText</span>
+        @headingText
+    </h1>
+
+    <div class="panel panel-border-wide">
+        <p>@insetContent</p>
+    </div>
+
+    @breakdownPartial(overview, taxYear)
+    @* TODO Need a small space adding before and after the p tag using the GovUk element classes when the migration has been completed *@
+    <h2 class="heading-large">@messages("final-declaration.declaration")</h2>
+    <p>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.declaration.p")</p>
+
+    @form(controllers.routes.FinalTaxCalculationController.submit(taxYear)) {
+        <button class="button">@messages("final-declaration.submit")</button>
+    }
+}

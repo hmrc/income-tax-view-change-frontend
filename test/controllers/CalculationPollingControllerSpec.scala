@@ -44,7 +44,7 @@ class CalculationPollingControllerSpec extends TestSupport with MockCalculationP
     "Called with an Unauthenticated User" should {
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
-        val result = TestCalculationPollingController.calculationPoller(testYear)(fakeRequestWithNinoAndCalc)
+        val result = TestCalculationPollingController.calculationPoller(testYear, isFinalCalc = false)(fakeRequestWithNinoAndCalc)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -53,7 +53,7 @@ class CalculationPollingControllerSpec extends TestSupport with MockCalculationP
       "return the redirect to calculation page" in {
         mockCalculationPollingSuccess()
 
-        val result = TestCalculationPollingController.calculationPoller(testYear)(fakeRequestWithNinoAndCalc)
+        val result = TestCalculationPollingController.calculationPoller(testYear, isFinalCalc = false)(fakeRequestWithNinoAndCalc)
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -63,7 +63,7 @@ class CalculationPollingControllerSpec extends TestSupport with MockCalculationP
       "return the internal server error page" in {
         mockCalculationPollingRetryableError()
 
-        val result = TestCalculationPollingController.calculationPoller(testYear)(fakeRequestWithNinoAndCalc)
+        val result = TestCalculationPollingController.calculationPoller(testYear, isFinalCalc = false)(fakeRequestWithNinoAndCalc)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some("text/html")
@@ -74,7 +74,7 @@ class CalculationPollingControllerSpec extends TestSupport with MockCalculationP
       "return the internal server error page" in {
         mockCalculationPollingNonRetryableError()
 
-        val result = TestCalculationPollingController.calculationPoller(testYear)(fakeRequestWithActiveSession)
+        val result = TestCalculationPollingController.calculationPoller(testYear, isFinalCalc = false)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some("text/html")
