@@ -22,29 +22,31 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatterImpl
 import models.reportDeadlines.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.ReportDeadlinesService
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.{NoReportDeadlines, Obligations, NextUpdates}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val authenticate: AuthenticationPredicate,
-                                          val retrieveNino: NinoPredicate,
-                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          val auditingService: AuditingService,
-                                          val reportDeadlinesService: ReportDeadlinesService,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val appConfig: FrontendAppConfig,
-                                          implicit val mcc: MessagesControllerComponents,
-                                          implicit val executionContext: ExecutionContext,
-                                          implicit val dateFormatter: ImplicitDateFormatterImpl)
-                                          extends BaseController with FeatureSwitching with I18nSupport {
+class ReportDeadlinesController @Inject()(noReportDeadlinesView: NoReportDeadlines,
+                                          obligationsView: Obligations,
+                                          nextUpdatesView: NextUpdates,
+                                          checkSessionTimeout: SessionTimeoutPredicate,
+                                          authenticate: AuthenticationPredicate,
+                                          retrieveNino: NinoPredicate,
+                                          retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          auditingService: AuditingService,
+                                          reportDeadlinesService: ReportDeadlinesService,
+                                          itvcErrorHandler: ItvcErrorHandler,
+                                          val appConfig: FrontendAppConfig)
+                                         (implicit mcc: MessagesControllerComponents,
+                                          val executionContext: ExecutionContext)
+  extends BaseController with FeatureSwitching with I18nSupport {
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
@@ -53,7 +55,7 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
           ifEnabled = renderViewNextUpdates,
           ifDisabled = renderViewBothObligations)
       } else {
-        Future.successful(Ok(views.html.noReportDeadlines(backUrl = backUrl)))
+        Future.successful(Ok(noReportDeadlinesView(backUrl = backUrl)))
       }
   }
 
@@ -65,7 +67,7 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       } yield {
         (currentObligations, previousObligations) match {
           case (currentObligations, previousObligations) if currentObligations.obligations.nonEmpty =>
-            Ok(views.html.obligations(currentObligations, previousObligations, dateFormatter, backUrl = backUrl))
+            Ok(obligationsView(currentObligations, previousObligations, backUrl = backUrl))
           case _ =>
             itvcErrorHandler.showInternalServerError
         }
@@ -78,7 +80,7 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
         nextUpdates <- getObligations()
     } yield {
         if (nextUpdates.obligations.nonEmpty) {
-					Ok(views.html.nextUpdates(nextUpdates, dateFormatter, backUrl = backUrl))
+          Ok(nextUpdatesView(nextUpdates, backUrl = backUrl))
 				} else {
 					itvcErrorHandler.showInternalServerError
         }

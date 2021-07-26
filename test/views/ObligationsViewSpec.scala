@@ -16,27 +16,26 @@
 
 package views
 
-import java.time.LocalDate
-
-import assets.BaseTestConstants.{testMtdItUser, testSelfEmploymentId}
+import assets.BaseTestConstants.testSelfEmploymentId
 import assets.BusinessDetailsTestConstants.business1
 import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
+import views.html.Obligations
+
+import java.time.LocalDate
 
 class ObligationsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val obligationsView: Obligations = app.injector.instanceOf[Obligations]
 
   class Setup(currentObligations: ObligationsModel, previousObligations: ObligationsModel) {
-    val html: HtmlFormat.Appendable = views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter,"testBackURL")(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter,"testBackURL")))
+    val pageDocument: Document = Jsoup.parse(contentAsString(obligationsView(currentObligations, previousObligations,"testBackURL")))
   }
 
   object obligationsMessages {

@@ -22,7 +22,6 @@ import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockReportDeadlinesService
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
@@ -34,6 +33,7 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.ReportDeadlinesService
+import views.html.{NextUpdates, NoReportDeadlines, Obligations}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -42,6 +42,9 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
                                             with MockReportDeadlinesService with FeatureSwitching{
 
   object TestReportDeadlinesController extends ReportDeadlinesController(
+    app.injector.instanceOf[NoReportDeadlines],
+    app.injector.instanceOf[Obligations],
+    app.injector.instanceOf[NextUpdates],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
@@ -49,10 +52,10 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
     app.injector.instanceOf[AuditingService],
     mockReportDeadlinesService,
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[FrontendAppConfig]
+  )(
     app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[ImplicitDateFormatterImpl]
+    ec
   )
 
   val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]

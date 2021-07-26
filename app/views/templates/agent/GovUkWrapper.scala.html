@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers.recruitmentBannerHelper
+@import views.html.helpers.injected.BetaBanner
+@import views.html.helpers.injected.LanguageSelection
+@import views.html.helpers.injected.RecruitmentBannerHelper
 @import play.twirl.api.HtmlFormat
 @import views.html.layouts.GovUkTemplate
 @import uk.gov.hmrc.play.views.html.layouts.FooterLinks
@@ -26,6 +28,10 @@
 @import uk.gov.hmrc.play.views.html.layouts.HeadWithTrackingConsent
 
 @this(
+        appConfig: config.FrontendAppConfig,
+        betaBanner: BetaBanner,
+        languageSelection: LanguageSelection,
+        recruitmentBannerHelper: RecruitmentBannerHelper,
         govUkTemplate: GovUkTemplate,
         mainContentLayout: MainContent,
         footerLinks: FooterLinks,
@@ -46,7 +52,7 @@
   scriptElem: Option[Html] = None,
   showLogout: Boolean = true,
   form: Option[Form[_]] = None
-)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+)(implicit messages: Messages)
 
 @titlePattern = @{
     if(form.exists(_.hasErrors)) {
@@ -97,7 +103,7 @@
 
 @serviceInfo = {
     @serviceInfoLayout(
-      betaBanner = views.html.helpers.betaBanner(),
+      betaBanner = betaBanner(),
       includeGridWrapper = false,
       serviceInfoContent = Some(serviceInfoContent),
       includeHMRCBranding = true,
@@ -110,7 +116,7 @@
     @if(contentHeader.isDefined) {
         <header class="page-header inline-block">@contentHeader.get</header>
     }
-        @helpers.language_selection()
+        @languageSelection()
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}

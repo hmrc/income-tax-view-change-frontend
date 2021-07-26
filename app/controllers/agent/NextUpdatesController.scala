@@ -20,7 +20,6 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.reportDeadlines.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -32,23 +31,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class NextUpdatesController @Inject()(val agentNextUpdates: views.html.agent.NextUpdates,
-                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                      val reportDeadlinesService: ReportDeadlinesService,
+class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpdates,
+                                      incomeSourceDetailsService: IncomeSourceDetailsService,
+                                      reportDeadlinesService: ReportDeadlinesService,
+                                      val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions)
-                                     (implicit val appConfig: FrontendAppConfig,
-                                      val languageUtils: LanguageUtils,
+                                     (implicit val languageUtils: LanguageUtils,
                                       mcc: MessagesControllerComponents,
-                                      implicit val ec: ExecutionContext,
-                                      dateFormatter: ImplicitDateFormatterImpl,
-                                      val itvcErrorHandler: ItvcErrorHandler)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                      val ec: ExecutionContext,
+                                      itvcErrorHandler: ItvcErrorHandler)
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private def view(obligationsModel: ObligationsModel, backUrl: String)
-                  (implicit request: Request[_], user: MtdItUser[_]): Html = {
+                  (implicit user: MtdItUser[_]): Html = {
     agentNextUpdates(
       currentObligations = obligationsModel,
-      implicitDateFormatter = dateFormatter,
       backUrl = backUrl
     )
   }
@@ -58,7 +55,7 @@ class NextUpdatesController @Inject()(val agentNextUpdates: views.html.agent.Nex
 			getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
 				mtdItUser =>
 					reportDeadlinesService.getReportDeadlines()(implicitly, mtdItUser).map {
-						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl)(implicitly, mtdItUser))
+						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl)(mtdItUser))
 						case _ => itvcErrorHandler.showInternalServerError()
 					}
 			}

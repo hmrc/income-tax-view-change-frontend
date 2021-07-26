@@ -16,26 +16,23 @@
 
 package views
 
-import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import implicits.ImplicitDateFormatterImpl
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.test.FakeRequest
 import play.api.test.Helpers.contentAsString
-import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
+import views.html.NextUpdates
 
 class NextUpdatesViewSpec extends TestSupport {
 
 	lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+	val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
 
 	class Setup(currentObligations: ObligationsModel) {
-		val html: HtmlFormat.Appendable = views.html.nextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL")(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-		val pageDocument: Document = Jsoup.parse(contentAsString(views.html.nextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL"))(defaultTimeout))
+		val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL"))(defaultTimeout))
 	}
 
 	object obligationsMessages {

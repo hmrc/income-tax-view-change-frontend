@@ -14,27 +14,23 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatter
-@import views.html.templates.main_template
-@import views.helpers.ReportDeadlinesPage
-@import views.html.helpers.backToHomeHelper
-@import views.html.helpers.accordionHelper
-@import models.reportDeadlines.ReportDeadlinesModel
-@import models.reportDeadlines.QuarterlyObligation
-@import models.reportDeadlines.EopsObligation
-@import models.reportDeadlines.QuarterlyObligation
+@import views.html.templates.MainTemplate
+@import models.reportDeadlines.ObligationsModel
 
-@import views.html.obligationTemplates.currentObligationsHelper
-@import views.html.obligationTemplates.previousObligationsHelper
-@import views.html.obligationTemplates.nextUpdatesHelper
-@import views.html.helpers.backLinkHelper
+@import views.html.helpers.injected.obligations.NextUpdatesHelper
+@import views.html.helpers.injected.BackLink
 
+@this(
+	mainTemplate: MainTemplate,
+	backLinkHelper: BackLink,
+	nextUpdatesHelper: NextUpdatesHelper
+)
 
-@(currentObligations: models.reportDeadlines.ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(currentObligations: ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 
 
-@main_template(
+@mainTemplate(
 	title = messages("nextUpdates.heading"),
 	bodyClasses = None) {
 @backLinkHelper(backUrl)
@@ -71,7 +67,7 @@
 
 	<h2 class="heading-medium">@messages("nextUpdates.sub-heading")</h2>
 
-	@nextUpdatesHelper(currentObligations, implicitDateFormatter)
+	@nextUpdatesHelper(currentObligations)
 
 	<p>
 		@messages("nextUpdates.previousYears.textOne")

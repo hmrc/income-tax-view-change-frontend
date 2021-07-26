@@ -14,26 +14,24 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatter
-@import views.html.templates.main_template
-@import views.helpers.ReportDeadlinesPage
-@import views.html.helpers.backToHomeHelper
-@import views.html.helpers.accordionHelper
-@import models.reportDeadlines.ReportDeadlinesModel
-@import models.reportDeadlines.QuarterlyObligation
-@import models.reportDeadlines.EopsObligation
-@import models.reportDeadlines.QuarterlyObligation
+@import views.html.templates.MainTemplate
+@import models.reportDeadlines.ObligationsModel
 
-@import views.html.obligationTemplates.currentObligationsHelper
-@import views.html.obligationTemplates.previousObligationsHelper
-@import views.html.obligationTemplates.nextUpdatesHelper
-@import views.html.helpers.backLinkHelper
+@import views.html.helpers.injected.obligations.CurrentObligationsHelper
+@import views.html.helpers.injected.obligations.PreviousObligationsHelper
+@import views.html.helpers.injected.BackLink
 
 
+@this(
+    mainTemplate: MainTemplate,
+    backLinkHelper: BackLink,
+    currentObligationsHelper: CurrentObligationsHelper,
+    previousObligationsHelper: PreviousObligationsHelper
+)
 
-@(currentObligations: models.reportDeadlines.ObligationsModel, previousObligations: models.reportDeadlines.ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(currentObligations: ObligationsModel, previousObligations: ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@main_template(
+@mainTemplate(
 title = messages("obligations.heading.v2"),
 bodyClasses = None,
 
@@ -60,11 +58,11 @@ bodyClasses = None,
     </ul>
     <div class="govuk-tabs__panel" id="current" role="tabpanel" aria-labelledby="tab_current">
         <h2 class="heading-large">@messages("obligations.sub-heading.v2")</h2>
-        @currentObligationsHelper(currentObligations, implicitDateFormatter)
+        @currentObligationsHelper(currentObligations)
     </div>
     <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="previous" role="tabpanel" aria-labelledby="tab_previous">
         <h2 class="heading-large">@messages("obligations.previous-obligations")</h2>
-        @previousObligationsHelper(previousObligations, implicitDateFormatter)
+        @previousObligationsHelper(previousObligations)
     </div>
 </div>
 
