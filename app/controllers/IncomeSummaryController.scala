@@ -28,12 +28,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
+import views.html.IncomeBreakdown
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
+                                        val checkSessionTimeout: SessionTimeoutPredicate,
                                         val authenticate: AuthenticationPredicate,
                                         val retrieveNino: NinoPredicate,
                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -55,7 +57,7 @@ class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutP
       implicit user =>
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(views.html.incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+              Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")

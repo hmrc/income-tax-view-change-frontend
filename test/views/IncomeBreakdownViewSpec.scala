@@ -22,11 +22,13 @@ import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
-import views.html.incomeBreakdown
+import views.html.IncomeBreakdown
 
 class IncomeBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
+
+  val incomeBreakdown = app.injector.instanceOf[IncomeBreakdown]
 
   object Breadcrumbs {
     val businessTaxAccount = "Business tax account"
