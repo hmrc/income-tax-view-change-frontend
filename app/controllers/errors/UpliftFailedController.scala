@@ -18,23 +18,22 @@ package controllers.errors
 
 import audit.AuditingService
 import audit.models.IvOutcomeFailureAuditModel
-import com.google.inject.Inject
-import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.errorPages.upliftFailed
+import views.html.errorPages.UpliftFailed
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpliftFailedController @Inject()(implicit val config: FrontendAppConfig,
-																			 mcc: MessagesControllerComponents,
-																			 auditingService: AuditingService,
-																			 implicit val executionContext: ExecutionContext) extends FrontendController(mcc) {
-	def show(): Action[AnyContent] = Action.async { implicit request =>
-		val journeyId = request.getQueryString("journeyId")
-		if (journeyId.isDefined) {
-			auditingService.audit(IvOutcomeFailureAuditModel(journeyId.get))
-		}
-		Future.successful(Forbidden(upliftFailed()))
-	}
+class UpliftFailedController @Inject()(upliftFailedView: UpliftFailed,
+                                       mcc: MessagesControllerComponents,
+                                       auditingService: AuditingService)
+                                      (implicit ec: ExecutionContext) extends FrontendController(mcc) {
+  def show(): Action[AnyContent] = Action.async { implicit request =>
+    val journeyId = request.getQueryString("journeyId")
+    if (journeyId.isDefined) {
+      auditingService.audit(IvOutcomeFailureAuditModel(journeyId.get))
+    }
+    Future.successful(Forbidden(upliftFailedView()))
+  }
 }

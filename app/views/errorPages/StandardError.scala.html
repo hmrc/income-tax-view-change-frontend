@@ -14,9 +14,22 @@
  * limitations under the License.
  *@
 
-@()(implicit appConfig: config.FrontendAppConfig, request: Request[_], messages: Messages)
+@import views.html.templates.GovUkWrapper
 
-@views.html.errorPages.standardError(
-    messages("notFound.heading"),
-    messages("notFound.message")
+@this(govukWrapper: GovUkWrapper)
+
+@(heading: String, message: String)(implicit messages: Messages)
+
+@contentHeader = {
+  <h1>@heading</h1>
+}
+
+@mainContent = {
+  <p class="lede">@message</p>
+}
+
+@govukWrapper(
+  title = heading,
+  contentHeader = Some(contentHeader),
+  mainContent = mainContent
 )

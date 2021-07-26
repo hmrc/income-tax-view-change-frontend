@@ -23,7 +23,6 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
-import implicits.ImplicitDateFormatter
 import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.reportDeadlines.ObligationsModel
@@ -32,8 +31,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, ReportDeadlinesService}
-import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxYearOverview
+import views.html.errorPages.StandardError
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -41,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
+                                          standardErrorView: StandardError,
                                           authenticate: AuthenticationPredicate,
                                           calculationService: CalculationService,
                                           checkSessionTimeout: SessionTimeoutPredicate,
@@ -51,10 +51,9 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           reportDeadlinesService: ReportDeadlinesService,
                                           val auditingService: AuditingService)
                                          (implicit val appConfig: FrontendAppConfig,
-                                      val languageUtils: LanguageUtils,
                                       mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext)
-  extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+  extends BaseController with FeatureSwitching with I18nSupport {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
@@ -62,8 +61,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                    calculationOverview: Option[CalcOverview] = None,
                    charge: List[DocumentDetailWithDueDate],
                    obligations: ObligationsModel
-                  )(implicit request: Request[_],
-                    user: MtdItUser[_]): Html = {
+                  )(implicit user: MtdItUser[_]): Html = {
     taxYearOverviewView(
       taxYear = taxYear,
       overviewOpt = calculationOverview,
@@ -135,7 +133,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         showTaxYearOverview(taxYear)
     } else {
       action.async { implicit request =>
-        Future.successful(BadRequest(views.html.errorPages.standardError(
+        Future.successful(BadRequest(standardErrorView(
           messagesApi.preferred(request)("standardError.heading"),
           messagesApi.preferred(request)("standardError.message")
         )))

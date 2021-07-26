@@ -16,22 +16,16 @@
 
 package controllers
 
-import java.time.LocalDate
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
-import assets.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, fullDocumentDetailWithDueDateModel}
+import assets.FinancialDetailsTestConstants.fullDocumentDetailWithDueDateModel
 import assets.FinancialTransactionsTestConstants.transactionModel
-import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.MessagesLookUp
 import audit.mocks.MockAuditingService
-import audit.models.BillsAuditing.BillsAuditModel
-import auth.MtdItUser
 import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockReportDeadlinesService}
 import models.calculation.CalcOverview
@@ -39,10 +33,12 @@ import models.financialDetails.DocumentDetailWithDueDate
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.TaxYearOverview
+import views.html.errorPages.StandardError
+
+import java.time.LocalDate
 
 class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
@@ -53,6 +49,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
 
   object TestTaxYearOverviewController extends TaxYearOverviewController(
     taxYearOverviewView,
+    app.injector.instanceOf[StandardError],
     MockAuthenticationPredicate,
     mockCalculationService,
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -63,7 +60,6 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
     mockReportDeadlinesService,
     mockAuditingService
   )(appConfig,
-    languageUtils,
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
 

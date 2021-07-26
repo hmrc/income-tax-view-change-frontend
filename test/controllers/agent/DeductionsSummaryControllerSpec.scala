@@ -20,7 +20,6 @@ import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
@@ -30,7 +29,6 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,9 +48,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       mockCalculationService
     )(
       appConfig,
-      app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
       app.injector.instanceOf[ExecutionContext],
       itvcErrorHandler = mockItvcErrorHandler
     )

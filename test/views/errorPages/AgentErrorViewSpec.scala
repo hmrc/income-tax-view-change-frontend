@@ -19,10 +19,11 @@ package views.errorPages
 import assets.MessagesLookUp.{AgentErrorMessages => pageMessages}
 import play.twirl.api.Html
 import testUtils.ViewSpec
+import views.html.errorPages.AgentError
 
 class AgentErrorViewSpec extends ViewSpec {
 
-  def agentErrorView: Html = views.html.errorPages.agentError()
+  def agentErrorView: Html = app.injector.instanceOf[AgentError].apply()
 
   "The Agent Error page" should {
 
