@@ -53,7 +53,7 @@
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@{calc.year}"
                            id="viewReturn-link-@{calc.year}"
-                           href="@{controllers.routes.CalculationController.renderTaxYearOverviewPage(calc.year).url}">
+                           href="@{controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(calc.year).url}">
                             @messages("taxYears.viewReturn")
                             <span class="visuallyhidden">@messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")</span>
                         </a>

@@ -36,7 +36,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 
-class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.now
@@ -133,7 +133,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
     multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
-  s"GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}" when {
+  s"GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}" when {
 
     "TaxYearOverviewUpdate FS is enabled" should {
       "should show the updated Tax Year Overview page" in {
@@ -176,7 +176,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -267,7 +267,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -319,7 +319,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
         And("A financial transaction call fails")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -384,7 +384,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           ))
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -450,7 +450,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           ))
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -493,7 +493,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5))
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -537,7 +537,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
         And("current obligations call failed")
         IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -600,7 +600,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -682,7 +682,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -719,7 +719,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A calculation call for 2017-18 fails")
           IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -749,7 +749,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A financial transaction call fails")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")

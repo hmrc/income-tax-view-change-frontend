@@ -17,7 +17,7 @@ GET         /                                       controllers.HomeController.h
 GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines
 
 #Calculation
-GET         /calculation/:taxYear                   controllers.CalculationController.renderTaxYearOverviewPage(taxYear: Int)
+GET         /calculation/:taxYear                   controllers.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear: Int)
 
 #IncomeSummary
 GET         /calculation/:taxYear/income            controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)

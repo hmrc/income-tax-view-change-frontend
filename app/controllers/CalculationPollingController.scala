@@ -50,7 +50,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
           pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino) flatMap {
             case OK =>
               Logger.info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
-              Future.successful(Redirect(routes.CalculationController.renderTaxYearOverviewPage(taxYear)))
+              Future.successful(Redirect(routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear)))
             case _ =>
               Logger.info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
               Future.successful(itvcErrorHandler.showInternalServerError())

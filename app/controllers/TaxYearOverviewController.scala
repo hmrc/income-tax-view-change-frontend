@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import audit.AuditingService
 import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
@@ -25,8 +23,7 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.{Inject, Singleton}
+import implicits.ImplicitDateFormatter
 import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.reportDeadlines.ObligationsModel
@@ -36,25 +33,27 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.taxYearOverview
+import views.html.TaxYearOverview
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationController @Inject()(authenticate: AuthenticationPredicate,
-                                      calculationService: CalculationService,
-                                      checkSessionTimeout: SessionTimeoutPredicate,
-                                      financialDetailsService: FinancialDetailsService,
-                                      itvcErrorHandler: ItvcErrorHandler,
-                                      retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                      retrieveNino: NinoPredicate,
-                                      reportDeadlinesService: ReportDeadlinesService,
-                                      val auditingService: AuditingService)
-                                     (implicit val appConfig: FrontendAppConfig,
+class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
+                                          authenticate: AuthenticationPredicate,
+                                          calculationService: CalculationService,
+                                          checkSessionTimeout: SessionTimeoutPredicate,
+                                          financialDetailsService: FinancialDetailsService,
+                                          itvcErrorHandler: ItvcErrorHandler,
+                                          retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          retrieveNino: NinoPredicate,
+                                          reportDeadlinesService: ReportDeadlinesService,
+                                          val auditingService: AuditingService)
+                                         (implicit val appConfig: FrontendAppConfig,
                                       val languageUtils: LanguageUtils,
                                       mcc: MessagesControllerComponents,
-                                      val executionContext: ExecutionContext,
-                                      dateFormatter: ImplicitDateFormatterImpl)
+                                      val executionContext: ExecutionContext)
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
@@ -65,12 +64,11 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                    obligations: ObligationsModel
                   )(implicit request: Request[_],
                     user: MtdItUser[_]): Html = {
-    taxYearOverview(
+    taxYearOverviewView(
       taxYear = taxYear,
       overviewOpt = calculationOverview,
       charges = charge,
       obligations,
-      dateFormatter,
       backUrl = backUrl
     )
   }
