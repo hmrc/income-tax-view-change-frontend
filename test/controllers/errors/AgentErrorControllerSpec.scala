@@ -23,14 +23,15 @@ import org.jsoup.Jsoup
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import views.html.errorPages.AgentError
 
 class AgentErrorControllerSpec extends TestSupport with MockAuthenticationPredicate {
 
   val TestAgentErrorController = new AgentErrorController(
     app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate
+    MockAuthenticationPredicate,
+    app.injector.instanceOf[AgentError]
   )(
-    appConfig,
     ec,
     app.injector.instanceOf[MessagesControllerComponents]
   )

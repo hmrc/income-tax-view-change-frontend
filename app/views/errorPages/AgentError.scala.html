@@ -14,18 +14,23 @@
  * limitations under the License.
  *@
 
-@(heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@import views.html.templates.MainTemplate
 
-@contentHeader = {
-  <h1>@heading</h1>
+@this(mainTemplate: MainTemplate, appConfig: config.FrontendAppConfig)
+
+@()(implicit messages: Messages)
+
+@mainTemplate(
+    title = messages("agent-error.heading")
+) {
+    <h1 class="h1-heading">@messages("agent-error.heading")</h1>
+
+    <p>@messages("agent-error.note")
+        <a href="@{appConfig.setUpAgentServicesAccountUrl}">@messages("agent-error.link")</a>.
+    </p>
+
+
+    <div>
+        <a class="button" href="@{controllers.routes.SignOutController.signOut}">@messages("base.sign-out")</a>
+    </div>
 }
-
-@mainContent = {
-  <p class="lede">@message</p>
-}
-
-@templates.govuk_wrapper(
-  title = heading,
-  contentHeader = Some(contentHeader),
-  mainContent = mainContent
-)

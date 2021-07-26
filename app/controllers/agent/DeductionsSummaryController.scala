@@ -22,19 +22,16 @@ import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeduct
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.Inject
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.DeductionBreakdown
-import views.html.errorPages.notFound
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdown,
                                             val authorisedFunctions: AuthorisedFunctions,
@@ -42,12 +39,10 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
                                             auditingService: AuditingService,
                                             calculationService: CalculationService)
                                            (implicit val appConfig: FrontendAppConfig,
-                                            val languageUtils: LanguageUtils,
                                             mcc: MessagesControllerComponents,
-                                            dateFormatter: ImplicitDateFormatterImpl,
                                             val ec: ExecutionContext,
                                             val itvcErrorHandler: ItvcErrorHandler)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
 
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] =

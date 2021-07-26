@@ -17,21 +17,21 @@
 package controllers.errors
 
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
 import controllers.BaseController
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import views.html.errorPages.AgentError
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class AgentErrorController @Inject()(checkSessionTimeout: SessionTimeoutPredicate,
-                                     authenticate: AuthenticationPredicate)
-                                    (implicit config: FrontendAppConfig,
-                                     override val executionContext: ExecutionContext,
+                                     authenticate: AuthenticationPredicate,
+                                     agentErrorView: AgentError)
+                                    (implicit override val executionContext: ExecutionContext,
                                      mcc: MessagesControllerComponents) extends BaseController with I18nSupport {
   val show: Action[AnyContent] = (checkSessionTimeout andThen authenticate) { implicit request =>
-    Ok(views.html.errorPages.agentError())
+    Ok(agentErrorView())
   }
 }
