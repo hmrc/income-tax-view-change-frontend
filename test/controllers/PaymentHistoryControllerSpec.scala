@@ -19,7 +19,7 @@ package controllers
 import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.Payment
 import org.mockito.ArgumentMatchers.any
@@ -29,6 +29,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
+import views.html.PaymentHistory
 
 import scala.concurrent.Future
 
@@ -50,6 +51,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     val paymentHistoryService: PaymentHistoryService = mock[PaymentHistoryService]
 
     val controller = new PaymentHistoryController(
+      app.injector.instanceOf[PaymentHistory],
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
@@ -57,7 +59,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
       paymentHistoryService,
-      app.injector.instanceOf[ImplicitDateFormatterImpl]
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig])

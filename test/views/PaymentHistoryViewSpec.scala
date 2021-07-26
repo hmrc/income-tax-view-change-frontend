@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
 import models.financialDetails.Payment
-import play.api.test.FakeRequest
 import testUtils.ViewSpec
+import views.html.PaymentHistory
 
 import java.time.LocalDate
 
@@ -29,6 +29,8 @@ import java.time.LocalDate
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+  lazy val paymentHistoryView: PaymentHistory = app.injector.instanceOf[PaymentHistory]
 
   object PaymentHistoryMessages {
     val title = "Payment history - Business Tax account - GOV.UK"
@@ -47,7 +49,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    views.html.paymentHistory(testPayments, mockImplicitDateFormatter, "testBackURL", saUtr)(FakeRequest(), implicitly, mockAppConfig)
+    paymentHistoryView(testPayments, "testBackURL", saUtr)(implicitly)
   )
 
   "The payments history view with payment response model" should {

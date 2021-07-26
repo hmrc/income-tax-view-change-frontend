@@ -22,24 +22,24 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatterImpl
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.PaymentHistoryService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.PaymentHistory
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentHistoryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
+                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                          val authenticate: AuthenticationPredicate,
                                          val retrieveNino: NinoPredicate,
                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                          auditingService: AuditingService,
                                          itvcErrorHandler: ItvcErrorHandler,
-                                         paymentHistoryService: PaymentHistoryService,
-                                         dateFormatter: ImplicitDateFormatterImpl)
+                                         paymentHistoryService: PaymentHistoryService)
                                         (implicit mcc: MessagesControllerComponents,
                                          ec: ExecutionContext,
                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
@@ -60,7 +60,7 @@ class PaymentHistoryController @Inject()(val checkSessionTimeout: SessionTimeout
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
             }
-            Ok(views.html.paymentHistory(payments, dateFormatter, backUrl = backUrl, user.saUtr))
+            Ok(paymentHistoryView(payments, backUrl = backUrl, user.saUtr))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
       }
