@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import views.html.templates.MainTemplate
 
 @this(mainTemplate: MainTemplate)
 
-@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit messages: Messages)
 
 @mainTemplate(title = pageTitle) {
     <h1 id="page-heading" class="heading-xlarge">@heading</h1>

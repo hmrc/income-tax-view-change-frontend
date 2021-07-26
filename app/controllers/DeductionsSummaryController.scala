@@ -29,6 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
+import views.html.DeductionBreakdown
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -41,6 +42,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val calculationService: CalculationService,
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
+                                            val deductionBreakdownView: DeductionBreakdown,
                                             val itvcErrorHandler: ItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
@@ -60,7 +62,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
             case calcDisplayModel: CalcDisplayModel =>
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
                 calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
-              Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear)))
+              Ok(deductionBreakdownView(calcDisplayModel, taxYear, backUrl(taxYear)))
 
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")

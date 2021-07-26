@@ -15,8 +15,9 @@
  *@
 
 @import views.html.layouts.GovUkTemplate
-@import views.html.helpers.phaseBanner
-@import views.html.helpers.recruitmentBannerHelper
+@import views.html.helpers.injected.BetaBanner
+@import views.html.helpers.injected.LanguageSelection
+@import views.html.helpers.injected.RecruitmentBannerHelper
 @import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.play.views.html.layouts.FooterLinks
 @import uk.gov.hmrc.play.views.html.layouts.MainContent
@@ -27,6 +28,7 @@
 @import uk.gov.hmrc.play.views.html.layouts.HeadWithTrackingConsent
 
 @this(
+        appConfig: config.FrontendAppConfig,
         govUkTemplate: GovUkTemplate,
         mainContentLayout: MainContent,
         footerLinks: FooterLinks,
@@ -34,6 +36,9 @@
         serviceInfoLayout: ServiceInfo,
         footer: Footer,
         headerNav: HeaderNav,
+        recruitmentBannerHelper: RecruitmentBannerHelper,
+        betaBanner: BetaBanner,
+        languageSelection: LanguageSelection,
         headWithTrackingConsent: HeadWithTrackingConsent
 )
 
@@ -45,7 +50,7 @@
   mainContent: Html = HtmlFormat.empty,
   serviceInfoContent: Html = HtmlFormat.empty,
   scriptElem: Option[Html] = None,
-  showLogout: Boolean = true)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+  showLogout: Boolean = true)(implicit messages: Messages)
 
 @linksElem = {
     <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc.css")'>
@@ -88,7 +93,7 @@
 
 @serviceInfo = {
     @serviceInfoLayout(
-      betaBanner = views.html.helpers.betaBanner(),
+      betaBanner = betaBanner(),
       includeGridWrapper = false,
       serviceInfoContent = Some(serviceInfoContent),
       includeHMRCBranding = true,
@@ -101,7 +106,7 @@
     @if(contentHeader.isDefined) {
         <header class="page-header inline-block">@contentHeader.get</header>
     }
-        @helpers.language_selection()
+    @languageSelection()
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
