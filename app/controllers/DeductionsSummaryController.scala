@@ -75,5 +75,5 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def backUrl(taxYear: Int): String = controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
+  def backUrl(taxYear: Int): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url
 }

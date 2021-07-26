@@ -14,16 +14,18 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatter
 @import implicits.ImplicitCurrencyFormatter._
 @import java.time.LocalDate
 @import models.calculation.CalcOverview
 @import models.reportDeadlines.ObligationsModel
-@import views.html.templates.main_template
-@import views.html.helpers.backLinkHelper
 @import models.financialDetails.DocumentDetailWithDueDate
+@import views.html.helpers.injected.BackLink
+@import views.html.templates.MainTemplate
+@import implicits.ImplicitDateFormatterImpl
 
-@(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
@@ -190,9 +192,9 @@
     }
 }
 
-@main_template(title = heading) {
+@mainTemplate(title = heading) {
 
-    @backLinkHelper(backUrl)
+    @backLink(backUrl)
 
     <header class="hmrc-page-heading heading-xlarge">
         <h1 class="heading-xlarge">@heading</h1>

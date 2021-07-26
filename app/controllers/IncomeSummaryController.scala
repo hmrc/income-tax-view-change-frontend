@@ -69,7 +69,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
           }
     }
 
-  def backUrl(taxYear: Int): String = controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
+  def backUrl(taxYear: Int): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url
 
 
 }

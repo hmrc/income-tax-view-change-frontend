@@ -17,7 +17,6 @@
 package controllers
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
@@ -43,13 +42,17 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import views.html.TaxYearOverview
 
-class CalculationControllerSpec extends TestSupport with MockCalculationService
+class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
   with MockFinancialDetailsService with FeatureSwitching
   with MockAuditingService with MockReportDeadlinesService {
 
-  object TestCalculationController extends CalculationController(
+  val taxYearOverviewView = app.injector.instanceOf[TaxYearOverview]
+
+  object TestTaxYearOverviewController extends TaxYearOverviewController(
+    taxYearOverviewView,
     MockAuthenticationPredicate,
     mockCalculationService,
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -62,8 +65,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   )(appConfig,
     languageUtils,
     app.injector.instanceOf[MessagesControllerComponents],
-    ec,
-    app.injector.instanceOf[ImplicitDateFormatterImpl])
+    ec)
 
   lazy val messagesLookUp = new MessagesLookUp.Calculation(testYear)
 
@@ -75,7 +77,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
 
 
-  "The CalculationController.renderTaxYearOverviewPage(year) action" when {
+  "The TaxYearOverview.renderTaxYearOverviewPage(year) action" when {
 
     "TaxYearOverviewUpdate FS is enabled" should {
       "show the updated Tax Year Overview Page" in {
@@ -88,16 +90,15 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         )
 
         val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
-        val expectedContent: String = views.html.taxYearOverview(
+        val expectedContent: String = taxYearOverviewView(
           testYear,
           Some(calcOverview),
           testChargesList,
           testObligtionsModel,
-          mockImplicitDateFormatter,
           taxYearsBackLink).toString
 
 
-        val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -117,15 +118,14 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
 
           val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
-          val expectedContent: String = views.html.taxYearOverview(
+          val expectedContent: String = taxYearOverviewView(
             testYear,
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            mockImplicitDateFormatter,
             taxYearsBackLink).toString
 
-          val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           contentAsString(result) shouldBe expectedContent
@@ -140,7 +140,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationCrystalisationSuccess()
           mockFinancialDetailsFailed()
 
-          val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           contentType(result) shouldBe Some("text/html")
@@ -157,7 +157,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             response = ReportDeadlinesErrorModel(500, "INTERNAL_SERVER_ERROR")
           )
 
-          val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           contentType(result) shouldBe Some("text/html")
@@ -168,7 +168,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         "return redirect SEE_OTHER (303)" in {
           setupMockAuthorisationException()
 
-          val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
         }
@@ -179,7 +179,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status Bad Request Error (400)" in {
             mockPropertyIncomeSource()
 
-            val result = TestCalculationController.renderTaxYearOverviewPage(-testYear)(fakeRequestWithActiveSession)
+            val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(-testYear)(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.BAD_REQUEST
           }
@@ -195,15 +195,14 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               response = testObligtionsModel
             )
 
-            val expectedContent: String = views.html.taxYearOverview(
+            val expectedContent: String = taxYearOverviewView(
               testYear,
               None,
               testChargesList,
               testObligtionsModel,
-              mockImplicitDateFormatter,
               taxYearsBackLink).toString
 
-            val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+            val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
             contentAsString(result) shouldBe expectedContent
@@ -217,7 +216,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             mockSingleBusinessIncomeSource()
             mockCalculationError()
 
-            val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+            val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             contentType(result) shouldBe Some("text/html")

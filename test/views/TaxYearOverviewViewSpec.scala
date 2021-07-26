@@ -27,7 +27,7 @@ import models.reportDeadlines.{ObligationsModel, ReportDeadlineModelWithIncomeTy
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.taxYearOverview
+import views.html.TaxYearOverview
 
 import java.time.LocalDate
 
@@ -37,6 +37,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
 
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
+  val taxYearOverviewView = app.injector.instanceOf[TaxYearOverview]
 
   import implicitDateFormatter._
 
@@ -67,13 +68,13 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
 
-  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverview(
-    testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, mockImplicitDateFormatter, "testBackURL")
+  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
+    testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, "testBackURL")
 
-  def estimateViewWithNoCalcData(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverview(
-    testYear, None, documentDetailsWithDueDates, obligations, mockImplicitDateFormatter, "testBackURL")
+  def estimateViewWithNoCalcData(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
+    testYear, None, documentDetailsWithDueDates, obligations, "testBackURL")
 
-  def crystallisedView: Html = taxYearOverview(testYear, Some(completeOverview(true)), testChargesList, testObligationsModel, mockImplicitDateFormatter, "testBackURL")
+  def crystallisedView: Html = taxYearOverviewView(testYear, Some(completeOverview(true)), testChargesList, testObligationsModel, "testBackURL")
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
