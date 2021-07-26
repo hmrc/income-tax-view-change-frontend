@@ -23,10 +23,11 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
+import views.html.notEnrolled.NotEnrolled
 
 class NotEnrolledControllerSpec extends TestSupport {
 
-  object TestNotEnrolledController extends NotEnrolledController()(
+  object TestNotEnrolledController extends NotEnrolledController(app.injector.instanceOf[NotEnrolled])(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents]
   )

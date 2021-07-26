@@ -14,12 +14,16 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
+
 @import config.FrontendAppConfig
+@import views.html.templates.MainTemplate
 
-@()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@this(mainTemplate: MainTemplate, appConfig: FrontendAppConfig)
 
-@main_template(title = messages("not_enrolled.heading"), bodyClasses = None, showLogout = true, showBtaHeader = false) {
+
+@()(implicit messages: Messages)
+
+@mainTemplate(title = messages("not_enrolled.heading"), bodyClasses = None, showLogout = true, showBtaHeader = false) {
 
   <h1 class="h1-heading" id="page-heading">@messages("not_enrolled.heading")</h1>
   <p id="sign-up">
