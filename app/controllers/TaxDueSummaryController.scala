@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
+
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
@@ -28,6 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
+import views.html.TaxCalcBreakdown
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +39,8 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
                                         retrieveNino: NinoPredicate,
                                         retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                         calculationService: CalculationService,
-                                        itvcErrorHandler: ItvcErrorHandler)
+                                        itvcErrorHandler: ItvcErrorHandler,
+                                        taxCalcBreakdown: TaxCalcBreakdown)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
@@ -52,7 +55,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
       implicit user => {
         calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
           case calcDisplayModel: CalcDisplayModel =>
-            Future.successful(Ok(views.html.taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+            Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
           case CalcDisplayNoDataFound =>
             Logger.warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")

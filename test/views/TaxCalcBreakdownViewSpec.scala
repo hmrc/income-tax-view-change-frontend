@@ -26,11 +26,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.exceptions.TestFailedException
 import testUtils.ViewSpec
-import views.html.taxCalcBreakdown
+import views.html.TaxCalcBreakdown
 
 class TaxCalcBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
+
+  val taxCalcBreakdown: TaxCalcBreakdown = app.injector.instanceOf[TaxCalcBreakdown]
 
   "The taxCalc breakdown view with Scotland tax regime" when {
 
