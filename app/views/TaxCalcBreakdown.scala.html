@@ -15,13 +15,15 @@
  *@
 
 @import models.calculation.{CalcDisplayModel, TaxBand}
-@import views.html.templates.main_template
+@import views.html.templates.MainTemplate
 @import implicits.ImplicitCurrencyFormatter._
-@import views.html.helpers.backLinkHelper
+@import views.html.helpers.injected.BackLink
 
-
-@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages,
-        appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@this(
+    mainTemplate: MainTemplate,
+    backLink: BackLink
+)
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit messages: Messages)
 
 @taxBandTableRow(band: TaxBand, scottishRegime: Boolean = false) = {
     <tr>
@@ -63,9 +65,9 @@
 }
 
 
-@main_template(messages("taxCal_breakdown.heading", s"${taxYear - 1}", s"$taxYear")) {
+@mainTemplate(messages("taxCal_breakdown.heading", s"${taxYear - 1}", s"$taxYear")) {
 
-    @backLinkHelper(backUrl)
+    @backLink(backUrl)
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
