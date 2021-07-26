@@ -18,13 +18,13 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{ChargeHistory, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsModel, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
@@ -34,9 +34,14 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.ChargeSummary
-
 import java.time.LocalDate
+import uk.gov.hmrc.http.HeaderCarrier
+import auth.MtdItUser
+
+
+import connectors.IncomeTaxViewChangeConnector
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -54,11 +59,13 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
-                   backLocation: Option[String], taxYear: Int)(implicit request: Request[_]): Html = {
+                   backLocation: Option[String], taxYear: Int, paymentAllocations: List[PaymentsWithChargeType],paymentAllocationEnabled: Boolean)(implicit request: Request[_]): Html = {
     chargeSummaryView(
       documentDetailWithDueDate = documentDetailWithDueDate,
       chargeHistoryOpt = chargeHistoryOpt,
-      backUrl = backUrl(backLocation, taxYear)
+      backUrl = backUrl(backLocation, taxYear),
+      paymentAllocations,
+      paymentAllocationEnabled
     )
   }
 
@@ -68,6 +75,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 				financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
 					case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == chargeId) =>
 						val backLocation = request.session.get(SessionKeys.chargeSummaryBackPage)
+
+
 
 						val docDateDetail: DocumentDetailWithDueDate = success.findDocumentDetailByIdWithDueDate(chargeId).get
 						getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
@@ -80,8 +89,16 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 							}
 						}
 
+            val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
+            val paymentAllocations: List[PaymentsWithChargeType] =
+              if (paymentAllocationEnabled) {
+                success.financialDetails.filter(_.transactionId.contains(chargeId)).flatMap(_.allocation)
+              } else Nil
+
 						getChargeHistory(chargeId).map { chargeHistoryOpt =>
-							Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear))
+							Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear,
+                paymentAllocations =paymentAllocations,
+                paymentAllocationEnabled= paymentAllocationEnabled))
 						}
 					case _: FinancialDetailsModel =>
 						Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")

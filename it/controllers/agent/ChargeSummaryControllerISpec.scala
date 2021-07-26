@@ -22,7 +22,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, testValidFinancialDetailsModelJson}
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.docDateDetail
@@ -109,9 +109,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when TxEventsApproved and ChargeHistory FSs are enabled" in {
+    s"return $OK with correct page title and audit events when TxEventsApproved and ChargeHistory and PaymentAllocation FSs are enabled" in {
       enable(TxmEventsApproved)
       enable(ChargeHistory)
+      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
@@ -123,7 +124,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("main h2")("Payment history")
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -136,9 +138,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ))
     }
 
-    s"return $OK with correct page title and audit events when TxEventsApproved and ChargeHistory FSs are enabled and LPI set to true" in {
+    s"return $OK with correct page title and audit events when TxEventsApproved ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
       enable(TxmEventsApproved)
       enable(ChargeHistory)
+      enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
@@ -150,7 +153,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("main h2")("Payment history")
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -166,6 +170,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "return a technical difficulties page to the user" when {
       "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
         enable(ChargeHistory)
+        enable(PaymentAllocation)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         stubGetFinancialDetailsSuccess()
