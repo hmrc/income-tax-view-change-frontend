@@ -14,14 +14,14 @@
 * limitations under the License.
 *@
 
-@import config.{FormPartialProvider, FrontendAppConfig}
+@import config.FormPartialProvider
 @import views.html.templates.MainTemplate
 
 @this(
     mainTemplate: MainTemplate
 )
 
-@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages, appConfig: FrontendAppConfig)
+@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
 
 @mainTemplate(title = messages("feedback.title"), showBtaHeader = false) {
     @formBody.getOrElse(formPartialProvider.getPartialContent(partialUrl))

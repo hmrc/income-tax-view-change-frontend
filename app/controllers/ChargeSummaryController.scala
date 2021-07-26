@@ -16,7 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
@@ -25,9 +24,6 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-
-import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel, PaymentsWithChargeType}
 import play.api.Logger
@@ -36,8 +32,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.FinancialDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.chargeSummary
+import views.html.ChargeSummary
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
@@ -47,17 +45,17 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         financialDetailsService: FinancialDetailsService,
                                         auditingService: AuditingService,
                                         itvcErrorHandler: ItvcErrorHandler,
-                                        incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+                                        incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                        chargeSummaryView: ChargeSummary)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
-                                        val executionContext: ExecutionContext,
-                                        dateFormatter: ImplicitDateFormatterImpl)
-  extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                        val executionContext: ExecutionContext)
+  extends BaseController with FeatureSwitching with I18nSupport {
 
   private def view(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backLocation: Option[String], taxYear: Int, chargesHistory: List[ChargeHistoryModel],
                    paymentAllocations: List[PaymentsWithChargeType], chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit request: Request[_]) = {
-    chargeSummary(documentDetail, dueDate, dateFormatter, backUrl(backLocation, taxYear), chargesHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
+    chargeSummaryView(documentDetail, dueDate, backUrl(backLocation, taxYear), chargesHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
   }
 
   def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =

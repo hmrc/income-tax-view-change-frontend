@@ -17,16 +17,16 @@
 package views
 
 import assets.FinancialDetailsTestConstants._
+import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{DocumentDetail, Payment, PaymentsWithChargeType}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.Assertion
 import play.twirl.api.Html
 import testUtils.ViewSpec
+import views.html.ChargeSummary
 
 import java.time.LocalDate
-import models.chargeHistory.ChargeHistoryModel
-import org.scalatest.Assertion
-import views.html.chargeSummary
 
 class ChargeSummarySpec extends ViewSpec {
 
@@ -37,7 +37,8 @@ class ChargeSummarySpec extends ViewSpec {
               chargeHistoryEnabled: Boolean = true,
               paymentAllocationEnabled: Boolean = false,
               latePaymentInterestCharge: Boolean = false) {
-    val view: Html = chargeSummary(documentDetail, dueDate, mockImplicitDateFormatter, "testBackURL",
+		val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
+    val view: Html = chargeSummary(documentDetail, dueDate, "testBackURL",
     chargeHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
     val document: Document = Jsoup.parse(view.toString())
 
