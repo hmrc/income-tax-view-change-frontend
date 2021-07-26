@@ -15,14 +15,14 @@
 *@
 
 @import views.html.templates.MainTemplate
-@import config.FrontendAppConfig
+
 @import config.FormPartialProvider
 
 @this(
     mainTemplate: MainTemplate
 )
 
-@(partialUrl: String, redirectUrl: String)(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages, appConfig: FrontendAppConfig)
+@(partialUrl: String, redirectUrl: String)(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
 
 @mainTemplate(title = messages("feedback.title")) {
     @formPartialProvider.getPartialContent(partialUrl)

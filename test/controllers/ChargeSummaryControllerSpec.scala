@@ -68,13 +68,13 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       financialDetailsService,
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
-			incomeTaxViewChangeConnector
+			incomeTaxViewChangeConnector,
+      app.injector.instanceOf[views.html.ChargeSummary]
     )(
       app.injector.instanceOf[FrontendAppConfig],
       languageUtils,
       app.injector.instanceOf[MessagesControllerComponents],
-      ec,
-      app.injector.instanceOf[ImplicitDateFormatterImpl]
+      ec
     )
   }
 
