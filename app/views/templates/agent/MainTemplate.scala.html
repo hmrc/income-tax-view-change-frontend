@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.play.views.html.layouts.Article
 
@@ -32,7 +31,7 @@
         serviceInfo: Html = Html(""),
         timeout: Boolean = true,
         form: Option[Form[_]] = None
-)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig)
+)(mainContent: Html)(implicit messages: Messages)
 
 @defaultScriptElem = {
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/timeout.css")' />

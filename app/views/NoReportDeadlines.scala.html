@@ -14,18 +14,19 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
-@import views.html.helpers.backLinkHelper
+@import views.html.templates.MainTemplate
+@import views.html.helpers.injected.BackLink
 
+@this(mainTemplate: MainTemplate, backLink: BackLink)
 
-@(backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(backUrl: String)(implicit messages: Messages)
 
-@main_template(
+@mainTemplate(
     title = messages("obligations.heading"),
     bodyClasses = None,
 ) {
 
-@backLinkHelper(backUrl)
+@backLink(backUrl)
 
 
     <section id="estimated-tax">

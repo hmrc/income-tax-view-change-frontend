@@ -16,13 +16,14 @@
 
 package controllers.agent
 
+import assets.BaseTestConstants
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockIncomeSourceDetailsService, MockReportDeadlinesService}
+import mocks.views.agent.MockNextUpdates
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
@@ -30,15 +31,11 @@ import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.ReportDeadlinesService
+import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 
 import java.time.LocalDate
-import assets.BaseTestConstants
-import mocks.views.agent.MockNextUpdates
-import play.twirl.api.HtmlFormat
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockItvcErrorHandler
@@ -49,21 +46,20 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
       agentNextUpdates,
       mockIncomeSourceDetailsService,
       mockReportDeadlinesService,
+      app.injector.instanceOf[FrontendAppConfig],
       mockAuthService
-    )(app.injector.instanceOf[FrontendAppConfig],
-      languageUtils,
+    )(languageUtils,
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[ExecutionContext],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
       mockItvcErrorHandler)
   }
+
+  val date: LocalDate = LocalDate.now
 
   val obligationsModel = ObligationsModel(Seq(
     ReportDeadlinesModel(BaseTestConstants.testSelfEmploymentId, List(ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001"))),
     ReportDeadlinesModel(BaseTestConstants.testPropertyIncomeId, List(ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS")))
   ))
-
-  val date: LocalDate = LocalDate.now
 
   def mockObligations: OngoingStubbing[Future[ReportDeadlinesResponseModel]] = {
     when(mockReportDeadlinesService.getReportDeadlines(matches(false))(any(), any()))

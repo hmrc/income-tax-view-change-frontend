@@ -19,19 +19,20 @@ import assets.MessagesLookUp.{NoReportDeadlines => reportDeadlinesMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
+import play.twirl.api.Html
 import testUtils.TestSupport
+import views.html.NoReportDeadlines
 
 class NoReportDeadlinesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
+  val noReportDeadlinesView = app.injector.instanceOf[NoReportDeadlines]
+
   "The noReportDeadlines view" should {
 
-    lazy val page: HtmlFormat.Appendable =
-      views.html.noReportDeadlines("testBackURL")(FakeRequest(), implicitly, mockAppConfig)
+    lazy val page: Html = noReportDeadlinesView("testBackURL")(implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${reportDeadlinesMessages.title}'" in {

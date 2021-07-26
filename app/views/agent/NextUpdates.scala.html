@@ -14,15 +14,14 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatter
 @import views.html.helpers.backLinkHelper
-@import views.html.obligationTemplates.nextUpdatesHelper
+@import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.templates.agent.MainTemplate
 @import views.html.helpers.injected.BackLink
 
-@this(mainTemplate: MainTemplate, backLink: BackLink)
+@this(mainTemplate: MainTemplate, backLink: BackLink, nextUpdatesHelper: NextUpdatesHelper)
 
-@(currentObligations: models.reportDeadlines.ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(currentObligations: models.reportDeadlines.ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @heading = @{
 	messages("agent.nextUpdates.heading")
@@ -64,7 +63,7 @@
 
 	<h2 class="heading-medium">@messages("agent.nextUpdates.sub-heading")</h2>
 
-	@nextUpdatesHelper(currentObligations, implicitDateFormatter)
+	@nextUpdatesHelper(currentObligations)
 
 	<p>
 		@messages("agent.nextUpdates.previousYears.textOne")
