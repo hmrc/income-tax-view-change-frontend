@@ -14,22 +14,25 @@
  * limitations under the License.
  *@
 
-@import models.paymentAllocations
-@import views.html.templates.main_template
-@import java.time.LocalDate
-@import implicits.ImplicitCurrencyFormatter._
-@import implicits.ImplicitDateFormatter
-@import views.html.helpers.backLinkHelper
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@import implicits.ImplicitCurrencyFormatter._
+@import views.html.templates.MainTemplate
+@import views.html.helpers.injected.BackLink
+@import implicits.ImplicitDateFormatterImpl
+
+@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String)(implicit messages: Messages)
+
 @import implicitDateFormatter._
-@main_template(
+
+@mainTemplate(
 title = messages("paymentAllocation.heading"),
 bodyClasses = None,
 scriptElem = None
 ) {
 
-@backLinkHelper(backUrl)
+@backLink(backUrl)
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
 

@@ -34,6 +34,7 @@ import testUtils.TestSupport
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import services.PaymentAllocationsService
 import services.PaymentAllocationsService.PaymentAllocationError
+import views.html.PaymentAllocation
 
 import scala.concurrent.Future
 
@@ -55,13 +56,13 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
     val paymentAllocation: PaymentAllocationsService = mock[PaymentAllocationsService]
 
     val controller = new PaymentAllocationsController(
+      app.injector.instanceOf[PaymentAllocation],
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       app.injector.instanceOf[ItvcErrorHandler],
-      paymentAllocation,
-      app.injector.instanceOf[ImplicitDateFormatterImpl]
+      paymentAllocation
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig])

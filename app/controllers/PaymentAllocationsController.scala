@@ -20,28 +20,26 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatterImpl
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
+import services.PaymentAllocationsService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.PaymentAllocation
 
 import javax.inject.{Inject, Singleton}
-import models.paymentAllocationCharges.PaymentAllocationViewModel
-import services.PaymentAllocationsService
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentAllocation,
+                                              val checkSessionTimeout: SessionTimeoutPredicate,
                                              val authenticate: AuthenticationPredicate,
                                              val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              itvcErrorHandler: ItvcErrorHandler,
-                                             paymentAllocations: PaymentAllocationsService,
-                                             dateFormatter: ImplicitDateFormatterImpl)
-                                        (implicit mcc: MessagesControllerComponents,
-                                         ec: ExecutionContext,
-                                         val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                             paymentAllocations: PaymentAllocationsService)
+                                            (implicit mcc: MessagesControllerComponents,
+                                             ec: ExecutionContext,
+                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
@@ -53,7 +51,7 @@ class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTim
       if (isEnabled(PaymentAllocation)) {
         paymentAllocations.getPaymentAllocation(user.nino, documentNumber) map {
           case Right(paymentAllocations) =>
-            Ok(views.html.paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl))
+            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
         }
       } else Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
