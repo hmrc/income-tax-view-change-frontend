@@ -26,11 +26,14 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
+import views.html.helpers.injected.obligations.NextUpdatesHelper
 
 class NextUpdatesHelperSpec extends TestSupport {
 
+	lazy val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
+
 	class Setup(currentObligations: ObligationsModel) {
-		val html: HtmlFormat.Appendable = views.html.obligationTemplates.nextUpdatesHelper(currentObligations, mockImplicitDateFormatter)(implicitly, testMtdItUser)
+		val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
 		val pageDocument: Document = Jsoup.parse(contentAsString(html)(defaultTimeout))
 	}
 

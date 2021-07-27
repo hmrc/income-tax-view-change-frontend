@@ -21,16 +21,18 @@ import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.timeout.Timeout
 
 import scala.concurrent.Future
 
 @Singleton
-class SessionTimeoutController @Inject()(implicit val config: FrontendAppConfig,
+class SessionTimeoutController @Inject()(val timeoutView: Timeout)
+                                        (implicit val config: FrontendAppConfig,
                                          mcc: MessagesControllerComponents
                                         ) extends FrontendController(mcc) {
 
   val timeout: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.timeout.timeout()).withNewSession)
+    Future.successful(Ok(timeoutView()).withNewSession)
   }
 
   val keepAlive: Action[AnyContent] = Action.async { implicit request =>

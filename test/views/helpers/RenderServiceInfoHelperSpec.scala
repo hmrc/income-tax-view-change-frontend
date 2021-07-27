@@ -21,14 +21,13 @@ import assets.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
 import org.jsoup.Jsoup
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.helpers.renderServiceInfoHelper
+import views.html.helpers.injected.RenderServiceInfoHelper
 
 class RenderServiceInfoHelperSpec extends TestSupport {
 
-  def html(user: Option[String]): Html = renderServiceInfoHelper(user)(
-    implicitly,
-    appConfig
-  )
+  lazy val renderServiceInfoHelper = app.injector.instanceOf[RenderServiceInfoHelper]
+
+  def html(user: Option[String]): Html = renderServiceInfoHelper(user)(implicitly)
 
   "The renderServiceInfoHelper" when {
 

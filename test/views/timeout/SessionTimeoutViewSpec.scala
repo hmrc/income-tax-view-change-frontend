@@ -23,12 +23,14 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import views.html.timeout.Timeout
 
 class SessionTimeoutViewSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val timeoutView = app.injector.instanceOf[Timeout]
 
-  lazy val page = views.html.timeout.timeout()(FakeRequest(), implicitly ,mockAppConfig)
+  lazy val page = timeoutView()(implicitly)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Session timeout view" should {

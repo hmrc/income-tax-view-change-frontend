@@ -18,9 +18,11 @@ package views.helpers
 
 import assets.MessagesLookUp
 import testUtils.ViewSpec
-import views.html.helpers.backLinkHelper
+import views.html.helpers.injected.BackLink
 
 class BackLinkHelperSpec extends ViewSpec {
+
+  lazy val backLinkHelper = app.injector.instanceOf[BackLink]
 
   class Test extends Setup(backLinkHelper("testUrl"))
 

@@ -24,9 +24,11 @@ import implicits.ImplicitDateFormatterImpl
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
-import views.html.obligationTemplates.previousObligationsHelper
+import views.html.helpers.injected.obligations.PreviousObligationsHelper
 
 class PreviousObligationsHelperSpec extends ViewSpec {
+
+  lazy val previousObligationsHelper = app.injector.instanceOf[PreviousObligationsHelper]
 
   object PreviousObligationsHelperMessages {
     def formatDate(date: LocalDate): String = date.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
@@ -45,7 +47,7 @@ class PreviousObligationsHelperSpec extends ViewSpec {
     val submittedOn: String = "Submitted on"
   }
 
-  class TestSetup(previousObligations: ObligationsModel) extends Setup(previousObligationsHelper(previousObligations, mockImplicitDateFormatter))
+  class TestSetup(previousObligations: ObligationsModel) extends Setup(previousObligationsHelper(previousObligations))
 
   val date: LocalDate = LocalDate.now.minusYears(1)
   val reportDeadline: ReportDeadlineModel = ReportDeadlineModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")

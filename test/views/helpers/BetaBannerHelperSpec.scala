@@ -19,12 +19,15 @@ package views.helpers
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import testUtils.TestSupport
+import views.html.helpers.injected.BetaBanner
 
 class BetaBannerHelperSpec extends TestSupport {
 
+  lazy val betaBanner = app.injector.instanceOf[BetaBanner]
+
   "The beta banner" should {
 
-    lazy val view = views.html.helpers.betaBanner()(implicitly, appConfig)
+    lazy val view = betaBanner()(implicitly)
     lazy val document = Jsoup.parse(view.body)
 
     "have the BETA label" in {

@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers.backLinkHelper
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.templates.agent.MainTemplate
 @import views.html.helpers.injected.BackLink
@@ -29,7 +28,7 @@
 
 @mainTemplate(title = heading) {
 
-	@backLinkHelper(backUrl)
+	@backLink(backUrl)
 
 	<h1 id="page-heading" class="heading-xlarge"> @messages("agent.nextUpdates.heading")</h1>
 
