@@ -14,6 +14,14 @@
  * limitations under the License.
  *@
 
-@(alternativeText: Option[String] = None)(implicit messages: Messages)
+@this()
 
-<button formnovalidate class="button" type="submit" id="continue-button">@alternativeText.fold(Messages("base.continue"))(x => x)</button>
+@(field: Field, label: String)(implicit messages: Messages)
+
+@value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
+
+<div class="multiple-choice">
+    <input id="@{field.name}" name="@{field.name}" type="checkbox" value="true" @if(value == "true"){ checked }>
+    <label for="@{field.name}">@label</label>
+</div>
+

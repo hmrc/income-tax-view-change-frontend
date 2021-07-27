@@ -14,15 +14,17 @@
  * limitations under the License.
  *@
 
-@import testOnly.views.html.templates.stub_template
+@import testOnly.views.html.templates.StubTemplate
 @import testOnly.models.SchemaModel
 @import testOnly.forms.StubSchemaForm._
 @import testOnly.views.html.helpers._
-@import uk.gov.hmrc.play.views.html.helpers.form
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+
+@this(stubTemplate: StubTemplate, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
 
 @(stubSchemaForm: Form[SchemaModel], postAction: Call, showSuccess: Boolean, errorMessage: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@stub_template(title = "ITVC Stub Schemas", bodyClasses = None) {
+@stubTemplate(title = "ITVC Stub Schemas", bodyClasses = None) {
 
     @summaryErrorHelper(stubSchemaForm)
 

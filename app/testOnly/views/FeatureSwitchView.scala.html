@@ -14,14 +14,15 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import helper._
 @import config.featureswitch.FeatureSwitch
-@import views.html.templates.main_template
+@import views.html.templates.MainTemplate
 
-@(switchNames: Map[FeatureSwitch, Boolean],action: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@this(mainTemplate: MainTemplate)
 
-@main_template(title = Messages("Feature switch")) {
+@(switchNames: Map[FeatureSwitch, Boolean],action: Call)(implicit request: Request[_], messages: Messages)
+
+@mainTemplate(title = Messages("Feature switch")) {
 <form method="@action.method" action="@action.url">
     @CSRF.formField
     <fieldset>

@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.connectors.MatchingStubConnector
 import testOnly.forms.StubClientDetailsForm
 import testOnly.models.StubClientDetailsModel
-import testOnly.views.html.injected.StubClientDetails
+import testOnly.views.html.StubClientDetails
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
