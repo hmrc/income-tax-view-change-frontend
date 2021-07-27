@@ -123,14 +123,19 @@ object IncomeTaxViewChangeStub {
   //FinancialDetails Stubs
   def financialDetailsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
 
-  def stubGetFinancialDetailsResponse(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
-                                     (status: Int, response: JsValue): StubMapping = {
+	def getFinancialsByDocumentIdUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
+
+	def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
+																				(status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
   }
 
-  def verifyGetFinancialDetails(nino: String, from: String = "2017-04-06", to: String = "2018-04-05"): Unit = {
+  def verifyGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05"): Unit = {
     WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to))
   }
+
+	def stubGetFinancialsByDocumentId(nino: String, docNumber: String)(status: Int, response: JsValue): Unit =
+		WiremockHelper.stubGet(getFinancialsByDocumentIdUrl(nino, docNumber), status, response.toString())
 
   //Payments Stubs
   def paymentsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
@@ -168,9 +173,9 @@ object IncomeTaxViewChangeStub {
 	}
 
   //Payment Allocation Charges stubs
-  def paymentAllocationCharegsUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
+  def paymentAllocationChargesUrl(nino: String, paymentLot: String, paymentLotItem: String) = s"/income-tax-view-change/$nino/payment-allocations/$paymentLot/$paymentLotItem"
 
-  def stubGetPaymentAllocationResponse(nino: String, docNumber: String)(status: Int, response: JsValue): Unit =
-    WiremockHelper.stubGet(paymentAllocationCharegsUrl(nino, docNumber), status, response.toString())
+  def stubGetPaymentAllocationResponse(nino: String, paymentLot: String, paymentLotItem: String)(status: Int, response: JsValue): Unit =
+    WiremockHelper.stubGet(paymentAllocationChargesUrl(nino, paymentLot, paymentLotItem), status, response.toString())
 
 }

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
-import models.paymentAllocations.PaymentAllocations
+import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
 import play.api.Logger
 import services.PaymentAllocationsService.PaymentAllocationError
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,13 +36,13 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
   def getPaymentAllocation(nino: String, documentNumber: String)
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError.type, PaymentAllocationViewModel]] = {
 
-    incomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(nino, documentNumber) flatMap {
+    incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(nino, documentNumber) flatMap {
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel =>
         incomeTaxViewChangeConnector.getPaymentAllocations(documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.get,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.get) flatMap {
           case paymentAllocations: PaymentAllocations =>
             createPaymentAllocationWithClearingDate(nino, paymentAllocations, documentDetailsWithFinancialDetailsModel) map {
-            case paymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[String])] if paymentAllocationWithClearingDate.find(_._2 == None).isEmpty =>
+            case paymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[AllocationDetail], Option[String])] if paymentAllocationWithClearingDate.find(_._2 == None).isEmpty =>
               Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, paymentAllocationWithClearingDate))
             case _ =>
               Logger.error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment allocations")
@@ -61,18 +61,20 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
 
   def createPaymentAllocationWithClearingDate(nino: String, paymentCharge: PaymentAllocations,
                                               documentDetailsWithFinancialDetails: FinancialDetailsWithDocumentDetailsModel)
-                                             (implicit hc: HeaderCarrier): Future[Seq[(PaymentAllocations, Option[String])]] = {
+                                             (implicit hc: HeaderCarrier): Future[Seq[(PaymentAllocations, Option[AllocationDetail], Option[String])]] = {
     Future.sequence(paymentCharge.allocations map {
-      allocations =>
-        incomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(nino, allocations.transactionId.get) map {
-          case paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel =>
-            (paymentCharge, paymentAllocationChargesModel.paymentDetails.find(_.chargeType == paymentCharge.allocations.head.`type`).head.items.get
+      allocation =>
+        incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(nino, allocation.transactionId.get) map {
+          case singleChargeModel: FinancialDetailsWithDocumentDetailsModel =>
+            (paymentCharge,
+              Some(allocation),
+              singleChargeModel.financialDetails.find(_.chargeType == allocation.chargeType).head.items.get
               .find(paymentAllocation =>
                 paymentAllocation.paymentLot == documentDetailsWithFinancialDetails.documentDetails.head.paymentLot
                   && paymentAllocation.paymentLotItem == documentDetailsWithFinancialDetails.documentDetails.head.paymentLotItem
-              ).head.clearingDate
+							).head.clearingDate
             )
-          case _ => (paymentCharge, None)
+          case _ => (paymentCharge,None, None)
         }
     })
   }

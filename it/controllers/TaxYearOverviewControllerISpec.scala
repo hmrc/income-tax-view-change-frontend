@@ -153,7 +153,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("A financial transaction call returns a success")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -183,7 +183,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, calculationTaxYear)
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino,
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
         )
@@ -244,7 +244,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And(s"A financial transaction call returns a $NOT_FOUND")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -274,7 +274,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, calculationTaxYear)
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
@@ -317,7 +317,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("A financial transaction call fails")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
         When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
@@ -326,7 +326,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
 
         And("Internal server error is returned")
@@ -577,7 +577,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("A financial transaction call returns a success")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -607,7 +607,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, calculationTaxYear)
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino,
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
         )
@@ -659,7 +659,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And(s"A financial transaction call returns a $NOT_FOUND")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -689,7 +689,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, calculationTaxYear)
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IncomeTaxViewChangeStub.verifyGetFinancialDetails(
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
@@ -747,7 +747,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
 
           And("A financial transaction call fails")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
           When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
@@ -756,7 +756,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           verifyIncomeSourceDetailsCall(testMtditid)
           IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
           IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-          IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
 
           And("Internal server error is returned")

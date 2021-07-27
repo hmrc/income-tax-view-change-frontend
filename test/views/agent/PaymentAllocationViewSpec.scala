@@ -16,7 +16,7 @@
 
 package views.agent
 
-import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail}
+import assets.PaymentAllocationsTestConstants.{documentDetail, financialDetail}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel

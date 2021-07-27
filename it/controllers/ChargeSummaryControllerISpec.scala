@@ -37,7 +37,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(OK, testChargeHistoryJson(testMtditid, "1040000123", 2500))
@@ -70,7 +70,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
       Given("the TxmEventsApproved feature switch is off")
       disable(TxmEventsApproved)
@@ -101,7 +101,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
       Given("the TxmEventsApproved feature switch is off")
       disable(TxmEventsApproved)
@@ -126,7 +126,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
       Given("the TxmEventsApproved feature switch is off")
       disable(TxmEventsApproved)
@@ -150,7 +150,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
       Given("the TxmEventsApproved feature switch is off")
       disable(TxmEventsApproved)
@@ -174,7 +174,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, Json.obj(
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
         "documentDetails" -> Json.arr(
           Json.obj("taxYear" -> "2018",
             "transactionId" -> "1040001234",

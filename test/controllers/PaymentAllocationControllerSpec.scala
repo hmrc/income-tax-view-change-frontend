@@ -18,20 +18,23 @@ package controllers
 
 
 
-import assets.PaymentAllocationChargesTestConstants.{documentDetail, financialDetail}
+import assets.PaymentAllocationsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
+import services.PaymentAllocationsService
+import services.PaymentAllocationsService.PaymentAllocationError
+
 import scala.concurrent.Future
 
 class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
@@ -49,7 +52,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
   trait Setup {
     val docNumber = "docNumber1"
 
-    val paymentAllocation: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+    val paymentAllocation: PaymentAllocationsService = mock[PaymentAllocationsService]
 
     val controller = new PaymentAllocationsController(
       app.injector.instanceOf[SessionTimeoutPredicate],
@@ -65,14 +68,16 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
   }
 
+
   "The PaymentAllocationsControllerSpec.viewPaymentAllocation function" should {
+    val successfulResponse = Right(paymentAllocationViewModel)
 
     "behave appropriately when the feature switch is on" when {
-      "Successfully retrieveing a user's payment allocation" in new Setup {
+      "Successfully retrieving a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getFinancialDataWithDocumentDetails(any(), any())(any()))
-          .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
+        when(paymentAllocation.getPaymentAllocation(any(), any())(any(), any()))
+          .thenReturn(Future.successful(successfulResponse))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
@@ -82,8 +87,8 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Failing to retrieve a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getFinancialDataWithDocumentDetails(any(), any())(any()))
-          .thenReturn(Future.successful(FinancialDetailsWithDocumentDetailsErrorModel(500, """"Error message"""")))
+        when(paymentAllocation.getPaymentAllocation(any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(PaymentAllocationError)))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
@@ -95,8 +100,8 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "trying to access payments allocation " in new Setup {
         disable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getFinancialDataWithDocumentDetails(any(), any())(any()))
-          .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
+        when(paymentAllocation.getPaymentAllocation(any(), any())(any(), any()))
+          .thenReturn(Future.successful(successfulResponse))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 

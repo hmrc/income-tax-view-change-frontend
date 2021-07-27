@@ -19,14 +19,15 @@ package controllers
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
 import javax.inject.{Inject, Singleton}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.paymentAllocationCharges.PaymentAllocationViewModel
+import services.PaymentAllocationsService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +37,7 @@ class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTim
                                              val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              itvcErrorHandler: ItvcErrorHandler,
-                                             paymentAllocations: IncomeTaxViewChangeConnector,
+                                             paymentAllocations: PaymentAllocationsService,
                                              dateFormatter: ImplicitDateFormatterImpl)
                                         (implicit mcc: MessagesControllerComponents,
                                          ec: ExecutionContext,
@@ -50,8 +51,8 @@ class PaymentAllocationsController @Inject()(val checkSessionTimeout: SessionTim
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = action.async {
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        paymentAllocations.getFinancialDataWithDocumentDetails(user.nino, documentNumber) map {
-          case paymentAllocations: FinancialDetailsWithDocumentDetailsModel =>
+        paymentAllocations.getPaymentAllocation(user.nino, documentNumber) map {
+          case Right(paymentAllocations) =>
             Ok(views.html.paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
         }

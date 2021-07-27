@@ -252,7 +252,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -325,7 +325,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         IndividualCalculationStub.stubGetCalculationListNotFound(testNino, calculationTaxYear)
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -381,7 +381,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         IndividualCalculationStub.stubGetCalculationNotFound(testNino, "2017-18")
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -441,7 +441,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -519,7 +519,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -596,7 +596,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -678,7 +678,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -828,7 +828,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -869,7 +869,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
@@ -914,7 +914,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = estimatedCalculationFullJson
         )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString

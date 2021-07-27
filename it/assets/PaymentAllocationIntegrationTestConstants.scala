@@ -1,30 +1,14 @@
-/*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package assets
 
 import java.time.LocalDate
 
-import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
-import play.api.libs.json.{JsValue, Json}
-import BaseTestConstants._
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
+import play.api.libs.json.{JsValue, Json}
 
-object PaymentAllocationsTestConstants {
+object PaymentAllocationIntegrationTestConstants {
+
 
 	val documentDetail: DocumentDetail = DocumentDetail(
 		taxYear = "2018",
@@ -118,181 +102,10 @@ object PaymentAllocationsTestConstants {
 			)))
 	)
 
-  val testValidPaymentAllocationsModelJson: JsValue = Json.obj(
-    "amount" -> 110.10,
-    "method" -> "Payment by Card",
-    "transactionDate" -> "2019-05-27",
-    "reference" -> "reference",
-    "allocations" -> Json.arr(
-      Json.obj(
-        "transactionId" -> "1040000872",
-        "from" -> "2019-06-27",
-        "to" -> "2019-08-27",
-        "chargeType" -> "NIC4 Wales",
-				"mainType" -> "SA Payment on Account 1",
-        "amount" -> 10.10,
-        "clearedAmount" -> 5.50
-      ),
-      Json.obj(
-        "transactionId" -> "1040000873",
-        "from" -> "2019-07-28",
-        "to" -> "2019-09-28",
-        "chargeType" -> "NIC4 Wales",
-				"mainType" -> "SA Payment on Account 1",
-        "amount" -> 10.90,
-        "clearedAmount" -> 5.90
-      )
-    )
-  )
-
-  val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
-    Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
-    Seq(
-      AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50)),
-      AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))
-    )
-  )
-  val testInvalidPaymentAllocationsModelJson: JsValue = Json.obj(
-    "amount" -> "invalidAmount",
-    "payMethod" -> "Payment by Card",
-    "valDate" -> "2019-05-27"
-  )
-
-  val testPaymentAllocationsErrorModelParsing: PaymentAllocationsError = PaymentAllocationsError(
-    testErrorStatus, "Json Validation Error. Parsing Payment Allocations Data Response")
-
-  val testPaymentAllocationsErrorModel: PaymentAllocationsError = PaymentAllocationsError(testErrorStatus, testErrorMessage)
-  val testPaymentAllocationsErrorModelJson: JsValue = Json.obj(
-    "code" -> testErrorStatus,
-    "message" -> testErrorMessage
-  )
-
 	val paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
 
-
-	val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
-		Seq(
-			(
-				testValidPaymentAllocationsModel,
-				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50))),
-				Some("2021-01-31")),
-			(
-				testValidPaymentAllocationsModel,
-				Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))),
-				Some("2021-01-31")
-			)
-		))
-
-	val validWrittenPaymentAllocationChargesJson: JsValue = Json.parse(
-		"""{
-			|    "documentDetails": [
-			|        {
-			|            "documentDate": "2018-03-29",
-			|            "documentDescription": "documentDescription",
-			|            "originalAmount": -300.0,
-			|            "outstandingAmount": -200.0,
-			|            "taxYear": "2018",
-			|            "transactionId": "id",
-			|            "paymentLot": "paymentLot",
-			|            "paymentLotItem": "paymentLotItem"
-			|        }
-			|    ],
-			|    "financialDetails": [
-			|        {
-			|            "chargeType": "NIC4 Wales",
-			|            "clearedAmount": 500.0,
-			|            "items": [
-			|                {
-			|                    "subItemId": "1",
-			|                    "amount": 100.00,
-			|                    "clearingDate": "2021-01-31",
-			|                    "dueDate": "2021-01-31",
-			|                    "outgoingPaymentMethod": "outgoingPaymentMethod",
-			|                    "paymentAmount": 2000.00,
-			|                    "paymentId": "paymentLot-paymentLotItem",
-			|                    "paymentLot": "paymentLot",
-			|                    "paymentLotItem": "paymentLotItem",
-			|                    "paymentMethod": "paymentMethod",
-			|                    "paymentReference": "paymentReference"
-			|                },
-			|                {
-			|                    "subItemId": "2",
-			|                    "amount": 200.00,
-			|                    "dueDate": "2021-01-31",
-			|                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
-			|                    "paymentAmount": 3000.00,
-			|                    "paymentLot": "paymentLot2",
-			|                    "paymentMethod": "paymentMethod2"
-			|                }
-			|            ],
-			|            "mainType": "SA Payment on Account 1",
-			|            "originalAmount": 500.0,
-			|            "outstandingAmount": 500.00,
-			|            "taxYear": "2018",
-			|            "totalAmount": 1000.00,
-			|            "transactionDate": "2018-03-29",
-			|            "transactionId": "transactionId",
-			|            "type": "type"
-			|        }
-			|    ]
-			|}
-			|""".stripMargin)
-
-	val validPaymentAllocationChargesJson: JsValue = Json.parse(
-		"""{
-			|    "documentDetails": [
-			|        {
-			|            "documentDate": "2018-03-29",
-			|            "documentDescription": "documentDescription",
-			|            "originalAmount": -300.0,
-			|            "outstandingAmount": -200.0,
-			|            "taxYear": "2018",
-			|            "transactionId": "id",
-			|            "paymentLot": "paymentLot",
-			|            "paymentLotItem": "paymentLotItem"
-			|        }
-			|    ],
-			|    "financialDetails": [
-			|        {
-			|            "chargeType": "NIC4 Wales",
-			|            "clearedAmount": 500.0,
-			|            "items": [
-			|                {
-			|                    "subItemId": "1",
-			|                    "amount": 100.00,
-			|                    "clearingDate": "2021-01-31",
-			|                    "dueDate": "2021-01-31",
-			|                    "outgoingPaymentMethod": "outgoingPaymentMethod",
-			|                    "paymentAmount": 2000.00,
-			|                    "paymentId": "paymentLot-paymentLotItem",
-			|                    "paymentLot": "paymentLot",
-			|                    "paymentLotItem": "paymentLotItem",
-			|                    "paymentMethod": "paymentMethod",
-			|                    "paymentReference": "paymentReference"
-			|                },
-			|                {
-			|                    "subItemId": "2",
-			|                    "amount": 200.00,
-			|                    "dueDate": "2021-01-31",
-			|                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
-			|                    "paymentAmount": 3000.00,
-			|                    "paymentId": "paymentLot2-paymentLotItem2",
-			|                    "paymentLot": "paymentLot2",
-			|                    "paymentMethod": "paymentMethod2"
-			|                }
-			|            ],
-			|            "mainType": "SA Payment on Account 1",
-			|            "originalAmount": 500.0,
-			|            "outstandingAmount": 500.00,
-			|            "taxYear": "2018",
-			|            "totalAmount": 1000.00,
-			|            "transactionDate": "2018-03-29",
-			|            "transactionId": "transactionId",
-			|            "type": "type"
-			|        }
-			|    ]
-			|}
-			|""".stripMargin)
+	val paymentAllocationChargesModelMultiplePayments: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail, documentDetail2),
+		List(financialDetail, financialDetail2))
 
 	val variedFinancialDetailsJson: JsValue = Json.parse(
 		"""{
@@ -362,6 +175,130 @@ object PaymentAllocationsTestConstants {
 			|                    "paymentLotItem": "paymentLotItem",
 			|                    "paymentMethod": "paymentMethod",
 			|                    "paymentReference": "paymentReference"
+			|                }
+			|            ],
+			|            "mainType": "SA Payment on Account 1",
+			|            "originalAmount": 500.0,
+			|            "outstandingAmount": 500.00,
+			|            "taxYear": "2018",
+			|            "totalAmount": 1000.00,
+			|            "transactionDate": "2018-03-29",
+			|            "transactionId": "transactionId",
+			|            "type": "type"
+			|        }
+			|    ]
+			|}
+			|""".stripMargin)
+
+	val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+		Seq(
+			(
+				testValidPaymentAllocationsModel,
+				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50))),
+				Some("2021-01-31")),
+			(
+				testValidPaymentAllocationsModel,
+				Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))),
+				Some("2021-01-31")
+			)
+		))
+
+	val validPaymentAllocationChargesJson: JsValue = Json.parse(
+		"""{
+			|    "documentDetails": [
+			|        {
+			|            "documentDate": "2018-03-29",
+			|            "documentDescription": "documentDescription",
+			|            "originalAmount": -300.0,
+			|            "outstandingAmount": -200.0,
+			|            "taxYear": "2018",
+			|            "transactionId": "id",
+			|            "paymentLot": "paymentLot",
+			|            "paymentLotItem": "paymentLotItem"
+			|        }
+			|    ],
+			|    "financialDetails": [
+			|        {
+			|            "chargeType": "NIC4 Wales",
+			|            "clearedAmount": 500.0,
+			|            "items": [
+			|                {
+			|                    "subItemId": "1",
+			|                    "amount": 100.00,
+			|                    "clearingDate": "2021-01-31",
+			|                    "dueDate": "2021-01-31",
+			|                    "outgoingPaymentMethod": "outgoingPaymentMethod",
+			|                    "paymentAmount": 2000.00,
+			|                    "paymentId": "paymentLot-paymentLotItem",
+			|                    "paymentLot": "paymentLot",
+			|                    "paymentLotItem": "paymentLotItem",
+			|                    "paymentMethod": "paymentMethod",
+			|                    "paymentReference": "paymentReference"
+			|                },
+			|                {
+			|                    "subItemId": "2",
+			|                    "amount": 200.00,
+			|                    "dueDate": "2021-01-31",
+			|                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
+			|                    "paymentAmount": 3000.00,
+			|                    "paymentId": "paymentLot2-paymentLotItem2",
+			|                    "paymentLot": "paymentLot2",
+			|                    "paymentMethod": "paymentMethod2"
+			|                }
+			|            ],
+			|            "mainType": "SA Payment on Account 1",
+			|            "originalAmount": 500.0,
+			|            "outstandingAmount": 500.00,
+			|            "taxYear": "2018",
+			|            "totalAmount": 1000.00,
+			|            "transactionDate": "2018-03-29",
+			|            "transactionId": "transactionId",
+			|            "type": "type"
+			|        }
+			|    ]
+			|}
+			|""".stripMargin)
+
+	val validWrittenPaymentAllocationChargesJson: JsValue = Json.parse(
+		"""{
+			|    "documentDetails": [
+			|        {
+			|            "documentDate": "2018-03-29",
+			|            "documentDescription": "documentDescription",
+			|            "originalAmount": -300.0,
+			|            "outstandingAmount": -200.0,
+			|            "taxYear": "2018",
+			|            "transactionId": "id",
+			|            "paymentLot": "paymentLot",
+			|            "paymentLotItem": "paymentLotItem"
+			|        }
+			|    ],
+			|    "paymentDetails": [
+			|        {
+			|            "chargeType": "NIC4 Wales",
+			|            "clearedAmount": 500.0,
+			|            "items": [
+			|                {
+			|                    "subItemId": "1",
+			|                    "amount": 100.00,
+			|                    "clearingDate": "2021-01-31",
+			|                    "dueDate": "2021-01-31",
+			|                    "outgoingPaymentMethod": "outgoingPaymentMethod",
+			|                    "paymentAmount": 2000.00,
+			|                    "paymentId": "paymentLot-paymentLotItem",
+			|                    "paymentLot": "paymentLot",
+			|                    "paymentLotItem": "paymentLotItem",
+			|                    "paymentMethod": "paymentMethod",
+			|                    "paymentReference": "paymentReference"
+			|                },
+			|                {
+			|                    "subItemId": "2",
+			|                    "amount": 200.00,
+			|                    "dueDate": "2021-01-31",
+			|                    "outgoingPaymentMethod": "outgoingPaymentMethod2",
+			|                    "paymentAmount": 3000.00,
+			|                    "paymentLot": "paymentLot2",
+			|                    "paymentMethod": "paymentMethod2"
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
@@ -469,6 +406,11 @@ object PaymentAllocationsTestConstants {
 			|}
 			|""".stripMargin)
 
-	val paymentAllocationChargesModelMultiplePayments: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail, documentDetail2),
-		List(financialDetail, financialDetail2))
+	val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
+		Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
+		Seq(
+			AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50)),
+			AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))
+		)
+	)
 }

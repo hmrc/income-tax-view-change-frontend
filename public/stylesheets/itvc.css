@@ -185,6 +185,11 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
     margin-bottom: 15px;
 }
 
+.govuk-body-s {
+	font-size: 16px;
+	line-height: 1.25;
+}
+
 .total-heading span {
     float: right;
 }

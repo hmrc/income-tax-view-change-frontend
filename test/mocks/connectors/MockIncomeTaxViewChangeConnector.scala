@@ -97,7 +97,7 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
 
   def setupGetPaymentAllocationCharges(nino: String, documentId: String)(response: FinancialDetailsWithDocumentDetailsResponse): Unit = {
     when(
-      mockIncomeTaxViewChangeConnector.getFinancialDataWithDocumentDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(documentId))(any())
+      mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(documentId))(any())
     ).thenReturn(Future.successful(response))
   }
 }

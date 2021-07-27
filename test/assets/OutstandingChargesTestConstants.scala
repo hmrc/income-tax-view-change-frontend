@@ -22,7 +22,6 @@ import play.api.libs.json.{JsValue, Json}
 
 object OutstandingChargesTestConstants {
 
-
   val testValidOutstandingChargesModelJson: JsValue = Json.parse(
     """
       |  {
@@ -118,6 +117,5 @@ object OutstandingChargesTestConstants {
       |  ]
       |}
       |""".stripMargin)
-
 
 }

@@ -3,13 +3,14 @@ package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
 import assets.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
-import assets.PaymentAllocationChargesIntegrationTestConstants.{documentDetail, financialDetail, validPaymentAllocationChargesJson}
+import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, testValidPaymentAllocationsModel, validPaymentAllocationChargesJson}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 
@@ -41,7 +42,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
@@ -61,7 +62,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
@@ -75,12 +76,16 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
     s"return $OK with the payment allocation page" when {
       "the payment allocation feature switch is enabled" in {
+
         enable(PaymentAllocation)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAllocationsModel))
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 

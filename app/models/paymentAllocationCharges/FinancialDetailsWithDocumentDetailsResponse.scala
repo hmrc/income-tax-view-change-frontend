@@ -26,10 +26,10 @@ sealed trait FinancialDetailsWithDocumentDetailsResponse
 
 
 case class FinancialDetailsWithDocumentDetailsModel(documentDetails: List[DocumentDetail],
-                                                    paymentDetails: List[FinancialDetail]) extends FinancialDetailsWithDocumentDetailsResponse {
+																										financialDetails: List[FinancialDetail]) extends FinancialDetailsWithDocumentDetailsResponse {
 
-  val filteredDocumentDetails = documentDetails.filter(_.paymentLot == paymentDetails.head.items.get.head.paymentLot)
-    .filter(_.paymentLotItem == paymentDetails.head.items.get.head.paymentLotItem)
+  val filteredDocumentDetails = documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
+    .filter(_.paymentLotItem == financialDetails.head.items.get.head.paymentLotItem)
 
 }
 
