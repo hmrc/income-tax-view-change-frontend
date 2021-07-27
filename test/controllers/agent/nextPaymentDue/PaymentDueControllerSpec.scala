@@ -32,7 +32,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import services.PaymentDueService
+import services.WhatYouOweService
 import testUtils.TestSupport
 
 import scala.concurrent.Future
@@ -47,7 +47,7 @@ class PaymentDueControllerSpec extends TestSupport
 
   trait Setup {
 
-    val paymentDueService: PaymentDueService = mock[PaymentDueService]
+    val paymentDueService: WhatYouOweService = mock[WhatYouOweService]
 
     val controller = new PaymentDueController(
       app.injector.instanceOf[views.html.agent.nextPaymentDue.paymentDue],

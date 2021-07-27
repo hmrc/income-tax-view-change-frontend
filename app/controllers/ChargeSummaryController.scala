@@ -131,7 +131,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
     case Some("taxYearOverview") => controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url + "#payments"
-    case Some("paymentDue") => controllers.routes.PaymentDueController.viewPaymentsDue().url
+    case Some("whatYouOwe") => controllers.routes.WhatYouOweController.viewPaymentsDue().url
     case _ => controllers.routes.HomeController.home().url
   }
 }

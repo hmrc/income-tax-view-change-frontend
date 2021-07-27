@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentDueService @Inject()(val financialDetailsService: FinancialDetailsService,
+class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
                                  (implicit ec: ExecutionContext, appConfig: FrontendAppConfig) {
 
