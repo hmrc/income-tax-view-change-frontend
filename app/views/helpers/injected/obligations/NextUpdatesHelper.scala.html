@@ -15,10 +15,10 @@
  *@
 
 @import implicits.ImplicitDateFormatterImpl
-@import views.html.helpers.accordionHelper
+@import views.html.helpers.injected.AccordionHelper
 @import models.reportDeadlines.ReportDeadlineModelWithIncomeType
 
-@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(implicitDateFormatter: ImplicitDateFormatterImpl, accordionHelper: AccordionHelper)
 @(obligations: models.reportDeadlines.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 

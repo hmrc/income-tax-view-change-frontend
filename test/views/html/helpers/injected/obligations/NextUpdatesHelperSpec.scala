@@ -29,7 +29,7 @@ import testUtils.TestSupport
 class NextUpdatesHelperSpec extends TestSupport {
 
   class Setup(currentObligations: ObligationsModel) {
-    val nextUpdatesHelper = new NextUpdatesHelper(mockImplicitDateFormatter)
+    val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
 
     val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
     val pageDocument: Document = Jsoup.parse(contentAsString(html)(defaultTimeout))

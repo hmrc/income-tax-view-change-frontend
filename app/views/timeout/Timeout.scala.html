@@ -14,5 +14,19 @@
  * limitations under the License.
  *@
 
-@(page: String)(implicit messages: Messages)
-<a id="back" class="link-back" data-journey-click="@{page}:ClickLink:BackToHome" href="@{controllers.routes.HomeController.home().url}">@messages("base.backToHome")</a>
+@import views.html.templates.MainTemplate
+
+@this(mainTemplate: MainTemplate)
+
+@()(implicit messages: Messages)
+
+@mainTemplate(title = messages("timeout.heading"), bodyClasses = None, showLogout = false, showBtaHeader = false, timeout = false) {
+
+  <h1 class="h1-heading">@messages("timeout.heading")</h1>
+  <p id="sign-in">
+   @messages("timeout.signIn.1")
+   <a id="sign-in-link" href="@controllers.routes.SignInController.signIn().url">@messages("timeout.signIn.2")</a>
+   @messages("timeout.signIn.3")
+  </p>
+
+}

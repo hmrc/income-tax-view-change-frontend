@@ -32,12 +32,14 @@ import play.api.i18n.Messages
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.obligationTemplates.currentObligationsHelper
+import views.html.helpers.injected.obligations.CurrentObligationsHelper
 
 class CurrentObligationsHelperSpec extends TestSupport with ImplicitDateFormatter {
 
+  lazy val currentObligationsHelper = app.injector.instanceOf[CurrentObligationsHelper]
+
   class Setup(model: ObligationsModel) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(currentObligationsHelper(model, mockImplicitDateFormatter)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(currentObligationsHelper(model)))
   }
 
   "The Current Obligations Helper" should {

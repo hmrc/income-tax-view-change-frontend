@@ -19,9 +19,11 @@ package views.helpers
 import assets.{EstimatesTestConstants, MessagesLookUp}
 import org.jsoup.Jsoup
 import testUtils.TestSupport
-import views.html.helpers.statusHelper
+import views.html.helpers.injected.StatusHelper
 
 class StatusHelperSpec extends TestSupport {
+
+  lazy val statusHelper = app.injector.instanceOf[StatusHelper]
 
   "The status helper" should {
 

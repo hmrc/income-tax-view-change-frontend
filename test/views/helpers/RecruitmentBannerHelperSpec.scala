@@ -20,12 +20,15 @@ import assets.MessagesLookUp
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import testUtils.TestSupport
+import views.html.helpers.injected.RecruitmentBannerHelper
 
 class RecruitmentBannerHelperSpec extends TestSupport{
 
+  lazy val recruitmentBannerHelper = app.injector.instanceOf[RecruitmentBannerHelper]
+
   "The recruitment banner" should {
 
-    lazy val view = views.html.helpers.recruitmentBannerHelper()
+    lazy val view = recruitmentBannerHelper()
     lazy val document = Jsoup.parse(view.body)
 
     s"have the correct header message '${MessagesLookUp.RecruitmentBanner.text}'" in {
