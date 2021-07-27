@@ -32,11 +32,11 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
     "return successful payment allocation details" when {
       "all fields are present" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
-        setupGetPaymentAllocation("paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
+        setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
         setupGetPaymentAllocationCharges(testNino, "1040000872")(paymentAllocationChargesModel)
         setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModel)
 
-        val result = await(TestPaymentAllocationsService.getPaymentAllocation(testNino, docNumber))
+        val result = await(TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber))
 
         result shouldBe Right(paymentAllocationViewModel)
       }
@@ -47,24 +47,24 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
       "all calls succeed except the payment charges which returns an error" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(FinancialDetailsWithDocumentDetailsErrorModel(404, "NOT FOUND"))
 
-        await(TestPaymentAllocationsService.getPaymentAllocation(testNino, docNumber)) shouldBe Left(PaymentAllocationError)
+        await(TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber)) shouldBe Left(PaymentAllocationError)
       }
 
       "all calls succeed except the call to payment Allocation which returns an error" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
-        setupGetPaymentAllocation("paymentLot", "paymentLotItem")(PaymentAllocationsError(404, "NOT FOUND"))
+        setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(PaymentAllocationsError(404, "NOT FOUND"))
 
-        await(TestPaymentAllocationsService.getPaymentAllocation(testNino, docNumber)) shouldBe Left(PaymentAllocationError)
+        await(TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber)) shouldBe Left(PaymentAllocationError)
       }
 
       "all calls succeed except the call to financial details with a payments SAP document number which returns an error" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
-        setupGetPaymentAllocation("paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
+        setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
         setupGetPaymentAllocationCharges(testNino, "1040000872")(FinancialDetailsWithDocumentDetailsErrorModel(404, "NOT FOUND"))
         setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModel)
 
 
-        await(TestPaymentAllocationsService.getPaymentAllocation(testNino, docNumber)) shouldBe Left(PaymentAllocationError)
+        await(TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber)) shouldBe Left(PaymentAllocationError)
       }
     }
   }

@@ -18,7 +18,7 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
-import models.core.{Nino, NinoResponseError}
+import models.core.{NinoResponseSuccess, NinoResponseError}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ObligationsModel
@@ -27,13 +27,13 @@ import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
-object IncomeTaxViewChangeStub {
+object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   // NINO Lookup Stubs
   // =================
   val ninoLookupUrl: String => String = mtditid => s"/income-tax-view-change/nino-lookup/$mtditid"
 
-  def stubGetNinoResponse(mtditid: String, nino: Nino): Unit =
+  def stubGetNinoResponse(mtditid: String, nino: NinoResponseSuccess): Unit =
     WiremockHelper.stubGet(ninoLookupUrl(mtditid), Status.OK, Json.toJson(nino).toString)
 
   def stubGetNinoError(mtditid: String, error: NinoResponseError): Unit =
@@ -163,10 +163,10 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.verifyGet(getOutstandingChargesUrl(idType, idNumber, s"${taxYear.toInt}-04-05"))
   }
 
-	//Charge History stubs
-	def getChargeHistoryUrl(mtdBsa: String, docNumber: String): String = {
-		s"/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
-	}
+  //Charge History stubs
+  def getChargeHistoryUrl(mtdBsa: String, docNumber: String): String = {
+    s"/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
+  }
 
 	def stubChargeHistoryResponse(mtdBsa: String, docNumber: String)(status: Int, response: JsValue): StubMapping = {
 		WiremockHelper.stubGet(getChargeHistoryUrl(mtdBsa, docNumber), status, response.toString())

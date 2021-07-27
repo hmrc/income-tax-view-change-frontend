@@ -14,21 +14,6 @@
  * limitations under the License.
  */
 
-package assets
+package models.core
 
-import models.core.{NinoResponseSuccess, NinoResponseError}
-import play.api.libs.json.{JsValue, Json}
-import BaseTestConstants._
-
-object NinoLookupTestConstants {
-  val testNinoModel: NinoResponseSuccess = NinoResponseSuccess(nino = testNino)
-  val testNinoModelJson: JsValue = Json.obj(
-    "nino" -> testNino
-  )
-
-  val testNinoErrorModel: NinoResponseError = NinoResponseError(testErrorStatus, testErrorMessage)
-  val testNinoErrorModelJson: JsValue = Json.obj(
-    "status" -> testErrorStatus,
-    "reason" -> testErrorMessage
-  )
-}
+case class Nino(value: String) extends AnyVal

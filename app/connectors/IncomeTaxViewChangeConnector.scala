@@ -22,7 +22,7 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import models.chargeHistory._
-import models.core.{Nino, NinoResponse, NinoResponseError}
+import models.core.{NinoResponseSuccess, NinoResponse, NinoResponseError, Nino}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.outstandingCharges._
@@ -185,7 +185,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
       response.status match {
         case OK =>
           Logger.debug(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, json: ${response.json}")
-          response.json.validate[Nino].fold(
+          response.json.validate[NinoResponseSuccess].fold(
             invalid => {
               Logger.error(s"[IncomeTaxViewChangeConnector][getNino] - Json Validation Error - $invalid")
               NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
@@ -324,10 +324,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
   }
 
-  def getPaymentAllocations(paymentLot: String, paymentLotItem: String)
-                           (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentAllocationsResponse] = {
+  def getPaymentAllocations(nino: Nino, paymentLot: String, paymentLotItem: String)
+                           (implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationsResponse] = {
 
-    val url = getPaymentAllocationsUrl(mtdUser.nino, paymentLot, paymentLotItem)
+    val url = getPaymentAllocationsUrl(nino.value, paymentLot, paymentLotItem)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
@@ -490,9 +490,9 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     }
   }
 
-  def getFinancialDetailsByDocumentId(nino: String, documentNumber: String)
-																		 (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
-    http.GET[HttpResponse](getFinancialDetailsByDocumentIdUrl(nino, documentNumber))(
+  def getFinancialDetailsByDocumentId(nino: Nino, documentNumber: String)
+                                     (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
+    http.GET[HttpResponse](getFinancialDetailsByDocumentIdUrl(nino.value, documentNumber))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec

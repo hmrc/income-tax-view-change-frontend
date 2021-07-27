@@ -16,14 +16,14 @@
 
 package audit.models
 
-import models.core.{Nino, NinoResponseError}
+import models.core.{NinoResponseSuccess, NinoResponseError}
 
 object NinoLookupAuditing {
 
   val ninoLookupTransactionName = "ITVCNinoLookup"
   val ninoLookupAuditType = "ninoLookup"
 
-  case class NinoLookupAuditModel(nino: Nino, mtdRef: String) extends AuditModel {
+  case class NinoLookupAuditModel(nino: NinoResponseSuccess, mtdRef: String) extends AuditModel {
     override val transactionName: String = ninoLookupTransactionName
     override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> mtdRef,

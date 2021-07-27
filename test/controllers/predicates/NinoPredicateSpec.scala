@@ -21,7 +21,7 @@ import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockNinoLookupService
-import models.core.{Nino, NinoResponseError}
+import models.core.{NinoResponseSuccess, NinoResponseError}
 import org.scalatest.EitherValues
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
@@ -40,7 +40,7 @@ class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLooku
     lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
       Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
-    lazy val ninoServiceSuccess = Nino(testNino)
+    lazy val ninoServiceSuccess = NinoResponseSuccess(testNino)
     lazy val ninoServiceError = NinoResponseError(testErrorStatus, testErrorMessage)
 
     object TestPredicate extends NinoPredicate(

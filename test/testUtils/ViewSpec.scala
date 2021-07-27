@@ -49,8 +49,9 @@ trait ViewSpec extends TestSupport {
     val inputError: String = ".error-notification"
     val link: String = "a"
     val table: String = "table"
-    val tableRow: String = "td"
+    val tableRow: String = "tr"
     val p: String = "p"
+    def id(id: String): String = s"#$id"
   }
 
   implicit def elementsToHeadOption(elements: Elements): Option[Element] = {
@@ -108,7 +109,7 @@ trait ViewSpec extends TestSupport {
     }
 
     def selectById(id: String): Element = {
-      element.select(s"#$id") getOrElse fail("element with id not found")
+      element.select(Selectors.id(id)) getOrElse fail("element with id not found")
     }
 
     def table(nthOfType: Int = 1): Element = {

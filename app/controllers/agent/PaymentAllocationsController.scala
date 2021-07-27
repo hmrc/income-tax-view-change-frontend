@@ -18,11 +18,12 @@ package controllers.agent
 
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitDateFormatterImpl
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.core.Nino
+import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.PaymentAllocationsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import views.html.agent.PaymentAllocation
@@ -31,14 +32,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentAllocationsController @Inject()(paymentAllocation: PaymentAllocation,
-                                             incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAllocation,
+                                             paymentAllocationsService: PaymentAllocationsService,
                                              val authorisedFunctions: AuthorisedFunctions
                                             )(implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               dateFormatter: ImplicitDateFormatterImpl,
-                                              implicit val ec: ExecutionContext,
-                                              val itvcErrorHandler: ItvcErrorHandler
+                                              val ec: ExecutionContext,
+                                              itvcErrorHandler: ItvcErrorHandler
                                             ) extends ClientConfirmedController with FeatureSwitching {
 
   lazy val backUrl: String = controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
@@ -46,9 +47,9 @@ class PaymentAllocationsController @Inject()(paymentAllocation: PaymentAllocatio
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(getClientNino(request), documentNumber) map {
-          case paymentAllocations: FinancialDetailsWithDocumentDetailsModel =>
-            Ok(paymentAllocation(paymentAllocations, dateFormatter, backUrl = backUrl))
+        paymentAllocationsService.getPaymentAllocation(Nino(getClientNino(request)), documentNumber) map {
+          case Right(viewModel: PaymentAllocationViewModel) =>
+            Ok(paymentAllocationView(viewModel, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
         }
       } else Future.failed(new NotFoundException("[PaymentAllocationsController] - PaymentAllocation is disabled"))

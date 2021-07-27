@@ -129,7 +129,7 @@ object PaymentAllocationsTestConstants {
         "from" -> "2019-06-27",
         "to" -> "2019-08-27",
         "chargeType" -> "NIC4 Wales",
-				"mainType" -> "SA Payment on Account 1",
+        "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.10,
         "clearedAmount" -> 5.50
       ),
@@ -138,7 +138,7 @@ object PaymentAllocationsTestConstants {
         "from" -> "2019-07-28",
         "to" -> "2019-09-28",
         "chargeType" -> "NIC4 Wales",
-				"mainType" -> "SA Payment on Account 1",
+        "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.90,
         "clearedAmount" -> 5.90
       )

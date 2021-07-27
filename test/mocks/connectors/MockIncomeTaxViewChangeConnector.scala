@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.IncomeTaxViewChangeConnector
-import models.core.NinoResponse
+import models.core.{Nino, NinoResponse}
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
@@ -88,16 +88,16 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
       .thenReturn(Future.successful(response))
   }
 
-  def setupGetPaymentAllocation(paymentLot: String, paymentLotItem: String)(response: PaymentAllocationsResponse): Unit = {
+  def setupGetPaymentAllocation(nino: String, paymentLot: String, paymentLotItem: String)(response: PaymentAllocationsResponse): Unit = {
     when(
-      mockIncomeTaxViewChangeConnector.getPaymentAllocations(ArgumentMatchers.eq(paymentLot), ArgumentMatchers.eq(paymentLotItem))
-      (any(),any())
+      mockIncomeTaxViewChangeConnector.getPaymentAllocations(Nino(ArgumentMatchers.eq(nino)),
+        ArgumentMatchers.eq(paymentLot), ArgumentMatchers.eq(paymentLotItem))(any())
     ).thenReturn(Future.successful(response))
   }
 
   def setupGetPaymentAllocationCharges(nino: String, documentId: String)(response: FinancialDetailsWithDocumentDetailsResponse): Unit = {
     when(
-      mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(documentId))(any())
+      mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(documentId))(any())
     ).thenReturn(Future.successful(response))
   }
 }

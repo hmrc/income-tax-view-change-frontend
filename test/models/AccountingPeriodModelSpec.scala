@@ -17,38 +17,42 @@
 package models
 
 import implicits.ImplicitDateFormatter
-import javax.inject.Inject
 import models.core.AccountingPeriodModel
+import models.core.AccountingPeriodModel.determineTaxYearFromPeriodEnd
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.language.LanguageUtils
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.TestSupport
 
-class AccountingPeriodModelSpec @Inject() (val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
+class AccountingPeriodModelSpec extends TestSupport with Matchers with ImplicitDateFormatter {
 
   "The AccountingPeriodModel Model" when {
     "the end date is before the Start of the next Tax Year" should {
       "return the current Tax Year" in {
         AccountingPeriodModel("2017-04-06", "2018-04-05").determineTaxYear shouldBe 2018
+        determineTaxYearFromPeriodEnd("2018-04-05") shouldBe 2018
       }
     }
     "the end date is on the Start of the next Tax Year" should {
       "return the next Tax Year" in {
         AccountingPeriodModel("2017-04-07", "2018-04-06").determineTaxYear shouldBe 2019
+        determineTaxYearFromPeriodEnd("2018-04-06") shouldBe 2019
       }
     }
     "the end date is after the Start of the next Tax Year" should {
       "return the next Tax Year" in {
         AccountingPeriodModel("2017-04-08", "2018-04-07").determineTaxYear shouldBe 2019
+        determineTaxYearFromPeriodEnd("2018-04-07") shouldBe 2019
       }
     }
     "the end date is 6th of March" should {
       "return the next Tax Year" in {
         AccountingPeriodModel("2017-03-05", "2018-03-06").determineTaxYear shouldBe 2018
+        determineTaxYearFromPeriodEnd("2018-03-06") shouldBe 2018
       }
     }
     "the end date is 1st of June" should {
       "return the next Tax Year" in {
         AccountingPeriodModel("2017-03-05", "2018-06-01").determineTaxYear shouldBe 2019
+        determineTaxYearFromPeriodEnd("2018-06-01") shouldBe 2019
       }
     }
   }

@@ -20,12 +20,12 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait NinoResponse
 
-case class Nino(nino: String) extends NinoResponse
+case class NinoResponseSuccess(nino: String) extends NinoResponse
 
 case class NinoResponseError(status: Int, reason: String) extends NinoResponse
 
-object Nino {
-  implicit val format: Format[Nino] = Json.format[Nino]
+object NinoResponseSuccess {
+  implicit val format: Format[NinoResponseSuccess] = Json.format[NinoResponseSuccess]
 }
 object NinoResponseError {
   implicit val format: Format[NinoResponseError] = Json.format[NinoResponseError]

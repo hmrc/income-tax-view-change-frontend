@@ -16,17 +16,13 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
 import assets.PaymentAllocationsTestConstants._
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.connectors.MockIncomeTaxViewChangeConnector
-import mocks.services.MockIncomeSourceDetailsService
-import mocks.views.agent.MockPaymentAllocation
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import mocks.services.MockPaymentAllocationsService
+import mocks.views.agent.MockPaymentAllocationView
 import play.api.http.Status._
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
@@ -34,27 +30,20 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 
-import scala.concurrent.Future
-
-class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAllocation with MockFrontendAuthorisedFunctions
-  with FeatureSwitching with MockIncomeSourceDetailsService with MockIncomeTaxViewChangeConnector with MockItvcErrorHandler {
+class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAllocationView with MockFrontendAuthorisedFunctions
+  with FeatureSwitching with MockPaymentAllocationsService with MockItvcErrorHandler {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     disable(PaymentAllocation)
   }
 
-  lazy val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail),
-    List(financialDetail)
-  )
-
   class Setup {
     val docNumber = "docNumber1"
 
     val controller: PaymentAllocationsController = new PaymentAllocationsController(
-      paymentAllocation = paymentAllocation,
-      incomeTaxViewChangeConnector = mockIncomeTaxViewChangeConnector,
+      paymentAllocationView = paymentAllocationView,
+      paymentAllocationsService = mockPaymentAllocationsService,
       authorisedFunctions = mockAuthService
     )(
       appConfig,
@@ -139,12 +128,10 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        mockSingleBusinessIncomeSource()
-        when(mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(any(), any())(any()))
-          .thenReturn(Future.successful(singleTestPaymentAllocationCharge))
+        setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModel)
 
-        mockPaymentAllocation(
-          singleTestPaymentAllocationCharge,
+        mockPaymentAllocationView(
+          paymentAllocationViewModel,
           controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
         )(HtmlFormat.empty)
 
@@ -157,9 +144,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        mockSingleBusinessIncomeSource()
-        when(mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(any(), any())(any()))
-          .thenReturn(Future.successful(FinancialDetailsWithDocumentDetailsErrorModel(500, """"Error message"""")))
+        setupMockGetPaymentAllocationError(testNinoAgent, docNumber)
         mockShowInternalServerError()
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient()))
