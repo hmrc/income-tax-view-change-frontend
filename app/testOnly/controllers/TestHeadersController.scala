@@ -22,15 +22,17 @@ import forms.utils.SessionKeys
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.forms.TestHeadersForm
 import testOnly.models.TestHeadersModel
+import testOnly.views.html.TestHeaders
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class TestHeadersController @Inject()(implicit appConfig: FrontendAppConfig, mcc: MessagesControllerComponents,
+class TestHeadersController @Inject()(testHeaders: TestHeaders)
+                                     (implicit appConfig: FrontendAppConfig, mcc: MessagesControllerComponents,
                                      val executionContext: ExecutionContext) extends BaseController {
 
   def showTestHeaders: Action[AnyContent] = Action { implicit request =>
-    Ok(testOnly.views.html.testHeaders(TestHeadersForm.form.fill(TestHeadersModel(
+    Ok(testHeaders(TestHeadersForm.form.fill(TestHeadersModel(
       request.session.get("Gov-Test-Scenario").getOrElse("DEFAULT"))), TestHeadersModel.validTestHeaders))
   }
 

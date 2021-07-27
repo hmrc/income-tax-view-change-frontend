@@ -16,20 +16,22 @@
 
 @import play.api.data.Form
 @import play.api.data.Field
+
+@this(fieldErrorHelper: FieldErrorHelper)
+
 @(field: Field,
         label: Option[String] = None,
         parentForm: Option[Form[_]] = None,
         maxLength: Option[Int] = None,
         labelClass: Option[String] = None,
         isNumeric: Boolean = false,
-        formHint: Option[Seq[String]] = None,
-        values: Seq[String]
+        formHint: Option[Seq[String]] = None
 )(implicit messages: Messages)
 
 @import testOnly.forms.validation.ErrorMessageHelper._
 
 @hintText(hint: String) = {
-    <span class="form-hint">
+<span class="form-hint" xmlns="http://www.w3.org/1999/html" id="text-area-helper">
     @hint
     </span>
 }
@@ -48,9 +50,13 @@
         @formHint.fold(Nil: Seq[Html])(_.map(hintText))
     </label>
     @fieldErrorHelper(field, parentForm)
-    <select style="margin:0" name=@field.name id=@field.name>
-        @for(value <- values) {
-            <option value="@value">@value</option>
-        }
-    </select>
+    @if(formHint.isDefined) {
+        <textarea name=@field.name class="textarea--fullwidth" id=@field.name rows="15" aria-describedby="text-area-helper"
+    } else {
+        <textarea name=@field.name class="textarea--fullwidth" id=@field.name rows="15"
+    }
+        @maxLength.fold(Html(""))(max => Html(s"maxlength=$max"))
+        value="@field.value.fold("")(v => v)"
+        @if(isNumeric){pattern="[0-9]*" inputmode="numeric"}
+    ></textarea>
 </div>

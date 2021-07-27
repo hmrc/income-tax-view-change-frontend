@@ -18,6 +18,7 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
+
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,11 +29,13 @@ import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubDataForm
 import testOnly.models.DataModel
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import testOnly.views.html.StubDataView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,
+class StubDataController @Inject()(stubDataView: StubDataView)
+                                  (implicit val appConfig: FrontendAppConfig,
                                    override val config: Configuration,
                                    override val env: Environment,
                                    implicit val mcc: MessagesControllerComponents,
@@ -83,7 +86,7 @@ class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,
                    showSuccess: Boolean = false,
                    errorResponse: Option[String] = None
                   )(implicit request: Request[AnyContent]) =
-    testOnly.views.html.stubDataView(
+    stubDataView(
       form,
       testOnly.controllers.routes.StubDataController.submit(),
       showSuccess,

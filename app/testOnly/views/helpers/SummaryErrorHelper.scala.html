@@ -15,18 +15,33 @@
  *@
 
 @import play.api.data.Form
-@import play.api.data.Field
+@import play.api.data._
 @import testOnly.forms.validation.ErrorMessageHelper._
+@import testOnly.forms.validation.models._
 
-@(field: Field, parentForm: Option[Form[_]] = None)(implicit messages: Messages)
+@this()
 
-    @error = @{
-        getFieldError(field, parentForm)
-    }
+@(form: Form[_])(implicit messages: Messages)
 
-    @error match {
-        case Some(err) => {
-            <span class="error-notification" role="tooltip" id="error-message-@field.name">@err.toText</span>
-        }
-        case _ => {}
-    }
+@errors = @{
+    getSummaryErrors(form)
+}
+
+@errMsg(err: (String, SummaryError)) = {
+    <li role="tooltip" data-metrics="itsa:error:@err._2.toText"><a href="#@err._1">@err._2.toText</a></li>
+}
+
+@if(form.hasErrors) {
+
+    <div class="flash error-summary error-summary--show"
+         id="error-summary-display"
+         role="alert"
+         aria-labelledby="error-summary-heading"
+         tabindex="-1">
+        <h2 id="error-summary-heading" class="h3-heading">Errors</h2>
+        <ul>
+            @errors.map(errMsg)
+        </ul>
+    </div>
+
+}

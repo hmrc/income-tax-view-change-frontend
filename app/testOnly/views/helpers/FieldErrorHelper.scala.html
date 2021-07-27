@@ -14,12 +14,21 @@
  * limitations under the License.
  *@
 
-@(field: Field, label: String)(implicit messages: Messages)
+@import play.api.data.Form
+@import play.api.data.Field
+@import testOnly.forms.validation.ErrorMessageHelper._
 
-@value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
+@this()
 
-<div class="multiple-choice">
-    <input id="@{field.name}" name="@{field.name}" type="checkbox" value="true" @if(value == "true"){ checked }>
-    <label for="@{field.name}">@label</label>
-</div>
+@(field: Field, parentForm: Option[Form[_]] = None)(implicit messages: Messages)
 
+    @error = @{
+        getFieldError(field, parentForm)
+    }
+
+    @error match {
+        case Some(err) => {
+            <span class="error-notification" role="tooltip" id="error-message-@field.name">@err.toText</span>
+        }
+        case _ => {}
+    }

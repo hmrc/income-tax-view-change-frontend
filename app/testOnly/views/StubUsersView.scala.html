@@ -15,13 +15,15 @@
  *@
 
 @import testOnly.models.UserModel
-@import testOnly.views.html.templates.stub_template
+@import testOnly.views.html.templates.StubTemplate
 @import testOnly.views.html.helpers._
-@import uk.gov.hmrc.play.views.html.helpers.form
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 
-@(userForm: Form[UserModel], postAction: Call, result: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@this(stubTemplate: StubTemplate, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, inputHelper: InputHelper, continueButton: ContinueButton)
 
-@stub_template(title = "ITVC Stub Users", bodyClasses = None) {
+@(userForm: Form[UserModel], postAction: Call, result: Option[String])(implicit request: Request[_], messages: Messages)
+
+@stubTemplate(title = "ITVC Stub Users", bodyClasses = None) {
 
     @summaryErrorHelper(userForm)
 

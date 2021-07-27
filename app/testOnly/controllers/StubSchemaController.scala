@@ -28,11 +28,13 @@ import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubSchemaForm
 import testOnly.models.SchemaModel
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import testOnly.views.html.StubSchemaView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StubSchemaController @Inject()(implicit val appConfig: FrontendAppConfig,
+class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
+                                    (implicit val appConfig: FrontendAppConfig,
                                      override val config: Configuration,
                                      override val env: Environment,
                                      implicit val mcc: MessagesControllerComponents,
@@ -76,7 +78,7 @@ class StubSchemaController @Inject()(implicit val appConfig: FrontendAppConfig,
   )}
 
   private def view(form: Form[SchemaModel], showSuccess: Boolean = false, errorMessage: Option[String] = None)(implicit request: Request[AnyContent]) =
-    testOnly.views.html.stubSchemaView(
+    stubSchemaView(
       form,
       testOnly.controllers.routes.StubSchemaController.submit(),
       showSuccess,

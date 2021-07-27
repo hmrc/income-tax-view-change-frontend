@@ -29,10 +29,12 @@ import testOnly.connectors.DesSimulatorConnector
 import testOnly.forms.UserModelForm
 import testOnly.models.UserModel
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import testOnly.views.html.StubUsersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class 	StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
+class 	StubUsersController @Inject()(stubUsersView: StubUsersView)
+                                    (implicit val appConfig: FrontendAppConfig,
                                     override val config: Configuration,
                                     override val env: Environment,
                                     implicit val mcc: MessagesControllerComponents,
@@ -64,6 +66,6 @@ class 	StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
   )}
 
   def view(form: Form[UserModel], result: Option[String] = None)(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
-    testOnly.views.html.stubUsersView(form, testOnly.controllers.routes.StubUsersController.submit(), result)
+    stubUsersView(form, testOnly.controllers.routes.StubUsersController.submit(), result)
   }
 }

@@ -16,6 +16,10 @@
 
 @import play.api.data.Form
 @import play.api.data.Field
+@import testOnly.forms.validation.ErrorMessageHelper._
+
+@this(fieldErrorHelper: FieldErrorHelper)
+
 @(field: Field,
         label: Option[String] = None,
         parentForm: Option[Form[_]] = None,
@@ -25,7 +29,6 @@
         formHint: Option[Seq[String]] = None
 )(implicit messages: Messages)
 
-@import testOnly.forms.validation.ErrorMessageHelper._
 
 @hintText(hint: String) = {
     <span class="form-hint" id="input-helper-hint">
