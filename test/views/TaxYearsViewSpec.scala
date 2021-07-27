@@ -26,9 +26,11 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
+import views.html.TaxYears
 
 class TaxYearsViewSpec extends ViewSpec {
 
+  val taxYearsView = app.injector.instanceOf[TaxYears]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   private def pageSetup(calcs: List[CalculationResponseModelWithYear],
@@ -37,7 +39,7 @@ class TaxYearsViewSpec extends ViewSpec {
 
                        ) = new {
     lazy val page: HtmlFormat.Appendable =
-      views.html.taxYears(calcs, "testBackURL",itsaSubmissionFeatureSwitch)(FakeRequest(), implicitly, mockAppConfig)
+      taxYearsView(calcs, "testBackURL",itsaSubmissionFeatureSwitch)(implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

@@ -25,10 +25,11 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.CalculationService
-
+import views.html.TaxYears
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
+class TaxYearsController @Inject() (taxYears: TaxYears)
+                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val executionContext: ExecutionContext,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
@@ -47,7 +48,7 @@ class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
         case taxYearCalResponse if taxYearCalResponse.exists(_.isError) =>
           Future.successful(itvcErrorHandler.showInternalServerError)
         case taxYearCalResponse =>
-          Future.successful(Ok(views.html.taxYears(taxYears = taxYearCalResponse.filter(_.isCalculation),backUrl = backUrl ,isEnabled(ITSASubmissionIntegration)))
+          Future.successful(Ok(taxYears(taxYears = taxYearCalResponse.filter(_.isCalculation),backUrl = backUrl ,isEnabled(ITSASubmissionIntegration)))
             .addingToSession("singleEstimate" -> "false"))
       }.recover {
           case ex => {
