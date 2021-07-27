@@ -31,7 +31,7 @@ import testUtils.TestSupport
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class PaymentDueServiceSpec extends TestSupport {
+class WhatYouOweServiceSpec extends TestSupport {
 
   implicit val mtdItUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -47,7 +47,7 @@ class PaymentDueServiceSpec extends TestSupport {
   val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
 
-  object TestPaymentDueService extends PaymentDueService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector)
+  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector)
 
   def outstandingChargesModel(dueDate: String): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234))
@@ -226,7 +226,7 @@ class PaymentDueServiceSpec extends TestSupport {
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days)))
 
-        await(TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueInMoreThan30Days
+        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueInMoreThan30Days
       }
     }
     "when both financial details and outstanding charges return success response and valid data of due in 30 days" should {
@@ -236,7 +236,7 @@ class PaymentDueServiceSpec extends TestSupport {
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueIn30Days)))
 
-        await(TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueIn30Days
+        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueIn30Days
       }
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
@@ -245,7 +245,7 @@ class PaymentDueServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsOverdueData)))
 
-          await(TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithOverdueData
+          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithOverdueData
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
@@ -255,7 +255,7 @@ class PaymentDueServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData1)))
 
-          await(TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithMixedData1
+          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithMixedData1
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
@@ -265,7 +265,7 @@ class PaymentDueServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData2)))
 
-          await(TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithMixedData2
+          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithMixedData2
         }
       }
       "when both financial details return success and outstanding charges return 500" should {
@@ -275,7 +275,7 @@ class PaymentDueServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days)))
 
-          val res = TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
+          val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
           val ex = intercept[Exception](await(res))
           ex.getMessage shouldBe "[PaymentDueService][callOutstandingCharges] Error response while getting outstanding charges"
@@ -288,7 +288,7 @@ class PaymentDueServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days, FinancialDetailsErrorModel(500, "test message"))))
 
-          val res = TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
+          val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
           val ex = intercept[Exception](await(res))
           ex.getMessage shouldBe "[PaymentDueService][getWhatYouOweChargesList] Error response while getting Unpaid financial details"
@@ -301,7 +301,7 @@ class PaymentDueServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days)))
 
-          await(TestPaymentDueService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
+          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
             futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates
           )
         }

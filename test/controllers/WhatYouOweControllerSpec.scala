@@ -33,19 +33,20 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import services.PaymentDueService
+import services.WhatYouOweService
+import views.html.WhatYouOwe
 
 import scala.concurrent.Future
 
-class PaymentDueControllerSpec extends MockAuthenticationPredicate
+class WhatYouOweControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockIncomeTaxViewChangeConnector with ImplicitDateFormatter with MockAuditingService {
 
 
   trait Setup {
 
-    val paymentDueService: PaymentDueService = mock[PaymentDueService]
+    val paymentDueService: WhatYouOweService = mock[WhatYouOweService]
 
-    val controller = new PaymentDueController(
+    val controller = new WhatYouOweController(
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
@@ -57,7 +58,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
-      app.injector.instanceOf[ImplicitDateFormatterImpl]
+      app.injector.instanceOf[WhatYouOwe]
     )
   }
 
@@ -97,7 +98,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
           val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.OK
-          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
 
         }
 
@@ -113,7 +114,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
           val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.OK
-          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
 
         }
 

@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 
 import java.time.LocalDate
 
-class PaymentDueControllerISpec extends ComponentSpecBase {
+class WhatYouOweControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None,

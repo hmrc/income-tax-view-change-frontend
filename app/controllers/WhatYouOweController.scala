@@ -22,30 +22,29 @@ import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PaymentDueService
+import services.WhatYouOweService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.WhatYouOwe
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
                                      val retrieveNino: NinoPredicate,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                     val paymentDueService: PaymentDueService,
+                                     val whatYouOweService: WhatYouOweService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val auditingService: AuditingService,
                                      implicit val appConfig: FrontendAppConfig,
                                      mcc: MessagesControllerComponents,
                                      implicit val ec: ExecutionContext,
-                                     dateFormatter: ImplicitDateFormatterImpl
+                                     whatYouOwe: WhatYouOwe
                                     ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def hasFinancialDetailsError(financialDetails: List[FinancialDetailsResponseModel]): Boolean = {
@@ -59,15 +58,14 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           auditingService.extendedAudit(WhatYouOweRequestAuditModel(user))
         }
 
-        paymentDueService.getWhatYouOweChargesList().map {
+        whatYouOweService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
             }
 
-            Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear,
-               implicitDateFormatter = dateFormatter, backUrl = backUrl, user.saUtr)
-            ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+            Ok(whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr)
+            ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
         } recover {
           case ex: Exception =>
             Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")

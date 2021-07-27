@@ -26,15 +26,14 @@ import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesModel, _}
-
 import models.outstandingCharges._
-
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
+import views.html.WhatYouOwe
 
 import java.time.LocalDate
 
@@ -42,14 +41,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
+  val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
+
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear
               ) {
-    val html: HtmlFormat.Appendable = views.html.whatYouOwe(charges, currentTaxYear,
-       mockImplicitDateFormatter, "testBackURL", Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
+    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"))(implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {

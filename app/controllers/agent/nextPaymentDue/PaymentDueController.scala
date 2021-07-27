@@ -29,7 +29,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
-import services.{IncomeSourceDetailsService, PaymentDueService}
+import services.{IncomeSourceDetailsService, WhatYouOweService}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.nextPaymentDue.paymentDue
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentDueController @Inject()(paymentDue: paymentDue,
-                                     val paymentDueService: PaymentDueService,
+                                     val paymentDueService: WhatYouOweService,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val auditingService: AuditingService,
