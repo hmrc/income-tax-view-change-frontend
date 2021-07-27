@@ -28,12 +28,14 @@ import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.paymentAllocation
+import views.html.PaymentAllocation
 import assets.MessagesLookUp.{PaymentAllocation => paymentAllocationMessages}
 
 
 class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+  lazy val paymentAllocationView = app.injector.instanceOf[PaymentAllocation]
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
@@ -49,7 +51,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   paymentAllocationChargesModel.financialDetails.head.chargeType.get + paymentAllocationChargesModel.financialDetails.head.mainType.get
 
-    val page: Html = paymentAllocation(paymentAllocationModel, mockImplicitDateFormatter, "testBackURL")
+    val page: Html = paymentAllocationView(paymentAllocationModel, "testBackURL")
     val document: Document = Jsoup.parse(page.body)
 
   }
