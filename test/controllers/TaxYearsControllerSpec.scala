@@ -32,6 +32,7 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import services.CalculationService
 import testUtils.TestSupport
+import views.html.TaxYears
 
 import scala.concurrent.Future
 
@@ -40,7 +41,7 @@ class TaxYearsControllerSpec extends MockCalculationService
 
   val calculationService: CalculationService = mock[CalculationService]
 
-  object TestTaxYearsController extends TaxYearsController()(
+  object TestTaxYearsController extends TaxYearsController(app.injector.instanceOf[TaxYears])(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
