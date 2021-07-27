@@ -126,7 +126,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   // Submission service
   lazy val submissionFrontendUrl: String = servicesConfig.getString("income-tax-submission-frontend.url")
 
-
   //Translation
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

@@ -69,13 +69,14 @@
          data-journey-click="primary-navigation:Click:Signout">@messages("base.sign-out")</a></li>}
 }
 
+
 @insideHeader = {
     @headerNav(
-      navTitle = Some(Messages("base.service_name")),
-      navTitleLink = None,
-      showBetaLink = false,
-      navLinks = Some(headerNavLinks))
-}
+        navTitle = Some(Messages("base.service_name")),
+        navTitleLink = Some(Call("GET", appConfig.businessTaxAccount)),
+        showBetaLink = false,
+        navLinks = Some(headerNavLinks))
+    }
 
 @afterHeader = {@recruitmentBannerHelper()}
 
