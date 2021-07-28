@@ -31,11 +31,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
 import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.ChargeSummary
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,16 +51,17 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                          val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
+  private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],latePaymentInterestCharge: Boolean,
                    backLocation: Option[String], taxYear: Int)(implicit request: Request[_]): Html = {
     chargeSummaryView(
       documentDetailWithDueDate = documentDetailWithDueDate,
+      latePaymentInterestCharge = latePaymentInterestCharge,
       chargeHistoryOpt = chargeHistoryOpt,
       backUrl = backUrl(backLocation, taxYear)
     )
   }
 
-  def showChargeSummary(taxYear: Int, chargeId: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] = {
+  def showChargeSummary(taxYear: Int, chargeId: String,isLatePaymentCharge: Boolean = false): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
 				financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
@@ -81,7 +80,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 						}
 
 						getChargeHistory(chargeId).map { chargeHistoryOpt =>
-							Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear))
+							Ok(view(docDateDetail, chargeHistoryOpt,isLatePaymentCharge,backLocation, taxYear))
 						}
 					case _: FinancialDetailsModel =>
 						Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")

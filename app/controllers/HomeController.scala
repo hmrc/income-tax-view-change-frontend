@@ -32,13 +32,13 @@ import play.twirl.api.Html
 import services.{FinancialDetailsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CurrentDateProvider
+
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeController @Inject()(val homeView: views.html.Home,
-                                val checkSessionTimeout: SessionTimeoutPredicate,
+class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val authenticate: AuthenticationPredicate,
                                val retrieveNino: NinoPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -55,7 +55,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])
                   (implicit request: Request[_], user: MtdItUser[_]): Html = {
-    homeView(
+    views.html.home(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
       overDuePayments = overDuePayments,
@@ -107,7 +107,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       }.recover {
         case ex =>
-          Logger.error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
+          Logger.error(s"[HomeController][home] Downstream error, ${ex.getMessage}")
           itvcErrorHandler.showInternalServerError()
       }
   }

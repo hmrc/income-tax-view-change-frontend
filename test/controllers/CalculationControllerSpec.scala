@@ -67,9 +67,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
   lazy val messagesLookUp = new MessagesLookUp.Calculation(testYear)
 
-  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true),
-    fullDocumentDetailWithDueDateModel)
+  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel)
   val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
   val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"

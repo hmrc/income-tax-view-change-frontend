@@ -24,7 +24,7 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
-import mocks.views.agent.MockTaxCalcBreakdown
+import mocks.views.MockTaxCalcBreakdown
 import models.calculation.CalcDisplayError
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents

@@ -36,7 +36,7 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 
 import java.time.LocalDate
 import assets.BaseTestConstants
-import mocks.views.agent.MockNextUpdates
+import mocks.views.MockNextUpdates
 import play.twirl.api.HtmlFormat
 
 import scala.concurrent.{ExecutionContext, Future}

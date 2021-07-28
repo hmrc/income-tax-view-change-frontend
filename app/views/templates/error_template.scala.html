@@ -15,13 +15,11 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.templates.MainTemplate
+@import views.html.templates.main_template
 
-@this(mainTemplate: MainTemplate)
+@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig)
-
-@mainTemplate(title = pageTitle) {
+@main_template(title = pageTitle) {
     <h1 id="page-heading" class="heading-xlarge">@heading</h1>
 
     <p data-metrics="handledError:serviceError:shownErrorPage">@message</p>

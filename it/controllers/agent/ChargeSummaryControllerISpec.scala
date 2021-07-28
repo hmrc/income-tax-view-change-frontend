@@ -150,7 +150,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+        pageTitle("Late payment interest on payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -206,7 +206,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             documentDescription = Some("ITSA- POA 1"),
             outstandingAmount = Some(1.2),
             originalAmount = Some(10.34),
-            documentDate = LocalDate.of(2018, 3, 29)
+            documentDate = LocalDate.of(2018, 3, 29),
+            interestFromDate = Some(LocalDate.of(2018,3,29)),
+            interestEndDate = Some(LocalDate.of(2018,3,29)),
+            latePaymentInterestAmount =  Some(100.0),
+            interestOutstandingAmount = Some(80.0)
           )
         ),
         financialDetails = List(

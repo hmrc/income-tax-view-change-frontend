@@ -25,7 +25,7 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockReportDeadlinesService}
-import mocks.views.agent.MockHome
+import mocks.views.MockHome
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
 import play.twirl.api.HtmlFormat

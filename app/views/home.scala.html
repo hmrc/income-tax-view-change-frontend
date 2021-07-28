@@ -17,11 +17,7 @@
 @import java.time.LocalDate
 @import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 @import implicits.ImplicitDateFormatter
-@import views.html.templates.MainTemplate
-
-@this(
-    mainTemplate: MainTemplate
-)
+@import views.html.templates.main_template
 
 @(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
@@ -107,9 +103,9 @@
     }
 }
 
-@mainTemplate(
-    title = messages("home.heading"),
-    mainClass = Some("full-width")
+@main_template(
+title = messages("home.heading"),
+mainClass = Some("full-width")
 ) {
     <h1 class="heading-xlarge">
         <span id="income-tax-heading">@messages("home.heading")</span>

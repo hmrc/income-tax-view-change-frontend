@@ -29,7 +29,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.Home
 
 import java.time.LocalDate
 
@@ -60,8 +59,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
               overDueUpdates: Option[Int] = Some(0), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
 
-    val home: Home = app.injector.instanceOf[Home]
-    lazy val page: HtmlFormat.Appendable = home(
+    lazy val page: HtmlFormat.Appendable = views.html.home(
       nextPaymentDueDate = paymentDueDate,
       nextUpdate = updateDate,
       overDuePayments = overDuePayments,

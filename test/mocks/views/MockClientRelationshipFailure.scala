@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-package mocks.views.agent
+package mocks.views
 
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.Home
+import views.html.agent.ClientRelationshipFailure
 
-import java.time.LocalDate
-
-trait MockHome extends BeforeAndAfterEach with MockitoSugar {
+trait MockClientRelationshipFailure extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val home: Home = mock[Home]
+  val clientRelationshipFailure: ClientRelationshipFailure = mock[ClientRelationshipFailure]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(home)
+    reset(clientRelationshipFailure)
   }
 
-  def mockHome(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-               nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int])(response: Html): Unit = {
-    when(home.apply(matches(nextPaymentOrOverdue), matches(nextUpdateOrOverdue), any(), any(), any(), any())(any(), any(), any(), any()))
+  def mockClientRelationshipFailure(response: Html): Unit = {
+    when(clientRelationshipFailure.apply(any())(any(), any(), any()))
       .thenReturn(response)
   }
 

@@ -51,7 +51,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 		val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 		val currentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
 		val controller = new HomeController(
-			app.injector.instanceOf[views.html.Home],
 			app.injector.instanceOf[SessionTimeoutPredicate],
 			MockAuthenticationPredicate,
 			app.injector.instanceOf[NinoPredicate],

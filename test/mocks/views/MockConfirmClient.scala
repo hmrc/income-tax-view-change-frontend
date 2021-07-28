@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-package mocks.views.agent
+package mocks.views
 
-import models.calculation.CalcDisplayModel
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.TaxCalcBreakdown
+import views.html.agent.confirmClient
 
-trait MockTaxCalcBreakdown extends BeforeAndAfterEach with MockitoSugar {
+trait MockConfirmClient extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val taxCalcBreakdown: TaxCalcBreakdown = mock[TaxCalcBreakdown]
+  val confirmClient: confirmClient = mock[confirmClient]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(taxCalcBreakdown)
+    reset(confirmClient)
   }
 
-  def mockTaxCalcBreakdown(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String)
-                          (response: Html): Unit = {
-    when(taxCalcBreakdown.apply(
-      matches(calcModel),
-      matches(taxYear),
-      matches(backUrl)
-    )(any(), any(), any(), any()))
+  def mockConfirmClient(response: Html): Unit = {
+    when(confirmClient.apply(any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(response)
   }
 
