@@ -98,21 +98,6 @@ object FinancialDetailsIntegrationTestConstants {
       financialDetails = List(financialDetail(taxYear))
     )
 
-  val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
-    documentDetails = List(
-      DocumentDetail("2019", "id1040000123", Some("TRM New Charge"), Some(10.33), Some(10.33), LocalDate.of(2018, 3, 29), Some(100),Some(100),
-        Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-      DocumentDetail("2020", "id1040000124", Some("TRM New Charge"), Some(10.34), Some(10.34), LocalDate.of(2018, 3, 29), Some(100),Some(100),
-        Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
-    ),
-    financialDetails = List(
-      FinancialDetail("2019", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
-        Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentId"))))),
-      FinancialDetail("2020", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
-        Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentId")))))
-    )
-  )
-
   def testFinancialDetailsModel(documentDescription: List[Option[String]],
                                 mainType: List[Option[String]],
                                 transactionId: Option[String],

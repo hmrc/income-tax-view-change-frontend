@@ -78,6 +78,7 @@ object FinancialDetailsTestConstants {
             "dueDate" -> "2019-05-15",
           "subItemId" -> "1",
           "amount" -> 100,
+          "dunningLock" -> "Stand over order",
           "clearingDate" -> "clearingDate",
           "clearingReason" -> "clearingReason",
             "outgoingPaymentMethod" -> "outgoingPaymentMethod",
@@ -387,9 +388,9 @@ object FinancialDetailsTestConstants {
     ),
     financialDetails = List(
       FinancialDetail("2019", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
-        Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentLot-paymentLotItem"))))),
+        Some("Stand over order"),Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"), Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentLot-paymentLotItem"))))),
       FinancialDetail("2020", Some("SA Balancing Charge"),Some("transactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
-        Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"),Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentLot-paymentLotItem")))))
+        None,Some("clearingDate"),Some("clearingReason"),Some("outgoingPaymentMethod"),Some("paymentReference"), Some(100),Some("paymentMethod"),Some("paymentLot"),Some("paymentLotItem"),Some("paymentLot-paymentLotItem")))))
     )
   )
 

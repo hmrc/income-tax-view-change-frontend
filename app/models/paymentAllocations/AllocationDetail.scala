@@ -18,39 +18,33 @@ package models.paymentAllocations
 
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
+import models.financialDetails.FinancialDetail
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 
 case class AllocationDetail(transactionId: Option[String],
-														from: Option[String],
-														to: Option[String],
-														chargeType: Option[String],
-														mainType: Option[String],
-														amount: Option[BigDecimal],
-														clearedAmount: Option[BigDecimal]) {
+                            from: Option[String],
+                            to: Option[String],
+                            chargeType: Option[String],
+                            mainType: Option[String],
+                            amount: Option[BigDecimal],
+                            clearedAmount: Option[BigDecimal]) {
 
-	def getPaymentAllocationTextInChargeSummary: String = (mainType, chargeType) match {
-		case (Some("SA Payment on Account 1"), Some(chargeType)) if chargeType.contains("NIC4") => "paymentAllocation.paymentAllocations.poa1.nic4"
-		case (Some("SA Payment on Account 1"), Some(chargeType)) if chargeType.contains("ITSA") => "paymentAllocation.paymentAllocations.poa1.incomeTax"
-		case (Some("SA Payment on Account 2"), Some(chargeType)) if chargeType.contains("NIC4") => "paymentAllocation.paymentAllocations.poa2.nic4"
-		case (Some("SA Payment on Account 2"), Some(chargeType)) if chargeType.contains("ITSA") => "paymentAllocation.paymentAllocations.poa2.incomeTax"
-		case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("ITSA") => "paymentAllocation.paymentAllocations.bcd.incomeTax"
-		case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("NIC4") => "paymentAllocation.paymentAllocations.bcd.nic4"
-		case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("Voluntary NIC2") => "paymentAllocation.paymentAllocations.bcd.vcnic2"
-		case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("NIC2") => "paymentAllocation.paymentAllocations.bcd.nic2"
-		case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("SL") => "paymentAllocation.paymentAllocations.bcd.sl"
-		case (Some("SA Balancing Charge"), Some(chargeType)) if chargeType.contains("CGT") => "paymentAllocation.paymentAllocations.bcd.cgt"
-		case _ =>
-			Logger.error(s"[PaymentAllocations] Non-matching document/charge found with main charge: ${mainType} and sub-charge: ${chargeType}")
-			""
-	}
+  def getPaymentAllocationKeyInPaymentAllocations: String = {
+    FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
+      .map(typesKey => s"paymentAllocation.paymentAllocations.$typesKey")
+      .getOrElse {
+        Logger.error(s"[PaymentAllocations] Non-matching document/charge found with main charge: $mainType and sub-charge: $chargeType")
+        ""
+      }
+  }
 
-	def getTaxYear(implicit implicitDateFormatter: ImplicitDateFormatter): Int = {
-		import implicitDateFormatter.localDate
+  def getTaxYear(implicit implicitDateFormatter: ImplicitDateFormatter): Int = {
+    import implicitDateFormatter.localDate
 
     AccountingPeriodModel.determineTaxYearFromPeriodEnd(
       to.getOrElse(throw new Exception("Missing tax period end date")).toLocalDate)
-	}
+  }
 }
 
 object AllocationDetail {

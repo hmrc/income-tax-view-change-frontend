@@ -23,6 +23,7 @@ import play.api.Logger
 case class SubItem(dueDate: Option[String] = None,
                    subItemId: Option[String] = None,
                    amount: Option[BigDecimal] = None,
+                   dunningLock: Option[String] = None,
                    clearingDate: Option[String] = None,
                    clearingReason: Option[String] = None,
                    outgoingPaymentMethod: Option[String] = None,
@@ -36,13 +37,12 @@ case class SubItem(dueDate: Option[String] = None,
 
 object SubItem {
 
-  val empty: SubItem = SubItem(None, None, None, None, None, None, None, None, None, None, None, None)
-
   implicit val writes: OWrites[SubItem] = Json.writes[SubItem]
 
   implicit val reads: Reads[SubItem] = for {
     subItemId <- (JsPath \ "subItemId").readNullable[String](Reads.of[String].filter(subItemJsonError)(isIntString))
     amount <- (JsPath \ "amount").readNullable[BigDecimal]
+    dunningLock <- (JsPath \ "dunningLock").readNullable[String]
     clearingDate <- (JsPath \ "clearingDate").readNullable[String]
     clearingReason <- (JsPath \ "clearingReason").readNullable[String]
     outgoingPaymentMethod <- (JsPath \ "outgoingPaymentMethod").readNullable[String]
@@ -61,6 +61,7 @@ object SubItem {
       dueDate,
       subItemId,
       amount,
+      dunningLock,
       clearingDate,
       clearingReason,
       outgoingPaymentMethod,

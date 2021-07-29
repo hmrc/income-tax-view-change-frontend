@@ -69,7 +69,7 @@ scriptElem = None
             <tr>
                 <td>
 					<a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation._2.get.getTaxYear(implicitDateFormatter), paymentAllocation._2.get.transactionId.get)}">
-						@messages(paymentAllocation._2.get.getPaymentAllocationTextInChargeSummary)
+						@messages(paymentAllocation._2.get.getPaymentAllocationKeyInPaymentAllocations)
 					</a>
 					<br>
 					<span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation._2.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation._2.get.getTaxYear(implicitDateFormatter).toString)</span>
