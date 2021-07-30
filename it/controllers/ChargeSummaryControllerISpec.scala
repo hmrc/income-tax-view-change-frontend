@@ -62,7 +62,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Remaining balance - Business Tax account - GOV.UK")
+        pageTitle("Remaining balance - Business Tax account - GOV.UK"),
+        elementTextBySelector("main h2")("Payment breakdown")
       )
     }
     "load the page with right audit events when TxmEventsApproved FS disabled" in {
@@ -92,7 +93,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Remaining balance - Business Tax account - GOV.UK")
+        pageTitle("Remaining balance - Business Tax account - GOV.UK"),
+        elementTextBySelector("main h2")("Payment breakdown")
       )
     }
 

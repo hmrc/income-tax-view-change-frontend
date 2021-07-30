@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import assets.FinancialDetailsTestConstants.financialDetail
-import models.financialDetails.FinancialDetail.{getChargeTypeKey, getMainTypeKey, getMessageKeyByTypes}
+import models.financialDetails.FinancialDetail.{getMessageKeyForChargeType, getMessageKeyForMainType, getMessageKeyByTypes}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class FinancialDetailSpec extends UnitSpec {
@@ -69,48 +69,48 @@ class FinancialDetailSpec extends UnitSpec {
 
   "FinancialDetail.Types" when {
 
-    "calling .getMainTypeKey with an optional value of a mainType" should {
+    "calling .getMainTypeMessageKey with an optional value of a mainType" should {
       "return Some correct message key for a known mainType" in {
-        getMainTypeKey(Some("SA Payment on Account 1")) shouldBe Some("poa1")
-        getMainTypeKey(Some("SA Payment on Account 2")) shouldBe Some("poa2")
-        getMainTypeKey(Some("SA Balancing Charge")) shouldBe Some("bcd")
+        getMessageKeyForMainType(Some("SA Payment on Account 1")) shouldBe Some("poa1")
+        getMessageKeyForMainType(Some("SA Payment on Account 2")) shouldBe Some("poa2")
+        getMessageKeyForMainType(Some("SA Balancing Charge")) shouldBe Some("bcd")
       }
 
       "return None for an unknown or absent mainType" in {
-        getMainTypeKey(Some("rubbish")) shouldBe None
-        getMainTypeKey(None) shouldBe None
+        getMessageKeyForMainType(Some("rubbish")) shouldBe None
+        getMessageKeyForMainType(None) shouldBe None
       }
     }
 
-    "calling .getChargeTypeKey with an optional value of a chargeType" should {
+    "calling .getMessageKeyForChargeType with an optional value of a chargeType" should {
       "return Some correct message key for a known chargeType" in {
-        getChargeTypeKey(Some("ITSA England & NI")) shouldBe Some("incomeTax")
-        getChargeTypeKey(Some("ITSA NI")) shouldBe Some("incomeTax")
-        getChargeTypeKey(Some("ITSA Scotland")) shouldBe Some("incomeTax")
-        getChargeTypeKey(Some("ITSA Wales")) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some("ITSA England & NI")) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some("ITSA NI")) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some("ITSA Scotland")) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some("ITSA Wales")) shouldBe Some("incomeTax")
 
-        getChargeTypeKey(Some("NIC4-GB")) shouldBe Some("nic4")
-        getChargeTypeKey(Some("NIC4 Scotland")) shouldBe Some("nic4")
-        getChargeTypeKey(Some("NIC4 Wales")) shouldBe Some("nic4")
-        getChargeTypeKey(Some("NIC4-NI")) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some("NIC4-GB")) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some("NIC4 Scotland")) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some("NIC4 Wales")) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some("NIC4-NI")) shouldBe Some("nic4")
 
-        getChargeTypeKey(Some("NIC2 Scotland")) shouldBe Some("nic2")
-        getChargeTypeKey(Some("NIC2 Wales")) shouldBe Some("nic2")
-        getChargeTypeKey(Some("NIC2-GB")) shouldBe Some("nic2")
-        getChargeTypeKey(Some("NIC2-NI")) shouldBe Some("nic2")
+        getMessageKeyForChargeType(Some("NIC2 Scotland")) shouldBe Some("nic2")
+        getMessageKeyForChargeType(Some("NIC2 Wales")) shouldBe Some("nic2")
+        getMessageKeyForChargeType(Some("NIC2-GB")) shouldBe Some("nic2")
+        getMessageKeyForChargeType(Some("NIC2-NI")) shouldBe Some("nic2")
 
-        getChargeTypeKey(Some("Voluntary NIC2-GB")) shouldBe Some("vcnic2")
-        getChargeTypeKey(Some("Voluntary NIC2-NI")) shouldBe Some("vcnic2")
-        getChargeTypeKey(Some("Voluntary NIC2-Scotland")) shouldBe Some("vcnic2")
-        getChargeTypeKey(Some("Voluntary NIC2-Wales")) shouldBe Some("vcnic2")
+        getMessageKeyForChargeType(Some("Voluntary NIC2-GB")) shouldBe Some("vcnic2")
+        getMessageKeyForChargeType(Some("Voluntary NIC2-NI")) shouldBe Some("vcnic2")
+        getMessageKeyForChargeType(Some("Voluntary NIC2-Scotland")) shouldBe Some("vcnic2")
+        getMessageKeyForChargeType(Some("Voluntary NIC2-Wales")) shouldBe Some("vcnic2")
 
-        getChargeTypeKey(Some("CGT")) shouldBe Some("cgt")
-        getChargeTypeKey(Some("SL")) shouldBe Some("sl")
+        getMessageKeyForChargeType(Some("CGT")) shouldBe Some("cgt")
+        getMessageKeyForChargeType(Some("SL")) shouldBe Some("sl")
       }
 
       "return None for an unknown or absent chargeType" in {
-        getChargeTypeKey(Some("rubbish")) shouldBe None
-        getMainTypeKey(None) shouldBe None
+        getMessageKeyForChargeType(Some("rubbish")) shouldBe None
+        getMessageKeyForMainType(None) shouldBe None
       }
     }
 

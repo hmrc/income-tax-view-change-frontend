@@ -18,9 +18,10 @@ package views
 
 import assets.FinancialDetailsTestConstants._
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetail, Payment, PaymentsWithChargeType}
+import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -28,19 +29,32 @@ import views.html.ChargeSummary
 
 import java.time.LocalDate
 
-class ChargeSummarySpec extends ViewSpec {
+class ChargeSummaryViewSpec extends ViewSpec {
 
   class Setup(documentDetail: DocumentDetail,
               dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+              paymentBreakdown: List[FinancialDetail] = List(),
               chargeHistory: List[ChargeHistoryModel] = List(),
               paymentAllocations: List[PaymentsWithChargeType] = List(),
               chargeHistoryEnabled: Boolean = true,
               paymentAllocationEnabled: Boolean = false,
               latePaymentInterestCharge: Boolean = false) {
-		val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
+    val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
     val view: Html = chargeSummary(documentDetail, dueDate, "testBackURL",
-    chargeHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
+      paymentBreakdown, chargeHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
     val document: Document = Jsoup.parse(view.toString())
+
+    def verifySummaryListRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
+      val summaryListRow = document.select(s".govuk-summary-list:nth-of-type(1) .govuk-summary-list__row:nth-of-type($rowNumber)")
+      summaryListRow.select(".govuk-summary-list__key").text() shouldBe expectedKeyText
+      summaryListRow.select(".govuk-summary-list__value").text() shouldBe expectedValueText
+    }
+
+    def verifyPaymentBreakdownRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
+      val paymentBreakdownRow = document.select(s".govuk-summary-list:nth-of-type(2) .govuk-summary-list__row:nth-of-type($rowNumber)")
+      paymentBreakdownRow.select(".govuk-summary-list__key").text() shouldBe expectedKeyText
+      paymentBreakdownRow.select(".govuk-summary-list__value").text() shouldBe expectedValueText
+    }
 
     def verifyPaymentHistoryContent(rows: String*): Assertion = {
       document select Selectors.table text() shouldBe
@@ -57,7 +71,11 @@ class ChargeSummarySpec extends ViewSpec {
 		def poaInterestHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
 		def balancingChargeHeading(year: Int) =  s"Tax year 6 April ${year - 1} to 5 April $year Remaining balance"
 		def balancingChargeInterestHeading(year: Int) =  s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
-		val paidToDate = "Paid to date"
+		val dueDate = "Due date"
+		val interestPeriod = "Interest period"
+		val fullPaymentAmount = "Full payment amount"
+		val remainingToPay = "Remaining to pay"
+		val paymentBreakdownHeading = "Payment breakdown"
 		val chargeHistoryHeading = "Payment history"
 		val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
 		def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
@@ -68,10 +86,31 @@ class ChargeSummarySpec extends ViewSpec {
 		val balancingChargeAmended = "Remaining balance reduced due to amended return"
 		def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 		val balancingChargeRequest = "Remaining balance reduced by taxpayer request"
+		val dunningLockBannerHeader = "Important"
+		val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)"
+		def dunningLockBannerText(formattedAmount: String, date: String) =
+			s"$dunningLockBannerLink. You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
 	}
 
 	val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "amended return")
 	val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
+
+	val paymentBreakdown: List[FinancialDetail] = List(
+		financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI"),
+		financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB"),
+		financialDetail(originalAmount = 3456.78, chargeType = "Voluntary NIC2-NI"),
+		financialDetail(originalAmount = 5678.9, chargeType = "NIC4 Wales"),
+		financialDetail(originalAmount = 9876.54, chargeType = "CGT"),
+		financialDetail(originalAmount = 543.21, chargeType = "SL")
+	)
+
+	val paymentBreakdownWithLocks: List[FinancialDetail] = List(
+		financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI"),
+		financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", dunningLock = Some("Stand over order")),
+		financialDetail(originalAmount = 9876.54, chargeType = "CGT", dunningLock = Some("Stand over order")),
+		financialDetail(originalAmount = 543.21, chargeType = "SL")
+	)
+
 
 	"The charge summary view" should {
 
@@ -83,7 +122,11 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("h1").text() shouldBe Messages.poaHeading(2018, 2)
 		}
 
-		"have the correct heading for a balancing charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"))) {
+		"have the correct heading for a new balancing charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"))) {
+			document.select("h1").text() shouldBe Messages.balancingChargeHeading(2019)
+		}
+
+		"have the correct heading for an amend balancing charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM Amend Charge"))) {
 			document.select("h1").text() shouldBe Messages.balancingChargeHeading(2019)
 		}
 
@@ -95,53 +138,121 @@ class ChargeSummarySpec extends ViewSpec {
 			document.select("h1").text() shouldBe Messages.poaInterestHeading(2018, 2)
 		}
 
-		"have the correct heading for a balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
+		"have the correct heading for a new balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
 			document.select("h1").text() shouldBe Messages.balancingChargeInterestHeading(2019)
 		}
 
+		"have the correct heading for an amend balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM Amend Charge")), latePaymentInterestCharge = true) {
+			document.select("h1").text() shouldBe Messages.balancingChargeInterestHeading(2019)
+		}
+
+		"not display a notification banner when there are no dunning locks in payment breakdown" in new Setup(
+			documentDetailModel(), paymentBreakdown = paymentBreakdown) {
+
+			document.doesNotHave(Selectors.id("dunningLocksBanner"))
+		}
+
+		"display a notification banner when there are dunning locks in payment breakdown" which {
+
+			s"has the '${Messages.dunningLockBannerHeader}' heading" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithLocks) {
+				document.selectById("dunningLocksBanner")
+					.select(Selectors.h2).text() shouldBe Messages.dunningLockBannerHeader
+			}
+
+			"has the link for Payment under review which opens in new tab" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithLocks) {
+				val link: Elements = document.selectById("dunningLocksBanner").select(Selectors.link)
+
+				link.text() shouldBe Messages.dunningLockBannerLink
+				link.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
+				link.attr("target") shouldBe "_blank"
+			}
+
+			"shows the same remaining amount and a due date as in the charge summary list" which {
+				"display a remaining amount" in new Setup(documentDetailModel(
+					outstandingAmount = Some(1600)), paymentBreakdown = paymentBreakdownWithLocks) {
+
+					document.selectById("dunningLocksBanner")
+						.selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£1,600.00", "15 May 2019")
+				}
+
+				"display 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new Setup(
+					documentDetailModel(outstandingAmount = Some(0)), paymentBreakdown = paymentBreakdownWithLocks) {
+
+					document.selectById("dunningLocksBanner")
+						.selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£0.00", "15 May 2019")
+				}
+
+				"display the original amount if no cleared or outstanding amount is present" in new Setup(
+					documentDetailModel(outstandingAmount = None, originalAmount = Some(1700)), paymentBreakdown = paymentBreakdownWithLocks) {
+
+					document.selectById("dunningLocksBanner")
+						.selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£1,700.00", "15 May 2019")
+				}
+			}
+		}
+
 		"display a due date" in new Setup(documentDetailModel()) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(1) .govuk-summary-list__value")
-				.text() shouldBe "OVERDUE 15 May 2019"
+			verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 May 2019")
 		}
 
 		"display the correct due date for an interest charge" in new Setup(documentDetailModel(), latePaymentInterestCharge = true) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(1) .govuk-summary-list__value")
-				.text() shouldBe "OVERDUE 15 June 2018"
+			verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 June 2018")
 		}
 
 		"display an interest period for a late interest charge" in new Setup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(2) .govuk-summary-list__value")
-				.text() shouldBe "29 Mar 2018 to 15 Jun 2018"
+			verifySummaryListRow(2, Messages.interestPeriod, "29 Mar 2018 to 15 Jun 2018")
 		}
 
 		"display a charge amount" in new Setup(documentDetailModel(originalAmount = Some(1500))) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(2) .govuk-summary-list__value")
-				.text() shouldBe "£1,500.00"
+			verifySummaryListRow(2, Messages.fullPaymentAmount, "£1,500.00")
 		}
 
 		"display a charge amount for a late interest charge" in new Setup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(3) .govuk-summary-list__value")
-				.text() shouldBe "£100.00"
+			verifySummaryListRow(3, Messages.fullPaymentAmount, "£100.00")
 		}
 
 		"display a remaining amount" in new Setup(documentDetailModel(outstandingAmount = Some(1600))) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(3) .govuk-summary-list__value")
-				.text() shouldBe "£1,600.00"
+			verifySummaryListRow(3, Messages.remainingToPay, "£1,600.00")
 		}
 
 		"display a remaining amount for a late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(1600)), latePaymentInterestCharge = true) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(4) .govuk-summary-list__value")
-				.text() shouldBe "£80.00"
+			verifySummaryListRow(4, Messages.remainingToPay, "£80.00")
 		}
 
 		"display a remaining amount of 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(3) .govuk-summary-list__value")
-				.text() shouldBe "£0.00"
+			verifySummaryListRow(3, Messages.remainingToPay, "£0.00")
 		}
 
 		"display the original amount if no cleared or outstanding amount is present" in new Setup(documentDetailModel(outstandingAmount = None, originalAmount = Some(1700))) {
-			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(3) .govuk-summary-list__value")
-				.text() shouldBe "£1,700.00"
+			verifySummaryListRow(3, Messages.remainingToPay, "£1,700.00")
+		}
+
+		"not display the Payment breakdown list when payments breakdown is empty" in new Setup(documentDetailModel(), paymentBreakdown = Nil) {
+			document.doesNotHave(Selectors.id("heading-payment-breakdown"))
+		}
+
+		"display the Payment breakdown list" which {
+
+			"has a correct heading" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
+				document.selectById("heading-payment-breakdown").text shouldBe Messages.paymentBreakdownHeading
+			}
+
+			"has payment rows with charge types and original amounts" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
+				verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
+				verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67")
+				verifyPaymentBreakdownRow(3, "Voluntary Class 2 National Insurance", "£3,456.78")
+				verifyPaymentBreakdownRow(4, "Class 4 National Insurance", "£5,678.90")
+				verifyPaymentBreakdownRow(5, "Capital Gains Tax", "£9,876.54")
+				verifyPaymentBreakdownRow(6, "Student Loans", "£543.21")
+			}
+
+			"has payment rows with Under review note when there are dunning locks on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithLocks) {
+				verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
+				verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 Under review")
+				verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 Under review")
+				verifyPaymentBreakdownRow(4, "Student Loans", "£543.21")
+			}
+
 		}
 
 		"have a payment link when an outstanding amount is to be paid" in new Setup(documentDetailModel()) {

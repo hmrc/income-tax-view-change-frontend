@@ -15,9 +15,10 @@
 *@
 
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import models.financialDetails.PaymentsWithChargeType
 @import implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.DocumentDetail
+@import models.financialDetails.FinancialDetail
+@import models.financialDetails.PaymentsWithChargeType
 @import views.html.helpers.injected.BackLink
 @import views.html.templates.MainTemplate
 
@@ -27,15 +28,36 @@
 @this(
     mainTemplate: MainTemplate,
     backLink: BackLink,
+    appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl
 )
-@(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backUrl: String, chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit messages: Messages)
+@(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backUrl: String,
+    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
+    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit messages: Messages)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
+
+@hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }
 
 @mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"),bodyClasses = None, scriptElem = None) {
 
     @backLink(backUrl)
+
+    @if(hasDunningLocks) {
+        <br>
+        <br>
+        <div id="dunningLocksBanner" class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title">@messages("chargeSummary.dunning.locks.banner.title")</h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <p class="govuk-notification-banner__heading">
+                    <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
+                    @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
+                </p>
+            </div>
+        </div>
+    }
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetail.taxYear).toLongDate)</span>
@@ -80,6 +102,26 @@
                 }</dd>
         </div>
     </dl>
+
+    @if(paymentBreakdown.nonEmpty) {
+        <h2 class="heading-medium" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
+        <dl class="govuk-summary-list">
+            @for(financialDetail <- paymentBreakdown) {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.get}")</dt>
+                    <dd class="govuk-summary-list__value">
+                        @financialDetail.originalAmount.get.toCurrency
+                        @if(financialDetail.dunningLockExists) {
+                            <br>
+                            <span class="govuk-body-s half-light">Under review</span>
+                        }
+                    </dd>
+                </div>
+            }
+        </dl>
+        <br>
+    }
+
     <p>
         @messages("chargeSummary.whatYouOwe.textOne")
         <a href="@controllers.routes.WhatYouOweController.viewPaymentsDue().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
