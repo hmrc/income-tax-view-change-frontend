@@ -28,27 +28,27 @@ class AllocationDetailSpec extends TestSupport with Matchers {
 
 	"AllocationDetail" when {
 
-		"calling .getPaymentAllocationTextInChargeSummary" should {
+		"calling .getPaymentAllocationKeyInPaymentAllocations" should {
 
 			"return a valid message" when {
 
 				"provided with all subcharge types for POA1" in {
-					allocationDetails("SA Payment on Account 1", "NIC4").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.poa1.nic4"
-					allocationDetails("SA Payment on Account 1", "ITSA").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.poa1.incomeTax"
+					allocationDetails("SA Payment on Account 1", "NIC4").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa1.nic4"
+					allocationDetails("SA Payment on Account 1", "ITSA").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa1.incomeTax"
 				}
 
 				"provided with all subcharge types for POA2" in {
-					allocationDetails("SA Payment on Account 2", "NIC4").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.poa2.nic4"
-					allocationDetails("SA Payment on Account 2", "ITSA").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.poa2.incomeTax"
+					allocationDetails("SA Payment on Account 2", "NIC4").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa2.nic4"
+					allocationDetails("SA Payment on Account 2", "ITSA").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa2.incomeTax"
 				}
 
 				"provided with all subcharge types for a balancing charge" in {
-					allocationDetails("SA Balancing Charge", "ITSA").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.bcd.incomeTax"
-					allocationDetails("SA Balancing Charge", "NIC4").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.bcd.nic4"
-					allocationDetails("SA Balancing Charge", "Voluntary NIC2").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.bcd.vcnic2"
-					allocationDetails("SA Balancing Charge", "NIC2").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.bcd.nic2"
-					allocationDetails("SA Balancing Charge", "SL").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.bcd.sl"
-					allocationDetails("SA Balancing Charge", "CGT").getPaymentAllocationTextInChargeSummary shouldBe "paymentAllocation.paymentAllocations.bcd.cgt"
+					allocationDetails("SA Balancing Charge", "ITSA").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.incomeTax"
+					allocationDetails("SA Balancing Charge", "NIC4").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.nic4"
+					allocationDetails("SA Balancing Charge", "Voluntary NIC2").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.vcnic2"
+					allocationDetails("SA Balancing Charge", "NIC2").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.nic2"
+					allocationDetails("SA Balancing Charge", "SL").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.sl"
+					allocationDetails("SA Balancing Charge", "CGT").getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.cgt"
 
 				}
 			}
