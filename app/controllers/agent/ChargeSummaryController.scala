@@ -58,11 +58,13 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                          val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
+  private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], latePaymentInterestCharge: Boolean,
                    backLocation: Option[String], taxYear: Int, paymentAllocations: List[PaymentsWithChargeType],paymentAllocationEnabled: Boolean)(implicit request: Request[_]): Html = {
+
     chargeSummaryView(
       documentDetailWithDueDate = documentDetailWithDueDate,
       chargeHistoryOpt = chargeHistoryOpt,
+      latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = backUrl(backLocation, taxYear),
       paymentAllocations,
       paymentAllocationEnabled
@@ -96,7 +98,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
               } else Nil
 
 						getChargeHistory(chargeId).map { chargeHistoryOpt =>
-							Ok(view(docDateDetail, chargeHistoryOpt, backLocation, taxYear,
+							Ok(view(docDateDetail, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
                 paymentAllocations =paymentAllocations,
                 paymentAllocationEnabled= paymentAllocationEnabled))
 						}
