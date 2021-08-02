@@ -549,17 +549,18 @@ paymentAllocation.tableHead.allocation                          = Payment alloca
 paymentAllocation.tableHead.allocated-date                      = Date allocated
 paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= Tax year {0} to {1}
+paymentAllocation.creditOnAccount                               = Credit on account
 
-paymentAllocation.paymentAllocations.poa1.incomeTax                    = Income Tax for payment on account 1 of 2
-paymentAllocation.paymentAllocations.poa1.nic4                         = Class 4 National Insurance for payment on account 1 of 2
-paymentAllocation.paymentAllocations.poa2.incomeTax                    = Income Tax for payment on account 2 of 2
-paymentAllocation.paymentAllocations.poa2.nic4                         = Class 4 National Insurance for payment on account 2 of 2
-paymentAllocation.paymentAllocations.bcd.incomeTax                     = Income Tax for remaining balance
-paymentAllocation.paymentAllocations.bcd.nic2                          = Class 2 National Insurance for remaining balance
-paymentAllocation.paymentAllocations.bcd.vcnic2                        = Voluntary Class 2 National Insurance for remaining balance
-paymentAllocation.paymentAllocations.bcd.nic4                          = Class 4 National Insurance for remaining balance
-paymentAllocation.paymentAllocations.bcd.sl                            = Student Loans for remaining balance
-paymentAllocation.paymentAllocations.bcd.cgt                           = Capital Gains Tax for remaining balance
+paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
+paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance for payment on account 1 of 2
+paymentAllocation.paymentAllocations.poa2.incomeTax             = Income Tax for payment on account 2 of 2
+paymentAllocation.paymentAllocations.poa2.nic4                  = Class 4 National Insurance for payment on account 2 of 2
+paymentAllocation.paymentAllocations.bcd.incomeTax              = Income Tax for remaining balance
+paymentAllocation.paymentAllocations.bcd.nic2                   = Class 2 National Insurance for remaining balance
+paymentAllocation.paymentAllocations.bcd.vcnic2                 = Voluntary Class 2 National Insurance for remaining balance
+paymentAllocation.paymentAllocations.bcd.nic4                   = Class 4 National Insurance for remaining balance
+paymentAllocation.paymentAllocations.bcd.sl                     = Student Loans for remaining balance
+paymentAllocation.paymentAllocations.bcd.cgt                    = Capital Gains Tax for remaining balance
 
 
 ##Tax Years Overview Update Tab##
