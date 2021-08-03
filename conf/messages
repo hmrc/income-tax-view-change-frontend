@@ -80,6 +80,9 @@ agent.paymentDue.over-due.interest-rate                                  = Any o
 agent.paymentDue.over-due.interest-rate.link                             = current interest rate for late and early payments (opens in new tab)
 
 
+agent.paymentDue.lpi.paymentOnAccount1.text                              = Late payment interest on payment on account 1 of 2
+agent.paymentDue.lpi.paymentOnAccount2.text                              = Late payment interest on payment on account 2 of 2
+agent.paymentDue.lpi.balancingCharge.text                                = Late payment interest on remaining balance
 
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet

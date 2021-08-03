@@ -572,6 +572,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val amountDue = "Amount due"
     val poa1Text = "Payment on account 1 of 2"
     val poa2Text = "Payment on account 2 of 2"
+    val latePoa1Text = "Late payment interest on payment on account 1 of 2"
+    val latePoa2Text = "Late payment interest on payment on account 2 of 2"
     val remainingBalance = "Remaining balance"
     val remainingBalanceLine1 = "The remaining balance is the tax you still need to pay for a tax year."
     val interestOnRemainingBalance = "Interest on remaining balance"
