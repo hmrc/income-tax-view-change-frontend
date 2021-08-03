@@ -179,6 +179,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1} to $taxYear. " +
       s"You can see more details in your record-keeping software."
 
+    val deductionBreakdownHeader = "Allowance or deduction type"
+    val deductionBreakdownHeaderAmount = "Amount"
     val personalAllowance = "Personal Allowance"
     val totalPensionContributions = "Pensions contributions"
     val lossesAppliedToGeneralIncome = "Loss relief"
