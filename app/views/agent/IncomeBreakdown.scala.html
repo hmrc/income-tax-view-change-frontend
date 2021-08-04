@@ -54,6 +54,12 @@
         </p>
 
         <table>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("income_breakdown.table.header")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("income_breakdown.table.header.amount")</th>
+            </tr>
+            </thead>
             @tableRow("employment", calcModel.calcDataModel.payPensionsProfit.totalPayeEmploymentAndLumpSumIncome)
             @tableRow("benefits_received", calcModel.calcDataModel.payPensionsProfit.totalBenefitsInKind)
             @tableRow("allowable_expenses", calcModel.calcDataModel.payPensionsProfit.totalEmploymentExpenses, isNegative = true)
