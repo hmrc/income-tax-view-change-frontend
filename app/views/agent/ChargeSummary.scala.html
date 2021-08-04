@@ -24,7 +24,7 @@
 
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
-@(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatter)
+@(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], latePaymentInterestCharge: Boolean, backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatter)
 
 @import java.time.LocalDate
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -38,29 +38,47 @@
 	</tr>
 }
 
-@mainTemplate(title = messages(s"chargeSummary.${documentDetail.getChargeTypeKey}"),bodyClasses = None){
+@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"), bodyClasses = None){
 	@backLink(backUrl)
 
 	<h1 class="heading-xlarge">
 		<span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetail.taxYear).toLongDate)</span>
-		@messages(s"chargeSummary.${documentDetail.getChargeTypeKey}")
+		@messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}")
 	</h1>
 
 	<dl class="govuk-summary-list">
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
 			<dd class="govuk-summary-list__value">
-				@if(documentDetailWithDueDate.isOverdue && !documentDetail.isPaid) { <span class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
-				@{documentDetailWithDueDate.dueDate.get.toLongDate}
+				@if(documentDetailWithDueDate.isOverdue && !documentDetail.isPaid) {
+				<span class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>
+				}
+				@{
+				if(latePaymentInterestCharge) documentDetail.interestEndDate.get.toLongDate
+				else documentDetailWithDueDate.dueDate.get.toLongDate
+				}
+			</dd>
+		</div>
+		@if(latePaymentInterestCharge) {
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
+			<dd class="govuk-summary-list__value">@messages("chargeSummary.lpi.interestPeriod.dates", documentDetail.interestFromDate.get.toLongDateShort, documentDetail.interestEndDate.get.toLongDateShort)</dd>
+		</div>
+		}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">@messages("chargeSummary.paymentAmount")</dt>
+			<dd class="govuk-summary-list__value">@{
+				if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.get.toCurrency
+				else documentDetail.originalAmount.get.toCurrency
+				}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">@messages("chargeSummary.paymentAmount")</dt>
-			<dd class="govuk-summary-list__value">@documentDetail.originalAmount.get.toCurrency</dd>
-		</div>
-		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
-			<dd class="govuk-summary-list__value">@documentDetail.remainingToPay.toCurrency</dd>
+			<dd class="govuk-summary-list__value">@{
+				if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+				else documentDetail.remainingToPay.toCurrency
+				}
 		</div>
 	</dl>
 
@@ -90,20 +108,36 @@
  			</thead>
 
  			<tbody>
+			@if(!latePaymentInterestCharge) {
 				@chargeHistoryRow(
 					dateStr = documentDetail.documentDate,
 					reasonCode = "created",
 					amount = documentDetail.originalAmount
 				)
+			}
 
- 				@for(charge <- chargeHistory) {
-					@chargeHistoryRow(
+				@if(latePaymentInterestCharge) {
+				<tr>
+					<td style="white-space: nowrap;">@{
+						documentDetail.interestEndDate.get.toLongDateShort
+						}</td>
+					<td>@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey}")
+					</td>
+					<td class="numeric">@{
+						documentDetail.latePaymentInterestAmount.get.toCurrency
+						}
+					</td>
+				</tr>
+				}
+				@if(!latePaymentInterestCharge) {
+ 					@for(charge <- chargeHistory) {
+						@chargeHistoryRow(
 						dateStr = charge.reversalDate,
 						reasonCode = charge.reasonCode,
 						amount = Some(charge.totalAmount)
-					)
- 				}
-
+						)
+ 					}
+				}
 				@if(paymentAllocationEnabled && paymentAllocations.nonEmpty) {
 				@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
 				<tr>

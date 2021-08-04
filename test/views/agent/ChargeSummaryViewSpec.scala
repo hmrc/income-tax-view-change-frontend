@@ -33,6 +33,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
 
   class Setup(documentDetailWithDueDate: DocumentDetailWithDueDate,
               chargeHistoryOpt: Option[List[ChargeHistoryModel]] = Some(List()),
+              latePaymentInterestCharge: Boolean = false,
               paymentAllocations: List[PaymentsWithChargeType]= List(),
               paymentAllocationEnabled: Boolean = false
              ) {
@@ -42,6 +43,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     val chargeSummaryView: Html = chargeSummary(
       documentDetailWithDueDate = documentDetailWithDueDate,
       chargeHistoryOpt = chargeHistoryOpt,
+      latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = "testBackURL",
       paymentAllocations,
       paymentAllocationEnabled
@@ -66,7 +68,9 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
   object Messages {
     def poaHeading(year: Int, number: Int): String = s"Tax year 6 April ${year - 1} to 5 April $year Payment on account $number of 2"
 
+    def poaInterestHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
     def balancingChargeHeading(year: Int): String = s"Tax year 6 April ${year - 1} to 5 April $year Remaining balance"
+    def balancingChargeInterestHeading(year: Int) =  s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
 
     val paidToDate = "Paid to date"
     val chargeHistoryHeading = "Payment history"
@@ -296,6 +300,32 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       }
 
     }
-  }
 
+    "display Late payment interest on accounts" when {
+
+      "have the correct heading for a POA 1 late interest charge" in new Setup(documentDetailPOA1, latePaymentInterestCharge = true) {
+        document.select("h1").text() shouldBe Messages.poaInterestHeading(2018, 1)
+      }
+      "have the correct heading for a POA 2 late interest charge" in new Setup(documentDetailPOA2, latePaymentInterestCharge = true) {
+        document.select("h1").text() shouldBe Messages.poaInterestHeading(2018, 2)
+      }
+      "have the correct heading for a balancing charge late interest charge" in new Setup(documentDetailBalancingCharge, latePaymentInterestCharge = true) {
+        document.select("h1").text() shouldBe Messages.balancingChargeInterestHeading(2018)
+      }
+
+      "display an interest period for a late interest charge" in new Setup(documentDetailPOA1, latePaymentInterestCharge = true) {
+        document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(2) .govuk-summary-list__value")
+          .text() shouldBe "29 Mar 2018 to 15 Jun 2018"
+      }
+
+      "display a charge amount for a late interest charge" in new Setup(documentDetailPOA1, latePaymentInterestCharge = true) {
+        document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(3) .govuk-summary-list__value")
+          .text() shouldBe "£100.00"
+      }
+      "display a remaining amount for a late interest charge" in new Setup(documentDetailPOA1, latePaymentInterestCharge = true) {
+        document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(4) .govuk-summary-list__value")
+          .text() shouldBe "£80.00"
+      }
+    }
+  }
 }
