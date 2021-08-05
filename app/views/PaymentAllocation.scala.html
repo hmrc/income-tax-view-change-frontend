@@ -79,13 +79,17 @@ scriptElem = None
             </tr>
         </tbody>
         }
-        <tbody>
-            <tr id="credit-on-account">
-                <td>@messages("paymentAllocation.creditOnAccount")</td>
-                <td></td>
-                <td>@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.get.abs.toCurrencyString}</td>
-            </tr>
-        </tbody>
+        @paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.map { outstandingAmount =>
+            @if(outstandingAmount != 0) {
+                <tbody>
+                    <tr id="credit-on-account">
+                        <td>@messages("paymentAllocation.creditOnAccount")</td>
+                        <td></td>
+                        <td>@{outstandingAmount.abs.toCurrencyString}</td>
+                    </tr>
+                </tbody>
+            }
+        }
     </table>
 </div>
 
