@@ -324,23 +324,28 @@ object FinancialDetailsTestConstants {
       paymentLot = paymentLot
     )
 
-  def financialDetail(taxYear: Int = 2018): FinancialDetail = FinancialDetail(
+  def financialDetail(taxYear: Int = 2018,
+                      mainType: String = "SA Payment on Account 1",
+                      chargeType: String = "NIC4 Wales",
+                      originalAmount: BigDecimal = 100,
+                      dunningLock: Option[String] = None): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
-    mainType = Some("SA Payment on Account 1"),
+    mainType = Some(mainType),
     transactionId = Some(id1040000123),
     transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
-    originalAmount = Some(100),
+    originalAmount = Some(originalAmount),
     outstandingAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(chargeType),
     items =
       Some(Seq(
         SubItem(
           dueDate = Some(LocalDate.of(2019, 5, 15).toString),
           subItemId = Some("1"),
           amount = Some(100),
+          dunningLock = dunningLock,
           clearingDate = Some("2019-07-23"),
           clearingReason = Some("clearingReason"),
           outgoingPaymentMethod= Some("outgoingPaymentMethod"),

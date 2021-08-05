@@ -32,6 +32,10 @@ case class FinancialDetail(taxYear: String,
                            items: Option[Seq[SubItem]]
                           ) {
 
+  lazy val messageKeyByTypes: Option[String] = FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
+
+  lazy val messageKeyForChargeType: Option[String] = FinancialDetail.getMessageKeyForChargeType(chargeType)
+
   lazy val dunningLockExists: Boolean = dunningLocks.nonEmpty
 
   lazy val dunningLocks: Seq[SubItem] = {
@@ -72,18 +76,18 @@ object FinancialDetail {
       chargeTypeValue <- chargeType
       chargeTypeParts <- supportedCTypePartsByMainType.get(mainTypeValue)
       if chargeTypeParts.exists(supportedCTypePart => chargeTypeValue.startsWith(supportedCTypePart))
-      mainTypeKey <- getMainTypeKey(mainType)
-      chargeTypeKey <- getChargeTypeKey(chargeType)
+      mainTypeKey <- getMessageKeyForMainType(mainType)
+      chargeTypeKey <- getMessageKeyForChargeType(chargeType)
     } yield s"$mainTypeKey.$chargeTypeKey"
   }
 
-  def getMainTypeKey(mainType: Option[String]): Option[String] = mainType collect {
+  def getMessageKeyForMainType(mainType: Option[String]): Option[String] = mainType collect {
     case MTypePOA1 => "poa1"
     case MTypePOA2 => "poa2"
     case MTypeBCD => "bcd"
   }
 
-  def getChargeTypeKey(chargeType: Option[String]): Option[String] = chargeType collect {
+  def getMessageKeyForChargeType(chargeType: Option[String]): Option[String] = chargeType collect {
     case ct if ct.startsWith(CTypePartNIC4) => "nic4"
     case ct if ct.startsWith(CTypePartITSA) => "incomeTax"
     case ct if ct.startsWith(CTypePartVoluntaryNIC2) => "vcnic2"

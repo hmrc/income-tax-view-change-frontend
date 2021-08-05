@@ -24,17 +24,16 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel, PaymentsWithChargeType}
+import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.FinancialDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.ChargeSummary
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,60 +52,13 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
-  private def view(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backLocation: Option[String], taxYear: Int, chargesHistory: List[ChargeHistoryModel],
-                   paymentAllocations: List[PaymentsWithChargeType], chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit request: Request[_]) = {
-    chargeSummaryView(documentDetail, dueDate, backUrl(backLocation, taxYear), chargesHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
-  }
-
   def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
       implicit user =>
         financialDetailsService.getFinancialDetails(taxYear, user.nino).flatMap {
           case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == id) =>
-            val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
-            val documentDetail = success.documentDetails.find(_.transactionId == id).get
+            doShowChargeSummary(taxYear, id, isLatePaymentCharge, success)
 
-            val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
-            val paymentAllocations: List[PaymentsWithChargeType] =
-              if (paymentAllocationEnabled) {
-                success.financialDetails.filter(_.transactionId.contains(id)).flatMap(_.allocation)
-              } else Nil
-
-            val chargeHistoryEnabled = isEnabled(ChargeHistory)
-
-            if (chargeHistoryEnabled && !isLatePaymentCharge) {
-              incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
-                case chargeHistory: ChargesHistoryModel =>
-                  auditChargeSummary(id, success)
-                  Ok(view(
-                    documentDetail = documentDetail,
-                    dueDate = success.getDueDateFor(documentDetail),
-                    backLocation = backLocation,
-                    taxYear = taxYear,
-                    paymentAllocations = paymentAllocations,
-                    chargesHistory = chargeHistory.chargeHistoryDetails.getOrElse(List()),
-                    chargeHistoryEnabled = chargeHistoryEnabled,
-                    paymentAllocationEnabled = paymentAllocationEnabled,
-                    latePaymentInterestCharge = isLatePaymentCharge
-                  ))
-                case _ =>
-                  Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
-                  itvcErrorHandler.showInternalServerError()
-              }
-            } else {
-              auditChargeSummary(id, success)
-              Future.successful(Ok(view(
-                documentDetail = documentDetail,
-                dueDate = success.getDueDateFor(documentDetail),
-                backLocation = backLocation,
-                taxYear = taxYear,
-                paymentAllocations = paymentAllocations,
-                chargesHistory = List(),
-                chargeHistoryEnabled = chargeHistoryEnabled,
-                paymentAllocationEnabled = paymentAllocationEnabled,
-                latePaymentInterestCharge = isLatePaymentCharge
-              )))
-            }
           //Should not happen unless url is changed manually so redirect to home
           case _: FinancialDetailsModel =>
             Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
@@ -116,6 +68,55 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
     }
+
+  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel)
+                               (implicit user: MtdItUser[_]): Future[Result] = {
+    val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
+    val documentDetail = chargeDetails.documentDetails.find(_.transactionId == id).get
+    val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
+
+    val paymentBreakdown: List[FinancialDetail] =
+      if (!isLatePaymentCharge) {
+        financialDetails.filter(_.messageKeyByTypes.isDefined)
+      } else Nil
+
+    val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
+    val paymentAllocations: List[PaymentsWithChargeType] =
+      if (paymentAllocationEnabled) {
+        financialDetails.flatMap(_.allocation)
+      } else Nil
+
+    val chargeHistoryEnabled = isEnabled(ChargeHistory)
+    val chargeHistoryFuture: Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] =
+      if (!isLatePaymentCharge && chargeHistoryEnabled) {
+        incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
+          case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
+          case errorResponse => Left(errorResponse)
+        }
+      } else {
+        Future.successful(Right(Nil))
+      }
+
+    chargeHistoryFuture.map {
+      case Right(chargeHistory) =>
+        auditChargeSummary(id, chargeDetails)
+        Ok(chargeSummaryView(
+          documentDetail = documentDetail,
+          dueDate = chargeDetails.getDueDateFor(documentDetail),
+          backUrl = backUrl(backLocation, taxYear),
+          paymentBreakdown = paymentBreakdown,
+          chargeHistory = chargeHistory,
+          paymentAllocations = paymentAllocations,
+          chargeHistoryEnabled = chargeHistoryEnabled,
+          paymentAllocationEnabled = paymentAllocationEnabled,
+          latePaymentInterestCharge = isLatePaymentCharge
+        ))
+
+      case _ =>
+        Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
+        itvcErrorHandler.showInternalServerError()
+    }
+  }
 
   private def auditChargeSummary(id: String, financialDetailsModel: FinancialDetailsModel)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
@@ -129,7 +130,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
     }
   }
 
-  def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
+  private def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
     case Some("taxYearOverview") => controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url + "#payments"
     case Some("whatYouOwe") => controllers.routes.WhatYouOweController.viewPaymentsDue().url
     case _ => controllers.routes.HomeController.home().url

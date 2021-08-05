@@ -18,15 +18,15 @@ package controllers
 
 import assets.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import mocks.services.MockIncomeSourceDetailsService
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.{ChargeHistory, PaymentAllocation, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockIncomeSourceDetailsService
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import models.financialDetails.FinancialDetailsResponseModel
+import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -44,6 +44,11 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   with MockAuditingService
   with FeatureSwitching
   with TestSupport {
+
+  def financialDetailsWithLocks(taxYear: Int): List[FinancialDetail] = List(
+    financialDetail(taxYear = taxYear, chargeType = "ITSA England & NI"),
+    financialDetail(taxYear = taxYear, chargeType = "NIC4 Wales", dunningLock = Some("Stand over order"))
+  )
 
 	def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
 
@@ -80,6 +85,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
   val errorHeading = "Sorry, there is a problem with the service"
   val successHeading = "Tax year 6 April 2017 to 5 April 2018 Payment on account 1 of 2"
+  val dunningLocksBannerHeading = "Important"
+  val paymentBreakdownHeading = "Payment breakdown"
   val paymentHistoryHeading = "Payment history"
   val lateInterestSuccessHeading = "Tax year 6 April 2017 to 5 April 2018 Late payment interest on payment on account 1 of 2"
 
@@ -104,7 +111,9 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
+        JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentHistoryHeading
       }
 
 			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
@@ -114,8 +123,29 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
 				status(result) shouldBe Status.OK
 				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
+        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
 			}
+
+      "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
+        financialDetailsModel(2018).copy(financialDetails = financialDetailsWithLocks(2018))) {
+
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
+        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").size() shouldBe 0
+      }
+
+      "provided with a matching id in the financial response with dunning locks, showing the locks banner" in new Setup(
+        financialDetailsModel(2018).copy(financialDetails = financialDetailsWithLocks(2018))) {
+
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
+        JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
+      }
 
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled and allocations present" in new Setup(financialDetailsModel(2018)) {
         disable(ChargeHistory)
@@ -124,7 +154,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentHistoryHeading
       }
 
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(financialDetailsModel(2018)) {
@@ -134,7 +165,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentHistoryHeading
       }
 
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS disabled" in new Setup(financialDetailsModel(2018)) {
@@ -144,7 +176,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe ""
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
       }
 
     }

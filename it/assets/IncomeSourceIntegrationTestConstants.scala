@@ -157,6 +157,7 @@ object IncomeSourceIntegrationTestConstants {
 				"mainType" -> "SA Balancing Charge",
 				"transactionId" -> "1040000123",
 				"chargeType" -> "ITSA NI",
+				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
 					Json.obj("amount" -> 10000,
 						"clearingDate" -> "2019-08-13",
@@ -169,6 +170,7 @@ object IncomeSourceIntegrationTestConstants {
 				"mainType" -> "SA Payment on Account 1",
 				"transactionId" -> "1040000123",
 				"chargeType" -> "ITSA NI",
+				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
 					Json.obj("amount" -> 9000,
 						"clearingDate" -> "2019-08-13",
@@ -181,6 +183,7 @@ object IncomeSourceIntegrationTestConstants {
 				"mainType" -> "SA Payment on Account 2",
 				"transactionId" -> "1040000123",
 				"chargeType" -> "ITSA NI",
+				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
 					Json.obj("amount" -> 8000,
 						"clearingDate" -> "2019-08-13",
