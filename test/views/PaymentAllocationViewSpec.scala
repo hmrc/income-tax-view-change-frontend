@@ -40,8 +40,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
-  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail),
+  val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+    List(documentDetail.copy(outstandingAmount = Some(0))),
     List(financialDetail)
   )
 
@@ -108,6 +108,11 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
         "getting payment allocation Amount"
         allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
+      }
+
+      "should not have Credit on account row within payment details" in new Setup(paymentAllocationViewModel.copy(
+        paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
+        document.getElementById("credit-on-account") shouldBe null
       }
     }
   }
