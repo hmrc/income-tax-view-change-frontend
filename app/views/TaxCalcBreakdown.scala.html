@@ -18,6 +18,7 @@
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.helpers.injected.BackLink
+@import models.calculation.CalcDisplayModel
 
 @this(
     mainTemplate: MainTemplate,
@@ -123,6 +124,12 @@
                 }
                 </p>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages(s"taxCal_breakdown.table.head.rates${calcModel.getRateHeaderKey}")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @for(band <- calcModel.calcDataModel.payPensionsProfit.bands.filter(_.income > 0).sortBy(_.rate)) {
                 @taxBandTableRow(band, calcModel.calcDataModel.nationalRegime.contains("Scotland"))
@@ -136,6 +143,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.savings")</h2>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @for(band <- calcModel.calcDataModel.savingsAndGains.bands.filter(_.income > 0)
                     .sortBy(_.name == "SSR").sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR")
@@ -152,6 +165,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.dividends")</h2>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @for(band <- calcModel.calcDataModel.dividends.bands.filter(_.income > 0)
                     .sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR").sortBy(_.name == "HRT")
@@ -175,6 +194,12 @@
                 }
                 </p>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages(s"taxCal_breakdown.table.head.rates${calcModel.getRateHeaderKey}")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @for(band <- calcModel.calcDataModel.lumpSums.bands.filter(_.income > 0).sortBy(_.rate)) {
                 @taxBandTableRow(band, calcModel.calcDataModel.nationalRegime.contains("Scotland"))
@@ -188,6 +213,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.gains_life_policies")</h2>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @for(band <- calcModel.calcDataModel.gainsOnLifePolicies.bands.filter(_.income > 0).sortBy(_.rate)) {
                 @taxBandTableRow(band, calcModel.calcDataModel.nationalRegime.contains("Scotland"))
@@ -201,6 +232,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.class4_national_insurance")</h2>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @calcModel.calcDataModel.nic.class4Bands.map { nicBands =>
                 @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) {
@@ -230,6 +267,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h2>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.reduction")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             @taxReductionsTableRow("deficiencyRelief")
             @taxReductionsTableRow("vctSubscriptions")
             @taxReductionsTableRow("eisSubscriptions")
@@ -259,7 +302,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.additional_charges")</h2>
             </caption>
-
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.charge_type")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @calcModel.calcDataModel.nic.class2.map { amount =>
                 <tr>
@@ -310,7 +358,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.table.other_charges")</h2>
             </caption>
-
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.charge_type")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
             @calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.map { amount =>
                 <tr>
@@ -329,6 +382,12 @@
             <caption>
                 <h2 class="heading-medium">@messages("taxCal_breakdown.taxDeductedAtSource")</h2>
             </caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("taxCal_breakdown.table.head.deduction")</th>
+                <th scope="col" class="govuk-table__header numeric">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            </thead>
             <tbody>
                 @calcModel.calcDataModel.taxDeductedAtSource.allFields.map { mapEntry =>
                     <tr>

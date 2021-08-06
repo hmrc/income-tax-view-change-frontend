@@ -252,6 +252,15 @@ taxCal_breakdown.table.nic2.true                                    = Voluntary 
 
 taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
 
+
+taxCal_breakdown.table.head.deduction                               = Deduction type
+taxCal_breakdown.table.head.charge_type                             = Charge type
+taxCal_breakdown.table.head.reduction                               = Reduction
+taxCal_breakdown.table.head.rate_band                               = Rate band
+taxCal_breakdown.table.head.national_insurance_type                 = National insurance type
+taxCal_breakdown.table.head.rates.uk                                = UK rates for England and Northern Ireland
+taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
+
 taxCal_breakdown.taxDeductedAtSource								= Tax deductions
 taxCal_breakdown.table.giftAidTax                                   = Gift Aid tax charge
 taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Total pension saving charges
@@ -271,7 +280,7 @@ taxCal_breakdown.table.total_notional_tax                           = Notional t
 taxCal_breakdown.table.total_foreign_tax_credit_relief              = Foreign Tax Credit Relief
 taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Relief claimed on a qualifying distribution
 taxCal_breakdown.table.nonDeductibleLoanInterest                    = Non deductible loan interest
-taxCal_breakdown.table.income_tax_due_after_tax_reductions           = Income Tax due after tax reductions
+taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Income Tax due after tax reductions
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
 taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = All employments
 taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions
@@ -281,6 +290,7 @@ taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= UK land and prop
 taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Special withholding tax
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = Void ISAs
 taxCal_breakdown.table.taxDeductedAtSource.total					= Income Tax due after deductions
+taxCal_breakdown.table.amount                                       = Amount
 
 taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments
 taxCal_breakdown.message.C22202                                 = Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax
