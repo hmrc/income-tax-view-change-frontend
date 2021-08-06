@@ -57,6 +57,13 @@ case class CalcDisplayModel(calcTimestamp: String,
     }
   }
 
+  def getRateHeaderKey: String = {
+    calcDataModel.nationalRegime match {
+      case Some("Scotland") => ".scotland"
+      case _ => ".uk"
+    }
+  }
+
   def estimatedWithBBSInterest: Boolean = {
     calcDataModel.savingsAndGains.taxableIncome.exists(_ > 0) && calcStatus == Estimate
   }

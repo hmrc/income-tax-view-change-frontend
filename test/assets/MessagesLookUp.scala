@@ -228,6 +228,12 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val regimeUkRateText: String = "(UK rate for England, Wales and Northern Ireland)"
     val regimeScotlandRateText: String = "(Rate for Scotland)"
     val regimeWales: String = "Tax regime: Wales"
+    val reductionTableHeader = "Reduction"
+    val amountTableHeader  = "Amount"
+    val pPPTableHead = "UK rates for England and Northern Ireland"
+    val pPPScotlandTableHead = "UK rates for Scotland"
+    val lsTableHeader = "Rate band"
+    val additionalChargeTableHeader = "Charge type"
     //pay, pension and profit table
     val pPP_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
     val pPP_HRT: String = "Higher rate (£100,000.00 at 40.0%)"
@@ -293,6 +299,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val specialWithholdingTax: String = "Special withholding tax"
     val voidISAs: String = "Void ISAs"
     val totalDeductions: String = "Income Tax due after deductions"
+    val deductionsTableHeader = "Deduction type"
   }
 
   // Estimated Tax Liability Page Messages
