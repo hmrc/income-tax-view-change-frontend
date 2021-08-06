@@ -133,9 +133,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
         isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
-        isElementVisibleById("payment-days-note")(expectedValue = true),
-        isElementVisibleById("credit-on-account")(expectedValue = true),
-        isElementVisibleById("payment-button")(expectedValue = true),
         isElementVisibleById("sa-note-migrated")(expectedValue = true),
         isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
       )
@@ -180,9 +177,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("interest-rate-para")(expectedValue = false),
         isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
-        isElementVisibleById(s"payment-days-note")(expectedValue = true),
-        isElementVisibleById(s"credit-on-account")(expectedValue = true),
-        isElementVisibleById(s"payment-button")(expectedValue = true),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
       )
@@ -243,7 +237,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
         isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
-        isElementVisibleById(s"payment-days-note")(expectedValue = true),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
       )
@@ -383,9 +376,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
         isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
-        isElementVisibleById("payment-days-note")(expectedValue = true),
-        isElementVisibleById("credit-on-account")(expectedValue = true),
-        isElementVisibleById("payment-button")(expectedValue = true),
         isElementVisibleById("sa-note-migrated")(expectedValue = true),
         isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
       )
@@ -428,9 +418,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("interest-rate-para")(expectedValue = false),
         isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
-        isElementVisibleById(s"payment-days-note")(expectedValue = true),
-        isElementVisibleById(s"credit-on-account")(expectedValue = true),
-        isElementVisibleById(s"payment-button")(expectedValue = true),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
       )
@@ -489,7 +476,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
         isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
-        isElementVisibleById(s"payment-days-note")(expectedValue = true),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
       )
@@ -541,9 +527,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("interest-rate-para")(expectedValue = true),
       isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
       isElementVisibleById("future-payments-heading")(expectedValue = false),
-      isElementVisibleById(s"payment-days-note")(expectedValue = true),
-      isElementVisibleById(s"credit-on-account")(expectedValue = true),
-      isElementVisibleById(s"payment-button")(expectedValue = true),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
     )
@@ -593,9 +576,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("interest-rate-para")(expectedValue = false),
       isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
       isElementVisibleById("future-payments-heading")(expectedValue = false),
-      isElementVisibleById(s"payment-days-note")(expectedValue = true),
-      isElementVisibleById(s"credit-on-account")(expectedValue = true),
-      isElementVisibleById(s"payment-button")(expectedValue = true),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
     )
@@ -636,9 +616,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById("payment-days-note")(expectedValue = true),
-          isElementVisibleById("credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
@@ -681,9 +658,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById("payment-days-note")(expectedValue = true),
-          isElementVisibleById("credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
@@ -737,9 +711,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById("payment-days-note")(expectedValue = true),
-          isElementVisibleById("credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
@@ -796,9 +767,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById(s"payment-days-note")(expectedValue = true),
-          isElementVisibleById(s"credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
@@ -849,9 +817,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("future-payments-heading")(expectedValue = true),
           isElementVisibleById("future-payments-type-0")(expectedValue = true),
           isElementVisibleById("future-payments-type-1")(expectedValue = true),
-          isElementVisibleById(s"payment-days-note")(expectedValue = true),
-          isElementVisibleById(s"credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
@@ -895,9 +860,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById("payment-days-note")(expectedValue = true),
-          isElementVisibleById("credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
@@ -938,9 +900,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById("payment-days-note")(expectedValue = true),
-          isElementVisibleById("credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
@@ -992,9 +951,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById("payment-days-note")(expectedValue = true),
-          isElementVisibleById("credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
@@ -1049,9 +1005,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(expectedValue = false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
-          isElementVisibleById(s"payment-days-note")(expectedValue = true),
-          isElementVisibleById(s"credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
@@ -1100,9 +1053,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("future-payments-heading")(expectedValue = true),
           isElementVisibleById("future-payments-type-0")(expectedValue = true),
           isElementVisibleById("future-payments-type-1")(expectedValue = true),
-          isElementVisibleById(s"payment-days-note")(expectedValue = true),
-          isElementVisibleById(s"credit-on-account")(expectedValue = true),
-          isElementVisibleById(s"payment-button")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
