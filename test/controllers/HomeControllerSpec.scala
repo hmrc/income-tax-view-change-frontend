@@ -17,9 +17,8 @@
 package controllers
 
 import assets.MessagesLookUp
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.calculation.Calculation
 import models.financialDetails._
@@ -59,12 +58,10 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			reportDeadlinesService,
 			app.injector.instanceOf[ItvcErrorHandler],
 			financialDetailsService,
-			app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
 			app.injector.instanceOf[FrontendAppConfig],
 			app.injector.instanceOf[MessagesControllerComponents],
 			ec,
 			currentDateProvider,
-			app.injector.instanceOf[ImplicitDateFormatterImpl],
 			mockAuditingService
 		)
 		when(currentDateProvider.getCurrentDate()) thenReturn LocalDate.of(2018, 1, 20)

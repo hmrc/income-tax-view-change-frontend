@@ -15,15 +15,16 @@
  *@
 
 @import java.time.LocalDate
-@import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-@import implicits.ImplicitDateFormatter
+@import implicits.ImplicitDateFormatterImpl
 @import views.html.templates.MainTemplate
 
 @this(
-    mainTemplate: MainTemplate
+    mainTemplate: MainTemplate,
+    appConfig: config.FrontendAppConfig,
+    implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
@@ -116,9 +117,11 @@
         <span id="sub-heading" class="heading-secondary">@user.userName.map(_.name)</span>
     </h1>
 
-    <span id="utr-reference-heading" class="form-hint heading-xl-addon">
-        @messages("home.unique.taxpayer.reference", user.mtditid)
-    </span>
+    @user.saUtr.map { utr =>
+        <span id="utr-reference-heading" class="form-hint heading-xl-addon">
+            @messages("home.utr", utr)
+        </span>
+    }
 
     @if(overDuePayments.getOrElse(0) > 0) {
         <div id="overdue-warning" class="grid-row grid-row-spacing">

@@ -20,7 +20,6 @@ import assets.BaseTestConstants._
 import assets.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -34,16 +33,16 @@ import views.html.Home
 import java.time.LocalDate
 
 
-class HomePageViewSpec extends TestSupport with FeatureSwitching {
+class HomePageViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testMtdItUser: MtdItUser[_] = MtdItUser(
+  def testMtdItUser(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = MtdItUser(
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(testMtditid, None, Nil, None),
-    Some("testUtr"),
+    saUtr,
     Some("testCredId"),
     Some("Individual"),
     None
@@ -58,7 +57,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
-              overDueUpdates: Option[Int] = Some(0), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
+              overDueUpdates: Option[Int] = Some(0), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
+              user: MtdItUser[_] = testMtdItUser()) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
@@ -67,9 +67,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       overDuePayments = overDuePayments,
       overDueUpdates = overDueUpdates,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      implicitDateFormatter = mockImplicitDateFormatter,
       paymentHistoryEnabled = paymentHistoryEnabled
-    )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+    )(messages, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
@@ -95,8 +94,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       getTextOfElementById("sub-heading") shouldBe Some(testUserName)
     }
 
-    "have the users mtd-it-id" in new Setup {
-      getTextOfElementById("utr-reference-heading") shouldBe Some(homeMessages.taxpayerReference(testMtdItUser.mtditid))
+    "have the users UTR" in new Setup {
+      getTextOfElementById("utr-reference-heading") shouldBe Some(homeMessages.taxpayerReference("testUtr"))
+    }
+
+    "not have the users UTR when it is absent in user profile" in new Setup(user = testMtdItUser(saUtr = None)) {
+      getElementById("utr-reference-heading") shouldBe None
     }
 
     "have an updates tile" which {

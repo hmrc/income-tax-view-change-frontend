@@ -116,7 +116,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val heading = "Income Tax"
     val agentHeading = "Your client’s Income Tax"
 
-    def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
+    def taxpayerReference(utr: String): String = s"UTR: $utr"
 
     val updatesHeading = "Next updates due"
     val paymentsHeading = "Next payments due"

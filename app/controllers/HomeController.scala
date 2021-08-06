@@ -20,9 +20,8 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import config.featureswitch._
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.FinancialDetailsModel
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.Logger
@@ -32,6 +31,7 @@ import play.twirl.api.Html
 import services.{FinancialDetailsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CurrentDateProvider
+
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,24 +45,21 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val reportDeadlinesService: ReportDeadlinesService,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialDetailsService: FinancialDetailsService,
-                               val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                               implicit val appConfig: FrontendAppConfig,
+                               override val appConfig: FrontendAppConfig,
                                mcc: MessagesControllerComponents,
                                implicit val ec: ExecutionContext,
                                val currentDateProvider: CurrentDateProvider,
-                               dateFormatter: ImplicitDateFormatterImpl,
                                auditingService: AuditingService) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])
-                  (implicit request: Request[_], user: MtdItUser[_]): Html = {
+                  (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
       overDuePayments = overDuePayments,
       overDueUpdates = overDueUpdates,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      paymentHistoryEnabled = isEnabled(PaymentHistory),
-      implicitDateFormatter = dateFormatter
+      paymentHistoryEnabled = isEnabled(PaymentHistory)
     )
   }
 
