@@ -375,11 +375,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("future-payments-type-1-overdue") shouldBe null
 
-        pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
-        pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
-        pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
-
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
         pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
