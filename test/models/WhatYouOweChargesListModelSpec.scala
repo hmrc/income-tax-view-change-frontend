@@ -29,6 +29,10 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
   def outstandingChargesModel(dueDate: String): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
+  val noDunningLocks: List[Option[String]] = List(None, None)
+  val oneDunningLock: List[Option[String]] = List(Some("Stand over order"), None)
+  val twoDunningLocks: List[Option[String]] = List(Some("Stand over order"), Some("Stand over order"))
+
   val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
     List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
@@ -41,6 +45,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
     chargeType = Some("NIC4 Wales"),
     List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
     subItemId = Some("1"),
+    dunningLock = List(Some("dunningLock"), Some("dunningLock")),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
     clearingReason = Some("clearingReason"),
@@ -67,6 +72,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
     chargeType = Some("NIC4 Wales"),
     List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
     subItemId = Some("1"),
+    dunningLock = List(Some("dunningLock"), Some("dunningLock")),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
     clearingReason = Some("clearingReason"),
@@ -81,7 +87,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
     LocalDate.now().getYear.toString
   )
 
-  val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
+  def financialDetailsOverdueData(dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModel(
     List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     transactionId= Some("TransactionId"),
@@ -93,6 +99,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
     chargeType = Some("NIC4 Wales"),
     List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
     subItemId = Some("1"),
+    dunningLock = dunningLock,
     amount = Some(100),
     clearingDate = Some("clearingDate"),
     clearingReason = Some("clearingReason"),
@@ -109,17 +116,17 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusMonths(13).toString)
 
-  val whatYouOweAllData: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
     futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
-    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
+    overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingCharges)
   )
 
-  val whatYouOweFinancialDataWithoutOutstandingCharges: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
     futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
-    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates
+    overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates
   )
 
 
@@ -127,28 +134,37 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
     "all values in model exists with tie breaker matching in OutstandingCharges Model" should {
       "bcdChargeTypeDefinedAndGreaterThanZero is true" in {
-        whatYouOweAllData.bcdChargeTypeDefinedAndGreaterThanZero shouldBe true
+        whatYouOweAllData().bcdChargeTypeDefinedAndGreaterThanZero shouldBe true
       }
       "isChargesListEmpty is false" in {
-        whatYouOweAllData.isChargesListEmpty shouldBe false
+        whatYouOweAllData().isChargesListEmpty shouldBe false
       }
       "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
-        whatYouOweAllData.getEarliestTaxYearAndAmountByDueDate._1 shouldBe LocalDate.now().minusMonths(13).getYear
-        whatYouOweAllData.getEarliestTaxYearAndAmountByDueDate._2 shouldBe 123456.67
+        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate._1 shouldBe LocalDate.now().minusMonths(13).getYear
+        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate._2 shouldBe 123456.67
+      }
+      "hasDunningLock should return false if there are no dunningLocks" in {
+        whatYouOweAllData().hasDunningLock shouldBe false
+      }
+      "hasDunningLock should return true if there are is one dunningLock" in {
+        whatYouOweAllData(oneDunningLock).hasDunningLock shouldBe true
+      }
+      "hasDunningLock should return true if there are multiple dunningLocks" in {
+        whatYouOweAllData(twoDunningLocks).hasDunningLock shouldBe true
       }
     }
 
     "all values in model exists except outstanding charges" should {
       "bcdChargeTypeDefinedAndGreaterThanZero is false" in {
-        whatYouOweFinancialDataWithoutOutstandingCharges.bcdChargeTypeDefinedAndGreaterThanZero shouldBe false
+        whatYouOweFinancialDataWithoutOutstandingCharges().bcdChargeTypeDefinedAndGreaterThanZero shouldBe false
       }
       "isChargesListEmpty is false" in {
-        whatYouOweFinancialDataWithoutOutstandingCharges.isChargesListEmpty shouldBe false
+        whatYouOweFinancialDataWithoutOutstandingCharges().isChargesListEmpty shouldBe false
       }
       "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
-        whatYouOweFinancialDataWithoutOutstandingCharges
+        whatYouOweFinancialDataWithoutOutstandingCharges()
           .getEarliestTaxYearAndAmountByDueDate._1 shouldBe LocalDate.now().minusDays(10).getYear
-        whatYouOweFinancialDataWithoutOutstandingCharges.getEarliestTaxYearAndAmountByDueDate._2 shouldBe 50.0
+        whatYouOweFinancialDataWithoutOutstandingCharges().getEarliestTaxYearAndAmountByDueDate._2 shouldBe 50.0
       }
     }
   }

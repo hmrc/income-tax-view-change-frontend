@@ -32,6 +32,8 @@ case class WhatYouOweChargesList(overduePaymentList: List[DocumentDetailWithDueD
 
   def isChargesListEmpty: Boolean = getAllCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
+  def hasDunningLock: Boolean = getAllCharges.exists(allCharges => allCharges.dunningLock)
+
   def interestOnOverdueCharges: Boolean =
     if (overduePaymentList.exists(_.documentDetail.interestOutstandingAmount.isDefined)
       && overduePaymentList.exists(_.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true

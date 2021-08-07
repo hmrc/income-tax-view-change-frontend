@@ -48,4 +48,26 @@ class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
       Json.fromJson[FinancialDetailsErrorModel](testFinancialDetailsErrorModelJson) shouldBe JsSuccess(testFinancialDetailsErrorModel)
     }
   }
+
+  "dunningLockExists" should {
+    val dunningLock = Some("Stand over order")
+    val unsupportedLock = Some("Disputed debt")
+
+    def financialDetailsModelWithDunningLock: FinancialDetailsModel = financialDetailsModel(dunningLock = dunningLock)
+    def financialDetailsModelWithUnsupportedLock: FinancialDetailsModel = financialDetailsModel(dunningLock = unsupportedLock)
+    def financialDetailsModelWithoutDunningLock: FinancialDetailsModel = financialDetailsModel()
+
+    "return true when there is a dunningLock against a charge" in {
+      financialDetailsModelWithDunningLock.dunningLockExists(id1040000123) shouldBe true
+    }
+
+    "return false when there is an unsupported dunningLock against a charge" in {
+      financialDetailsModelWithUnsupportedLock.dunningLockExists(id1040000123) shouldBe false
+    }
+
+    "return true when there is not a dunningLock against a charge" in {
+      financialDetailsModelWithoutDunningLock.dunningLockExists(id1040000123) shouldBe false
+    }
+  }
+
 }

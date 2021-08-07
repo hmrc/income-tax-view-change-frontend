@@ -119,8 +119,13 @@ object IncomeSourceIntegrationTestConstants {
 		)
 	)
 
-	def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
-																				 taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+	val noDunningLock: List[String] = List("dunningLock", "dunningLock")
+	val oneDunningLock: List[String] = List("Stand over order", "dunningLock")
+	val twoDunningLocks: List[String] = List("Stand over order", "Stand over order")
+
+  def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
+                                         taxYear: String = "2018", dueDate: String = "2018-02-14",
+                                         dunningLock: List[String] = noDunningLock): JsValue = Json.obj(
 		"documentDetails" -> Json.arr(
 			Json.obj(
 				"taxYear" -> taxYear,
@@ -136,7 +141,7 @@ object IncomeSourceIntegrationTestConstants {
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
+				"transactionId" -> "1040000124",
 				"documentDescription" -> "ITSA- POA 1",
 				"outstandingAmount" -> outstandingAmount,
 				"originalAmount" -> originalAmount,
@@ -144,7 +149,7 @@ object IncomeSourceIntegrationTestConstants {
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
+				"transactionId" -> "1040000125",
 				"documentDescription" -> "ITSA - POA 2",
 				"outstandingAmount" -> outstandingAmount,
 				"originalAmount" -> originalAmount,
@@ -168,7 +173,7 @@ object IncomeSourceIntegrationTestConstants {
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 1",
-				"transactionId" -> "1040000123",
+				"transactionId" -> "1040000124",
 				"chargeType" -> "ITSA NI",
 				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
@@ -176,12 +181,15 @@ object IncomeSourceIntegrationTestConstants {
 						"clearingDate" -> "2019-08-13",
 						"dueDate" -> dueDate,
 						"paymentLot" -> "081203010024",
-						"paymentLotItem" -> "000001"))
+						"paymentLotItem" -> "000001"),
+					Json.obj(
+						"dunningLock" -> dunningLock.head
+					))
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 2",
-				"transactionId" -> "1040000123",
+				"transactionId" -> "1040000125",
 				"chargeType" -> "ITSA NI",
 				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
@@ -189,7 +197,10 @@ object IncomeSourceIntegrationTestConstants {
 						"clearingDate" -> "2019-08-13",
 						"dueDate" -> dueDate,
 						"paymentLot" -> "081203010024",
-						"paymentLotItem" -> "000001"))
+						"paymentLotItem" -> "000001"),
+					Json.obj(
+						"dunningLock" -> dunningLock(1)
+					))
 			)
 		)
 	)

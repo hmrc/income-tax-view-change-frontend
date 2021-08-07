@@ -64,7 +64,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
               auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
             }
 
-            Ok(whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr)
+            Ok(whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr, dunningLock = whatYouOweChargesList.hasDunningLock)
             ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
         } recover {
           case ex: Exception =>
