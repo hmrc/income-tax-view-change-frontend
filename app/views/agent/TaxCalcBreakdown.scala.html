@@ -118,13 +118,6 @@
         <table>
             <caption>
                 <h2 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")</h2>
-                <p>
-                @if(calcModel.calcDataModel.nationalRegime.contains("Scotland")) {
-                    @messages("taxCal-breakdown.scotlandRate")
-                } else {
-                    @messages("taxCal-breakdown.ukRate")
-                }
-                </p>
             </caption>
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -188,13 +181,6 @@
         <table>
             <caption>
                 <h2 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")</h2>
-                <p>
-                @if(calcModel.calcDataModel.nationalRegime.contains("Scotland")) {
-                    @messages("taxCal-breakdown.scotlandRate")
-                } else {
-                    @messages("taxCal-breakdown.ukRate")
-                }
-                </p>
             </caption>
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">

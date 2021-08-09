@@ -289,11 +289,6 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
           row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
         }
 
-        "have the correct UK regime rate message" in new Setup(view) {
-          val regime: Element = content.selectNth("caption", 1).selectFirst("p")
-          regime.text() shouldBe TaxCalcBreakdown.regimeUkRateText
-        }
-
         "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_BRT
@@ -450,11 +445,6 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
           val row: Element = content.table().select("tr").get(0)
           row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
           row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "have the correct UK regime rate message" in new Setup(view) {
-          val regime: Element = content.selectNth("table", 4).selectFirst("p")
-          regime.text() shouldBe TaxCalcBreakdown.regimeUkRateText
         }
 
         "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
