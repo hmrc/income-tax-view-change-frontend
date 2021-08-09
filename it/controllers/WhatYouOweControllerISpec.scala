@@ -209,6 +209,105 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             )
           }
 
+          "render the payments due page with no dunningLocks" in {
+            enable(TxmEventsApproved)
+            val testTaxYear = LocalDate.now().getYear.toString
+
+            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+
+            And("I wiremock stub a multiple financial details response")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock))
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
+
+            AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
+
+            Then("the result should have a HTTP status of OK (200) and the payments due page")
+            res should have(
+              httpStatus(OK),
+              pageTitle("What you owe - Business Tax account - GOV.UK"),
+              isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false)
+            )
+          }
+
+          "render the payments due page with a dunningLocks against a charge" in {
+            enable(TxmEventsApproved)
+            val testTaxYear = LocalDate.now().getYear.toString
+
+            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+
+            And("I wiremock stub a multiple financial details response")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock))
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
+
+            AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
+
+            Then("the result should have a HTTP status of OK (200) and the payments due page")
+            res should have(
+              httpStatus(OK),
+              pageTitle("What you owe - Business Tax account - GOV.UK"),
+              isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
+            )
+          }
+
+          "render the payments due page with multiple dunningLocks" in {
+            enable(TxmEventsApproved)
+            val testTaxYear = LocalDate.now().getYear.toString
+
+            Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+
+            And("I wiremock stub a multiple financial details response")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks))
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
+
+            AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
+
+            Then("the result should have a HTTP status of OK (200) and the payments due page")
+            res should have(
+              httpStatus(OK),
+              pageTitle("What you owe - Business Tax account - GOV.UK"),
+              isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
+            )
+          }
+
           "redirect to an internal server error page when both connectors return internal server error" in {
             val testTaxYear = LocalDate.now().getYear
             enable(TxmEventsApproved)

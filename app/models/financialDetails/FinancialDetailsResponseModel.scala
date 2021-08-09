@@ -51,6 +51,13 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
       .map(LocalDate.parse)
   }
 
+  def dunningLockExists(documentId: String): Boolean = {
+    documentDetails.filter(_.transactionId == documentId)
+      .exists { documentDetail =>
+        financialDetails.exists(financialDetail => financialDetail.transactionId.contains(documentDetail.transactionId) && financialDetail.dunningLockExists)
+    }
+  }
+
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear.toInt == taxYear)
 
   def findDocumentDetailForYearWithDueDate(taxYear: Int): Option[DocumentDetailWithDueDate] = {
@@ -64,7 +71,8 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
   }
 
   def getAllDocumentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-    documentDetails.map(documentDetail => DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail)))
+    documentDetails.map(documentDetail =>
+      DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)

@@ -47,9 +47,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(charges: WhatYouOweChargesList,
-              currentTaxYear: Int = LocalDate.now().getYear
+              currentTaxYear: Int = LocalDate.now().getYear,
+              dunningLock: Boolean = false
               ) {
-    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"))(implicitly)
+    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock)(implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -63,7 +64,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def outstandingChargesModel(dueDate: String, aciAmount: BigDecimal = 12.67): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, aciAmount, 1234)))
 
-  val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
+  def testFinancialDetails(dueDate: List[Option[String]], dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     transactionId= Some("TransactionId"),
@@ -73,8 +74,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
+    dueDate = dueDate,
     subItemId = Some("1"),
+    dunningLock = dunningLock,
     amount = Some(100),
     clearingDate = Some("clearingDate"),
     clearingReason = Some("clearingReason"),
@@ -88,70 +90,33 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString
   )
+
+  val noDunningLocks: List[Option[String]] = List(None, None)
+  val oneDunningLock: List[Option[String]] = List(Some("Stand over order"), None)
+  val twoDunningLocks: List[Option[String]] = List(Some("Stand over order"), Some("Stand over order"))
+
+  val dueDateMoreThan30Days: List[Option[String]] = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString))
+  val dueDateDueIn30Days: List[Option[String]] = List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString))
+  val dueDateOverdue: List[Option[String]] = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString))
+  
+  def financialDetailsDueInMoreThan30Days(dunningLock: List[Option[String]]): FinancialDetailsModel =
+    testFinancialDetails(dueDate = dueDateMoreThan30Days, dunningLock = dunningLock)
   val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35).toString)
 
-  val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(
-    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
+  def whatYouOweDataWithDataDueInMoreThan30Days(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    futurePayments = financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
-  val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
-    subItemId = Some("1"),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
-  )
+  def financialDetailsDueIn30Days(dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetails(dueDate = dueDateDueIn30Days, dunningLock = dunningLock)
   val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(30).toString)
 
-  val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
-    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
+  def whatYouOweDataWithDataDueIn30Days(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    dueInThirtyDaysList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
-  val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
-    subItemId = Some("1"),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
-  )
+  def financialDetailsOverdueData(dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetails(dueDate = dueDateOverdue, dunningLock = dunningLock)
 
   def financialDetailsOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): FinancialDetailsModel = testFinancialDetailsModelWithInterest(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
@@ -164,10 +129,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     latePaymentInterestAmount = latePaymentInterest
   )
 
-  def financialDetailsOverdueWithLpi(latePaymentInterest: List[Option[BigDecimal]]): FinancialDetailsModel = testFinancialDetailsModelWithLPI(
+  def financialDetailsOverdueWithLpi(latePaymentInterest: List[Option[BigDecimal]], dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModelWithLPI(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+    dunningLock = dunningLock,
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
@@ -202,8 +168,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(30).toString)
 
-  val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
-    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
+  def whatYouOweDataWithOverdueData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
@@ -212,8 +178,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    overduePaymentList = financialDetailsOverdueWithLpi(latePaymentInterest).getAllDocumentDetailsWithDueDates,
+  def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]],
+                                   dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
@@ -287,14 +254,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def whatYouOweDataWithOverdueMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest).getAllDocumentDetailsWithDueDates(1)),
+    overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
 
   )
 
   def whatYouOweDataTestActiveWithMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest).getAllDocumentDetailsWithDueDates(1)),
+    overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
@@ -317,13 +284,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList()
+  
+  val currentYear: String = LocalDate.now().getYear.toString
+  val currentYearMinusOne: String = (LocalDate.now().getYear - 1).toString
 
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
-      "have the link to their previous Self Assessment online account in the sa-note" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
+      "have the link to their previous Self Assessment online account in the sa-note" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
         verifySelfAssessmentLink()
       }
-      s"have the remaining balance title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
+      "have the remaining balance title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
@@ -332,7 +302,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         remainingBalanceHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
         remainingBalanceHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
       }
-      s"remaining balance row data exists and should not contain hyperlink and overdue tag " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
+      "remaining balance row data exists and should not contain hyperlink and overdue tag " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
         val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
         remainingBalanceTable.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
@@ -341,14 +311,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("balancing-charge-type-overdue") shouldBe null
       }
-      s"payment type drop down and content exists" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
+      "payment type drop down and content exists" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
 
       }
 
-      s"table header and data for future payments" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days) {
+      "table header and data for future payments" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days(noDunningLocks)) {
         pageDocument.getElementById("future-payments-heading").text shouldBe whatYouOwe.futurePayments
         val futurePaymentsHeader: Element = pageDocument.select("tr").get(2)
         futurePaymentsHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -357,8 +327,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(45).toLongDateShort
-        futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYear
         futurePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("future-payments-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -367,8 +336,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
         futurePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().plusDays(50).toLongDateShort
-        futurePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        futurePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYear
         futurePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("future-payments-type-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -384,10 +352,41 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
       }
+      "display the paragraph about payments under review when there is a dunningLock" in new Setup(
+        whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
+        val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
+
+        pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
+        paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
+        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
+      }
+
+      "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
+        whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks)) {
+        pageDocument.getElementById("payment-under-review-info") shouldBe null
+      }
+
+      s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
+        whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock)) {
+        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
+        val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
+
+        futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearAndUnderReview
+        futurePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYear
+      }
+
+      s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against multiple charges" in new Setup(
+        whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks)) {
+        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
+        val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
+
+        futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearAndUnderReview
+        futurePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYearAndUnderReview
+      }
     }
 
     "the user has charges and access viewer within 30 days of due date" should {
-      s"have the remaining balance header and table data" in new Setup(whatYouOweDataWithDataDueIn30Days) {
+      s"have the remaining balance header and table data" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
         val remainingBalanceHeader: Element = pageDocument.select("tr").first()
@@ -401,7 +400,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
       }
-      s"have payment type drop down details" in new Setup(whatYouOweDataWithDataDueIn30Days) {
+      "have payment type drop down details" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
@@ -409,7 +408,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("balancing-charge-type-overdue") shouldBe null
       }
 
-      s"have table header and data for due within 30 days" in new Setup(whatYouOweDataWithDataDueIn30Days) {
+      "have table header and data for due within 30 days" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("due-in-thirty-days-payments-heading").text shouldBe whatYouOwe.dueInThirtyDays
 
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
@@ -419,19 +418,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().toLongDateShort
-        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYear
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
       }
-      s"have data with POA2 with hyperlink and no overdue" in new Setup(whatYouOweDataWithDataDueIn30Days) {
+      "have data with POA2 with hyperlink and no overdue" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(4)
         dueWithInThirtyDaysTableRow2.select("td").first().text() shouldBe LocalDate.now().plusDays(1).toLongDateShort
-        dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYear
         dueWithInThirtyDaysTableRow2.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -439,7 +436,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("due-in-thirty-days-type-1-overdue") shouldBe null
       }
 
-      s"have payment details and should not contain future payments and overdue payment headers" in new Setup(whatYouOweDataWithDataDueIn30Days) {
+      "have payment details and should not contain future payments and overdue payment headers" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
         pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
@@ -449,11 +446,43 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("future-payments-heading") shouldBe null
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
       }
+
+      "display the paragraph about payments under review when there is a dunningLock" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
+        val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
+
+        pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
+        paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
+        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
+      }
+
+      "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+        pageDocument.getElementById("payment-under-review-info") shouldBe null
+      }
+
+      s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
+        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
+        val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(4)
+
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearAndUnderReview
+        dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYear
+      }
+
+      s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against multiple charges" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
+        val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(4)
+
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearAndUnderReview
+        dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYearAndUnderReview
+      }
     }
 
     "the user has charges and access viewer after due date" should {
       "have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
-        whatYouOweDataWithOverdueData) {
+        whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
         val remainingBalanceHeader: Element = pageDocument.select("tr").first()
@@ -474,7 +503,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe whatYouOwe.overdueTag
       }
-      "have payment type dropdown details" in new Setup(whatYouOweDataWithOverdueData) {
+      "have payment type dropdown details" in new Setup(whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
@@ -492,7 +521,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
-          whatYouOwe.latePoa1Text + " " + whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.latePoa1Text + " " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
         pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -512,7 +541,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
-          whatYouOwe.poa1Text + " " + whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.poa1Text + " " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -533,7 +562,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
 */
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
-          whatYouOwe.poa1Text + " " + whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.poa1Text + " " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -544,7 +573,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
         overduePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
         overduePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.poa2Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("over-due-type-1-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -576,11 +605,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("interest-rate-link").attr("href") shouldBe expectedUrl
       }
 
-      "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(whatYouOweDataWithOverdueData) {
+      "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(whatYouOweDataWithOverdueData()) {
         pageDocument.select(".interest-rate").first() shouldBe null
       }
 
-      "have payments data with button" in new Setup(whatYouOweDataWithOverdueData) {
+      "have payments data with button" in new Setup(whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
         pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
@@ -589,6 +618,38 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("future-payments-heading") shouldBe null
         pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
+      }
+
+      "display the paragraph about payments under review when there is a dunningLock" in new Setup(
+        whatYouOweDataWithOverdueData(twoDunningLocks), dunningLock = true) {
+        val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
+
+        pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
+        paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
+        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
+      }
+
+      "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
+        whatYouOweDataWithOverdueData(twoDunningLocks)) {
+        pageDocument.getElementById("payment-under-review-info") shouldBe null
+      }
+
+      s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
+        whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock)) {
+        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
+        val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
+
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearOverdueAndUnderReview
+        overduePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYearOverdue
+      }
+
+      s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against multiple charges" in new Setup(
+        whatYouOweDataWithOverdueLPI(List(None, None), twoDunningLocks)) {
+        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
+        val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
+
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearOverdueAndUnderReview
+        overduePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYearOverdueAndUnderReview
       }
     }
 
@@ -609,7 +670,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(1)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.poa2Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -625,7 +686,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
         dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -643,7 +704,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
         futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         futurePaymentsTableRow1.select("td").last().text() shouldBe "£25.00"
 
         pageDocument.getElementById("future-payments-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -687,7 +748,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.poa2Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -703,7 +764,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(5)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
         dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -721,7 +782,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(5)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
         futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
-          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
         futurePaymentsTableRow1.select("td").last().text() shouldBe "£25.00"
 
         pageDocument.getElementById("future-payments-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(

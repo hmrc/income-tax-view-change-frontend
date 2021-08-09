@@ -28,7 +28,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl,
     appConfig: config.FrontendAppConfig
 )
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String])(implicit messages: Messages)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String], dunningLock: Boolean)(implicit messages: Messages)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -74,6 +74,17 @@
     </details>
 }
 
+@dunningLockParagraph = {
+    @if(dunningLock) {
+        <div id="payment-under-review-info">
+            @Html(messages("whatYouOwe.dunningLock.text",
+            <a id="disagree-with-tax-appeal-link" href="https://www.gov.uk/tax-appeals" target="_blank">
+                {messages("whatYouOwe.dunningLock.link")}</a>
+            ))
+        </div>
+    }
+}
+
 @tableHead(headId: String) = {
     <thead id="@headId">
         <tr>
@@ -93,6 +104,7 @@
             @messages(s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
             @if(isChargeTypeHyperlinked){</a>}
             <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
+            @if(documentDetailWithDueDate.dunningLock) {<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
         </td>
         <td class="numeric">@{documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency}</td>
     </tr>
@@ -115,6 +127,7 @@
         @if(isChargeTypeHyperlinked){</a>}
 
         <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
+        @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
     </td>
     <td class="numeric">@{
 		if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
@@ -146,6 +159,10 @@
 
         <p>
             @paymentTypesDropdown
+        </p>
+
+        <p>
+            @dunningLockParagraph
         </p>
 
         <div>
