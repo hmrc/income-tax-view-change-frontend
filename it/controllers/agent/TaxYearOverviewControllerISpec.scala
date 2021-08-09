@@ -95,7 +95,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         documentDescription = Some("ITSA- POA 1"),
         outstandingAmount = Some(500.00),
         originalAmount = Some(1000.00),
-        documentDate = LocalDate.of(2018, 3, 29)
+        documentDate = LocalDate.of(2018, 3, 29),
+        interestOutstandingAmount = Some(0.00),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24)),
+        latePaymentInterestAmount = Some(100.00)
       )
     ),
     financialDetails = List(
@@ -284,10 +287,14 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(2)", "td:nth-of-type(2)")("−£500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest on payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("24 June 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -550,10 +557,14 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(2)", "td:nth-of-type(2)")("−£500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest on payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDate),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -628,10 +639,14 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(2)", "td:nth-of-type(2)")("−£500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest on payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDate),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -709,10 +724,14 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(2)", "td:nth-of-type(2)")("−£500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(1)", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest on payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDate),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDate),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"

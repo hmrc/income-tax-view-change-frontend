@@ -23,7 +23,7 @@ import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatter
 import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview, Calculation}
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.reportDeadlines.ObligationsModel
@@ -33,7 +33,6 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, ReportDeadlinesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.TaxYearOverview
 
@@ -51,38 +50,37 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                          )(implicit val appConfig: FrontendAppConfig,
                                            val languageUtils: LanguageUtils,
                                            mcc: MessagesControllerComponents,
-                                           dateFormatter: ImplicitDateFormatterImpl,
                                            implicit val ec: ExecutionContext,
                                            val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-				if (isEnabled(TxmEventsApproved)) {
-					auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(mtdItUser, user.agentReferenceNumber))
-				}
-				withCalculation(getClientNino(request), taxYear) { calculationOpt =>
-					withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
-						withObligationsModel(taxYear) { obligations =>
-							calculationOpt.map(calculation =>
-								if (isEnabled(TxmEventsApproved)) {
-									auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-										mtdItUser, user.agentReferenceNumber, calculation,
-										documentDetailsWithDueDates, obligations))
-								}
-							)
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+        if (isEnabled(TxmEventsApproved)) {
+          auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(mtdItUser, user.agentReferenceNumber))
+        }
+        withCalculation(getClientNino(request), taxYear) { calculationOpt =>
+          withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
+            withObligationsModel(taxYear) { obligations =>
+              calculationOpt.map(calculation =>
+                if (isEnabled(TxmEventsApproved)) {
+                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
+                    mtdItUser, user.agentReferenceNumber, calculation,
+                    documentDetailsWithDueDates, obligations))
+                }
+              )
 
-							Future.successful(Ok(view(
-								taxYear,
-								calculationOpt.map(calc => CalcOverview(calc, None)),
-								documentDetailsWithDueDates = documentDetailsWithDueDates,
-								obligations = obligations
-							)(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
-						}
-					}
-				}
-			}
+              Future.successful(Ok(view(
+                taxYear,
+                calculationOpt.map(calc => CalcOverview(calc, None)),
+                documentDetailsWithDueDates = documentDetailsWithDueDates,
+                obligations = obligations
+              )(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
+            }
+          }
+        }
+      }
   }
 
   def backUrl(): String = {
@@ -99,7 +97,6 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
       overviewOpt = calculationOverview,
       documentDetailsWithDueDates = documentDetailsWithDueDates,
       obligations = obligations,
-      implicitDateFormatter = dateFormatter,
       backUrl = backUrl()
     )
   }
@@ -118,9 +115,15 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(documentDetails, _) =>
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-          documentDetails.filter(_.paymentLot.isEmpty).map(documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail)))
+          documentDetails.filter(_.paymentLot.isEmpty).map(
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail))
+          )
         }
-        f(documentDetailsWithDueDates)
+        val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
+          documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
+            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true))
+        }
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ =>
         Logger.error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")

@@ -16,20 +16,19 @@
 
 package controllers.agent
 
-import java.time.LocalDate
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import assets.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockReportDeadlinesService}
 import mocks.views.agent.MockTaxYearOverview
 import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, CalcOverview}
+import models.financialDetails.DocumentDetailWithDueDate
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
 import play.twirl.api.HtmlFormat
@@ -38,6 +37,7 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
@@ -59,7 +59,6 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
       app.injector.instanceOf[ExecutionContext],
       itvcErrorHandler = mockItvcErrorHandler
     )
@@ -169,7 +168,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockTaxYearOverview(
 					taxYear = testYear,
 					calcOverview = None,
-					documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
+					documentDetailsWithDueDates = financialDetailsModel(testYear)
+						.getAllDocumentDetailsWithDueDates ++ List(DocumentDetailWithDueDate(financialDetailsModel(testYear).documentDetails.head,
+						financialDetailsModel(testYear).documentDetails.head.interestEndDate, true)),
 					obligations = ObligationsModel(Nil),
 					backUrl = controllers.agent.routes.TaxYearsController.show().url
 				)(HtmlFormat.empty)
@@ -193,7 +194,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockTaxYearOverview(
 					taxYear = testYear,
 					calcOverview = Some(CalcOverview(calculationDataSuccessModel, None)),
-					documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
+					documentDetailsWithDueDates = financialDetailsModel(testYear)
+						.getAllDocumentDetailsWithDueDates ++ List(DocumentDetailWithDueDate(financialDetailsModel(testYear).documentDetails.head,
+						financialDetailsModel(testYear).documentDetails.head.interestEndDate, true)),
 					obligations = ObligationsModel(Nil),
 					backUrl = controllers.agent.routes.TaxYearsController.show().url
 				)(HtmlFormat.empty)

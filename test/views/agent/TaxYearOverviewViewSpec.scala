@@ -65,9 +65,18 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   def date(day: Int, month: Int, year: Int): LocalDate = LocalDate.of(year, month, day)
 
   val testCharges: List[DocumentDetailWithDueDate] = List(
-    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00), documentDescription = Some("ITSA- POA 1"), documentDate = date(29, 3, 2018)), Some(LocalDate.now)),
-    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00), documentDescription = Some("ITSA - POA 2"), documentDate = date(29, 3, 2018)), Some(date(7, 4, 2020))),
-    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00), documentDescription = Some("TRM New Charge"), documentDate = date(29, 3, 2018)), Some(date(8, 4, 2020)))
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
+      documentDescription = Some("ITSA- POA 1"), documentDate = date(29, 3, 2018)), Some(LocalDate.now)),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00),
+      documentDescription = Some("ITSA - POA 2"), documentDate = date(29, 3, 2018)), Some(date(7, 4, 2020))),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00),
+      documentDescription = Some("TRM New Charge"), documentDate = date(29, 3, 2018)), Some(date(8, 4, 2020))),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
+      documentDescription = Some("ITSA- POA 1"), documentDate = date(29, 3, 2018), latePaymentInterestAmount = Some(200.0)), Some(LocalDate.now.plusMonths(1)), true),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00),
+      documentDescription = Some("ITSA - POA 2"), documentDate = date(29, 3, 2018), latePaymentInterestAmount = Some(80.0)), Some(LocalDate.now.plusMonths(2)), true),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00),
+      documentDescription = Some("TRM New Charge"), documentDate = date(29, 3, 2018), interestOutstandingAmount = Some(0.0)), Some(LocalDate.now.plusMonths(3)), true)
   )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -127,7 +136,6 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       overviewOpt = overview,
       documentDetailsWithDueDates = documentDetailsWithDueDates,
       obligations = obligations,
-      implicitDateFormatter = mockImplicitDateFormatter,
       backUrl = "/testBack"
     )
   }
@@ -172,6 +180,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val paymentsTabPaymentOnAccount1: String = "Payment on account 1 of 2"
     val paymentsTabPaymentOnAccount2: String = "Payment on account 2 of 2"
     val paymentsTabBalancingCharge: String = "Remaining balance"
+    val lpiPaymentOnAccount1: String = "Late payment interest on payment on account 1 of 2"
+    val lpiPaymentOnAccount2: String = "Late payment interest on payment on account 2 of 2"
+    val lpiRemainingBalance: String = "Late payment interest on remaining balance"
 
     val paymentsTabPaid: String = "Paid"
     val paymentsTabPartPaid: String = "Part Paid"
@@ -329,17 +340,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("th", 3).text shouldBe TaxYearOverviewMessages.paymentsTabStatusHeading
               row.selectNth("th", 4).text shouldBe TaxYearOverviewMessages.paymentsTabAmountHeading
             }
-            "has a row for a paid payment on account 1" in new Setup(view()) {
-              val row: Element = content.selectHead("#payments").selectHead("table").selectNth("tr", 2)
-              row.selectNth("td", 1).selectHead("div").selectHead("a").text shouldBe TaxYearOverviewMessages.paymentsTabPaymentOnAccount1
-              row.selectNth("td", 1).selectHead("div").selectHead("a").attr("href") shouldBe
-                controllers.agent.routes.ChargeSummaryController.showChargeSummary(testYear, "testId").url
-              row.selectNth("td", 2).text shouldBe LocalDate.now.toLongDate
-              row.selectNth("td", 3).text shouldBe TaxYearOverviewMessages.paymentsTabPaid
-              row.selectNth("td", 4).text shouldBe "£100.00"
-            }
             "has a row for a part paid (overdue) payment on account 2" in new Setup(view()) {
-              val row: Element = content.selectHead("#payments").selectHead("table").selectNth("tr", 3)
+              val row: Element = content.selectHead("#payments").selectHead("table").selectNth("tr", 2)
               val firstColumn: Element = row.selectNth("td", 1)
               firstColumn.selectNth("div", 1).text shouldBe TaxYearOverviewMessages.paymentsTabOverdue
               firstColumn.selectNth("div", 1).attr("class") shouldBe "govuk-tag govuk-tag--red"
@@ -352,7 +354,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 4).text shouldBe "£200.00"
             }
             "has a row for a unpaid (overdue) balancing charge" in new Setup(view()) {
-              val row: Element = content.selectHead("#payments").selectHead("table").selectNth("tr", 4)
+              val row: Element = content.selectHead("#payments").selectHead("table").selectNth("tr", 3)
               val firstColumn: Element = row.selectNth("td", 1)
               firstColumn.selectNth("div", 1).text shouldBe TaxYearOverviewMessages.paymentsTabOverdue
               firstColumn.selectNth("div", 1).attr("class") shouldBe "govuk-tag govuk-tag--red"
@@ -363,6 +365,71 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 2).text shouldBe "8 April 2020"
               row.selectNth("td", 3).text shouldBe TaxYearOverviewMessages.paymentsTabUnpaid
               row.selectNth("td", 4).text shouldBe "£100.00"
+            }
+            "has a row for a paid payment on account 1" in new Setup(view()) {
+              val row: Element = content.selectHead("#payments").selectHead("table").selectNth("tr", 4)
+              row.selectNth("td", 1).selectHead("div").selectHead("a").text shouldBe TaxYearOverviewMessages.paymentsTabPaymentOnAccount1
+              row.selectNth("td", 1).selectHead("div").selectHead("a").attr("href") shouldBe
+                controllers.agent.routes.ChargeSummaryController.showChargeSummary(testYear, "testId").url
+              row.selectNth("td", 2).text shouldBe LocalDate.now.toLongDate
+              row.selectNth("td", 3).text shouldBe TaxYearOverviewMessages.paymentsTabPaid
+              row.selectNth("td", 4).text shouldBe "£100.00"
+            }
+            "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(view()) {
+              val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(5) td:nth-child(1) a")
+              paymentTypeLink.text shouldBe TaxYearOverviewMessages.lpiPaymentOnAccount1
+              paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+                testYear, "testId", true).url
+            }
+
+            "display the Due date in the Payments tab for late payment interest POA1" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(1).toLongDate
+            }
+
+            "display the Status in the payments tab for late payment interest POA1" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(5) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabPartPaid
+            }
+
+            "display the Amount in the payments tab for late payment interest POA1" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(5) td:nth-child(4)").text shouldBe "£200.00"
+            }
+
+            "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(view()) {
+              val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(6) td:nth-child(1) a")
+              paymentTypeLink.text shouldBe TaxYearOverviewMessages.lpiPaymentOnAccount2
+              paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+                testYear, "testId2", true).url
+            }
+
+            "display the Due date in the Payments tab for late payment interest POA2" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(6) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(2).toLongDate
+            }
+
+            "display the Status in the payments tab for late payment interest POA2" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(6) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabPartPaid
+            }
+
+            "display the Amount in the payments tab for late payment interest POA2" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(6) td:nth-child(4)").text shouldBe "£80.00"
+            }
+
+            "display the payment type as a link to Charge Summary in the Payments tab for late payment interest remaining balance" in new Setup(view()) {
+              val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(7) td:nth-child(1) a")
+              paymentTypeLink.text shouldBe TaxYearOverviewMessages.lpiRemainingBalance
+              paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+                testYear, "testId3", true).url
+            }
+
+            "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(7) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(3).toLongDate
+            }
+
+            "display the Status in the payments tab for late payment interest remaining balance" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(7) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabUnpaid
+            }
+
+            "display the Amount in the payments tab for late payment interest remaining balance" in new Setup(view()) {
+              content.selectHead("#payments-table tr:nth-child(7) td:nth-child(4)").text shouldBe "£100.00"
             }
           }
         }

@@ -47,8 +47,8 @@ trait MockTaxYearOverview extends BeforeAndAfterEach with MockitoSugar {
       matches(calcOverview),
       matches(documentDetailsWithDueDates),
       matches(obligations),
-      any(), matches(backUrl)
-    )(any(), any(), any(), any()))
+      matches(backUrl)
+    )(any(), any()))
       .thenReturn(response)
   }
 

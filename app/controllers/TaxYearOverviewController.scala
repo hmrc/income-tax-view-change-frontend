@@ -83,7 +83,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
           documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true))
         }
-        f((documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi))
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ => Future.successful(itvcErrorHandler.showInternalServerError())
     }
