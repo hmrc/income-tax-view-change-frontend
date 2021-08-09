@@ -183,6 +183,11 @@ object PaymentAllocationsTestConstants {
 			)
 		))
 
+	val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+		List(documentDetail.copy(outstandingAmount = Some(0))),
+		List(financialDetail)
+	)
+
 	val validWrittenPaymentAllocationChargesJson: JsValue = Json.parse(
 		"""{
 			|    "documentDetails": [

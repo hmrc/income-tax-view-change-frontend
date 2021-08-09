@@ -48,7 +48,6 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
     )(
       appConfig,
       app.injector.instanceOf[MessagesControllerComponents],
-      mockImplicitDateFormatter,
       ec,
       mockItvcErrorHandler
     )

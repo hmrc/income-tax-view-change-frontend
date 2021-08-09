@@ -19,7 +19,6 @@ package controllers.agent
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.ImplicitDateFormatterImpl
 import models.core.Nino
 import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,7 +36,6 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
                                              val authorisedFunctions: AuthorisedFunctions
                                             )(implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
-                                              dateFormatter: ImplicitDateFormatterImpl,
                                               val ec: ExecutionContext,
                                               itvcErrorHandler: ItvcErrorHandler
                                             ) extends ClientConfirmedController with FeatureSwitching {

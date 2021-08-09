@@ -16,12 +16,12 @@
 
 package views.agent
 
-import assets.PaymentAllocationsTestConstants.{paymentAllocationChargesModel, paymentAllocationViewModel}
-import assets.PaymentAllocationsTestConstants.testValidPaymentAllocationsModel
+import assets.PaymentAllocationsTestConstants._
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.PaymentAllocationViewModel
 import models.paymentAllocations.AllocationDetail
+import org.jsoup.select.Elements
 import testUtils.ViewSpec
 import views.html.agent.PaymentAllocation
 
@@ -46,6 +46,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     val allocationsTableHeading = "Payment allocations"
     val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
     val allocationsTableHeadersText: String = allocationsTableHeaders.mkString(" ")
+    val creditOnAccount = "Credit on account"
+    val creditOnAccountAmount = "£200.00"
   }
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
@@ -133,6 +135,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Class 4 National Insurance for payment on account 1 of 2 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
              |Class 4 National Insurance for payment on account 1 of 2 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
              |Class 4 National Insurance for payment on account 1 of 2 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
+             |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         content.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -172,6 +175,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Class 4 National Insurance for payment on account 2 of 2 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
              |Class 4 National Insurance for payment on account 2 of 2 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
              |Class 4 National Insurance for payment on account 2 of 2 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
+             |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         content.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -205,11 +209,25 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Capital Gains Tax for remaining balance Tax year 2018 to 2019 27 Aug 2019 £9,876.54
              |Student Loans for remaining balance Tax year 2018 to 2019 28 Aug 2019 £8,765.43
              |Voluntary Class 2 National Insurance for remaining balance Tax year 2019 to 2020 29 Aug 2019 £7,654.32
+             |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         content.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
+    }
+
+    "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
+      val allTableData: Elements =  document.getElementById("credit-on-account").getElementsByTag("td")
+      "getting payment allocation information"
+      allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
+      "getting payment allocation Amount"
+      allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
+    }
+
+    "not have Credit on account row within payment details" in new PaymentAllocationSetup(paymentAllocationViewModel.copy(
+      paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
+      document.getElementById("credit-on-account") shouldBe null
     }
 
   }
