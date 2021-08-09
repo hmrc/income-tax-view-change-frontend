@@ -39,7 +39,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
 
   def form: Form[StubClientDetailsModel] = StubClientDetailsForm.clientDetailsForm.fill(
     StubClientDetailsModel(
-      nino = "AA000000A",
+      nino = "AA888888A",
       utr = "1234567890",
       status = OK
     )
