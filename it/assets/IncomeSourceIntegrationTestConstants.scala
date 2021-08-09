@@ -154,6 +154,16 @@ object IncomeSourceIntegrationTestConstants {
 				"outstandingAmount" -> outstandingAmount,
 				"originalAmount" -> originalAmount,
 				"documentDate" -> "2018-03-29"
+			),
+			Json.obj(
+				"taxYear" -> "9999",
+				"transactionId" -> "PAYID01",
+				"documentDescription" -> "Payment On Account",
+				"outstandingAmount" -> -outstandingAmount,
+				"originalAmount" -> -originalAmount,
+				"documentDate" -> "2018-03-29",
+				"paymentLot" -> "081203010024",
+				"paymentLotItem" -> "000001"
 			)
 		),
 		"financialDetails" -> Json.arr(

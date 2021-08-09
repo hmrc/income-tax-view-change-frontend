@@ -24,6 +24,7 @@
 
 @import java.time.LocalDate
 @import models.chargeHistory.ChargeHistoryModel
+@import models.financialDetails.FinancialDetailsModel
 
 @this(
     mainTemplate: MainTemplate,
@@ -32,7 +33,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl
 )
 @(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backUrl: String,
-    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
+    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
     chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit messages: Messages)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -178,7 +179,17 @@
             @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
                 <tr>
                     <td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
-                    <td>@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))</td>
+                    <td>
+						@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
+							<a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+								@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+							</a>
+						}
+
+						@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isEmpty) {
+							@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+						}
+					</td>
                     <td class="numeric">@payment.amount.get.abs.toCurrency</td>
                 </tr>
             }
