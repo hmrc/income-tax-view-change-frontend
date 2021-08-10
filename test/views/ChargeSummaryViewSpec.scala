@@ -36,13 +36,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
               paymentBreakdown: List[FinancialDetail] = List(),
               chargeHistory: List[ChargeHistoryModel] = List(),
               paymentAllocations: List[PaymentsWithChargeType] = List(),
-							payments: FinancialDetailsModel = payments,
               chargeHistoryEnabled: Boolean = true,
               paymentAllocationEnabled: Boolean = false,
               latePaymentInterestCharge: Boolean = false) {
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
     val view: Html = chargeSummary(documentDetail, dueDate, "testBackURL",
-      paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
+      paymentBreakdown, chargeHistory, paymentAllocations, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -110,11 +109,6 @@ class ChargeSummaryViewSpec extends ViewSpec {
 		financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", dunningLock = Some("Stand over order")),
 		financialDetail(originalAmount = 9876.54, chargeType = "CGT", dunningLock = Some("Stand over order")),
 		financialDetail(originalAmount = 543.21, chargeType = "SL")
-	)
-
-	val payments: FinancialDetailsModel = FinancialDetailsModel(
-		documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, Some("lotItem"), Some("lot"))),
-		financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
 	)
 
 
@@ -391,12 +385,6 @@ class ChargeSummaryViewSpec extends ViewSpec {
 				"chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
 					chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
 					verifyPaymentHistoryContent(Messages.historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
-				}
-
-				"chargeHistory enabled with a matching link to the payment allocations page" in new Setup(documentDetailModel(),
-					chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
-					document.select(Selectors.table).select("a").size shouldBe 10
-					document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
 				}
 
 				"chargeHistory disabled" in new Setup(documentDetailModel(),

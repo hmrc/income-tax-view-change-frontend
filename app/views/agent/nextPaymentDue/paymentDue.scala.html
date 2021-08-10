@@ -244,15 +244,5 @@
             }
 
         </div>
-            <div>
-                @paymentDaysNoteParagraph
-                @creditOnAccountNotePanel
-                <div id="payment-button">
-                    <a id="payment-button-link" class="button" href="@controllers.agent.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence)"
-                       aria-label='@messages("agent.paymentDue.pay-now-aria", (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
-                                   chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)'>@messages("agent.paymentDue.payNow")</a>
-                </div>
-            </div>
-
     }
 }

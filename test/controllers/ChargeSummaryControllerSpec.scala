@@ -57,8 +57,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 		val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
 
-    when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
-      .thenReturn(Future.successful(List((2018, financialDetails))))
+    when(financialDetailsService.getFinancialDetails(any(), any())(any()))
+      .thenReturn(Future.successful(financialDetails))
 
 		when(incomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
 			.thenReturn(Future.successful(chargeHistory))
@@ -147,7 +147,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
       }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled and allocations present" in new Setup(chargesWithAllocatedPaymentModel(2018)) {
+      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled and allocations present" in new Setup(financialDetailsModel(2018)) {
         disable(ChargeHistory)
         enable(PaymentAllocation)
         val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
@@ -158,7 +158,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentHistoryHeading
       }
 
-      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(chargesWithAllocatedPaymentModel(2018)) {
+      "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(financialDetailsModel(2018)) {
         disable(ChargeHistory)
         enable(PaymentAllocation)
         val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))

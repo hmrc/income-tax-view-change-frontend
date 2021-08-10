@@ -328,8 +328,7 @@ object FinancialDetailsTestConstants {
                       mainType: String = "SA Payment on Account 1",
                       chargeType: String = "NIC4 Wales",
                       originalAmount: BigDecimal = 100,
-                      dunningLock: Option[String] = None,
-											additionalSubItems: Seq[SubItem] = Seq()): FinancialDetail = FinancialDetail.apply(
+                      dunningLock: Option[String] = None): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
     transactionId = Some(id1040000123),
@@ -348,9 +347,16 @@ object FinancialDetailsTestConstants {
           amount = Some(100),
           dunningLock = dunningLock,
           clearingDate = Some("2019-07-23"),
-          clearingReason = Some("clearingReason")
+          clearingReason = Some("clearingReason"),
+          outgoingPaymentMethod= Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount =  Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem")
         )
-      ) ++ additionalSubItems)
+      ))
   )
 
 
@@ -377,14 +383,6 @@ object FinancialDetailsTestConstants {
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock))
     )
-
-	def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
-		FinancialDetailsModel(
-			documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None),
-				documentDetailModel(9999, outstandingAmount = outstandingAmount.map (amount => -amount), paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem"))),
-			financialDetails = List(financialDetail(taxYear, additionalSubItems = Seq(SubItem(clearingDate = Some("2018-09-08"), amount = Some(500.0), paymentAmount = Some(500.0),
-				paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem")))))
-		)
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     documentDetails = List(
