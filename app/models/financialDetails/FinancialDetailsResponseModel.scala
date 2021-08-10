@@ -77,22 +77,6 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
 
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)
 
-	def filterPayments(): FinancialDetailsModel = {
-		val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
-		FinancialDetailsModel(
-			filteredDocuments,
-			financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
-		)
-	}
-
-	def findMatchingPaymentDocument(paymentLot: String, paymentLotItem: String): Option[DocumentDetail] = {
-		documentDetails.find(document => document.paymentLot.contains(paymentLot) && document.paymentLotItem.contains(paymentLotItem))
-	}
-
-	def merge(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
-		FinancialDetailsModel(documentDetails ++ financialDetailsModel.documentDetails,
-			financialDetails ++ financialDetailsModel.financialDetails)
-	}
 }
 
 
