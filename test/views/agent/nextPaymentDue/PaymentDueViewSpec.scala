@@ -391,12 +391,6 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("future-payments-type-1-overdue") shouldBe null
 
-        pageDocument.getElementById("payment-days-note").text shouldBe AgentPaymentDue.paymentDaysNote
-        pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
-        pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
-
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(12345667).url
-
         pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
       }
@@ -461,12 +455,6 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       s"have payment details and should not contain future payments and overdue payment headers" in new Setup(whatYouOweDataWithDataDueIn30Days) {
-        pageDocument.getElementById("payment-days-note").text shouldBe AgentPaymentDue.paymentDaysNote
-        pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
-        pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
-
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(5000).url
-
         pageDocument.getElementById("future-payments-heading") shouldBe null
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
       }
@@ -577,12 +565,6 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("over-due-type-1-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
       s"have payments data with button" in new Setup(whatYouOweDataWithOverdueData) {
-        pageDocument.getElementById("payment-days-note").text shouldBe AgentPaymentDue.paymentDaysNote
-        pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
-        pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
-
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(12345667).url
-
         pageDocument.getElementById("future-payments-heading") shouldBe null
         pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
       }
@@ -646,12 +628,6 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("future-payments-type-0-overdue") shouldBe null
       }
       s"have payment data with button" in new Setup(whatYouOweDataWithMixedData) {
-        pageDocument.getElementById("payment-days-note").text shouldBe AgentPaymentDue.paymentDaysNote
-        pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
-        pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
-
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(5000).url
-
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
       }
     }
@@ -759,15 +735,6 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
           LocalDate.now().getYear, "1040000123").url
         pageDocument.getElementById("future-payments-type-0-overdue") shouldBe null
       }
-      s"have payment data with button" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
-        pageDocument.getElementById("payment-days-note").text shouldBe AgentPaymentDue.paymentDaysNote
-        pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
-        pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
-
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(12345667).url
-
-      }
-
     }
 
     "the user has no charges" should {
@@ -776,8 +743,6 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("no-payments-due").text shouldBe AgentPaymentDue.noPaymentsDue
         pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe AgentPaymentDue.osChargesNote
-        pageDocument.getElementById("payment-days-note").text shouldBe AgentPaymentDue.paymentDaysNote
-        pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
       }
 
       "have the link to their previous Self Assessment online account in the sa-note" in new Setup(noChargesModel) {

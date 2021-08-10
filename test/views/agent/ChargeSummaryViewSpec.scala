@@ -111,10 +111,6 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
         .text shouldBe "£1,700.00"
     }
 
-    "have a payment link when an outstanding amount is to be paid and payments are enabled" in new Setup(documentDetailWithDueDateModel()) {
-      document.select("div#payment-link-2018").text() shouldBe "Pay now"
-    }
-
     "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailWithDueDateModel(outstandingAmount = Some(0))) {
       document.select("div#payment-link-2018").text() shouldBe ""
     }
@@ -128,11 +124,6 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     "has a back link" in new Setup(documentDetailPOA1) {
       document.backLink.text shouldBe "Back"
     }
-
-    "has a pay now button display" in new Setup(documentDetailWithDueDateModel(outstandingAmount = Some(1600))) {
-      document.select(".button").text() shouldBe "Pay now"
-    }
-
 
     "not display Payment (charge) history" when {
       "charge history is not provided" in new Setup(documentDetailPOA1, chargeHistoryOpt = None) {
