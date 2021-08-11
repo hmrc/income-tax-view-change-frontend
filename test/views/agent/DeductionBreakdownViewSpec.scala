@@ -38,6 +38,8 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       Estimate),taxYear2017,"testBackURL")
   )
 
+  val deductions = "Allowances and deductions"
+
   "The deduction breakdown view" when {
 
     "provided with a calculation without tax deductions for the 2017 tax year" should {
@@ -52,6 +54,10 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have the correct heading" in new DeductionBreakdownSetup {
         content hasPageHeading DeductionBreakdown.heading(taxYear2017)
         content.h1.select(".heading-secondary").text() shouldBe DeductionBreakdown.subHeading(taxYear2017)
+      }
+
+      "have the correct caption" in new DeductionBreakdownSetup {
+        content.selectHead(" caption").text.contains(deductions)
       }
 
       "have the correct guidance" in new DeductionBreakdownSetup {
@@ -95,6 +101,10 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have the correct agent heading" in new DeductionBreakdownSetup2018 {
         content hasPageHeading DeductionBreakdown.heading(taxYear2018)
         content.h1.select(".heading-secondary").text() shouldBe DeductionBreakdown.subHeading(taxYear2018)
+      }
+
+      "have the correct caption" in new DeductionBreakdownSetup2018 {
+        content.selectHead(" caption").text.contains(deductions)
       }
 
       "have the correct guidance" in new DeductionBreakdownSetup2018 {

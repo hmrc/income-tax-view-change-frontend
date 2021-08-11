@@ -162,6 +162,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
     def calculationTabHeadingEstimate(from: String, to: String): String = s"$from to $to estimate"
 
+    val sectionHeader: String = "Section"
+    val amountHeader: String = "Amount"
     val calculationTabIncome: String = "Income"
     val calculationTabAllowances: String = "Allowances and deductions"
     val calculationTabTotalIncome: String = "Total income on which tax is due"
@@ -270,11 +272,13 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         "has the tab contents" which {
           "has different headings" when {
             "it is an estimate" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
-              val heading: Element = content.selectHead("#taxCalculation").selectHead("h2")
-              heading.text shouldBe TaxYearOverviewMessages.calculationTabHeadingEstimate("6 April 2019", "6 April 2020")
+              content.selectHead("dl > div:nth-child(1) > dd:nth-child(1)").text shouldBe TaxYearOverviewMessages.calculationDate
+
             }
             "it is crystallised" in new Setup(view()) {
-              content.selectHead("#taxCalculation").selectHead("h2").text shouldBe TaxYearOverviewMessages.calculationTabHeadingCrystallised
+
+              content.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe TaxYearOverviewMessages.totalDue
+
             }
             "there is no calculation data" in new Setup(view(overview = None)) {
               content.selectHead("#taxCalculation").selectHead("h2").text shouldBe TaxYearOverviewMessages.taxCalculationNoData
@@ -286,12 +290,22 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             }
           }
           "has a table detailing a users income calculation" which {
+
+            "display the section header in the Tax Calculation tab" in new Setup(view()) {
+              val sectionHeader: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(1)")
+              sectionHeader.text shouldBe TaxYearOverviewMessages.sectionHeader
+            }
+
+            "display the amount header in the Tax Calculation tab" in new Setup(view()) {
+              val amountHeader: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(2)")
+              amountHeader.text shouldBe TaxYearOverviewMessages.amountHeader
+            }
+
             "has a row for the user's income" in new Setup(view()) {
-              val row: Element = content.selectHead("#taxCalculation").selectNth("table", 1).selectNth("tr", 1)
-              row.selectNth("td", 1).selectHead("a").text shouldBe TaxYearOverviewMessages.calculationTabIncome
-              row.selectNth("td", 1).selectHead("a")
-                .attr("href") shouldBe controllers.agent.routes.IncomeSummaryController.showIncomeSummary(2020).url
-              row.selectNth("td", 2).text shouldBe "£150.00"
+              val incomeLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
+              incomeLink.text shouldBe TaxYearOverviewMessages.calculationTabIncome
+              incomeLink.attr("href") shouldBe controllers.agent.routes.IncomeSummaryController.showIncomeSummary(2020).url
+              content.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe "£150.00"
             }
             "has a row for the user's allowances and deductions" in new Setup(view()) {
               val row: Element = content.selectHead("#taxCalculation").selectNth("table", 1).selectNth("tr", 2)

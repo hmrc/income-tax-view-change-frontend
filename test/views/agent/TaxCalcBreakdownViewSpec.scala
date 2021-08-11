@@ -67,7 +67,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.h2.selectFirst("h2").text().contains(TaxCalcBreakdown.sectionHeadingPPP)
+          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingPPP)
         }
 
         "has a table header section" in new Setup(view) {
@@ -125,7 +125,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.h2.selectFirst("h2").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums)
+          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingLumpSums)
         }
 
         "has a table header section" in new Setup(view) {
@@ -184,7 +184,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.h2.selectFirst("h2").text().contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies)
+          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies)
         }
 
         "has a table header section" in new Setup(view) {
@@ -294,7 +294,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.h2.selectFirst("h2").text().contains(TaxCalcBreakdown.sectionHeadingPPP)
+          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingPPP)
         }
 
         "has a table header section" in new Setup(view) {
@@ -324,7 +324,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have no Pay, pensions and profit Income" which {
         "has no Pay, pensions and profit heading" in new Setup(zeroIncome) {
-          document.select("h2").text().contains(TaxCalcBreakdown.sectionHeadingPPP) shouldBe false
+          document.select("caption").text().contains(TaxCalcBreakdown.sectionHeadingPPP) shouldBe false
         }
       }
 
@@ -335,7 +335,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.table(2).h2.text() shouldBe TaxCalcBreakdown.sectionHeadingSavings
+          content.selectById("savingsAndGains").text shouldBe TaxCalcBreakdown.sectionHeadingSavings
         }
 
         "has a table header section" in new Setup(view) {
@@ -383,7 +383,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have no Savings and Gains Income" which {
         "has no Savings and Gains heading" in new Setup(zeroIncome) {
-          document.select("h2").text().contains(TaxCalcBreakdown.sectionHeadingSavings) shouldBe false
+          document.select("caption").text().contains(TaxCalcBreakdown.sectionHeadingSavings) shouldBe false
         }
       }
 
@@ -394,7 +394,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.table(3).h2.text() shouldBe TaxCalcBreakdown.sectionHeadingDividends
+          content.selectById("dividends").text shouldBe TaxCalcBreakdown.sectionHeadingDividends
         }
 
         "has a table header section" in new Setup(view) {
@@ -442,7 +442,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have no Dividend Income" which {
         "has no dividend heading" in new Setup(zeroIncome) {
-          document.select("h2").text().contains(TaxCalcBreakdown.sectionHeadingDividends) shouldBe false
+          document.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingDividends) shouldBe false
         }
       }
 
@@ -452,7 +452,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.h2.selectFirst("h2").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums
+          content.selectHead("caption").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums
           )
         }
 
@@ -483,7 +483,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have no Lump Sum Income" which {
         "has no Lump Sum heading" in new Setup(zeroIncome) {
-          document.select("h2").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums) shouldBe false
+          document.select("caption").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums) shouldBe false
         }
       }
 
@@ -494,7 +494,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.h2.selectFirst("h2").text().contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies)
+          content.selectById("gainsOnLifePolicies").text shouldBe TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies
         }
 
         "has a table header section" in new Setup(view) {
@@ -524,7 +524,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have no Gains on Life Policy Income" which {
         "has no Gains on Life Policy heading" in new Setup(zeroIncome) {
-          document.select("h2").text().contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies) shouldBe false
+          document.select("caption").text().contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies) shouldBe false
         }
       }
 
@@ -592,7 +592,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       "have a Tax reductions table" which {
 
         "has a Tax reductions heading" in new Setup(view) {
-          content.table(7).h2.text() shouldBe TaxCalcBreakdown.sectionHeadingTaxReductions
+          content.selectById("reductions-title").text shouldBe TaxCalcBreakdown.sectionHeadingTaxReductions
         }
 
         "has a table header section" in new Setup(view) {
@@ -697,7 +697,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.table(8).h2.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          content.selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
         }
 
         "has a table header section" in new Setup(view) {
@@ -707,7 +707,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has a Tax reductions line with the correct value" in new Setup(view) {
-          content.table(9).h2.text() shouldBe TaxCalcBreakdown.otherCharges
+          content.selectById("other_charges").text shouldBe TaxCalcBreakdown.otherCharges
         }
 
         "has a Voluntary Nic line with the correct value" in new Setup(view) {
@@ -730,7 +730,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          content.table(10).h2.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalDeduc
+          content.selectById("taxDeductedAtSource").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalDeduc
         }
 
         "has a table header section" in new Setup(view) {

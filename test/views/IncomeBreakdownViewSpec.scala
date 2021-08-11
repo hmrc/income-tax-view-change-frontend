@@ -30,15 +30,8 @@ class IncomeBreakdownViewSpec extends ViewSpec {
 
   val incomeBreakdown = app.injector.instanceOf[IncomeBreakdown]
 
-  object Breadcrumbs {
-    val businessTaxAccount = "Business tax account"
-    val home = "Income Tax account"
-    val taxYears = "Tax years"
+  val income = "Income"
 
-    def taxYear(start: Int, end: Int): String = s"6 April $start to 5 April $end"
-
-    val income = "Income"
-  }
 
   "The income breakdown view" when {
 
@@ -56,6 +49,10 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have the correct heading" in new Setup(view) {
         content hasPageHeading IncomeBreakdown.heading(taxYear)
         content.h1.select(".heading-secondary").text() shouldBe IncomeBreakdown.subHeading(taxYear)
+      }
+
+      "have the correct caption" in new Setup(view) {
+        content.selectHead(" caption").text.contains(income)
       }
 
       "have the correct guidance" in new Setup(view) {
@@ -96,6 +93,10 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have the correct heading" in new Setup(view) {
         content hasPageHeading IncomeBreakdown.heading(taxYear)
         content.h1.select(".heading-secondary").text() shouldBe IncomeBreakdown.subHeading(taxYear)
+      }
+
+      "have the correct caption" in new Setup(view) {
+        content.selectHead(" caption").text.contains(income)
       }
 
       "have the correct guidance" in new Setup(view) {

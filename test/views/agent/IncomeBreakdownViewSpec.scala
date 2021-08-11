@@ -42,6 +42,8 @@ class IncomeBreakdownViewSpec extends ViewSpec {
     ),
     transaction = Some(TransactionModel())
   )
+  val income = "Income"
+
 
   "The income breakdown view" when {
 
@@ -59,6 +61,10 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have the correct heading" in new Setup(view) {
         content hasPageHeading IncomeBreakdown.heading(taxYear)
         content.h1.select(".heading-secondary").text() shouldBe IncomeBreakdown.subHeading(taxYear)
+      }
+
+      "have the correct caption" in new Setup(view) {
+        content.selectHead(" caption").text.contains(income)
       }
 
       "have the correct guidance" in new Setup(view) {
@@ -99,6 +105,10 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have the correct heading" in new Setup(view) {
         content hasPageHeading IncomeBreakdown.heading(taxYear)
         content.h1.select(".heading-secondary").text() shouldBe IncomeBreakdown.subHeading(taxYear)
+      }
+
+      "have the correct caption" in new Setup(view) {
+        content.selectHead(" caption").text.contains(income)
       }
 
       "have the correct guidance" in new Setup(view) {

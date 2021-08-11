@@ -51,6 +51,10 @@
         </p>
 
         <table>
+            <caption class="govuk-table__caption heading-large visually-hidden">
+                <span class="heading-secondary">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>
+                @messages("deduction_breakdown.heading")
+            </caption>
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("deduction_breakdown.table.header")</th>
