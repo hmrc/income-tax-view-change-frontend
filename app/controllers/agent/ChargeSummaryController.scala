@@ -97,8 +97,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                 success.financialDetails.filter(_.transactionId.contains(chargeId)).flatMap(_.allocation)
               } else Nil
 
-						getChargeHistory(chargeId).map { chargeHistoryOpt =>
-							Ok(view(docDateDetail, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
+            getChargeHistory(chargeId, isLatePaymentCharge).map { chargeHistoryOpt =>
+              Ok(view(docDateDetail, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
                 paymentAllocations =paymentAllocations,
                 paymentAllocationEnabled= paymentAllocationEnabled))
 						}
@@ -118,11 +118,13 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     case _ => controllers.agent.routes.HomeController.show().url
   }
 
-  private def getChargeHistory(chargeId: String)(implicit req: Request[_]): Future[Option[List[ChargeHistoryModel]]] = {
+  private def getChargeHistory(chargeId: String, isLatePaymentCharge: Boolean)(implicit req: Request[_]): Future[Option[List[ChargeHistoryModel]]] = {
     ChargeHistory.fold(
       ifDisabled = Future.successful(None),
-      ifEnabled = financialDetailsService.getChargeHistoryDetails(getClientMtditid, chargeId)
-        .map(historyListOpt => historyListOpt.map(sortHistory) orElse Some(Nil))
+      ifEnabled = if (isLatePaymentCharge) Future.successful(Some(Nil)) else {
+          financialDetailsService.getChargeHistoryDetails(getClientMtditid, chargeId)
+            .map(historyListOpt => historyListOpt.map(sortHistory) orElse Some(Nil))
+        }
     )
   }
 

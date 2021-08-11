@@ -170,7 +170,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 				verify(mockFinancialDetailsService).getChargeHistoryDetails(ameq("XAIT00000000015"), ameq(id1040000123))(any())
 			}
 
-			"pass to the view an empty list" when {
+			"pass to the view an empty charge history list" when {
 				"charge history list does not exist" in new Setup() {
 					enable(ChargeHistory)
 					enable(PaymentAllocation)
@@ -185,6 +185,21 @@ class ChargeSummaryControllerSpec extends TestSupport
 
 					status(result) shouldBe OK
 					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any())(any(), any(), any(), any())
+				}
+
+				"viewing a Late Payment Interest summary" in new Setup() {
+					enable(ChargeHistory)
+					enable(PaymentAllocation)
+					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+					mockSingleBusinessIncomeSource()
+
+					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123, isLatePaymentCharge = true)
+						.apply(fakeRequestConfirmedClient("AB123456C"))
+
+					status(result) shouldBe OK
+					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any())(any(), any(), any(), any())
+					verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 				}
 			}
 
@@ -215,6 +230,21 @@ class ChargeSummaryControllerSpec extends TestSupport
 				mockSingleBusinessIncomeSource()
 
 				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
+					.apply(fakeRequestConfirmedClient("AB123456C"))
+
+				status(result) shouldBe OK
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any())(any(), any(), any(), any())
+				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
+			}
+
+			"not pass any charge history list to the view when viewing a Late Payment Interest summary" in new Setup() {
+				disable(ChargeHistory)
+				disable(PaymentAllocation)
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+				mockSingleBusinessIncomeSource()
+
+				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123, isLatePaymentCharge = true)
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK

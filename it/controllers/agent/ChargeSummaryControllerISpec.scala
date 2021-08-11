@@ -145,7 +145,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubGetFinancialDetailsSuccess()
-      stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment(
         currentTaxYearEnd.getYear.toString, "testId", clientDetails
