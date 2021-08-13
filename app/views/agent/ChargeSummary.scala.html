@@ -84,7 +84,7 @@
 
 	<p>
 		@messages("chargeSummary.whatYouOwe.textOne")
-		<a id= "what-you-owe-link" href=@controllers.agent.nextPaymentDue.routes.PaymentDueController.show().url>@messages("chargeSummary.whatYouOwe.linkText")</a>
+		<a id= "what-you-owe-link" href=@controllers.agent.routes.WhatYouOweController.show().url>@messages("chargeSummary.whatYouOwe.linkText")</a>
 		@messages("chargeSummary.whatYouOwe.textTwo")
 	</p>
 

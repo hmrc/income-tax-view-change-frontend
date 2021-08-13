@@ -1,9 +1,12 @@
 
-package controllers.agent.nextPaymentDue
+package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
+import assets.FinancialDetailsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.OutstandingChargesIntegrationTestConstants._
+import assets.PaymentDueTestConstraints.getCurrentTaxYearEnd
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import controllers.Assets.INTERNAL_SERVER_ERROR
@@ -12,17 +15,14 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
-import assets.PaymentDueTestConstraints.getCurrentTaxYearEnd
-import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 
 import java.time.LocalDate
-import assets.FinancialDetailsIntegrationTestConstants.{whatYouOweDataFullDataWithoutOutstandingCharges, whatYouOweDataWithDataDueIn30Days, whatYouOweFinancialDetailsEmptyBCDCharge, whatYouOweNoChargeList, whatYouOweOutstandingChargesOnly, whatYouOweWithAZeroOutstandingAmount}
 
-class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val clientDetails: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
@@ -56,7 +56,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
     incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
   )(FakeRequest())
 
-  s"GET ${controllers.agent.nextPaymentDue.routes.PaymentDueController.show().url}" should {
+  s"GET ${controllers.agent.routes.WhatYouOweController.show().url}" should {
     "SEE_OTHER to " when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
@@ -579,6 +579,91 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
     )
+  }
+
+  "when showing the Dunning Lock content" should {
+    "render the what you owe page with no dunningLocks" in {
+      disable(TxmEventsApproved)
+      stubAuthorisedAgentUser(authorised = true)
+      val testTaxYear = LocalDate.now().getYear.toString
+
+      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+      And("I wiremock stub a multiple financial details response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+        testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock))
+      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+        "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+      When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+      Then("the result should have a HTTP status of OK (200) and the what you owe page with no dunningLocks")
+      result should have(
+        httpStatus(OK),
+        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false),
+        elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")(""),
+        elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
+      )
+    }
+
+    "render the what you owe page with a dunningLocks against a charge" in {
+      disable(TxmEventsApproved)
+      stubAuthorisedAgentUser(authorised = true)
+      val testTaxYear = LocalDate.now().getYear.toString
+
+      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+
+      And("I wiremock stub a multiple financial details response with dunning lock present")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+        testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock))
+      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+        "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+      When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+      Then("the result should have a HTTP status of OK (200) and the what you owe page with dunning lock present")
+      result should have(
+        httpStatus(OK),
+        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
+        elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+        elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
+      )
+    }
+
+    "render the what you owe page with multiple dunningLocks" in {
+      disable(TxmEventsApproved)
+      stubAuthorisedAgentUser(authorised = true)
+      val testTaxYear = LocalDate.now().getYear.toString
+
+      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
+
+
+      And("I wiremock stub a multiple financial details response with dunning locks present")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+        testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks))
+      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+        "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+      When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+      Then("the result should have a HTTP status of OK (200) and the what you owe page with multiple dunningLocks")
+      result should have(
+        httpStatus(OK),
+        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
+        elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+        elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
+      )
+    }
   }
 
   s"return $OK with TxmEventsApproved FS enabled" when {
