@@ -57,6 +57,14 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     outstandingAmount = Some(8.08)
   )
 
+  val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")),
+    dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")),
+      dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")),
+      dueDate = Some(LocalDate.of(2019, 8, 15)), dunningLock = true))
+
   val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2"), latePaymentInterestAmount = Some(80.0)),
@@ -64,6 +72,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0)),
       dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true),
     fullDocumentDetailWithDueDateModel)
+
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
@@ -73,6 +82,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
   def estimateViewWithNoCalcData(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
     testYear, None, documentDetailsWithDueDates, obligations, "testBackURL")
+
+  def multipleDunningLockView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testDunningLockChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
+    testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, "testBackURL")
 
   def crystallisedView: Html = taxYearOverviewView(testYear, Some(completeOverview(true)), testChargesList, testObligationsModel, "testBackURL")
 
@@ -112,6 +124,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val lpiPaymentOnAccount1: String = "Late payment interest on payment on account 1 of 2"
     val lpiPaymentOnAccount2: String = "Late payment interest on payment on account 2 of 2"
     val lpiRemainingBalance: String = "Late payment interest on remaining balance"
+    val paymentUnderReview: String = "Payment under review"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -304,6 +317,12 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
     "display the Amount in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
       content.selectHead("#payments-table tr:nth-child(5) td:nth-child(4)").text shouldBe "£100.00"
+    }
+
+    "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Remaining Balance" in new Setup(multipleDunningLockView()) {
+      content.selectHead("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+      content.doesNotHave("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
+      content.selectHead("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
     }
 
     "display updates by due-date" in new Setup(estimateView()) {

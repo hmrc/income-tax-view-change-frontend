@@ -73,15 +73,18 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
   private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])
                                    (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(documentDetails, _) =>
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail)))
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true))
+            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true,
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
