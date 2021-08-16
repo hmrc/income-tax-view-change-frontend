@@ -67,6 +67,44 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     )
   )
 
+  val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(List(
+    DocumentDetail(
+      taxYear = getCurrentTaxYearEnd.getYear.toString,
+      transactionId = "testDunningTransactionId",
+      documentDescription = Some("ITSA- POA 1"),
+      documentDate = LocalDate.of(2018, 3, 29),
+      originalAmount = Some(1000.00),
+      outstandingAmount = Some(500.00),
+      interestOutstandingAmount = Some(0.00),
+      interestEndDate = Some(LocalDate.of(2021, 6, 24)),
+      latePaymentInterestAmount = Some(100.00)
+    ),
+    DocumentDetail(
+      taxYear = getCurrentTaxYearEnd.getYear.toString,
+      transactionId = "testDunningTransactionId2",
+      documentDescription = Some("ITSA - POA 2"),
+      documentDate = LocalDate.of(2018, 3, 29),
+      originalAmount = Some(2000.00),
+      outstandingAmount = Some(500.00),
+      interestOutstandingAmount = Some(0.00),
+      interestEndDate = Some(LocalDate.of(2021, 6, 24))
+    )),
+    List(
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = Some("testDunningTransactionId"),
+        mainType = Some("SA Payment on Account 1"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23).toString), amount = Some(12), dunningLock = Some("Stand over order"), transactionId = Some("testDunningTransactionId"))))
+      ),
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = Some("testDunningTransactionId"),
+        mainType = Some("SA Payment on Account 2"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23).toString), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
+      )
+    )
+  )
+
   val emptyPaymentsList: List[DocumentDetailWithDueDate] = List.empty
 
   val currentObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
@@ -135,7 +173,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   s"GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}" when {
 
-    "TaxYearOverviewUpdate FS is enabled" should {
+    "TxmEventsApproved FS is enabled" should {
       "should show the updated Tax Year Overview page" in {
         enable(TxmEventsApproved)
 
@@ -209,6 +247,102 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("24 June 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Paid"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
+        )
+
+        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+          )(FakeRequest()), None).detail)
+
+        AuditStub.verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+          )(FakeRequest()), None, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
+      }
+
+      "should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
+        enable(TxmEventsApproved)
+
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And(s"A non crystallised calculation for $calculationTaxYear is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.of(2020, 4, 6, 12, 0))))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        And("A financial transaction call returns a success")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(financialDetailsDunningLockSuccess)
+        )
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, calculationTaxYear)
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )
+
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        And("The expected result is returned")
+        res should have(
+          httpStatus(OK),
+          pageTitle(TaxYearOverviewMessages.title),
+          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("#calculation-date")("6 July 2017"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric no-wrap]")("−£500.00"),
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 April 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Overdue Payment on account 2 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("23 April 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£2,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(1)")("Late payment interest on payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(2)")("24 June 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
@@ -559,8 +693,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
 
-    "TaxYearOverviewUpdate FS is enabled and with TxmEventsApproved FS disabled" should {
-      "should show the updated Tax Year Overview page" in {
+    "TxmEventsApproved FS is disabled" should {
+      "should show the Tax Year Overview page" in {
         disable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
