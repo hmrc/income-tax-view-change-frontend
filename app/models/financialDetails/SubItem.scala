@@ -24,6 +24,7 @@ case class SubItem(dueDate: Option[String] = None,
                    subItemId: Option[String] = None,
                    amount: Option[BigDecimal] = None,
                    dunningLock: Option[String] = None,
+                   interestLock: Option[String] = None,
                    clearingDate: Option[String] = None,
                    clearingReason: Option[String] = None,
                    outgoingPaymentMethod: Option[String] = None,
@@ -43,6 +44,7 @@ object SubItem {
     subItemId <- (JsPath \ "subItemId").readNullable[String](Reads.of[String].filter(subItemJsonError)(isIntString))
     amount <- (JsPath \ "amount").readNullable[BigDecimal]
     dunningLock <- (JsPath \ "dunningLock").readNullable[String]
+    interestLock <- (JsPath \ "interestLock").readNullable[String]
     clearingDate <- (JsPath \ "clearingDate").readNullable[String]
     clearingReason <- (JsPath \ "clearingReason").readNullable[String]
     outgoingPaymentMethod <- (JsPath \ "outgoingPaymentMethod").readNullable[String]
@@ -62,6 +64,7 @@ object SubItem {
       subItemId,
       amount,
       dunningLock,
+      interestLock,
       clearingDate,
       clearingReason,
       outgoingPaymentMethod,

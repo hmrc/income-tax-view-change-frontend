@@ -29,6 +29,7 @@ case class FinancialDetail(taxYear: String,
                            outstandingAmount: Option[BigDecimal] = None,
                            clearedAmount: Option[BigDecimal] = None,
                            chargeType: Option[String] = None,
+                           accruedInterest: Option[BigDecimal] = None,
                            items: Option[Seq[SubItem]]
                           ) {
 
