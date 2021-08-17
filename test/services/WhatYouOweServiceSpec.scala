@@ -148,6 +148,33 @@ class WhatYouOweServiceSpec extends TestSupport {
     taxYear = LocalDate.now().getYear.toString
   )
 
+	val financialDetailsBalancingCharges: FinancialDetailsModel = testFinancialDetailsModel(
+		documentDescription = List(Some("TRM New Charge"), Some("TRM Amend Charge")),
+		mainType = List(Some("SA Balancing Charge"), Some("SA Balancing Charge")),
+		transactionId= Some("TransactionId"),
+		transactionDate= Some("transactionDate"),
+		`type`= Some("type"),
+		totalAmount = Some(100),
+		originalAmount = Some(100),
+		clearedAmount = Some(100),
+		chargeType = Some("NIC4 Wales"),
+		dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+		subItemId = Some("1"),
+		dunningLock = List(Some("dunningLock"), Some("dunningLock")),
+		amount = Some(100),
+		clearingDate = Some("clearingDate"),
+		clearingReason = Some("clearingReason"),
+		outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+		paymentReference = Some("paymentReference"),
+		paymentAmount =  Some(100),
+		paymentMethod = Some("paymentMethod"),
+		paymentLot = Some("paymentLot"),
+		paymentLotItem = Some("paymentLotItem"),
+		paymentId = Some("paymentId"),
+		outstandingAmount = List(Some(50), Some(75)),
+		taxYear = LocalDate.now().getYear.toString
+	)
+
   val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(30).toString)
 
   val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -309,6 +336,19 @@ class WhatYouOweServiceSpec extends TestSupport {
           )
         }
       }
+
+			"when both financial details return success and with balancing charges returned" should {
+				"return a success response back" in {
+					when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+						.thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+					when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+						.thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
+
+					await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
+						overduePaymentList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates
+					)
+				}
+			}
     }
   }
 }
