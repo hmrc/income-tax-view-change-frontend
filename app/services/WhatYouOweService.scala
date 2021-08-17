@@ -17,7 +17,6 @@
 package services
 
 import auth.MtdItUser
-import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -30,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
-                                 (implicit ec: ExecutionContext, appConfig: FrontendAppConfig) {
+                                 (implicit ec: ExecutionContext) {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -44,7 +43,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     financialDetailsService.getAllUnpaidFinancialDetails flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("[PaymentDueService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
+        throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
       case financialDetails: List[FinancialDetailsModel] =>
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {
           case Some(outstandingChargesModel) => WhatYouOweChargesList(overduePaymentList = getOverduePaymentsList(financialDetails),
@@ -63,7 +62,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       incomeTaxViewChangeConnector.getOutstandingCharges("utr", saUtr.get.toLong, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
         case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
-        case _ => throw new Exception("[PaymentDueService][callOutstandingCharges] Error response while getting outstanding charges")
+        case _ => throw new Exception("[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges")
       }
     } else {
       Future.successful(None)

@@ -16,9 +16,9 @@
 
 package models
 
-import assets.FinancialDetailsTestConstants.testFinancialDetailsModel
-import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import assets.FinancialDetailsTestConstants._
+import models.financialDetails.WhatYouOweChargesList
+import models.outstandingCharges.OutstandingChargesModel
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -26,106 +26,18 @@ import java.time.LocalDate
 
 class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
-  def outstandingChargesModel(dueDate: String): OutstandingChargesModel = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
-
-  val noDunningLocks: List[Option[String]] = List(None, None)
-  val oneDunningLock: List[Option[String]] = List(Some("Stand over order"), None)
-  val twoDunningLocks: List[Option[String]] = List(Some("Stand over order"), Some("Stand over order"))
-
-  val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
-    List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
-    subItemId = Some("1"),
-    dunningLock = List(Some("dunningLock"), Some("dunningLock")),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    List(Some(50), Some(75)),
-    LocalDate.now().getYear.toString
-  )
-
-  val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
-    List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
-    subItemId = Some("1"),
-    dunningLock = List(Some("dunningLock"), Some("dunningLock")),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    List(Some(50), Some(75)),
-    LocalDate.now().getYear.toString
-  )
-
-  def financialDetailsOverdueData(dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModel(
-    List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
-    subItemId = Some("1"),
-    dunningLock = dunningLock,
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    List(Some(50), Some(75)),
-    LocalDate.now().getYear.toString
-  )
-
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusMonths(13).toString)
 
   def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
-    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
+    dueInThirtyDaysList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates,
+    futurePayments = financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingCharges)
   )
 
   def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
-    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
+    dueInThirtyDaysList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates,
+    futurePayments = financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates
   )
 

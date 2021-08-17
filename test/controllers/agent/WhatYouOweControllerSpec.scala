@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.nextPaymentDue
+package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.FinancialDetailsTestConstants._
@@ -37,7 +37,7 @@ import testUtils.TestSupport
 
 import scala.concurrent.Future
 
-class PaymentDueControllerSpec extends TestSupport
+class WhatYouOweControllerSpec extends TestSupport
   with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate
   with MockIncomeTaxViewChangeConnector
@@ -47,19 +47,16 @@ class PaymentDueControllerSpec extends TestSupport
 
   trait Setup {
 
-    val paymentDueService: WhatYouOweService = mock[WhatYouOweService]
+    val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
 
-    val controller = new PaymentDueController(
-      app.injector.instanceOf[views.html.agent.nextPaymentDue.paymentDue],
-      paymentDueService,
+    val controller = new WhatYouOweController(
+      app.injector.instanceOf[views.html.agent.WhatYouOwe],
+      whatYouOweService,
       mockIncomeSourceDetailsService,
-      mockItvcHeaderCarrierForPartialsConverter,
       mockAuditingService,
+      appConfig,
       mockAuthService
-    )(appConfig,
-      app.injector.instanceOf[MessagesControllerComponents],
-      languageUtils,
-      mockImplicitDateFormatter,
+    )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       mockItvcErrorHandler)
   }
@@ -83,7 +80,7 @@ class PaymentDueControllerSpec extends TestSupport
   val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
 
 
-  "The PaymentDueControllerSpec.show function" when {
+  "The WhatYouOweController.show function" when {
 
     "obtaining a users charge" should {
       "send the user to the paymentsOwe page with full data of charges" in new Setup {
@@ -91,7 +88,7 @@ class PaymentDueControllerSpec extends TestSupport
 
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
@@ -107,7 +104,7 @@ class PaymentDueControllerSpec extends TestSupport
 
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
         val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
@@ -124,7 +121,7 @@ class PaymentDueControllerSpec extends TestSupport
         mockSingleBISWithCurrentYearAsMigrationYear()
         mockShowInternalServerError()
 
-        when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
         val result: Result = await(controller.show()(fakeRequestConfirmedClient()))

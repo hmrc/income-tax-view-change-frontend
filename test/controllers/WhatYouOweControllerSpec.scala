@@ -23,7 +23,7 @@ import audit.mocks.MockAuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatter
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
@@ -44,14 +44,14 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate
 
   trait Setup {
 
-    val paymentDueService: WhatYouOweService = mock[WhatYouOweService]
+    val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
 
     val controller = new WhatYouOweController(
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
-      paymentDueService,
+      whatYouOweService,
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
       mockAuditingService,
@@ -86,13 +86,13 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
 
 
-  "The PaymentDueControllerSpec.viewPaymentsDue function" when {
+  "The WhatYouOweController.viewPaymentsDue function" when {
       "obtaining a users charge" should {
         "send the user to the paymentsOwe page with full data of charges" in new Setup {
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
-          when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+          when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListFull))
 
           val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
@@ -108,7 +108,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
-          when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+          when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
           val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
@@ -124,7 +124,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
-          when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+          when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
           val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))

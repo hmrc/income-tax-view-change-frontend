@@ -17,18 +17,17 @@
 package services
 
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import assets.FinancialDetailsTestConstants.{testFinancialDetailsModel, testFinancialDetailsModelWithChargesOfSameType}
+import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
+import models.financialDetails.{FinancialDetailsErrorModel, WhatYouOweChargesList}
+import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import testUtils.TestSupport
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhatYouOweServiceSpec extends TestSupport {
@@ -49,214 +48,15 @@ class WhatYouOweServiceSpec extends TestSupport {
 
   object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector)
 
-  def outstandingChargesModel(dueDate: String): OutstandingChargesModel = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234))
-  )
-
-  val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
-    subItemId = Some("1"),
-    dunningLock = List(Some("dunningLock"), Some("dunningLock")),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
-  )
-
-  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35).toString)
-
-  val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(
-    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
-    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
-  )
-
-  val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
-    subItemId = Some("1"),
-    dunningLock = List(Some("dunningLock"), Some("dunningLock")),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
-  )
-
-  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(30).toString)
-
-  val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
-    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
-    outstandingChargesModel = Some(outstandingChargesDueIn30Days)
-  )
-
-  val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
-    subItemId = Some("1"),
-    dunningLock = List(Some("dunningLock"), Some("dunningLock")),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
-  )
-
-	val financialDetailsBalancingCharges: FinancialDetailsModel = testFinancialDetailsModel(
-		documentDescription = List(Some("TRM New Charge"), Some("TRM Amend Charge")),
-		mainType = List(Some("SA Balancing Charge"), Some("SA Balancing Charge")),
-		transactionId= Some("TransactionId"),
-		transactionDate= Some("transactionDate"),
-		`type`= Some("type"),
-		totalAmount = Some(100),
-		originalAmount = Some(100),
-		clearedAmount = Some(100),
-		chargeType = Some("NIC4 Wales"),
-		dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
-		subItemId = Some("1"),
-		dunningLock = List(Some("dunningLock"), Some("dunningLock")),
-		amount = Some(100),
-		clearingDate = Some("clearingDate"),
-		clearingReason = Some("clearingReason"),
-		outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-		paymentReference = Some("paymentReference"),
-		paymentAmount =  Some(100),
-		paymentMethod = Some("paymentMethod"),
-		paymentLot = Some("paymentLot"),
-		paymentLotItem = Some("paymentLotItem"),
-		paymentId = Some("paymentId"),
-		outstandingAmount = List(Some(50), Some(75)),
-		taxYear = LocalDate.now().getYear.toString
-	)
-
-  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(30).toString)
-
-  val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
-    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
-    outstandingChargesModel = Some(outstandingChargesOverdueData)
-  )
-
-  val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(35).toString), Some(LocalDate.now().minusDays(1).toString)),
-    subItemId = Some("1"),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
-  )
-
-  val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
-    overduePaymentList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates(1)),
-    dueInThirtyDaysList = List(),
-    futurePayments = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates.head),
-    outstandingChargesModel = Some(OutstandingChargesModel(List()))
-  )
-
-  val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    transactionId= Some("TransactionId"),
-    transactionDate= Some("transactionDate"),
-    `type`= Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(1).toString)),
-    subItemId = Some("1"),
-    amount = Some(100),
-    clearingDate = Some("clearingDate"),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(25), Some(50)),
-    taxYear = LocalDate.now().getYear.toString
-  )
-
-  val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
-    overduePaymentList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates(1)),
-    dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
-    futurePayments = List(),
-    outstandingChargesModel = Some(OutstandingChargesModel(List()))
-  )
-
-  "The PaymentDueService.getWhatYouOweChargesList method" when {
+  "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
       "return a success response back" in {
         when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(outstandingChargesDueInMoreThan30Days))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-          .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days)))
+          .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
-        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueInMoreThan30Days
+        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueInMoreThan30Days()
       }
     }
     "when both financial details and outstanding charges return success response and valid data of due in 30 days" should {
@@ -264,18 +64,18 @@ class WhatYouOweServiceSpec extends TestSupport {
         when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(outstandingChargesDueIn30Days))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-          .thenReturn(Future.successful(List(financialDetailsDueIn30Days)))
+          .thenReturn(Future.successful(List(financialDetailsDueIn30Days())))
 
-        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueIn30Days
+        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueIn30Days()
       }
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(outstandingChargesOverdueData))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-            .thenReturn(Future.successful(List(financialDetailsOverdueData)))
+            .thenReturn(Future.successful(List(financialDetailsOverdueData())))
 
-          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithOverdueData
+          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithOverdueData()
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
@@ -303,12 +103,12 @@ class WhatYouOweServiceSpec extends TestSupport {
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(500, "test message")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-            .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days)))
+            .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
           val ex = intercept[Exception](await(res))
-          ex.getMessage shouldBe "[PaymentDueService][callOutstandingCharges] Error response while getting outstanding charges"
+          ex.getMessage shouldBe "[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges"
         }
       }
       "when both financial details return error and outstanding charges return success" should {
@@ -316,12 +116,12 @@ class WhatYouOweServiceSpec extends TestSupport {
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(outstandingChargesOverdueData))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-            .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days, FinancialDetailsErrorModel(500, "test message"))))
+            .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days(), FinancialDetailsErrorModel(500, "test message"))))
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
           val ex = intercept[Exception](await(res))
-          ex.getMessage shouldBe "[PaymentDueService][getWhatYouOweChargesList] Error response while getting Unpaid financial details"
+          ex.getMessage shouldBe "[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details"
         }
       }
       "when both financial details return success and outstanding charges return 404" should {
@@ -329,10 +129,10 @@ class WhatYouOweServiceSpec extends TestSupport {
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-            .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days)))
+            .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
           await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
-            futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates
+            futurePayments = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates
           )
         }
       }

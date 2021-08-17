@@ -73,6 +73,9 @@ agent.paymentDue.over-due                                                = OVERD
 agent.paymentDue.future-payments                                         = Future payments
 agent.paymentDue.due-in-thirty-days-payments                             = Due within 30 days
 agent.paymentDue.payment-type.taxYear                                    = Tax year {0} to {1}
+agent.paymentDue.paymentUnderReview                                      = Payment under review
+agent.paymentDue.dunningLock.text                                        = One or more of your payments are currently under review and your {0}
+agent.paymentDue.dunningLock.link                                        = tax decision is being investigated (opens in new tab).
 
 agent.paymentDue.over-due.interest.line1                                 = Interest for late payment
 agent.paymentDue.over-due.interest.line2                                 = {0} to {1} at {2}%

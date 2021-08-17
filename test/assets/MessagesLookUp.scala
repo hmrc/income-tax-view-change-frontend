@@ -16,7 +16,7 @@
 
 package assets
 
-import java.time.LocalDate
+import assets.FinancialDetailsTestConstants.{currentYear, currentYearMinusOne}
 
 object MessagesLookUp { // scalastyle:off number.of.methods
 
@@ -520,9 +520,6 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   }
 
   object WhatYouOwe {
-    val currentYear: String = LocalDate.now().getYear.toString
-    val currentYearMinusOne: String = (LocalDate.now().getYear - 1).toString
-
     val title = "What you owe - Business Tax account - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
@@ -590,6 +587,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val dropDownInfo = "What are the payment types?"
     val paymentDaysNote = "Payments can take up to 7 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
+    val paymentUnderReviewParaLink = "tax decision is being investigated (opens in new tab)."
+    val paymentUnderReviewPara = s"One or more of your payments are currently under review and your $paymentUnderReviewParaLink"
 
     def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
 
@@ -602,6 +601,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val remainingBalance = "Remaining balance"
     val remainingBalanceLine1 = "The remaining balance is the tax you still need to pay for a tax year."
     val interestOnRemainingBalance = "Interest on remaining balance"
+    val paymentUnderReview = "Payment under review"
 
     def interestOnRemainingBalanceYear(from: String, to: String) = s"From $from to $to"
 
@@ -612,12 +612,18 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val dueInThirtyDays = "Due within 30 days"
     val futurePayments = "Future payments"
 
+    val poa1WithTaxYear = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa2WithTaxYear = s"$poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa1WithTaxYearAndUnderReview = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa2WithTaxYearAndUnderReview = s"$poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
 
     val dueDate = "Due date"
-    val payNow = "Pay now"
-
-    def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
 
   object TaxYearOverview {

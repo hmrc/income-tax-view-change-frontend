@@ -14,49 +14,42 @@
  * limitations under the License.
  */
 
-package controllers.agent.nextPaymentDue
+package controllers.agent
 
 import audit.AuditingService
 import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
-import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.WhatYouOweChargesList
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.agent.nextPaymentDue.paymentDue
+import views.html.agent.WhatYouOwe
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class PaymentDueController @Inject()(paymentDue: paymentDue,
-                                     val paymentDueService: WhatYouOweService,
-                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                     val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                     val auditingService: AuditingService,
+class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
+                                     whatYouOweService: WhatYouOweService,
+                                     incomeSourceDetailsService: IncomeSourceDetailsService,
+                                     auditingService: AuditingService,
+                                     val appConfig: FrontendAppConfig,
                                      val authorisedFunctions: FrontendAuthorisedFunctions
-                                    )(implicit val appConfig: FrontendAppConfig,
-                                      mcc: MessagesControllerComponents,
-                                      val languageUtils: LanguageUtils,
-                                      dateFormatter: ImplicitDateFormatterImpl,
-                                      implicit val ec: ExecutionContext,
-                                      val itvcErrorHandler: ItvcErrorHandler
+                                    )(implicit mcc: MessagesControllerComponents,
+                                      val ec: ExecutionContext,
+                                      itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def view(charge: WhatYouOweChargesList, taxYear: Int)(implicit request: Request[_], user: MtdItUser[_]): Html = {
-    paymentDue.apply(
+  private def view(charge: WhatYouOweChargesList, taxYear: Int)(implicit user: MtdItUser[_]): Html = {
+    whatYouOweView.apply(
       chargesList = charge,
       currentTaxYear = taxYear,
-      implicitDateFormatter = dateFormatter,
       backUrl = backUrl,
       user.saUtr
     )
@@ -66,18 +59,18 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          mtdItUser =>
+          implicit mtdItUser =>
 						if (isEnabled(TxmEventsApproved)) {
 							auditingService.extendedAudit(WhatYouOweRequestAuditModel(mtdItUser))
 						}
 
-						paymentDueService.getWhatYouOweChargesList()(implicitly, mtdItUser).map {
+						whatYouOweService.getWhatYouOweChargesList().map {
 							whatYouOweChargesList => {
 								if (isEnabled(TxmEventsApproved)) {
 									auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
 								}
 
-								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
+								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)
 								).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
 							}
 						} recover {
