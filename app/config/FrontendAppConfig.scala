@@ -129,7 +129,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val submissionFrontendTaxOverviewUrl: String => String = taxYear =>
     servicesConfig.baseUrl("income-tax-submission-frontend") + s"/income-through-software/return/$taxYear/view"
   lazy val submissionFrontendFinalDeclarationUrl: Int => String = taxYear =>
-    servicesConfig.baseUrl("personal-income-tax-submission-frontend") + s"/income-through-software/return/$taxYear/income-tax-return-received"
+    servicesConfig.baseUrl("income-tax-submission-frontend") + s"/income-through-software/return/$taxYear/income-tax-return-received"
 
   // Disagree with a tax decision
   lazy val taxAppealsUrl: String = servicesConfig.getString("tax-appeals.url")
