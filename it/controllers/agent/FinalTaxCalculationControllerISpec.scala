@@ -346,7 +346,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       }
 
       "has the correct redirect url" in {
-        result.headers("Location").head shouldBe "http://localhost:9308/income-through-software/return/2018/income-tax-return-received"
+        result.headers("Location").head shouldBe "http://localhost:9302/income-through-software/return/2018/income-tax-return-received"
       }
 
     }
