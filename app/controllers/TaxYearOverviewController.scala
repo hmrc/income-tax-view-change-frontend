@@ -50,7 +50,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           retrieveNino: NinoPredicate,
                                           reportDeadlinesService: ReportDeadlinesService,
                                           val auditingService: AuditingService)
-                                         (implicit val appConfig: FrontendAppConfig,
+                                     (implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {

@@ -42,15 +42,26 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
 
   val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
-  def calculationPoller(taxYear: Int): Action[AnyContent] = action.async {
+  def calculationPoller(taxYear: Int, isFinalCalc: Boolean): Action[AnyContent] = action.async {
     implicit user =>
-    (user.session.get(SessionKeys.calculationId), user.nino) match {
-        case (Some(calculationId),nino) => {
+
+      lazy val successfulPollRedirect: Call = if(isFinalCalc) {
+        if(user.arn.nonEmpty) {
+          agent.routes.FinalTaxCalculationController.show(taxYear)
+        } else {
+          routes.FinalTaxCalculationController.show(taxYear)
+        }
+      } else {
+        routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear)
+      }
+
+      (user.session.get(SessionKeys.calculationId), user.nino) match {
+        case (Some(calculationId), nino) => {
           Logger.info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
           pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino) flatMap {
             case OK =>
               Logger.info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
-              Future.successful(Redirect(routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear)))
+              Future.successful(Redirect(successfulPollRedirect))
             case _ =>
               Logger.info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
               Future.successful(itvcErrorHandler.showInternalServerError())
@@ -65,5 +76,5 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
           Logger.error(s"[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
           Future.successful(itvcErrorHandler.showInternalServerError())
       }
-    }
+  }
 }

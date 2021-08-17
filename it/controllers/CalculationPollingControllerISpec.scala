@@ -33,7 +33,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
-  s"GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt).url}" when {
+  s"GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}" when {
       "the user is authorised with an active enrolment" when {
         "redirects to calculation home page" in {
           Given("Calculation service returns a successful response back")
@@ -43,7 +43,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             body = estimatedCalculationFullJson
           )
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear,Map(SessionKeys.calculationId -> "idOne"))
 
           Then("I check all calls expected were made")
@@ -62,7 +62,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
           IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
           val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear,Map(SessionKeys.calculationId -> "idTwo"))
 
@@ -80,7 +80,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
           IndividualCalculationStub.stubGetCalculationListNotFound(testNino,"idThree")
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear,Map(SessionKeys.calculationId -> "idThree"))
 
           Then("I check all calls expected were made")
@@ -97,7 +97,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
           IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "idFour")
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
           val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear,Map(SessionKeys.calculationId -> "idFour"))
 
@@ -127,7 +127,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
           IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "idFive")
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
           val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear,Map(SessionKeys.calculationId -> "idFive"))
 
@@ -149,6 +149,30 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           await(mongoDbConnection.repo.findById("idFive")) shouldBe None
         }
     }
+  }
+
+  s"calling GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = true).url}" when {
+    
+    "the user is authorised with an active enrolment" should {
+      
+      "redirect the user to the final tax calculation page" which {
+        lazy val result = {
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(OK, estimatedCalculationFullJson)
+          IncomeTaxViewChangeFrontend.getFinalTaxCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idOne"))
+        }
+        
+        "has the status of SEE_OTHER (303)" in {
+          result.status shouldBe SEE_OTHER
+        }
+        
+        s"redirect to '${controllers.routes.FinalTaxCalculationController.show(testTaxYear).url}''" in {
+          result.header("Location").head shouldBe controllers.routes.FinalTaxCalculationController.show(testTaxYear).url
+        }
+        
+      }
+      
+    }
+    
   }
 
 }

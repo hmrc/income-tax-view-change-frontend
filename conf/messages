@@ -626,6 +626,20 @@ agent.obligations.quarterlyUpdates                              = Quarterly upda
 agent.obligations.annualUpdates                                 = Annual updates
 agent.obligations.finalDeclarationUpdate                        = Final declaration
 
+## Final Declaration (Individual/Common Content)
+final-declaration.individual.heading                            = Your final tax overview
+final-declaration.caption                                       = 6 April {0} to 5 April {1}
+final-declaration.inset.1                                       = If you think this information is incorrect, you can
+final-declaration.individual.inset.2                            = check your Income Tax Return.
+final-declaration.declaration                                   = Declaration
+final-declaration.individual.declaration.p                      = The information I have provided is correct and complete to the best of my knowledge and belief. If I give false information I may have to pay financial penalties and face prosecution.
+final-declaration.submit                                        = I agree - Submit Income Tax Return
+
+## Final Declaration (Agent Content overrides)
+final-declaration.agent.heading                                 = Your client’s final tax overview
+final-declaration.agent.declaration.p                           = I confirm that my client has reviewed the information provided and confirmed that it is correct and complete to the best of their knowledge to establish the liability for the tax year 2019 to 2020. My client understands that they may have to pay financial penalties or face prosecution if they give false information.
+final-declaration.agent.inset.2                                 = check your client’s Income Tax Return.
+
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English
 language-switcher.english                                       = English

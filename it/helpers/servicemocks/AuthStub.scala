@@ -52,6 +52,37 @@ object AuthStub extends ComponentSpecBase {
            |}""".stripMargin).toString())
   }
 
+  def stubAuthorisedWithName(): Unit = {
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
+      Json.parse(
+        s"""{
+           | "allEnrolments": [{
+           | "key":"$testMtditidEnrolmentKey",
+           | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
+           | },
+           | {
+           | "key":"$testNinoEnrolmentKey",
+           | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
+           | },
+           | {
+           | "key":"$testSaUtrEnrolmentKey",
+           | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
+           | }
+           | ],
+           | "userDetailsUri":"$testUserDetailsWiremockUrl",
+           | "affinityGroup" : "Individual",
+           | "optionalCredentials": {
+           |  "providerId": "12345-credId",
+           |  "providerType": "GovernmentGateway"
+           | },
+           | "optionalName": {
+           |  "name": "John",
+           |  "lastName": "Doe"
+           | },
+           | "confidenceLevel": 200
+           |}""".stripMargin).toString())
+  }
+
   def stubAuthorisedNoNino(): Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
       Json.parse(
