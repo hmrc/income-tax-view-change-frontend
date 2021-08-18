@@ -31,6 +31,9 @@ class ClientsUTRFormSpec extends WordSpec with MustMatchers {
       "bound with a valid utr" in {
         form(Some("1234567890")).value mustBe Some("1234567890")
       }
+      "bound with a valid utr that contains spaces" in {
+        form(Some("1 2 3 4 5 6 7 8 9 0")).value mustBe Some("1234567890")
+      }
     }
 
     "return an error that the utr is empty" when {
