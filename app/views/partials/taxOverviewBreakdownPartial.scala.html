@@ -21,6 +21,14 @@
 @(overview: CalcOverview, taxYear: Int)(implicit messages: Messages)
 
 <table id="income-deductions-table">
+    <caption class="govuk-table__caption heading-large">Tax calculation</caption>
+
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
+        <th scope="col" class="govuk-table__header numeric">@messages("tax-year-overview.amount")</th>
+    </tr>
+    </thead>
     <tr>
         <td>
             <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>

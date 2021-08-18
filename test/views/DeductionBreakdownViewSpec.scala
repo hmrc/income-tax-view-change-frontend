@@ -27,14 +27,8 @@ import views.html.DeductionBreakdown
 class DeductionBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
+  val deductions = "Allowances and deductions"
 
-  object Breadcrumbs {
-    val businessTaxAccount = "Business tax account"
-    val home = "Income Tax account"
-    val taxYears = "Tax years"
-    def taxYear(start: Int, end: Int): String = s"6 April $start to 5 April $end"
-    val deductions = "Allowances and deductions"
-  }
 
   def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
 
@@ -54,6 +48,10 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have the correct heading" in new Setup(view) {
         content hasPageHeading DeductionBreakdown.heading(taxYear)
         content.h1.select(".heading-secondary").text() shouldBe DeductionBreakdown.subHeading(taxYear)
+      }
+
+      "have the correct caption" in new Setup(view) {
+        content.selectHead(" caption").text.contains(deductions)
       }
 
       "have the correct guidance" in new Setup(view) {
@@ -95,6 +93,10 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have the correct heading" in new Setup(view) {
         content hasPageHeading DeductionBreakdown.heading(taxYear)
         content.h1.select(".heading-secondary").text() shouldBe DeductionBreakdown.subHeading(taxYear)
+      }
+
+      "have the correct caption" in new Setup(view) {
+        content.selectHead(" caption").text.contains(deductions)
       }
 
       "have the correct guidance" in new Setup(view) {
