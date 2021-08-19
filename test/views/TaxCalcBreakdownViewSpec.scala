@@ -822,7 +822,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 			val document: Document = Jsoup.parse(view.body)
 
 			document.select("div.panel-border-wide").size shouldBe 1
-			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Gift Aid payments"
+			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
 		}
 
 		"provided with message C22205" in {
