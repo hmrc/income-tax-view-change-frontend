@@ -20,7 +20,7 @@ import assets.BusinessDetailsIntegrationTestConstants.testMtdItId
 import assets.IncomeSourceIntegrationTestConstants._
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -175,6 +175,34 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(SEE_OTHER),
           redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
         )
+      }
+
+      s"redirect ($SEE_OTHER) to the next page" when {
+        "the utr submitted contains spaces and is valid" in {
+          val validUTR: String = "1234567890"
+          val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+          stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)
+          CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+            status = OK,
+            response = CitizenDetailsStub.validCitizenDetailsResponse(
+              firstName = "testFirstName",
+              lastName = "testLastName",
+              nino = testNino
+            )
+          )
+          IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+            status = OK,
+            response = Json.toJson(singleBusinessResponse)
+          )
+
+          val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+          Then("The enter clients utr page is returned with an error")
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+          )
+        }
       }
     }
 

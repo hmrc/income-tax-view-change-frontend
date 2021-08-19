@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.{InternalServerException, NotFoundException}
+import uk.gov.hmrc.http.InternalServerException
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}

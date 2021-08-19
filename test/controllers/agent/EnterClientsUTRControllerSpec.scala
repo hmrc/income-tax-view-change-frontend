@@ -154,6 +154,30 @@ class EnterClientsUTRControllerSpec extends TestSupport
 					verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
 					verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
 				}
+				"the utr entered contains spaces and is valid" in {
+					val validUTR: String = "1234567890"
+					val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+
+					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+					mockClientDetails(validUTR)(
+						response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+					)
+
+					val result = await(TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+						ClientsUTRForm.utr -> utrWithSpaces
+					)))
+
+					status(result) shouldBe SEE_OTHER
+					redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+
+					result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+					result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+					result.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+					result.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+					result.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
+					verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+					verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+				}
 			}
 
 			"return a bad request" when {

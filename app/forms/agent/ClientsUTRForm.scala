@@ -51,7 +51,9 @@ object ClientsUTRForm {
 
   val form: Form[String] = Form[String](
     single(
-      utr -> default(text, "").verifying(
+      utr -> default(text, "")
+        .transform[String](_.replaceAll("\\s", ""), identity)
+        .verifying(
         nonEmptyUTR andThen containsOnlyNumbers andThen isValidUTRLength
       )
     )
