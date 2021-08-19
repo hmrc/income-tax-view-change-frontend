@@ -67,14 +67,14 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     val insetText = ".panel-border-wide"
     val insetLinkText = ".panel-border-wide > p > a"
 
-    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
-    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td.numeric"
+    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
+    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td.numeric"
 
-    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
-    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td.numeric"
+    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(3) > td:nth-child(1) > a"
+    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td.numeric"
 
-    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
-    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td.numeric"
+    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(4) > td:nth-child(1)"
+    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(4) > td.numeric"
 
     val contributionDueRowText = "#taxdue-payments-table > tbody > tr > td:nth-child(1) > a"
     val contributionDueRowAmount = "#taxdue-payments-table > tbody > tr > td:nth-child(2)"
