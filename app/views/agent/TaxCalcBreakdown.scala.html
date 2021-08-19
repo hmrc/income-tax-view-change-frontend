@@ -86,7 +86,7 @@
 
 	@if(calcModel.calcDataModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
 		<div class="panel panel-border-wide">
-		@messages(s"taxCal_breakdown.message.C22201",calcModel.calcDataModel.reductionsAndCharges.giftAidTax.get.toCurrencyString, calcModel.getModifiedBaseTaxBand.get.apportionedBandLimit.toCurrencyString)
+		@messages(s"taxCal_breakdown.message.C22201",calcModel.calcDataModel.reductionsAndCharges.grossGiftAidPayments.get.toCurrencyString, calcModel.getModifiedBaseTaxBand.get.apportionedBandLimit.toCurrencyString)
 		</div>
 	}
 

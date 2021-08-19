@@ -208,6 +208,7 @@ object CalcBreakdownTestConstants {
 
     reductionsAndCharges = ReductionsAndCharges(
       giftAidTax = Some(5000.99),
+			grossGiftAidPayments = Some(5000.98),
       totalPensionSavingsTaxCharges = Some(5000.99),
       statePensionLumpSumCharges = Some(5000.99),
       totalStudentLoansRepaymentAmount = Some(5000.99),
