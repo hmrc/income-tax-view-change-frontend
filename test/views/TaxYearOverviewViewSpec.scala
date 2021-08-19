@@ -206,10 +206,10 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the income row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val incomeLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
+      val incomeLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
       incomeLink.text shouldBe taxYearOverviewMessages.income
       incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
-      content.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(false).income.toCurrencyString
+      content.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe completeOverview(false).income.toCurrencyString
     }
 
     "when there is no calc data should display the correct heading in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
@@ -221,15 +221,15 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val allowancesLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
+      val allowancesLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(3) td:nth-child(1) a")
       allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
       allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
-      content.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
+      content.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(2)").text shouldBe "−£2.02"
     }
 
     "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
-      content.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
-      content.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(2)").text shouldBe completeOverview(false).totalTaxableIncome.toCurrencyString
+      content.selectHead("#income-deductions-table tr:nth-child(4) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
+      content.selectHead("#income-deductions-table tr:nth-child(4) td:nth-child(2)").text shouldBe completeOverview(false).totalTaxableIncome.toCurrencyString
     }
 
     "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
