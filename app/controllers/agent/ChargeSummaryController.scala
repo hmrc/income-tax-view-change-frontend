@@ -18,30 +18,26 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
+import auth.MtdItUser
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
+import controllers.predicates.IncomeTaxAgentUser
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsModel, PaymentsWithChargeType}
+import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc._
 import play.twirl.api.Html
 import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.ChargeSummary
-import java.time.LocalDate
-import uk.gov.hmrc.http.HeaderCarrier
-import auth.MtdItUser
 
-
-import connectors.IncomeTaxViewChangeConnector
 import javax.inject.Inject
-
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -59,7 +55,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], latePaymentInterestCharge: Boolean,
-                   backLocation: Option[String], taxYear: Int, paymentAllocations: List[PaymentsWithChargeType],paymentAllocationEnabled: Boolean)(implicit request: Request[_]): Html = {
+                   backLocation: Option[String], taxYear: Int, paymentAllocations: List[PaymentsWithChargeType],
+                   paymentBreakdown: List[FinancialDetail], paymentAllocationEnabled: Boolean)(implicit request: Request[_]): Html = {
 
     chargeSummaryView(
       documentDetailWithDueDate = documentDetailWithDueDate,
@@ -67,6 +64,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
       latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = backUrl(backLocation, taxYear),
       paymentAllocations,
+      paymentBreakdown,
       paymentAllocationEnabled
     )
   }
@@ -74,41 +72,65 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   def showChargeSummary(taxYear: Int, chargeId: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-				financialDetailsService.getFinancialDetails(taxYear, getClientNino).flatMap {
-					case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == chargeId) =>
-						val backLocation = request.session.get(SessionKeys.chargeSummaryBackPage)
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { mtdItUser =>
+          financialDetailsService.getAllFinancialDetails(mtdItUser, implicitly, implicitly).flatMap { financialResponses =>
+
+            val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
+              case (year, response) if year == taxYear => response
+            }
+
+            matchingYear.headOption match {
+              case Some(financialDetailsModel: FinancialDetailsModel) if financialDetailsModel.documentDetails.exists(_.transactionId == chargeId) =>
+                doShowChargeSummary(taxYear, chargeId, isLatePaymentCharge, financialDetailsModel)(hc, mtdItUser, user)
+              case Some(_: FinancialDetailsModel) =>
+                Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
+                Future.successful(Redirect(controllers.agent.routes.HomeController.show().url))
+              case _ =>
+                Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
+                Future.successful(itvcErrorHandler.showInternalServerError())
+            }
+          }
+        }
+    }
+  }
+
+  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel)
+                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], incomeTaxAgentUser: IncomeTaxAgentUser): Future[Result] = {
+    val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
+    val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
+    val financialDetailsModel = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
 
 
+    val paymentBreakdown: List[FinancialDetail] =
+      if (!isLatePaymentCharge) {
+        financialDetailsModel.filter(_.messageKeyByTypes.isDefined)
+      } else Nil
 
-						val docDateDetail: DocumentDetailWithDueDate = success.findDocumentDetailByIdWithDueDate(chargeId).get
-						getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
-							if (isEnabled(TxmEventsApproved)) {
-								auditingService.extendedAudit(ChargeSummaryAudit(
-									mtdItUser = mtdItUser,
-									docDateDetail = docDateDetail,
-									agentReferenceNumber = user.agentReferenceNumber
-								))
-							}
-						}
 
-            val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
-            val paymentAllocations: List[PaymentsWithChargeType] =
-              if (paymentAllocationEnabled) {
-                success.financialDetails.filter(_.transactionId.contains(chargeId)).flatMap(_.allocation)
-              } else Nil
+    val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
+    val paymentAllocations: List[PaymentsWithChargeType] =
+      if (paymentAllocationEnabled) {
+        financialDetailsModel.flatMap(_.allocation)
+      } else Nil
 
-            getChargeHistory(chargeId, isLatePaymentCharge).map { chargeHistoryOpt =>
-              Ok(view(docDateDetail, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
-                paymentAllocations =paymentAllocations,
-                paymentAllocationEnabled= paymentAllocationEnabled))
-						}
-					case _: FinancialDetailsModel =>
-						Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
-						Future.successful(Redirect(controllers.agent.routes.HomeController.show()))
-					case _ =>
-						Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
-						Future.successful(itvcErrorHandler.showInternalServerError())
-				}
+
+    getChargeHistory(id, isLatePaymentCharge).map { chargeHistoryOpt =>
+      auditChargeSummary(documentDetailWithDueDate)
+      Ok(view(documentDetailWithDueDate, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
+        paymentAllocations = paymentAllocations,
+        paymentBreakdown = paymentBreakdown,
+        paymentAllocationEnabled = paymentAllocationEnabled))
+    }
+  }
+
+  private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate)
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_], incomeTaxAgentUser: IncomeTaxAgentUser): Unit = {
+    if (isEnabled(TxmEventsApproved)) {
+      auditingService.extendedAudit(ChargeSummaryAudit(
+        mtdItUser = user,
+        docDateDetail = documentDetailWithDueDate,
+        agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber
+      ))
     }
   }
 
@@ -122,9 +144,9 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     ChargeHistory.fold(
       ifDisabled = Future.successful(None),
       ifEnabled = if (isLatePaymentCharge) Future.successful(Some(Nil)) else {
-          financialDetailsService.getChargeHistoryDetails(getClientMtditid, chargeId)
-            .map(historyListOpt => historyListOpt.map(sortHistory) orElse Some(Nil))
-        }
+        financialDetailsService.getChargeHistoryDetails(getClientMtditid, chargeId)
+          .map(historyListOpt => historyListOpt.map(sortHistory) orElse Some(Nil))
+      }
     )
   }
 

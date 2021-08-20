@@ -55,7 +55,7 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
     documentDetails.filter(_.transactionId == documentId)
       .exists { documentDetail =>
         financialDetails.exists(financialDetail => financialDetail.transactionId.contains(documentDetail.transactionId) && financialDetail.dunningLockExists)
-    }
+      }
   }
 
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear.toInt == taxYear)
@@ -67,7 +67,8 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
 
   def findDocumentDetailByIdWithDueDate(id: String): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
-      .map(documentDetail => DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail)))
+      .map(documentDetail => DocumentDetailWithDueDate(
+        documentDetail, getDueDateFor(documentDetail), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
   def getAllDocumentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
@@ -77,22 +78,22 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
 
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)
 
-	def filterPayments(): FinancialDetailsModel = {
-		val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
-		FinancialDetailsModel(
-			filteredDocuments,
-			financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
-		)
-	}
+  def filterPayments(): FinancialDetailsModel = {
+    val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
+    FinancialDetailsModel(
+      filteredDocuments,
+      financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
+    )
+  }
 
-	def findMatchingPaymentDocument(paymentLot: String, paymentLotItem: String): Option[DocumentDetail] = {
-		documentDetails.find(document => document.paymentLot.contains(paymentLot) && document.paymentLotItem.contains(paymentLotItem))
-	}
+  def findMatchingPaymentDocument(paymentLot: String, paymentLotItem: String): Option[DocumentDetail] = {
+    documentDetails.find(document => document.paymentLot.contains(paymentLot) && document.paymentLotItem.contains(paymentLotItem))
+  }
 
-	def merge(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
-		FinancialDetailsModel(documentDetails ++ financialDetailsModel.documentDetails,
-			financialDetails ++ financialDetailsModel.financialDetails)
-	}
+  def merge(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
+    FinancialDetailsModel(documentDetails ++ financialDetailsModel.documentDetails,
+      financialDetails ++ financialDetailsModel.financialDetails)
+  }
 }
 
 

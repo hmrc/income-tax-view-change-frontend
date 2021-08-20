@@ -19,7 +19,7 @@ package views.agent
 import assets.FinancialDetailsTestConstants._
 import config.featureswitch.FeatureSwitching
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetailWithDueDate, Payment, PaymentsWithChargeType}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, Payment, PaymentsWithChargeType, SubItem}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -27,6 +27,7 @@ import org.scalatest.Assertion
 import play.twirl.api.Html
 import testUtils.{TestSupport, ViewSpec}
 import views.html.agent.ChargeSummary
+
 import java.time.LocalDate
 
 class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -35,7 +36,8 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               chargeHistoryOpt: Option[List[ChargeHistoryModel]] = Some(List()),
               latePaymentInterestCharge: Boolean = false,
               paymentAllocations: List[PaymentsWithChargeType]= List(),
-              paymentAllocationEnabled: Boolean = false
+              paymentAllocationEnabled: Boolean = false,
+              paymentBreakdown: List[FinancialDetail] = List()
              ) {
 
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
@@ -46,6 +48,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = "testBackURL",
       paymentAllocations,
+      paymentBreakdown = paymentBreakdown,
       paymentAllocationEnabled
     )
 
@@ -63,6 +66,13 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
            |${rows.mkString("\n")}
            |""".stripMargin.trim.linesIterator.mkString(" ")
     }
+
+
+    def verifyPaymentBreakdownRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
+      val paymentBreakdownRow = document.select(s".govuk-summary-list:nth-of-type(2) .govuk-summary-list__row:nth-of-type($rowNumber)")
+      paymentBreakdownRow.select(".govuk-summary-list__key").text() shouldBe expectedKeyText
+      paymentBreakdownRow.select(".govuk-summary-list__value").text() shouldBe expectedValueText
+    }
   }
 
   object Messages {
@@ -72,10 +82,35 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     def balancingChargeHeading(year: Int): String = s"Tax year 6 April ${year - 1} to 5 April $year Remaining balance"
     def balancingChargeInterestHeading(year: Int) =  s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
 
-    val paidToDate = "Paid to date"
+    val dueDate = "Due date"
+    val interestPeriod = "Interest period"
+    val fullPaymentAmount = "Full payment amount"
+    val remainingToPay = "Remaining to pay"
+    val paymentBreakdownHeading = "Payment breakdown"
     val chargeHistoryHeading = "Payment history"
     val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
+    val dunningLockBannerHeader = "Important"
+    val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)"
+    def dunningLockBannerText(formattedAmount: String, date: String) =
+      s"$dunningLockBannerLink. You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
+
   }
+
+  val paymentBreakdown: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI"),
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB"),
+    financialDetail(originalAmount = 3456.78, chargeType = "Voluntary NIC2-NI"),
+    financialDetail(originalAmount = 5678.9, chargeType = "NIC4 Wales"),
+    financialDetail(originalAmount = 9876.54, chargeType = "CGT"),
+    financialDetail(originalAmount = 543.21, chargeType = "SL")
+  )
+
+  val paymentBreakdownWithLocks: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI"),
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", dunningLock = Some("Stand over order")),
+    financialDetail(originalAmount = 9876.54, chargeType = "CGT", dunningLock = Some("Stand over order")),
+    financialDetail(originalAmount = 543.21, chargeType = "SL")
+  )
 
   "The agent charge summary view" should {
 
@@ -132,6 +167,79 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       }
     }
 
+    "not display a notification banner when there are no dunning locks in payment breakdown" in new Setup(
+      documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdown) {
+
+      document.doesNotHave(Selectors.id("dunningLocksBanner"))
+    }
+
+    "display a notification banner when there are dunning locks in payment breakdown" which {
+
+      s"has the '${Messages.dunningLockBannerHeader}' heading" in new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithLocks) {
+        document.selectById("dunningLocksBanner")
+          .select(Selectors.h2).text() shouldBe Messages.dunningLockBannerHeader
+      }
+
+      "has the link for Payment under review which opens in new tab" in new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithLocks) {
+        val link: Elements = document.selectById("dunningLocksBanner").select(Selectors.link)
+
+        link.text() shouldBe Messages.dunningLockBannerLink
+        link.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
+        link.attr("target") shouldBe "_blank"
+      }
+
+      "shows the same remaining amount and a due date as in the charge summary list" which {
+        "display a remaining amount" in new Setup(documentDetailWithDueDateModel(
+          outstandingAmount = Some(1600)), paymentBreakdown = paymentBreakdownWithLocks) {
+
+          document.selectById("dunningLocksBanner")
+            .selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£1,600.00", "15 May 2019")
+        }
+
+        "display 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new Setup(
+          documentDetailWithDueDateModel(outstandingAmount = Some(0)), paymentBreakdown = paymentBreakdownWithLocks) {
+
+          document.selectById("dunningLocksBanner")
+            .selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£0.00", "15 May 2019")
+        }
+
+        "display the original amount if no cleared or outstanding amount is present" in new Setup(
+          documentDetailWithDueDateModel(outstandingAmount = None, originalAmount = Some(1700)), paymentBreakdown = paymentBreakdownWithLocks) {
+
+          document.selectById("dunningLocksBanner")
+            .selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£1,700.00", "15 May 2019")
+        }
+      }
+
+      "not display the Payment breakdown list when payments breakdown is empty" in new Setup(documentDetailWithDueDateModel(), paymentBreakdown = Nil) {
+        document.doesNotHave(Selectors.id("heading-payment-breakdown"))
+      }
+
+      "display the Payment breakdown list" which {
+
+        "has a correct heading" in new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdown) {
+          document.selectById("heading-payment-breakdown").text shouldBe Messages.paymentBreakdownHeading
+        }
+
+        "has payment rows with charge types and original amounts" in new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdown) {
+          verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
+          verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67")
+          verifyPaymentBreakdownRow(3, "Voluntary Class 2 National Insurance", "£3,456.78")
+          verifyPaymentBreakdownRow(4, "Class 4 National Insurance", "£5,678.90")
+          verifyPaymentBreakdownRow(5, "Capital Gains Tax", "£9,876.54")
+          verifyPaymentBreakdownRow(6, "Student Loans", "£543.21")
+        }
+
+        "has payment rows with Under review note when there are dunning locks on a payment" in new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithLocks) {
+          verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
+          verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 Under review")
+          verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 Under review")
+          verifyPaymentBreakdownRow(4, "Student Loans", "£543.21")
+        }
+
+      }
+    }
+
     "display Payment (charge) history" when {
       "charge history list is given" when {
 
@@ -147,7 +255,10 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
             "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil)) {
               verifyChargesHistoryContent("29 Mar 2018 Payment on account 2 of 2 created £1,400.00")
             }
-            "balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil)) {
+            "New balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil)) {
+              verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
+            }
+            "Amended balancing charge" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(Nil)) {
               verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
             }
           }
@@ -160,7 +271,10 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
             "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil),paymentAllocationEnabled = false) {
               verifyChargesHistoryContent("29 Mar 2018 Payment on account 2 of 2 created £1,400.00")
             }
-            "balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
+            "New balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
+              verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
+            }
+            "Amended balancing charge" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
               verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
             }
           }
@@ -175,7 +289,11 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               paymentAllocations = Nil) {
               verifyChargesHistoryContent("29 Mar 2018 Payment on account 2 of 2 created £1,400.00")
             }
-            "balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = true,
+            "New balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = true,
+              paymentAllocations = Nil) {
+              verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
+            }
+            "Amended balancing charge" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = true,
               paymentAllocations = Nil) {
               verifyChargesHistoryContent("29 Mar 2018 Remaining balance created £1,400.00")
             }
@@ -207,7 +325,13 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
                 "6 Jul 2018 Payment on account 2 of 2 reduced due to amended return £12,345.00",
                 "12 Aug 2019 Payment on account 2 of 2 reduced by taxpayer request £54,321.00")
             }
-            "balancing charge" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(fullChargeHistory)) {
+            "balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(fullChargeHistory)) {
+              verifyChargesHistoryContent(
+                "29 Mar 2018 Remaining balance created £1,400.00",
+                "6 Jul 2018 Remaining balance reduced due to amended return £12,345.00",
+                "12 Aug 2019 Remaining balance reduced by taxpayer request £54,321.00")
+            }
+            "Amended balancing charge" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(fullChargeHistory)) {
               verifyChargesHistoryContent(
                 "29 Mar 2018 Remaining balance created £1,400.00",
                 "6 Jul 2018 Remaining balance reduced due to amended return £12,345.00",
