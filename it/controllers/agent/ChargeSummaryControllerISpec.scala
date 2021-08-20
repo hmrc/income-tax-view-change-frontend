@@ -60,7 +60,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-      stubGetFinancialDetailsSuccess()
+      stubGetFinancialDetailsSuccess(Some("ITSA NI"))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
         currentTaxYearEnd.getYear.toString, "testId", clientDetails
@@ -77,7 +77,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("main h2")("Payment breakdown")
       )
     }
 
@@ -88,7 +89,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-      stubGetFinancialDetailsSuccess()
+      stubGetFinancialDetailsSuccess(Some("ITSA NI"))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
         currentTaxYearEnd.getYear.toString, "testId", clientDetails
@@ -105,7 +106,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("main h2")("Payment breakdown")
       )
     }
 
@@ -195,7 +197,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
   }
 
-  private def stubGetFinancialDetailsSuccess(): Unit = {
+  private def stubGetFinancialDetailsSuccess(chargeType: Option[String] = None): Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
       from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -220,7 +222,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         financialDetails = List(
           FinancialDetail(
             taxYear = currentTaxYearEnd.getYear.toString,
+            transactionId = Some("testId"),
             mainType = Some("SA Payment on Account 1"),
+            chargeType = chargeType,
+            originalAmount = Some(10.34),
             items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
           )
         )

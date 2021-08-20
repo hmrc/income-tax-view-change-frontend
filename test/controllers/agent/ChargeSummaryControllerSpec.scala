@@ -26,7 +26,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
 import mocks.views.agent.MockChargeSummary
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.FinancialDetailsModel
+import models.financialDetails.{FinancialDetail, FinancialDetailsModel}
 import org.mockito.ArgumentMatchers.{any, eq => ameq}
 import org.mockito.Mockito.{never, verify}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
@@ -35,8 +35,9 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import play.twirl.api.Html
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
-import java.time.LocalDate
+import views.html.agent.ChargeSummary
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class ChargeSummaryControllerSpec extends TestSupport
@@ -47,7 +48,14 @@ class ChargeSummaryControllerSpec extends TestSupport
   with FeatureSwitching
   with MockChargeSummary {
 
-  class Setup() {
+	def financialDetailsWithLocks(taxYear: Int): List[FinancialDetail] = List(
+		financialDetail(taxYear = taxYear, chargeType = "ITSA England & NI"),
+		financialDetail(taxYear = taxYear, chargeType = "NIC4 Wales", dunningLock = Some("Stand over order"))
+	)
+
+	val injectChargeSummaryView = app.injector.instanceOf[views.html.agent.ChargeSummary]
+
+  class Setup(chargeSummaryView: ChargeSummary = chargeSummary) {
 
     disable(ChargeHistory)
 		disable(PaymentAllocation)
@@ -55,7 +63,7 @@ class ChargeSummaryControllerSpec extends TestSupport
     mockChargeSummary()(Html("<html><head><title>Test title</title></head></html>"))
 
     val chargeSummaryController: ChargeSummaryController = new ChargeSummaryController(
-      chargeSummary,
+			chargeSummaryView,
       mockAuthService,
       mockFinancialDetailsService,
       mockIncomeSourceDetailsService,
@@ -71,17 +79,21 @@ class ChargeSummaryControllerSpec extends TestSupport
     val currentYear: Int = LocalDate.now().getYear
     val errorHeading = "Sorry, there is a problem with the service"
     val currentFinancialDetails: FinancialDetailsModel = financialDetailsModel(currentYear)
-		val lateInterestSuccessHeading = "Tax year 6 April 2017 to 5 April 2018 Late payment interest on payment on account 1 of 2"
+		val successHeading = s"Tax year 6 April ${currentYear - 1} to 5 April $currentYear Payment on account 1 of 2"
+		val lateInterestSuccessHeading = s"Tax year 6 April ${currentYear - 1} to 5 April $currentYear Late payment interest on payment on account 1 of 2"
+		val dunningLocksBannerHeading = "Important"
+		val paymentBreakdownHeading = "Payment breakdown"
+		val paymentHistoryHeading = "Payment history"
   }
 
   ".showChargeSummary" when {
 		"getFinancialDetails returns a FinancialDetailsModel" when {
 			"the model contains a transaction for the charge provided" should {
-				"show a charge summary with the correct title" in new Setup() {
+				"show a charge summary with the correct title" in new Setup(injectChargeSummaryView) {
 
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 
 					mockSingleBusinessIncomeSource()
 
@@ -89,17 +101,18 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(await(result)) shouldBe OK
-					JsoupParse(result).toHtmlDocument.title() shouldBe "Test title"
-
+					JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+					JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
+					JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
 				}
 			}
 
 			"the model contains a transaction for the charge with LPI set to true" should {
-				"show a charge summary with the correct title" in new Setup() {
+				"show a charge summary with the correct title without dunning lock" in new Setup(injectChargeSummaryView) {
 
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 
 					mockSingleBusinessIncomeSource()
 
@@ -107,9 +120,25 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(await(result)) shouldBe OK
-					JsoupParse(result).toHtmlDocument.title() shouldBe "Test title"
-
+					JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
+					JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
 				}
+			}
+
+			"the model contains a transaction for the charge with dunning locks" in new Setup(injectChargeSummaryView) {
+
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+				mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails.copy(financialDetails = financialDetailsWithLocks(currentYear)))))
+
+				mockSingleBusinessIncomeSource()
+
+				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
+					.apply(fakeRequestConfirmedClient("AB123456C"))
+
+				status(result) shouldBe OK
+				JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
+				JsoupParse(result).toHtmlDocument.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
 			}
 
 			"the model does not contains a transaction for the charge provided" should {
@@ -117,7 +146,9 @@ class ChargeSummaryControllerSpec extends TestSupport
 
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
+
+					mockSingleBusinessIncomeSource()
 
 					val result: Result = await(chargeSummaryController.showChargeSummary(currentYear, id1040000124)
 						.apply(fakeRequestConfirmedClient("AB123456C")))
@@ -135,7 +166,9 @@ class ChargeSummaryControllerSpec extends TestSupport
 
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-				setupMockGetFinancialDetails(currentYear)(testFinancialDetailsErrorModelParsing)
+				mockGetAllFinancialDetails(List((currentYear, testFinancialDetailsErrorModelParsing)))
+
+				mockSingleBusinessIncomeSource()
 
 				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, "testid")
 					.apply(fakeRequestConfirmedClient("AB123456C"))
@@ -157,7 +190,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 				enable(ChargeHistory)
 				enable(PaymentAllocation)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+				mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 				mockSingleBusinessIncomeSource()
 
 				mockGetChargeHistoryDetails(Some(chargeHistoryListInAscendingOrder.reverse))
@@ -166,7 +199,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any(),any(),any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any(), any(),any(),any(), any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService).getChargeHistoryDetails(ameq("XAIT00000000015"), ameq(id1040000123))(any())
 			}
 
@@ -175,7 +208,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					enable(ChargeHistory)
 					enable(PaymentAllocation)
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 					mockSingleBusinessIncomeSource()
 
 					mockGetChargeHistoryDetails(response = None)
@@ -184,21 +217,21 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any())(any(), any(), any(), any())
+					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any())(any(), any(), any(), any())
 				}
 
 				"viewing a Late Payment Interest summary" in new Setup() {
 					enable(ChargeHistory)
 					enable(PaymentAllocation)
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 					mockSingleBusinessIncomeSource()
 
 					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123, isLatePaymentCharge = true)
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any())(any(), any(), any(), any())
+					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any())(any(), any(), any(), any())
 					verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 				}
 			}
@@ -207,7 +240,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 				"call for charge history list fails" in new Setup() {
 					enable(ChargeHistory)
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-					setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 					mockSingleBusinessIncomeSource()
 
 					val emulatedServiceError = new IllegalStateException("Emulated service error")
@@ -226,14 +259,14 @@ class ChargeSummaryControllerSpec extends TestSupport
 				disable(ChargeHistory)
 				disable(PaymentAllocation)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+				mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 				mockSingleBusinessIncomeSource()
 
 				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 
@@ -241,14 +274,14 @@ class ChargeSummaryControllerSpec extends TestSupport
 				disable(ChargeHistory)
 				disable(PaymentAllocation)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				setupMockGetFinancialDetails(currentYear)(currentFinancialDetails)
+				mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 				mockSingleBusinessIncomeSource()
 
 				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123, isLatePaymentCharge = true)
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 		}
