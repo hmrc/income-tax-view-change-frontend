@@ -340,6 +340,17 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
           }
         }
 
+        "the list contains ChargeHistory and Payment breakdown" should {
+          val fullChargeHistory = List(
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 12345, LocalDate.of(2018, 7, 6), "amended return"),
+            ChargeHistoryModel("n/a", "n/a", "n/a", "n/a", 54321, LocalDate.of(2019, 8, 12), "Customer Request")
+          )
+
+          "display the payment breakdown in h2 and charge history heading in h3" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(fullChargeHistory), paymentBreakdown = paymentBreakdown) {
+            content select Selectors.h2 text() shouldBe Messages.paymentBreakdownHeading
+            content select Selectors.h3 text() shouldBe Messages.chargeHistoryHeading
+          }
+        }
       }
     }
 

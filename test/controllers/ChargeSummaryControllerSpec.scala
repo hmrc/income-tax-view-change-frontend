@@ -112,8 +112,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
 
 			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
@@ -154,8 +154,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
 
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(chargesWithAllocatedPaymentModel(2018)) {
@@ -165,8 +165,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentHistoryHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
 
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS disabled" in new Setup(financialDetailsModel(2018)) {

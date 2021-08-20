@@ -273,6 +273,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
 			document.select("main h2").text shouldBe Messages.chargeHistoryHeading
 		}
 
+		"display a paymentbreakdown heading in h2 and charge history in h3" in new Setup(
+			documentDetailModel(outstandingAmount = Some(0)), paymentBreakdown = paymentBreakdown) {
+			document.select("main h2").text shouldBe Messages.paymentBreakdownHeading
+			document.select("main h3").text shouldBe Messages.chargeHistoryHeading
+		}
+
 		"display only the charge creation item when no history found for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
 			document.select("tbody tr").size() shouldBe 1
 			document.select("tbody tr td:nth-child(1)").text() shouldBe "29 Mar 2018"
