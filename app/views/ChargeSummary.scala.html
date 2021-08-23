@@ -136,66 +136,70 @@
     }
 
     @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
-    <h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
-
-    <table>
-
-        <thead>
-        <tr>
-            <th>@messages("chargeSummary.chargeHistory.date")</th>
-            <th>@messages("chargeSummary.chargeHistory.description")</th>
-            <th>@messages("chargeSummary.chargeHistory.amount")</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @if(chargeHistoryEnabled){
-            @if(!latePaymentInterestCharge) {
-                <tr>
-                    <td style="white-space: nowrap;">@{documentDetail.documentDate.toLongDateShort}</td>
-                    <td>@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
-                    <td class="numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
-                </tr>
-            }
-
-            @if(latePaymentInterestCharge) {
-                <tr>
-                    <td style="white-space: nowrap;">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
-                    <td>@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
-                    <td class="numeric">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
-                </tr>
-            }
-
-            @for(charge <- chargeHistory) {
-                <tr>
-                    <td style="white-space: nowrap;">@{charge.reversalDate.toLongDateShort}</td>
-                    <td>@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey}")</td>
-                    <td class="numeric">@{charge.totalAmount.toCurrency}</td>
-                </tr>
-            }
+        @if(paymentBreakdown.nonEmpty) {
+            <h3 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h3>
+        } else {
+            <h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
         }
 
-        @if(paymentAllocationEnabled) {
-            @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
-                <tr>
-                    <td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
-                    <td>
-						@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
+        <table>
 
-							<a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
-								@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
-							</a>
-						}
+            <thead>
+            <tr>
+                <th>@messages("chargeSummary.chargeHistory.date")</th>
+                <th>@messages("chargeSummary.chargeHistory.description")</th>
+                <th>@messages("chargeSummary.chargeHistory.amount")</th>
+            </tr>
+            </thead>
 
-						@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isEmpty) {
-							@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
-						}
-					</td>
-                    <td class="numeric">@payment.amount.get.abs.toCurrency</td>
-                </tr>
+            <tbody>
+            @if(chargeHistoryEnabled){
+                @if(!latePaymentInterestCharge) {
+                    <tr>
+                        <td style="white-space: nowrap;">@{documentDetail.documentDate.toLongDateShort}</td>
+                        <td>@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
+                        <td class="numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
+                    </tr>
+                }
+
+                @if(latePaymentInterestCharge) {
+                    <tr>
+                        <td style="white-space: nowrap;">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
+                        <td>@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
+                        <td class="numeric">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                    </tr>
+                }
+
+                @for(charge <- chargeHistory) {
+                    <tr>
+                        <td style="white-space: nowrap;">@{charge.reversalDate.toLongDateShort}</td>
+                        <td>@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey}")</td>
+                        <td class="numeric">@{charge.totalAmount.toCurrency}</td>
+                    </tr>
+                }
             }
-        }
-        </tbody>
-    </table>
+
+            @if(paymentAllocationEnabled) {
+                @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
+                    <tr>
+                        <td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
+                        <td>
+                            @if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
+
+                                <a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                                    @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                                </a>
+                            }
+
+                            @if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isEmpty) {
+                                @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                            }
+                        </td>
+                        <td class="numeric">@payment.amount.get.abs.toCurrency</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
     }
 }

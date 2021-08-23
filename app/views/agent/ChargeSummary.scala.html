@@ -131,7 +131,11 @@
 	</p>
 
 	@chargeHistoryOpt.map { chargeHistory =>
-		<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
+			@if(paymentBreakdown.nonEmpty) {
+				<h3 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h3>
+			} else {
+				<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
+			}
 
 		<table>
  			<thead>
