@@ -488,9 +488,12 @@ chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Full payment amount
 chargeSummary.paidToDate    									   = Paid to date
 chargeSummary.remainingDue   									   = Remaining to pay
+chargeSummary.overdue                                              = OVERDUE
+
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab)
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
+
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
 chargeSummary.paymentBreakdown.nic2   							   = Class 2 National Insurance
@@ -498,10 +501,17 @@ chargeSummary.paymentBreakdown.vcnic2   						   = Voluntary Class 2 National In
 chargeSummary.paymentBreakdown.nic4   							   = Class 4 National Insurance
 chargeSummary.paymentBreakdown.cgt   							   = Capital Gains Tax
 chargeSummary.paymentBreakdown.sl   							   = Student Loans
+chargeSummary.paymentBreakdown.dunningLocks.underReview            = Under review
+chargeSummary.paymentBreakdown.interestLocks.notCharging           = We are not currently charging interest on this payment
+chargeSummary.paymentBreakdown.interestLocks.charging              = We are charging you interest on this payment
+chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
+
+chargeSummary.interestLocks.text                                   = Any interest on this payment is shown as a total on the
+chargeSummary.interestLocks.linkText                               = What you owe page
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
-chargeSummary.overdue                                              = OVERDUE
+
 chargeSummary.chargeHistory.heading								   = Payment history
 chargeSummary.chargeHistory.date								   = Date
 chargeSummary.chargeHistory.description							   = Description
