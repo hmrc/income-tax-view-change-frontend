@@ -40,16 +40,16 @@ class AgentErrorViewSpec extends ViewSpec {
     }
 
     s"have a paragraph stating: ${pageMessages.notAnAgentNote}" in new Setup(agentErrorView) {
-      content.select(Selectors.p).text shouldBe pageMessages.notAnAgentNote
+      layoutContent.select(Selectors.p).text shouldBe pageMessages.notAnAgentNote
     }
 
     s"have a link in the paragraph: ${pageMessages.setupAccountLink}" in new Setup(agentErrorView) {
-      content.selectFirst(Selectors.p)
+      layoutContent.selectFirst(Selectors.p)
         .hasCorrectLink(pageMessages.setupAccountLink, "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account")
     }
 
     s"have a sign out button stating: ${pageMessages.signOutButton}" in new Setup(agentErrorView) {
-      val signoutLinkButton = content.select("a[class=button]")
+      val signoutLinkButton = layoutContent.select("a[class=govuk-button]")
       signoutLinkButton.text shouldBe pageMessages.signOutButton
       signoutLinkButton.attr("href") shouldBe controllers.routes.SignOutController.signOut().url
     }

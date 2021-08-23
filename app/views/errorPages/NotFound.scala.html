@@ -16,7 +16,7 @@
 
 @this(standardError: StandardError)
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @standardError(
     messages("notFound.heading"),

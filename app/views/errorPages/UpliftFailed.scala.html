@@ -14,27 +14,29 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.MainTemplate
+@import views.html.layouts.layout
+@import views.html.components._
 
-@this(mainTemplate: MainTemplate)
+@this(  mainTemplate: layout,
+        h1: h1,
+        p: p,
+        link: link,
+        list: bulletPointList)
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+
+@()(implicit messages: Messages)
 
 @mainTemplate(messages("upliftFailure.title")) {
+    @h1(msg = "upliftFailure.title")
 
-	<h1 class="heading-xlarge">@messages("upliftFailure.title")</h1>
-
-	<p>@messages("upliftFailure.content")</p>
+    @p{@messages("upliftFailure.content")}
 
 	<div>
-		<ul class="govuk-list link-list__link--final bullets">
-			<li>@messages("upliftFailure.bullet.1")</li>
-			<li>@messages("upliftFailure.bullet.2")</li>
-			<li>@messages("upliftFailure.bullet.3")</li>
-		</ul>
+        @list("upliftFailure.bullet.1", "upliftFailure.bullet.2", "upliftFailure.bullet.3")
 	</div>
 
 	<div>
-		<a class="button" href="@{controllers.routes.SignOutController}">@messages("base.sign-out")</a>
+        @link(link = controllers.routes.SignOutController.signOut.url,  messageKey = "base.sign-out", classes = "govuk-button")
 	</div>
 }
