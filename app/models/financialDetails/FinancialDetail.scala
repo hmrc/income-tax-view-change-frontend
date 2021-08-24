@@ -39,9 +39,26 @@ case class FinancialDetail(taxYear: String,
 
   lazy val dunningLockExists: Boolean = dunningLocks.nonEmpty
 
+  lazy val interestLockExists: Boolean = interestLocks.nonEmpty
+
+  lazy val hasAccruedInterest: Boolean = accruedInterest.isDefined
+
   lazy val dunningLocks: Seq[SubItem] = {
     items.fold(Seq.empty[SubItem]) { subItems =>
       subItems.filter(_.dunningLock.contains("Stand over order"))
+    }
+  }
+
+  lazy private val interestLockReasons = Set(
+    "Clerical Interest Signal",
+    "Manual Interest Calculated",
+    "C18 Appeal in Progress",
+    "Manual RPI Signal",
+    "Breathing Space Moratorium Act")
+
+  lazy val interestLocks: Seq[SubItem] = {
+    items.fold(Seq.empty[SubItem]) { subItems =>
+      subItems.filter(_.interestLock.exists(interestLockReasons.contains))
     }
   }
 

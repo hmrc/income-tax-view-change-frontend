@@ -122,10 +122,12 @@ object IncomeSourceIntegrationTestConstants {
 	val noDunningLock: List[String] = List("dunningLock", "dunningLock")
 	val oneDunningLock: List[String] = List("Stand over order", "dunningLock")
 	val twoDunningLocks: List[String] = List("Stand over order", "Stand over order")
+	val noInterestLock: List[String] = List("Interest lock", "Interest lock")
+	val twoInterestLocks: List[String] = List("Breathing Space Moratorium Act", "Manual RPI Signal")
 
-  def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
-                                         taxYear: String = "2018", dueDate: String = "2018-02-14",
-                                         dunningLock: List[String] = noDunningLock): JsValue = Json.obj(
+  def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
+																				 dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+																				 interestLocks: List[String] = noInterestLock): JsValue = Json.obj(
 		"documentDetails" -> Json.arr(
 			Json.obj(
 				"taxYear" -> taxYear,
@@ -193,6 +195,7 @@ object IncomeSourceIntegrationTestConstants {
 						"paymentLot" -> "081203010024",
 						"paymentLotItem" -> "000001"),
 					Json.obj(
+						"interestLock" -> interestLocks.head,
 						"dunningLock" -> dunningLock.head
 					))
 			),
@@ -209,6 +212,7 @@ object IncomeSourceIntegrationTestConstants {
 						"paymentLot" -> "081203010024",
 						"paymentLotItem" -> "000001"),
 					Json.obj(
+						"interestLock" -> interestLocks(1),
 						"dunningLock" -> dunningLock(1)
 					))
 			)

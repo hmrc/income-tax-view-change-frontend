@@ -64,6 +64,46 @@ class FinancialDetailSpec extends UnitSpec {
       }
 
     }
+    "working with Interest Locks" when {
+      def financialDetailWithoutLocks: FinancialDetail = financialDetail()
+      def financialDetailWithLocks(lock: String): FinancialDetail = financialDetailWithoutLocks.copy(
+        items = Some(Seq(interestLockSubItem(lock)))
+      )
+
+      def interestLockSubItem(lock: String) = SubItem(interestLock = Some(lock), amount = Some(123.45))
+
+      val supportedLocks = List(
+        "Clerical Interest Signal",
+        "Manual Interest Calculated",
+        "C18 Appeal in Progress",
+        "Manual RPI Signal",
+        "Breathing Space Moratorium Act")
+
+      "calling a predicate for Interest Locks" should {
+        for(supportedLock <- supportedLocks) {
+          s"return true when there are sub items with the $supportedLock Interest Lock" in {
+            financialDetailWithLocks(supportedLock).interestLockExists shouldBe true
+          }
+        }
+
+        "return false there are no sub items with Interest Locks" in {
+          financialDetailWithoutLocks.interestLockExists shouldBe false
+        }
+
+      }
+    }
+
+    "working with Accrued Interest" when {
+
+      "should return true" in {
+        financialDetail(accruedInterest = Some(3)).hasAccruedInterest shouldBe true
+      }
+
+
+      "should return false" in {
+        financialDetail().hasAccruedInterest shouldBe false
+      }
+    }
 
   }
 

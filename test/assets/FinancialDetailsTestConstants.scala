@@ -332,6 +332,8 @@ object FinancialDetailsTestConstants {
                       chargeType: String = "NIC4 Wales",
                       originalAmount: BigDecimal = 100,
                       dunningLock: Option[String] = None,
+                      interestLock: Option[String] = None,
+                      accruedInterest: Option[BigDecimal] = None,
 											additionalSubItems: Seq[SubItem] = Seq()): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
@@ -343,6 +345,7 @@ object FinancialDetailsTestConstants {
     outstandingAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some(chargeType),
+    accruedInterest = accruedInterest,
     items =
       Some(Seq(
         SubItem(
@@ -350,6 +353,7 @@ object FinancialDetailsTestConstants {
           subItemId = Some("1"),
           amount = Some(100),
           dunningLock = dunningLock,
+          interestLock = interestLock,
           clearingDate = Some("2019-07-23"),
           clearingReason = Some("clearingReason")
         )

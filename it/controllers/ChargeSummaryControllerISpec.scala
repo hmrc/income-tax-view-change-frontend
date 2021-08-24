@@ -17,7 +17,7 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson}
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch.{ChargeHistory, PaymentAllocation, TxmEventsApproved}
@@ -31,6 +31,34 @@ import play.api.test.FakeRequest
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" should {
+
+    "load the page with right data for Payments Breakdown" in {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+      And("I wiremock stub a charge history response")
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+      Given("the TxmEventsApproved feature switch is on")
+      enable(TxmEventsApproved)
+
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      res should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Business Tax account - GOV.UK"),
+        elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
+        elementTextBySelector("article dl:nth-of-type(2) dd span")("Under review"),
+        elementTextBySelector("article dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
+      )
+    }
 
     "load the page with right audit events when TxmEventsApproved FS enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
