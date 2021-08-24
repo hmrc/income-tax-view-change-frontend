@@ -341,9 +341,16 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           "has a heading" in new Setup(view()) {
             content.selectHead("#payments").selectHead("h2").text shouldBe TaxYearOverviewMessages.paymentsTabHeading
           }
+
+          "has a caption" in new Setup(view()) {
+            content.selectHead("#payments").selectHead(" caption").text.contains(TaxYearOverviewMessages.paymentsTabLabel)
+          }
+
           "has no payments due content" when {
             "no payments are due" in new Setup(view(documentDetailsWithDueDates = Nil)) {
               content.selectHead("#payments").selectHead("p").text shouldBe TaxYearOverviewMessages.paymentsTabNoPayments
+              content.selectHead("#payments").selectHead("h2").text shouldBe TaxYearOverviewMessages.paymentsTabHeading
+              content.selectHead("#payments").selectHead(" caption").text shouldBe null
             }
           }
           "has a table of the payments for the year" which {

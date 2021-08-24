@@ -264,8 +264,15 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       content.selectHead("#payments-table tr:nth-child(2) td:nth-child(4)").text shouldBe "£1,400.00"
     }
 
-    "display No payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
+    "display no payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
       content.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
+      content.h2.selectFirst("h2").text().contains(taxYearOverviewMessages.payments)
+      content.selectHead(" caption").text shouldBe null
+    }
+
+    "display payments heading and caption when there are payments in payments tab" in new Setup(estimateView()) {
+      content.h2.selectFirst("h2").text().contains(taxYearOverviewMessages.payments)
+      content.selectHead(" caption").text().contains(taxYearOverviewMessages.payments)
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
