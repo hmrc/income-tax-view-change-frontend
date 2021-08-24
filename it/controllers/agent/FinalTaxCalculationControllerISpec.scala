@@ -18,11 +18,9 @@ package controllers.agent
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
 import assets.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import auth.MtdItUser
 import controllers.agent.utils.SessionKeys
 import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, IndividualCalculationStub}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
@@ -30,9 +28,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
-import play.api.test.FakeRequest
-import play.mvc.Http.Headers
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.{LocalDate, LocalDateTime}
 
