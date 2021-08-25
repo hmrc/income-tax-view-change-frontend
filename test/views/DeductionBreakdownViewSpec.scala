@@ -16,11 +16,12 @@
 
 package views
 
-import assets.MessagesLookUp.DeductionBreakdown
 import assets.CalcBreakdownTestConstants
+import assets.MessagesLookUp.DeductionBreakdown
 import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
+import org.scalatest.prop.TableDrivenPropertyChecks._
 import testUtils.ViewSpec
 import views.html.DeductionBreakdown
 
@@ -106,8 +107,22 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
       "have an deduction table" which {
 
-        "has all ten table rows" in new Setup(view) {
-          content hasTableWithCorrectSize (1,10)
+        val expectedBreakdownTableDataRows = Table(
+          ("row index", "deduction type", "formatted amount"),
+          (1, DeductionBreakdown.personalAllowance, "£11,500.00"),
+          (2, DeductionBreakdown.marriageAllowanceTransfer, "−£7,500.00"),
+          (3, DeductionBreakdown.totalPensionContributions, "£12,500.00"),
+          (4, DeductionBreakdown.lossesAppliedToGeneralIncome, "£13,500.00"),
+          (5, DeductionBreakdown.giftOfInvestmentsAndPropertyToCharity, "£10,000.00"),
+          (6, DeductionBreakdown.annualPayments, "£1,000.00"),
+          (7, DeductionBreakdown.loanInterest, "£1,001.00"),
+          (8, DeductionBreakdown.postCessasationTradeReceipts, "£1,002.00"),
+          (9, DeductionBreakdown.tradeUnionPayments, "£1,003.00"),
+          (10, DeductionBreakdown.total, "£47,500.00")
+        )
+
+        "has all eleven table rows, including a header row" in new Setup(view) {
+          content hasTableWithCorrectSize (1, 11)
         }
 
         "has a table header and amount section" in new Setup(view) {
@@ -116,60 +131,16 @@ class DeductionBreakdownViewSpec extends ViewSpec {
           row.select("th").last().text() shouldBe DeductionBreakdown.deductionBreakdownHeaderAmount
         }
 
-        "has a personal allowance line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(1)
-          row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
-          row.select("td").last().text() shouldBe "£11,500.00"
-        }
+        forAll(expectedBreakdownTableDataRows) { (rowIndex: Int, deductionType: String, formattedAmount: String) =>
 
-        "has a pensions contributions line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(2)
-          row.select("td").first().text() shouldBe DeductionBreakdown.totalPensionContributions
-          row.select("td").last().text() shouldBe "£12,500.00"
-        }
-
-        "has a loss relief line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(3)
-          row.select("td").first().text() shouldBe DeductionBreakdown.lossesAppliedToGeneralIncome
-          row.select("td").last().text() shouldBe "£12,500.00"
+          s"has the row $rowIndex for $deductionType line with the correct amount value" in new Setup(view) {
+            val row: Element = content.table().select("tr").get(rowIndex)
+            row.select("td").first().text() shouldBe deductionType
+            row.select("td").last().text() shouldBe formattedAmount
+          }
 
         }
 
-        "has a gift of investments and property to charity line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(4)
-          row.select("td").first().text() shouldBe DeductionBreakdown.giftOfInvestmentsAndPropertyToCharity
-          row.select("td").last().text() shouldBe "£10,000.00"
-        }
-
-        "has a annual payments line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(5)
-          row.select("td").first().text() shouldBe DeductionBreakdown.annualPayments
-          row.select("td").last().text() shouldBe "£1,000.00"
-        }
-
-        "has a qualifying loan interest line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(6)
-          row.select("td").first().text() shouldBe DeductionBreakdown.loanInterest
-          row.select("td").last().text() shouldBe "£1,001.00"
-        }
-
-        "has a post cessasation trade receipts line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(7)
-          row.select("td").first().text() shouldBe DeductionBreakdown.postCessasationTradeReceipts
-          row.select("td").last().text() shouldBe "£1,002.00"
-        }
-
-        "has a trade union payments line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(8)
-          row.select("td").first().text() shouldBe DeductionBreakdown.tradeUnionPayments
-          row.select("td").last().text() shouldBe "£1,003.00"
-        }
-
-        "has a total deductions line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(9)
-          row.select("td").first().text() shouldBe DeductionBreakdown.total
-          row.select("td").last().text() shouldBe "£47,500.00"
-        }
       }
     }
   }

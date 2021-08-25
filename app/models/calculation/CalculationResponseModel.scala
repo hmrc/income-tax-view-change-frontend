@@ -46,6 +46,7 @@ case class Calculation(totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                        taxDeductedAtSource: TaxDeductedAtSource = TaxDeductedAtSource(),
                        lumpSums: LumpSums = LumpSums(),
                        gainsOnLifePolicies: GainsOnLifePolicies = GainsOnLifePolicies(),
+                       capitalGainsTax: CapitalGainsTax = CapitalGainsTax(),
                        messages: Option[Messages] = None
                       ) extends CalculationResponseModel with CrystallisedViewModel
 
@@ -68,6 +69,7 @@ object Calculation {
       __.read[TaxDeductedAtSource] and
       __.read[LumpSums] and
       __.read[GainsOnLifePolicies] and
+      __.read[CapitalGainsTax] and
       readNullable[Messages](__ \ "messages")
     ) (Calculation.apply _)
   implicit val writes: OWrites[Calculation] = Json.writes[Calculation]

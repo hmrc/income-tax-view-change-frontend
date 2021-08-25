@@ -18,7 +18,7 @@ package models.calculation
 
 import models.{readNullable, readNullableList}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, OFormat, OWrites, Reads, _}
+import play.api.libs.json._
 
 case class TaxBand(name: String, rate: BigDecimal, income: BigDecimal, taxAmount: BigDecimal, bandLimit: BigDecimal, apportionedBandLimit: BigDecimal)
 
@@ -113,6 +113,8 @@ case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
                                 totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                                 statePensionLumpSumCharges: Option[BigDecimal] = None,
                                 totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
+                                marriageAllowanceTransferredInAmount: Option[BigDecimal] = None,
+                                topSlicingRelief: Option[BigDecimal] = None,
                                 totalResidentialFinanceCostsRelief: Option[BigDecimal] = None,
                                 totalForeignTaxCreditRelief: Option[BigDecimal] = None,
                                 reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
@@ -121,7 +123,6 @@ case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
                                 totalIncomeTaxDue: Option[BigDecimal] = None
                                ) {
   val reliefsClaimedMap: Map[String, Option[BigDecimal]] = reliefsClaimed.getOrElse(Seq()).map(relief => relief.`type` -> relief.amountUsed).toMap
-
 }
 
 object ReductionsAndCharges {
@@ -131,6 +132,8 @@ object ReductionsAndCharges {
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalPensionSavingsTaxCharges") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "statePensionLumpSumCharges") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalStudentLoansRepaymentAmount") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "marriageAllowanceTransferredIn" \ "amount") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "topSlicingRelief" \ "amount") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "residentialFinanceCosts" \ "totalResidentialFinanceCostsRelief") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "foreignTaxCreditRelief" \ "totalForeignTaxCreditRelief") and
       readNullable[Seq[ReliefsClaimed]](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "reliefsClaimed") and
@@ -148,15 +151,8 @@ object ReliefsClaimed {
 }
 
 
-case class ResidentialFinanceCosts(rate: BigDecimal,
-                                   propertyFinanceRelief: BigDecimal)
-
-object ResidentialFinanceCosts {
-  implicit val format: OFormat[ResidentialFinanceCosts] = Json.format[ResidentialFinanceCosts]
-}
-
-
 case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
+                                   marriageAllowanceTransfer: Option[BigDecimal] = None,
                                    totalPensionContributions: Option[BigDecimal] = None,
                                    lossesAppliedToGeneralIncome: Option[BigDecimal] = None,
                                    giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
@@ -176,6 +172,7 @@ case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
 object AllowancesAndDeductions {
   implicit val reads: Reads[AllowancesAndDeductions] = (
     readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "personalAllowance") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "marriageAllowanceTransferOut" \ "transferredOutAmount") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "pensionContributions" \ "totalPensionContributions") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "lossesAppliedToGeneralIncome") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "giftOfInvestmentsAndPropertyToCharity") and
@@ -295,4 +292,48 @@ object GainsOnLifePolicies {
     readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "gainsOnLifePolicies" \ "taxBands") map GainsOnLifePolicies.apply
 
   implicit val writes: Writes[GainsOnLifePolicies] = Json.writes[GainsOnLifePolicies]
+}
+
+case class CapitalGainsTax(businessAssetsDisposalsAndInvestorsRel: SingleBandCgtDetail = SingleBandCgtDetail(),
+                           propertyAndInterestTaxBands: List[CgtTaxBand] = Nil,
+                           otherGainsTaxBands: List[CgtTaxBand] = Nil,
+                           totalTaxableGains: Option[BigDecimal] = None,
+                           adjustments: Option[BigDecimal] = None,
+                           foreignTaxCreditRelief: Option[BigDecimal] = None,
+                           taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
+                           capitalGainsTaxDue: Option[BigDecimal] = None,
+                           capitalGainsOverpaid: Option[BigDecimal] = None)
+
+object CapitalGainsTax {
+  implicit val reads: Reads[CapitalGainsTax] = (
+      (__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "capitalGainsTax" \ "businessAssetsDisposalsAndInvestorsRel").read[SingleBandCgtDetail] orElse Reads.pure(SingleBandCgtDetail()) and
+      readNullableList[CgtTaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "capitalGainsTax" \ "residentialPropertyAndCarriedInterest" \ "cgtTaxBands") and
+      readNullableList[CgtTaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "capitalGainsTax" \ "otherGains" \ "cgtTaxBands") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "capitalGainsTax" \ "totalTaxableGains") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "capitalGainsTax" \ "adjustments") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "capitalGainsTax" \ "foreignTaxCreditRelief") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "capitalGainsTax" \ "taxOnGainsAlreadyPaid") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "capitalGainsTax" \ "capitalGainsTaxDue") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "capitalGainsTax" \ "capitalGainsOverpaid")
+    ) (CapitalGainsTax.apply _)
+  implicit val writes: OWrites[CapitalGainsTax] = Json.writes[CapitalGainsTax]
+}
+
+case class SingleBandCgtDetail(taxableGains: Option[BigDecimal] = None,
+                               rate: Option[BigDecimal] = None,
+                               taxAmount: Option[BigDecimal] = None)
+
+object SingleBandCgtDetail {
+  implicit val format: OFormat[SingleBandCgtDetail] = Json.format[SingleBandCgtDetail]
+}
+
+case class CgtTaxBand(name: String, rate: BigDecimal, income: BigDecimal, taxAmount: BigDecimal)
+
+object CgtTaxBand {
+  implicit val format: OFormat[CgtTaxBand] = Json.format[CgtTaxBand]
+
+  object Names {
+    val lowerRate = "lowerRate"
+    val higherRate = "higherRate"
+  }
 }

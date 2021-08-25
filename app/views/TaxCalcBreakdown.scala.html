@@ -18,11 +18,14 @@
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.helpers.injected.BackLink
-@import models.calculation.CalcDisplayModel
+@import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTable
+@import views.html.partials.taxcalcbreakdown.TableRow
 
 @this(
     mainTemplate: MainTemplate,
-    backLink: BackLink
+    backLink: BackLink,
+    tableRow: TableRow,
+    capitalGainsTaxTable: CapitalGainsTaxTable
 )
 @(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages)
 
@@ -52,21 +55,7 @@
     }
 }
 
-@tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
-    @if(dataItem.isDefined) {
-        <tr id="@messageCode">
-            <td>@messages(s"taxCal_breakdown.table.$messageCode")</td>
-            <td class="numeric no-wrap">@{
-                if(isNegative) dataItem.get.toNegativeCurrency
-                else dataItem.get.toCurrency
-            }
-            </td>
-        </tr>
-    }
-}
-
-
-@mainTemplate(messages("taxCal_breakdown.heading", s"${taxYear - 1}", s"$taxYear")) {
+@mainTemplate(title = messages("taxCal_breakdown.heading")) {
 
     @backLink(backUrl)
 
@@ -256,7 +245,9 @@
                 <th scope="col" class="govuk-table__header numeric bold">@messages("taxCal_breakdown.table.amount")</th>
             </tr>
 
+            @tableRow("marriage_allowance_transfer", calcModel.calcDataModel.reductionsAndCharges.marriageAllowanceTransferredInAmount, isNegative = true)
             @taxReductionsTableRow("deficiencyRelief")
+            @tableRow("top_slicing_relief", calcModel.calcDataModel.reductionsAndCharges.topSlicingRelief, isNegative = true)
             @taxReductionsTableRow("vctSubscriptions")
             @taxReductionsTableRow("eisSubscriptions")
             @taxReductionsTableRow("seedEnterpriseInvestment")
@@ -335,6 +326,8 @@
             </tbody>
         </table>
     }
+
+    @capitalGainsTaxTable(calcModel.calcDataModel.capitalGainsTax)
 
     @if(calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.nonEmpty) {
         <table>
