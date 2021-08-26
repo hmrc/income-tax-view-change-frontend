@@ -109,6 +109,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val overdue = "OVERDUE"
     val updateReturn = "Update return"
     val viewReturn = "View return"
+    val tableHeadingTaxYear = "Tax year"
+    val tableHeadingOptions = "Options"
   }
 
   // Home Page Messages

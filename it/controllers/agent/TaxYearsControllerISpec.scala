@@ -165,14 +165,14 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")(
+          elementTextBySelectorList("#content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)", "li:nth-of-type(1)")(
             expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")(
-            expectedValue = s"Update return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-          ),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(3)")(
+          elementTextBySelectorList("#content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "li:nth-of-type(1)")(
             expectedValue = s"View return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+          ),
+          elementTextBySelectorList("#content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "li:nth-of-type(2)")(
+            expectedValue = s"Update return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           )
         )
 
@@ -204,10 +204,10 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")(
+          elementTextBySelectorList("#content", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)", "li:nth-of-type(1)")(
             expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")(
+          elementTextBySelectorList("#content", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "li:nth-of-type(1)")(
             expectedValue = s"View return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           )
         )

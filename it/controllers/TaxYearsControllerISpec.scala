@@ -98,7 +98,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
             res should have(
               httpStatus(OK),
               pageTitle(messages.taxYearsTitle),
-              nElementsWithClass("govuk-summary-list__value")(2)
+              nElementsWithClass("govuk-table__row")(3)
             )
           }
         }
