@@ -113,8 +113,8 @@
     mainClass = Some("full-width")
 ) {
     <h1 class="heading-xlarge">
-        <span id="income-tax-heading">@messages("home.heading")</span>
         <span id="sub-heading" class="heading-secondary">@user.userName.map(_.name)</span>
+        <span id="income-tax-heading">@messages("home.heading")</span>
     </h1>
 
     @user.saUtr.map { utr =>
