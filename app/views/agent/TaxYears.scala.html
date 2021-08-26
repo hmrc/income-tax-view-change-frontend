@@ -21,27 +21,39 @@
 
 @(taxYears: Seq[Int], backUrl: String, itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@taxYearRow(year: Int) = {
-	<div class="govuk-summary-list__row">
-		<dd class="govuk-summary-list__value">
-			@messages("taxYears.taxYears", s"${year - 1}", s"$year")
-		</dd>
-		@if(itsaSubmissionIntegrationEnabled) {
-			<dd class="govuk-summary-list__actions">
-				<a class="govuk-link" id="updateReturn-link-@year" href="@appConfig.submissionFrontendUrl">
-					@messages("taxYears.updateReturn")
-					<span class="visuallyhidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
-				</a>
-			</dd>
-		}
-		<dd class="govuk-summary-list__actions">
-			<a class="govuk-link" id="viewReturn-link-@year" href="@controllers.agent.routes.TaxYearOverviewController.show(year).url">
-				@messages("taxYears.viewReturn")
-				<span class="visuallyhidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
-			</a>
-		</dd>
-	</div>
+@viewReturnLink(year: Int) = {
+	<a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewReturn-link-@year"
+	href="@{controllers.agent.routes.TaxYearOverviewController.show(year).url}">
+		@messages("taxYears.viewReturn")
+		<span class="visuallyhidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+	</a>
 }
+
+@updateReturnLink(year: Int) = {
+	<a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="updateReturn-link-@year" href="@appConfig.submissionFrontendUrl">
+		@messages("taxYears.updateReturn")
+		<span class="visuallyhidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+	</a>
+}
+
+@taxYearRow(year: Int) = {
+	<tr class="govuk-table__row">
+		<td class="govuk-table__cell">
+			<ul class="govuk-list-taxYears">
+				<li>@messages("taxYears.taxYears", s"${year - 1}", s"$year")</li>
+			</ul>
+		</td>
+		<td class="govuk-table__cell">
+			<ul class="govuk-list-taxYears">
+				<li>@viewReturnLink(year)</li>
+				@if(itsaSubmissionIntegrationEnabled) {
+					<li>@updateReturnLink(year)</li>
+				}
+			</ul>
+		</td>
+	</tr>
+}
+
 
 @mainTemplate(title = messages("taxYears.heading")){
 
@@ -54,9 +66,18 @@
 	@if(taxYears.isEmpty){
 		<p id="no-taxYears">@messages("taxYears.noEstimates")</p>
 	} else {
-		<dl class="govuk-summary-list">
-			@taxYears.map(taxYearRow)
-		</dl>
+		<table class="govuk-table-taxYears">
+			<caption class="govuk-table__caption heading-xlarge visually-hidden">@messages("taxYears.heading")</caption>
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">@messages("taxYears.table.taxYear.heading")</th>
+					<th scope="col" class="govuk-table__header numeric">@messages("taxYears.table.options.heading")</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				@taxYears.map(taxYearRow)
+			</tbody>
+		</table>
 	}
 
 }

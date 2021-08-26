@@ -144,6 +144,8 @@ taxYears.ongoing                                               = ONGOING
 taxYears.overdue                                               = OVERDUE
 taxYears.complete                                              = COMPLETE
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
+taxYears.table.taxYear.heading                                 = Tax year
+taxYears.table.options.heading                                 = Options
 
 ## Tax Year Overview ##
 tax-year-overview.heading                                           = Tax year overview

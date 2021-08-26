@@ -1072,6 +1072,24 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
         width: 160px;
     }
 
+    .govuk-table-taxYears td:first-of-type {
+        width: 400px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .govuk-table-taxYears td:nth-of-type(2) {
+        width: 200px;
+        text-align: right;
+        vertical-align: top;
+    }
+
+    .govuk-list-taxYears {
+        margin: 0;
+        display: inline-block;
+    }
+
+
 .govuk-accordion {
     margin-bottom: 20px;
 }

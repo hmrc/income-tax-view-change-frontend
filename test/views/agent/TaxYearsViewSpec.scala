@@ -41,6 +41,8 @@ class TaxYearsViewSpec extends ViewSpec {
     def updateReturn(year: Int): String = s"Update return ${taxYearDates(year)}"
     def viewReturn(year: Int): String = s"View return ${taxYearDates(year)}"
     val back: String = "Back"
+    val tableHeadingTaxYear = "Tax year"
+    val tableHeadingOptions = "Options"
   }
 
   "The Confirm Client page" should {
@@ -66,54 +68,58 @@ class TaxYearsViewSpec extends ViewSpec {
 
     "have a list containing tax years" which {
       "has a 2021 year row" which {
+        "has table headers" in new Setup(view()) {
+          content.selectNth("th", 1).text shouldBe TaxYearsMessages.tableHeadingTaxYear
+          content.selectNth("th", 2).text shouldBe TaxYearsMessages.tableHeadingOptions
+        }
         "includes a submission service link" when {
           "the submission integration flag is enabled" in new Setup(view()) {
-            val row: Element = content.selectHead("dl").selectNth("div", 1)
-            row.selectNth("dd", 1).text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("dd", 2).selectHead("a").text shouldBe TaxYearsMessages.updateReturn(year2021)
-            row.selectNth("dd", 2).selectHead("a").attr("href") shouldBe appConfig.submissionFrontendUrl
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
-            row.selectNth("dd", 3).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2021)
-            row.selectNth("dd", 3).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2021).url
-            row.selectNth("dd", 3).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("dd", 3).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            val row: Element = content.selectHead("tbody").selectNth("tr", 1)
+            row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2021)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2021)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2021).url
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").text shouldBe TaxYearsMessages.updateReturn(year2021)
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").attr("href") shouldBe appConfig.submissionFrontendUrl
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
           }
         }
         "does not include a submission service link" when {
           "the submission integration flag is disabled" in new Setup(view(submissionIntegrationEnabled = false)) {
-            val row: Element = content.selectHead("dl").selectNth("div", 1)
-            row.selectNth("dd", 1).text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("dd", 2).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2021)
-            row.selectNth("dd", 2).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2021).url
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            val row: Element = content.selectHead("tbody").selectNth("tr", 1)
+            row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2021)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2021)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2021).url
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
           }
         }
       }
       "has a 2020 year row" which {
         "includes a submission service link" when {
           "the submission integration flag is enabled" in new Setup(view()) {
-            val row: Element = content.selectHead("dl").selectNth("div", 2)
-            row.selectNth("dd", 1).text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("dd", 2).selectHead("a").text shouldBe TaxYearsMessages.updateReturn(year2020)
-            row.selectNth("dd", 2).selectHead("a").attr("href") shouldBe appConfig.submissionFrontendUrl
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
-            row.selectNth("dd", 3).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2020)
-            row.selectNth("dd", 3).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2020).url
-            row.selectNth("dd", 3).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("dd", 3).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            val row: Element = content.selectHead("tbody").selectNth("tr", 2)
+            row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2020)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2020)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2020).url
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").text shouldBe TaxYearsMessages.updateReturn(year2020)
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").attr("href") shouldBe appConfig.submissionFrontendUrl
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
           }
         }
         "does not include a submission service link" when {
           "the submission integration flag is disabled" in new Setup(view(submissionIntegrationEnabled = false)) {
-            val row: Element = content.selectHead("dl").selectNth("div", 2)
-            row.selectNth("dd", 1).text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("dd", 2).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2020)
-            row.selectNth("dd", 2).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2020).url
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("dd", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            val row: Element = content.selectHead("tbody").selectNth("tr", 2)
+            row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2020)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2020)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2020).url
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
           }
         }
       }
