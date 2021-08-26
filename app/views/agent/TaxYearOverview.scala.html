@@ -110,6 +110,7 @@
                                 <a id="paymentTypeLink-@{index}" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
                             }
                         </div>
+                        @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     </td>
                     @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
                         <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>

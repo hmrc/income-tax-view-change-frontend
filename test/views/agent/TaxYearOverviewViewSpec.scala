@@ -61,6 +61,13 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     ),
     transaction = Some(TransactionModel())
   )
+  val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
+      documentDescription = Some("ITSA- POA 1"), documentDate = date(29, 3, 2018)), Some(LocalDate.now), dunningLock = true) ,
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00),
+      documentDescription = Some("ITSA - POA 2"), documentDate = date(29, 3, 2018)), Some(date(7, 4, 2020))),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00),
+      documentDescription = Some("TRM New Charge"), documentDate = date(29, 3, 2018)), Some(date(8, 4, 2020)), dunningLock = true))
 
   def date(day: Int, month: Int, year: Int): LocalDate = LocalDate.of(year, month, day)
 
@@ -140,6 +147,18 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     )
   }
 
+  def multipleDunningLockView(taxYear: Int = testYear,
+           overview: Option[CalcOverview] = Some(testCalcOverview),
+           documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testDunningLockChargesList,
+           obligations: ObligationsModel = testObligations): Html = {
+    taxYearOverview(
+      taxYear = taxYear,
+      overviewOpt = overview,
+      documentDetailsWithDueDates = documentDetailsWithDueDates,
+      obligations = obligations,
+      backUrl = "/testBack"
+    )
+  }
   import mockImplicitDateFormatter.longDate
 
   object TaxYearOverviewMessages {
@@ -191,6 +210,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val paymentsTabUnpaid: String = "Unpaid"
 
     val paymentsTabOverdue: String = "Overdue"
+
+    val paymentUnderReview: String = "Payment under review"
 
     val updatesTabHeading: String = "Updates"
 
@@ -444,6 +465,11 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
             "display the Amount in the payments tab for late payment interest remaining balance" in new Setup(view()) {
               content.selectHead("#payments-table tr:nth-child(7) td:nth-child(4)").text shouldBe "£100.00"
+            }
+            "display the Dunning lock subheading in the payments tab for multiple lines POA and Remaining Balance" in new Setup(multipleDunningLockView()) {
+              content.doesNotHave("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)")
+              content.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentUnderReview
+              content.selectHead("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(2)").text shouldBe TaxYearOverviewMessages.paymentUnderReview
             }
           }
         }
