@@ -138,14 +138,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getCalculation(year: String): WSResponse = get(s"/calculation/$year")
 
-    def getCalculationPoller(year: String, additionalCookies: Map[String, String]): WSResponse =
-      getWithCalcIdInSession(s"/calculation/$year/submitted", additionalCookies)
+    def getCalculationPoller(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse =
+      getWithCalcIdInSession(s"${if(isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
       
-    def getFinalTaxCalculationPoller(taxYear: String, additionalCookies: Map[String, String]): WSResponse =
-      getWithCalcIdInSession(s"/$taxYear/final-tax-overview-and-declaration/calculate", additionalCookies)
+    def getFinalTaxCalculationPoller(taxYear: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse = {
+      val agentString = if(isAgent) "/agents" else ""
+      getWithCalcIdInSession(s"$agentString/$taxYear/final-tax-overview-and-declaration/calculate", additionalCookies)
+    }
 
-    def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String]): Future[WSResponse] =
-      getWithCalcIdInSessionAndWithoutAwait(s"/calculation/$year/submitted", additionalCookies)
+    def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): Future[WSResponse] =
+      getWithCalcIdInSessionAndWithoutAwait(s"${if(isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
 
     def getIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income")
 

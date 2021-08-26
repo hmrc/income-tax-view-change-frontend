@@ -1,61 +1,64 @@
 # agent specific routes
 
 # Language
-GET         /language/:lang                                     controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+GET         /language/:lang                                               controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
 
 # Enter Clients UTR
-GET         /client-utr                                         controllers.agent.EnterClientsUTRController.show
-POST        /client-utr                                         controllers.agent.EnterClientsUTRController.submit
+GET         /client-utr                                                   controllers.agent.EnterClientsUTRController.show
+POST        /client-utr                                                   controllers.agent.EnterClientsUTRController.submit
 
 # Confirm Client
-GET         /confirm-client                                     controllers.agent.ConfirmClientUTRController.show
-POST        /confirm-client                                     controllers.agent.ConfirmClientUTRController.submit
+GET         /confirm-client                                               controllers.agent.ConfirmClientUTRController.show
+POST        /confirm-client                                               controllers.agent.ConfirmClientUTRController.submit
 
 # Client Relationship Failure
-GET         /client-relationship-problem                        controllers.agent.ClientRelationshipFailureController.show
+GET         /client-relationship-problem                                  controllers.agent.ClientRelationshipFailureController.show
 
 # UTR Error
-GET         /utr-problem                                        controllers.agent.UTRErrorController.show
-POST        /utr-problem                                        controllers.agent.UTRErrorController.submit
+GET         /utr-problem                                                  controllers.agent.UTRErrorController.show
+POST        /utr-problem                                                  controllers.agent.UTRErrorController.submit
 
 #Home Controller
-GET         /income-tax-account                                 controllers.agent.HomeController.show
-GET         /                                                   controllers.agent.HomeController.show
-GET         /remove-client-sessions                             controllers.agent.RemoveClientDetailsSessionsController.show
+GET         /income-tax-account                                           controllers.agent.HomeController.show
+GET         /                                                             controllers.agent.HomeController.show
+GET         /remove-client-sessions                                       controllers.agent.RemoveClientDetailsSessionsController.show
 
 #Next Payments Due
-GET         /payments-owed                                      controllers.agent.WhatYouOweController.show
+GET         /payments-owed                                                controllers.agent.WhatYouOweController.show
 
 #Charge summary
-GET         /tax-years/:taxYear/charge                          controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
+GET         /tax-years/:taxYear/charge                                    controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
 
 #Payment
-GET         /payment                                            controllers.agent.PaymentController.paymentHandoff(amountInPence: Long)
+GET         /payment                                                      controllers.agent.PaymentController.paymentHandoff(amountInPence: Long)
 
 #Payment Allocation
-GET         /charges/payments-made                              controllers.agent.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
+GET         /charges/payments-made                                        controllers.agent.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
 
 # Tax Year Overview
-GET         /calculation/:taxYear                               controllers.agent.TaxYearOverviewController.show(taxYear: Int)
+GET         /calculation/:taxYear                                         controllers.agent.TaxYearOverviewController.show(taxYear: Int)
 
 # Tax Years
-GET         /tax-years                                          controllers.agent.TaxYearsController.show
+GET         /tax-years                                                    controllers.agent.TaxYearsController.show
 
 #Payment history
-GET         /payments/history                                   controllers.agent.PaymentHistoryController.viewPaymentHistory
+GET         /payments/history                                             controllers.agent.PaymentHistoryController.viewPaymentHistory
 
 #Next updates
-GET         /next-updates                                       controllers.agent.NextUpdatesController.getNextUpdates
+GET         /next-updates                                                 controllers.agent.NextUpdatesController.getNextUpdates
 
 #Deductions Summary
-GET         /calculation/:taxYear/deductions                    controllers.agent.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
+GET         /calculation/:taxYear/deductions                              controllers.agent.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
 
 #IncomeSummary
-GET         /calculation/:taxYear/income                        controllers.agent.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+GET         /calculation/:taxYear/income                                  controllers.agent.IncomeSummaryController.showIncomeSummary(taxYear: Int)
 
 #Tax Due
-GET         /calculation/:taxYear/tax-due                       controllers.agent.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
+GET         /calculation/:taxYear/tax-due                                 controllers.agent.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
 
 #Final Tax URLs
-GET         /:taxYear/final-tax-overview-and-declaration        controllers.agent.FinalTaxCalculationController.show(taxYear: Int)
-POST        /:taxYear/final-tax-overview-and-declaration        controllers.agent.FinalTaxCalculationController.submit(taxYear: Int)
+GET         /:taxYear/final-tax-overview-and-declaration                  controllers.agent.FinalTaxCalculationController.show(taxYear: Int)
+POST        /:taxYear/final-tax-overview-and-declaration                  controllers.agent.FinalTaxCalculationController.submit(taxYear: Int)
+
+#Final Tax Calculation
+GET         /:taxYear/final-tax-overview-and-declaration/calculate        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int)

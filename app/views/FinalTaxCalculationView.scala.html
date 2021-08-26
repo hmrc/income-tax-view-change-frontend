@@ -39,6 +39,14 @@
     @messages("final-declaration.inset.1") <a href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear.toString)}>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.inset.2")</a>
 }
 
+@formCall = @{
+    if(isAgent) {
+        controllers.agent.routes.FinalTaxCalculationController.submit(taxYear)
+    } else {
+        controllers.routes.FinalTaxCalculationController.submit(taxYear)
+    }
+}
+    
 @mainTemplate(
     title = headingText
 ) {
@@ -56,7 +64,7 @@
     <h2 class="heading-large">@messages("final-declaration.declaration")</h2>
     <p>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.declaration.p")</p>
 
-    @form(controllers.routes.FinalTaxCalculationController.submit(taxYear)) {
+    @form(formCall) {
         <button class="button">@messages("final-declaration.submit")</button>
     }
 }

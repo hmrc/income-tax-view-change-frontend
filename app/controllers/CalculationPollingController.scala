@@ -45,14 +45,10 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
   def calculationPoller(taxYear: Int, isFinalCalc: Boolean): Action[AnyContent] = action.async {
     implicit user =>
 
-      lazy val successfulPollRedirect: Call = if(isFinalCalc) {
-        if(user.arn.nonEmpty) {
-          agent.routes.FinalTaxCalculationController.show(taxYear)
-        } else {
-          routes.FinalTaxCalculationController.show(taxYear)
-        }
+      lazy val successfulPollRedirect: Call = if (isFinalCalc) {
+        controllers.routes.FinalTaxCalculationController.show(taxYear)
       } else {
-        routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear)
+        controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear)
       }
 
       (user.session.get(SessionKeys.calculationId), user.nino) match {
