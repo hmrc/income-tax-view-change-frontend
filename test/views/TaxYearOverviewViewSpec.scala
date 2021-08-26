@@ -28,8 +28,8 @@ import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.TaxYearOverview
-
 import java.time.LocalDate
+
 
 class TaxYearOverviewViewSpec extends ViewSpec {
 
@@ -267,7 +267,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     "display no payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
       content.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
       content.h2.selectFirst("h2").text().contains(taxYearOverviewMessages.payments)
-      content.selectHead(" caption").text shouldBe null
+      content.selectHead("#payments").doesNotHave("table")
     }
 
     "display payments heading and caption when there are payments in payments tab" in new Setup(estimateView()) {
