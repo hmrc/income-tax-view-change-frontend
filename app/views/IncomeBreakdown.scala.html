@@ -46,9 +46,6 @@
     </h1>
 
     <div>
-        <p>
-        @messages("income_breakdown.guidance_software", s"${taxYear - 1}", s"$taxYear")
-        </p>
 
         <table>
             <caption id="income_breakdown" class="govuk-table__caption heading-large visually-hidden">
@@ -86,5 +83,10 @@
                 <td class="numeric total-section">@calcModel.calcDataModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
             </tr>
         </table>
+        <br>
+        <br>
+        <p>
+            @messages("income_breakdown.guidance_software")
+        </p>
     </div>
 }

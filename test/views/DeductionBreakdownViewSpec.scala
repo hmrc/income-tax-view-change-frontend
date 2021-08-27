@@ -56,7 +56,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = content.select("p").get(0)
-        guidance.text() shouldBe DeductionBreakdown.guidance(taxYear)
+        guidance.text() shouldBe DeductionBreakdown.guidance
       }
 
       "have an deduction table" which {
@@ -101,7 +101,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = content.select("p").get(0)
-        guidance.text() shouldBe DeductionBreakdown.guidance(taxYear)
+        guidance.text() shouldBe DeductionBreakdown.guidance
       }
 
       "have an deduction table" which {
