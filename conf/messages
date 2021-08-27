@@ -310,6 +310,13 @@ taxCal_breakdown.message.C22208                                 = Your Basic Rat
 taxCal_breakdown.message.C22209                                 = Your Basic Rate limit has been increased by {0} to {1} for Pension Contribution and Gift Aid payments
 taxCal_breakdown.message.C22210                                 = Employment related expenses are capped at the total amount of employment income
 taxCal_breakdown.message.C22211                                 = This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration
+taxCal_breakdown.message.C22212                                 = Employment and Deduction related expenses have been limited to employment income.
+taxCal_breakdown.message.C22213                                 = Due to your employed earnings, paying Class 2 Voluntary may not be beneficial.
+taxCal_breakdown.message.C22214                                 = Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions.
+taxCal_breakdown.message.C22215                                 = Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
+taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
+taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
+taxCal_breakdown.message.C22218                                 = The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation.
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Report deadlines

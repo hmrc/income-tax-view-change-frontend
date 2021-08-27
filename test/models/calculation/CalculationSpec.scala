@@ -608,14 +608,28 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
 				Message("C22206", "message6"),
 				Message("C22207", "message7"),
 				Message("C22210", "message10"),
-				Message("C22211", "message11")
+				Message("C22211", "message11"),
+        Message("C22212", "message12"),
+        Message("C22213", "message13"),
+        Message("C22214", "message14"),
+        Message("C22215", "message15"),
+        Message("C22216", "message16"),
+        Message("C22217", "message17"),
+        Message("C22218", "message18")
 			))).genericMessages mustBe Seq(
 				Message("C22202", "message2"),
 				Message("C22203", "message3"),
 				Message("C22206", "message6"),
 				Message("C22207", "message7"),
 				Message("C22210", "message10"),
-				Message("C22211", "message11")
+				Message("C22211", "message11"),
+        Message("C22212", "message12"),
+        Message("C22213", "message13"),
+        Message("C22214", "message14"),
+        Message("C22215", "message15"),
+        Message("C22216", "message16"),
+        Message("C22217", "message17"),
+        Message("C22218", "message18")
 			)
 		}
 	}

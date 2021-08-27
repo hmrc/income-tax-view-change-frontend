@@ -223,6 +223,13 @@ taxCal_breakdown.message.C22208                                 = Mae eich terfy
 taxCal_breakdown.message.C22209                                 = Mae eich terfyn Cyfradd Sylfaenol wedi’i gynyddu {0} i {1} ar gyfer Cyfraniad Pensiwn a thaliadau Rhodd Cymorth
 taxCal_breakdown.message.C22210                                 = Caiff treuliau sy’n ymwneud â chyflogaeth eu cyfyngu i gyfanswm yr incwm o gyflogaeth
 taxCal_breakdown.message.C22211                                 = Rhagolwg yw hwn o’ch rhwymedigaeth Treth Incwm blynyddol, sy’n seiliedig ar yr wybodaeth yr ydych wedi’i rhoi hyd yma. Ni chaiff gordaliadau Treth Incwm eu had-dalu hyd nes i chi gyflwyno’ch datganiad terfynol
+taxCal_breakdown.message.C22212                                 = Mae treuliau cysylltiedig â chyflogaeth a didyniadau wedi’u cyfyngu i incwm o gyflogaeth.
+taxCal_breakdown.message.C22213                                 = Oherwydd eich enillion o gyflogaeth, efallai na fydd talu cyfraniadau Dosbarth 2 gwirfoddol o fudd i chi.
+taxCal_breakdown.message.C22214                                 = Mae eich cyfraniadau Dosbarth 4 wedi’u haddasu ar gyfer y cyfraniadau Dosbarth 2 sy’n ddyledus a o brif gyfraniadau Dosbarth 1.
+taxCal_breakdown.message.C22215                                 = Oherwydd lefel eich incwm presennol, efallai na fyddwch yn gymwys ar gyfer Lwfans Priodasol, ac o’r herwydd nid yw wedi’i gynnwys yn y cyfrifiad hwn.
+taxCal_breakdown.message.C22216                                 = Oherwydd lefel eich incwm, nid ydych yn gymwys ar gyfer Lwfans Priodasol mwyach, ac felly caiff eich hawliad ei ganslo.
+taxCal_breakdown.message.C22217                                 = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEM.
+taxCal_breakdown.message.C22218                                 = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
