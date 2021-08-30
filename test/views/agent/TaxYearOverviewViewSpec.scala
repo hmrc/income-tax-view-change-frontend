@@ -367,9 +367,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           }
           "has no payments due content" when {
             "no payments are due" in new Setup(view(documentDetailsWithDueDates = Nil)) {
+              content.selectHead("#payments").doesNotHave("table")
               content.selectHead("#payments").selectHead("p").text shouldBe TaxYearOverviewMessages.paymentsTabNoPayments
               content.selectHead("#payments").selectHead("h2").text shouldBe TaxYearOverviewMessages.paymentsTabHeading
-              content.selectHead("#payments").doesNotHave("table")
             }
           }
           "has a table of the payments for the year" which {

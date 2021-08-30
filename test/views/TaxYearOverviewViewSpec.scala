@@ -265,9 +265,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display no payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
+      content.selectHead("#payments").doesNotHave("table")
       content.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
       content.h2.selectFirst("h2").text().contains(taxYearOverviewMessages.payments)
-      content.selectHead("#payments").doesNotHave("table")
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
