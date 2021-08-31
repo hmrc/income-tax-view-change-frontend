@@ -803,7 +803,14 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 					Message("C22206", "message6"),
 					Message("C22207", "message7"),
 					Message("C22210", "message10"),
-					Message("C22211", "message11")
+					Message("C22211", "message11"),
+          Message("C22212", "message12"),
+          Message("C22213", "message13"),
+          Message("C22214", "message14"),
+          Message("C22215", "message15"),
+          Message("C22216", "message16"),
+          Message("C22217", "message17"),
+          Message("C22218", "message18")
 				))
 			)))
 
@@ -813,13 +820,20 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
 			val document: Document = Jsoup.parse(view.body)
 
-			document.select("div.panel-border-wide").size shouldBe 6
+			document.select("div.panel-border-wide").size shouldBe 13
 			document.select("div.panel-border-wide").get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
 			document.select("div.panel-border-wide").get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
 			document.select("div.panel-border-wide").get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
 			document.select("div.panel-border-wide").get(3).text shouldBe "Your payroll giving amount has been included in your adjusted taxable income"
 			document.select("div.panel-border-wide").get(4).text shouldBe "Employment related expenses are capped at the total amount of employment income"
 			document.select("div.panel-border-wide").get(5).text shouldBe "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
+      document.select("div.panel-border-wide").get(6).text shouldBe "Employment and Deduction related expenses have been limited to employment income."
+      document.select("div.panel-border-wide").get(7).text shouldBe "Due to your employed earnings, paying Class 2 Voluntary may not be beneficial."
+      document.select("div.panel-border-wide").get(8).text shouldBe "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
+      document.select("div.panel-border-wide").get(9).text shouldBe "Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation."
+      document.select("div.panel-border-wide").get(10).text shouldBe "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
+      document.select("div.panel-border-wide").get(11).text shouldBe "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
+      document.select("div.panel-border-wide").get(12).text shouldBe "The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation."
 		}
 
 		"provided with message C22201" in {
