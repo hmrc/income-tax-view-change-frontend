@@ -78,7 +78,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 
     val currentYear: Int = LocalDate.now().getYear
     val errorHeading = "Sorry, there is a problem with the service"
-    val currentFinancialDetails: FinancialDetailsModel = financialDetailsModel(currentYear)
+    val currentFinancialDetails: FinancialDetailsModel = chargesWithAllocatedPaymentModel(currentYear)
 		val successHeading = s"Tax year 6 April ${currentYear - 1} to 5 April $currentYear Payment on account 1 of 2"
 		val lateInterestSuccessHeading = s"Tax year 6 April ${currentYear - 1} to 5 April $currentYear Late payment interest on payment on account 1 of 2"
 		val dunningLocksBannerHeading = "Important"
@@ -199,7 +199,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any(), any(),any(),any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any(), any(),any(),any(), any(), any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService).getChargeHistoryDetails(ameq("XAIT00000000015"), ameq(id1040000123))(any())
 			}
 
@@ -217,7 +217,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any())(any(), any(), any(), any())
+					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any(), any())(any(), any(), any(), any())
 				}
 
 				"viewing a Late Payment Interest summary" in new Setup() {
@@ -231,7 +231,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any())(any(), any(), any(), any())
+					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any(), any())(any(), any(), any(), any())
 					verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 				}
 			}
@@ -266,7 +266,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any(), any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 
@@ -281,7 +281,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any(), any())(any(), any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 		}
