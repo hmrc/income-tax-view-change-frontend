@@ -152,6 +152,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe AgentPaymentDue.dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe AgentPaymentDue.remainingBalance + " " + AgentPaymentDue.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe AgentPaymentDue.poaHeading + " " + AgentPaymentDue.poaLine1
+        pageDocument.getElementById("payment-details-content-2").text shouldBe AgentPaymentDue.lpiHeading + " " + AgentPaymentDue.lpiLine1
 
       }
 
@@ -246,6 +247,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe AgentPaymentDue.dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe AgentPaymentDue.remainingBalance + " " + AgentPaymentDue.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe AgentPaymentDue.poaHeading + " " + AgentPaymentDue.poaLine1
+        pageDocument.getElementById("payment-details-content-2").text shouldBe AgentPaymentDue.lpiHeading + " " + AgentPaymentDue.lpiLine1
 
         pageDocument.doesNotHave(id("balancing-charge-type-overdue"))
       }
@@ -352,6 +354,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe AgentPaymentDue.dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe AgentPaymentDue.remainingBalance + " " + AgentPaymentDue.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe AgentPaymentDue.poaHeading + " " + AgentPaymentDue.poaLine1
+        pageDocument.getElementById("payment-details-content-2").text shouldBe AgentPaymentDue.lpiHeading + " " + AgentPaymentDue.lpiLine1
+
       }
 
       "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in

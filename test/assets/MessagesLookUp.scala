@@ -550,6 +550,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     val poaHeading = "Payment on account"
     val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
+    val lpiHeading = "Late payment interest"
+    val lpiLine1   = "This is interest you owe for a late payment."
     val overduePayments = "Overdue payments"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
@@ -607,6 +609,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     val poaHeading = "Payment on account"
     val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
+    val lpiHeading = "Late payment interest"
+    val lpiLine1   = "This is interest you owe for a late payment."
     val overduePayments = "Overdue payments"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
