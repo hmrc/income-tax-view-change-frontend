@@ -31,6 +31,7 @@
 @(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String], dunningLock: Boolean)(implicit messages: Messages)
 @import implicitDateFormatter.longDate
 
+
 @saNoteParagraph = {
 	@if(utr.isDefined) {
 
@@ -70,6 +71,11 @@
         <div class="govuk-details__text" id="payment-details-content-1" data-module="govuk-details" aria-hidden="false">
             <h3 id="payment-on-account-heading" class="heading-medium">@messages("whatYouOwe.payment-on-account.heading")</h3>
             <span id="payment-on-account-line1"> @messages("whatYouOwe.payment-on-account.line1")</span>
+        </div>
+
+        <div class="govuk-details__text" id="payment-details-content-2" data-module="govuk-details" aria-hidden="false">
+            <h3 id="late-payment-interest-heading" class="heading-medium">@messages("whatYouOwe.late-payment-interest.heading")</h3>
+            <span id="late-payment-interest-line1"> @messages("whatYouOwe.late-payment-interest.line1")</span>
         </div>
     </details>
 }
