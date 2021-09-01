@@ -841,8 +841,8 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 	.js-enabled .govuk-accordion__open-all:focus {
 		outline: 3px solid transparent;
 		color: #0b0c0c;
-		background-color: #ffbf47;
-		box-shadow: 0 -2px #ffbf47, 0 4px #0b0c0c;
+		background-color: #fd0;
+		box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
 		text-decoration: none;
 	}
 
@@ -915,8 +915,8 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 	.js-enabled .govuk-accordion__section-button:focus {
 		outline: 3px solid transparent;
 		color: #0b0c0c;
-		background-color: #ffbf47;
-		box-shadow: 0 -2px #ffbf47, 0 4px #0b0c0c;
+		background-color: #fd0;
+		box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
 		text-decoration: none;
 	}
 
@@ -1265,8 +1265,8 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .js-enabled .govuk-accordion__open-all:focus {
     outline: 3px solid transparent;
     color: #0b0c0c;
-    background-color: #ffbf47;
-    box-shadow: 0 -2px #ffbf47, 0 4px #0b0c0c;
+    background-color: #fd0;
+    box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
     text-decoration: none;
 }
 
@@ -1339,8 +1339,8 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .js-enabled .govuk-accordion__section-button:focus {
     outline: 3px solid transparent;
     color: #0b0c0c;
-    background-color: #ffbf47;
-    box-shadow: 0 -2px #ffbf47, 0 4px #0b0c0c;
+    background-color: #fd0;
+    box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
     text-decoration: none;
 }
 
