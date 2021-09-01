@@ -64,15 +64,15 @@ class NextUpdatesViewSpec extends TestSupport {
 		}
 
 		"have a summary section for quarterly updates" in new Setup(obligationsModel) {
-			pageDocument.select("details h3").get(0).text() shouldBe obligationsMessages.summaryQuarterly
+			pageDocument.select("details h2").get(0).text() shouldBe obligationsMessages.summaryQuarterly
 		}
 
 		"have a summary section for annual updates" in new Setup(obligationsModel) {
-			pageDocument.select("details h3").get(1).text() shouldBe obligationsMessages.summaryAnnual
+			pageDocument.select("details h2").get(1).text() shouldBe obligationsMessages.summaryAnnual
 		}
 
 		"have a summary section for final declarations" in new Setup(obligationsModel) {
-			pageDocument.select("details h3").get(2).text() shouldBe obligationsMessages.summaryDeclaration
+			pageDocument.select("details h2").get(2).text() shouldBe obligationsMessages.summaryDeclaration
 		}
 
 		"have an updates accordion" in  new Setup(obligationsModel) {
