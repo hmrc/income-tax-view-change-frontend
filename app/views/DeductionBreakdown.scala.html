@@ -26,16 +26,16 @@
 
 @(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages)
 
-@tableRow(messageCode: String, dataItem: Option[BigDecimal]) = {
+@tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
     @dataItem.map { data =>
         <tr id="@messageCode">
             <td>@messages(s"deduction_breakdown.table.$messageCode")</td>
-            <td class="numeric">@{data.toCurrency}</td>
+            <td class="numeric">@{ if(isNegative) data.toNegativeCurrency else data.toCurrency }</td>
         </tr>
     }
 }
 
-@mainTemplate(messages("deduction_breakdown.heading",  s"${taxYear-1}", s"$taxYear")
+@mainTemplate(messages("deduction_breakdown.heading")
 ) {
 
 @backLink(backUrl)
@@ -59,6 +59,7 @@
             </tr>
             </thead>
             @tableRow("personal_allowance", calcModel.calcDataModel.allowancesAndDeductions.personalAllowance)
+            @tableRow("marriage_allowance_transfer", calcModel.calcDataModel.allowancesAndDeductions.marriageAllowanceTransfer, isNegative = true)
             @tableRow("pension_contributions", calcModel.calcDataModel.allowancesAndDeductions.totalPensionContributions)
             @tableRow("loss_relief", calcModel.calcDataModel.allowancesAndDeductions.lossesAppliedToGeneralIncome)
             @tableRow("gift_of_investments_and_property_to_charity", calcModel.calcDataModel.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity)

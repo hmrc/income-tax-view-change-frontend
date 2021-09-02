@@ -83,6 +83,12 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
         val res2 = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
 
+        Then("I see Allowances and deductions page")
+        res2 should have(
+          httpStatus(OK),
+          pageTitle(messages.deductionsSummaryTitle),
+        )
+
         And("Audit TXM events have been fired with TxmApproved FS false")
         val expectedAllowancesAndDeductionsFalse = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions.copy(giftOfInvestmentsAndPropertyToCharity = None)
         verifyAuditEvent(AllowanceAndDeductionsRequestAuditModel(testUser))

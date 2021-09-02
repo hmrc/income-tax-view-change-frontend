@@ -1025,6 +1025,47 @@ object CalcBreakdownTestConstants {
             apportionedBandLimit = 15000)
         )
       ),
+      capitalGainsTax = CapitalGainsTax(
+        businessAssetsDisposalsAndInvestorsRel = SingleBandCgtDetail(
+          taxableGains = Some(10000.0),
+          rate = Some(10.0),
+          taxAmount = Some(1000.0)
+        ),
+        propertyAndInterestTaxBands = List(
+          CgtTaxBand(
+            name = "higherRate",
+            rate = 28.0,
+            income = 30000.0,
+            taxAmount = 8400.0
+          ),
+          CgtTaxBand(
+            name = "lowerRate",
+            rate = 18.0,
+            income = 20000.0,
+            taxAmount = 3600.0
+          )
+        ),
+        otherGainsTaxBands = List(
+          CgtTaxBand(
+            name = "higherRate",
+            rate = 28.0,
+            income = 12000.0,
+            taxAmount = 3360.0
+          ),
+          CgtTaxBand(
+            name = "lowerRate",
+            rate = 20.0,
+            income = 11000.0,
+            taxAmount = 2200.0
+          )
+        ),
+        totalTaxableGains = Some(1234.56),
+        adjustments = Some(123.45),
+        foreignTaxCreditRelief = Some(2345.67),
+        taxOnGainsAlreadyPaid = Some(3456.78),
+        capitalGainsTaxDue = Some(4567.89),
+        capitalGainsOverpaid = Some(234.56)
+      ),
       savingsAndGains = SavingsAndGains(
         Some(0),
         Some(500),
@@ -1080,6 +1121,8 @@ object CalcBreakdownTestConstants {
         totalPensionSavingsTaxCharges = Some(5000),
         statePensionLumpSumCharges = Some(5000),
         totalStudentLoansRepaymentAmount = Some(5000),
+        marriageAllowanceTransferredInAmount = Some(252),
+        topSlicingRelief = Some(1200),
         totalResidentialFinanceCostsRelief = Some(5000),
         totalForeignTaxCreditRelief = Some(6000),
         totalNotionalTax = Some(7000),
@@ -2001,8 +2044,9 @@ object CalcBreakdownTestConstants {
     crystallised = false,
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(11500),
+      marriageAllowanceTransfer = Some(7500),
       totalPensionContributions = Some(12500),
-      lossesAppliedToGeneralIncome = Some(12500),
+      lossesAppliedToGeneralIncome = Some(13500),
       giftOfInvestmentsAndPropertyToCharity = Some(10000),
       totalAllowancesAndDeductions = Some(47000),
       totalReliefs = Some(500),
