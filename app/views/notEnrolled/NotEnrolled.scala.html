@@ -21,7 +21,7 @@
 @this(mainTemplate: MainTemplate, appConfig: FrontendAppConfig)
 
 
-@()(implicit messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(title = messages("not_enrolled.heading"), bodyClasses = None, showLogout = true, showBtaHeader = false) {
 

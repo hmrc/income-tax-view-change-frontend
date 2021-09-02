@@ -23,7 +23,7 @@
 @import models.financialDetails.DocumentDetailWithDueDate
 
 @this(mainTemplate: MainTemplate, backLink: BackLink, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatterImpl)
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String])(implicit messages: Messages)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {

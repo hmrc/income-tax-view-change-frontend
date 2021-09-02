@@ -61,7 +61,7 @@
 
     @breakdownPartial(overview, taxYear)
     @* TODO Need a small space adding before and after the p tag using the GovUk element classes when the migration has been completed *@
-    <h2 class="heading-large">@messages("final-declaration.declaration")</h2>
+    <h2 class="heading-large" id="declaration">@messages("final-declaration.declaration")</h2>
     <p>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.declaration.p")</p>
 
     @form(formCall) {

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.templates.MainTemplate
+package views
 
-@this(mainTemplate: MainTemplate)
+import org.jsoup.Jsoup
+import testUtils.{TestSupport, ViewSpec}
+import views.html.templates.MainTemplate
 
-@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+class MainTemplateViewSpec extends TestSupport with ViewSpec {
 
-@mainTemplate(title = pageTitle) {
-    <h1 id="page-heading" class="heading-xlarge">@heading</h1>
+  lazy val mainTemplate = app.injector.instanceOf[MainTemplate]
 
-    <p data-metrics="handledError:serviceError:shownErrorPage">@message</p>
+  "The mainTemplate" should {
+
+    lazy val view = mainTemplate("unitTest")(implicitly)
+    lazy val document = Jsoup.parse(view.body)
+
+    s"show the footer" in {
+      document.getElementsByClass("platform-help-links").text shouldBe "Cookies Accessibility statement Privacy policy Terms and conditions Help using GOV.UK"
+    }
+
+  }
+
 }
-

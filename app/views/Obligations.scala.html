@@ -29,7 +29,7 @@
     previousObligationsHelper: PreviousObligationsHelper
 )
 
-@(currentObligations: ObligationsModel, previousObligations: ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(currentObligations: ObligationsModel, previousObligations: ObligationsModel, backUrl: String)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
 title = messages("obligations.heading.v2"),

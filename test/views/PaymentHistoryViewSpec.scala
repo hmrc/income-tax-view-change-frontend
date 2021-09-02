@@ -22,8 +22,9 @@ import implicits.ImplicitDateFormatter
 import models.financialDetails.Payment
 import testUtils.ViewSpec
 import views.html.PaymentHistory
-
 import java.time.LocalDate
+
+import play.api.test.FakeRequest
 
 
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -49,7 +50,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments, "testBackURL", saUtr)(implicitly)
+    paymentHistoryView(testPayments, "testBackURL", saUtr)(FakeRequest(),implicitly)
   )
 
   "The payments history view with payment response model" should {

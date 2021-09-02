@@ -34,7 +34,7 @@
         recruitmentBannerHelper: RecruitmentBannerHelper,
         govUkTemplate: GovUkTemplate,
         mainContentLayout: MainContent,
-        footerLinks: FooterLinks,
+        footerLinksLayout: FooterLinks,
         reportAProblemLink: ReportAProblemLink,
         serviceInfoLayout: ServiceInfo,
         footer: Footer,
@@ -52,7 +52,7 @@
   scriptElem: Option[Html] = None,
   showLogout: Boolean = true,
   form: Option[Form[_]] = None
-)(implicit messages: Messages)
+)(implicit request : Request[_], messages: Messages)
 
 @titlePattern = @{
     if(form.exists(_.hasErrors)) {
@@ -131,4 +131,4 @@
       getHelpForm = getHelpForm)
 }
 
-@govUkTemplate(Some(titlePattern), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks), nav=true)(content)
+@govUkTemplate(Some(titlePattern), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinksLayout()), nav=true)(content)

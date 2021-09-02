@@ -28,8 +28,9 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import views.html.agent.WhatYouOwe
-
 import java.time.LocalDate
+
+import play.api.test.FakeRequest
 
 class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDateFormatter {
   import Selectors.id
@@ -40,7 +41,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear,
-      "testBackURL", Some("1234567890"))(messages)
+      "testBackURL", Some("1234567890"))(FakeRequest(),implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {

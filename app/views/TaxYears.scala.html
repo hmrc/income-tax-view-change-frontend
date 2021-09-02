@@ -19,7 +19,7 @@
 @import models.calculation.CalculationResponseModelWithYear
 @this(mainTemplate: MainTemplate, backLinkHelper: BackLink, appConfig: config.FrontendAppConfig)
 
-@(taxYears: List[CalculationResponseModelWithYear], backUrl: String, itsaSubmissionIntegrationEnabled: Boolean)(implicit messages: Messages)
+@(taxYears: List[CalculationResponseModelWithYear], backUrl: String, itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
 @viewReturnLink(year: Int) = {
         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewReturn-link-@year"
