@@ -23,7 +23,7 @@
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
-  showLogout: Boolean = true)(mainContent: Html)(implicit messages: Messages)
+  showLogout: Boolean = true)(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.play.views.html.layouts
 

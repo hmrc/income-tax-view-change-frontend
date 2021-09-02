@@ -19,7 +19,7 @@
 
 @this(mainTemplate: MainTemplate, appConfig: config.FrontendAppConfig, btaPartial: BtaPartial)
 
-@()(implicit messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(title = "Test the BTA Partial") {
 

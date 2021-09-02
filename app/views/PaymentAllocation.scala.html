@@ -22,7 +22,7 @@
 
 @this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String)(implicit messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @import implicitDateFormatter._
 

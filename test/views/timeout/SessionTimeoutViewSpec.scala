@@ -30,7 +30,7 @@ class SessionTimeoutViewSpec extends TestSupport {
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
   lazy val timeoutView = app.injector.instanceOf[Timeout]
 
-  lazy val page = timeoutView()(implicitly)
+  lazy val page = timeoutView()(FakeRequest(),implicitly)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Session timeout view" should {

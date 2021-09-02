@@ -24,7 +24,7 @@
         backLink: BackLink
 )
 
-@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit messages: Messages)
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal]) = {
     @dataItem.map { data =>

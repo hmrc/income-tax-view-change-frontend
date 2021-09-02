@@ -34,7 +34,7 @@ import scala.concurrent.ExecutionContext
 class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpdates,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       reportDeadlinesService: ReportDeadlinesService,
-                                      val appConfig: FrontendAppConfig,
+                                      implicit val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions)
                                      (implicit val languageUtils: LanguageUtils,
                                       mcc: MessagesControllerComponents,

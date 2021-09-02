@@ -32,7 +32,7 @@
   showBtaHeader: Boolean = true,
   serviceInfo: Html = Html(""),
   timeout: Boolean = true
-)(mainContent: Html)(implicit messages: Messages)
+)(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
 
 @defaultScriptElem = {
