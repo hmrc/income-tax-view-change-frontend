@@ -595,6 +595,9 @@ paymentHistory.textLink1                                        = Self Assessmen
 paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
+paymentHistory.table.header.date                                = Date
+paymentHistory.table.header.description                         = Description
+paymentHistory.table.header.amount                              = Amount
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC

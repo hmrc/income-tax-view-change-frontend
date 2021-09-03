@@ -22,8 +22,9 @@ import implicits.ImplicitDateFormatter
 import models.financialDetails.Payment
 import testUtils.ViewSpec
 import views.html.PaymentHistory
-
 import java.time.LocalDate
+
+import org.jsoup.nodes.Element
 
 
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -41,6 +42,10 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     val paymentToHmrc = "Payment made to HMRC"
     val CardRef = "Payment made by debit card ref:"
+
+    val paymentHeadingDate = "Date"
+    val paymentHeadingDescription = "Description"
+    val paymentHeadingAmount = "Amount"
   }
 
   val testPayments: List[Payment] = List(
@@ -58,8 +63,25 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         document.title() shouldBe PaymentHistoryMessages.title
       }
 
-      s"have the heading '${PaymentHistoryMessages.heading}'" in new PaymentHistorySetup(testPayments) {
+      s"have the h1 heading '${PaymentHistoryMessages.heading}'" in new PaymentHistorySetup(testPayments) {
         content.selectHead("h1").text shouldBe PaymentHistoryMessages.heading
+      }
+
+      s"has the h2 heading '${PaymentHistoryMessages.heading}'" in new PaymentHistorySetup(testPayments) {
+        content.selectHead("h2").text shouldBe PaymentHistoryMessages.heading
+      }
+
+      s"has a table of payment history" which {
+        s"has the table caption" in new PaymentHistorySetup(testPayments)  {
+          content.selectHead("div").selectNth("div", 2).selectHead("table")
+            .selectHead("caption").text shouldBe PaymentHistoryMessages.heading
+        }
+        s"has table headings for each table column" in new PaymentHistorySetup(testPayments) {
+          val row: Element = content.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
+          row.selectNth("th", 1).text shouldBe PaymentHistoryMessages.paymentHeadingDate
+          row.selectNth("th", 2).text shouldBe PaymentHistoryMessages.paymentHeadingDescription
+          row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingAmount
+        }
       }
 
       s"have the information  ${PaymentHistoryMessages.info}" in new PaymentHistorySetup(testPayments) {
