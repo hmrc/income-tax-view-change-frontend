@@ -16,7 +16,7 @@
 
 @this(standardError: StandardError)
 
-@()(implicit messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
 @standardError(
     messages("notFound.heading"),

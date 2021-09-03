@@ -20,7 +20,6 @@ import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
@@ -32,7 +31,6 @@ import play.api.test.Helpers.{contentType, _}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.ExecutionContext
 
@@ -44,13 +42,12 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
     val controller: TaxDueSummaryController = new TaxDueSummaryController(
       taxCalcBreakdown = taxCalcBreakdown,
+      appConfig = appConfig,
       authorisedFunctions = mockAuthService,
       calculationService = mockCalculationService,
       incomeSourceDetailsService = mockIncomeSourceDetailsService
-    )(appConfig,
-      app.injector.instanceOf[LanguageUtils],
+    )(
       app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
       app.injector.instanceOf[ExecutionContext],
       itvcErrorHandler = mockItvcErrorHandler
     )

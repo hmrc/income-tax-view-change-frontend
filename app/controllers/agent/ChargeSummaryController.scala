@@ -55,7 +55,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], latePaymentInterestCharge: Boolean,
-                   backLocation: Option[String], taxYear: Int, paymentAllocations: List[PaymentsWithChargeType],
+                   backLocation: Option[String], taxYear: Int, paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
                    paymentBreakdown: List[FinancialDetail], paymentAllocationEnabled: Boolean)(implicit request: Request[_]): Html = {
 
     chargeSummaryView(
@@ -63,9 +63,10 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
       chargeHistoryOpt = chargeHistoryOpt,
       latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = backUrl(backLocation, taxYear),
-      paymentAllocations,
-      paymentBreakdown,
-      paymentAllocationEnabled
+			paymentAllocations = paymentAllocations,
+			payments = payments,
+			paymentBreakdown = paymentBreakdown,
+			paymentAllocationEnabled = paymentAllocationEnabled
     )
   }
 
@@ -74,14 +75,17 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { mtdItUser =>
           financialDetailsService.getAllFinancialDetails(mtdItUser, implicitly, implicitly).flatMap { financialResponses =>
+						val payments = financialResponses.collect {
+							case (_, model: FinancialDetailsModel) => model.filterPayments()
+						}.foldLeft(FinancialDetailsModel(List(), List()))((merged, next) => merged.merge(next))
 
-            val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
-              case (year, response) if year == taxYear => response
-            }
+						val matchingYear = financialResponses.collect {
+							case (year, response) if year == taxYear => response
+						}
 
             matchingYear.headOption match {
               case Some(financialDetailsModel: FinancialDetailsModel) if financialDetailsModel.documentDetails.exists(_.transactionId == chargeId) =>
-                doShowChargeSummary(taxYear, chargeId, isLatePaymentCharge, financialDetailsModel)(hc, mtdItUser, user)
+                doShowChargeSummary(taxYear, chargeId, isLatePaymentCharge, financialDetailsModel, payments)(hc, mtdItUser, user)
               case Some(_: FinancialDetailsModel) =>
                 Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
                 Future.successful(Redirect(controllers.agent.routes.HomeController.show().url))
@@ -94,7 +98,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     }
   }
 
-  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel)
+  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_], incomeTaxAgentUser: IncomeTaxAgentUser): Future[Result] = {
     val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
@@ -119,7 +123,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
       Ok(view(documentDetailWithDueDate, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
         paymentAllocations = paymentAllocations,
         paymentBreakdown = paymentBreakdown,
-        paymentAllocationEnabled = paymentAllocationEnabled))
+        paymentAllocationEnabled = paymentAllocationEnabled,
+				payments = payments))
     }
   }
 

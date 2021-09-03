@@ -19,31 +19,26 @@ package controllers.agent
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.play.language.LanguageUtils
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxDueSummaryController @Inject()(val taxCalcBreakdown: views.html.agent.TaxCalcBreakdown,
+class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCalcBreakdown,
+                                        val appConfig: FrontendAppConfig,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
                                         incomeSourceDetailsService: IncomeSourceDetailsService
-                                       )(implicit val appConfig: FrontendAppConfig,
-                                         val languageUtils: LanguageUtils,
-                                         mcc: MessagesControllerComponents,
-                                         dateFormatter: ImplicitDateFormatterImpl,
-                                         implicit val ec: ExecutionContext,
-                                         val itvcErrorHandler: ItvcErrorHandler)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                       )(implicit mcc: MessagesControllerComponents,
+                                         val ec: ExecutionContext,
+                                         itvcErrorHandler: ItvcErrorHandler)
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>

@@ -37,7 +37,8 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               latePaymentInterestCharge: Boolean = false,
               paymentAllocations: List[PaymentsWithChargeType]= List(),
               paymentAllocationEnabled: Boolean = false,
-              paymentBreakdown: List[FinancialDetail] = List()
+              paymentBreakdown: List[FinancialDetail] = List(),
+							payments: FinancialDetailsModel = FinancialDetailsModel(List(), List())
              ) {
 
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
@@ -45,10 +46,11 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     val chargeSummaryView: Html = chargeSummary(
       documentDetailWithDueDate = documentDetailWithDueDate,
       chargeHistoryOpt = chargeHistoryOpt,
-      latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = "testBackURL",
       paymentAllocations,
       paymentBreakdown = paymentBreakdown,
+			payments = payments,
+			latePaymentInterestCharge = latePaymentInterestCharge,
       paymentAllocationEnabled
     )
 
@@ -371,6 +373,8 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               lot = Some("lot"), lotItem = Some("lotItem"), date = Some(date), transactionId = None)),
             mainType = Some(mainType), chargeType = Some(chargeType))
 
+				def payments() = FinancialDetailsModel(List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(10000.0), Some(1000.0), LocalDate.now(), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))), List())
+
         val paymentAllocationsPOA1 = List(
           paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0),
           paymentsForCharge(typePOA1, "NIC4 Scotland", "2018-03-31", 1600.0)
@@ -423,6 +427,11 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
             "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance £3,900.00"
           )
         }
+
+				"chargeHistory enabled with a matching link to the payment allocations page" in new Setup(documentDetailWithDueDateModel(), chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsBalCharge, payments = payments()) {
+					document.select(Selectors.table).select("a").size shouldBe 6
+					document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
+				}
       }
 
     }

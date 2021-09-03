@@ -17,6 +17,7 @@
 @import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.play.views.html.layouts.Article
 
+
 @this(
         article: Article,
         govUkWrapper: GovUkWrapper
@@ -31,7 +32,7 @@
         serviceInfo: Html = Html(""),
         timeout: Boolean = true,
         form: Option[Form[_]] = None
-)(mainContent: Html)(implicit messages: Messages)
+)(mainContent: Html)(implicit request : Request[_], messages: Messages)
 
 @defaultScriptElem = {
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/timeout.css")' />

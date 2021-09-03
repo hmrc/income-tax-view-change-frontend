@@ -18,7 +18,7 @@ package models.calculation
 
 import models.calculation.TaxDeductedAtSource.{Message, Messages}
 import org.scalatest.{MustMatchers, WordSpecLike}
-import play.api.libs.json.{JsObject, JsSuccess, Json}
+import play.api.libs.json.{JsObject, Json}
 
 class CalculationSpec extends WordSpecLike with MustMatchers {
 
@@ -52,6 +52,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       totalPensionSavingsTaxCharges = Some(3.0),
       statePensionLumpSumCharges = Some(4.0),
       totalStudentLoansRepaymentAmount = Some(5.0),
+      marriageAllowanceTransferredInAmount = Some(9.0),
+      topSlicingRelief = Some(10.0),
       totalResidentialFinanceCostsRelief = Some(6.0),
       totalForeignTaxCreditRelief = Some(7.0),
       totalNotionalTax = Some(8.0),
@@ -72,6 +74,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(1.0),
+      marriageAllowanceTransfer = Some(5.0),
       giftOfInvestmentsAndPropertyToCharity = Some(2.0),
       totalAllowancesAndDeductions = Some(3.0),
       totalReliefs = Some(4.0)
@@ -106,6 +109,47 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         TaxBand("GOLPBand", 1.0, 2.0, 3.0, 4.0, 5.0)
       )
     ),
+    capitalGainsTax = CapitalGainsTax(
+      businessAssetsDisposalsAndInvestorsRel = SingleBandCgtDetail(
+        taxableGains = Some(2.1),
+        rate = Some(2.2),
+        taxAmount = Some(2.3)
+      ),
+      propertyAndInterestTaxBands = List(
+          CgtTaxBand(
+            name = "higherRate",
+            rate = 4.1,
+            income = 4.2,
+            taxAmount = 4.3
+          ),
+          CgtTaxBand(
+            name = "lowerRate",
+            rate = 5.1,
+            income = 5.2,
+            taxAmount = 5.3
+          )
+      ),
+      otherGainsTaxBands = List(
+          CgtTaxBand(
+            name = "higherRate",
+            rate = 6.1,
+            income = 6.2,
+            taxAmount = 6.3
+          ),
+          CgtTaxBand(
+            name = "lowerRate",
+            rate = 7.1,
+            income = 7.2,
+            taxAmount = 7.3
+          )
+      ),
+      totalTaxableGains = Some(1.1),
+      adjustments = Some(1.2),
+      foreignTaxCreditRelief = Some(1.3),
+      taxOnGainsAlreadyPaid = Some(1.4),
+      capitalGainsTaxDue = Some(1.5),
+      capitalGainsOverpaid = Some(1.6)
+    ),
 		messages = Some(Messages(
 			info = Some(Seq(Message("infoId", "infoMessage"))),
 			warnings = Some(Seq(Message("warningId", "warningMessage"))),
@@ -120,7 +164,6 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     "incomeTaxAndNicsCalculated" -> Json.obj(
       "summary" -> Json.obj(
         "totalIncomeTaxAndNicsDue" -> 1.0,
-        "totalIncomeTaxAndNicsDue" -> 1.0,
         "totalIncomeTaxNicsCharged" -> 2.0,
         "totalStudentLoansRepaymentAmount" -> 5.0,
         "taxRegime" -> "Welsh",
@@ -133,6 +176,14 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "totalPensionSavingsTaxCharges" -> 3.0,
           "statePensionLumpSumCharges" -> 4.0,
           "totalNotionalTax" -> 8.0
+        ),
+        "capitalGainsTax" -> Json.obj(
+          "totalTaxableGains" -> 1.1,
+          "adjustments" -> 1.2,
+          "foreignTaxCreditRelief" -> 1.3,
+          "taxOnGainsAlreadyPaid" -> 1.4,
+          "capitalGainsTaxDue" -> 1.5,
+          "capitalGainsOverpaid" -> 1.6
         ),
         "totalTaxDeducted" -> 700.0
       ),
@@ -150,6 +201,9 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
             )
           )
         ),
+        "marriageAllowanceTransferredIn" -> Json.obj(
+          "amount" -> 9.0
+        ),
         "taxDeductedAtSource" -> Json.obj(
           "payeEmployments" -> 100.0,
           "occupationalPensions" -> 200.0,
@@ -160,6 +214,45 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "voidedIsa" -> 700.0,
           "savings" -> 800.0,
           "totalIncomeTaxAndNicsDue" -> 1.0
+        ),
+        "capitalGainsTax" -> Json.obj(
+          "businessAssetsDisposalsAndInvestorsRel" -> Json.obj(
+            "taxableGains" -> 2.1,
+            "rate" -> 2.2,
+            "taxAmount" -> 2.3
+          ),
+          "residentialPropertyAndCarriedInterest" -> Json.obj(
+            "cgtTaxBands" -> Json.arr(
+              Json.obj(
+                "name" -> "higherRate",
+                "rate" -> 4.1,
+                "income" -> 4.2,
+                "taxAmount" -> 4.3
+              ),
+              Json.obj(
+                "name" -> "lowerRate",
+                "rate" -> 5.1,
+                "income" -> 5.2,
+                "taxAmount" -> 5.3
+              )
+            )
+          ),
+          "otherGains" -> Json.obj(
+            "cgtTaxBands" -> Json.arr(
+              Json.obj(
+                "name" -> "higherRate",
+                "rate" -> 6.1,
+                "income" -> 6.2,
+                "taxAmount" -> 6.3
+              ),
+              Json.obj(
+                "name" -> "lowerRate",
+                "rate" -> 7.1,
+                "income" -> 7.2,
+                "taxAmount" -> 7.3
+              )
+            )
+          )
         ),
         "incomeTax" -> Json.obj(
           "payPensionsProfit" -> Json.obj(
@@ -267,7 +360,10 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "detail" -> Json.obj(
         "allowancesAndDeductions" -> Json.obj(
           "personalAllowance" -> 1.0,
-          "giftOfInvestmentsAndPropertyToCharity" -> 2.0
+          "giftOfInvestmentsAndPropertyToCharity" -> 2.0,
+          "marriageAllowanceTransferOut" -> Json.obj(
+            "transferredOutAmount" -> 5.0
+          )
         ),
         "reliefs" -> Json.obj(
           "residentialFinanceCosts" -> Json.obj(
@@ -275,6 +371,9 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           ),
           "foreignTaxCreditRelief" -> Json.obj(
             "totalForeignTaxCreditRelief" -> 7.0
+          ),
+          "topSlicingRelief" -> Json.obj(
+            "amount" -> 10.0
           ),
           "reliefsClaimed" -> Json.arr(
             Json.obj(
@@ -391,6 +490,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "totalPensionSavingsTaxCharges" -> 3.0,
       "statePensionLumpSumCharges" -> 4.0,
       "totalStudentLoansRepaymentAmount" -> 5.0,
+      "marriageAllowanceTransferredInAmount" -> 9.0,
+      "topSlicingRelief" -> 10.0,
       "totalResidentialFinanceCostsRelief" -> 6.0,
       "totalForeignTaxCreditRelief" -> 7.0,
       "totalNotionalTax" -> 8.0,
@@ -449,6 +550,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     "allowancesAndDeductions" -> Json.obj(
       "personalAllowance" -> 1.0,
+      "marriageAllowanceTransfer" -> 5.0,
       "giftOfInvestmentsAndPropertyToCharity" -> 2.0,
       "totalAllowancesAndDeductions" -> 3.0,
       "totalReliefs" -> 4.0
@@ -501,6 +603,47 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "apportionedBandLimit" -> 5.0
         )
       )
+    ),
+    "capitalGainsTax" -> Json.obj(
+      "businessAssetsDisposalsAndInvestorsRel" -> Json.obj(
+        "taxableGains" -> 2.1,
+        "rate" -> 2.2,
+        "taxAmount" -> 2.3
+      ),
+      "propertyAndInterestTaxBands" -> Json.arr(
+        Json.obj(
+          "name" -> "higherRate",
+          "rate" -> 4.1,
+          "income" -> 4.2,
+          "taxAmount" -> 4.3
+        ),
+        Json.obj(
+          "name" -> "lowerRate",
+          "rate" -> 5.1,
+          "income" -> 5.2,
+          "taxAmount" -> 5.3
+        )
+      ),
+      "otherGainsTaxBands" -> Json.arr(
+        Json.obj(
+          "name" -> "higherRate",
+          "rate" -> 6.1,
+          "income" -> 6.2,
+          "taxAmount" -> 6.3
+        ),
+        Json.obj(
+          "name" -> "lowerRate",
+          "rate" -> 7.1,
+          "income" -> 7.2,
+          "taxAmount" -> 7.3
+        )
+      ),
+      "totalTaxableGains" -> 1.1,
+      "adjustments" -> 1.2,
+      "foreignTaxCreditRelief" -> 1.3,
+      "taxOnGainsAlreadyPaid" -> 1.4,
+      "capitalGainsTaxDue" -> 1.5,
+      "capitalGainsOverpaid" -> 1.6
     ),
     "messages" -> Json.obj(
       "info" -> Json.arr(
@@ -563,16 +706,21 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     "gainsOnLifePolicies" -> Json.obj(
       "bands" -> Json.arr()
+    ),
+    "capitalGainsTax" -> Json.obj(
+      "businessAssetsDisposalsAndInvestorsRel" -> Json.obj(),
+      "propertyAndInterestTaxBands" -> Json.arr(),
+      "otherGainsTaxBands" -> Json.arr()
     )
   )
 
 	"Calculation" must {
 		"read from json successfully" when {
 			"all data is provided" in {
-				Json.fromJson[Calculation](fullReadJson) mustBe JsSuccess(fullModel)
+				fullReadJson.as[Calculation] mustBe fullModel
 			}
 			"all optional data is not provided" in {
-				Json.fromJson[Calculation](minimalReadJson) mustBe JsSuccess(minimalModel)
+				minimalReadJson.as[Calculation] mustBe minimalModel
 			}
 		}
 

@@ -274,8 +274,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       "have a declaration section" that {
 
         "has the correct title" in {
-          document.select(Selectors.declarationTitle).text().trim shouldBe ExpectedValues.declarationTitle
-        }
+          document.getElementById("declaration").text() shouldBe "Declaration"        }
 
         "has the correct paragraph text" in {
           document.select(Selectors.declarationParagraph).text() shouldBe ExpectedValues.declarationParagraph

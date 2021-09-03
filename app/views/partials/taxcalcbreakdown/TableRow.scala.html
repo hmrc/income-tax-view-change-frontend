@@ -14,15 +14,18 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.MainTemplate
+@import implicits.ImplicitCurrencyFormatter._
 
-@this(mainTemplate: MainTemplate)
+@this()
+@(messageCode: String, amount: Option[BigDecimal], isNegative: Boolean = false, isTotalsRow: Boolean = false)(implicit messages: Messages)
 
-@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
-
-@mainTemplate(title = pageTitle) {
-    <h1 id="page-heading" class="heading-xlarge">@heading</h1>
-
-    <p data-metrics="handledError:serviceError:shownErrorPage">@message</p>
-}
-
+    @if(amount.isDefined) {
+        <tr id="@messageCode">
+            <td @if(isTotalsRow){class="total-section"} >@messages(s"taxCal_breakdown.table.$messageCode")</td>
+            <td class="numeric no-wrap @if(isTotalsRow){total-section}">@{
+                if(isNegative) amount.get.toNegativeCurrency
+                else amount.get.toCurrency
+            }
+            </td>
+        </tr>
+    }
