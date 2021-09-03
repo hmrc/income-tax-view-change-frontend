@@ -16,23 +16,39 @@
 
 package views
 
-import assets.MessagesLookUp.TaxCalcBreakdown
 import assets.CalcBreakdownTestConstants
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
+import assets.MessagesLookUp.TaxCalcBreakdown
 import enums.Crystallised
-import models.calculation.{AllowancesAndDeductions, CalcDisplayModel}
 import models.calculation.TaxDeductedAtSource.{Message, Messages}
+import models.calculation.{AllowancesAndDeductions, CalcDisplayModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import org.scalatest.exceptions.TestFailedException
+import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableFor3
+import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.TaxCalcBreakdown
 
-class TaxCalcBreakdownViewSpec extends ViewSpec {
+class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
-  val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
+  override val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
 
-  val taxCalcBreakdown: TaxCalcBreakdown = app.injector.instanceOf[TaxCalcBreakdown]
+  override def taxCalcBreakdown(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String): Html =
+    app.injector.instanceOf[TaxCalcBreakdown].apply(calcModel, taxYear, backUrl)
+
+  override val expectedPageTitle: String = TaxCalcBreakdown.title
+
+}
+
+
+abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
+
+  def backUrl: String
+
+  def taxCalcBreakdown(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String): Html
+
+  def expectedPageTitle: String
 
   "The taxCalc breakdown view with Scotland tax regime" when {
 
@@ -48,49 +64,20 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have a Pay, pensions and profit table" which {
 
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(1, 6)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingPPP,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.scotlandRateTableHead, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.pPP_Scot_SRT, "£2,000.00"),
+            (2, TaxCalcBreakdown.pPP_Scot_BRT, "£4,000.00"),
+            (3, TaxCalcBreakdown.pPP_Scot_IRT, "£45,000.00"),
+            (4, TaxCalcBreakdown.pPP_Scot_HRT, "£40,000.00"),
+            (5, TaxCalcBreakdown.pPP_Scot_ART, "£22,500.00")
+          )
+        )
 
-        "has the correct heading" in new Setup(view) {
-          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingPPP)
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPScotlandTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a basic rate threshold(SRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_SRT
-          row.select("td").last().text() shouldBe "£2,000.00"
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_BRT
-          row.select("td").last().text() shouldBe "£4,000.00"
-        }
-
-        "has a basic rate threshold(IRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_IRT
-          row.select("td").last().text() shouldBe "£45,000.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_HRT
-          row.select("td").last().text() shouldBe "£40,000.00"
-        }
-
-        "has a top rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_ART
-          row.select("td").last().text() shouldBe "£22,500.00"
-        }
       }
     }
 
@@ -106,49 +93,20 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have a Lump sums table" which {
 
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(1, 6)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingLumpSums,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.scotlandRateTableHead, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.ls_Scot_SRT, "£2,000.00"),
+            (2, TaxCalcBreakdown.ls_Scot_BRT, "£4,000.00"),
+            (3, TaxCalcBreakdown.ls_Scot_IRT, "£45,000.00"),
+            (4, TaxCalcBreakdown.ls_Scot_HRT, "£40,000.00"),
+            (5, TaxCalcBreakdown.ls_Scot_ART, "£22,500.00")
+          )
+        )
 
-        "has the correct heading" in new Setup(view) {
-          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingLumpSums)
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPScotlandTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a basic rate threshold(SRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_Scot_SRT
-          row.select("td").last().text() shouldBe "£2,000.00"
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_Scot_BRT
-          row.select("td").last().text() shouldBe "£4,000.00"
-        }
-
-        "has a basic rate threshold(IRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_Scot_IRT
-          row.select("td").last().text() shouldBe "£45,000.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_Scot_HRT
-          row.select("td").last().text() shouldBe "£40,000.00"
-        }
-
-        "has a top rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_Scot_ART
-          row.select("td").last().text() shouldBe "£22,500.00"
-        }
       }
     }
 
@@ -163,51 +121,22 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         CalcBreakdownTestConstants.scottishTaxBandModelJustGols,
         Crystallised), taxYear, backUrl)
 
-      "have a Pay, pensions and profit table" which {
+      "have a Gains on life policies table" which {
 
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(1, 6)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.gols_Scot_SRT, "£2,000.00"),
+            (2, TaxCalcBreakdown.gols_Scot_BRT, "£4,000.00"),
+            (3, TaxCalcBreakdown.gols_Scot_IRT, "£45,000.00"),
+            (4, TaxCalcBreakdown.gols_Scot_HRT, "£40,000.00"),
+            (5, TaxCalcBreakdown.gols_Scot_ART, "£22,500.00")
+          )
+        )
 
-        "has the correct heading" in new Setup(view) {
-          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies)
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.lsTableHeader
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a basic rate threshold(SRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_Scot_SRT
-          row.select("td").last().text() shouldBe "£2,000.00"
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_Scot_BRT
-          row.select("td").last().text() shouldBe "£4,000.00"
-        }
-
-        "has a basic rate threshold(IRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_Scot_IRT
-          row.select("td").last().text() shouldBe "£45,000.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_Scot_HRT
-          row.select("td").last().text() shouldBe "£40,000.00"
-        }
-
-        "has a top rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_Scot_ART
-          row.select("td").last().text() shouldBe "£22,500.00"
-        }
       }
     }
   }
@@ -225,7 +154,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         Crystallised), taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe TaxCalcBreakdown.title
+        document title() shouldBe expectedPageTitle
       }
 
       "have the correct heading" in new Setup(view) {
@@ -260,7 +189,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         Crystallised), taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe TaxCalcBreakdown.title
+        document title() shouldBe expectedPageTitle
       }
 
       "have the correct heading" in new Setup(view) {
@@ -275,410 +204,181 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have a Pay, pensions and profit table" which {
 
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(1, 4)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingPPP,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.ukRateTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.pPP_BRT, "£4,000.00"),
+            (2, TaxCalcBreakdown.pPP_HRT, "£40,000.00"),
+            (3, TaxCalcBreakdown.pPP_ART, "£22,500.00")
+          )
+        )
 
-        "has the correct heading" in new Setup(view) {
-          content.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingPPP)
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_BRT
-          row.select("td").last().text() shouldBe "£4,000.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_HRT
-          row.select("td").last().text() shouldBe "£40,000.00"
-        }
-
-        "has a additional rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(1).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_ART
-          row.select("td").last().text() shouldBe "£22,500.00"
-        }
       }
 
       "have no Pay, pensions and profit Income" which {
         "has no Pay, pensions and profit heading" in new Setup(zeroIncome) {
-          document.select("h2").text().contains(TaxCalcBreakdown.sectionHeadingPPP) shouldBe false
+          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingPPP
         }
       }
 
       "have an Savings table" which {
 
-        "has all six table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(2, 7)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 2,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingSavings,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.saving_SSR, "£0.00"),
+            (2, TaxCalcBreakdown.saving_ZRTBR, "£0.00"),
+            (3, TaxCalcBreakdown.saving_BRT, "£2.00"),
+            (4, TaxCalcBreakdown.saving_ZRTHR, "£0.00"),
+            (5, TaxCalcBreakdown.saving_HRT, "£800.00"),
+            (6, TaxCalcBreakdown.saving_ART, "£5,000.00")
+          )
+        )
 
-        "has the correct heading" in new Setup(view) {
-          content.selectById("savingsAndGains").text shouldBe  TaxCalcBreakdown.sectionHeadingSavings
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a Starting rate threshold(SSR) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(2).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_SSR
-          row.select("td").last().text() shouldBe "£0.00"
-        }
-
-        "has a Basic rate band at nil rate threshold(ZRTBR) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(2).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_ZRTBR
-          row.select("td").last().text() shouldBe "£0.00"
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(2).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_BRT
-          row.select("td").last().text() shouldBe "£2.00"
-        }
-
-        "has a Higher rate band at nil rate threshold(ZRTHR) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(2).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_ZRTHR
-          row.select("td").last().text() shouldBe "£0.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(2).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_HRT
-          row.select("td").last().text() shouldBe "£800.00"
-        }
-
-        "has a Additional rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(2).select("tr").get(6)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_ART
-          row.select("td").last().text() shouldBe "£5,000.00"
-        }
       }
 
       "have no Savings and Gains Income" which {
         "has no Savings and Gains heading" in new Setup(zeroIncome) {
-          document.select("caption").text().contains(TaxCalcBreakdown.sectionHeadingSavings) shouldBe false
+          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingSavings
         }
       }
 
       "have a Dividends table" which {
 
-        "has all six table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(3, 7)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 3,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingDividends,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.dividend_ZRTBR, "£0.00"),
+            (2, TaxCalcBreakdown.dividend_BRT, "£75.00"),
+            (3, TaxCalcBreakdown.dividend_ZRTHR, "£0.00"),
+            (4, TaxCalcBreakdown.dividend_HRT, "£750.00"),
+            (5, TaxCalcBreakdown.dividend_ZRTAR, "£0.00"),
+            (6, TaxCalcBreakdown.dividend_ART, "£1,143.00")
+          )
+        )
 
-        "has the correct heading" in new Setup(view) {
-          content.selectById("dividends").text shouldBe TaxCalcBreakdown.sectionHeadingDividends
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a basic rate band at nil rate threshold(ZRTBR) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(3).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ZRTBR
-          row.select("td").last().text() shouldBe "£0.00"
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(3).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_BRT
-          row.select("td").last().text() shouldBe "£75.00"
-        }
-
-        "has a higher rate band at nil rate threshold(ZRTHR) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(3).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ZRTHR
-          row.select("td").last().text() shouldBe "£0.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(3).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_HRT
-          row.select("td").last().text() shouldBe "£750.00"
-        }
-
-        "has a additional rate band at nil rate threshold(ZRTAR) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(3).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ZRTAR
-          row.select("td").last().text() shouldBe "£0.00"
-        }
-
-        "has a additional rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(3).select("tr").get(6)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ART
-          row.select("td").last().text() shouldBe "£1,143.00"
-        }
       }
 
       "have no Dividend Income" which {
         "has no dividend heading" in new Setup(zeroIncome) {
-          document.selectHead(" caption").text.contains(TaxCalcBreakdown.sectionHeadingDividends) shouldBe false
+          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingDividends
         }
       }
 
       "have a Employment lump sums table" which {
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(4, 4)
-        }
 
-        "has the correct heading" in new Setup(view) {
-          content.selectHead("caption").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 4,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingLumpSums,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.ukRateTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.ls_BRT, "£4,000.00"),
+            (2, TaxCalcBreakdown.ls_HRT, "£40,000.00"),
+            (3, TaxCalcBreakdown.ls_ART, "£22,500.00")
+          )
+        )
 
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(4).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_BRT
-          row.select("td").last().text() shouldBe "£4,000.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(4).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_HRT
-          row.select("td").last().text() shouldBe "£40,000.00"
-        }
-
-        "has a additional rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(4).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ls_ART
-          row.select("td").last().text() shouldBe "£22,500.00"
-        }
       }
 
       "have no Lump Sum Income" which {
         "has no Lump Sum heading" in new Setup(zeroIncome) {
-          document.select("caption").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums) shouldBe false
+          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingLumpSums
         }
       }
 
       "have a Gains on life policies table" which {
 
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(5, 4)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 5,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.gols_BRT, "£4,000.00"),
+            (2, TaxCalcBreakdown.gols_HRT, "£40,000.00"),
+            (3, TaxCalcBreakdown.gols_ART, "£22,500.00")
+          )
+        )
 
-        "has the correct heading" in new Setup(view) {
-          content.selectById("gainsOnLifePolicies").text shouldBe TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(5).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_BRT
-          row.select("td").last().text() shouldBe "£4,000.00"
-        }
-
-        "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(5).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_HRT
-          row.select("td").last().text() shouldBe "£40,000.00"
-        }
-
-        "has a additional rate threshold(ART) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(5).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_ART
-          row.select("td").last().text() shouldBe "£22,500.00"
-        }
       }
 
       "have no Gains on Life Policy Income" which {
         "has no Gains on Life Policy heading" in new Setup(zeroIncome) {
-          document.select("caption").text().contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies) shouldBe false
+          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies
         }
       }
 
       "have a Nic 4 table" which {
 
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(6, 8)
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 6,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingNIC4,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.Nic4_ZRT, "£100.00"),
+            (2, TaxCalcBreakdown.Nic4_BRT, "£200.00"),
+            (3, TaxCalcBreakdown.Nic4_HRT, "£300.00"),
+            (4, TaxCalcBreakdown.giftAidTaxCharge, "£400.00"),
+            (5, TaxCalcBreakdown.totalPensionSavingCharges, "£500.00"),
+            (6, TaxCalcBreakdown.statePensionLumpSum, "£600.00"),
+            (7, TaxCalcBreakdown.totalStudentLoansRepaymentAmount, "£700.00")
+          )
+        )
 
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has a Nic4 zero rate threshold(ZRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(6).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic4_ZRT
-          row.select("td").last().text() shouldBe "£100.00"
-        }
-
-        "has a Nic4 basic rate band threshold(BRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(6).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic4_BRT
-          row.select("td").last().text() shouldBe "£200.00"
-        }
-
-        "has a Nic4 higher rate threshold(HRT) line with the correct value" in new Setup(view) {
-          val row: Element = content.table(6).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic4_HRT
-          row.select("td").last().text() shouldBe "£300.00"
-        }
-
-        "has a giftAidTaxCharge line with the correct value" in new Setup(view) {
-          val row: Element = content.table(6).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.giftAidTaxCharge
-          row.select("td").last().text() shouldBe "£400.00"
-        }
-
-        "has a totalPensionSavingCharges line with the correct value" in new Setup(view) {
-          val row: Element = content.table(6).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.totalPensionSavingCharges
-          row.select("td").last().text() shouldBe "£500.00"
-        }
-
-        "has a statePensionLumpSum line with the correct value" in new Setup(view) {
-          val row: Element = content.table(6).select("tr").get(6)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.statePensionLumpSum
-          row.select("td").last().text() shouldBe "£600.00"
-        }
-
-        "has a totalStudentLoansRepaymentAmount line with the correct value" in new Setup(view) {
-          val row: Element = content.table(6).select("tr").get(7)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.totalStudentLoansRepaymentAmount
-          row.select("td").last().text() shouldBe "£700.00"
-        }
       }
 
       "have no Tax reductions table and heading when there is no any reductions value" in new Setup(viewAllIncome) {
-        val ex = intercept[TestFailedException](content.table(8))
-        ex.getMessage shouldBe "table element not found"
-
+        content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingTaxReductions
       }
 
       "have a Tax reductions table" which {
 
-        "has a Tax reductions heading" in new Setup(view) {
-          content.selectById("reductions-title").text shouldBe TaxCalcBreakdown.sectionHeadingTaxReductions
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 7,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.marriageAllowanceTransfer, "−£252.00"),
+            (2, TaxCalcBreakdown.deficiencyRelief, "−£1,000.00"),
+            (3, TaxCalcBreakdown.topSlicingRelief, "−£1,200.00"),
+            (4, TaxCalcBreakdown.vctRelief, "−£2,000.00"),
+            (5, TaxCalcBreakdown.eisRelief, "−£3,000.00"),
+            (6, TaxCalcBreakdown.seedRelief, "−£4,000.00"),
+            (7, TaxCalcBreakdown.citRelief, "−£5,000.00"),
+            (8, TaxCalcBreakdown.sitRelief, "−£6,000.00"),
+            (9, TaxCalcBreakdown.maintenanceRelief, "−£7,000.00"),
+            (10, TaxCalcBreakdown.reliefForFinanceCosts, "−£5,000.00"),
+            (11, TaxCalcBreakdown.notionalTax, "−£7,000.00"),
+            (12, TaxCalcBreakdown.foreignTaxCreditRelief, "−£6,000.00"),
+            (13, TaxCalcBreakdown.reliefClaimedOnQualifyingDis, "−£8,000.00"),
+            (14, TaxCalcBreakdown.nonDeductibleLoanInterest, "−£9,000.00"),
+            (15, TaxCalcBreakdown.incomeTaxDueAfterTaxReductions, "£2,000.00")
+          )
+        )
 
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
-
-        "has all 13 table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(7, 14)
-        }
-
-        "has a Deficiency Relief line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.deficiencyRelief
-          row.select("td").last().text() shouldBe "−£1,000.00"
-        }
-
-        "has a Venture Capital Trust relief line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.vctRelief
-          row.select("td").last().text() shouldBe "−£2,000.00"
-        }
-
-        "has a Enterprise Investment Scheme relief line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.eisRelief
-          row.select("td").last().text() shouldBe "−£3,000.00"
-        }
-
-        "has a Seed Enterprise Scheme relief line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.seedRelief
-          row.select("td").last().text() shouldBe "−£4,000.00"
-        }
-
-        "has a Community Investment Tax Relief line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.citRelief
-          row.select("td").last().text() shouldBe "−£5,000.00"
-        }
-
-        "has a Social Investment Tax Relief line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(6)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.sitRelief
-          row.select("td").last().text() shouldBe "−£6,000.00"
-        }
-
-        "has a Maintenance and alimony paid line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(7)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.maintenanceRelief
-          row.select("td").last().text() shouldBe "−£7,000.00"
-        }
-
-        "has a Relief for finance costs line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(8)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.reliefForFinanceCosts
-          row.select("td").last().text() shouldBe "−£5,000.00"
-        }
-
-        "has a Notional tax from gains on life policies etc line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(9)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.notionalTax
-          row.select("td").last().text() shouldBe "−£7,000.00"
-        }
-
-        "has a Foreign Tax Credit Relief with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(10)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.foreignTaxCreditRelief
-          row.select("td").last().text() shouldBe "−£6,000.00"
-        }
-
-        "has a Relief claimed on a qualifying distribution line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(11)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.reliefClaimedOnQualifyingDis
-          row.select("td").last().text() shouldBe "−£8,000.00"
-        }
-
-        "has a non deductible loan interest line with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(12)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.nonDeductibleLoanInterest
-          row.select("td").last().text() shouldBe "−£9,000.00"
-        }
-
-        "has a Income Tax due after tax reductions with the correct value" in new Setup(view) {
-          val row: Element = content.table(7).select("tr").get(13)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.incomeTaxDueAfterTaxReductions
-          row.select("td").last().text() shouldBe "£2,000.00"
-        }
       }
 
       "have no additional charges table and heading when there is no any other charges value" in new Setup(viewAllIncome) {
-        val ex = intercept[TestFailedException](content.table(8))
-        ex.getMessage shouldBe "table element not found"
-
+        content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
       }
 
       "have an additional charges table" which {
+        val tableNumber = 8
 
         "has all four table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(8, 5)
+          content hasTableWithCorrectSize(tableNumber, 5)
         }
 
         "has the correct heading" in new Setup(view) {
@@ -686,93 +386,86 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
 
         "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
+          val row: Element = content.table(tableNumber).select("tr").get(0)
+          row.select("th").first().text() shouldBe TaxCalcBreakdown.chargeTypeTableHeader
           row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
         }
 
-        "has a Tax reductions line with the correct value" in new Setup(view) {
-          content.selectById("other_charges").text shouldBe  TaxCalcBreakdown.otherCharges
-        }
-
         "has a Voluntary Nic line with the correct value" in new Setup(view) {
-          val row: Element = content.table(8).select("tr").get(1)
+          val row: Element = content.table(tableNumber).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.VoluntaryNic2
           row.select("td").last().text() shouldBe "£10,000.00"
         }
 
         "has a Nic2 line with the correct value" in new Setup(viewNic2) {
-          val row: Element = content.table(8).select("tr").get(1)
+          val row: Element = content.table(tableNumber).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic2
           row.select("td").last().text() shouldBe "£10,000.00"
         }
       }
 
-      "have an additional deductions table" which {
+      "have no Capital Gains Tax table and heading when there is no any CGT value" in new Setup(zeroIncome) {
+        content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingCapitalGainsTax
+      }
 
-        "has one table row" in new Setup(view) {
-          content hasTableWithCorrectSize(8, 5)
-        }
+      "have a Capital Gains Tax table" which {
+
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 9,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingCapitalGainsTax,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.cgtTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.taxableCapitalGains, "£1,234.56"),
+            (2, TaxCalcBreakdown.assetsDisposalsAndInvestorsRelief, "£1,000.00"),
+            (3, TaxCalcBreakdown.propertyAndInterest_LRT, "£3,600.00"),
+            (4, TaxCalcBreakdown.propertyAndInterest_HRT, "£8,400.00"),
+            (5, TaxCalcBreakdown.otherGains_LRT, "£2,200.00"),
+            (6, TaxCalcBreakdown.otherGains_HRT, "£3,360.00"),
+            (7, TaxCalcBreakdown.capitalGainsTaxAdj, "£123.45"),
+            (8, TaxCalcBreakdown.foreignTaxCreditReliefOnCG, "−£2,345.67"),
+            (9, TaxCalcBreakdown.taxOnGainsAlreadyPaid, "−£3,456.78"),
+            (10, TaxCalcBreakdown.capitalGainsTaxDue, "£4,567.89"),
+            (11, TaxCalcBreakdown.capitalGainsTaxOverpaid, "£234.56")
+          )
+        )
+
+      }
+
+      "have an other charges table" which {
+        val tableNumber = 10
 
         "has the correct heading" in new Setup(view) {
-          content.selectById("taxDeductedAtSource").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalDeduc
+          content.selectById("other_charges").text shouldBe TaxCalcBreakdown.otherCharges
         }
 
         "has a table header section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.pPPTableHead
+          val row: Element = content.table(tableNumber).select("tr").get(0)
+          row.select("th").first().text() shouldBe TaxCalcBreakdown.chargeTypeTableHeader
           row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
         }
+      }
 
-        "has an employments line with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.employments
-          row.select("td").last().text() shouldBe "−£100.00"
-        }
+      "have an additional deductions table" which {
 
-        "has a UK pensions line with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(2)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ukPensions
-          row.select("td").last().text() shouldBe "−£200.00"
-        }
-        "has a state benefits line with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(3)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.stateBenefits
-          row.select("td").last().text() shouldBe "−£300.00"
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 11,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingAdditionalDeduc,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.deductionsTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.employments, "−£100.00"),
+            (2, TaxCalcBreakdown.ukPensions, "−£200.00"),
+            (3, TaxCalcBreakdown.stateBenefits, "−£300.00"),
+            (4, TaxCalcBreakdown.cis, "−£400.00"),
+            (5, TaxCalcBreakdown.ukLandAndProperty, "−£500.00"),
+            (6, TaxCalcBreakdown.specialWithholdingTax, "−£600.00"),
+            (7, TaxCalcBreakdown.voidISAs, "−£700.00"),
+            (8, TaxCalcBreakdown.BBSI, "−£800.00"),
+            (9, TaxCalcBreakdown.totalDeductions, "£900.00")
+          )
+        )
 
-        "has a CIS line with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(4)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.cis
-          row.select("td").last().text() shouldBe "−£400.00"
-        }
-
-        "has a UK land and property line with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(5)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.ukLandAndProperty
-          row.select("td").last().text() shouldBe "−£500.00"
-        }
-        "has a Special Withholding Tax with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(6)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.specialWithholdingTax
-          row.select("td").last().text() shouldBe "−£600.00"
-        }
-        "has a VoidISAs with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(7)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.voidISAs
-          row.select("td").last().text() shouldBe "−£700.00"
-        }
-        "has a UK banks and building societies line with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(8)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.BBSI
-          row.select("td").last().text() shouldBe "−£800.00"
-        }
-
-        "has a total deductions line with the correct value" in new Setup(view) {
-          val row: Element = content.table(10).select("tr").get(9)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.totalDeductions
-          row.select("td").last().text() shouldBe "£900.00"
-        }
       }
     }
   }
@@ -895,5 +588,44 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
 		}
 	}
+
+  type ROW_INDEX = Int
+  type COLUMN_TEXT = String
+  type BREAKDOWN_TABLE = TableFor3[ROW_INDEX, COLUMN_TEXT, COLUMN_TEXT]
+
+  private def shouldHaveACorrectTableContent(view: Html)(tableNumber: Int, expectedCaption: String, expectedTableRows: BREAKDOWN_TABLE): Unit = {
+    lazy val tableIndex = tableNumber - 1
+    lazy val expectedRowsCount = expectedTableRows.length
+
+    s"has $expectedRowsCount rows in total" in new Setup(view) {
+      content hasTableWithCorrectSize(tableNumber, expectedRowsCount)
+    }
+
+    s"has the heading $expectedCaption" in new Setup(view) {
+      content.select("caption").get(tableIndex).text() shouldBe expectedCaption
+    }
+
+    forAll(expectedTableRows) { (rowIndex: Int, firstColumnText: String, secondColumnText: String) =>
+      if(rowIndex == 0) {
+
+        s"has a table headers: [$firstColumnText, $secondColumnText]" in new Setup(view) {
+          val row: Element = content.table(tableNumber).select("tr").get(0)
+          row.select("th").first().text() shouldBe firstColumnText
+          row.select("th").last().text() shouldBe secondColumnText
+        }
+
+      } else {
+
+        s"has the row $rowIndex for $firstColumnText line with the correct amount value" in new Setup(view) {
+          val row: Element = content.table(tableNumber).select("tr").get(rowIndex)
+          row.select("td").first().text() shouldBe firstColumnText
+          row.select("td").last().text() shouldBe secondColumnText
+        }
+
+      }
+    }
+
+  }
+
 }
 

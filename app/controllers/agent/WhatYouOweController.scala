@@ -39,7 +39,7 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                      whatYouOweService: WhatYouOweService,
                                      incomeSourceDetailsService: IncomeSourceDetailsService,
                                      auditingService: AuditingService,
-                                     val appConfig: FrontendAppConfig,
+                                     implicit val appConfig: FrontendAppConfig,
                                      val authorisedFunctions: FrontendAuthorisedFunctions
                                     )(implicit mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext,

@@ -40,7 +40,7 @@ trait MockTaxCalcBreakdown extends BeforeAndAfterEach with MockitoSugar {
       matches(calcModel),
       matches(taxYear),
       matches(backUrl)
-    )(any(), any(), any(), any()))
+    )(any(), any()))
       .thenReturn(response)
   }
 

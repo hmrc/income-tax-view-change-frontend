@@ -1,0 +1,85 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitCurrencyFormatter._
+@import models.calculation.CapitalGainsTax
+@import models.calculation.CgtTaxBand
+
+@this(
+    tableRow: TableRow
+)
+@(capitalGainsTax: models.calculation.CapitalGainsTax)(implicit messages: Messages)
+
+@cgtBandRow(taxTypeKey: String, band: CgtTaxBand) = @{ cgtBandTableRow(taxTypeKey, band.name, band.income, band.rate, band.taxAmount) }
+
+@cgtBandTableRow(taxTypeKey: String, bandName: String, income: BigDecimal, rate: BigDecimal, taxAmount: BigDecimal) = {
+    <tr>
+        <td>
+        @messages(
+            s"taxCal_breakdown.table.cgt.$taxTypeKey.band.$bandName",
+            income.toCurrencyString,
+            s"${rate}")
+        </td>
+        <td class="numeric">@{ taxAmount.toCurrency }</td>
+    </tr>
+}
+
+@canShowCapitalGainsTaxTable = @{
+    capitalGainsTax.totalTaxableGains.isDefined ||
+    (capitalGainsTax.businessAssetsDisposalsAndInvestorsRel.taxableGains.isDefined &&
+        capitalGainsTax.businessAssetsDisposalsAndInvestorsRel.rate.isDefined &&
+        capitalGainsTax.businessAssetsDisposalsAndInvestorsRel.taxAmount.isDefined) ||
+    capitalGainsTax.propertyAndInterestTaxBands.nonEmpty ||
+    capitalGainsTax.otherGainsTaxBands.nonEmpty ||
+    capitalGainsTax.adjustments.isDefined ||
+    capitalGainsTax.foreignTaxCreditRelief.isDefined ||
+    capitalGainsTax.taxOnGainsAlreadyPaid.isDefined ||
+    capitalGainsTax.capitalGainsTaxDue.isDefined ||
+    capitalGainsTax.capitalGainsOverpaid.isDefined
+}
+
+
+@if(canShowCapitalGainsTaxTable) {
+    <table>
+        <caption id="cgt-title" class="govuk-table__caption heading-large">@messages("taxCal_breakdown.table.capital_gains_tax")
+        </caption>
+
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.cgt_type")</th>
+            <th scope="col" class="govuk-table__header numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+        </tr>
+
+        @tableRow("cgt.taxable_capital_gains", capitalGainsTax.totalTaxableGains)
+        @for(income <- capitalGainsTax.businessAssetsDisposalsAndInvestorsRel.taxableGains;
+            rate <- capitalGainsTax.businessAssetsDisposalsAndInvestorsRel.rate;
+            taxAmount <- capitalGainsTax.businessAssetsDisposalsAndInvestorsRel.taxAmount) {
+
+            @cgtBandTableRow("assets_or_investors_relief", bandName = "single", income, rate, taxAmount)
+        }
+        @for(cgtBand <- capitalGainsTax.propertyAndInterestTaxBands.filter(_.income > 0).sortBy(_.rate)) {
+            @cgtBandRow("property_and_interest", cgtBand)
+        }
+        @for(cgtBand <- capitalGainsTax.otherGainsTaxBands.filter(_.income > 0).sortBy(_.rate)) {
+            @cgtBandRow("other_gains", cgtBand)
+        }
+        @tableRow("cgt.adjustment", capitalGainsTax.adjustments)
+        @tableRow("cgt.foreign_tax_credit_relief", capitalGainsTax.foreignTaxCreditRelief, isNegative = true)
+        @tableRow("cgt.already_paid", capitalGainsTax.taxOnGainsAlreadyPaid, isNegative = true)
+
+        @tableRow("cgt.due", capitalGainsTax.capitalGainsTaxDue, isTotalsRow = true)
+        @tableRow("cgt.overpaid", capitalGainsTax.capitalGainsOverpaid, isTotalsRow = true)
+    </table>
+}

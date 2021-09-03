@@ -68,7 +68,7 @@ class HomePageViewSpec extends TestSupport {
       overDueUpdates = overDueUpdates,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled
-    )(messages, user)
+    )(FakeRequest(),implicitly, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))

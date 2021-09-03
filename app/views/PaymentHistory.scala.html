@@ -29,7 +29,7 @@
       implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(payments: List[Payment], backUrl: String, saUtr: Option[String])(implicit messages: Messages)
+@(payments: List[Payment], backUrl: String, saUtr: Option[String])(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @groupedPayments = @{

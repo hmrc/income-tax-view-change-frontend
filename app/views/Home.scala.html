@@ -24,7 +24,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {

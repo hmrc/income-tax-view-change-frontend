@@ -22,12 +22,12 @@
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.PaymentsWithChargeType
 @import models.financialDetails.FinancialDetail
-
+@import models.financialDetails.FinancialDetailsModel
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
-@(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], latePaymentInterestCharge: Boolean,
-		backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentBreakdown: List[FinancialDetail],
-		paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig,
+@(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
+		backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentBreakdown: List[FinancialDetail], payments: FinancialDetailsModel,
+		latePaymentInterestCharge: Boolean, paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig,
 		implicitDateFormatter: ImplicitDateFormatter)
 
 @import java.time.LocalDate
@@ -178,13 +178,23 @@
  					}
 				}
 				@if(paymentAllocationEnabled && paymentAllocations.nonEmpty) {
-				@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
-				<tr>
-					<td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
-					<td>@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))</td>
-					<td class="numeric">@payment.amount.get.abs.toCurrency</td>
-				</tr>
-				}
+					@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
+						<tr>
+							<td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
+							<td>
+								@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
+									<a href="@{controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+										@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+									</a>
+								}
+
+								@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isEmpty) {
+									@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+								}
+							</td>
+							<td class="numeric">@payment.amount.get.abs.toCurrency</td>
+						</tr>
+					}
 				}
 
  			</tbody>

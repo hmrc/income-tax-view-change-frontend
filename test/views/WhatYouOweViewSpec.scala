@@ -28,8 +28,9 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.WhatYouOwe
-
 import java.time.LocalDate
+
+import play.api.test.FakeRequest
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
 
@@ -39,7 +40,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               currentTaxYear: Int = LocalDate.now().getYear,
               dunningLock: Boolean = false
               ) {
-    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock)(implicitly)
+    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock)(FakeRequest(),implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {

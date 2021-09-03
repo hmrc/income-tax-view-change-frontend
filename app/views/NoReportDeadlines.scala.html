@@ -19,7 +19,7 @@
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
 
-@(backUrl: String)(implicit messages: Messages)
+@(backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("obligations.heading"),

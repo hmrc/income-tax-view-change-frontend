@@ -39,7 +39,7 @@ class TaxYearsViewSpec extends ViewSpec {
 
                        ) = new {
     lazy val page: HtmlFormat.Appendable =
-      taxYearsView(calcs, "testBackURL",itsaSubmissionFeatureSwitch)(implicitly)
+      taxYearsView(calcs, "testBackURL",itsaSubmissionFeatureSwitch)(FakeRequest(),implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

@@ -19,6 +19,7 @@ import assets.MessagesLookUp.{NoReportDeadlines => reportDeadlinesMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import testUtils.TestSupport
@@ -32,7 +33,7 @@ class NoReportDeadlinesViewSpec extends TestSupport {
 
   "The noReportDeadlines view" should {
 
-    lazy val page: Html = noReportDeadlinesView("testBackURL")(implicitly)
+    lazy val page: Html = noReportDeadlinesView("testBackURL")(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${reportDeadlinesMessages.title}'" in {
