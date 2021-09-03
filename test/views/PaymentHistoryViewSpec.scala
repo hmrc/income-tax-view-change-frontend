@@ -23,7 +23,6 @@ import models.financialDetails.Payment
 import testUtils.ViewSpec
 import views.html.PaymentHistory
 import java.time.LocalDate
-
 import org.jsoup.nodes.Element
 
 
