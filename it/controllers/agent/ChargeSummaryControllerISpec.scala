@@ -31,6 +31,8 @@ import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetail
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -52,7 +54,34 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val currentYear: Int = LocalDate.now().getYear
   val testArn: String = "1"
 
-  s"GET ${routes.ChargeSummaryController.showChargeSummary(currentYear, "testId").url}" should {
+  s"GET ok" should {
+    "load the page with right data for Payments Breakdown" in {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      stubAuthorisedAgentUser(authorised = true)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+      stubChargeHistorySuccess()
+
+
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        "2018", "1040000124", clientDetails
+      )
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
+        elementTextBySelector("article dl:nth-of-type(2) dd span")("Under review"),
+        elementTextBySelector("article dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
+      )
+    }
+
     s"return $OK with correct page title and audit events when TxEventsApproved FS is enabled" in {
 
       enable(TxmEventsApproved)

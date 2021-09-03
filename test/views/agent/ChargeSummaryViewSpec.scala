@@ -114,6 +114,36 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     financialDetail(originalAmount = 543.21, chargeType = "SL")
   )
 
+  val paymentBreakdownWithInterestLocks: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI", accruedInterest = Some(30)),
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", interestLock = Some("Clerical Interest Signal")),
+    financialDetail(originalAmount = 9876.54, chargeType = "CGT", interestLock = Some("Manual RPI Signal"), accruedInterest = Some(35)),
+    financialDetail(originalAmount = 543.21, chargeType = "SL")
+  )
+
+  val paymentBreakdownWhenInterestAccrues: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI", accruedInterest = Some(30)),
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", interestLock = Some("Clerical Interest Signal"))
+  )
+
+  val paymentBreakdownWithPreviouslyAccruedInterest: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", interestLock = Some("Clerical Interest Signal"), accruedInterest = Some(30))
+  )
+
+  val paymentBreakdownWithMixedLocks: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI"),
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", dunningLock = Some("Stand over order"), interestLock = Some("Clerical Interest Signal"))
+  )
+
+  val paymentBreakdownWithOnlyAccruedInterest: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI", accruedInterest = Some(30)),
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB")
+  )
+
+  val paymentBreakdownWithOnlyInterestLock: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", interestLock = Some("Clerical Interest Signal"))
+  )
+
   "The agent charge summary view" should {
 
     "have the correct heading for a POA 1" in new Setup(documentDetailPOA1) {
@@ -153,7 +183,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     }
 
     "has a link to view what you owe" in new Setup(documentDetailPOA1) {
-      val link: Option[Elements] = getElementById("what-you-owe-link").map(_.select("a"))
+      val link: Option[Elements] = getElementById("what-you-owe-link1").map(_.select("a"))
       link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments-owed")
       link.map(_.text) shouldBe Some("what you owe")
     }
@@ -239,6 +269,41 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
           verifyPaymentBreakdownRow(4, "Student Loans", "£543.21")
         }
 
+        "has payment rows with appropriate messages for each row" in
+          new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithInterestLocks) {
+          verifyPaymentBreakdownRow(1, "Income Tax", "£123.45 We are charging you interest on this payment")
+          verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 We are not currently charging interest on this payment")
+          verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 We have previously charged you interest on this payment")
+          verifyPaymentBreakdownRow(4, "Student Loans", "£543.21 We are charging you interest on this payment")
+        }
+
+          "has payment rows but no interest lock message when there are no interest locks but there's accrued interest on a payment" in
+            new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
+            verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
+            verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67")
+          }
+
+        "have a interest lock payment link when the interest is accruing" in
+          new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
+          document.select("#content article p a").text() shouldBe "What you owe page"
+          document.select("#content article p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+        }
+
+        "have a interest lock payment link when the interest has previously" in
+          new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
+          document.select("#content article p a").text() shouldBe "What you owe page"
+          document.select("#content article p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+        }
+
+        "have no interest lock payment link when there is no accrued interest" in
+          new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
+          document.select("#content article p a").text() shouldBe "what you owe"
+        }
+
+        "have no interest lock payment link when there is an intererst lock but no accrued interest" in
+          new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
+          document.select("#content article p a").text() shouldBe "what you owe"
+        }
       }
     }
 
@@ -351,6 +416,9 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
           "display the payment breakdown in h2 and charge history heading in h3" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(fullChargeHistory), paymentBreakdown = paymentBreakdown) {
             content select Selectors.h2 text() shouldBe Messages.paymentBreakdownHeading
             content select Selectors.h3 text() shouldBe Messages.chargeHistoryHeading
+          }
+          "not display the Payment breakdown list when payments breakdown is empty" in new Setup(documentDetailWithDueDateModel(), paymentBreakdown = Nil) {
+            document.doesNotHave(Selectors.id("heading-payment-breakdown"))
           }
         }
       }
