@@ -64,6 +64,14 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
   </div>
   <div class="govuk-accordion__section-content" id="accordion-default-content-@year" >
     <table class="govuk-table">
+     <caption class="govuk-table__caption heading-large visually-hidden" style="margin-bottom: 0px;">@messages("paymentHistory.button", year.toString)</caption>
+     <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+       <th class="govuk-table__header">@messages("paymentHistory.table.header.date")</th>
+       <th class="govuk-table__header">@messages("paymentHistory.table.header.description")</th>
+       <th class="govuk-table__header">@messages("paymentHistory.table.header.amount")</th>
+      </tr>
+     </thead>
      <tbody>
      @yearPayments.map{payment =>
      <tr>
