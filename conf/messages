@@ -694,3 +694,7 @@ language-switcher.english                                       = English
 language-switcher.welsh                                         = Cymraeg
 language-switcher.welsh.hidden                                  = Newid yr iaith ir Gymraeg
 language-switcher.nav                                           = Language switcher
+
+
+#technical helper
+getpagehelp.linkText                                            = Get help with this page.

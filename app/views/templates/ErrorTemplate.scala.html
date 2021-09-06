@@ -14,15 +14,21 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.MainTemplate
+@import views.html.layouts.layout
+@import views.html.components._
 
-@this(mainTemplate: MainTemplate)
+@this(
+      mainTemplate: layout,
+      h1: h1,
+      p: data_metric_p
+)
 
-@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, heading: String, message: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@mainTemplate(title = pageTitle) {
-    <h1 id="page-heading" class="heading-xlarge">@heading</h1>
+@mainTemplate(pageTitle = pageTitle) {
 
-    <p data-metrics="handledError:serviceError:shownErrorPage">@message</p>
+     @h1(msg = heading)
+     @p(message)
+
 }
 

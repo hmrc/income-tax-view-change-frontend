@@ -14,23 +14,29 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.MainTemplate
+@import views.html.layouts.layout
+@import views.html.components._
 
-@this(mainTemplate: MainTemplate, appConfig: config.FrontendAppConfig)
+@this(  mainTemplate: layout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        p: p,
+        link: link)
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @mainTemplate(
-    title = messages("agent-error.heading")
+    pageTitle = messages("agent-error.heading")
 ) {
-    <h1 class="h1-heading">@messages("agent-error.heading")</h1>
+    @h1(msg = "agent-error.heading")
 
-    <p>@messages("agent-error.note")
-        <a href="@{appConfig.setUpAgentServicesAccountUrl}">@messages("agent-error.link")</a>.
-    </p>
+    @p{
+        @messages("agent-error.note")
+        @link(link = appConfig.setUpAgentServicesAccountUrl, messageKey = "agent-error.link", outerMessage = Some("."))
+    }
 
 
     <div>
-        <a class="button" href="@{controllers.routes.SignOutController.signOut}">@messages("base.sign-out")</a>
+        @link(link = controllers.routes.SignOutController.signOut.url, messageKey = "base.sign-out", classes = "govuk-button")
     </div>
 }

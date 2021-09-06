@@ -17,6 +17,7 @@
 package controllers.errors
 
 import assets.MessagesLookUp.{AgentErrorMessages => pageMessages}
+import config.FrontendAppConfig
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import org.jsoup.Jsoup
@@ -33,7 +34,8 @@ class AgentErrorControllerSpec extends TestSupport with MockAuthenticationPredic
     app.injector.instanceOf[AgentError]
   )(
     ec,
-    app.injector.instanceOf[MessagesControllerComponents]
+    app.injector.instanceOf[MessagesControllerComponents],
+    app.injector.instanceOf[FrontendAppConfig]
   )
 
   "Calling the show action of the NotAnAgentController" should {

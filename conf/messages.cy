@@ -520,3 +520,6 @@ language-switcher.english                                       = English
 language-switcher.welsh                                         = Cymraeg
 language-switcher.welsh.hidden                                  = Newid yr iaith ir Gymraeg
 language-switcher.nav                                           = Switcher iaith
+
+#technical helper
+getpagehelp.linkText                                            = Help gyda’r dudalen hon.

@@ -1,0 +1,57 @@
+@*
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+
+@import cats.syntax.eq._
+@import cats.instances.string._
+
+
+@this()
+@()(implicit messages: Messages)
+
+@if(messages.lang.code === "en") {
+<nav class="hmrc-language-select" aria-label="Language switcher">
+    <ul class="hmrc-language-select__list">
+        <li class="hmrc-language-select__list-item">
+            <span aria-current="true">English</span>
+        </li>
+        <li class="hmrc-language-select__list-item">
+            <a href="@controllers.routes.ItvcLanguageController.switchToWelsh" hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:Cymraeg">
+                <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                <span aria-hidden="true">Cymraeg</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+} else {
+
+<nav class="hmrc-language-select" aria-label="Switcher iaith">
+    <ul class="hmrc-language-select__list">
+        <li class="hmrc-language-select__list-item">
+            <a href="@controllers.routes.ItvcLanguageController.switchToEnglish" hreflang="en" lang="en" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:English">
+                <span class="govuk-visually-hidden">Change the language to English</span>
+                <span aria-hidden="true">English</span>
+            </a>
+        </li>
+        <li class="hmrc-language-select__list-item">
+            <span aria-current="true">Cymraeg</span>
+        </li>
+    </ul>
+</nav>
+
+}
+
+

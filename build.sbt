@@ -95,7 +95,14 @@ lazy val microservice = Project(appName, file("."))
     Keys.fork in IntegrationTest := false,
     unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    parallelExecution in IntegrationTest := false)
+    parallelExecution in IntegrationTest := false,
+    TwirlKeys.templateImports ++= Seq(
+      "uk.gov.hmrc.govukfrontend.views.html.helpers._",
+      "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
+      "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
+      "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
+    )
+  )
   .settings(resolvers ++= Seq(
     Resolver.jcenterRepo
   ))
