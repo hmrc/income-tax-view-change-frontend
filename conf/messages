@@ -290,6 +290,8 @@ taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Total pens
 taxCal_breakdown.table.statePensionLumpSumCharges                   = State pension lump sum
 taxCal_breakdown.table.other_charges                                = Other charges
 taxCal_breakdown.table.totalStudentLoansRepaymentAmount             = Student Loan repayments
+taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Underpaid tax for earlier years in your tax code for {0} to {1}
+taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Underpaid tax for earlier years in your self assessment for {0} to {1}
 taxCal_breakdown.table.tax_reductions                               = Tax reductions
 taxCal_breakdown.table.marriage_allowance_transfer                  = Marriage Allowance Transfer
 taxCal_breakdown.table.top_slicing_relief                           = Top Slicing Relief
@@ -307,6 +309,7 @@ taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    
 taxCal_breakdown.table.nonDeductibleLoanInterest                    = Non deductible loan interest
 taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Income Tax due after tax reductions
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
+taxCal_breakdown.table.taxDeductedAtSource.inYearAdjustment			= Outstanding debt collected through PAYE
 taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = All employments
 taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions
 taxCal_breakdown.table.taxDeductedAtSource.stateBenefits	        = State benefits

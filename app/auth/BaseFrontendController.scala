@@ -75,6 +75,12 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
           case _ => EmptyPredicate
         }
 
+        //Add test headers if found in session
+        lazy val updatedHeaders = request.session.get("Gov-Test-Scenario") match {
+          case Some(data) => request.headers.add(("Gov-Test-Scenario", data))
+          case _ => request.headers
+        }
+
         authorisedFunctions.authorised(authPredicate).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
           case enrolments ~ affinity ~ confidence ~ credentials =>
             implicit val user: User = userApply(enrolments, affinity, confidence, credentials)
@@ -82,7 +88,7 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
               case Right(AuthPredicateSuccess) if requireClientSelected && clientMtd.isEmpty =>
                 Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show()))
               case Right(AuthPredicateSuccess) =>
-                action(request)(user)
+                action(request.withHeaders(updatedHeaders))(user)
               case Left(failureResult) => failureResult
             }
         }.recover(handleExceptions(request))

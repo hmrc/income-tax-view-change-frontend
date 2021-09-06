@@ -57,6 +57,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       totalResidentialFinanceCostsRelief = Some(6.0),
       totalForeignTaxCreditRelief = Some(7.0),
       totalNotionalTax = Some(8.0),
+      payeUnderpaymentsCodedOut = Some(9.0),
+      saUnderpaymentsCodedOut = Some(10.0),
       reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1.0)), ReliefsClaimed("vctSubscriptions", Some(2.0)),
         ReliefsClaimed("eisSubscriptions", Some(3.0)), ReliefsClaimed("seedEnterpriseInvestment", Some(4.0)),
         ReliefsClaimed("communityInvestment", Some(5.0)), ReliefsClaimed("socialEnterpriseInvestment", Some(6.0)),
@@ -88,16 +90,17 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       ))
     ),
     taxDeductedAtSource = TaxDeductedAtSource(
-      Some(100.0),
-      Some(200.0),
-      Some(300.0),
-      Some(400.0),
-      Some(500.0),
-      Some(600.0),
-      Some(700.0),
-      Some(800.0),
-      Some(700.0),
-      Some(1.0)
+      payeEmployments = Some(100.0),
+      ukPensions = Some(200.0),
+      stateBenefits = Some(300.0),
+      cis = Some(400.0),
+      ukLandAndProperty = Some(500.0),
+      specialWithholdingTax = Some(600.0),
+      voidISAs = Some(700.0),
+      savings = Some(800.0),
+      inYearAdjustmentCodedInLaterTaxYear = Some(900.0),
+      total = Some(700.0),
+      totalIncomeTaxAndNicsDue = Some(1.0)
     ),
     lumpSums = LumpSums(
       bands = List(
@@ -167,6 +170,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         "totalIncomeTaxNicsCharged" -> 2.0,
         "totalStudentLoansRepaymentAmount" -> 5.0,
         "taxRegime" -> "Welsh",
+        "saUnderpaymentsCodedOut" -> 10.0,
         "nics" -> Json.obj(
           "class2NicsAmount" -> 1.0,
           "class4NicsAmount" -> 2.0,
@@ -175,7 +179,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         "incomeTax" -> Json.obj(
           "totalPensionSavingsTaxCharges" -> 3.0,
           "statePensionLumpSumCharges" -> 4.0,
-          "totalNotionalTax" -> 8.0
+          "totalNotionalTax" -> 8.0,
+          "payeUnderpaymentsCodedOut"-> 9.0
         ),
         "capitalGainsTax" -> Json.obj(
           "totalTaxableGains" -> 1.1,
@@ -213,7 +218,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "specialWithholdingTaxOrUkTaxPaid" -> 600.0,
           "voidedIsa" -> 700.0,
           "savings" -> 800.0,
-          "totalIncomeTaxAndNicsDue" -> 1.0
+          "totalIncomeTaxAndNicsDue" -> 1.0,
+          "inYearAdjustmentCodedInLaterTaxYear" -> 900.0
         ),
         "capitalGainsTax" -> Json.obj(
           "businessAssetsDisposalsAndInvestorsRel" -> Json.obj(
@@ -495,6 +501,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "totalResidentialFinanceCostsRelief" -> 6.0,
       "totalForeignTaxCreditRelief" -> 7.0,
       "totalNotionalTax" -> 8.0,
+      "payeUnderpaymentsCodedOut" -> 9.0,
+      "saUnderpaymentsCodedOut" -> 10.0,
       "reliefsClaimed" -> Json.arr(
         Json.obj(
           "type" -> "deficiencyRelief",
@@ -577,6 +585,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "specialWithholdingTax" -> 600.0,
       "voidISAs" -> 700.0,
       "savings" -> 800,
+      "inYearAdjustmentCodedInLaterTaxYear" -> 900.0,
       "total" -> 700,
       "totalIncomeTaxAndNicsDue" -> 1
     ),

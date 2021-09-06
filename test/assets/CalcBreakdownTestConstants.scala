@@ -1127,6 +1127,8 @@ object CalcBreakdownTestConstants {
         totalForeignTaxCreditRelief = Some(6000),
         totalNotionalTax = Some(7000),
         incomeTaxDueAfterTaxReductions = Some(2000),
+        payeUnderpaymentsCodedOut = Some(254),
+        saUnderpaymentsCodedOut = Some(400),
         reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1000)), ReliefsClaimed("vctSubscriptions", Some(2000)),
           ReliefsClaimed("eisSubscriptions", Some(3000)), ReliefsClaimed("seedEnterpriseInvestment", Some(4000)),
           ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("socialEnterpriseInvestment", Some(6000)),
@@ -1237,16 +1239,17 @@ object CalcBreakdownTestConstants {
         class2VoluntaryContributions = Some(true)
       ),
       taxDeductedAtSource = TaxDeductedAtSource(
-        Some(100.0),
-        Some(200.0),
-        Some(300.0),
-        Some(400.0),
-        Some(500.0),
-        Some(600.0),
-        Some(700.0),
-        Some(800.0),
-        Some(900.0),
-        Some(1000.0)
+        payeEmployments = Some(100.0),
+        ukPensions = Some(200.0),
+        stateBenefits = Some(300.0),
+        cis = Some(400.0),
+        ukLandAndProperty = Some(500.0),
+        specialWithholdingTax = Some(600.0),
+        voidISAs = Some(700.0),
+        savings = Some(800.0),
+        inYearAdjustmentCodedInLaterTaxYear = Some(900.0),
+        total = Some(1000.0),
+        totalIncomeTaxAndNicsDue = Some(1100.0)
       )
     )
 

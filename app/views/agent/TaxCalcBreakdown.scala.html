@@ -329,7 +329,10 @@
 
     @capitalGainsTaxTable(calcModel.calcDataModel.capitalGainsTax)
 
-    @if(calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.nonEmpty) {
+    @if(calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.nonEmpty ||
+        calcModel.calcDataModel.reductionsAndCharges.payeUnderpaymentsCodedOut.nonEmpty ||
+        calcModel.calcDataModel.reductionsAndCharges.saUnderpaymentsCodedOut.nonEmpty
+    ) {
         <table>
             <caption
               id ="other_charges"  class="govuk-table__caption heading-large">@messages("taxCal_breakdown.table.other_charges")
@@ -344,6 +347,22 @@
             @calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.map { amount =>
                 <tr>
                     <td>@messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount")</td>
+                    <td class="numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            @calcModel.calcDataModel.reductionsAndCharges.payeUnderpaymentsCodedOut.map { amount =>
+                <tr>
+                    <td>@messages("taxCal_breakdown.table.payeUnderpaymentsCodedOut", s"${taxYear - 1}", s"$taxYear")</td>
+                    <td class="numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            @calcModel.calcDataModel.reductionsAndCharges.saUnderpaymentsCodedOut.map { amount =>
+                <tr>
+                    <td>@messages("taxCal_breakdown.table.saUnderpaymentsCodedOut", s"${taxYear - 1}", s"$taxYear")</td>
                     <td class="numeric">@{
                         amount.toCurrency
                     }</td>

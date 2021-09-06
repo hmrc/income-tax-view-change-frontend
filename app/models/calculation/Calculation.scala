@@ -120,7 +120,9 @@ case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
                                 reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
                                 totalNotionalTax: Option[BigDecimal] = None,
                                 incomeTaxDueAfterTaxReductions: Option[BigDecimal] = None,
-                                totalIncomeTaxDue: Option[BigDecimal] = None
+                                totalIncomeTaxDue: Option[BigDecimal] = None,
+                                payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
+                                saUnderpaymentsCodedOut: Option[BigDecimal] = None
                                ) {
   val reliefsClaimedMap: Map[String, Option[BigDecimal]] = reliefsClaimed.getOrElse(Seq()).map(relief => relief.`type` -> relief.amountUsed).toMap
 }
@@ -139,7 +141,9 @@ object ReductionsAndCharges {
       readNullable[Seq[ReliefsClaimed]](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "reliefsClaimed") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalNotionalTax") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "incomeTaxDueAfterTaxReductions") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalIncomeTaxDue")
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalIncomeTaxDue") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "payeUnderpaymentsCodedOut") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "saUnderpaymentsCodedOut")
     ) (ReductionsAndCharges.apply _)
   implicit val writes: OWrites[ReductionsAndCharges] = Json.writes[ReductionsAndCharges]
 }
@@ -222,10 +226,12 @@ case class TaxDeductedAtSource(payeEmployments: Option[BigDecimal] = None,
                                specialWithholdingTax: Option[BigDecimal] = None,
                                voidISAs: Option[BigDecimal] = None,
                                savings: Option[BigDecimal] = None,
+                               inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
                                total: Option[BigDecimal] = None,
                                totalIncomeTaxAndNicsDue: Option[BigDecimal] = None
                               ) {
   val allFields: Seq[(String, BigDecimal)] = Seq(
+    "inYearAdjustment" -> inYearAdjustmentCodedInLaterTaxYear,
     "payeEmployments" -> payeEmployments,
     "ukPensions" -> ukPensions,
     "stateBenefits" -> stateBenefits,
@@ -250,9 +256,9 @@ object TaxDeductedAtSource {
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "specialWithholdingTaxOrUkTaxPaid") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "voidedIsa") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "savings") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "inYearAdjustmentCodedInLaterTaxYear") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalTaxDeducted") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalIncomeTaxAndNicsDue")
-
     ) (TaxDeductedAtSource.apply _)
   implicit val writes: Writes[TaxDeductedAtSource] = Json.writes[TaxDeductedAtSource]
 
