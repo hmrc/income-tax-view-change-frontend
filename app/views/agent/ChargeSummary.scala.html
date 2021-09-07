@@ -37,6 +37,10 @@
 
 @hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }
 
+@hasInterestLocks = @{ paymentBreakdown.exists(_.interestLockExists) }
+
+@hasAccruedInterest = @{ paymentBreakdown.exists(_.hasAccruedInterest) }
+
 @chargeHistoryRow(dateStr: LocalDate, reasonCode: String, amount: Option[BigDecimal]) = {
 	<tr>
 		<td style="white-space: nowrap;">@{dateStr.toLongDateShort}</td>
@@ -115,7 +119,12 @@
 					@financialDetail.originalAmount.get.toCurrency
 					@if(financialDetail.dunningLockExists) {
 						<br>
-						<span class="govuk-body-s half-light">Under review</span>
+					<span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
+					}
+					@if(hasInterestLocks){
+					@if(!financialDetail.interestLockExists){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.charging") </div>}
+					@if(financialDetail.interestLockExists && !financialDetail.hasAccruedInterest){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.notCharging") </div>}
+					@if(financialDetail.interestLockExists && financialDetail.hasAccruedInterest){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged") </div>}
 					}
 				</dd>
 			</div>
@@ -124,11 +133,16 @@
 		<br>
 	}
 
-	<p>
-		@messages("chargeSummary.whatYouOwe.textOne")
-		<a id= "what-you-owe-link" href=@controllers.agent.routes.WhatYouOweController.show().url>@messages("chargeSummary.whatYouOwe.linkText")</a>
-		@messages("chargeSummary.whatYouOwe.textTwo")
-	</p>
+
+@if(hasInterestLocks && hasAccruedInterest) {
+<p>@messages("chargeSummary.interestLocks.text")
+	<a id= "what-you-owe-link" href=@controllers.agent.routes.WhatYouOweController.show().url>@messages("chargeSummary.interestLocks.linkText")</a></p>
+}else{
+<p> @messages("chargeSummary.whatYouOwe.textOne")
+	<a id= "what-you-owe-link1" href="@controllers.agent.routes.WhatYouOweController.show().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
+	@messages("chargeSummary.whatYouOwe.textTwo")</p>
+}
+
 
 	@chargeHistoryOpt.map { chargeHistory =>
 			@if(paymentBreakdown.nonEmpty) {
