@@ -433,17 +433,18 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have an other charges table" which {
-        val tableNumber = 10
 
-        "has the correct heading" in new Setup(view) {
-          content.selectById("other_charges").text shouldBe TaxCalcBreakdown.otherCharges
-        }
-
-        "has a table header section" in new Setup(view) {
-          val row: Element = content.table(tableNumber).select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.chargeTypeTableHeader
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
-        }
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 10,
+          expectedCaption = TaxCalcBreakdown.otherCharges,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.chargeTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.totalStudentLoansRepaymentAmount, "£5,000.00"),
+            (2, TaxCalcBreakdown.payeUnderpaymentsCodedOut, "£254.00"),
+            (3, TaxCalcBreakdown.saUnderpaymentsCodedOut, "£400.00")
+          )
+        )
       }
 
       "have an additional deductions table" which {
@@ -454,15 +455,16 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
             (0, TaxCalcBreakdown.deductionsTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.employments, "−£100.00"),
-            (2, TaxCalcBreakdown.ukPensions, "−£200.00"),
-            (3, TaxCalcBreakdown.stateBenefits, "−£300.00"),
-            (4, TaxCalcBreakdown.cis, "−£400.00"),
-            (5, TaxCalcBreakdown.ukLandAndProperty, "−£500.00"),
-            (6, TaxCalcBreakdown.specialWithholdingTax, "−£600.00"),
-            (7, TaxCalcBreakdown.voidISAs, "−£700.00"),
-            (8, TaxCalcBreakdown.BBSI, "−£800.00"),
-            (9, TaxCalcBreakdown.totalDeductions, "£900.00")
+            (1, TaxCalcBreakdown.inYearAdjustmentCodedInLaterTaxYear, "−£900.00"),
+            (2, TaxCalcBreakdown.employments, "−£100.00"),
+            (3, TaxCalcBreakdown.ukPensions, "−£200.00"),
+            (4, TaxCalcBreakdown.stateBenefits, "−£300.00"),
+            (5, TaxCalcBreakdown.cis, "−£400.00"),
+            (6, TaxCalcBreakdown.ukLandAndProperty, "−£500.00"),
+            (7, TaxCalcBreakdown.specialWithholdingTax, "−£600.00"),
+            (8, TaxCalcBreakdown.voidISAs, "−£700.00"),
+            (9, TaxCalcBreakdown.BBSI, "−£800.00"),
+            (10, TaxCalcBreakdown.totalDeductions, "£1,000.00")
           )
         )
 
