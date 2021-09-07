@@ -78,7 +78,7 @@
             @tableRow("occupational_pensions", calcModel.calcDataModel.payPensionsProfit.totalOccupationalPensionIncome)
             @tableRow("state_benefit", calcModel.calcDataModel.payPensionsProfit.totalStateBenefitsIncome)
             @tableRow("share_schemes", calcModel.calcDataModel.payPensionsProfit.totalShareSchemesIncome)
-            <tr class="no-border-bottom">
+            <tr class="govuk-table__row">
                 <td class="total-section">@messages("income_breakdown.total")</td>
                 <td class="numeric total-section">@calcModel.calcDataModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
             </tr>

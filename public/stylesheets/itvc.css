@@ -1,9 +1,5 @@
 /*Estimated Tax Liabilities*/
 
-.no-border-bottom td {
-    border-bottom: 0;
-}
-
 .summary-data {
     text-align: right !important;
     vertical-align: top;
