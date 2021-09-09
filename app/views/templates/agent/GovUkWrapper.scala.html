@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers.injected.BackLink
 @import views.html.helpers.injected.BetaBanner
 @import views.html.helpers.injected.LanguageSelection
 @import views.html.helpers.injected.RecruitmentBannerHelper
@@ -30,6 +31,7 @@
 @this(
         appConfig: config.FrontendAppConfig,
         betaBanner: BetaBanner,
+        backLink: BackLink,
         languageSelection: LanguageSelection,
         recruitmentBannerHelper: RecruitmentBannerHelper,
         govUkTemplate: GovUkTemplate,
@@ -50,6 +52,7 @@
   mainContent: Html = HtmlFormat.empty,
   serviceInfoContent: Html = HtmlFormat.empty,
   scriptElem: Option[Html] = None,
+  backUrl: Option[String] = None,
   showLogout: Boolean = true,
   form: Option[Form[_]] = None
 )(implicit request : Request[_], messages: Messages)
@@ -109,14 +112,15 @@
       includeHMRCBranding = true,
       setLang = messages.lang.code
     )
+
+    @languageSelection()
+    @backUrl.map(backLink(_))
 }
 
 @mainContentHeader = {
-
     @if(contentHeader.isDefined) {
         <header class="page-header inline-block">@contentHeader.get</header>
     }
-        @languageSelection()
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}

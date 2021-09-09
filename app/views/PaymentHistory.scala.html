@@ -18,13 +18,11 @@
 @import java.time.LocalDate
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
-@import views.html.helpers.injected.BackLink
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 
 @this(
       mainTemplate: MainTemplate,
-      backLink: BackLink,
       appConfig: config.FrontendAppConfig,
       implicitDateFormatter: ImplicitDateFormatterImpl
 )
@@ -37,10 +35,9 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
 }
 
 @mainTemplate(
- title = messages("paymentHistory.heading")
+    title = messages("paymentHistory.heading"),
+    backUrl = Some(backUrl)
 ) {
-
-@backLink(backUrl)
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentHistory.heading")</h1>
 

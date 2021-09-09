@@ -15,9 +15,8 @@
  *@
 
 @import views.html.templates.MainTemplate
-@import views.html.helpers.injected.BackLink
 @import models.calculation.CalculationResponseModelWithYear
-@this(mainTemplate: MainTemplate, backLinkHelper: BackLink, appConfig: config.FrontendAppConfig)
+@this(mainTemplate: MainTemplate, appConfig: config.FrontendAppConfig)
 
 @(taxYears: List[CalculationResponseModelWithYear], backUrl: String, itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
@@ -54,9 +53,7 @@
     </tr>
 }
 
-@mainTemplate(title = messages("taxYears.heading"), bodyClasses = None) {
-
-@backLinkHelper(backUrl)
+@mainTemplate(title = messages("taxYears.heading"), backUrl = Some(backUrl)) {
 
     <header class="page-heading">
         <h1 class="heading-xlarge" id="heading">@messages("taxYears.heading")</h1>

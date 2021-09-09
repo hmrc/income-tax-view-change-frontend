@@ -17,7 +17,6 @@
 package controllers.errors
 
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.notEnrolled.NotEnrolled
@@ -26,8 +25,7 @@ import scala.concurrent.Future
 
 @Singleton
 class NotEnrolledController @Inject()(notEnrolled: NotEnrolled)
-                                     (implicit val config: FrontendAppConfig,
-                                      mcc: MessagesControllerComponents) extends FrontendController(mcc){
+                                     (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc){
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(notEnrolled()))
   }

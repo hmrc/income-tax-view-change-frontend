@@ -17,7 +17,6 @@
 package controllers.errors
 
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
 import controllers.BaseController
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
@@ -31,8 +30,7 @@ class AgentErrorController @Inject()(checkSessionTimeout: SessionTimeoutPredicat
                                      authenticate: AuthenticationPredicate,
                                      agentErrorView: AgentError)
                                     (implicit override val executionContext: ExecutionContext,
-                                     mcc: MessagesControllerComponents,
-                                     appConfig: FrontendAppConfig) extends BaseController with I18nSupport {
+                                     mcc: MessagesControllerComponents) extends BaseController with I18nSupport {
   val show: Action[AnyContent] = (checkSessionTimeout andThen authenticate) { implicit request =>
     Ok(agentErrorView())
   }

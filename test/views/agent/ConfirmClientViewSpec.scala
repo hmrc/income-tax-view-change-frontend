@@ -59,8 +59,9 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"have a back link" in new Setup(confirmClientView) {
-      content.backLink.text shouldBe confirmClientMessages.backLink
-      content.hasBackLinkTo(controllers.agent.routes.EnterClientsUTRController.show().url)
+      content.doesNotHave(Selectors.backLink)
+      document.backLink.text shouldBe confirmClientMessages.backLink
+      document.hasBackLinkTo(controllers.agent.routes.EnterClientsUTRController.show().url)
     }
 
     s"have the sub heading ${confirmClientMessages.clientNameHeading}" in new Setup(confirmClientView) {

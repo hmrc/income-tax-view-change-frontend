@@ -240,7 +240,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     }
 
     "have a back link" in new Setup(view()) {
-      val backLink: Element = content.backLink
+      content.doesNotHave(Selectors.backLink)
+      val backLink: Element = document.backLink
       backLink.text shouldBe TaxYearOverviewMessages.back
       backLink.attr("href") shouldBe "/testBack"
     }

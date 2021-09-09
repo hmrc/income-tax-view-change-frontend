@@ -15,12 +15,11 @@
  *@
 
 @import views.html.templates.agent.MainTemplate
-@import views.html.helpers.injected.BackLink
 @import models.paymentAllocationCharges.PaymentAllocationViewModel
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
 
-@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(viewModel: PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages)
 
@@ -29,10 +28,9 @@
 @import viewModel.originalPaymentAllocationWithClearingDate
 
 @mainTemplate(
-    title = messages("paymentAllocation.heading")
+    title = messages("paymentAllocation.heading"),
+    backUrl = Some(backUrl)
 ) {
-
-    @backLink(backUrl)
 
     <h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
 

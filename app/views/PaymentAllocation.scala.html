@@ -17,22 +17,18 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.templates.MainTemplate
-@import views.html.helpers.injected.BackLink
 @import implicits.ImplicitDateFormatterImpl
 
-@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @import implicitDateFormatter._
 
 @mainTemplate(
-title = messages("paymentAllocation.heading"),
-bodyClasses = None,
-scriptElem = None
+    title = messages("paymentAllocation.heading"),
+    backUrl = Some(backUrl)
 ) {
-
-@backLink(backUrl)
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
 

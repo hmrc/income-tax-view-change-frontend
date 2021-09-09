@@ -17,13 +17,11 @@
 @import models.calculation.{CalcDisplayModel, TaxBand}
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.templates.agent.MainTemplate
-@import views.html.helpers.injected.BackLink
 @import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTable
 @import views.html.partials.taxcalcbreakdown.TableRow
 
 @this(
     mainTemplate: MainTemplate,
-    backLink: BackLink,
     tableRow: TableRow,
     capitalGainsTaxTable: CapitalGainsTaxTable
 )
@@ -55,9 +53,7 @@
     }
 }
 
-@mainTemplate(title = messages("taxCal_breakdown.heading")){
-
-    @backLink(backUrl)
+@mainTemplate(title = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl)){
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>

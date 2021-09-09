@@ -16,10 +16,10 @@
 
 @this()
 
-@(content: Html, classes: String = "govuk-body", id: Option[String] = None)(implicit messages: Messages)
+@(content: Html, classes: String = "govuk-body", id: Option[String] = None)
 
 @if(id.isDefined){
-<p class="@classes", id ="@id">@content</p>
+<p class="@classes" id="@id">@content</p>
 } else {
 <p class="@classes">@content</p>
 }

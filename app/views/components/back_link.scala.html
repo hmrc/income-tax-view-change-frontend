@@ -14,11 +14,7 @@
  * limitations under the License.
  *@
 
-@this(standardError: StandardError)
+@this()
+@(href: String)(implicit messages: Messages)
 
-@()(implicit request : Request[_], messages: Messages)
-
-@standardError(
-    messages("notFound.heading"),
-    messages("notFound.message")
-)
+<a id="back" class="govuk-back-link" href="@href">@messages("base.back")</a>

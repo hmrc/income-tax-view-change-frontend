@@ -15,18 +15,15 @@
  *@
 
 @import views.html.templates.MainTemplate
-@import views.html.helpers.injected.BackLink
 
-@this(mainTemplate: MainTemplate, backLink: BackLink)
+@this(mainTemplate: MainTemplate)
 
 @(backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("obligations.heading"),
-    bodyClasses = None,
+    backUrl = Some(backUrl)
 ) {
-
-@backLink(backUrl)
 
 
     <section id="estimated-tax">

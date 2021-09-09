@@ -18,11 +18,9 @@
 @import models.reportDeadlines.ObligationsModel
 
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
-@import views.html.helpers.injected.BackLink
 
 @this(
 	mainTemplate: MainTemplate,
-	backLinkHelper: BackLink,
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
@@ -32,8 +30,8 @@
 
 @mainTemplate(
 	title = messages("nextUpdates.heading"),
-	bodyClasses = None) {
-@backLinkHelper(backUrl)
+	backUrl = Some(backUrl)
+) {
 
 	<h1 id="page-heading" class="heading-xlarge"> @messages("nextUpdates.heading")</h1>
 

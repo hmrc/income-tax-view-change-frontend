@@ -5,31 +5,31 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header => HmrcHeaderArgs}
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
-@import views.html.helpers.injected.LanguageSelection
 @this(
-reportAProblemLink: ReportAProblemLink,
-hmrcBanner: HmrcBanner,
-govukBackLink: GovukBackLink,
-govukLayout: GovukLayout,
-hmrcHeader:  HmrcHeader,
-phaseBanner: components.phaseBanner,
-footerLinks: HmrcStandardFooter,
-hmrcTimeoutDialog: HmrcTimeoutDialog,
-hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-languageSelection: components.languageSelection
+    appConfig: config.FrontendAppConfig,
+    reportAProblemLink: ReportAProblemLink,
+    hmrcBanner: HmrcBanner,
+    govukBackLink: GovukBackLink,
+    govukLayout: GovukLayout,
+    hmrcHeader:  HmrcHeader,
+    phaseBanner: components.phaseBanner,
+    footerLinks: HmrcStandardFooter,
+    hmrcTimeoutDialog: HmrcTimeoutDialog,
+    hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+    backLink: components.back_link,
+    languageSelection: components.languageSelection
 )
 
-@(pageTitle: String, beforeContentBlock: Option[Html] = None, signOutLink: Boolean = true, timeout: Boolean = true)(contentBlock: Html)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
-    homepageUrl = controllers.routes.HomeController.home.url,
-    serviceName = Some(messages("base.service_name")),
-    serviceUrl = controllers.routes.HomeController.home.url,
-    containerClasses = "govuk-width-container",
-    signOutHref = Some(controllers.routes.SignOutController.signOut.url)
-))
-
+        homepageUrl = controllers.routes.HomeController.home.url,
+        serviceName = Some(messages("base.service_name")),
+        serviceUrl = controllers.routes.HomeController.home.url,
+        containerClasses = "govuk-width-container",
+        signOutHref = Some(controllers.routes.SignOutController.signOut.url)
+    ))
 }
 
 @hmrcTrackingConsentSnippet()
@@ -39,25 +39,25 @@ languageSelection: components.languageSelection
 <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.at("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
 
-@if(timeout) {
-    @hmrcTimeoutDialog(TimeoutDialog(
-    language = Some("en"),
-    timeout = Option(900),
-    countdown = Option(120),
-    keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
-    signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
-    keepAliveButtonText = Some(messages("button.continue"))
-    ))
+    @if(timeout) {
+        @hmrcTimeoutDialog(TimeoutDialog(
+            language = Some("en"),
+            timeout = Option(900),
+            countdown = Option(120),
+            keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
+            signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
+            keepAliveButtonText = Some(messages("button.continue"))
+        ))
     }
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
 
 @beforeContentBlock = {
-@phaseBanner("beta")
-@hmrcBanner(Banner(if(messages.lang.code == "cy") {Cy} else {En}))
-@languageSelection()
-
+    @phaseBanner("beta")
+    @hmrcBanner(Banner(if(messages.lang.code == "cy") {Cy} else {En}))
+    @languageSelection()
+    @backUrl.map(backLink(_))
 }
 
 @scripts = {
@@ -82,11 +82,11 @@ languageSelection: components.languageSelection
 }
 
 @govukLayout(
-pageTitle = Some(messages("titlePattern.serviceName.govUk", pageTitle)),
-headBlock = Some(head),
-beforeContentBlock = Some(beforeContentBlock),
-bodyEndBlock = None,
-headerBlock = Some(siteHeader),
-footerBlock = Some(footerLinks()),
-scriptsBlock = Some(scripts)
+    pageTitle = Some(messages("titlePattern.serviceName.govUk", pageTitle)),
+    headBlock = Some(head),
+    beforeContentBlock = Some(beforeContentBlock),
+    bodyEndBlock = None,
+    headerBlock = Some(siteHeader),
+    footerBlock = Some(footerLinks()),
+    scriptsBlock = Some(scripts)
 )(content)

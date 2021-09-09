@@ -16,9 +16,8 @@
 
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.templates.agent.MainTemplate
-@import views.html.helpers.injected.BackLink
 
-@this(mainTemplate: MainTemplate, backLink: BackLink, nextUpdatesHelper: NextUpdatesHelper)
+@this(mainTemplate: MainTemplate, nextUpdatesHelper: NextUpdatesHelper)
 
 @(currentObligations: models.reportDeadlines.ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -26,9 +25,7 @@
 	messages("agent.nextUpdates.heading")
 }
 
-@mainTemplate(title = heading) {
-
-	@backLink(backUrl)
+@mainTemplate(title = heading, backUrl = Some(backUrl)) {
 
 	<h1 id="page-heading" class="heading-xlarge"> @messages("agent.nextUpdates.heading")</h1>
 

@@ -17,7 +17,6 @@
 package controllers
 
 import assets.MessagesLookUp.{NotEnrolled => notEnrolleMessages}
-import config.FrontendAppConfig
 import controllers.errors.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -28,7 +27,6 @@ import views.html.notEnrolled.NotEnrolled
 class NotEnrolledControllerSpec extends TestSupport {
 
   object TestNotEnrolledController extends NotEnrolledController(app.injector.instanceOf[NotEnrolled])(
-    app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents]
   )
 
