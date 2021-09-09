@@ -124,6 +124,10 @@ home.your-returns.description                                   = Use this servi
 home.your-returns.agent.description                             = Use this service to report untaxed income and any tax relief you’re claiming.
 home.your-returns.updatesLink                                   = Update and submit an Income Tax Return
 home.update-and-submit-your-returns.Link                        = Update and submit an Income Tax Return
+home.self-assessment.updatesLink                                   = View your Self Assessment tax years
+home.view-self-assessment.Link                                      = View your Self Assessment tax years
+home.self-assessment.description                             = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
+
 home.overdue.message                                            = You have overdue payments. You will be charged interest on these until they are paid in full.
 home.agent.overdue.message                                      = You have overdue payments. You will be charged interest on these until they are paid in full.
 

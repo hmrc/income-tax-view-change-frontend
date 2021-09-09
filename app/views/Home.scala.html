@@ -24,7 +24,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int],utr: Option[String], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
@@ -99,14 +99,28 @@
         </div>
         <div id="submit-your-returns-tile" class="grid-row">
             <div class="column-one-third">
-                <h3 class ="heading-small">
+                <h3 class ="heading-small" id ="submit-your-returns">
                     <a href=@appConfig.submissionFrontendUrl>@messages("home.your-returns.updatesLink")</a>
                 </h3>
                 <p>@messages("home.your-returns.description")</p>
             </div>
+            @if(utr.isDefined) {
+            <div id="saViewLandPTile">
+            <div class="column-one-third">
+                <h3 class ="heading-small" id="saViewLandPService">
+                    <a href="@{appConfig.saViewLandPService(utr.get)}">@messages("home.self-assessment.updatesLink")</a>
+                </h3>
+                <p>@messages("home.self-assessment.description")</p>
+            </div>
+            </div>
+            }
         </div>
     }
 }
+
+
+
+
 
 @mainTemplate(
     title = messages("home.heading"),
