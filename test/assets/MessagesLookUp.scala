@@ -134,6 +134,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val yourIncomeTaxReturnDescription = "Send updates to HMRC and declare income for a tax year."
     val sendUpdatesLink = "Send updates"
     val submitYourReturnsLink = "Update and submit an Income Tax Return"
+    val saViewLandPServiceLink = "View your Self Assessment tax years"
+    val saViewLandPServiceDescription = "Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax."
     val changeClientLink = "Change client"
     val backLink = "Back"
   }

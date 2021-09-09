@@ -58,6 +58,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       nextUpdate = nextUpdate,
       overDuePayments = overDuePayments,
       overDueUpdates = overDueUpdates,
+      user.saUtr,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       paymentHistoryEnabled = isEnabled(PaymentHistory)
     )
