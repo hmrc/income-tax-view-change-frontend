@@ -98,7 +98,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
     val totalDue: String = "Total Due"
     val taxDue: String = "£4.04"
-    val calcDateInfo: String = "This calculation is from the last time you viewed your tax calculation in your own software. You will need to view it in your software for the most up to date version."
+    val calcDateInfo: String = "This calculation is only based on your completed updates for this tax year up to 5 Jan 2017. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
     val taxCalculation: String = "Tax calculation"
     val taxCalculationNoData: String = "No calculation yet"
     val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."

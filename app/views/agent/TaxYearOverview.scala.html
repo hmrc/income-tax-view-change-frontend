@@ -221,7 +221,7 @@
         </dl>
 
         @if(!overview.crystallised){
-            <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time")</div>
+            <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)</div>
         }
     }
 
