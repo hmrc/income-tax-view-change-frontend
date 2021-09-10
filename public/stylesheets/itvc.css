@@ -1082,6 +1082,10 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
         vertical-align: top;
     }
 
+	table.govuk-table-taxYears {
+		margin-bottom: 1.5em;
+	}
+
     .govuk-list-taxYears {
         margin: 0;
         display: inline-block;
