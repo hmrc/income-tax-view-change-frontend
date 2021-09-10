@@ -19,12 +19,10 @@
 
 @import views.html.helpers.injected.obligations.CurrentObligationsHelper
 @import views.html.helpers.injected.obligations.PreviousObligationsHelper
-@import views.html.helpers.injected.BackLink
 
 
 @this(
     mainTemplate: MainTemplate,
-    backLinkHelper: BackLink,
     currentObligationsHelper: CurrentObligationsHelper,
     previousObligationsHelper: PreviousObligationsHelper
 )
@@ -32,12 +30,9 @@
 @(currentObligations: ObligationsModel, previousObligations: ObligationsModel, backUrl: String)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
-title = messages("obligations.heading.v2"),
-bodyClasses = None,
-
+    title = messages("obligations.heading.v2"),
+    backUrl = Some(backUrl)
 ) {
-
-@backLinkHelper(backUrl)
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("obligations.heading.v2")</h1>
 <div class="govuk-tabs" data-module="govuk-tabs">

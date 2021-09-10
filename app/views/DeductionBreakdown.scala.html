@@ -17,11 +17,9 @@
 @import models.calculation.CalcDisplayModel
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitCurrencyFormatter._
-@import views.html.helpers.injected.BackLink
 
 @this(
-        mainTemplate: MainTemplate,
-        backLink: BackLink
+        mainTemplate: MainTemplate
 )
 
 @(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages)
@@ -35,10 +33,7 @@
     }
 }
 
-@mainTemplate(messages("deduction_breakdown.heading")
-) {
-
-@backLink(backUrl)
+@mainTemplate(title = messages("deduction_breakdown.heading"), backUrl = Some(backUrl)) {
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>

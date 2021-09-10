@@ -43,7 +43,7 @@ trait ViewSpec extends TestSupport {
     val h1: String = "h1"
     val h2: String = "h2"
     val h3: String = "h3"
-    val backLink: String = ".link-back"
+    val backLink: String = id("back")
     val backToHome: String = "back"
     val form: String = "form"
     val summaryError: String = "#error-summary-display ul a"

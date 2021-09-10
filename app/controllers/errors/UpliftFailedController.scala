@@ -18,7 +18,6 @@ package controllers.errors
 
 import audit.AuditingService
 import audit.models.IvOutcomeFailureAuditModel
-import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.errorPages.UpliftFailed
@@ -29,8 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpliftFailedController @Inject()(upliftFailedView: UpliftFailed,
                                        mcc: MessagesControllerComponents,
                                        auditingService: AuditingService)
-                                      (implicit ec: ExecutionContext,
-                                       implicit val config: FrontendAppConfig) extends FrontendController(mcc) {
+                                      (implicit ec: ExecutionContext) extends FrontendController(mcc) {
   def show(): Action[AnyContent] = Action.async { implicit request =>
     val journeyId = request.getQueryString("journeyId")
     if (journeyId.isDefined) {

@@ -28,6 +28,7 @@
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
+  backUrl: Option[String] = None,
   showLogout: Boolean = true,
   showBtaHeader: Boolean = true,
   serviceInfo: Html = Html(""),
@@ -77,6 +78,7 @@
                mainContent = article(mainContentWithGA),
                serviceInfoContent = serviceInfo,
                scriptElem = Some(defaultScriptElem),
+               backUrl = backUrl,
                showLogout = showLogout
 )
 

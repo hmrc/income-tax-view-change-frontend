@@ -15,9 +15,8 @@
  *@
 
 @import views.html.templates.agent.MainTemplate
-@import views.html.helpers.injected.BackLink
 
-@this(mainTemplate: MainTemplate, backLink: BackLink)
+@this(mainTemplate: MainTemplate)
 
 @(taxYears: Seq[Int], backUrl: String, itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
@@ -55,9 +54,7 @@
 }
 
 
-@mainTemplate(title = messages("taxYears.heading")){
-
-	@backLink(backUrl)
+@mainTemplate(title = messages("taxYears.heading"), backUrl = Some(backUrl)){
 
 	<header class="page-heading">
 		<h1 class="heading-xlarge" id="heading">@messages("taxYears.heading")</h1>

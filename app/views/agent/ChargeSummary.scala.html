@@ -16,7 +16,6 @@
 
 @import views.html.templates.agent.MainTemplate
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import views.html.helpers.injected.BackLink
 @import implicits.ImplicitDateFormatter
 @import models.chargeHistory.ChargeHistoryModel
 @import models.financialDetails.DocumentDetailWithDueDate
@@ -24,7 +23,7 @@
 @import models.financialDetails.FinancialDetail
 @import models.financialDetails.FinancialDetailsModel
 
-@this(mainTemplate: MainTemplate, backLink: BackLink)
+@this(mainTemplate: MainTemplate)
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
 		backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentBreakdown: List[FinancialDetail], payments: FinancialDetailsModel,
 		latePaymentInterestCharge: Boolean, paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig,
@@ -49,8 +48,7 @@
 	</tr>
 }
 
-@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"), bodyClasses = None){
-	@backLink(backUrl)
+@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"), backUrl = Some(backUrl)){
 
 	@if(hasDunningLocks) {
 		<br>

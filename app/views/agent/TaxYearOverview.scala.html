@@ -17,13 +17,12 @@
 @import views.html.templates.agent.MainTemplate
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
-@import views.html.helpers.injected.BackLink
 @import models.calculation.CalcOverview
 @import models.reportDeadlines.ObligationsModel
 @import java.time.LocalDate
 @import models.financialDetails.DocumentDetailWithDueDate
 
-@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(taxYear: Int, overviewOpt: Option[CalcOverview], documentDetailsWithDueDates: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -182,9 +181,7 @@
     }
 }
 
-@mainTemplate(title = heading){
-
-    @backLink(backUrl)
+@mainTemplate(title = heading, backUrl = Some(backUrl)){
 
     <header class="hmrc-page-heading heading-xlarge">
         <h1 class="heading-xlarge">@heading</h1>

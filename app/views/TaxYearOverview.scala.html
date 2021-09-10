@@ -19,12 +19,11 @@
 @import models.calculation.CalcOverview
 @import models.reportDeadlines.ObligationsModel
 @import models.financialDetails.DocumentDetailWithDueDate
-@import views.html.helpers.injected.BackLink
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.partials.taxOverviewBreakdownPartial
 
-@this(mainTemplate: MainTemplate, backLink: BackLink, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
+@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
 
 @(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
@@ -150,9 +149,7 @@
     }
 }
 
-@mainTemplate(title = heading) {
-
-    @backLink(backUrl)
+@mainTemplate(title = heading, backUrl = Some(backUrl)) {
 
     <header class="hmrc-page-heading heading-xlarge">
         <h1 class="heading-xlarge">@heading</h1>

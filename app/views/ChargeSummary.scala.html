@@ -19,7 +19,6 @@
 @import models.financialDetails.DocumentDetail
 @import models.financialDetails.FinancialDetail
 @import models.financialDetails.PaymentsWithChargeType
-@import views.html.helpers.injected.BackLink
 @import views.html.templates.MainTemplate
 
 @import java.time.LocalDate
@@ -28,7 +27,6 @@
 
 @this(
     mainTemplate: MainTemplate,
-    backLink: BackLink,
     appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl
 )
@@ -44,9 +42,7 @@
 
 @hasAccruedInterest = @{ paymentBreakdown.exists(_.hasAccruedInterest) }
 
-@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"),bodyClasses = None, scriptElem = None) {
-
-    @backLink(backUrl)
+@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"),bodyClasses = None, backUrl = Some(backUrl), scriptElem = None) {
 
     @if(hasDunningLocks) {
         <br>

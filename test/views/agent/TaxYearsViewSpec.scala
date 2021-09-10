@@ -56,8 +56,9 @@ class TaxYearsViewSpec extends ViewSpec {
     }
 
     "have a back link" in new Setup(view()) {
-      content.backLink.text shouldBe TaxYearsMessages.back
-      content.hasBackLinkTo(testBackUrl)
+      content.doesNotHave(Selectors.backLink)
+      document.backLink.text shouldBe TaxYearsMessages.back
+      document.hasBackLinkTo(testBackUrl)
     }
 
     "have a message that there are no calculations" when {

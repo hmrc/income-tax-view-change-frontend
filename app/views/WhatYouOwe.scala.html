@@ -19,12 +19,10 @@
 @import models.financialDetails.WhatYouOweChargesList
 @import views.html.templates.MainTemplate
 @import java.time.LocalDate
-@import views.html.helpers.injected.BackLink
 @import models.financialDetails.DocumentDetailWithDueDate
 
 @this(
     mainTemplate: MainTemplate,
-    backLink: BackLink,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     appConfig: config.FrontendAppConfig
 )
@@ -144,11 +142,8 @@
 
 @mainTemplate(
     title = messages("whatYouOwe.heading"),
-    bodyClasses = None,
-    scriptElem = None
+    backUrl = Some(backUrl)
 ) {
-
-    @backLink(backUrl)
 
     <header class="page-heading">
         <h1 class="heading-xlarge" id="page-heading">@messages("whatYouOwe.heading")</h1>
