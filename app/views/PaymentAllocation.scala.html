@@ -65,14 +65,14 @@
         @paymentAllocations.originalPaymentAllocationWithClearingDate.map { paymentAllocation =>
        <tbody class="govuk-table__body">
 
-       <tr>
-           <td class="govuk-table__cell">
+             <tr>
+                <td class="govuk-table__cell">
 					<a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation._2.get.getTaxYear(implicitDateFormatter), paymentAllocation._2.get.transactionId.get)}" class="govuk-link">
 						@messages(paymentAllocation._2.get.getPaymentAllocationKeyInPaymentAllocations)
 					</a>
                     <br>
 					<span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation._2.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation._2.get.getTaxYear(implicitDateFormatter).toString)</span>
-           </td>
+                </td>
                 <td class="govuk-table__cell">@paymentAllocation._3.get.toLocalDate.toLongDateShort</td>
                 <td class="govuk-table__cell">@paymentAllocation._2.get.amount.get.toCurrencyString</td>
             </tr>
@@ -83,11 +83,11 @@
             @if(outstandingAmount != 0) {
        <tbody class="govuk-table__body">
 
-       <tr id="credit-on-account">
-           <td class="govuk-table__cell">@messages("paymentAllocation.creditOnAccount")</td>
+             <tr id="credit-on-account">
+                        <td class="govuk-table__cell">@messages("paymentAllocation.creditOnAccount")</td>
                         <td class="govuk-table__cell"></td>
                         <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
-                    </tr>
+             </tr>
        </tbody>
 
        }
