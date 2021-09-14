@@ -15,7 +15,7 @@
  */
 
 package views
-import assets.MessagesLookUp.{NoReportDeadlines => reportDeadlinesMessages}
+import assets.MessagesLookUp.{NoNextUpdates => reportDeadlinesMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -23,17 +23,17 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.NoReportDeadlines
+import views.html.NoNextUpdates
 
-class NoReportDeadlinesViewSpec extends TestSupport {
+class NoNextUpdatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val noReportDeadlinesView = app.injector.instanceOf[NoReportDeadlines]
+  val NoNextUpdatesView = app.injector.instanceOf[NoNextUpdates]
 
-  "The noReportDeadlines view" should {
+  "The NoNextUpdates view" should {
 
-    lazy val page: Html = noReportDeadlinesView("testBackURL")(FakeRequest(), implicitly)
+    lazy val page: Html = NoNextUpdatesView("testBackURL")(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${reportDeadlinesMessages.title}'" in {

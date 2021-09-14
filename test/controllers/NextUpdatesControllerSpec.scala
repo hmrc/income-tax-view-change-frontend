@@ -17,7 +17,7 @@
 package controllers
 
 import assets.BaseTestConstants
-import assets.MessagesLookUp.{NoReportDeadlines, Obligations => obligationsMessages}
+import assets.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -33,7 +33,7 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.ReportDeadlinesService
-import views.html.{NextUpdates, NoReportDeadlines, Obligations}
+import views.html.{NextUpdates, NoNextUpdates, Obligations}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
                                             with MockReportDeadlinesService with FeatureSwitching{
 
   object TestNextUpdatesController$ extends NextUpdatesController(
-    app.injector.instanceOf[NoReportDeadlines],
+    app.injector.instanceOf[NoNextUpdates],
     app.injector.instanceOf[Obligations],
     app.injector.instanceOf[NextUpdates],
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -243,12 +243,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
             charset(result) shouldBe Some("utf-8")
           }
 
-          "render the NoReportDeadlines page" in {
-            document.title shouldBe NoReportDeadlines.title
+          "render the NoNextUpdates page" in {
+            document.title shouldBe NoNextUpdates.title
           }
 
-          s"have the correct no report deadlines message '${NoReportDeadlines.noReports}'" in {
-            document.getElementById("p1").text shouldBe NoReportDeadlines.noReports
+          s"have the correct no report deadlines message '${NoNextUpdates.noReports}'" in {
+            document.getElementById("p1").text shouldBe NoNextUpdates.noReports
           }
         }
 
