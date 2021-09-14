@@ -247,8 +247,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
             document.title shouldBe NoNextUpdates.title
           }
 
+          s"have the heading '${NoNextUpdates.heading}'" in {
+            document.select("h1").text() shouldBe NoNextUpdates.heading
+          }
+
           s"have the correct no report deadlines message '${NoNextUpdates.noReports}'" in {
-            document.getElementById("p1").text shouldBe NoNextUpdates.noReports
+            document.select("p.govuk-body").text shouldBe NoNextUpdates.noReports
           }
         }
 
