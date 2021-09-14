@@ -25,9 +25,9 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 
-class ReportDeadlinesControllerISpec extends ComponentSpecBase {
+class NextUpdatesControllerISpec extends ComponentSpecBase {
 
-  "Calling the ReportDeadlinesController" when {
+  "Calling the NextUpdatesController" when {
 
     unauthorisedTest("/obligations")
 

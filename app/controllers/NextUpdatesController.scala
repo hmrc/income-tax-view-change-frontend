@@ -33,18 +33,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReportDeadlinesController @Inject()(noReportDeadlinesView: NoReportDeadlines,
-                                          obligationsView: Obligations,
-                                          nextUpdatesView: NextUpdates,
-                                          checkSessionTimeout: SessionTimeoutPredicate,
-                                          authenticate: AuthenticationPredicate,
-                                          retrieveNino: NinoPredicate,
-                                          retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          auditingService: AuditingService,
-                                          reportDeadlinesService: ReportDeadlinesService,
-                                          itvcErrorHandler: ItvcErrorHandler,
-                                          val appConfig: FrontendAppConfig)
-                                         (implicit mcc: MessagesControllerComponents,
+class NextUpdatesController @Inject()(noReportDeadlinesView: NoReportDeadlines,
+                                      obligationsView: Obligations,
+                                      nextUpdatesView: NextUpdates,
+                                      checkSessionTimeout: SessionTimeoutPredicate,
+                                      authenticate: AuthenticationPredicate,
+                                      retrieveNino: NinoPredicate,
+                                      retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                      auditingService: AuditingService,
+                                      reportDeadlinesService: ReportDeadlinesService,
+                                      itvcErrorHandler: ItvcErrorHandler,
+                                      val appConfig: FrontendAppConfig)
+                                     (implicit mcc: MessagesControllerComponents,
                                           val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
@@ -95,7 +95,7 @@ class ReportDeadlinesController @Inject()(noReportDeadlinesView: NoReportDeadlin
     }
 
   private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
-    auditingService.audit(ReportDeadlinesAuditModel(user), Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url))
+    auditingService.audit(ReportDeadlinesAuditModel(user), Some(controllers.routes.NextUpdatesController.getReportDeadlines().url))
 
   lazy val backUrl: String = controllers.routes.HomeController.home().url
 

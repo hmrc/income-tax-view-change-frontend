@@ -38,10 +38,10 @@ import views.html.{NextUpdates, NoReportDeadlines, Obligations}
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
                                             with MockReportDeadlinesService with FeatureSwitching{
 
-  object TestReportDeadlinesController extends ReportDeadlinesController(
+  object TestNextUpdatesController$ extends NextUpdatesController(
     app.injector.instanceOf[NoReportDeadlines],
     app.injector.instanceOf[Obligations],
     app.injector.instanceOf[NextUpdates],
@@ -76,11 +76,11 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
       ))))
   }
 
-  "The ReportDeadlinesController.getReportDeadlines function" when {
+  "The NextUpdatesController.getReportDeadlines function" when {
 
     "the Next Updates feature switch is disabled" should {
 
-      lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+      lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
@@ -106,7 +106,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
         "successfully retrieves a set of Property ReportDeadlines and Previous from the ReportDeadlines service" should {
 
-          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
@@ -128,7 +128,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
         "successfully retrieves a set of both Business & Property ReportDeadlines and Previous Obligations from the ReportDeadlines service" should {
 
-          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
@@ -169,7 +169,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
         "successfully retrieves a set of only Property ReportDeadlines and no Previous from the ReportDeadlines service" should {
 
-          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
@@ -191,7 +191,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
         "successfully retrieves a set of only both Business & Property ReportDeadlines and no Previous Obligations from the ReportDeadlines service" should {
 
-          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
@@ -213,7 +213,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
         "receives an Error from the ReportDeadlines Service" should {
 
-          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status ISE (500)" in {
@@ -230,7 +230,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
         "doesn't have any Income Source" should {
 
-          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
@@ -258,14 +258,14 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
         "return redirect SEE_OTHER (303)" in {
           setupMockAuthorisationException()
-          val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.SEE_OTHER
         }
       }
     }
 
 		"the Next Updates feature switch is enabled" should {
-			lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+			lazy val result = TestNextUpdatesController$.getReportDeadlines()(fakeRequestWithActiveSession)
 			lazy val document = Jsoup.parse(bodyOf(result))
 
 			"set Next Updates enabled" in {
