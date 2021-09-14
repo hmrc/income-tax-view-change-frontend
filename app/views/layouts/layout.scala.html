@@ -56,8 +56,10 @@
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(if(messages.lang.code == "cy") {Cy} else {En}))
+    <div class="nav-bar-wrapper">
     @languageSelection()
     @backUrl.map(backLink(_))
+    </div>
 }
 
 @scripts = {
