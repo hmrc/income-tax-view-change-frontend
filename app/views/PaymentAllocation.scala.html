@@ -16,7 +16,6 @@
 
 
 @import implicits.ImplicitCurrencyFormatter._
-@import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.components._
 @import views.html.layouts.layout
@@ -51,9 +50,10 @@
     @p{@messages("paymentAllocation.info")}
 </div>
 
+<h2 class="govuk-heading-l">@messages("paymentAllocation.tableSection.heading")</h2>
 
    <table class="govuk-table">
-       <caption class="govuk-table__caption govuk-table__caption--l">@messages("paymentAllocation.tableSection.heading")</caption>
+       <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
 
         <thead class="govuk-table__head">
            <tr class="govuk-table__row">

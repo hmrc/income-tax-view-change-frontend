@@ -79,7 +79,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in  new Setup(){
-        document.getElementsByClass("govuk-table__caption").text() shouldBe paymentAllocationMessages.paymentAllocationHeading
+        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
 
 
       }
