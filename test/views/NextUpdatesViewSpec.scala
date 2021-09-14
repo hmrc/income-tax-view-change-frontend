@@ -40,6 +40,11 @@ class NextUpdatesViewSpec extends TestSupport {
 		val title: String = s"$heading - Business Tax account - GOV.UK"
 		val summary: String = "What are the update types?"
 		val summaryQuarterly: String = "Quarterly updates"
+		val quarterlyLine1: String = "A quarterly update is a record of all your business income in a 3 month period."
+		val quarterlyLine2: String = "Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income."
+		val annualLine1: String = "In an annual update you need to declare that the 4 quarterly updates you have sent are correct. You can also change any previous errors."
+		val annualLine2: String = "Using your record-keeping software, you need to send one annual update for each source of income at the end of each accounting period."
+		val declarationLine1: String = "Your final declaration confirms that the annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software."
 		val summaryAnnual: String = "Annual updates"
 		val summaryDeclaration: String = "Final declaration"
 	}
@@ -67,12 +72,32 @@ class NextUpdatesViewSpec extends TestSupport {
 			pageDocument.select("details h2").get(0).text() shouldBe obligationsMessages.summaryQuarterly
 		}
 
+		"have the correct line 1 for quarterly updates section" in new Setup(obligationsModel) {
+			pageDocument.getElementById("quarterly-dropdown-line1").text() shouldBe obligationsMessages.quarterlyLine1
+		}
+
+		"have the correct line 2 for quarterly updates section" in new Setup(obligationsModel) {
+			pageDocument.getElementById("quarterly-dropdown-line2").text() shouldBe obligationsMessages.quarterlyLine2
+		}
+
 		"have a summary section for annual updates" in new Setup(obligationsModel) {
 			pageDocument.select("details h2").get(1).text() shouldBe obligationsMessages.summaryAnnual
 		}
 
+		"have the correct line 1 for annual updates section" in new Setup(obligationsModel) {
+			pageDocument.getElementById("annual-dropdown-line1").text() shouldBe obligationsMessages.annualLine1
+		}
+
+		"have the correct line 2 for annual updates section" in new Setup(obligationsModel) {
+			pageDocument.getElementById("annual-dropdown-line2").text() shouldBe obligationsMessages.annualLine2
+		}
+
 		"have a summary section for final declarations" in new Setup(obligationsModel) {
 			pageDocument.select("details h2").get(2).text() shouldBe obligationsMessages.summaryDeclaration
+		}
+
+		"have the correct line 1 for final declaration section" in new Setup(obligationsModel) {
+			pageDocument.getElementById("final-declaration-line1").text() shouldBe obligationsMessages.declarationLine1
 		}
 
 		"have an updates accordion" in  new Setup(obligationsModel) {

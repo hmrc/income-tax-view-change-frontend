@@ -24,6 +24,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
+import reactivemongo.bson.document
 
 class NextUpdatesControllerISpec extends ComponentSpecBase {
 
@@ -124,7 +125,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         Then("the page displays no obligation dates")
         res should have(
-          elementTextByID("p1")(obligationsMessages.noReports)
+          elementTextBySelector("p.govuk-body") (obligationsMessages.noReports)
         )
       }
 
