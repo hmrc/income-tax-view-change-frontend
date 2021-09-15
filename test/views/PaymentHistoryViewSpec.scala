@@ -47,6 +47,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val paymentHeadingDescription = "Description"
     val paymentHeadingAmount = "Amount"
     val partialH2Heading = "payments"
+    val saLink = "Self Assessment service"
   }
 
   val testPayments: List[Payment] = List(
@@ -55,7 +56,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments, "testBackURL", saUtr)(FakeRequest(),implicitly)
+    paymentHistoryView(testPayments, "testBackURL", saUtr)(FakeRequest(),implicitly, mockAppConfig)
   )
 
   "The payments history view with payment response model" should {
@@ -65,20 +66,20 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"have the h1 heading '${PaymentHistoryMessages.heading}'" in new PaymentHistorySetup(testPayments) {
-        content.selectHead("h1").text shouldBe PaymentHistoryMessages.heading
+        layoutContent.selectHead("h1").text shouldBe PaymentHistoryMessages.heading
       }
 
       s"has the h2 heading '${PaymentHistoryMessages.heading}'" in new PaymentHistorySetup(testPayments) {
-        content.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
+        layoutContent.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
       }
 
       s"has a table of payment history" which {
         s"has the table caption" in new PaymentHistorySetup(testPayments)  {
-          content.selectHead("div").selectNth("div", 2).selectHead("table")
+          layoutContent.selectHead("div").selectNth("div", 2).selectHead("table")
             .selectHead("caption").text.contains(PaymentHistoryMessages.partialH2Heading)
         }
         s"has table headings for each table column" in new PaymentHistorySetup(testPayments) {
-          val row: Element = content.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
+          val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
           row.selectNth("th", 1).text shouldBe PaymentHistoryMessages.paymentHeadingDate
           row.selectNth("th", 2).text shouldBe PaymentHistoryMessages.paymentHeadingDescription
           row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingAmount
@@ -86,19 +87,19 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"have the information  ${PaymentHistoryMessages.info}" in new PaymentHistorySetup(testPayments) {
-        content.selectHead("#payment-history-info").text shouldBe PaymentHistoryMessages.info
-        content.selectHead("#payment-history-info a").attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
+        layoutContent.select(Selectors.p).text shouldBe PaymentHistoryMessages.info
+        layoutContent.selectFirst(Selectors.p).hasCorrectLink(PaymentHistoryMessages.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
       }
 
       s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(testPayments, None) {
-        content.select("#payment-history-info").text should not be PaymentHistoryMessages.info
+        layoutContent.select("#payment-history-info").text should not be PaymentHistoryMessages.info
       }
 
       "display payment history by year" in new PaymentHistorySetup(testPayments) {
         testPayments.groupBy { payment => LocalDate.parse(payment.date.get).getYear }.map { case (year, payments) =>
 
-          content.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
-          val sectionContent = content.selectHead(s"#accordion-default-content-$year")
+          layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
+          val sectionContent = layoutContent.selectHead(s"#accordion-default-content-$year")
           val tbody = sectionContent.selectHead("table > tbody")
           payments.zipWithIndex.foreach {
             case (payment, index) =>
