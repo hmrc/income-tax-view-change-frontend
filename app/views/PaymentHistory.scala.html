@@ -18,7 +18,6 @@
 @import java.time.LocalDate
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
-@import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 
 @import views.html.layouts.layout
@@ -72,9 +71,9 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
      <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
      <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-       <th class="govuk-table__header">@messages("paymentHistory.table.header.date")</th>
-       <th class="govuk-table__header">@messages("paymentHistory.table.header.description")</th>
-       <th class="govuk-table__header">@messages("paymentHistory.table.header.amount")</th>
+       <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.date")</th>
+       <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.description")</th>
+       <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.amount")</th>
       </tr>
      </thead>
      <tbody>

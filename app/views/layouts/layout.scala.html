@@ -52,12 +52,12 @@
     }
 
 
-<script type="text/javascript" src=@routes.Assets.at("javascripts/itvc.js")></script>
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/itvc.js")></script>
 <script>
 		setAccordianMessages("@messages("sections.open.all")", "@messages("sections.close.all")");
 	</script>
-<script type="text/javascript" src=@routes.Assets.at("javascripts/accordian.js")></script>
-<script type="text/javascript" src=@routes.Assets.at("javascripts/govuk-frontend.js")></script>
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/accordian.js")></script>
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/govuk-frontend.js")></script>
 <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
 
 @scriptsBlock.fold(HtmlFormat.empty)(x => x)
