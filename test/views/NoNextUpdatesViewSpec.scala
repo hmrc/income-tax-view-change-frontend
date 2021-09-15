@@ -45,7 +45,7 @@ class NoNextUpdatesViewSpec extends TestSupport {
     }
 
     s"have the text the correct content text" in {
-      document.select("p.govuk-body").text() shouldBe NoNextUpdates.noReports
+      document.select("p.govuk-body").text() shouldBe NoNextUpdates.noUpdates
     }
 
   }

@@ -370,7 +370,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object NoNextUpdates {
     val title = "Report deadlines - Business Tax account - GOV.UK"
     val heading = "Report deadlines"
-    val noReports = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
+    val noUpdates = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
   }
 
   // Statements Page Messages
@@ -473,7 +473,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val signInLink = "Go back to sign in."
   }
 
-  //ReportDeadlines Page Messages
+  //NextUpdates Page Messages
   object Obligations {
     val title = "Updates - Business Tax account - GOV.UK"
     val nextTitle = "Next updates - Business Tax account - GOV.UK"

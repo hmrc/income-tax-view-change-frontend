@@ -21,7 +21,7 @@ import helpers.WiremockHelper
 import models.core.{NinoResponseSuccess, NinoResponseError}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
@@ -95,21 +95,21 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.verifyGet(previousObligationsUrl(nino))
 
 
-  //ReportDeadlines Stubs
+  //NextUpdates Stubs
   //=====================
-  def reportDeadlinesUrl(nino: String): String = s"/income-tax-view-change/$nino/report-deadlines"
+  def nextUpdatesUrl(nino: String): String = s"/income-tax-view-change/$nino/report-deadlines"
 
-  def stubGetReportDeadlines(nino: String, deadlines: ObligationsModel): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
+  def stubgetNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
+    WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
-  def stubGetReportDeadlinesError(nino: String): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
+  def stubgetNextUpdatesError(nino: String): Unit =
+    WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
 
-  def stubGetReportDeadlinesNotFound(nino: String): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.NO_CONTENT, "")
+  def stubgetNextUpdatesNotFound(nino: String): Unit =
+    WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.NO_CONTENT, "")
 
-  def verifyGetReportDeadlines(nino: String): Unit =
-    WiremockHelper.verifyGet(reportDeadlinesUrl(nino))
+  def verifygetNextUpdates(nino: String): Unit =
+    WiremockHelper.verifyGet(nextUpdatesUrl(nino))
 
   //PayApi Stubs
   def stubPayApiResponse(url: String, status: Int, response: JsValue): StubMapping = {

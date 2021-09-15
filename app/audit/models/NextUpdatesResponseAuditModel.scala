@@ -17,32 +17,32 @@
 package audit.models
 
 import auth.MtdItUser
-import models.reportDeadlines.ReportDeadlineModel
+import models.nextUpdates.NextUpdateModel
 import play.api.libs.json._
 import utils.Utilities.JsonUtil
 
-case class ReportDeadlinesResponseAuditModel(mtdItUser: MtdItUser[_],
-                                             incomeSourceId: String,
-                                             reportDeadlines: Seq[ReportDeadlineModel]) extends ExtendedAuditModel {
+case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
+                                         incomeSourceId: String,
+                                         nextUpdates: Seq[NextUpdateModel]) extends ExtendedAuditModel {
 
   override val transactionName: String = "view-obligations-response"
   override val auditType: String = "ViewObligationsResponse"
 
-  private def reportDeadineJson(reportDeadline: ReportDeadlineModel): JsObject = Json.obj(
-    "startDate" -> reportDeadline.start,
-    "endDate" -> reportDeadline.end,
-    "dueDate" -> reportDeadline.due,
-    "obligationType" -> reportDeadline.obligationType,
-    "periodKey" -> reportDeadline.periodKey
-  ) ++ ("dateReceived", reportDeadline.dateReceived)
+  private def nextUpdateJson(nextUpdate: NextUpdateModel): JsObject = Json.obj(
+    "startDate" -> nextUpdate.start,
+    "endDate" -> nextUpdate.end,
+    "dueDate" -> nextUpdate.due,
+    "obligationType" -> nextUpdate.obligationType,
+    "periodKey" -> nextUpdate.periodKey
+  ) ++ ("dateReceived", nextUpdate.dateReceived)
 
-  private val reportDeadlinesJson: Seq[JsObject] = reportDeadlines.map(reportDeadineJson)
+  private val nextUpdatesJson: Seq[JsObject] = nextUpdates.map(nextUpdateJson)
 
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,
     "nationalInsuranceNumber" -> mtdItUser.nino,
     "incomeSourceId" -> incomeSourceId,
-    "reportDeadlines" -> reportDeadlinesJson
+    "nextUpdates" -> nextUpdatesJson
   ) ++
     ("saUtr", mtdItUser.saUtr) ++
     ("credId", mtdItUser.credId) ++

@@ -18,7 +18,7 @@ package mocks.views.agent
 
 import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}

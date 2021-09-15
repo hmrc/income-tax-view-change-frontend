@@ -16,13 +16,13 @@
 
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.helpers.injected.AccordionHelper
-@import models.reportDeadlines.ReportDeadlineModelWithIncomeType
+@import models.nextUpdates.NextUpdateModelWithIncomeType
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl, accordionHelper: AccordionHelper)
-@(obligations: models.reportDeadlines.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(obligations: models.nextUpdates.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
-	@deadlineRow(deadline: ReportDeadlineModelWithIncomeType) = {
+	@deadlineRow(deadline: NextUpdateModelWithIncomeType) = {
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">@{deadline.obligation.obligationType}</td>
 			<td class="govuk-table__cell">@{deadline.incomeType}</td>

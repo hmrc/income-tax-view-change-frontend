@@ -17,15 +17,15 @@ package controllers
 
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
-import assets.ReportDeadlinesIntegrationTestConstants._
+import assets.NextUpdatesIntegrationTestConstants._
 import assets.messages.HomeMessages._
-import audit.models.{HomeAudit, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
+import audit.models.{HomeAudit, NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 
@@ -51,7 +51,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         ))
 
         And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, currentObligations)
+        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, currentObligations)
 
         And("I stub a successful financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
@@ -64,7 +64,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyReportDeadlinesCall(testNino)
+        verifyNextUpdatesCall(testNino)
 
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
@@ -75,11 +75,11 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
 
         verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
       "render the home page with the payment due date with TxmEventsApproved FS disabled" in {
@@ -95,7 +95,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         ))
 
         And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, currentObligations)
+        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, currentObligations)
 
         And("I stub a successful financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
@@ -108,7 +108,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyReportDeadlinesCall(testNino)
+        verifyNextUpdatesCall(testNino)
 
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
@@ -119,11 +119,11 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
 
         verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
       "render the ISE page when receive an error from the backend" in {
@@ -131,14 +131,14 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
+        IncomeTaxViewChangeStub.stubgetNextUpdatesError(testNino)
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyReportDeadlinesCall(testNino)
+        verifyNextUpdatesCall(testNino)
 
         Then("the result should have a HTTP status of ISE (500) and the Income Tax home page")
         res should have(

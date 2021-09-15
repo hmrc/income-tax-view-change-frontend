@@ -17,39 +17,39 @@
 package audit.models
 
 import assets.BaseTestConstants._
-import assets.ReportDeadlinesTestConstants._
+import assets.NextUpdatesTestConstants._
 import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testUtils.TestSupport
 
-class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
+class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "view-obligations-response"
   val auditEvent = "ViewObligationsResponse"
 
-  "The ReportDeadlinesResponseAuditModel" when {
+  "The NextUpdatesResponseAuditModel" when {
 
     "Supplied with Multiple Obligations" should {
 
       val deadlines = List(openObligation, openObligation, overdueObligation)
-      val testReportDeadlinesResponseAuditModel = ReportDeadlinesResponseAuditModel(
+      val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
         testMtdItAgentUser,
         testSelfEmploymentId,
         deadlines
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
-        testReportDeadlinesResponseAuditModel.transactionName shouldBe transactionName
+        testNextUpdatesResponseAuditModel.transactionName shouldBe transactionName
       }
 
       s"Have the correct audit event type of '$auditEvent'" in {
-        testReportDeadlinesResponseAuditModel.auditType shouldBe auditEvent
+        testNextUpdatesResponseAuditModel.auditType shouldBe auditEvent
       }
 
       "Have the correct details for the audit event" in {
-        testReportDeadlinesResponseAuditModel.detail shouldBe Json.obj(
+        testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
           "nationalInsuranceNumber" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
@@ -57,7 +57,7 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
           "credId" -> testCredId,
           "userType" -> "Agent",
           "agentReferenceNumber" -> testArn,
-          "reportDeadlines" -> Json.arr(
+          "nextUpdates" -> Json.arr(
             Json.obj(
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
@@ -86,22 +86,22 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
 
     "Supplied with a Single Obligation" should {
 
-      val testReportDeadlinesResponseAuditModel = ReportDeadlinesResponseAuditModel(
+      val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
         testMtdItAgentUser,
         testSelfEmploymentId,
         List(openObligation)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
-        testReportDeadlinesResponseAuditModel.transactionName shouldBe transactionName
+        testNextUpdatesResponseAuditModel.transactionName shouldBe transactionName
       }
 
       s"Have the correct audit event type of '$auditEvent'" in {
-        testReportDeadlinesResponseAuditModel.auditType shouldBe auditEvent
+        testNextUpdatesResponseAuditModel.auditType shouldBe auditEvent
       }
 
       "Have the correct details for the audit event" in {
-        testReportDeadlinesResponseAuditModel.detail shouldBe Json.obj(
+        testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
           "nationalInsuranceNumber" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
@@ -109,7 +109,7 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
           "credId" -> testCredId,
           "userType" -> "Agent",
           "agentReferenceNumber" -> testArn,
-          "reportDeadlines" -> Json.arr(
+          "nextUpdates" -> Json.arr(
             Json.obj(
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
@@ -124,26 +124,26 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
 
     "Supplied with no Obligations and optional fields" should {
 
-      val testReportDeadlinesResponseAuditModel = ReportDeadlinesResponseAuditModel(
+      val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
         MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(testMtditid, None, Nil, None), None, None, None, None)(FakeRequest()),
         testSelfEmploymentId,
         List()
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
-        testReportDeadlinesResponseAuditModel.transactionName shouldBe transactionName
+        testNextUpdatesResponseAuditModel.transactionName shouldBe transactionName
       }
 
       s"Have the correct audit event type of '$auditEvent'" in {
-        testReportDeadlinesResponseAuditModel.auditType shouldBe auditEvent
+        testNextUpdatesResponseAuditModel.auditType shouldBe auditEvent
       }
 
       "Have the correct details for the audit event" in {
-        testReportDeadlinesResponseAuditModel.detail shouldBe Json.obj(
+        testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
           "nationalInsuranceNumber" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
-          "reportDeadlines" -> Json.arr()
+          "nextUpdates" -> Json.arr()
         )
       }
     }

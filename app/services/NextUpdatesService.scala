@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import connectors._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.reportDeadlines._
+import models.nextUpdates._
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -28,17 +28,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext) {
+class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext) {
 
 
   def getNextDeadlineDueDateAndOverDueObligations(incomeSourceResponse: IncomeSourceDetailsModel)
                                                  (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[(LocalDate, Seq[LocalDate])] = {
-    getReportDeadlines().map {
+    getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val latestDeadline = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
         val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(LocalDate.now()))
         (latestDeadline, overdueObligations)
-      case error: ReportDeadlinesErrorModel => throw new Exception(s"${error.message}")
+      case error: NextUpdatesErrorModel => throw new Exception(s"${error.message}")
       case _ =>
         Logger.error("Unexpected Exception getting next deadline due and Overdue Obligations")
         throw new Exception(s"Unexpected Exception getting next deadline due and Overdue Obligations")
@@ -47,7 +47,7 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
 
   def getObligationDueDates()
                            (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
-    getReportDeadlines().map {
+    getNextUpdates().map {
 
       case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) => {
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
@@ -66,39 +66,39 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
     }
   }
 
-  def getReportDeadlines(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
+  def getNextUpdates(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
     if (previous) {
-      Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting previous Report Deadlines for nino: ${mtdUser.nino}")
+      Logger.debug(s"[NextUpdatesService][getNextUpdates] - Requesting previous Next Updates for nino: ${mtdUser.nino}")
       incomeTaxViewChangeConnector.getPreviousObligations()
     } else {
-      Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting current Report Deadlines for nino: ${mtdUser.nino}")
-      incomeTaxViewChangeConnector.getReportDeadlines()
+      Logger.debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
+      incomeTaxViewChangeConnector.getNextUpdates()
     }
   }
 
 
-  private def obligationFilter(fromDate: LocalDate, toDate: LocalDate, obligationsModel: ObligationsModel): Seq[ReportDeadlinesModel] = {
+  private def obligationFilter(fromDate: LocalDate, toDate: LocalDate, obligationsModel: ObligationsModel): Seq[NextUpdatesModel] = {
     obligationsModel.obligations map {
-      reportDeadlines =>
-        reportDeadlines.copy(obligations = reportDeadlines.obligations.filterNot {
-          reportDeadline => reportDeadline.start.isBefore(fromDate) || reportDeadline.end.isAfter(toDate)
+      nextUpdates =>
+        nextUpdates.copy(obligations = nextUpdates.obligations.filterNot {
+          nextUpdate => nextUpdate.start.isBefore(fromDate) || nextUpdate.end.isAfter(toDate)
         })
     }
   }
 
-  def getReportDeadlines(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
+  def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
     for {
       previousObligations <- incomeTaxViewChangeConnector.getPreviousObligations(fromDate, toDate)
-      openObligations <- incomeTaxViewChangeConnector.getReportDeadlines()
+      openObligations <- incomeTaxViewChangeConnector.getNextUpdates()
     } yield {
       (previousObligations, openObligations) match {
         case (ObligationsModel(previous), open: ObligationsModel) =>
           ObligationsModel((previous ++ obligationFilter(fromDate, toDate, open)).filter(_.obligations.nonEmpty))
-        case (error: ReportDeadlinesErrorModel, open: ObligationsModel) if error.code == 404 =>
+        case (error: NextUpdatesErrorModel, open: ObligationsModel) if error.code == 404 =>
           ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
-        case (error: ReportDeadlinesErrorModel, _) => error
-        case (_, error: ReportDeadlinesErrorModel) => error
+        case (error: NextUpdatesErrorModel, _) => error
+        case (_, error: NextUpdatesErrorModel) => error
       }
     }
   }

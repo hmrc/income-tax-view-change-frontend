@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.reportDeadlines
+package models.nextUpdates
 
 sealed trait ObligationType
 case object EopsObligation extends ObligationType

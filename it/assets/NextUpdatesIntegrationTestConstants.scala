@@ -18,11 +18,11 @@ package assets
 import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel}
 import play.api.libs.json.{JsValue, Json}
 
-object ReportDeadlinesIntegrationTestConstants {
-  def successResponse(obligationsModel: ReportDeadlinesModel): JsValue = {
+object NextUpdatesIntegrationTestConstants {
+  def successResponse(obligationsModel: NextUpdatesModel): JsValue = {
     Json.toJson(obligationsModel)
   }
 
@@ -48,43 +48,43 @@ object ReportDeadlinesIntegrationTestConstants {
 
   val testPropertyId = "1234"
 
-  def multipleReportDeadlinesDataSuccessModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
-    ReportDeadlineModel(
+  def multipleNextUpdatesDataSuccessModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
+    NextUpdateModel(
       start = deadlineStart1,
       end = deadlineEnd1,
       due = LocalDate.now().minusDays(128),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
-    ), ReportDeadlineModel(
+    ), NextUpdateModel(
       start = deadlineStart2,
       end = deadlineEnd2,
       due = LocalDate.now().minusDays(36),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
-    ), ReportDeadlineModel(
+    ), NextUpdateModel(
       start = deadlineStart3,
       end = deadlineEnd3,
       due = LocalDate.now().minusDays(36),
       obligationType = "EOPS",
       dateReceived = None,
       periodKey = "periodKey"
-    ), ReportDeadlineModel(
+    ), NextUpdateModel(
       start = deadlineStart4,
       end = deadlineEnd4,
       due = LocalDate.now().plusDays(30),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
-    ),ReportDeadlineModel(
+    ),NextUpdateModel(
       start = deadlineStart5,
       end = deadlineEnd5,
       due = LocalDate.now().plusDays(146),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
-    ), ReportDeadlineModel(
+    ), NextUpdateModel(
       start = deadlineStart6,
       end = deadlineEnd6,
       due = LocalDate.now().plusDays(174),
@@ -101,8 +101,8 @@ object ReportDeadlinesIntegrationTestConstants {
 
   val overdueDate: LocalDate = LocalDate.now().minusDays(1)
 
-  def singleObligationQuarterlyReturnModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
-    ReportDeadlineModel(
+  def singleObligationQuarterlyReturnModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
+    NextUpdateModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
       due = singleObligationDue,
@@ -115,8 +115,8 @@ object ReportDeadlinesIntegrationTestConstants {
   val veryOverdueDate: LocalDate = LocalDate.of(2017, 5, 5)
   val veryOverDueLongDate = "5 May 2017"
 
-  val singleObligationCrystallisationModel: ReportDeadlinesModel = ReportDeadlinesModel(testMtditid, List(
-    ReportDeadlineModel(
+  val singleObligationCrystallisationModel: NextUpdatesModel = NextUpdatesModel(testMtditid, List(
+    NextUpdateModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
       obligationType = "Crystallised",
@@ -126,8 +126,8 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  def singleObligationOverdueModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
-    ReportDeadlineModel(
+  def singleObligationOverdueModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
+    NextUpdateModel(
       start = singleObligationStart,
       end = singleObligationEnd,
       obligationType = "Quarterly",
@@ -141,8 +141,8 @@ object ReportDeadlinesIntegrationTestConstants {
   val singleObligationEndEOPs = LocalDate.of(2018,7,5)
   val singleObligationDueEOPs = LocalDate.of(2018,1,1)
 
-  val singleObligationEOPSPropertyModel = ReportDeadlinesModel(testPropertyId, List(
-    ReportDeadlineModel(
+  val singleObligationEOPSPropertyModel = NextUpdatesModel(testPropertyId, List(
+    NextUpdateModel(
       singleObligationStartEOPs,
       singleObligationEndEOPs,
       singleObligationDueEOPs,
@@ -152,12 +152,12 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  def noObligationsModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
+  def noObligationsModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
 
   ))
 
-  def singleObligationQuarterlyModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
-    ReportDeadlineModel(
+  def singleObligationQuarterlyModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
+    NextUpdateModel(
       singleObligationStart,
       singleObligationEnd,
       singleObligationDue,
@@ -167,8 +167,8 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  def singleObligationPlusYearOpenModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
-    ReportDeadlineModel(
+  def singleObligationPlusYearOpenModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
+    NextUpdateModel(
       start = LocalDate.of(2017,4,6),
       end = LocalDate.of(2017,7,5),
       due = LocalDate.now().plusYears(1),
@@ -179,8 +179,8 @@ object ReportDeadlinesIntegrationTestConstants {
   ))
 
 
-  def SEIncomeSourceEOPSModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
-    ReportDeadlineModel(
+  def SEIncomeSourceEOPSModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
+    NextUpdateModel(
       start = LocalDate.of(2017,4,6),
       end = LocalDate.of(2018,4,5),
       due = LocalDate.of(2018,1,31),
@@ -190,8 +190,8 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val crystallisedEOPSModel = ReportDeadlinesModel(testMtditid, List(
-    ReportDeadlineModel(
+  val crystallisedEOPSModel = NextUpdatesModel(testMtditid, List(
+    NextUpdateModel(
       start = LocalDate.of(2017,4,6),
       end = LocalDate.of(2018,4,5),
       due = LocalDate.of(2019,1,31),
@@ -201,8 +201,8 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val crystallisedEOPSModelMulti = ReportDeadlinesModel(testMtditid, List(
-    ReportDeadlineModel(
+  val crystallisedEOPSModelMulti = NextUpdatesModel(testMtditid, List(
+    NextUpdateModel(
       start = LocalDate.of(2018,4,6),
       end = LocalDate.of(2019,4,5),
       due = LocalDate.of(2020,1,31),
@@ -210,7 +210,7 @@ object ReportDeadlinesIntegrationTestConstants {
       dateReceived = None,
       periodKey = "#003"
     ),
-    ReportDeadlineModel(
+    NextUpdateModel(
       start = LocalDate.of(2017,4,6),
       end = LocalDate.of(2018,4,5),
       due = LocalDate.of(2019,1,31),
@@ -220,5 +220,5 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  def emptyModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List())
+  def emptyModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List())
 }

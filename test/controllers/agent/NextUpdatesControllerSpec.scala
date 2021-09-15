@@ -22,9 +22,9 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.{MockIncomeSourceDetailsService, MockReportDeadlinesService}
+import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockNextUpdates
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
@@ -39,13 +39,13 @@ import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockItvcErrorHandler
-  with MockIncomeSourceDetailsService with MockNextUpdates with MockReportDeadlinesService with FeatureSwitching {
+  with MockIncomeSourceDetailsService with MockNextUpdates with MockNextUpdatesService with FeatureSwitching {
 
   trait Setup {
     val controller = new NextUpdatesController(
       agentNextUpdates,
       mockIncomeSourceDetailsService,
-      mockReportDeadlinesService,
+      mockNextUpdatesService,
       app.injector.instanceOf[FrontendAppConfig],
       mockAuthService
     )(languageUtils,
@@ -57,21 +57,21 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
   val date: LocalDate = LocalDate.now
 
   val obligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(BaseTestConstants.testSelfEmploymentId, List(ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001"))),
-    ReportDeadlinesModel(BaseTestConstants.testPropertyIncomeId, List(ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS")))
+    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(date, date, date, "Quarterly", Some(date), "#001"))),
+    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(date, date, date, "EOPS", Some(date), "EOPS")))
   ))
 
-  def mockObligations: OngoingStubbing[Future[ReportDeadlinesResponseModel]] = {
-    when(mockReportDeadlinesService.getReportDeadlines(matches(false))(any(), any()))
+  def mockObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
+    when(mockNextUpdatesService.getNextUpdates(matches(false))(any(), any()))
       .thenReturn(Future.successful(obligationsModel))
   }
 
-  def mockNoObligations: OngoingStubbing[Future[ReportDeadlinesResponseModel]] = {
-    when(mockReportDeadlinesService.getReportDeadlines(matches(false))(any(), any()))
+  def mockNoObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
+    when(mockNextUpdatesService.getNextUpdates(matches(false))(any(), any()))
       .thenReturn(Future.successful(ObligationsModel(Seq())))
   }
 
-  "The NextUpdatesController.getReportDeadlines function" when {
+  "The NextUpdatesController.getNextUpdates function" when {
 
     "the user is not authenticated" should {
       "redirect them to sign in" in new Setup {

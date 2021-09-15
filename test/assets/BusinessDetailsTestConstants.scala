@@ -19,10 +19,10 @@ package assets
 import java.time.LocalDate
 
 import assets.BaseTestConstants._
-import assets.ReportDeadlinesTestConstants.{openObligation, overdueObligation}
+import assets.NextUpdatesTestConstants.{openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.reportDeadlines.ReportDeadlinesModel
+import models.nextUpdates.NextUpdatesModel
 
 object BusinessDetailsTestConstants {
 
@@ -150,6 +150,6 @@ object BusinessDetailsTestConstants {
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
-  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
+  val obligationsDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
 
 }

@@ -17,9 +17,9 @@
 package views.agent
 
 import assets.BusinessDetailsTestConstants.business1
-import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
+import assets.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.reportDeadlines.{ObligationsModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
@@ -44,7 +44,7 @@ class NextUpdatesViewSpec extends TestSupport {
 		val summaryDeclaration: String = "Final declaration"
 	}
 
-	lazy val obligationsModel = ObligationsModel(Seq(ReportDeadlinesModel(
+	lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
 		business1.incomeSourceId,
 		twoObligationsSuccessModel.obligations
 	)))

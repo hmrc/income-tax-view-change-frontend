@@ -17,15 +17,15 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
+import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
-import services.ReportDeadlinesService
+import services.NextUpdatesService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{NoNextUpdates, Obligations, NextUpdates}
 
@@ -41,14 +41,14 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       retrieveNino: NinoPredicate,
                                       retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                       auditingService: AuditingService,
-                                      reportDeadlinesService: ReportDeadlinesService,
+                                      NextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       val appConfig: FrontendAppConfig)
                                      (implicit mcc: MessagesControllerComponents,
                                           val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
-  val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+  val getNextUpdates: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
         NextUpdates.fold(
@@ -60,7 +60,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   }
 
   private def renderViewBothObligations[A](implicit user: MtdItUser[A]): Future[Result] = {
-      auditReportDeadlines(user)
+      auditNextUpdates(user)
       for {
         currentObligations <- getObligations()
         previousObligations <- getObligations(previous = true)
@@ -75,7 +75,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   }
 
   private def renderViewNextUpdates[A](implicit user: MtdItUser[A]): Future[Result] = {
-      auditReportDeadlines(user)
+      auditNextUpdates(user)
       for {
         nextUpdates <- getObligations()
     } yield {
@@ -89,13 +89,13 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
 
   private def getObligations[A](previous: Boolean = false)
                                (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsModel] =
-    reportDeadlinesService.getReportDeadlines(previous).map {
+    NextUpdatesService.getNextUpdates(previous).map {
       case obligations: ObligationsModel => obligations
       case _ => ObligationsModel(Nil)
     }
 
-  private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
-    auditingService.audit(ReportDeadlinesAuditModel(user), Some(controllers.routes.NextUpdatesController.getReportDeadlines().url))
+  private def auditNextUpdates[A](user: MtdItUser[A])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
+    auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates().url))
 
   lazy val backUrl: String = controllers.routes.HomeController.home().url
 

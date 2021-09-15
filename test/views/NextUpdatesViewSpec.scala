@@ -17,9 +17,9 @@
 package views
 
 import assets.BusinessDetailsTestConstants.business1
-import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
+import assets.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.reportDeadlines.{ObligationsModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
@@ -50,7 +50,7 @@ class NextUpdatesViewSpec extends TestSupport {
 		val info: String = "To view previously submitted updates visit the tax years page."
 	}
 
-	lazy val obligationsModel: ObligationsModel = ObligationsModel(Seq(ReportDeadlinesModel(
+	lazy val obligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
 		business1.incomeSourceId,
 		twoObligationsSuccessModel.obligations
 	)))
