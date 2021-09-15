@@ -328,21 +328,21 @@ class ChargeSummaryViewSpec extends ViewSpec {
     }
 
     "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-      document.select("#content article p a").text() shouldBe "What you owe page"
-      document.select("#content article p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+      document.select("#main-content p a").text() shouldBe "What you owe page"
+      document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
     "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
-      document.select("#content article p a").text() shouldBe "What you owe page"
-      document.select("#content article p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+      document.select("#main-content p a").text() shouldBe "What you owe page"
+      document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
     "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
-      document.select("#content article p a").text() shouldBe "what you owe"
+      document.select("#main-content p a").text() shouldBe "what you owe"
     }
 
     "have no interest lock payment link when there is an intererst lock but no accrued interest" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
-      document.select("#content article p a").text() shouldBe "what you owe"
+      document.select("#main-content p a").text() shouldBe "what you owe"
     }
 
     "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown =paymentBreakdown) {
