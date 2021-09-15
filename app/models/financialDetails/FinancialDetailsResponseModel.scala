@@ -28,7 +28,7 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
 
   def getDueDateFor(documentDetail: DocumentDetail): Option[LocalDate] = {
     financialDetails.find { fd =>
-      fd.transactionId.get == documentDetail.transactionId &&
+      fd.transactionId.contains(documentDetail.transactionId) &&
         fd.taxYear == documentDetail.taxYear
     } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
   }
