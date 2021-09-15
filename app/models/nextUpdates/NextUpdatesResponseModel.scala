@@ -19,8 +19,6 @@ package models.nextUpdates
 import java.time.LocalDate
 
 import auth.MtdItUser
-import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 

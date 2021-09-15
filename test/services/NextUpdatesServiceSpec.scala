@@ -23,7 +23,7 @@ import assets.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIn
 import assets.NextUpdatesTestConstants._
 import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 

@@ -19,7 +19,7 @@ package views.html.helpers.injected.obligations
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
-import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString

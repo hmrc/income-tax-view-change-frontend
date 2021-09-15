@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants
 import assets.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
 import audit.AuditingService
@@ -24,7 +26,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockNextUpdatesService
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
@@ -35,7 +37,6 @@ import play.api.test.Helpers._
 import services.NextUpdatesService
 import views.html.{NextUpdates, NoNextUpdates, Obligations}
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate

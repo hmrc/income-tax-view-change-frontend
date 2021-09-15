@@ -17,14 +17,13 @@ package controllers
 
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.PreviousObligationsIntegrationTestConstants._
 import assets.NextUpdatesIntegrationTestConstants._
+import assets.PreviousObligationsIntegrationTestConstants._
 import assets.messages.{NextUpdatesMessages => obligationsMessages}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
-import reactivemongo.bson.document
 
 class NextUpdatesControllerISpec extends ComponentSpecBase {
 

@@ -18,9 +18,8 @@ package views.obligationTemplates
 
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
-import assets.NextUpdatesTestConstants.{crystallisedObligation, crystallisedObligationTwo, twoObligationsSuccessModel}
-import implicits.ImplicitDateFormatterImpl
-import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
+import assets.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
+import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString

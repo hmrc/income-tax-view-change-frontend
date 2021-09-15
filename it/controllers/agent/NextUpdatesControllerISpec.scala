@@ -15,6 +15,8 @@
  */
 package controllers.agent
 
+import java.time.LocalDate
+
 import assets.BaseIntegrationTestConstants._
 import audit.models.{NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
@@ -26,13 +28,11 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
-
-import java.time.LocalDate
 
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
 

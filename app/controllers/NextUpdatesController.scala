@@ -22,14 +22,14 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
 import models.nextUpdates.ObligationsModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import services.NextUpdatesService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.{NoNextUpdates, Obligations, NextUpdates}
+import views.html.{NextUpdates, NoNextUpdates, Obligations}
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
