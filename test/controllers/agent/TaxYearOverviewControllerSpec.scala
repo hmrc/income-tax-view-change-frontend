@@ -54,7 +54,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
       calculationService = mockCalculationService,
       financialDetailsService = mockFinancialDetailsService,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      NextUpdatesService = mockNextUpdatesService,
+      nextUpdatesService = mockNextUpdatesService,
       auditingService = mockAuditingService
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],

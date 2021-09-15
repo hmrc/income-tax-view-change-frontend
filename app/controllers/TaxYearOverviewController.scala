@@ -48,7 +48,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           itvcErrorHandler: ItvcErrorHandler,
                                           retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           retrieveNino: NinoPredicate,
-                                          NextUpdatesService: NextUpdatesService,
+                                          nextUpdatesService: NextUpdatesService,
                                           val auditingService: AuditingService)
                                      (implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
@@ -93,7 +93,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   }
 
   private def withObligationsModel(taxYear: Int)(implicit user: MtdItUser[AnyContent]) = {
-    NextUpdatesService.getNextUpdates(
+    nextUpdatesService.getNextUpdates(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     )

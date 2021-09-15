@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(home: Home,
-                               NextUpdatesService: NextUpdatesService,
+                               nextUpdatesService: NextUpdatesService,
                                financialDetailsService: FinancialDetailsService,
                                incomeSourceDetailsService: IncomeSourceDetailsService,
                                auditingService: AuditingService,
@@ -66,7 +66,7 @@ class HomeController @Inject()(home: Home,
     implicit user =>
 			for {
 				mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
-				dueObligationDetails <- NextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
+				dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
 				dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
 			} yield {
 				if (isEnabled(TxmEventsApproved)) {

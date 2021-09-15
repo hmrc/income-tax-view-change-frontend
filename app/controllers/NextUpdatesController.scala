@@ -41,7 +41,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       retrieveNino: NinoPredicate,
                                       retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                       auditingService: AuditingService,
-                                      NextUpdatesService: NextUpdatesService,
+                                      nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       val appConfig: FrontendAppConfig)
                                      (implicit mcc: MessagesControllerComponents,
@@ -89,7 +89,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
 
   private def getObligations[A](previous: Boolean = false)
                                (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsModel] =
-    NextUpdatesService.getNextUpdates(previous).map {
+    nextUpdatesService.getNextUpdates(previous).map {
       case obligations: ObligationsModel => obligations
       case _ => ObligationsModel(Nil)
     }

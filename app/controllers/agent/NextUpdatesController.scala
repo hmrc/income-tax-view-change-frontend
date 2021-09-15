@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpdates,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
-                                      NextUpdatesService: NextUpdatesService,
+                                      nextUpdatesService: NextUpdatesService,
                                       implicit val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions)
                                      (implicit val languageUtils: LanguageUtils,
@@ -54,7 +54,7 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpd
     implicit user =>
 			getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
 				mtdItUser =>
-					NextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
+					nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
 						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl)(mtdItUser))
 						case _ => itvcErrorHandler.showInternalServerError()
 					}

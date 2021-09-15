@@ -45,7 +45,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                           calculationService: CalculationService,
                                           financialDetailsService: FinancialDetailsService,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          NextUpdatesService: NextUpdatesService,
+                                          nextUpdatesService: NextUpdatesService,
                                           auditingService: AuditingService
                                          )(implicit val appConfig: FrontendAppConfig,
                                            val languageUtils: LanguageUtils,
@@ -134,7 +134,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   }
 
   private def withObligationsModel(taxYear: Int)(f: ObligationsModel => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    NextUpdatesService.getNextUpdates(
+    nextUpdatesService.getNextUpdates(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     ) flatMap {
