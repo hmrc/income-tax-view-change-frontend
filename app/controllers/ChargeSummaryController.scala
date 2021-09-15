@@ -24,9 +24,10 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
+
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, PaymentsWithChargeType}
+import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -58,7 +59,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 				financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
 					val payments = financialResponses.collect {
 						case (_, model: FinancialDetailsModel) => model.filterPayments()
-					}.foldLeft(FinancialDetailsModel(List(), List()))((merged, next) => merged.merge(next))
+					}.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), List(), List()))((merged, next) => merged.merge(next))
 
 					val matchingYear = financialResponses.collect {
 						case (year, response) if year == taxYear => response

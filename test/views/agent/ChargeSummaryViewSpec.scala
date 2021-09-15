@@ -19,7 +19,7 @@ package views.agent
 import assets.FinancialDetailsTestConstants._
 import config.featureswitch.FeatureSwitching
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, Payment, PaymentsWithChargeType, SubItem}
+import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, Payment, PaymentsWithChargeType, SubItem}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -38,7 +38,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               paymentAllocations: List[PaymentsWithChargeType]= List(),
               paymentAllocationEnabled: Boolean = false,
               paymentBreakdown: List[FinancialDetail] = List(),
-							payments: FinancialDetailsModel = FinancialDetailsModel(List(), List())
+							payments: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00), List(), List())
              ) {
 
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
@@ -441,7 +441,8 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               lot = Some("lot"), lotItem = Some("lotItem"), date = Some(date), transactionId = None)),
             mainType = Some(mainType), chargeType = Some(chargeType))
 
-				def payments() = FinancialDetailsModel(List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(10000.0), Some(1000.0), LocalDate.now(), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))), List())
+				def payments() = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),
+          List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(10000.0), Some(1000.0), LocalDate.now(), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))), List())
 
         val paymentAllocationsPOA1 = List(
           paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0),

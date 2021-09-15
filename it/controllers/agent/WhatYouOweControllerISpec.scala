@@ -134,7 +134,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById("sa-note-migrated")(expectedValue = true),
-        isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+        isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = false),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+        isElementVisibleById("totalBalance")(expectedValue = false)
       )
     }
 
@@ -178,7 +181,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = false),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+        isElementVisibleById("totalBalance")(expectedValue = false)
       )
     }
 
@@ -193,6 +199,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       )
 
       val mixedJson = Json.obj(
+        "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
           documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString),
           documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1"),
@@ -238,7 +245,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = false),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+        isElementVisibleById("totalBalance")(expectedValue = false)
       )
     }
 
@@ -377,7 +387,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById("sa-note-migrated")(expectedValue = true),
-        isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+        isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = false),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+        isElementVisibleById("totalBalance")(expectedValue = false)
       )
     }
 
@@ -419,11 +432,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = false),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+        isElementVisibleById("totalBalance")(expectedValue = false)
       )
     }
 
-    "with multiple charges and one charge equals zero" in {
+    "with multiple charges with a no charge and one charge equals zero" in {
       disable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -434,6 +450,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       )
 
       val mixedJson = Json.obj(
+        "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
           documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString),
           documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1"),
@@ -477,7 +494,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = false),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+        isElementVisibleById("totalBalance")(expectedValue = false)
       )
     }
   }
@@ -528,7 +548,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
       isElementVisibleById("future-payments-heading")(expectedValue = false),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+      isElementVisibleById("overdueAmount")(expectedValue = false),
+      isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+      isElementVisibleById("totalBalance")(expectedValue = false)
     )
   }
 
@@ -577,7 +600,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
       isElementVisibleById("future-payments-heading")(expectedValue = false),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+      isElementVisibleById("overdueAmount")(expectedValue = false),
+      isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+      isElementVisibleById("totalBalance")(expectedValue = false)
     )
   }
 
@@ -704,6 +730,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -746,6 +775,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -759,6 +791,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)))
 
         val mixedJson = Json.obj(
+          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
             documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
             documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "4444"),
@@ -799,6 +832,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -812,6 +848,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)))
 
         val mixedJson = Json.obj(
+          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
             documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
             documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "3333"),
@@ -854,7 +891,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("future-payments-heading")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -904,7 +944,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("future-payments-type-1")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -948,6 +991,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -988,6 +1034,12 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -1001,6 +1053,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)))
 
         val mixedJson = Json.obj(
+          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
             documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
             documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "4444"),
@@ -1039,6 +1092,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById(s"no-payments-due")(expectedValue = true),
           isElementVisibleById("sa-note-migrated")(expectedValue = true),
           isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -1052,6 +1108,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)))
 
         val mixedJson = Json.obj(
+          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
             documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
             documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "3333"),
@@ -1092,7 +1149,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("future-payments-heading")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }
@@ -1140,7 +1200,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("future-payments-type-1")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+          isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+          isElementVisibleById("overdueAmount")(expectedValue = false),
+          isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+          isElementVisibleById("totalBalance")(expectedValue = false)
         )
       }
     }

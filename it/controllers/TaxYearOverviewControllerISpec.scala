@@ -46,7 +46,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
-  val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(List(
+  val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
+    BalanceDetails(1.00, 2.00, 3.00),
+    List(
     DocumentDetail(
       taxYear = getCurrentTaxYearEnd.getYear.toString,
       transactionId = "testTransactionId",
@@ -67,8 +69,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     )
   )
 
-  val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(List(
-    DocumentDetail(
+  val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
+    BalanceDetails(1.00, 2.00, 3.00),
+    List(DocumentDetail(
       taxYear = getCurrentTaxYearEnd.getYear.toString,
       transactionId = "testDunningTransactionId",
       documentDescription = Some("ITSA- POA 1"),

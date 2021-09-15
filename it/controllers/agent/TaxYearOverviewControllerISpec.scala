@@ -30,7 +30,7 @@ import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, IndividualCalcu
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
@@ -88,6 +88,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   import implicitDateFormatter.longDate
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     documentDetails = List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -109,7 +110,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       )
     )
   )
-  val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(List(
+  val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
+    BalanceDetails(1.00, 2.00, 3.00),
+    List(
     DocumentDetail(
       taxYear = getCurrentTaxYearEnd.getYear.toString,
       transactionId = "testDunningTransactionId",

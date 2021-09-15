@@ -75,7 +75,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                    (implicit user: MtdItUser[AnyContent]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case financialDetails@FinancialDetailsModel(documentDetails, _) =>
+      case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),

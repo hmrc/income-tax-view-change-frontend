@@ -516,6 +516,9 @@ whatYouOwe.payment-type.taxYear                                    = Tax year {0
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review and your {0}
 whatYouOwe.dunningLock.link                                        = tax decision is being investigated (opens in new tab).
+whatYouOwe.overdueAmount                                           = Overdue payments due
+whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
+whatYouOwe.totalBalance                                            = Total payments due
 
 
 ## Charge Summary ##
