@@ -47,9 +47,10 @@ class NextUpdatesViewSpec extends TestSupport {
 		val declarationLine1: String = "Your final declaration confirms that the annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software."
 		val summaryAnnual: String = "Annual updates"
 		val summaryDeclaration: String = "Final declaration"
+		val info: String = "To view previously submitted updates visit the tax years page."
 	}
 
-	lazy val obligationsModel = ObligationsModel(Seq(ReportDeadlinesModel(
+	lazy val obligationsModel: ObligationsModel = ObligationsModel(Seq(ReportDeadlinesModel(
 		business1.incomeSourceId,
 		twoObligationsSuccessModel.obligations
 	)))
@@ -102,6 +103,11 @@ class NextUpdatesViewSpec extends TestSupport {
 
 		"have an updates accordion" in  new Setup(obligationsModel) {
 			pageDocument.select("div .govuk-accordion").size() == 1
+		}
+
+		s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
+			pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
+			pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
 		}
 	}
 }
