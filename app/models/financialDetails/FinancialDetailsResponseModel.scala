@@ -26,29 +26,15 @@ sealed trait FinancialDetailsResponseModel
 case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
-  val documentDescriptionToFinancialMainType: String => String = {
-    case "ITSA- POA 1" => "SA Payment on Account 1"
-    case "ITSA - POA 2" => "SA Payment on Account 2"
-    case "TRM New Charge" | "TRM Amend Charge" => "SA Balancing Charge"
-    case other => other
-  }
-
   def getDueDateFor(documentDetail: DocumentDetail): Option[LocalDate] = {
-    documentDetail.documentDescription flatMap { documentDescription =>
-      financialDetails.find { financialDetail =>
-        financialDetail.mainType.contains(documentDescriptionToFinancialMainType(documentDescription)) &&
-          financialDetail.taxYear == documentDetail.taxYear
-      }
+    financialDetails.find { financialDetail =>
+      financialDetail.transactionId.get == documentDetail.transactionId &&
+        financialDetail.taxYear == documentDetail.taxYear
     } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
   }
 
   def getAllDueDates: List[LocalDate] = {
-    documentDetails.filter(_.documentDescription.isDefined)
-      .map(documentDetail => (documentDetail.taxYear, documentDescriptionToFinancialMainType(documentDetail.documentDescription.get)))
-      .flatMap { case (taxYear, mainType) =>
-        financialDetails.find(financialDetail => financialDetail.mainType.contains(mainType) && financialDetail.taxYear == taxYear)
-      }.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
-      .map(LocalDate.parse)
+    documentDetails.map(getDueDateFor).flatten
   }
 
   def dunningLockExists(documentId: String): Boolean = {
