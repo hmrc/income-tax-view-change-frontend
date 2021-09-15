@@ -27,9 +27,9 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def getDueDateFor(documentDetail: DocumentDetail): Option[LocalDate] = {
-    financialDetails.find { financialDetail =>
-      financialDetail.transactionId.get == documentDetail.transactionId &&
-        financialDetail.taxYear == documentDetail.taxYear
+    financialDetails.find { fd =>
+      fd.transactionId.get == documentDetail.transactionId &&
+        fd.taxYear == documentDetail.taxYear
     } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
   }
 
