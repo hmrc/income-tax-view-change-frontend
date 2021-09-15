@@ -150,6 +150,9 @@ taxYears.complete                                              = COMPLETE
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
+taxYears.oldSa.content.1									   = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
+taxYears.oldSa.content.2									   = Self Assessment for Agents Online Service (opens in new tab)
+taxYears.oldSa.content.3									   =. This will be a different Government Gateway ID and password to your Agent Services account.
 
 ## Tax Year Overview ##
 tax-year-overview.heading                                           = Tax year overview
