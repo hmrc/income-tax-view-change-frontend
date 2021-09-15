@@ -43,6 +43,8 @@ class TaxYearsViewSpec extends ViewSpec {
     val back: String = "Back"
     val tableHeadingTaxYear = "Tax year"
     val tableHeadingOptions = "Options"
+		val oldSaServiceMessage = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Online Service (opens in new tab). This will be a different Government Gateway ID and password to your Agent Services account."
+		val oldSaServiceLink = "Self Assessment for Agents Online Service (opens in new tab)"
   }
 
   "The Confirm Client page" should {
@@ -125,5 +127,16 @@ class TaxYearsViewSpec extends ViewSpec {
         }
       }
     }
+
+		"have content linking an agent to the old world sa services" which {
+			"has the correct message" in new Setup(view()) {
+				content.select("p").text() shouldBe TaxYearsMessages.oldSaServiceMessage
+			}
+
+			"has the correct link" in new Setup(view()) {
+				content.select("p a").text() shouldBe TaxYearsMessages.oldSaServiceLink
+				content.select("p a").attr("href") shouldBe "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+			}
+		}
   }
 }
