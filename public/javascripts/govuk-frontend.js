@@ -301,7 +301,7 @@
 						this.updateOpenAllButton(e)
 					}
 				}, e.prototype.initControls = function() {
-					this.$openAllButton = document.createElement("button"), this.$openAllButton.setAttribute("type", "button"), this.$openAllButton.innerHTML = 'Open all <span class="govuk-visually-hidden">sections</span>', this.$openAllButton.setAttribute("class", this.openAllClass), this.$openAllButton.setAttribute("aria-expanded", "false"), this.$openAllButton.setAttribute("type", "button");
+					this.$openAllButton = document.createElement("button"), this.$openAllButton.setAttribute("type", "button"), this.$openAllButton.innerHTML = 'Open all <span class="visuallyhidden govuk-visually-hidden">sections</span>', this.$openAllButton.setAttribute("class", this.openAllClass), this.$openAllButton.setAttribute("aria-expanded", "false"), this.$openAllButton.setAttribute("type", "button");
 					var e = document.createElement("div");
 					e.setAttribute("class", this.controlsClass), e.appendChild(this.$openAllButton), this.$module.insertBefore(e, this.$module.firstChild), this.$openAllButton.addEventListener("click", this.onOpenOrCloseAllToggle.bind(this))
 				}, e.prototype.initSectionHeaders = function() {
@@ -351,7 +351,7 @@
 					return n
 				}, e.prototype.updateOpenAllButton = function(e) {
 					var t = e ? accordianMessages.accordianCloseMessage : accordianMessages.accordianOpenMessage;
-					t += '<span class="govuk-visually-hidden"> sections</span>', this.$openAllButton.setAttribute("aria-expanded", e), this.$openAllButton.innerHTML = t
+					t += '<span class="visuallyhidden govuk-visually-hidden"> sections</span>', this.$openAllButton.setAttribute("aria-expanded", e), this.$openAllButton.innerHTML = t
 				};
 				var t = {
 					checkForSessionStorage: function() {

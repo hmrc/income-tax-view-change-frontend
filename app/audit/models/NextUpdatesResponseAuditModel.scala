@@ -42,7 +42,7 @@ case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
     "mtditid" -> mtdItUser.mtditid,
     "nationalInsuranceNumber" -> mtdItUser.nino,
     "incomeSourceId" -> incomeSourceId,
-    "nextUpdates" -> nextUpdatesJson
+    "reportDeadlines" -> nextUpdatesJson
   ) ++
     ("saUtr", mtdItUser.saUtr) ++
     ("credId", mtdItUser.credId) ++

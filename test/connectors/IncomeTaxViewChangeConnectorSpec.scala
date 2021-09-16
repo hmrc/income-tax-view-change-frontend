@@ -95,7 +95,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getNextUpdatesUrl" should {
     "return the correct url" in new Setup {
-      getNextUpdatesUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/report-deadlines"
+      getReportDeadlinesUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/report-deadlines"
     }
   }
 

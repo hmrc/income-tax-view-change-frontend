@@ -63,7 +63,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     s"${appConfig.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
 
-  def getNextUpdatesUrl(nino: String): String = {
+  def getReportDeadlinesUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
   }
 
@@ -209,7 +209,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
   def getNextUpdates()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-    val url = getNextUpdatesUrl(mtdUser.nino)
+    val url = getReportDeadlinesUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getNextUpdates] - GET $url")
 
     auditingService.extendedAudit(NextUpdatesRequestAuditModel(mtdUser))

@@ -57,7 +57,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
           "credId" -> testCredId,
           "userType" -> "Agent",
           "agentReferenceNumber" -> testArn,
-          "nextUpdates" -> Json.arr(
+          "reportDeadlines" -> Json.arr(
             Json.obj(
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
@@ -109,7 +109,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
           "credId" -> testCredId,
           "userType" -> "Agent",
           "agentReferenceNumber" -> testArn,
-          "nextUpdates" -> Json.arr(
+          "reportDeadlines" -> Json.arr(
             Json.obj(
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
@@ -143,7 +143,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
           "mtditid" -> testMtditid,
           "nationalInsuranceNumber" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
-          "nextUpdates" -> Json.arr()
+          "reportDeadlines" -> Json.arr()
         )
       }
     }
