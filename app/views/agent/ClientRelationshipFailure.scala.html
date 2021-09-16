@@ -18,25 +18,30 @@
 @import views.html.templates.agent.MainTemplate
 @import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import views.html.layouts.agent.layout
+@import views.html.components._
+
+
 
 @this(
-        mainTemplate: MainTemplate,
+        mainTemplate: layout,
         continueButton: ContinueButton,
-        form: FormWithCSRF
+        form: FormWithCSRF,
+        h1:h1,
+        p: p
 )
 
 @(postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@mainTemplate(title = messages("agent.client_relationship_failure.heading")) {
+@mainTemplate(pageTitle = messages("agent.client_relationship_failure.heading")) {
 
-    <h1>@messages("agent.client_relationship_failure.heading")</h1>
-
-    <p>
+@h1(msg ="agent.client_relationship_failure.heading", classes="govuk-heading-l")
+    @p{
         @Html(messages(
            "agent.client_relationship_failure.info",
            <a href={appConfig.clientAuthorisationGuidance} target="_blank">{messages("agent.client_relationship_failure.info.link")}</a>
         ))
-    </p>
+    }
 
     @form(action = postAction) {
         @continueButton(alternativeText = Some(messages("agent.client_relationship_failure.enter_different_details")))

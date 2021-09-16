@@ -24,9 +24,9 @@
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
-        homepageUrl = controllers.routes.HomeController.home.url,
-        serviceName = Some(messages("base.service_name")),
-        serviceUrl = controllers.routes.HomeController.home.url,
+        homepageUrl = controllers.agent.routes.HomeController.show().url,
+        serviceName = Some(Messages("agent.base.service_name")),
+        serviceUrl = controllers.agent.routes.HomeController.show().url,
         containerClasses = "govuk-width-container",
         signOutHref = Some(controllers.routes.SignOutController.signOut.url)
     ))
@@ -83,7 +83,7 @@
 }
 
 @govukLayout(
-    pageTitle = Some(pageTitle),
+    pageTitle = Some(messages("agent.titlePattern.serviceName.govUk", pageTitle)),
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
     bodyEndBlock = None,
