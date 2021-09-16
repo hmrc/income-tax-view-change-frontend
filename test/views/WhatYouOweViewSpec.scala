@@ -20,7 +20,7 @@ import assets.FinancialDetailsTestConstants._
 import assets.MessagesLookUp.{WhatYouOwe => whatYouOwe}
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -28,8 +28,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.WhatYouOwe
-import java.time.LocalDate
 
+import java.time.LocalDate
 import play.api.test.FakeRequest
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
@@ -74,17 +74,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueInterestData(latePaymentInterest).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]],
                                    dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataWithOverdueMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
@@ -92,6 +95,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def whatYouOweDataTestActiveWithMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
@@ -101,6 +105,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
@@ -108,18 +113,26 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(),
     dueInThirtyDaysList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates(1)),
     futurePayments = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
-  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList()
+  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
 
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
       "have the link to their previous Self Assessment online account in the sa-note" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
         verifySelfAssessmentLink()
+      }
+      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe whatYouOwe.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
       }
       "have the remaining balance title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
@@ -210,6 +223,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has charges and access viewer within 30 days of due date" should {
+      "have BalanceDueWithin30Days amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueIn30Days()) {
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe whatYouOwe.dueInThirtyDays
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£1.00"
+      }
       s"have the remaining balance header and table data" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
@@ -307,6 +327,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has charges and access viewer after due date" should {
+      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe whatYouOwe.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
+      }
       "have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
@@ -488,7 +515,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"not have MTD payments heading" in new Setup(whatYouOweDataWithMixedData1) {
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
       }
-
+      "have Overdue amount, Due within 30 days and Total amount displayed " in new Setup(whatYouOweDataWithMixedData1) {
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe whatYouOwe.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe whatYouOwe.dueInThirtyDays
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
+      }
       s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueMixedData2(List(None,None,None))) {
         val overdueTableHeader: Element = pageDocument.select("tr").first()
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -551,6 +585,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has charges and access viewer with mixed dates and ACI value of zero" should {
+      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe whatYouOwe.dueInThirtyDays
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe whatYouOwe.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
+      }
       s"have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
@@ -629,6 +671,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has no charges" should {
+      "have no totals displayed " in new Setup(noChargesModel) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
+      }
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.selectFirst("header > h1").text shouldBe whatYouOwe.heading

@@ -20,8 +20,10 @@ import models.outstandingCharges.OutstandingChargesModel
 
 import java.time.LocalDate
 
-case class WhatYouOweChargesList(overduePaymentList: List[DocumentDetailWithDueDate] = List(), dueInThirtyDaysList: List[DocumentDetailWithDueDate] = List(),
-                                 futurePayments: List[DocumentDetailWithDueDate] = List(), outstandingChargesModel: Option[OutstandingChargesModel] = None) {
+case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentList: List[DocumentDetailWithDueDate] = List(),
+                                 dueInThirtyDaysList: List[DocumentDetailWithDueDate] = List(),
+                                 futurePayments: List[DocumentDetailWithDueDate] = List(),
+                                 outstandingChargesModel: Option[OutstandingChargesModel] = None) {
 
   private def getAllCharges: List[DocumentDetailWithDueDate] = overduePaymentList ++ dueInThirtyDaysList ++ futurePayments
 

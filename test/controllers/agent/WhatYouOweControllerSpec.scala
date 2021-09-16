@@ -25,7 +25,7 @@ import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.financialTransactions.FinancialTransactionsModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
@@ -66,6 +66,7 @@ class WhatYouOweControllerSpec extends TestSupport
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00),
     List(documentDetailWithDueDateModel(2019)),
     List(documentDetailWithDueDateModel(2020)),
     List(documentDetailWithDueDateModel(2021)),
@@ -74,7 +75,7 @@ class WhatYouOweControllerSpec extends TestSupport
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00), List.empty)
 
   val noFinancialTransactionErrors = List(testFinancialTransaction(2018))
   val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
