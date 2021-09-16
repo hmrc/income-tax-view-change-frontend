@@ -17,7 +17,7 @@
 package views.html.helpers.injected.obligations
 
 import assets.BaseTestConstants.{testMtdItUser, testPropertyIncomeId, testSelfEmploymentId}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
 
@@ -48,13 +48,13 @@ class PreviousObligationsHelperSpec extends ViewSpec {
   class TestSetup(previousObligations: ObligationsModel) extends Setup(previousObligationsHelper(previousObligations))
 
   val date: LocalDate = LocalDate.now.minusYears(1)
-  val reportDeadline: ReportDeadlineModel = ReportDeadlineModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")
+  val nextUpdate: NextUpdateModel = NextUpdateModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")
 
-  def basicDeadline(identification: String, obligationType: String): ReportDeadlinesModel = ReportDeadlinesModel(identification, List(reportDeadline.copy(obligationType = obligationType)))
+  def basicDeadline(identification: String, obligationType: String): NextUpdatesModel = NextUpdatesModel(identification, List(nextUpdate.copy(obligationType = obligationType)))
 
-  val basicBusinessDeadline: ReportDeadlinesModel = basicDeadline(testSelfEmploymentId, "Quarterly")
-  val basicPropertyDeadline: ReportDeadlinesModel = basicDeadline(testPropertyIncomeId, "EOPS").copy(identification = testPropertyIncomeId)
-  val basicCrystallisedDeadline: ReportDeadlinesModel = basicDeadline(testMtdItUser.mtditid, "Crystallised").copy(identification = testMtdItUser.mtditid)
+  val basicBusinessDeadline: NextUpdatesModel = basicDeadline(testSelfEmploymentId, "Quarterly")
+  val basicPropertyDeadline: NextUpdatesModel = basicDeadline(testPropertyIncomeId, "EOPS").copy(identification = testPropertyIncomeId)
+  val basicCrystallisedDeadline: NextUpdatesModel = basicDeadline(testMtdItUser.mtditid, "Crystallised").copy(identification = testMtdItUser.mtditid)
 
   val obligationModelWithAllTypes: ObligationsModel = ObligationsModel(Seq(
     basicBusinessDeadline, basicPropertyDeadline, basicCrystallisedDeadline

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.templates.MainTemplate
+package models.nextUpdates
 
-@this(mainTemplate: MainTemplate)
-
-@(backUrl: String)(implicit request: Request[_], messages: Messages)
-
-@mainTemplate(
-    title = messages("obligations.heading"),
-    backUrl = Some(backUrl)
-) {
+sealed trait ObligationType
+case object EopsObligation extends ObligationType
+case object QuarterlyObligation extends ObligationType
 
 
-    <section id="estimated-tax">
-
-        <header class="page-heading">
-            <h1 id="page-heading" class="heading-xlarge">@messages("obligations.heading")</h1>
-        </header>
-
-        <p id="p1">@messages("obligations.noReports")</p>
-
-    </section>
-
-}

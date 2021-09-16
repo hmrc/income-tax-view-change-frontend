@@ -45,47 +45,52 @@ agent.utr_error.reason.bullet2_link                             = Making Tax Dig
 agent.utr_error.go_back                                         = Go back and enter a different UTR
 
 ## Agent - Payment Due Page
-agent.paymentDue.heading                                                 = What you owe
-agent.paymentDue.no-payments-due                                         = You have no payments due.
-agent.paymentDue.sa-note                                                 = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
-agent.paymentDue.sa-link                                                 = Self Assessment online account (opens in new tab)
-agent.paymentDue.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
-agent.paymentDue.dropdown.info                                           = What are the payment types?
-agent.paymentDue.payment-days-note                                       = Payments can take up to 7 days to process.
-agent.paymentDue.credit-on-account                                       = If you make a payment more than 30 days before a payment is due, you will see it as credit on account.
-agent.paymentDue.payNow                                                  = Pay now
-agent.paymentDue.pay-now-aria                                            = Pay now for Tax year {0} to {1}
-agent.paymentDue.pre-mtd-payments                                        = Tax year {0} to {1} pre-Making Tax Digital payments
-agent.paymentDue.tableHead.due-date                                      = Due date
-agent.paymentDue.tableHead.payment-type                                  = Payment type
-agent.paymentDue.tableHead.amount-due                                    = Amount due
-agent.paymentDue.paymentOnAccount1.text							         = Payment on account 1 of 2
-agent.paymentDue.paymentOnAccount2.text							         = Payment on account 2 of 2
-agent.paymentDue.balancingCharge.text  							         = Remaining balance
-agent.paymentDue.balancingCharge.interest.line1.text                     = Interest on remaining balance
-agent.paymentDue.balancingCharge.interest.line2.text                     = From {0} to {1}
-agent.paymentDue.remaining-balance.heading                               = Remaining balance
-agent.paymentDue.remaining-balance.line1                                 = The remaining balance is the tax you still need to pay for a tax year.
-agent.paymentDue.payment-on-account.heading                              = Payment on account
-agent.paymentDue.payment-on-account.line1                                = This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill.
-agent.paymentDue.over-due-payments                                       = Overdue payments
-agent.paymentDue.over-due                                                = OVERDUE
-agent.paymentDue.future-payments                                         = Future payments
-agent.paymentDue.due-in-thirty-days-payments                             = Due within 30 days
-agent.paymentDue.payment-type.taxYear                                    = Tax year {0} to {1}
-agent.paymentDue.paymentUnderReview                                      = Payment under review
-agent.paymentDue.dunningLock.text                                        = One or more of your payments are currently under review and your {0}
-agent.paymentDue.dunningLock.link                                        = tax decision is being investigated (opens in new tab).
+agent.paymentDue.heading                                       = What you owe
+agent.paymentDue.no-payments-due                               = You have no payments due.
+agent.paymentDue.sa-note                                       = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
+agent.paymentDue.sa-link                                       = Self Assessment online account (opens in new tab)
+agent.paymentDue.outstanding-charges-note                      = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
+agent.paymentDue.dropdown.info                                 = What are the payment types?
+agent.paymentDue.payment-days-note                             = Payments can take up to 7 days to process.
+agent.paymentDue.credit-on-account                             = If you make a payment more than 30 days before a payment is due, you will see it as credit on account.
+agent.paymentDue.payNow                                        = Pay now
+agent.paymentDue.pay-now-aria                                  = Pay now for Tax year {0} to {1}
+agent.paymentDue.pre-mtd-payments                              = Tax year {0} to {1} pre-Making Tax Digital payments
+agent.paymentDue.tableHead.due-date                            = Due date
+agent.paymentDue.tableHead.payment-type                        = Payment type
+agent.paymentDue.tableHead.amount-due                          = Amount due
+agent.paymentDue.paymentOnAccount1.text						   = Payment on account 1 of 2
+agent.paymentDue.paymentOnAccount2.text						   = Payment on account 2 of 2
+agent.paymentDue.balancingCharge.text  						   = Remaining balance
+agent.paymentDue.balancingCharge.interest.line1.text           = Interest on remaining balance
+agent.paymentDue.balancingCharge.interest.line2.text           = From {0} to {1}
+agent.paymentDue.remaining-balance.heading                     = Remaining balance
+agent.paymentDue.remaining-balance.line1                       = The remaining balance is the tax you still need to pay for a tax year.
+agent.paymentDue.payment-on-account.heading                    = Payment on account
+agent.paymentDue.payment-on-account.line1                      = This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill.
+agent.paymentDue.over-due-payments                             = Overdue payments
+agent.paymentDue.over-due                                      = OVERDUE
+agent.paymentDue.future-payments                               = Future payments
+agent.paymentDue.due-in-thirty-days-payments                   = Due within 30 days
+agent.paymentDue.payment-type.taxYear                          = Tax year {0} to {1}
+agent.paymentDue.paymentUnderReview                            = Payment under review
+agent.paymentDue.dunningLock.text                              = One or more of your payments are currently under review and your {0}
+agent.paymentDue.dunningLock.link                              = tax decision is being investigated (opens in new tab).
 
-agent.paymentDue.over-due.interest.line1                                 = Interest for late payment
-agent.paymentDue.over-due.interest.line2                                 = {0} to {1} at {2}%
-agent.paymentDue.over-due.interest-rate                                  = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
-agent.paymentDue.over-due.interest-rate.link                             = current interest rate for late and early payments (opens in new tab)
+agent.paymentDue.over-due.interest.line1                       = Interest for late payment
+agent.paymentDue.over-due.interest.line2                       = {0} to {1} at {2}%
+agent.paymentDue.over-due.interest-rate                        = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
+agent.paymentDue.over-due.interest-rate.link                   = current interest rate for late and early payments (opens in new tab)
 
 
-agent.paymentDue.lpi.paymentOnAccount1.text                              = Late payment interest on payment on account 1 of 2
-agent.paymentDue.lpi.paymentOnAccount2.text                              = Late payment interest on payment on account 2 of 2
-agent.paymentDue.lpi.balancingCharge.text                                = Late payment interest on remaining balance
+agent.paymentDue.lpi.paymentOnAccount1.text                    = Late payment interest on payment on account 1 of 2
+agent.paymentDue.lpi.paymentOnAccount2.text                    = Late payment interest on payment on account 2 of 2
+agent.paymentDue.lpi.balancingCharge.text                      = Late payment interest on remaining balance
+
+agent.paymentDue.overdueAmount                                 = Overdue payments due
+agent.paymentDue.balanceDueWithin30Days                        = Due within 30 days
+agent.paymentDue.totalBalance                                  = Total payments due
+
 
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet
@@ -150,6 +155,9 @@ taxYears.complete                                              = COMPLETE
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
+taxYears.oldSa.content.1									   = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
+taxYears.oldSa.content.2									   = Self Assessment for Agents Online Service (opens in new tab)
+taxYears.oldSa.content.3									   =. This will be a different Government Gateway ID and password to your Agent Services account.
 
 ## Tax Year Overview ##
 tax-year-overview.heading                                           = Tax year overview
@@ -342,7 +350,7 @@ taxCal_breakdown.message.C22216                                 = Due to the lev
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation.
 
-## ReportDeadlines Page ##
+## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
@@ -513,6 +521,9 @@ whatYouOwe.payment-type.taxYear                                    = Tax year {0
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review and your {0}
 whatYouOwe.dunningLock.link                                        = tax decision is being investigated (opens in new tab).
+whatYouOwe.overdueAmount                                           = Overdue payments due
+whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
+whatYouOwe.totalBalance                                            = Total payments due
 
 
 ## Charge Summary ##

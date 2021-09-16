@@ -20,7 +20,7 @@
     languageSelection: components.languageSelection
 )
 
-@(pageTitle: Option[String] = None, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
@@ -55,8 +55,10 @@
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(if(messages.lang.code == "cy") {Cy} else {En}))
+    <div class="nav-bar-wrapper">
     @languageSelection()
     @backUrl.map(backLink(_))
+    </div>
 }
 
 @scripts = {
@@ -81,7 +83,7 @@
 }
 
 @govukLayout(
-    pageTitle = pageTitle,
+    pageTitle = Some(pageTitle),
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
     bodyEndBlock = None,

@@ -17,7 +17,7 @@
 package models
 
 import assets.FinancialDetailsTestConstants._
-import models.financialDetails.WhatYouOweChargesList
+import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
@@ -29,6 +29,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusMonths(13).toString)
 
   def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     dueInThirtyDaysList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     futurePayments = financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates,
@@ -36,6 +37,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
   )
 
   def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     dueInThirtyDaysList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     futurePayments = financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates,
     overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates

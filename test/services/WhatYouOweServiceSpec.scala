@@ -21,7 +21,7 @@ import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{FinancialDetailsErrorModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -132,6 +132,7 @@ class WhatYouOweServiceSpec extends TestSupport {
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
           await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(0.00, 2.00, 2.00),
             futurePayments = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates
           )
         }
@@ -145,6 +146,7 @@ class WhatYouOweServiceSpec extends TestSupport {
 						.thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
 
 					await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 						overduePaymentList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates
 					)
 				}

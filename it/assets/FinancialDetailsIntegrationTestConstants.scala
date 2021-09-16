@@ -17,10 +17,8 @@
 package assets
 
 import java.time.LocalDate
-
 import assets.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel,
-  FinancialDetailsModel, SubItem, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 
@@ -94,6 +92,7 @@ object FinancialDetailsIntegrationTestConstants {
 
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
     FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount)),
       financialDetails = List(financialDetail(taxYear))
     )
@@ -122,6 +121,7 @@ object FinancialDetailsIntegrationTestConstants {
                                 outstandingAmount: List[Option[BigDecimal]],
                                 taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
         DocumentDetail(taxYear, "id1040000124", documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
@@ -158,6 +158,7 @@ object FinancialDetailsIntegrationTestConstants {
                                                      outstandingAmount: List[Option[BigDecimal]],
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
         DocumentDetail(taxYear, "id1040000123", documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
@@ -341,30 +342,36 @@ object FinancialDetailsIntegrationTestConstants {
   )
 
   val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
   val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataFullData: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataFullDataWithoutOutstandingCharges: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates
   )
 
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(),
     futurePayments = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates.head),
@@ -372,6 +379,7 @@ object FinancialDetailsIntegrationTestConstants {
   )
 
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
@@ -379,15 +387,18 @@ object FinancialDetailsIntegrationTestConstants {
   )
 
   val whatYouOweWithAZeroOutstandingAmount: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     dueInThirtyDaysList = List(financialDetailsDueIn30DaysWithAZeroOutstandingAmount.getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(outstandingChargesModel = Some(outstandingChargesOverdueData))
+  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    outstandingChargesModel = Some(outstandingChargesOverdueData))
 
-  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(List.empty, List.empty, List.empty)
+  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00), List.empty, List.empty, List.empty)
 
-  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))
+  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))
 
   val testInvalidFinancialDetailsJson: JsValue = Json.obj(
     "amount" -> "invalidAmount",

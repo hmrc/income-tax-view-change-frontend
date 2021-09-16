@@ -118,7 +118,7 @@ class HomePageViewSpec extends TestSupport {
       }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.getNextUpdates().url)
         link.map(_.text) shouldBe Some(homeMessages.updatesLink)
       }
     }

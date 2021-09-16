@@ -17,7 +17,6 @@
 package controllers.agent
 
 import java.time.LocalDate
-
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, testValidFinancialDetailsModelJson}
 import audit.models.ChargeSummaryAudit
@@ -27,7 +26,7 @@ import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.docDateDetail
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -234,6 +233,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )(
       status = OK,
       response = Json.toJson(FinancialDetailsModel(
+        balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
         documentDetails = List(
           DocumentDetail(
             taxYear = currentTaxYearEnd.getYear.toString,

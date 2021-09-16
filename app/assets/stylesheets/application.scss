@@ -13,3 +13,14 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 .govuk-table__cell {
   vertical-align: middle;
 }
+
+.nav-bar-wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+
+  .govuk-back-link {
+    margin-top: 30px;
+    margin-bottom: 0px;
+  }
+}

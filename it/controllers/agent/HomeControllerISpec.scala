@@ -17,7 +17,7 @@ package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
 import assets.messages.HomeMessages.agentTitle
-import audit.models.{HomeAudit, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
+import audit.models.{HomeAudit, NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import controllers.Assets.INTERNAL_SERVER_ERROR
@@ -27,10 +27,10 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoe
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
-import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -153,14 +153,14 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
               val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                ReportDeadlinesModel(
+                NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
                   ))
               ))
 
-							IncomeTaxViewChangeStub.stubGetReportDeadlines(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines =currentObligations
 							)
@@ -172,6 +172,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -204,8 +205,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
-							verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-							verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 						"there are payments upcoming and nothing is overdue with TxmEventsApproved FS disabled" in {
 
@@ -217,14 +218,14 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							val currentObligations: ObligationsModel = ObligationsModel(Seq(
-								ReportDeadlinesModel(
+								NextUpdatesModel(
 									identification = "testId",
 									obligations = List(
-										ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+										NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
 									))
 							))
 
-							IncomeTaxViewChangeStub.stubGetReportDeadlines(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines =currentObligations
 							)
@@ -236,6 +237,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -268,8 +270,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
-							verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-							verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 					}
 					"display the page with no upcoming payment" when {
@@ -284,14 +286,14 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							val currentObligations: ObligationsModel = ObligationsModel(Seq(
-								ReportDeadlinesModel(
+								NextUpdatesModel(
 									identification = "testId",
 									obligations = List(
-										ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+										NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
 									))
 							))
 
-							IncomeTaxViewChangeStub.stubGetReportDeadlines(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines = currentObligations
 							)
@@ -303,6 +305,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -334,8 +337,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
-							verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-							verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 						"display the page with no upcoming payment with TxmEventsApproved FS disabled" when {
 							"there are no upcoming payments for the client" in {
@@ -349,14 +352,14 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								val currentObligations: ObligationsModel = ObligationsModel(Seq(
-									ReportDeadlinesModel(
+									NextUpdatesModel(
 										identification = "testId",
 										obligations = List(
-											ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+											NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
 										))
 								))
 
-								IncomeTaxViewChangeStub.stubGetReportDeadlines(
+								IncomeTaxViewChangeStub.stubGetNextUpdates(
 									nino = testNino,
 									deadlines = currentObligations
 								)
@@ -368,6 +371,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)(
 									status = OK,
 									response = Json.toJson(FinancialDetailsModel(
+										balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 										documentDetails = List(
 											DocumentDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -399,8 +403,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								verifyAuditDoesNotContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
-								verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-								verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+								verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
 						"display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS enabled" when {
@@ -415,14 +419,14 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								val currentObligations: ObligationsModel = ObligationsModel(Seq(
-									ReportDeadlinesModel(
+									NextUpdatesModel(
 										identification = "testId",
 										obligations = List(
-											ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+											NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
 										))
 								))
 
-								IncomeTaxViewChangeStub.stubGetReportDeadlines(
+								IncomeTaxViewChangeStub.stubGetNextUpdates(
 									nino = testNino,
 									deadlines = currentObligations
 								)
@@ -434,6 +438,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)(
 									status = OK,
 									response = Json.toJson(FinancialDetailsModel(
+										balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 										documentDetails = List(
 											DocumentDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -465,8 +470,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
-								verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-								verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+								verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
 						"display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS disabled" when {
@@ -481,14 +486,14 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								val currentObligations: ObligationsModel = ObligationsModel(Seq(
-									ReportDeadlinesModel(
+									NextUpdatesModel(
 										identification = "testId",
 										obligations = List(
-											ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+											NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
 										))
 								))
 
-								IncomeTaxViewChangeStub.stubGetReportDeadlines(
+								IncomeTaxViewChangeStub.stubGetNextUpdates(
 									nino = testNino,
 									deadlines = currentObligations
 								)
@@ -500,6 +505,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)(
 									status = OK,
 									response = Json.toJson(FinancialDetailsModel(
+										balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 										documentDetails = List(
 											DocumentDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -531,8 +537,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
-								verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-								verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+								verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
 					}
@@ -548,15 +554,15 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
               val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                ReportDeadlinesModel(
+                NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
-                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
+                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
+                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
                   ))
               ))
 
-							IncomeTaxViewChangeStub.stubGetReportDeadlines(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines = currentObligations
 							)
@@ -568,6 +574,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -612,8 +619,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
               verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
-              verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-              verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+              verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 					}
 					"display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS disabled" when {
@@ -628,15 +635,15 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							val currentObligations: ObligationsModel = ObligationsModel(Seq(
-								ReportDeadlinesModel(
+								NextUpdatesModel(
 									identification = "testId",
 									obligations = List(
-										ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
-										ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
+										NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
+										NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
 									))
 							))
 
-							IncomeTaxViewChangeStub.stubGetReportDeadlines(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines = currentObligations
 							)
@@ -648,6 +655,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -692,8 +700,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
-							verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-							verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 					}
 				}
@@ -708,14 +716,14 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					)
 
           val currentObligations: ObligationsModel = ObligationsModel(Seq(
-            ReportDeadlinesModel(
+            NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+                NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
               ))
           ))
 
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
 						nino = testNino,
 						deadlines = currentObligations
 					)
@@ -736,8 +744,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
 					)
 
-          verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-          verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 				}
 			}
 			"retrieving the client's obligations was unsuccessful" in {
@@ -749,7 +757,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					response = incomeSourceDetailsModel
 				)
 
-				IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
+				IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
 				val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 

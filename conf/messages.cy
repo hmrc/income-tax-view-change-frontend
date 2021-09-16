@@ -231,7 +231,7 @@ taxCal_breakdown.message.C22216                                 = Oherwydd lefel
 taxCal_breakdown.message.C22217                                 = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEM.
 taxCal_breakdown.message.C22218                                 = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
 
-## ReportDeadlines Page ##
+## NextUpdates Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
 obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
@@ -370,6 +370,10 @@ whatYouOwe.over-due                                             = YN HWYR
 whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
 whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth {0} i {1}
+whatYouOwe.overdueAmount                                        = Taliadau hwyr sy'n ddyledus
+whatYouOwe.balanceDueWithin30Days                               = Yn ddyledus cyn pen 30 diwrnod
+whatYouOwe.totalBalance                                         = Cyfanswm y taliadau sy'n ddyledus
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -464,34 +468,37 @@ updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
 
 ## Agent - Payment Due Page
-agent.paymentDue.heading                                                 = Yr hyn sydd arnoch
-agent.paymentDue.no-payments-due                                         = Nid oes gennych taliadau sy’n ddyledus.
-agent.paymentDue.sa-note                                                 = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
-agent.paymentDue.sa-link                                                 = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
-agent.paymentDue.outstanding-charges-note                                = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
-agent.paymentDue.dropdown.info                                           = Beth yw’r mathau o daliadau?
-agent.paymentDue.payment-days-note                                       = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
-agent.paymentDue.credit-on-account                                       = Os ydych yn gwneud taliad fwy na 30 diwrnod cyn bod taliad yn ddyledus, byddwch yn ei weld fel credyd ar gyfrif.
-agent.paymentDue.payNow                                                  = Talu nawr
-agent.paymentDue.pay-now-aria                                            = Talu nawr ar gyfer Blwyddyn dreth  {0} i {1}
-agent.paymentDue.pre-mtd-payments                                        = Blwyddyn dreth {0} i {1}: taliadau cyn-Troi Treth yn Ddigidol
-agent.paymentDue.tableHead.due-date                                      = Dyddiad dyledus
-agent.paymentDue.tableHead.payment-type                                  = Math o daliad
-agent.paymentDue.tableHead.amount-due                                    = Swm sy’n ddyledus
-agent.paymentDue.paymentOnAccount1.text                                  = Taliad ar gyfrif 1 o 2
-agent.paymentDue.paymentOnAccount2.text                                  = Taliad ar gyfrif 2 o 2
-agent.paymentDue.balancingCharge.text                                    = Balans sy’n weddill
-agent.paymentDue.balancingCharge.interest.line1.text                     = Llog ar y balans sy’n weddill
-agent.paymentDue.balancingCharge.interest.line2.text                     = O {0} i {1}
-agent.paymentDue.remaining-balance.heading                               = Balans sy’n weddill
-agent.paymentDue.remaining-balance.line1                                 = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
-agent.paymentDue.payment-on-account.heading                              = Taliad ar gyfrif
-agent.paymentDue.payment-on-account.line1                                = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
-agent.paymentDue.over-due-payments                                       = Taliadau sy’n hwyr
-agent.paymentDue.over-due                                                = YN HWYR
-agent.paymentDue.future-payments                                         = Taliadau yn y dyfodol
-agent.paymentDue.due-in-thirty-days-payments                             = Yn ddyledus cyn pen 30 diwrnod
-agent.paymentDue.payment-type.taxYear                                    = Blwyddyn dreth {0} i {1}
+agent.paymentDue.heading                                        = Yr hyn sydd arnoch
+agent.paymentDue.no-payments-due                                = Nid oes gennych taliadau sy’n ddyledus.
+agent.paymentDue.sa-note                                        = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+agent.paymentDue.sa-link                                        = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
+agent.paymentDue.outstanding-charges-note                       = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
+agent.paymentDue.dropdown.info                                  = Beth yw’r mathau o daliadau?
+agent.paymentDue.payment-days-note                              = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
+agent.paymentDue.credit-on-account                              = Os ydych yn gwneud taliad fwy na 30 diwrnod cyn bod taliad yn ddyledus, byddwch yn ei weld fel credyd ar gyfrif.
+agent.paymentDue.payNow                                         = Talu nawr
+agent.paymentDue.pay-now-aria                                   = Talu nawr ar gyfer Blwyddyn dreth  {0} i {1}
+agent.paymentDue.pre-mtd-payments                               = Blwyddyn dreth {0} i {1}: taliadau cyn-Troi Treth yn Ddigidol
+agent.paymentDue.tableHead.due-date                             = Dyddiad dyledus
+agent.paymentDue.tableHead.payment-type                         = Math o daliad
+agent.paymentDue.tableHead.amount-due                           = Swm sy’n ddyledus
+agent.paymentDue.paymentOnAccount1.text                         = Taliad ar gyfrif 1 o 2
+agent.paymentDue.paymentOnAccount2.text                         = Taliad ar gyfrif 2 o 2
+agent.paymentDue.balancingCharge.text                           = Balans sy’n weddill
+agent.paymentDue.balancingCharge.interest.line1.text            = Llog ar y balans sy’n weddill
+agent.paymentDue.balancingCharge.interest.line2.text            = O {0} i {1}
+agent.paymentDue.remaining-balance.heading                      = Balans sy’n weddill
+agent.paymentDue.remaining-balance.line1                        = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
+agent.paymentDue.payment-on-account.heading                     = Taliad ar gyfrif
+agent.paymentDue.payment-on-account.line1                       = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
+agent.paymentDue.over-due-payments                              = Taliadau sy’n hwyr
+agent.paymentDue.over-due                                       = YN HWYR
+agent.paymentDue.future-payments                                = Taliadau yn y dyfodol
+agent.paymentDue.due-in-thirty-days-payments                    = Yn ddyledus cyn pen 30 diwrnod
+agent.paymentDue.payment-type.taxYear                           = Blwyddyn dreth {0} i {1}
+agent.paymentDue.overdueAmount                                  = Taliadau hwyr sy'n ddyledus
+agent.paymentDue.balanceDueWithin30Days                         = Yn ddyledus cyn pen 30 diwrnod
+agent.paymentDue.totalBalance                                   = Cyfanswm y taliadau sy'n ddyledus
 
 #Agent next updates
 agent.nextUpdates.heading                                       = Diweddariadau nesaf

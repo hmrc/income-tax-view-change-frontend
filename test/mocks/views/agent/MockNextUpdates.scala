@@ -33,7 +33,7 @@ trait MockNextUpdates extends BeforeAndAfterEach with MockitoSugar {
     reset(agentNextUpdates)
   }
 
-  def mockAgentNextUpdates(currentObligations: models.reportDeadlines.ObligationsModel, backUrl: String)
+  def mockAgentNextUpdates(currentObligations: models.nextUpdates.ObligationsModel, backUrl: String)
                           (response: Html): Unit = {
     when(agentNextUpdates.apply(
       matches(currentObligations),
