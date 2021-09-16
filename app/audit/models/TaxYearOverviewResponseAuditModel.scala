@@ -20,7 +20,7 @@ import audit.Utilities._
 import auth.MtdItUser
 import models.calculation.Calculation
 import models.financialDetails.DocumentDetailWithDueDate
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModelWithIncomeType}
+import models.nextUpdates.{ObligationsModel, NextUpdateModelWithIncomeType}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
@@ -77,7 +77,7 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
     }
   }
 
-  private def updatesJson(updates: ReportDeadlineModelWithIncomeType): JsObject = {
+  private def updatesJson(updates: NextUpdateModelWithIncomeType): JsObject = {
     Json.obj("updateType" -> getUpdateType(updates.obligation.obligationType),
       "incomeSource" -> getObligationsType(updates.incomeType)) ++
       ("dateSubmitted", updates.obligation.dateReceived)

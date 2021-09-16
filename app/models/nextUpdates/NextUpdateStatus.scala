@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.reportDeadlines
+package models.nextUpdates
 
 import java.time.LocalDate
 
-sealed trait ReportDeadlineStatus
-case class Overdue(dueDate: LocalDate) extends ReportDeadlineStatus
-case class Open(dueDate: LocalDate) extends ReportDeadlineStatus
+sealed trait NextUpdateStatus
+case class Overdue(dueDate: LocalDate) extends NextUpdateStatus
+case class Open(dueDate: LocalDate) extends NextUpdateStatus

@@ -37,7 +37,7 @@ import config.featureswitch._
 import models.calculation.{AllowancesAndDeductions, CalcOverview, Calculation}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, SubItem}
 import models.financialTransactions.TransactionModel
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlineModelWithIncomeType, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdateModelWithIncomeType, NextUpdatesModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -89,8 +89,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   val testObligations: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel("XA00001234", List(
-      ReportDeadlineModel(
+    NextUpdatesModel("XA00001234", List(
+      NextUpdateModel(
         start = LocalDate.of(2020, 1, 1),
         end = LocalDate.of(2020, 3, 31),
         due = LocalDate.of(2020, 3, 31),
@@ -98,7 +98,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         dateReceived = Some(LocalDate.of(2020, 3, 30)),
         periodKey = "#001"
       ),
-      ReportDeadlineModel(
+      NextUpdateModel(
         start = LocalDate.of(2020, 4, 1),
         end = LocalDate.of(2020, 6, 30),
         due = LocalDate.of(2020, 6, 30),
@@ -107,8 +107,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         periodKey = "EOPS"
       )
     )),
-    ReportDeadlinesModel("1234", List(
-      ReportDeadlineModel(
+    NextUpdatesModel("1234", List(
+      NextUpdateModel(
         start = LocalDate.of(2020, 1, 1),
         end = LocalDate.of(2020, 3, 31),
         due = LocalDate.of(2020, 3, 31),
@@ -117,8 +117,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         periodKey = "#001"
       )
     )),
-    ReportDeadlinesModel(testMtditid, List(
-      ReportDeadlineModel(
+    NextUpdatesModel(testMtditid, List(
+      NextUpdateModel(
         start = LocalDate.of(2020, 4, 1),
         end = LocalDate.of(2020, 6, 30),
         due = LocalDate.of(2020, 6, 30),
@@ -128,9 +128,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       )
     ))
   ))
-  val groupedObligations: Seq[(LocalDate, Seq[ReportDeadlineModelWithIncomeType])] = {
-    testObligations.allDeadlinesWithSource(previous = true).reverse.groupBy[LocalDate] { reportDeadlineWithIncomeType =>
-      reportDeadlineWithIncomeType.obligation.due
+  val groupedObligations: Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] = {
+    testObligations.allDeadlinesWithSource(previous = true).reverse.groupBy[LocalDate] { nextUpdateWithIncomeType =>
+      nextUpdateWithIncomeType.obligation.due
     }.toList.sortBy(_._1)
   }
 

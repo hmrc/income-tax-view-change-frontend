@@ -25,12 +25,12 @@ import controllers.predicates._
 import forms.utils.SessionKeys
 import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CalculationService, FinancialDetailsService, ReportDeadlinesService}
+import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
 import views.html.TaxYearOverview
 import views.html.errorPages.StandardError
 
@@ -48,7 +48,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           itvcErrorHandler: ItvcErrorHandler,
                                           retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           retrieveNino: NinoPredicate,
-                                          reportDeadlinesService: ReportDeadlinesService,
+                                          nextUpdatesService: NextUpdatesService,
                                           val auditingService: AuditingService)
                                      (implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
@@ -93,7 +93,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   }
 
   private def withObligationsModel(taxYear: Int)(implicit user: MtdItUser[AnyContent]) = {
-    reportDeadlinesService.getReportDeadlines(
+    nextUpdatesService.getNextUpdates(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     )

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import play.api.libs.json.{JsValue, Json}
 import utils.Utilities.JsonUtil
 
-case class ReportDeadlinesRequestAuditModel(user: MtdItUser[_]) extends ExtendedAuditModel {
+case class NextUpdatesRequestAuditModel(user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = "view-obligations"
   override val auditType: String = "ViewObligations"

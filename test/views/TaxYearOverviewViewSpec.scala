@@ -17,13 +17,13 @@
 package views
 
 import assets.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
-import assets.ReportDeadlinesTestConstants._
+import assets.NextUpdatesTestConstants._
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatterImpl
 import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
 import models.financialTransactions.TransactionModel
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModelWithIncomeType}
+import models.nextUpdates.{ObligationsModel, NextUpdateModelWithIncomeType}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -74,7 +74,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
     testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, "testBackURL")
@@ -335,9 +335,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
     "display updates by due-date" in new Setup(estimateView()) {
 
-      testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { reportDeadlineWithIncomeType =>
-        reportDeadlineWithIncomeType.obligation.due
-      }.toList.sortBy(_._1)(localDateOrdering).reverse.map { case (due: LocalDate, obligations: Seq[ReportDeadlineModelWithIncomeType]) =>
+      testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
+        nextUpdateWithIncomeType.obligation.due
+      }.toList.sortBy(_._1)(localDateOrdering).reverse.map { case (due: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
         content.selectHead(s"#table-default-content-$due").text shouldBe taxYearOverviewMessages.dueMessage(due.toLongDate)
         val sectionContent = content.selectHead(s"#updates")
         obligations.zip(1 to obligations.length).foreach {
