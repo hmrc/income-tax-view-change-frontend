@@ -92,7 +92,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     documentDetails.find(document => document.paymentLot.contains(paymentLot) && document.paymentLotItem.contains(paymentLotItem))
   }
 
-  def merge(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
+  def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
     FinancialDetailsModel(balanceDetails, documentDetails ++ financialDetailsModel.documentDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }

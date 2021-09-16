@@ -144,19 +144,19 @@
             <div class="grid-row" style="width: 150%; margin-top: 50px; margin-bottom: 50px">
                 @if(chargesList.balanceDetails.overDueAmount > 0) {
                     <div id="overdueAmount" class="column-one-third">
-                        <p class="what-you-owe-total-heading">@messages("whatYouOwe.overdueAmount")</p>
+                        <p class="what-you-owe-total-heading">@messages("agent.paymentDue.overdueAmount")</p>
                         <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.overDueAmount.toCurrency</p>
                     </div>
                 }
                 @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
                     <div id="balanceDueWithin30Days" class="column-one-third">
-                        <p class="what-you-owe-total-heading">@messages("whatYouOwe.balanceDueWithin30Days")</p>
+                        <p class="what-you-owe-total-heading">@messages("agent.paymentDue.balanceDueWithin30Days")</p>
                         <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.balanceDueWithin30Days.toCurrency</p>
                     </div>
                 }
                 @if(chargesList.balanceDetails.totalBalance > 0) {
                     <div id="totalBalance" class="column-one-third">
-                        <p class="what-you-owe-total-heading">@messages("whatYouOwe.totalBalance")</p>
+                        <p class="what-you-owe-total-heading">@messages("agent.paymentDue.totalBalance")</p>
                         <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.totalBalance.toCurrency</p>
                     </div>
                 }
