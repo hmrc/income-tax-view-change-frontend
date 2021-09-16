@@ -22,7 +22,7 @@ import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
-import models.reportDeadlines.ReportDeadlinesResponseModel
+import models.nextUpdates.NextUpdatesResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
@@ -57,17 +57,17 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
         ArgumentMatchers.eq(mtdRef))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-  def setupMockReportDeadlines(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockIncomeTaxViewChangeConnector.getReportDeadlines()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+  def setupMockNextUpdates(response: NextUpdatesResponseModel): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPreviousObligations(response: ReportDeadlinesResponseModel): Unit = {
+  def setupMockPreviousObligations(response: NextUpdatesResponseModel): Unit = {
     when(mockIncomeTaxViewChangeConnector.getPreviousObligations()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPreviousObligationsWithDates(from: LocalDate, to: LocalDate)(response: ReportDeadlinesResponseModel): Unit = {
+  def setupMockPreviousObligationsWithDates(from: LocalDate, to: LocalDate)(response: NextUpdatesResponseModel): Unit = {
     when(mockIncomeTaxViewChangeConnector.getPreviousObligations(
       fromDate = matches(from), toDate = matches(to))(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))

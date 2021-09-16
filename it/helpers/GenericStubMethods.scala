@@ -59,7 +59,7 @@ trait GenericStubMethods extends CustomMatchers {
     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid)
   }
 
-  def verifyReportDeadlinesCall(nino: String): Unit = {
-    IncomeTaxViewChangeStub.verifyGetReportDeadlines(nino)
+  def verifyNextUpdatesCall(nino: String): Unit = {
+    IncomeTaxViewChangeStub.verifyGetNextUpdates(nino)
   }
 }

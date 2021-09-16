@@ -20,28 +20,28 @@ import java.time.LocalDate
 
 import assets.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import assets.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIncomeDetails, propertyIncomeOnly}
-import assets.ReportDeadlinesTestConstants._
+import assets.NextUpdatesTestConstants._
 import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 
 import scala.concurrent.Future
 
-class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
+class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
 
-  object TestReportDeadlinesService extends ReportDeadlinesService(mockIncomeTaxViewChangeConnector)
+  object TestNextUpdatesService extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
 
-  class Setup extends ReportDeadlinesService(mockIncomeTaxViewChangeConnector)
+  class Setup extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
 
-  val previousObligation: ReportDeadlineModel = ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now, "Quarterly", Some(LocalDate.now), "#001")
+  val previousObligation: NextUpdateModel = NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now, "Quarterly", Some(LocalDate.now), "#001")
 
-  def currentObligation(date: LocalDate): ReportDeadlineModel = ReportDeadlineModel(date, date, date, "Quarterly", None, "#001")
+  def currentObligation(date: LocalDate): NextUpdateModel = NextUpdateModel(date, date, date, "Quarterly", None, "#001")
 
   "getObligationDueDates" should {
     "return an internal server exception when an error model is returned from the connector" in new Setup {
-      setupMockReportDeadlines(obligationsDataErrorModel)
+      setupMockNextUpdates(obligationsDataErrorModel)
 
       intercept[InternalServerException](await(getObligationDueDates()))
         .message shouldBe "Unexpected Exception getting obligation due dates"
@@ -49,16 +49,16 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
     "return a single overdue date" when {
       "the connector returns obligations with a single overdue date" in new Setup {
         val obligationsWithSingleOverdue: ObligationsModel = ObligationsModel(Seq(
-          ReportDeadlinesModel(
+          NextUpdatesModel(
             identification = "testId1",
             obligations = List(
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now.minusDays(1), "obligationsType", None, "testPeriodKey"),
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now, "obligationsType", None, "testPeriodKey"),
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now.plusDays(1), "obligationsType", None, "testPeriodKey")
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now.minusDays(1), "obligationsType", None, "testPeriodKey"),
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now, "obligationsType", None, "testPeriodKey"),
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now.plusDays(1), "obligationsType", None, "testPeriodKey")
             )
           )
         ))
-        setupMockReportDeadlines(obligationsWithSingleOverdue)
+        setupMockNextUpdates(obligationsWithSingleOverdue)
 
         val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
 
@@ -68,17 +68,17 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
     "return a count of overdue dates" when {
       "the connector returns obligations with more than one overdue date" in new Setup {
         val obligationsWithMultipleOverdue: ObligationsModel = ObligationsModel(Seq(
-          ReportDeadlinesModel(
+          NextUpdatesModel(
             identification = "testId1",
             obligations = List(
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now.minusDays(2), "obligationsType", None, "testPeriodKey"),
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now.minusDays(1), "obligationsType", None, "testPeriodKey"),
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now, "obligationsType", None, "testPeriodKey"),
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now.plusDays(1), "obligationsType", None, "testPeriodKey")
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now.minusDays(2), "obligationsType", None, "testPeriodKey"),
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now.minusDays(1), "obligationsType", None, "testPeriodKey"),
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now, "obligationsType", None, "testPeriodKey"),
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now.plusDays(1), "obligationsType", None, "testPeriodKey")
             )
           )
         ))
-        setupMockReportDeadlines(obligationsWithMultipleOverdue)
+        setupMockNextUpdates(obligationsWithMultipleOverdue)
 
         val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
 
@@ -88,15 +88,15 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
     "return a single non-overdue date" when {
       "the connector returns obligations without any overdue dates" in new Setup {
         val obligationsWithSingleOverdue: ObligationsModel = ObligationsModel(Seq(
-          ReportDeadlinesModel(
+          NextUpdatesModel(
             identification = "testId1",
             obligations = List(
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now, "obligationsType", None, "testPeriodKey"),
-              ReportDeadlineModel(LocalDate.now, LocalDate.now, LocalDate.now.plusDays(1), "obligationsType", None, "testPeriodKey")
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now, "obligationsType", None, "testPeriodKey"),
+              NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now.plusDays(1), "obligationsType", None, "testPeriodKey")
             )
           )
         ))
-        setupMockReportDeadlines(obligationsWithSingleOverdue)
+        setupMockNextUpdates(obligationsWithSingleOverdue)
 
         val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
 
@@ -108,61 +108,61 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
   "getNextDeadlineDueDate" should {
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
-        setupMockReportDeadlines(obligationsAllDeadlinesSuccessModel)
+        setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
         await(getNextDeadlineDueDateAndOverDueObligations(businessAndPropertyAligned))._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just one report deadline from an income source" in new Setup {
-        setupMockReportDeadlines(obligationsPropertyOnlySuccessModel)
+        setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
         await(getNextDeadlineDueDateAndOverDueObligations(propertyIncomeOnly))._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just a crystallisation deadline" in new Setup {
-        setupMockReportDeadlines(obligationsCrystallisedOnlySuccessModel)
+        setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
         await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails))._1 shouldBe LocalDate.of(2017, 10, 31)
       }
 
       "there are no deadlines available" in new Setup {
-        setupMockReportDeadlines(emptyObligationsSuccessModel)
+        setupMockNextUpdates(emptyObligationsSuccessModel)
         the[Exception] thrownBy await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails)) should have message "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
-      "the report deadlines returned back an error model" in new Setup {
-        setupMockReportDeadlines(obligationsDataErrorModel)
+      "the Next Updates returned back an error model" in new Setup {
+        setupMockNextUpdates(obligationsDataErrorModel)
         the[Exception] thrownBy await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails)) should have message "Dummy Error Message"
       }
     }
   }
 
-  "The ReportDeadlinesService.getReportDeadlines method" when {
+  "The NextUpdatesService.getNextUpdates method" when {
 
-    "a valid list of Report Deadlines is returned from the connector" should {
+    "a valid list of Next Updates is returned from the connector" should {
 
-      "return a valid list of Report Deadlines" in {
-        setupMockReportDeadlines(ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel)))
-        await(TestReportDeadlinesService.getReportDeadlines()) shouldBe ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
+      "return a valid list of Next Updates" in {
+        setupMockNextUpdates(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
+        await(TestNextUpdatesService.getNextUpdates()) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
 
-      "return a valid list of previous Report Deadlines" in {
-        setupMockPreviousObligations(ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel)))
-        await(TestReportDeadlinesService.getReportDeadlines(previous = true)) shouldBe ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
+      "return a valid list of previous Next Updates" in {
+        setupMockPreviousObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
+        await(TestNextUpdatesService.getNextUpdates(previous = true)) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
     }
 
     "an error is returned from the connector" should {
 
       "return the error" in {
-        setupMockReportDeadlines(obligationsDataErrorModel)
-        await(TestReportDeadlinesService.getReportDeadlines()) shouldBe obligationsDataErrorModel
+        setupMockNextUpdates(obligationsDataErrorModel)
+        await(TestNextUpdatesService.getNextUpdates()) shouldBe obligationsDataErrorModel
       }
 
       "return the error for previous deadlines" in {
         setupMockPreviousObligations(obligationsDataErrorModel)
-        await(TestReportDeadlinesService.getReportDeadlines(previous = true)) shouldBe obligationsDataErrorModel
+        await(TestNextUpdatesService.getNextUpdates(previous = true)) shouldBe obligationsDataErrorModel
       }
     }
   }
 
 
-  "The ReportDeadlinesService.getReportDeadlines method" when {
+  "The NextUpdatesService.getNextUpdates method" when {
     "it receives a fromDate and toDate" should {
       "valid current and previous obligations are returned" should {
         "return all obligations" in {
@@ -170,20 +170,20 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
             from = LocalDate.now.minusDays(1),
             to = LocalDate.now.plusDays(2)
           )(ObligationsModel(Seq(
-            ReportDeadlinesModel("idOne", List(previousObligation))
+            NextUpdatesModel("idOne", List(previousObligation))
           )))
-          setupMockReportDeadlines(ObligationsModel(Seq(
-            ReportDeadlinesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
+          setupMockNextUpdates(ObligationsModel(Seq(
+            NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestReportDeadlinesService.getReportDeadlines(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
           ))
 
           result shouldBe ObligationsModel(Seq(
-            ReportDeadlinesModel("idOne", List(previousObligation)),
-            ReportDeadlinesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
+            NextUpdatesModel("idOne", List(previousObligation)),
+            NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           ))
         }
       }
@@ -193,18 +193,18 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
           setupMockPreviousObligationsWithDates(
             from = LocalDate.now.minusDays(1),
             to = LocalDate.now.plusDays(2)
-          )(ReportDeadlinesErrorModel(NOT_FOUND, "not found"))
-          setupMockReportDeadlines(ObligationsModel(Seq(
-            ReportDeadlinesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
+          )(NextUpdatesErrorModel(NOT_FOUND, "not found"))
+          setupMockNextUpdates(ObligationsModel(Seq(
+            NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestReportDeadlinesService.getReportDeadlines(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
           ))
 
           result shouldBe ObligationsModel(Seq(
-            ReportDeadlinesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
+            NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           ))
         }
       }
@@ -214,19 +214,19 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
           from = LocalDate.now.minusDays(1),
           to = LocalDate.now.plusDays(1)
         )(ObligationsModel(Seq(
-          ReportDeadlinesModel("idOne", List(previousObligation))
+          NextUpdatesModel("idOne", List(previousObligation))
         )))
-        setupMockReportDeadlines(ObligationsModel(Seq(
-          ReportDeadlinesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(3))))
+        setupMockNextUpdates(ObligationsModel(Seq(
+          NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(3))))
         )))
 
-        val result = await(TestReportDeadlinesService.getReportDeadlines(
+        val result = await(TestNextUpdatesService.getNextUpdates(
           fromDate = LocalDate.now.minusDays(1),
           toDate = LocalDate.now.plusDays(1)
         ))
 
         result shouldBe ObligationsModel(Seq(
-          ReportDeadlinesModel("idOne", List(previousObligation)),
+          NextUpdatesModel("idOne", List(previousObligation)),
         ))
       }
 
@@ -236,33 +236,33 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
             from = LocalDate.now.minusDays(1),
             to = LocalDate.now.plusDays(1)
           )(ObligationsModel(Seq(
-            ReportDeadlinesModel("idOne", List(previousObligation))
+            NextUpdatesModel("idOne", List(previousObligation))
           )))
-          setupMockReportDeadlines(ReportDeadlinesErrorModel(INTERNAL_SERVER_ERROR, "error"))
+          setupMockNextUpdates(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error"))
 
-          val result = await(TestReportDeadlinesService.getReportDeadlines(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(1)
           ))
 
-          result shouldBe ReportDeadlinesErrorModel(INTERNAL_SERVER_ERROR, "error")
+          result shouldBe NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error")
         }
 
         "an error is returned from the previous obligations" in {
           setupMockPreviousObligationsWithDates(
             from = LocalDate.now.minusDays(1),
             to = LocalDate.now.plusDays(2)
-          )(ReportDeadlinesErrorModel(INTERNAL_SERVER_ERROR, "not found"))
-          setupMockReportDeadlines(ObligationsModel(Seq(
-            ReportDeadlinesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
+          )(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "not found"))
+          setupMockNextUpdates(ObligationsModel(Seq(
+            NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestReportDeadlinesService.getReportDeadlines(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
           ))
 
-          result shouldBe ReportDeadlinesErrorModel(INTERNAL_SERVER_ERROR, "not found")
+          result shouldBe NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "not found")
         }
       }
     }

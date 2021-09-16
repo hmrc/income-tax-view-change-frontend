@@ -17,35 +17,35 @@ package assets
 
 import java.time.LocalDate
 
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 
 object PreviousObligationsIntegrationTestConstants {
 
   private val date: LocalDate = LocalDate.of(2017, 1, 1)
 
-  def previousQuarterlyObligation(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(
+  def previousQuarterlyObligation(incomeId: String): NextUpdatesModel = NextUpdatesModel(
     incomeId,
     List(
-      ReportDeadlineModel(
+      NextUpdateModel(
         date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001"
       )
     )
   )
 
-  def previousEOPSObligation(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(
+  def previousEOPSObligation(incomeId: String): NextUpdatesModel = NextUpdatesModel(
     incomeId,
     List(
-      ReportDeadlineModel(
+      NextUpdateModel(
         date.plusMonths(2), date.plusMonths(3), date.plusMonths(4), "EOPS", Some(date.plusMonths(3)), "EOPS"
       )
     )
   )
 
-  val previousCrystallisationObligation: ReportDeadlinesModel = ReportDeadlinesModel(
+  val previousCrystallisationObligation: NextUpdatesModel = NextUpdatesModel(
     testMtditid,
     List(
-      ReportDeadlineModel(
+      NextUpdateModel(
         date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallised", Some(date.plusMonths(5)), "Crystallised"
       )
     )

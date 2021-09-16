@@ -17,10 +17,10 @@
 package assets
 
 import assets.BaseTestConstants.testPropertyIncomeId
-import assets.ReportDeadlinesTestConstants.fakeReportDeadlinesModel
+import assets.NextUpdatesTestConstants.fakeNextUpdatesModel
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
-import models.reportDeadlines.ReportDeadlineModel
+import models.nextUpdates.NextUpdateModel
 
 import java.time.LocalDate
 
@@ -60,7 +60,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None
   )
 
-  val openCrystallised: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val openCrystallised: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2017, 10, 31),

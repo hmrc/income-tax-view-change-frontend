@@ -24,7 +24,7 @@ import controllers.Assets.{NOT_FOUND, OK, SEE_OTHER}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockReportDeadlinesService}
+import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockHome
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
@@ -40,7 +40,7 @@ class HomeControllerSpec extends TestSupport
   with MockIncomeSourceDetailsService
   with MockFrontendAuthorisedFunctions
   with MockItvcErrorHandler
-  with MockReportDeadlinesService
+  with MockNextUpdatesService
   with MockFinancialDetailsService
   with MockAuditingService
   with MockHome
@@ -49,7 +49,7 @@ class HomeControllerSpec extends TestSupport
   trait Setup {
     val controller = new HomeController(
       app.injector.instanceOf[views.html.agent.Home],
-      mockReportDeadlinesService,
+      mockNextUpdatesService,
       mockFinancialDetailsService,
       mockIncomeSourceDetailsService,
       mockAuditingService,
