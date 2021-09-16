@@ -51,7 +51,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         ))
 
         And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, currentObligations)
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
 
         And("I stub a successful financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
@@ -95,7 +95,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         ))
 
         And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, currentObligations)
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
 
         And("I stub a successful financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
@@ -131,7 +131,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubgetNextUpdatesError(testNino)
+        IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome

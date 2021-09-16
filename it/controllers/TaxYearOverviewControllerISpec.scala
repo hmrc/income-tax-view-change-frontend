@@ -209,7 +209,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -301,7 +301,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -396,7 +396,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -502,7 +502,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino,
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
           ObligationsModel(Seq(
             NextUpdatesModel(
               "ABC123456789",
@@ -568,7 +568,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino,
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
           ObligationsModel(Seq(
             NextUpdatesModel(
               "ABC123456789",
@@ -619,7 +619,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino,
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
           ObligationsModel(Nil))
 
         And("previous obligations call failed")
@@ -669,7 +669,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           ObligationsModel(Nil))
 
         And("current obligations call failed")
-        IncomeTaxViewChangeStub.stubgetNextUpdatesError(testNino)
+        IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
         When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
@@ -729,7 +729,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -811,7 +811,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )

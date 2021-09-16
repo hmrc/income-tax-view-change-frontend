@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
 
-  object TestNextUpdatesService$ extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
+  object TestNextUpdatesService extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
 
   class Setup extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
 
@@ -138,12 +138,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
       "return a valid list of Next Updates" in {
         setupMockNextUpdates(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
-        await(TestNextUpdatesService$.getNextUpdates()) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
+        await(TestNextUpdatesService.getNextUpdates()) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
 
       "return a valid list of previous Next Updates" in {
         setupMockPreviousObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
-        await(TestNextUpdatesService$.getNextUpdates(previous = true)) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
+        await(TestNextUpdatesService.getNextUpdates(previous = true)) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
     }
 
@@ -151,12 +151,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
       "return the error" in {
         setupMockNextUpdates(obligationsDataErrorModel)
-        await(TestNextUpdatesService$.getNextUpdates()) shouldBe obligationsDataErrorModel
+        await(TestNextUpdatesService.getNextUpdates()) shouldBe obligationsDataErrorModel
       }
 
       "return the error for previous deadlines" in {
         setupMockPreviousObligations(obligationsDataErrorModel)
-        await(TestNextUpdatesService$.getNextUpdates(previous = true)) shouldBe obligationsDataErrorModel
+        await(TestNextUpdatesService.getNextUpdates(previous = true)) shouldBe obligationsDataErrorModel
       }
     }
   }
@@ -176,7 +176,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestNextUpdatesService$.getNextUpdates(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
           ))
@@ -198,7 +198,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestNextUpdatesService$.getNextUpdates(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
           ))
@@ -220,7 +220,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(3))))
         )))
 
-        val result = await(TestNextUpdatesService$.getNextUpdates(
+        val result = await(TestNextUpdatesService.getNextUpdates(
           fromDate = LocalDate.now.minusDays(1),
           toDate = LocalDate.now.plusDays(1)
         ))
@@ -240,7 +240,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           )))
           setupMockNextUpdates(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error"))
 
-          val result = await(TestNextUpdatesService$.getNextUpdates(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(1)
           ))
@@ -257,7 +257,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestNextUpdatesService$.getNextUpdates(
+          val result = await(TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
           ))

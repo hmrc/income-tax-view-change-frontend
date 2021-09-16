@@ -160,7 +160,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   ))
               ))
 
-							IncomeTaxViewChangeStub.stubgetNextUpdates(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines =currentObligations
 							)
@@ -224,7 +224,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									))
 							))
 
-							IncomeTaxViewChangeStub.stubgetNextUpdates(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines =currentObligations
 							)
@@ -291,7 +291,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									))
 							))
 
-							IncomeTaxViewChangeStub.stubgetNextUpdates(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines = currentObligations
 							)
@@ -356,7 +356,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										))
 								))
 
-								IncomeTaxViewChangeStub.stubgetNextUpdates(
+								IncomeTaxViewChangeStub.stubGetNextUpdates(
 									nino = testNino,
 									deadlines = currentObligations
 								)
@@ -422,7 +422,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										))
 								))
 
-								IncomeTaxViewChangeStub.stubgetNextUpdates(
+								IncomeTaxViewChangeStub.stubGetNextUpdates(
 									nino = testNino,
 									deadlines = currentObligations
 								)
@@ -488,7 +488,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										))
 								))
 
-								IncomeTaxViewChangeStub.stubgetNextUpdates(
+								IncomeTaxViewChangeStub.stubGetNextUpdates(
 									nino = testNino,
 									deadlines = currentObligations
 								)
@@ -556,7 +556,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   ))
               ))
 
-							IncomeTaxViewChangeStub.stubgetNextUpdates(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines = currentObligations
 							)
@@ -636,7 +636,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									))
 							))
 
-							IncomeTaxViewChangeStub.stubgetNextUpdates(
+							IncomeTaxViewChangeStub.stubGetNextUpdates(
 								nino = testNino,
 								deadlines = currentObligations
 							)
@@ -715,7 +715,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               ))
           ))
 
-          IncomeTaxViewChangeStub.stubgetNextUpdates(
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
 						nino = testNino,
 						deadlines = currentObligations
 					)
@@ -749,7 +749,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					response = incomeSourceDetailsModel
 				)
 
-				IncomeTaxViewChangeStub.stubgetNextUpdatesError(testNino)
+				IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
 				val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 

@@ -301,7 +301,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -389,7 +389,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsDunningLockSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -466,7 +466,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -522,7 +522,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -582,7 +582,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.obj()
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -660,7 +660,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -741,7 +741,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -827,7 +827,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -1022,7 +1022,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdatesError(
+        IncomeTaxViewChangeStub.stubGetNextUpdatesError(
           nino = testNino
         )
 
@@ -1067,7 +1067,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )

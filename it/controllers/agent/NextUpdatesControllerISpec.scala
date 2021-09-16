@@ -125,7 +125,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 				response = incomeSourceDetails
 			)
 
-			IncomeTaxViewChangeStub.stubgetNextUpdates(
+			IncomeTaxViewChangeStub.stubGetNextUpdates(
 				nino = testNino,
 				deadlines = currentObligations
 			)
@@ -153,7 +153,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 				response = incomeSourceDetails
 			)
 
-			IncomeTaxViewChangeStub.stubgetNextUpdates(
+			IncomeTaxViewChangeStub.stubGetNextUpdates(
 				nino = testNino,
 				deadlines = ObligationsModel(Seq())
 			)
@@ -162,7 +162,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
 			verifyIncomeSourceDetailsCall(testMtditid)
 
-			IncomeTaxViewChangeStub.verifygetNextUpdates(testNino)
+			IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
 			Then("then Internal server error is returned")
 			res should have(

@@ -60,6 +60,6 @@ trait GenericStubMethods extends CustomMatchers {
   }
 
   def verifyNextUpdatesCall(nino: String): Unit = {
-    IncomeTaxViewChangeStub.verifygetNextUpdates(nino)
+    IncomeTaxViewChangeStub.verifyGetNextUpdates(nino)
   }
 }

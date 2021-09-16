@@ -37,7 +37,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationEOPSPropertyModel)))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationEOPSPropertyModel)))
 
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
@@ -72,7 +72,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationEOPSPropertyModel)))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationEOPSPropertyModel)))
 
         IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, previousObligationsModel)
 
@@ -131,7 +131,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a quarterly property income obligation only and no previous obligations" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
@@ -164,7 +164,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
@@ -203,7 +203,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a quarterly business income obligation only and no previous obligations" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
 
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
@@ -237,7 +237,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a quarterly business income obligation and previous obligations" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
 
         IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, previousObligationsModel)
 
@@ -276,7 +276,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has multiple quarterly business income obligations only and no previous obligations" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
           singleObligationQuarterlyModel(otherTestSelfEmploymentId))))
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
@@ -311,7 +311,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has multiple quarterly business income obligations and previous obligations" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
           singleObligationQuarterlyModel(otherTestSelfEmploymentId))))
         IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, previousObligationsModel)
 
@@ -349,7 +349,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
       "the user has a eops SE income obligation only and no previous obligations" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
@@ -383,7 +383,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
       "the user has a eops SE income obligation and previous obligations" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
         IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, previousObligationsModel)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
@@ -423,7 +423,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a Crystallised obligation only and no previous obligations" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
@@ -461,7 +461,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a Crystallised obligation and previous obligations" in {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubgetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
         IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, previousObligationsModel)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates

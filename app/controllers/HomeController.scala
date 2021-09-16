@@ -42,7 +42,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val authenticate: AuthenticationPredicate,
                                val retrieveNino: NinoPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                               val NextUpdatesService: NextUpdatesService,
+                               val nextUpdatesService: NextUpdatesService,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialDetailsService: FinancialDetailsService,
                                override val appConfig: FrontendAppConfig,
@@ -67,7 +67,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
 
-      NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
+      nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
         val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYears.map { taxYear =>
             financialDetailsService.getFinancialDetails(taxYear, user.nino)
         }) map {

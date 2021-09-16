@@ -99,16 +99,16 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   //=====================
   def nextUpdatesUrl(nino: String): String = s"/income-tax-view-change/$nino/report-deadlines"
 
-  def stubgetNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
+  def stubGetNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
-  def stubgetNextUpdatesError(nino: String): Unit =
+  def stubGetNextUpdatesError(nino: String): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
 
-  def stubgetNextUpdatesNotFound(nino: String): Unit =
+  def stubGetNextUpdatesNotFound(nino: String): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.NO_CONTENT, "")
 
-  def verifygetNextUpdates(nino: String): Unit =
+  def verifyGetNextUpdates(nino: String): Unit =
     WiremockHelper.verifyGet(nextUpdatesUrl(nino))
 
   //PayApi Stubs
