@@ -97,11 +97,7 @@
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">@messages("whatYouOwe.tableHead.due-date")</th>
             <th scope="col" class="govuk-table__header">@messages("whatYouOwe.tableHead.payment-type")</th>
-            @*
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Amount due</th>
-            *@
             <th scope="col" class="govuk-table__header">@messages("whatYouOwe.tableHead.amount-due")</th>
-
         </tr>
     </thead>
 }
@@ -249,7 +245,6 @@
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
-
                     @p{
                         @messages("whatYouOwe.over-due.interest-rate-1", "")
                         @link(link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
