@@ -1665,3 +1665,23 @@ margin-bottom: 0 !important;
     margin-top: 30px;
 }
 
+.what-you-owe-total {
+    width: 990px;
+    height: 110px
+}
+.what-you-owe-total-heading {
+    font-size: 24px !important;
+    line-height: 1.25 !important;
+    margin-bottom: 20px;
+    margin-top: 0px;
+}
+
+.what-you-owe-total-values {
+    font-size: 36px !important;
+    line-height: 1.11 !important;
+    font-weight: bold;
+}
+
+.what-you-owe-total-values-bold {
+    font-weight: 700 !important;
+}

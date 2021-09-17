@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -45,11 +45,15 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
       case financialDetails: List[FinancialDetailsModel] =>
+        val balanceDetails = financialDetails.headOption.map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00))
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {
-          case Some(outstandingChargesModel) => WhatYouOweChargesList(overduePaymentList = getOverduePaymentsList(financialDetails),
+          case Some(outstandingChargesModel) => WhatYouOweChargesList(
+            balanceDetails = balanceDetails,
+            overduePaymentList = getOverduePaymentsList(financialDetails),
             dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetails), futurePayments = getFuturePaymentsList(financialDetails),
             outstandingChargesModel = Some(outstandingChargesModel))
-          case _ => WhatYouOweChargesList(overduePaymentList = getOverduePaymentsList(financialDetails),
+          case _ => WhatYouOweChargesList(balanceDetails = balanceDetails,
+            overduePaymentList = getOverduePaymentsList(financialDetails),
             dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetails), futurePayments = getFuturePaymentsList(financialDetails))
         }
     }

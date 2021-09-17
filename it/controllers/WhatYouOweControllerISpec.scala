@@ -90,7 +90,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("credit-on-account")(expectedValue = true),
               isElementVisibleById("payment-button")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
-              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true)
             )
 
           }
@@ -144,7 +147,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true)
             )
 
           }
@@ -158,6 +164,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a single financial details response")
             val mixedJson = Json.obj(
+              "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
                 documentDetailJson(3400.00, 1000.00, testTaxYear.toString),
                 documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1"),
@@ -205,7 +212,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("future-payments-heading")(expectedValue = false),
               isElementVisibleById(s"payment-days-note")(expectedValue = true),
               isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true)
             )
           }
 
@@ -449,7 +459,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("credit-on-account")(expectedValue = true),
                 isElementVisibleById("payment-button")(expectedValue = true),
                 isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                isElementVisibleById("overdueAmount")(expectedValue = true),
+                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+                isElementVisibleById("totalBalance")(expectedValue = true)
               )
 
             }
@@ -501,7 +514,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById(s"credit-on-account")(expectedValue = true),
                 isElementVisibleById(s"payment-button")(expectedValue = true),
                 isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                isElementVisibleById("overdueAmount")(expectedValue = true),
+                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+                isElementVisibleById("totalBalance")(expectedValue = true)
               )
 
             }
@@ -553,7 +569,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById(s"credit-on-account")(expectedValue = true),
                 isElementVisibleById(s"payment-button")(expectedValue = true),
                 isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                isElementVisibleById("overdueAmount")(expectedValue = true),
+                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+                isElementVisibleById("totalBalance")(expectedValue = true)
               )
             }
 
@@ -604,7 +623,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById(s"credit-on-account")(expectedValue = true),
                 isElementVisibleById(s"payment-button")(expectedValue = true),
                 isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                isElementVisibleById("overdueAmount")(expectedValue = true),
+                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+                isElementVisibleById("totalBalance")(expectedValue = true)
               )
             }
 
@@ -618,6 +640,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
               And("I wiremock stub a single financial details response")
               val mixedJson = Json.obj(
+                "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
                 "documentDetails" -> Json.arr(
                   documentDetailJson(3400.00, 1000.00, testTaxYear.toString),
                   documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1"),
@@ -663,7 +686,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("future-payments-heading")(expectedValue = false),
                 isElementVisibleById(s"payment-days-note")(expectedValue = true),
                 isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                isElementVisibleById("overdueAmount")(expectedValue = true),
+                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+                isElementVisibleById("totalBalance")(expectedValue = true)
               )
             }
           }
@@ -710,7 +736,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
-              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = false),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+              isElementVisibleById("totalBalance")(expectedValue = false)
             )
           }
         }
@@ -761,7 +790,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
-              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = false),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+              isElementVisibleById("totalBalance")(expectedValue = false)
             )
 
           }
@@ -780,6 +812,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a mixed financial details response")
             val mixedJson = Json.obj(
+              "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
                 documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
                 documentDetailJson(1000.00, 0, testTaxYear.toString, "4444"),
@@ -827,7 +860,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
-              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = false),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+              isElementVisibleById("totalBalance")(expectedValue = false)
             )
 
           }
@@ -846,6 +882,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a mixed financial details response")
             val mixedJson = Json.obj(
+              "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
                 documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
                 documentDetailJson(1000.00, 0, testTaxYear.toString, "4444"),
@@ -893,7 +930,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
-              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = false),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
+              isElementVisibleById("totalBalance")(expectedValue = false)
             )
 
           }
@@ -912,6 +952,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a mixed financial details response")
             val mixedJson = Json.obj(
+              "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
                 documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
                 documentDetailJson(1000.00, 0, testTaxYear.toString, "3333"),
@@ -959,7 +1000,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
               isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true)
             )
 
           }
@@ -977,6 +1021,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a mixed financial details response")
             val mixedJson = Json.obj(
+              "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
                 documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
                 documentDetailJson(1000.00, 0, testTaxYear.toString, "3333"),
@@ -1022,7 +1067,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
               isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true)
             )
 
           }
@@ -1078,7 +1126,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
               isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true)
             )
 
           }
@@ -1134,7 +1185,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
               isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true)
             )
           }
         }

@@ -27,7 +27,7 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoe
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -172,6 +172,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -236,6 +237,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -303,6 +305,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -368,6 +371,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)(
 									status = OK,
 									response = Json.toJson(FinancialDetailsModel(
+										balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 										documentDetails = List(
 											DocumentDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -434,6 +438,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)(
 									status = OK,
 									response = Json.toJson(FinancialDetailsModel(
+										balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 										documentDetails = List(
 											DocumentDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -500,6 +505,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)(
 									status = OK,
 									response = Json.toJson(FinancialDetailsModel(
+										balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 										documentDetails = List(
 											DocumentDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -568,6 +574,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -648,6 +655,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)(
 								status = OK,
 								response = Json.toJson(FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,

@@ -23,7 +23,8 @@ import java.time.LocalDate
 
 sealed trait FinancialDetailsResponseModel
 
-case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
+case class FinancialDetailsModel(balanceDetails: BalanceDetails,
+                                 documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def getDueDateFor(documentDetail: DocumentDetail): Option[LocalDate] = {
@@ -67,6 +68,7 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
   def filterPayments(): FinancialDetailsModel = {
     val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
     FinancialDetailsModel(
+      balanceDetails,
       filteredDocuments,
       financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
     )
@@ -76,8 +78,8 @@ case class FinancialDetailsModel(documentDetails: List[DocumentDetail],
     documentDetails.find(document => document.paymentLot.contains(paymentLot) && document.paymentLotItem.contains(paymentLotItem))
   }
 
-  def merge(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
-    FinancialDetailsModel(documentDetails ++ financialDetailsModel.documentDetails,
+  def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
+    FinancialDetailsModel(balanceDetails, documentDetails ++ financialDetailsModel.documentDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
 }
