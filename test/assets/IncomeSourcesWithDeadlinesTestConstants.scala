@@ -17,14 +17,14 @@
 package assets
 
 import assets.BusinessDetailsTestConstants.{business2, obligationsDataSuccessModel}
-import assets.ReportDeadlinesTestConstants.reportDeadlinesDataPropertySuccessModel
-import models.reportDeadlines.ObligationsModel
+import assets.NextUpdatesTestConstants.nextUpdatesDataPropertySuccessModel
+import models.nextUpdates.ObligationsModel
 
 object IncomeSourcesWithDeadlinesTestConstants {
   val businessAndPropertyIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel,
-    obligationsDataSuccessModel.copy(identification = business2.incomeSourceId), reportDeadlinesDataPropertySuccessModel))
+    obligationsDataSuccessModel.copy(identification = business2.incomeSourceId), nextUpdatesDataPropertySuccessModel))
   val singleBusinessIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel))
-  val propertyIncomeOnlyWithDeadlines = ObligationsModel(Seq(reportDeadlinesDataPropertySuccessModel))
-  val businessAndPropertyAlignedWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel, reportDeadlinesDataPropertySuccessModel))
+  val propertyIncomeOnlyWithDeadlines = ObligationsModel(Seq(nextUpdatesDataPropertySuccessModel))
+  val businessAndPropertyAlignedWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel, nextUpdatesDataPropertySuccessModel))
   val noIncomeDetailsWithNoDeadlines = ObligationsModel(Seq.empty)
 }

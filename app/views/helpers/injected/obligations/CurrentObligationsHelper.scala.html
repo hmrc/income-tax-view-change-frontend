@@ -17,7 +17,7 @@
 @import implicits.ImplicitDateFormatterImpl
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
-@(obligations: models.reportDeadlines.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(obligations: models.nextUpdates.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 <div id="submit-using-record-keeping-software">@Html(messages(

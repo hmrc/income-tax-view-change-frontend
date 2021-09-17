@@ -20,8 +20,8 @@ import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.{business1, testTradeName}
 import assets.MessagesLookUp.{CurrentObligationsHelper => currentObligations}
 import assets.PropertyDetailsTestConstants.propertyDetails
-import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import assets.NextUpdatesTestConstants.{twoObligationsSuccessModel, _}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -39,55 +39,55 @@ class CurrentObligationsHelperSpec extends TestSupport {
 
   "The Current Obligations Helper" should {
 
-    lazy val businessIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
+    lazy val businessIncomeSource = ObligationsModel(Seq(NextUpdatesModel(
       business1.incomeSourceId,
       twoObligationsSuccessModel.obligations
     )))
 
-    lazy val piQuarterlyReturnSource = ObligationsModel(Seq(ReportDeadlinesModel(
+    lazy val piQuarterlyReturnSource = ObligationsModel(Seq(NextUpdatesModel(
       propertyDetails.incomeSourceId,
-      reportDeadlinesDataSelfEmploymentSuccessModel.obligations
+      nextUpdatesDataSelfEmploymentSuccessModel.obligations
     )))
 
-    lazy val twoPiQuarterlyReturnSource = ObligationsModel(Seq(ReportDeadlinesModel(
+    lazy val twoPiQuarterlyReturnSource = ObligationsModel(Seq(NextUpdatesModel(
       propertyDetails.incomeSourceId,
       quarterlyObligationsDataSuccessModel.obligations
     )))
 
 
-    lazy val quarterlyBusinessIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
+    lazy val quarterlyBusinessIncomeSource = ObligationsModel(Seq(NextUpdatesModel(
       business1.incomeSourceId,
       List(quarterlyBusinessObligation)
     )))
 
-    lazy val eopsPropertyIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
+    lazy val eopsPropertyIncomeSource = ObligationsModel(Seq(NextUpdatesModel(
       propertyDetails.incomeSourceId,
       List(
-        ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", None, "EOPS")
+        NextUpdateModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", None, "EOPS")
       )
     )))
 
     lazy val crystallisedIncomeSource = ObligationsModel(Seq(
-      ReportDeadlinesModel(
+      NextUpdatesModel(
         business1.incomeSourceId,
         List(crystallisedObligation)),
-      ReportDeadlinesModel(
+      NextUpdatesModel(
         testMtdItUser.mtditid,
         List(crystallisedObligation))
     ))
 
 
     lazy val multiCrystallisedIncomeSource = ObligationsModel(Seq(
-      ReportDeadlinesModel(
+      NextUpdatesModel(
         business1.incomeSourceId,
         List(crystallisedObligation)),
-      ReportDeadlinesModel(
+      NextUpdatesModel(
         testMtdItUser.mtditid,
         List(crystallisedObligationTwo, crystallisedObligation))
     ))
 
 
-    lazy val eopsSEIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
+    lazy val eopsSEIncomeSource = ObligationsModel(Seq(NextUpdatesModel(
       business1.incomeSourceId,
       List(openEOPSObligation)
     )))

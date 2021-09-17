@@ -55,8 +55,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Business Tax account - GOV.UK"),
         elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
-        elementTextBySelector("article dl:nth-of-type(2) dd span")("Under review"),
-        elementTextBySelector("article dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
+        elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
+        elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
       )
     }
 
@@ -205,6 +205,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
+        "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
           Json.obj("taxYear" -> "2018",
             "transactionId" -> "1040001234",

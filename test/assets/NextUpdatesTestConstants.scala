@@ -17,20 +17,20 @@
 package assets
 
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentId2}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
-object ReportDeadlinesTestConstants {
+object NextUpdatesTestConstants {
 
-  def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey) {
+  def fakeNextUpdatesModel(m: NextUpdateModel): NextUpdateModel = new NextUpdateModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey) {
     override def currentTime() = LocalDate.of(2017, 10, 31)
   }
 
   val testStartDate = LocalDate.of(2017, 7, 1)
 
-  val quarterlyBusinessObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val quarterlyBusinessObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
     due = LocalDate.of(2019, 10, 30),
@@ -39,7 +39,7 @@ object ReportDeadlinesTestConstants {
     periodKey = "#002"
   ))
 
-  val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val overdueObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
     due = LocalDate.of(2017, 10, 30),
@@ -48,7 +48,7 @@ object ReportDeadlinesTestConstants {
     periodKey = "#002"
   ))
 
-  val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val openObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
     due = LocalDate.of(2017, 10, 31),
@@ -58,7 +58,7 @@ object ReportDeadlinesTestConstants {
   ))
 
 
-  val secondQuarterlyObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val secondQuarterlyObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 10, 1),
     end = LocalDate.of(2017, 10, 31),
     due = LocalDate.of(2017, 10, 31),
@@ -67,7 +67,7 @@ object ReportDeadlinesTestConstants {
     periodKey = "#002"
   ))
 
-  val crystallisedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val crystallisedObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 10, 1),
     end = LocalDate.of(2018, 10, 30),
     due = LocalDate.of(2017, 10, 31),
@@ -76,7 +76,7 @@ object ReportDeadlinesTestConstants {
     periodKey = ""
   ))
 
-  val crystallisedObligationTwo = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val crystallisedObligationTwo = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2018, 10, 1),
     end = LocalDate.of(2019, 10, 30),
     due = LocalDate.of(2020, 10, 31),
@@ -86,17 +86,17 @@ object ReportDeadlinesTestConstants {
   ))
 
 
-  val quarterlyObligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(secondQuarterlyObligation, openObligation))
+  val quarterlyObligationsDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(secondQuarterlyObligation, openObligation))
 
-  val reportDeadlinesDataSelfEmploymentSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
+  val nextUpdatesDataSelfEmploymentSuccessModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
 
-  val reportDeadlinesDataPropertySuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(overdueObligation, openObligation))
+  val nextUpdatesDataPropertySuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueObligation, openObligation))
 
-  val obligationsDataSelfEmploymentOnlySuccessModel: ObligationsModel = ObligationsModel(List(reportDeadlinesDataSelfEmploymentSuccessModel))
+  val obligationsDataSelfEmploymentOnlySuccessModel: ObligationsModel = ObligationsModel(List(nextUpdatesDataSelfEmploymentSuccessModel))
 
-  val obligationsDataPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(List(reportDeadlinesDataPropertySuccessModel))
+  val obligationsDataPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(List(nextUpdatesDataPropertySuccessModel))
 
-  val previousObligationOne: ReportDeadlineModel = ReportDeadlineModel(
+  val previousObligationOne: NextUpdateModel = NextUpdateModel(
     LocalDate.of(2017, 1, 1),
     LocalDate.of(2017, 4, 1),
     LocalDate.of(2017, 5, 1),
@@ -105,7 +105,7 @@ object ReportDeadlinesTestConstants {
     "#001"
   )
 
-  val previousObligationTwo: ReportDeadlineModel = ReportDeadlineModel(
+  val previousObligationTwo: NextUpdateModel = NextUpdateModel(
     LocalDate.of(2017, 4, 1),
     LocalDate.of(2017, 7, 1),
     LocalDate.of(2017, 8, 1),
@@ -114,7 +114,7 @@ object ReportDeadlinesTestConstants {
     "#002"
   )
 
-  val previousObligationThree: ReportDeadlineModel = ReportDeadlineModel(
+  val previousObligationThree: NextUpdateModel = NextUpdateModel(
     LocalDate.of(2017, 1, 1),
     LocalDate.of(2018, 1, 1),
     LocalDate.of(2018, 1, 1),
@@ -123,7 +123,7 @@ object ReportDeadlinesTestConstants {
     "EOPS"
   )
 
-  val previousObligationFour: ReportDeadlineModel = ReportDeadlineModel(
+  val previousObligationFour: NextUpdateModel = NextUpdateModel(
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 30),
@@ -133,7 +133,7 @@ object ReportDeadlinesTestConstants {
   )
 
 
-  val previousObligationFive: ReportDeadlineModel = ReportDeadlineModel(
+  val previousObligationFive: NextUpdateModel = NextUpdateModel(
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 31),
@@ -143,18 +143,18 @@ object ReportDeadlinesTestConstants {
   )
 
 
-  val previousObligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(previousObligationTwo, previousObligationOne))
-  val previousObligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(previousObligationThree, previousObligationFour))
-  val previousObligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(previousObligationFive))
+  val previousObligationsDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(previousObligationTwo, previousObligationOne))
+  val previousObligationsEOPSDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(previousObligationThree, previousObligationFour))
+  val previousObligationsCrystallisedSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(previousObligationFive))
 
-  val reportDeadlineOverdueJson = Json.obj(
+  val nextUpdateOverdueJson = Json.obj(
     "start" -> "2017-07-01",
     "end" -> "2017-09-30",
     "due" -> "2017-10-30",
     "obligationType" -> "Quarterly",
     "periodKey" -> "#002"
   )
-  val reportDeadlineOpenJson = Json.obj(
+  val nextUpdateOpenJson = Json.obj(
     "start" -> "2017-07-01",
     "end" -> "2017-09-30",
     "due" -> "2017-10-31",
@@ -164,26 +164,26 @@ object ReportDeadlinesTestConstants {
   val obligationsDataSuccessJson = Json.obj(
     "identification" -> testSelfEmploymentId,
     "obligations" -> Json.arr(
-      reportDeadlineOverdueJson,
-      reportDeadlineOpenJson
+      nextUpdateOverdueJson,
+      nextUpdateOpenJson
     )
   )
 
-  val reportDeadlinesDataFromJson: JsValue = Json.obj(
+  val nextUpdatesDataFromJson: JsValue = Json.obj(
     "identification" -> testSelfEmploymentId,
     "obligations" -> Json.arr(
-      reportDeadlineOverdueJson,
-      reportDeadlineOpenJson
+      nextUpdateOverdueJson,
+      nextUpdateOpenJson
     )
   )
 
   val obligationsDataFromJson: JsValue = Json.obj(
     "obligations" -> Json.arr(
-      reportDeadlinesDataFromJson
+      nextUpdatesDataFromJson
     )
   )
 
-  val overdueEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val overdueEOPSObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2017, 10, 1),
@@ -191,7 +191,7 @@ object ReportDeadlinesTestConstants {
     dateReceived = None,
     periodKey = "#002"
   ))
-  val openEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val openEOPSObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2017, 10, 31),
@@ -200,7 +200,7 @@ object ReportDeadlinesTestConstants {
     periodKey = "#003"
   ))
 
-  val openCrystObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+  val openCrystObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2019, 10, 31),
@@ -210,14 +210,14 @@ object ReportDeadlinesTestConstants {
   ))
 
 
-  val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(overdueEOPSObligation, openEOPSObligation))
+  val obligationsEOPSDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueEOPSObligation, openEOPSObligation))
 
-  val obligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testMtditid, List(crystallisedObligation))
+  val obligationsCrystallisedSuccessModel: NextUpdatesModel = NextUpdatesModel(testMtditid, List(crystallisedObligation))
 
-  val obligationsAllDeadlinesSuccessModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel,
+  val obligationsAllDeadlinesSuccessModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel,
     obligationsEOPSDataSuccessModel, obligationsCrystallisedSuccessModel))
 
-  val obligationsCrystallisedEmptySuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testNino, List())
+  val obligationsCrystallisedEmptySuccessModel: NextUpdatesModel = NextUpdatesModel(testNino, List())
 
   val obligationsPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsEOPSDataSuccessModel, obligationsCrystallisedEmptySuccessModel))
 
@@ -225,13 +225,13 @@ object ReportDeadlinesTestConstants {
 
   val emptyObligationsSuccessModel: ObligationsModel = ObligationsModel(Seq())
 
-  val reportDeadlineEOPSOverdueJson: JsValue = Json.obj(
+  val nextUpdateEOPSOverdueJson: JsValue = Json.obj(
     "start" -> "2017-04-06",
     "end" -> "2018-04-05",
     "due" -> "2017-07-31",
     "periodKey" -> "#002"
   )
-  val reportDeadlineEOPSOpenJson: JsValue = Json.obj(
+  val nextUpdateEOPSOpenJson: JsValue = Json.obj(
     "start" -> "2017-04-06",
     "end" -> "2018-04-05",
     "due" -> "2018-05-01",
@@ -239,18 +239,18 @@ object ReportDeadlinesTestConstants {
   )
   val obligationsEOPSDataSuccessJson: JsValue = Json.obj(
     "obligations" -> Json.arr(
-      reportDeadlineEOPSOverdueJson,
-      reportDeadlineEOPSOpenJson
+      nextUpdateEOPSOverdueJson,
+      nextUpdateEOPSOpenJson
     )
   )
 
 
-  val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(overdueObligation, openEOPSObligation))
+  val twoObligationsSuccessModel: NextUpdatesModel = NextUpdatesModel(testPropertyIncomeId, List(overdueObligation, openEOPSObligation))
 
-  val crystallisedDeadlineSuccess: ReportDeadlinesModel = ReportDeadlinesModel(testMtditid, List(openCrystObligation))
+  val crystallisedDeadlineSuccess: NextUpdatesModel = NextUpdatesModel(testMtditid, List(openCrystObligation))
 
-  val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
-  val obligations4xxDataErrorModel = ReportDeadlinesErrorModel(404, testErrorMessage)
+  val obligationsDataErrorModel = NextUpdatesErrorModel(testErrorStatus, testErrorMessage)
+  val obligations4xxDataErrorModel = NextUpdatesErrorModel(404, testErrorMessage)
 
   val obligationsDataErrorJson = Json.obj(
     "code" -> testErrorStatus,
@@ -258,15 +258,15 @@ object ReportDeadlinesTestConstants {
   )
 
   val obligationsDataAllMinusCrystallisedSuccessModel: ObligationsModel = ObligationsModel(List(
-    reportDeadlinesDataPropertySuccessModel,
-    reportDeadlinesDataSelfEmploymentSuccessModel,
-    ReportDeadlinesModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
+    nextUpdatesDataPropertySuccessModel,
+    nextUpdatesDataSelfEmploymentSuccessModel,
+    NextUpdatesModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
   ))
 
   val obligationsDataAllDataSuccessModel: ObligationsModel = ObligationsModel(List(
-    reportDeadlinesDataPropertySuccessModel,
-    reportDeadlinesDataSelfEmploymentSuccessModel,
+    nextUpdatesDataPropertySuccessModel,
+    nextUpdatesDataSelfEmploymentSuccessModel,
     crystallisedDeadlineSuccess,
-    ReportDeadlinesModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
+    NextUpdatesModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
   ))
 }
