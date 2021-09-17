@@ -112,7 +112,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                 if (isEnabled(TxmEventsApproved)) {
                   auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel))
                 }
-                Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation, None)),
+                Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation)),
                 charge = charges, obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }

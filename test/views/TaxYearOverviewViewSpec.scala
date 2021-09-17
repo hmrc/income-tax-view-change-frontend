@@ -22,8 +22,7 @@ import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatterImpl
 import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
-import models.financialTransactions.TransactionModel
-import models.nextUpdates.{ObligationsModel, NextUpdateModelWithIncomeType}
+import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -49,11 +48,6 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     payment = 5.05,
     totalRemainingDue = 6.06,
     crystallised = crystallised
-  )
-
-  val transactionModel: TransactionModel = TransactionModel(
-    clearedAmount = Some(7.07),
-    outstandingAmount = Some(8.08)
   )
 
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(

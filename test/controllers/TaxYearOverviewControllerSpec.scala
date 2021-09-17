@@ -19,7 +19,6 @@ package controllers
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
 import assets.FinancialDetailsTestConstants.fullDocumentDetailWithDueDateModel
-import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.MessagesLookUp
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
@@ -85,7 +84,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           response = testObligtionsModel
         )
 
-        val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
+        val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel)
         val expectedContent: String = taxYearOverviewView(
           testYear,
           Some(calcOverview),
@@ -113,7 +112,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           )
 
 
-          val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
+          val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel)
           val expectedContent: String = taxYearOverviewView(
             testYear,
             Some(calcOverview),

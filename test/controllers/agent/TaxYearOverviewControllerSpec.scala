@@ -193,7 +193,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				)
 				mockTaxYearOverview(
 					taxYear = testYear,
-					calcOverview = Some(CalcOverview(calculationDataSuccessModel, None)),
+					calcOverview = Some(CalcOverview(calculationDataSuccessModel)),
 					documentDetailsWithDueDates = financialDetailsModel(testYear)
 						.getAllDocumentDetailsWithDueDates ++ List(DocumentDetailWithDueDate(financialDetailsModel(testYear).documentDetails.head,
 						financialDetailsModel(testYear).documentDetails.head.interestEndDate, true)),
