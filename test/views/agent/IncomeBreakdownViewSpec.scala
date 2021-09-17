@@ -20,7 +20,6 @@ import assets.CalcBreakdownTestConstants
 import assets.MessagesLookUp.IncomeBreakdown
 import enums.Estimate
 import models.calculation.{AllowancesAndDeductions, CalcDisplayModel, CalcOverview, Calculation}
-import models.financialTransactions.TransactionModel
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
 import views.html.agent.IncomeBreakdown
@@ -39,8 +38,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       totalIncomeReceived = Some(150.00),
       allowancesAndDeductions = AllowancesAndDeductions(totalAllowancesAndDeductions = Some(25.00), totalReliefs = Some(25.00)),
       totalTaxableIncome = Some(30.00)
-    ),
-    transaction = Some(TransactionModel())
+    )
   )
   val income = "Income"
 

@@ -16,20 +16,17 @@
 
 package controllers.agent
 
-import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import controllers.predicates.agent.AgentAuthenticationPredicate
 import controllers.agent.utils.SessionKeys
-import forms.utils.SessionKeys.{calculationId, summaryData}
+import controllers.predicates.{IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys.summaryData
 import models.calculation.{CalcDisplayModel, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.FinalTaxCalculationView
 
 import javax.inject.Inject
@@ -54,7 +51,7 @@ class FinalTaxCalculationController @Inject()(
     getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
       calcService.getCalculationDetail(user.nino, taxYear).map {
         case CalcDisplayModel(_, _, calcDataModel, _) =>
-          val calcOverview = CalcOverview(calcDataModel, None)
+          val calcOverview = CalcOverview(calcDataModel)
           Ok(view(calcOverview, taxYear, isAgent = true))
         case _ => itvcErrorHandler.showInternalServerError()
       }
@@ -68,7 +65,7 @@ class FinalTaxCalculationController @Inject()(
 
         calcService.getCalculationDetail(user.nino, taxYear).map {
           case CalcDisplayModel(_, _, calcDataModel, _) =>
-            val calcOverview = CalcOverview(calcDataModel, None)
+            val calcOverview = CalcOverview(calcDataModel)
             
             user.saUtr match {
               case Some(saUtr) =>

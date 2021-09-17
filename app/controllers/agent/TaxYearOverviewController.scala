@@ -73,7 +73,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
               Future.successful(Ok(view(
                 taxYear,
-                calculationOpt.map(calc => CalcOverview(calc, None)),
+                calculationOpt.map(calc => CalcOverview(calc)),
                 documentDetailsWithDueDates = documentDetailsWithDueDates,
                 obligations = obligations
               )(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))

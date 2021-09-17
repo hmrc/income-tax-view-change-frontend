@@ -35,9 +35,8 @@ package views.agent
 import assets.BaseTestConstants.{testMtdItUser, testMtditid}
 import config.featureswitch._
 import models.calculation.{AllowancesAndDeductions, CalcOverview, Calculation}
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, SubItem}
-import models.financialTransactions.TransactionModel
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdateModelWithIncomeType, NextUpdatesModel}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import models.nextUpdates.{NextUpdateModel, NextUpdateModelWithIncomeType, NextUpdatesModel, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -58,8 +57,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       totalIncomeReceived = Some(150.00),
       allowancesAndDeductions = AllowancesAndDeductions(totalAllowancesAndDeductions = Some(25.00), totalReliefs = Some(25.00)),
       totalTaxableIncome = Some(30.00)
-    ),
-    transaction = Some(TransactionModel())
+    )
   )
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
