@@ -18,9 +18,8 @@ package views.obligationTemplates
 
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
-import assets.ReportDeadlinesTestConstants.{crystallisedObligation, crystallisedObligationTwo, twoObligationsSuccessModel}
-import implicits.ImplicitDateFormatterImpl
-import models.reportDeadlines.{ObligationsModel, ReportDeadlinesModel}
+import assets.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
+import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
@@ -37,12 +36,12 @@ class NextUpdatesHelperSpec extends TestSupport {
 		val pageDocument: Document = Jsoup.parse(contentAsString(html)(defaultTimeout))
 	}
 
-	lazy val obligationsModel = ObligationsModel(Seq(ReportDeadlinesModel(
+	lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
 		business1.incomeSourceId,
 		twoObligationsSuccessModel.obligations
 	)))
 
-	lazy val crystallisedObligationsModel = ObligationsModel(Seq(ReportDeadlinesModel(
+	lazy val crystallisedObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
 		business1.incomeSourceId,
 		List(crystallisedObligation)
 	)))

@@ -19,7 +19,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import assets.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
 import assets.messages.TaxYearOverviewMessages.agentTitle
-import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.{NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import controllers.Assets.INTERNAL_SERVER_ERROR
@@ -32,7 +32,7 @@ import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -150,10 +150,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     )
   )
   val currentObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "testId",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -165,10 +165,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     )
   ))
   val previousObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "testId2",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -181,10 +181,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   ))
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "testId",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -194,10 +194,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       )
     ),
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "testId2",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -304,7 +304,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -353,9 +353,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
         verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(testUser, Some("1"), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
       }
 
@@ -392,7 +392,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsDunningLockSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -441,9 +441,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
         verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(testUser, Some("1"), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
       }
       "Calculation List was not found" in {
@@ -469,7 +469,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -491,9 +491,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
       "Calculation data was not found" in {
         enable(TxmEventsApproved)
@@ -525,7 +525,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -547,9 +547,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
       }
       "financial details data was not found" in {
@@ -585,7 +585,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.obj()
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -626,9 +626,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
       "previous obligations data was not found" in {
         enable(TxmEventsApproved)
@@ -663,7 +663,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -706,8 +706,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
         verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(testUser, Some("1"), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, currentObligationsSuccess).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
     "return the tax year overview page with TxmEventsApproved FS disabled" when {
@@ -744,7 +744,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -792,9 +792,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(testUser, Some("1"), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
       }
       "previous obligations data was not found" in {
@@ -830,7 +830,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -872,8 +872,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(testUser, Some("1"), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, currentObligationsSuccess).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
     "return a technical difficulties page to the user" when {
@@ -1025,7 +1025,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlinesError(
+        IncomeTaxViewChangeStub.stubGetNextUpdatesError(
           nino = testNino
         )
 
@@ -1070,7 +1070,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -1089,8 +1089,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(testUser, Some("1")).detail)
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
   }

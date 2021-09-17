@@ -18,13 +18,13 @@ package audit.models
 
 import auth.MtdItUser
 
-object ReportDeadlinesAuditing {
+object NextUpdatesAuditing {
 
-  val reportDeadlineTransactionName = "ITVCObligations"
-  val reportDeadlineAuditType = "obligationsPageView"
+  val nextUpdateTransactionName = "ITVCObligations"
+  val nextUpdateAuditType = "obligationsPageView"
 
-  case class ReportDeadlinesAuditModel[A](user: MtdItUser[A]) extends AuditModel {
-    override val transactionName: String = reportDeadlineTransactionName
+  case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends AuditModel {
+    override val transactionName: String = nextUpdateTransactionName
     val business = user.incomeSources.businesses.headOption
     override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> user.mtditid,
@@ -36,7 +36,7 @@ object ReportDeadlinesAuditing {
       "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
       "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}")
     )
-    override val auditType: String = reportDeadlineAuditType
+    override val auditType: String = nextUpdateAuditType
   }
 
 }

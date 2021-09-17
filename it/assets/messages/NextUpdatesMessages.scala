@@ -19,7 +19,7 @@ import java.time.LocalDate
 
 import helpers.ComponentSpecBase
 
-object ReportDeadlinesMessages extends ComponentSpecBase {
+object NextUpdatesMessages extends ComponentSpecBase {
 
   //Report deadlines view messages
   val title = "Report deadlines - Business Tax account - GOV.UK"
@@ -35,7 +35,7 @@ object ReportDeadlinesMessages extends ComponentSpecBase {
   //Previous Obligations
   val noPreviousObligations = "No previously submitted updates"
 
-  //No Reports
-  val noReports = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
+  //No Updates
+  val noUpdates = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
 
 }

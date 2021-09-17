@@ -19,7 +19,7 @@
 
 @this(mainTemplate: MainTemplate, nextUpdatesHelper: NextUpdatesHelper)
 
-@(currentObligations: models.reportDeadlines.ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(currentObligations: models.nextUpdates.ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @heading = @{
 	messages("agent.nextUpdates.heading")

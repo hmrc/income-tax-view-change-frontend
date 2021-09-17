@@ -15,8 +15,10 @@
  */
 package controllers.agent
 
+import java.time.LocalDate
+
 import assets.BaseIntegrationTestConstants._
-import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
+import audit.models.{NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
@@ -26,13 +28,11 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
-
-import java.time.LocalDate
 
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -113,10 +113,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 			stubAuthorisedAgentUser(authorised = true)
 
 			val currentObligations: ObligationsModel = ObligationsModel(Seq(
-				ReportDeadlinesModel(
+				NextUpdatesModel(
 					identification = "testId",
 					obligations = List(
-						ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+						NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
 					))
 			))
 
@@ -125,7 +125,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 				response = incomeSourceDetails
 			)
 
-			IncomeTaxViewChangeStub.stubGetReportDeadlines(
+			IncomeTaxViewChangeStub.stubGetNextUpdates(
 				nino = testNino,
 				deadlines = currentObligations
 			)
@@ -134,7 +134,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
 			verifyIncomeSourceDetailsCall(testMtditid)
 
-			verifyReportDeadlinesCall(testNino)
+			verifyNextUpdatesCall(testNino)
 
 			Then("the next update view displays the correct title")
 			res should have(
@@ -142,8 +142,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 				pageTitle("Next updates - Your client’s Income Tax details - GOV.UK")
 			)
 
-			verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-			verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+			verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+			verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 		}
 
 		"the user has no obligations" in {
@@ -153,7 +153,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 				response = incomeSourceDetails
 			)
 
-			IncomeTaxViewChangeStub.stubGetReportDeadlines(
+			IncomeTaxViewChangeStub.stubGetNextUpdates(
 				nino = testNino,
 				deadlines = ObligationsModel(Seq())
 			)
@@ -162,14 +162,14 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
 			verifyIncomeSourceDetailsCall(testMtditid)
 
-			IncomeTaxViewChangeStub.verifyGetReportDeadlines(testNino)
+			IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
 			Then("then Internal server error is returned")
 			res should have(
 				httpStatus(INTERNAL_SERVER_ERROR)
 			)
 
-			verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+			verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 		}
   }
 }

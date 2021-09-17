@@ -14,26 +14,24 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.MainTemplate
+@import views.html.components._
+@import views.html.layouts.layout
 
-@this(mainTemplate: MainTemplate)
+@this(
+        mainTemplate: layout,
+        h1: h1,
+        p: p
+)
 
 @(backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
-    title = messages("obligations.heading"),
+    pageTitle = messages("obligations.heading"),
     backUrl = Some(backUrl)
 ) {
 
+    @h1(msg = "obligations.heading")
 
-    <section id="estimated-tax">
-
-        <header class="page-heading">
-            <h1 id="page-heading" class="heading-xlarge">@messages("obligations.heading")</h1>
-        </header>
-
-        <p id="p1">@messages("obligations.noReports")</p>
-
-    </section>
+    @p{@messages("obligations.noReports")}
 
 }

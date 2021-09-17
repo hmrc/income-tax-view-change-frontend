@@ -20,11 +20,11 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{IncomeSourceDetailsService, ReportDeadlinesService}
+import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.{Inject, Singleton}
@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpdates,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
-                                      reportDeadlinesService: ReportDeadlinesService,
+                                      nextUpdatesService: NextUpdatesService,
                                       implicit val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions)
                                      (implicit val languageUtils: LanguageUtils,
@@ -54,7 +54,7 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpd
     implicit user =>
 			getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
 				mtdItUser =>
-					reportDeadlinesService.getReportDeadlines()(implicitly, mtdItUser).map {
+					nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
 						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl)(mtdItUser))
 						case _ => itvcErrorHandler.showInternalServerError()
 					}

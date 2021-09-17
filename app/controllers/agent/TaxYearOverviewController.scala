@@ -26,12 +26,12 @@ import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview, Calculation}
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, ReportDeadlinesService}
+import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.TaxYearOverview
@@ -45,7 +45,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                           calculationService: CalculationService,
                                           financialDetailsService: FinancialDetailsService,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          reportDeadlinesService: ReportDeadlinesService,
+                                          nextUpdatesService: NextUpdatesService,
                                           auditingService: AuditingService
                                          )(implicit val appConfig: FrontendAppConfig,
                                            val languageUtils: LanguageUtils,
@@ -134,7 +134,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   }
 
   private def withObligationsModel(taxYear: Int)(f: ObligationsModel => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    reportDeadlinesService.getReportDeadlines(
+    nextUpdatesService.getNextUpdates(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     ) flatMap {

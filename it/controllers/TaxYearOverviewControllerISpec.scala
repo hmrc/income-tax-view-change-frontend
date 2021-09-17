@@ -23,7 +23,7 @@ import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.TaxYearOverviewMessages
-import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.{NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import helpers.ComponentSpecBase
@@ -31,7 +31,7 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.financialDetails._
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -111,10 +111,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   val emptyPaymentsList: List[DocumentDetailWithDueDate] = List.empty
 
   val currentObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "ABC123456789",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -126,10 +126,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   ))
 
   val previousObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "ABC123456789",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -141,10 +141,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   ))
 
   val allObligations: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "ABC123456789",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -153,10 +153,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           periodKey = "EOPS"
         ))
     ),
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "ABC123456789",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,
@@ -212,7 +212,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -229,9 +229,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
         res should have(
@@ -304,7 +304,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -321,9 +321,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
         res should have(
@@ -399,7 +399,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -416,9 +416,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("Page is displayed with no payments due")
         res should have(
@@ -490,9 +490,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5),
           ObligationsModel(Seq(
-            ReportDeadlinesModel(
+            NextUpdatesModel(
               "ABC123456789",
-              List(ReportDeadlineModel(
+              List(NextUpdateModel(
                 LocalDate.of(2017, 12, 28),
                 LocalDate.of(2018, 2, 3),
                 LocalDate.of(2018, 2, 4),
@@ -505,11 +505,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
           ObligationsModel(Seq(
-            ReportDeadlinesModel(
+            NextUpdatesModel(
               "ABC123456789",
-              List(ReportDeadlineModel(
+              List(NextUpdateModel(
                 LocalDate.of(2017, 11, 28),
                 LocalDate.of(2018, 1, 3),
                 LocalDate.of(2018, 1, 4),
@@ -556,9 +556,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5),
           ObligationsModel(Seq(
-            ReportDeadlinesModel(
+            NextUpdatesModel(
               "ABC123456789",
-              List(ReportDeadlineModel(
+              List(NextUpdateModel(
                 LocalDate.of(2017, 12, 28),
                 LocalDate.of(2018, 2, 3),
                 LocalDate.of(2018, 2, 4),
@@ -571,11 +571,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
           ObligationsModel(Seq(
-            ReportDeadlinesModel(
+            NextUpdatesModel(
               "ABC123456789",
-              List(ReportDeadlineModel(
+              List(NextUpdateModel(
                 LocalDate.of(2017, 11, 28),
                 LocalDate.of(2018, 1, 3),
                 LocalDate.of(2018, 1, 4),
@@ -622,7 +622,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
           ObligationsModel(Nil))
 
         And("previous obligations call failed")
@@ -672,7 +672,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           ObligationsModel(Nil))
 
         And("current obligations call failed")
-        IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
+        IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
         When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
@@ -682,7 +682,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 
         And("Internal server error is returned")
         res should have(
@@ -732,7 +732,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -749,9 +749,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
         res should have(
@@ -814,7 +814,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
           nino = testNino,
           deadlines = currentObligationsSuccess
         )
@@ -831,9 +831,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
 
-        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("Page is displayed with no payments due")
         res should have(
