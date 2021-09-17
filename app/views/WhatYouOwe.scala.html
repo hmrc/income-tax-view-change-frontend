@@ -42,6 +42,9 @@
             @messages("whatYouOwe.sa-note")
             @link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", outerMessage = Some("."))
         }
+        @p{
+            @messages("whatYouOwe.outstanding-charges-note")
+        }
         </div>
     }
 }
