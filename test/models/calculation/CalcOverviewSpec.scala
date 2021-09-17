@@ -16,7 +16,6 @@
 
 package models.calculation
 
-import models.financialTransactions.TransactionModel
 import org.scalatest.{MustMatchers, WordSpec}
 
 class CalcOverviewSpec extends WordSpec with MustMatchers {
@@ -35,17 +34,10 @@ class CalcOverviewSpec extends WordSpec with MustMatchers {
 
   val emptyCalculation: Calculation = Calculation(crystallised = true)
 
-  val transaction: TransactionModel = TransactionModel(
-    clearedAmount = Some(6.06),
-    outstandingAmount = Some(7.07)
-  )
-
-  val emptyTransaction: TransactionModel = TransactionModel()
-
   "CalcOverview" must {
-    "be created with the correct data using a calculation only" when {
+    "be created with the correct data using a calculation" when {
       "the calculation has data" in {
-        val overview: CalcOverview = CalcOverview(calculation, None)
+        val overview: CalcOverview = CalcOverview(calculation)
 
         overview.income mustBe calculation.totalIncomeReceived.get
         overview.deductions mustBe calculation.allowancesAndDeductions.totalAllowancesDeductionsReliefs.get
@@ -55,7 +47,7 @@ class CalcOverviewSpec extends WordSpec with MustMatchers {
         overview.totalRemainingDue mustBe 3.03
       }
       "the calculation has no data" in {
-        val overview: CalcOverview = CalcOverview(emptyCalculation, None)
+        val overview: CalcOverview = CalcOverview(emptyCalculation)
 
         overview.income mustBe 0.00
         overview.deductions mustBe 0.00
@@ -63,28 +55,6 @@ class CalcOverviewSpec extends WordSpec with MustMatchers {
         overview.taxDue mustBe 0.00
         overview.payment mustBe 0.00
         overview.totalRemainingDue mustBe 0.00
-      }
-    }
-    "be created with the correct data using a calculation and transaction model" when {
-      "the transaction has data" in {
-        val overview: CalcOverview = CalcOverview(calculation, Some(transaction))
-
-        overview.income mustBe calculation.totalIncomeReceived.get
-        overview.deductions mustBe calculation.allowancesAndDeductions.totalAllowancesDeductionsReliefs.get
-        overview.totalTaxableIncome mustBe calculation.totalTaxableIncome.get
-        overview.taxDue mustBe calculation.totalIncomeTaxAndNicsDue.get
-        overview.payment mustBe transaction.clearedAmount.get
-        overview.totalRemainingDue mustBe transaction.outstandingAmount.get
-      }
-      "the transaction has no data" in {
-        val overview: CalcOverview = CalcOverview(calculation, Some(emptyTransaction))
-
-        overview.income mustBe calculation.totalIncomeReceived.get
-        overview.deductions mustBe calculation.allowancesAndDeductions.totalAllowancesDeductionsReliefs.get
-        overview.totalTaxableIncome mustBe calculation.totalTaxableIncome.get
-        overview.taxDue mustBe calculation.totalIncomeTaxAndNicsDue.get
-        overview.payment mustBe 0.00
-        overview.totalRemainingDue mustBe 3.03
       }
     }
   }

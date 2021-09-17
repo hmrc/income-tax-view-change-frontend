@@ -23,7 +23,6 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.financialDetails.FinancialDetailsModel
-import models.financialTransactions.FinancialTransactionsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -72,15 +71,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
             financialDetailsService.getFinancialDetails(taxYear, user.nino)
         }) map {
           _.filter(_ match {
-            case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty =>
-              ftm.financialTransactions.get.exists(!_.isPaid)
             case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty =>
               fdm.documentDetails.exists(!_.isPaid)
             case _ =>
               false
           }) flatMap {
-            case ftm: FinancialTransactionsModel =>
-              ftm.financialTransactions.get.flatMap(_.charges().map(_.dueDate.get))
             case fdm: FinancialDetailsModel =>
               fdm.getAllDueDates
           }

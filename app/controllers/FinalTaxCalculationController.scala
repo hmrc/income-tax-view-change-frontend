@@ -16,7 +16,7 @@
 
 package controllers
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
@@ -49,7 +49,7 @@ class FinalTaxCalculationController @Inject()(
   def show(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
     calcService.getCalculationDetail(user.nino, taxYear).map {
       case CalcDisplayModel(_, _, calcDataModel, _) =>
-        val calcOverview = CalcOverview(calcDataModel, None)
+        val calcOverview = CalcOverview(calcDataModel)
         Ok(view(calcOverview, taxYear))
       case _ => itvcErrorHandler.showInternalServerError()
     }
@@ -62,7 +62,7 @@ class FinalTaxCalculationController @Inject()(
     
     calcService.getCalculationDetail(user.nino, taxYear).map {
       case CalcDisplayModel(_, _, calcDataModel, _) =>
-        val calcOverview = CalcOverview(calcDataModel, None)
+        val calcOverview = CalcOverview(calcDataModel)
 
         (fullNameOptional, user.saUtr) match {
           case (Some(fullName), Some(saUtr)) =>
