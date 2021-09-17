@@ -221,9 +221,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
       AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
-      val detail = WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail
-      println("detail",detail)
-      AuditStub.verifyAuditContainsDetail(detail)
+      AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail)
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
