@@ -166,14 +166,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
-                documentDetailJson(3400.00, 1000.00, testTaxYear.toString),
-                documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1"),
-                documentDetailJson(1000.00, 0.00, testTaxYear.toString, "ITSA - POA 2")
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId1"),
+                documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId2"),
+                documentDetailJson(1000.00, 0.00, testTaxYear.toString, "ITSA - POA 2", transactionId = "transId3")
               ),
               "financialDetails" -> Json.arr(
-                financialDetailJson(testTaxYear.toString),
-                financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString),
-                financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
+                financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
+                financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, "transId2"),
+                financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, "transId3")
               )
             )
 
@@ -642,14 +642,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               val mixedJson = Json.obj(
                 "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
                 "documentDetails" -> Json.arr(
-                  documentDetailJson(3400.00, 1000.00, testTaxYear.toString),
-                  documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1"),
-                  documentDetailJson(1000.00, 0.00, testTaxYear.toString, "ITSA - POA 2")
+                  documentDetailJson(3400.00, 1000.00, testTaxYear.toString, transactionId="transId1"),
+                  documentDetailJson(1000.00, 100.00, testTaxYear.toString, transactionId="transId2"),
+                  documentDetailJson(1000.00, 0.00, testTaxYear.toString, transactionId="transId3")
                 ),
                 "financialDetails" -> Json.arr(
-                  financialDetailJson(testTaxYear.toString),
-                  financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString),
-                  financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
+                  financialDetailJson(testTaxYear.toString, transactionId="transId1"),
+                  financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, transactionId="transId2"),
+                  financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, transactionId="transId3")
                 )
               )
 
@@ -814,14 +814,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
-                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
-                documentDetailJson(1000.00, 0, testTaxYear.toString, "4444"),
-                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, "5555")
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, transactionId = "transId1"),
+                documentDetailJson(1000.00, 0, testTaxYear.toString, transactionId = "transId2"),
+                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, transactionId = "transId3")
               ),
               "financialDetails" -> Json.arr(
-                financialDetailJson(testTaxYear.toString, "test"),
-                financialDetailJson(testTaxYear.toString, "4444"),
-                financialDetailJson(testTaxYear.toString, "5555")
+                financialDetailJson(testTaxYear.toString, transactionId = "transId5"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId6"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId7")
               )
             )
 
@@ -884,14 +884,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
-                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
-                documentDetailJson(1000.00, 0, testTaxYear.toString, "4444"),
-                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, "5555")
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, transactionId = "transId1"),
+                documentDetailJson(1000.00, 0, testTaxYear.toString, transactionId = "transId2"),
+                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, transactionId = "transId3")
               ),
               "financialDetails" -> Json.arr(
-                financialDetailJson(testTaxYear.toString, "test"),
-                financialDetailJson(testTaxYear.toString, "4444"),
-                financialDetailJson(testTaxYear.toString, "5555")
+                financialDetailJson(testTaxYear.toString, transactionId = "transId5"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId6"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId7")
               )
             )
 
@@ -954,14 +954,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
-                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
-                documentDetailJson(1000.00, 0, testTaxYear.toString, "3333"),
-                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, "4444")
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, transactionId = "transId1"),
+                documentDetailJson(1000.00, 0, testTaxYear.toString, transactionId = "transId2"),
+                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, transactionId = "transId3")
               ),
               "financialDetails" -> Json.arr(
-                financialDetailJson(testTaxYear.toString, "test"),
-                financialDetailJson(testTaxYear.toString, "3333"),
-                financialDetailJson(testTaxYear.toString, "4444")
+                financialDetailJson(testTaxYear.toString, transactionId = "transId4"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId5"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId6")
               ))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -1023,14 +1023,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
               "documentDetails" -> Json.arr(
-                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
-                documentDetailJson(1000.00, 0, testTaxYear.toString, "3333"),
-                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, "4444")
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, transactionId = "transId1"),
+                documentDetailJson(1000.00, 0, testTaxYear.toString, transactionId = "transId2"),
+                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, transactionId = "transId3")
               ),
               "financialDetails" -> Json.arr(
-                financialDetailJson(testTaxYear.toString, "test"),
-                financialDetailJson(testTaxYear.toString, "3333"),
-                financialDetailJson(testTaxYear.toString, "4444")
+                financialDetailJson(testTaxYear.toString, transactionId = "transId4"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId5"),
+                financialDetailJson(testTaxYear.toString, transactionId = "transId6")
               ))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(

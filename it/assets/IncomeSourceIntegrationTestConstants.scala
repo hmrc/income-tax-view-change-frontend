@@ -249,7 +249,7 @@ object IncomeSourceIntegrationTestConstants {
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
+				"transactionId" -> "1040000124",
 				"documentDescription" -> "ITSA- POA 1",
 				"outstandingAmount" -> outstandingAmount,
 				"originalAmount" -> originalAmount,
@@ -262,7 +262,7 @@ object IncomeSourceIntegrationTestConstants {
 			),
 			Json.obj(
 				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
+				"transactionId" -> "1040000125",
 				"documentDescription" -> "ITSA - POA 2",
 				"outstandingAmount" -> outstandingAmount,
 				"originalAmount" -> originalAmount,
@@ -278,6 +278,7 @@ object IncomeSourceIntegrationTestConstants {
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Balancing Charge",
+				"transactionId" -> "1040000123",
 				"items" -> Json.arr(
 					Json.obj("amount" -> 8000,
 						"clearingDate" -> "2019-08-13",
@@ -288,6 +289,7 @@ object IncomeSourceIntegrationTestConstants {
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 1",
+				"transactionId" -> "1040000124",
 				"items" -> Json.arr(
 					Json.obj("amount" -> 8000,
 						"clearingDate" -> "2019-08-13",
@@ -298,6 +300,7 @@ object IncomeSourceIntegrationTestConstants {
 			Json.obj(
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 2",
+				"transactionId" -> "1040000125",
 				"items" -> Json.arr(
 					Json.obj("amount" -> 8000,
 						"clearingDate" -> "2019-08-13",
@@ -311,9 +314,10 @@ object IncomeSourceIntegrationTestConstants {
 	def documentDetailJson(originalAmount: BigDecimal,
 												 outstandingAmount: BigDecimal,
 												 taxYear: String = "2018",
-												 documentDescription: String = "TRM New Charge"): JsValue = Json.obj(
+												 documentDescription: String = "TRM New Charge",
+												 transactionId: String = "1040000123"): JsValue = Json.obj(
 		"taxYear" -> taxYear,
-		"transactionId" -> "1040000123",
+		"transactionId" -> transactionId,
 		"documentDescription" -> documentDescription,
 		"outstandingAmount" -> outstandingAmount,
 		"originalAmount" -> originalAmount,
@@ -322,9 +326,11 @@ object IncomeSourceIntegrationTestConstants {
 
 	def financialDetailJson(taxYear: String = "2018",
 													mainType: String = "SA Balancing Charge",
-													dueDate: String = "2018-02-14"): JsValue = Json.obj(
+													dueDate: String = "2018-02-14",
+													transactionId: String = "1040000123"): JsValue = Json.obj(
 		"taxYear" -> taxYear,
 		"mainType" -> mainType,
+		"transactionId" -> transactionId,
 		"items" -> Json.arr(
 			Json.obj("dueDate" -> dueDate)
 		)

@@ -201,14 +201,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val mixedJson = Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString),
-          documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1"),
-          documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, "ITSA - POA 2")
+          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+          documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId2"),
+          documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, "ITSA - POA 2", transactionId = "transId3")
         ),
         "financialDetails" -> Json.arr(
-          financialDetailJson(currentTaxYearEnd.toString),
-          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString),
-          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
+          financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId1"),
+          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, transactionId = "transId2"),
+          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, transactionId = "transId3")
         ))
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
@@ -221,8 +221,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
       AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
-
-      AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail)
+      val detail = WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail
+      println("detail",detail)
+      AuditStub.verifyAuditContainsDetail(detail)
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
@@ -452,14 +453,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val mixedJson = Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString),
-          documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1"),
-          documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, "ITSA - POA 2")
+          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+          documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, transactionId = "transId2"),
+          documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, transactionId = "transId3")
         ),
         "financialDetails" -> Json.arr(
-          financialDetailJson(currentTaxYearEnd.toString),
-          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString),
-          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
+          financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId1"),
+          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, transactionId = "transId2"),
+          financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, transactionId = "transId3")
         ))
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
@@ -793,14 +794,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val mixedJson = Json.obj(
           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
-            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
-            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "4444"),
-            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, "5555")
+            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, transactionId = "transId2"),
+            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
-            financialDetailJson(currentTaxYearEnd.toString, "test"),
-            financialDetailJson(currentTaxYearEnd.toString, "4444"),
-            financialDetailJson(currentTaxYearEnd.toString, "5555")
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId5"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId6")
           )
         )
 
@@ -850,14 +851,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val mixedJson = Json.obj(
           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
-            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
-            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "3333"),
-            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, "4444")
+            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, transactionId = "transId2"),
+            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
-            financialDetailJson(currentTaxYearEnd.toString, "test"),
-            financialDetailJson(currentTaxYearEnd.toString, "3333"),
-            financialDetailJson(currentTaxYearEnd.toString, "4444")
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId5"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId6")
           ))
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
@@ -1055,14 +1056,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val mixedJson = Json.obj(
           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
-            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
-            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "4444"),
-            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, "5555")
+            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, transactionId = "transId2"),
+            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
-            financialDetailJson(currentTaxYearEnd.toString, "test"),
-            financialDetailJson(currentTaxYearEnd.toString, "4444"),
-            financialDetailJson(currentTaxYearEnd.toString, "5555")
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId5"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId6")
           )
         )
 
@@ -1110,15 +1111,16 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val mixedJson = Json.obj(
           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
-            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "test"),
-            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, "3333"),
-            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, "4444")
+            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, transactionId = "transId2"),
+            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
-            financialDetailJson(currentTaxYearEnd.toString, "test"),
-            financialDetailJson(currentTaxYearEnd.toString, "3333"),
-            financialDetailJson(currentTaxYearEnd.toString, "4444")
-          ))
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId5"),
+            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId6")
+          )
+        )
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, mixedJson)
 
