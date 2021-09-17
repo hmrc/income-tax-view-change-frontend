@@ -16,11 +16,14 @@
 
 package views
 
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeIndividual}
 import assets.FinancialDetailsTestConstants._
 import assets.MessagesLookUp.{WhatYouOwe => whatYouOwe}
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.outstandingCharges._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -38,9 +41,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
-              dunningLock: Boolean = false
+              dunningLock: Boolean = false,
+              migrationYear: Int = LocalDate.now().getYear - 1
               ) {
-    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock)(FakeRequest(),implicitly)
+    val individualUser: MtdItUser[_] = MtdItUser(
+      mtditid = testMtditid,
+      nino = testNino,
+      userName = Some(testRetrievedUserName),
+      incomeSources = IncomeSourceDetailsModel("testMtdItId", Some(migrationYear.toString), List(), None),
+      saUtr = Some(testSaUtr),
+      credId = Some(testCredId),
+      userType = Some(testUserTypeIndividual),
+      arn = None
+    )(FakeRequest())
+    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock)(FakeRequest(),individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -133,6 +147,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
         pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(),
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
       }
       "have the remaining balance title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
@@ -229,6 +249,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("overdueAmount") shouldBe null
         pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
         pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£1.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueIn30Days(),
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
       }
       s"have the remaining balance header and table data" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
@@ -333,6 +359,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
         pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(),
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
       }
       "have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithOverdueData()) {
@@ -523,6 +555,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
         pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
       }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithMixedData1,
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
+      }
       s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueMixedData2(List(None,None,None))) {
         val overdueTableHeader: Element = pageDocument.select("tr").first()
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -592,6 +630,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
         pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
         pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue,
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
       }
       s"have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithWithAciValueZeroAndOverdue) {

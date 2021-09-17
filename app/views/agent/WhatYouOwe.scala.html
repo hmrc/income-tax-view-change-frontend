@@ -20,9 +20,10 @@
 @import views.html.templates.agent.MainTemplate
 @import java.time.LocalDate
 @import models.financialDetails.DocumentDetailWithDueDate
+@import auth.MtdItUser
 
 @this(mainTemplate: MainTemplate, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatterImpl)
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String])(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -140,27 +141,32 @@
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
     } else {
-        @if(chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0) {
-            <div class="grid-row" style="width: 150%; margin-top: 50px; margin-bottom: 50px">
-                @if(chargesList.balanceDetails.overDueAmount > 0) {
-                    <div id="overdueAmount" class="column-one-third">
-                        <p class="what-you-owe-total-heading">@messages("agent.paymentDue.overdueAmount")</p>
-                        <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.overDueAmount.toCurrency</p>
-                    </div>
-                }
-                @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
-                    <div id="balanceDueWithin30Days" class="column-one-third">
-                        <p class="what-you-owe-total-heading">@messages("agent.paymentDue.balanceDueWithin30Days")</p>
-                        <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.balanceDueWithin30Days.toCurrency</p>
-                    </div>
-                }
-                @if(chargesList.balanceDetails.totalBalance > 0) {
-                    <div id="totalBalance" class="column-one-third">
-                        <p class="what-you-owe-total-heading">@messages("agent.paymentDue.totalBalance")</p>
-                        <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.totalBalance.toCurrency</p>
-                    </div>
-                }
-            </div>
+        @user.incomeSources.yearOfMigration.map { yearOfMigration =>
+            @if(currentTaxYear > yearOfMigration.toInt &&
+                    (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
+                <div class="grid-row" style="width: 150%;
+                    margin-top: 50px;
+                    margin-bottom: 50px">
+                    @if(chargesList.balanceDetails.overDueAmount > 0) {
+                        <div id="overdueAmount" class="column-one-third">
+                            <p class="what-you-owe-total-heading">@messages("agent.paymentDue.overdueAmount")</p>
+                            <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.overDueAmount.toCurrency</p>
+                        </div>
+                    }
+                    @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
+                        <div id="balanceDueWithin30Days" class="column-one-third">
+                            <p class="what-you-owe-total-heading">@messages("agent.paymentDue.balanceDueWithin30Days")</p>
+                            <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.balanceDueWithin30Days.toCurrency</p>
+                        </div>
+                    }
+                    @if(chargesList.balanceDetails.totalBalance > 0) {
+                        <div id="totalBalance" class="column-one-third">
+                            <p class="what-you-owe-total-heading">@messages("agent.paymentDue.totalBalance")</p>
+                            <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.totalBalance.toCurrency</p>
+                        </div>
+                    }
+                </div>
+            }
         }
         @saNoteParagraph
 
