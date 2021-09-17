@@ -489,6 +489,7 @@ whatYouOwe.pre-mtd-payments                                        = Tax year {0
 whatYouOwe.tableHead.due-date                                      = Due date
 whatYouOwe.tableHead.payment-type                                  = Payment type
 whatYouOwe.tableHead.amount-due                                    = Amount due
+
 whatYouOwe.paymentOnAccount1.text							       = Payment on account 1 of 2
 whatYouOwe.paymentOnAccount2.text							       = Payment on account 2 of 2
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on payment on account 1 of 2
@@ -509,13 +510,16 @@ whatYouOwe.over-due                                                = OVERDUE
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment
 whatYouOwe.over-due.interest.line2                                 = {0} to {1} at {2}%
 whatYouOwe.over-due.interest-rate                                  = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
+whatYouOwe.over-due.interest-rate-1                                = Any overdue payment interest is at the {0}
+whatYouOwe.over-due.interest-rate-2                                = The rate may have changed since the interest was first charged.
+
 whatYouOwe.over-due.interest-rate.link                             = current interest rate for late and early payments (opens in new tab)
 whatYouOwe.future-payments                                         = Future payments
 whatYouOwe.due-in-thirty-days-payments                             = Due within 30 days
 whatYouOwe.payment-type.taxYear                                    = Tax year {0} to {1}
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review and your {0}
-whatYouOwe.dunningLock.link                                        = tax decision is being investigated (opens in new tab).
+whatYouOwe.dunningLock.link                                        = tax decision is being investigated (opens in new tab)
 
 
 ## Charge Summary ##
