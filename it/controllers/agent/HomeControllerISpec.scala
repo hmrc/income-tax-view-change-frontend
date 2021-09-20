@@ -187,6 +187,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										FinancialDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											mainType = Some("SA Payment on Account 1"),
+											transactionId = Some("testTransactionId"),
 											items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
 										)
 									)
@@ -252,6 +253,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										FinancialDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											mainType = Some("SA Payment on Account 1"),
+											transactionId = Some("testTransactionId"),
 											items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
 										)
 									)
@@ -320,6 +322,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										FinancialDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											mainType = Some("SA Payment on Account 1"),
+											transactionId = Some("testTransactionId"),
 											items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
 										)
 									)
@@ -386,6 +389,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 											FinancialDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
 												mainType = Some("SA Payment on Account 1"),
+												transactionId = Some("testTransactionId"),
 												items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
 											)
 										)
@@ -453,6 +457,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 											FinancialDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
 												mainType = Some("SA Payment on Account 1"),
+												transactionId = Some("testTransactionId"),
 												items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
 											)
 										)
@@ -520,6 +525,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 											FinancialDetail(
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
 												mainType = Some("SA Payment on Account 1"),
+												transactionId = Some("testTransactionId"),
 												items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
 											)
 										)
@@ -578,7 +584,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									documentDetails = List(
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
-											transactionId = "testTransactionId",
+											transactionId = "testTransactionId1",
 											documentDescription = Some("ITSA- POA 1"),
 											outstandingAmount = Some(500.00),
 											originalAmount = Some(1000.00),
@@ -597,11 +603,13 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										FinancialDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											mainType = Some("SA Payment on Account 1"),
+											transactionId = Some("testTransactionId1"),
 											items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
 										),
 										FinancialDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											mainType = Some("SA Payment on Account 2"),
+											transactionId = Some("testTransactionId2"),
 											items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString))))
 										)
 									)
@@ -678,11 +686,13 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										FinancialDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											mainType = Some("SA Payment on Account 1"),
+											transactionId = Some("testTransactionId"),
 											items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
 										),
 										FinancialDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											mainType = Some("SA Payment on Account 2"),
+											transactionId = Some("testTransactionId2"),
 											items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString))))
 										)
 									)

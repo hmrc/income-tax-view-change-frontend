@@ -106,6 +106,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Payment on Account 1"),
+        transactionId = Some("testTransactionId"),
         items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
       )
     )
@@ -143,7 +144,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
-        transactionId = Some("testDunningTransactionId"),
+        transactionId = Some("testDunningTransactionId2"),
         mainType = Some("SA Payment on Account 2"),
         items = Some(Seq(SubItem(Some(LocalDate.now.toString), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
       )

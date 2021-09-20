@@ -99,7 +99,7 @@ object FinancialDetailsIntegrationTestConstants {
 
   def testFinancialDetailsModel(documentDescription: List[Option[String]],
                                 mainType: List[Option[String]],
-                                transactionId: Option[String],
+                                transactionIds: List[Option[String]],
                                 transactionDate: Option[String],
                                 `type`: Option[String],
                                 totalAmount: Option[BigDecimal],
@@ -123,20 +123,20 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, "id1040000124", documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, "1040000125", documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some("transactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
                                                      mainType: List[Option[String]],
-                                                     transactionId: Option[String],
+                                                     transactionIds: List[Option[String]],
                                                      transactionDate: Option[String],
                                                      `type`: Option[String],
                                                      totalAmount: Option[BigDecimal],
@@ -160,14 +160,14 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, "id1040000123", documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, "id1040000124", documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some("transactionId") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1),Some("transactionId") ,  Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1),transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
@@ -188,8 +188,8 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    transactionId= Some("transactionId"),
-    transactionDate= Some("transactionDate"),
+    transactionIds = List(Some("transId1"), Some("transId2")),
+    transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
@@ -214,7 +214,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    transactionId= Some("transactionId"),
+    transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate= Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
@@ -240,7 +240,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    transactionId= Some("transactionId"),
+    transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate= Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
@@ -266,7 +266,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    transactionId= Some("transactionId"),
+    transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate= Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
@@ -292,7 +292,7 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    transactionId= Some("transactionId"),
+    transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate= Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
@@ -318,8 +318,8 @@ object FinancialDetailsIntegrationTestConstants {
   val financialDetailsDueIn30DaysWithAZeroOutstandingAmount: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    transactionId= Some("transactionId"),
-    transactionDate= Some("transactionDate"),
+    transactionIds = List(Some("transId1"), Some("transId2")),
+    transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),

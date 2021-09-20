@@ -151,20 +151,20 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             documentDetails = List(
-              DocumentDetail("testYear1", "testTransactionId", Some("ITSA- POA 1"), Some(100.00), None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail("testYear1", "testTransactionId", Some("ITSA - POA 2"), Some(200.00), None, LocalDate.of(2018, 3, 29))
+              DocumentDetail("testYear1", "testTransactionId1", Some("ITSA- POA 1"), Some(100.00), None, LocalDate.of(2018, 3, 29)),
+              DocumentDetail("testYear1", "testTransactionId2", Some("ITSA - POA 2"), Some(200.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", Some("SA Payment on Account 1"),Some("TransactionId") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100),Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
-              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("TransactionId") ,Some("transactionDate"), Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100),Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
+              FinancialDetail("testYear1", Some("SA Payment on Account 1"),Some("testTransactionId1") ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100),Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
+              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("testTransactionId2") ,Some("transactionDate"), Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100),Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
             )
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             documentDetails = List(
-              DocumentDetail("testYear2", "testTransactionId", None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail("testYear2", "testTransactionId", None, None, None, LocalDate.of(2018, 3, 29))
+              DocumentDetail("testYear2", "testTransactionId1", None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
+              DocumentDetail("testYear2", "testTransactionId2", None, None, None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
               FinancialDetail("testYear2", None,None,None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
@@ -191,24 +191,24 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             documentDetails = List(
-              DocumentDetail("testYear1", "testTransactionId", None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail("testYear1", "testTransactionId", None, Some(100.00), None, LocalDate.of(2018, 3, 29))
+              DocumentDetail("testYear1", "testTransactionId1", None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
+              DocumentDetail("testYear1", "testTransactionId2", None, Some(100.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
               FinancialDetail("testYear1", None,None, None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(7).toString))))),
-              FinancialDetail("testYear1", None,None , None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
+              FinancialDetail("testYear1", None,None, None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
             )
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             documentDetails = List(
-              DocumentDetail("testYear2", "testTransactionId", None, None, None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail("testYear2", "testTransactionId", Some("ITSA- POA 1"), Some(100.00), None, LocalDate.of(2018, 3, 29))
+              DocumentDetail("testYear2", "testTransactionId1", None, None, None, LocalDate.of(2018, 3, 29)),
+              DocumentDetail("testYear2", "testTransactionId2", Some("ITSA- POA 1"), Some(100.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("TransactionId") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("TransactionId")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("testTransactionId1") , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
+              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("testTransactionId2")  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
             )
           )
 
@@ -231,24 +231,24 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             documentDetails = List(
-              DocumentDetail("testYear1", "testTransactionId", Some("ITSA- POA 1"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
-              DocumentDetail("testYear1", "testTransactionId", Some("ITSA - POA 2"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
+              DocumentDetail("testYear1", "testTransactionId1", Some("ITSA- POA 1"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
+              DocumentDetail("testYear1", "testTransactionId2", Some("ITSA - POA 2"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some("TransactionId"), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
-              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("TransactionId"), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
+              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))),
+              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
             )
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             documentDetails = List(
-              DocumentDetail("testYear2", "testTransactionId", Some("ITSA- POA 1"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
-              DocumentDetail("testYear2", "testTransactionId", Some("ITSA - POA 2"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
+              DocumentDetail("testYear2", "testTransactionId1", Some("ITSA- POA 1"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
+              DocumentDetail("testYear2", "testTransactionId2", Some("ITSA - POA 2"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("TransactionId"),Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100),Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("TransactionId"),Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100),Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString)))))
+              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("testTransactionId1"),Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100),Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
+              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("testTransactionId2"),Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100),Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString)))))
             )
           )
 
