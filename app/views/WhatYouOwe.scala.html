@@ -42,14 +42,17 @@
 
 @saNoteParagraph = {
     @if(utr.isDefined) {
-        <div class="govuk-inset-text">
-        @p{
-            @messages("whatYouOwe.sa-note")
-            @link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", outerMessage = Some("."))
-        }
-        @p{
-            @messages("whatYouOwe.outstanding-charges-note")
-        }
+        <div id="payments-due-note" class="govuk-inset-text">
+
+            @p(content = Html(
+                messages("whatYouOwe.sa-note") +
+                        link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", outerMessage = Some(".")).toString()), id = Some("sa-note-migrated"))
+
+
+            @p {
+                @messages("whatYouOwe.outstanding-charges-note")
+            }
+
         </div>
     }
 }
@@ -180,25 +183,23 @@
         @user.incomeSources.yearOfMigration.map { yearOfMigration =>
             @if(currentTaxYear > yearOfMigration.toInt &&
                     (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
-                <div class="grid-row" style="width: 150%;
-                    margin-top: 50px;
-                    margin-bottom: 50px">
+                <div class="grid-row">
                     @if(chargesList.balanceDetails.overDueAmount > 0) {
                         <div id="overdueAmount" class="column-one-third">
-                            <p class="what-you-owe-total-heading">@messages("whatYouOwe.overdueAmount")</p>
-                            <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.overDueAmount.toCurrency</p>
+                            <p class="govuk-body govuk-!-font-size-24">@messages("whatYouOwe.overdueAmount")</p>
+                            <p class="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold">@chargesList.balanceDetails.overDueAmount.toCurrency</p>
                         </div>
                     }
                     @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
                         <div id="balanceDueWithin30Days" class="column-one-third">
-                            <p class="what-you-owe-total-heading">@messages("whatYouOwe.balanceDueWithin30Days")</p>
-                            <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.balanceDueWithin30Days.toCurrency</p>
+                            <p class="govuk-body govuk-!-font-size-24">@messages("whatYouOwe.balanceDueWithin30Days")</p>
+                            <p class="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold">@chargesList.balanceDetails.balanceDueWithin30Days.toCurrency</p>
                         </div>
                     }
                     @if(chargesList.balanceDetails.totalBalance > 0) {
                         <div id="totalBalance" class="column-one-third">
-                            <p class="what-you-owe-total-heading">@messages("whatYouOwe.totalBalance")</p>
-                            <p class="what-you-owe-total-values what-you-owe-total-values-bold">@chargesList.balanceDetails.totalBalance.toCurrency</p>
+                            <p class="govuk-body govuk-!-font-size-24">@messages("whatYouOwe.totalBalance")</p>
+                            <p class="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold">@chargesList.balanceDetails.totalBalance.toCurrency</p>
                         </div>
                     }
                 </div>
@@ -262,7 +263,7 @@
                                 @tableRow2(s"over-due-type-$index", charge, isOverduePayment = true, latePaymentCharge = true)
                                 @if(charge.documentDetail.interestOutstandingAmount.isDefined && charge.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0) {
                                     <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
-                                        <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
+                                        <td class="govuk-table__cell"></td>
                                         <td class="govuk-table__cell">
                                             @messages("whatYouOwe.over-due.interest.line1")
                                             <div>
