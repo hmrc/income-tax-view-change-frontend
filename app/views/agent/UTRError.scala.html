@@ -17,26 +17,32 @@
 @import views.html.templates.agent.MainTemplate
 @import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import views.html.layouts.agent.layout
+@import views.html.components._
+
+
 
 @this(
-    mainTemplate: MainTemplate,
+    mainTemplate: layout,
     continueButton: ContinueButton,
-    form: FormWithCSRF
+    form: FormWithCSRF,
+    h1: h1,
+    p:  p
 )
 
 @(clientUtr: String, postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @mainTemplate(
-    title = messages("agent.utr_error.heading")
+    pageTitle = messages("agent.utr_error.heading")
 ) {
 
-    <h1 class="heading-xlarge">@messages("agent.utr_error.heading")</h1>
+@h1(msg ="agent.utr_error.heading")
 
-    <p>@messages("agent.utr_error.utr_wrong.part1")
-        <span class="bold">@clientUtr</span>
-        @messages("agent.utr_error.utr_wrong.part2")</p>
+    @p{@messages("agent.utr_error.utr_wrong.part1")
+        <span class="client-utr">@clientUtr</span>
+        @messages("agent.utr_error.utr_wrong.part2")}
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
         <li id = "list-bullet1">@messages("agent.utr_error.reason.bullet1")</li>
         <li>@Html(messages("agent.utr_error.reason.bullet2",
             <a href="https://www.gov.uk/government/collections/making-tax-digital-for-income-tax" target="_blank">{messages("agent.utr_error.reason.bullet2_link")}</a>

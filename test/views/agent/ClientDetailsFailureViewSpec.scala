@@ -52,27 +52,27 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
     }
 
     s"have the heading '${ClientRelationshipMessages.heading}'" in new ClientRelationshipFailureSetup {
-      content hasPageHeading ClientRelationshipMessages.heading
+      layoutContent hasPageHeading ClientRelationshipMessages.heading
     }
 
     s"have information about why the user is not authorised for the client" in new ClientRelationshipFailureSetup {
-      content.selectHead(".content__body p").text shouldBe ClientRelationshipMessages.info
+      layoutContent.getElementsByTag("p").get(0).text shouldBe ClientRelationshipMessages.info
     }
 
     "have a link to the govuk client authorisation overview" in new ClientRelationshipFailureSetup {
-      val link: Element = content.selectHead(s"a[href=${appConfig.clientAuthorisationGuidance}]")
+      val link: Element = layoutContent.selectHead(s"a[href=${appConfig.clientAuthorisationGuidance}]")
       link.text shouldBe ClientRelationshipMessages.clientAuthorisationLink
       link.attr("target") shouldBe "_blank"
     }
 
     s"have a ${ClientRelationshipMessages.enterDifferentDetails} button" in new ClientRelationshipFailureSetup {
-      val button: Element = content.selectById("continue-button")
+      val button: Element = layoutContent.selectById("continue-button")
       button.attr("type") shouldBe "submit"
       button.text shouldBe ClientRelationshipMessages.enterDifferentDetails
     }
 
     s"have a form with ${postAction.method} and ${postAction.url}" in new ClientRelationshipFailureSetup {
-      content.hasFormWith(postAction.method, postAction.url)
+      layoutContent.hasFormWith(postAction.method, postAction.url)
     }
   }
 
