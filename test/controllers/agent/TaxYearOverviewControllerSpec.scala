@@ -23,11 +23,11 @@ import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockReportDeadlinesService}
+import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockTaxYearOverview
 import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, CalcOverview}
 import models.financialDetails.DocumentDetailWithDueDate
-import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
+import models.nextUpdates.{ObligationsModel, NextUpdatesErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
   with FeatureSwitching with MockTaxYearOverview with MockCalculationService with MockIncomeSourceDetailsService
-  with MockReportDeadlinesService with MockItvcErrorHandler with MockAuditingService {
+  with MockNextUpdatesService with MockItvcErrorHandler with MockAuditingService {
 
   class Setup {
 
@@ -54,7 +54,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
       calculationService = mockCalculationService,
       financialDetailsService = mockFinancialDetailsService,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      reportDeadlinesService = mockReportDeadlinesService,
+      nextUpdatesService = mockNextUpdatesService,
       auditingService = mockAuditingService
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],
@@ -145,8 +145,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
 				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
-				mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-					ReportDeadlinesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
+				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+					NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
 				)
 				mockShowInternalServerError()
 
@@ -162,7 +162,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayNoDataFound)
 				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
-				mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
 					ObligationsModel(Nil)
 				)
 				mockTaxYearOverview(
@@ -188,12 +188,12 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
 				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
-				mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
 					ObligationsModel(Nil)
 				)
 				mockTaxYearOverview(
 					taxYear = testYear,
-					calcOverview = Some(CalcOverview(calculationDataSuccessModel, None)),
+					calcOverview = Some(CalcOverview(calculationDataSuccessModel)),
 					documentDetailsWithDueDates = financialDetailsModel(testYear)
 						.getAllDocumentDetailsWithDueDates ++ List(DocumentDetailWithDueDate(financialDetailsModel(testYear).documentDetails.head,
 						financialDetailsModel(testYear).documentDetails.head.interestEndDate, true)),

@@ -16,8 +16,6 @@
 
 package models.calculation
 
-import models.financialTransactions.TransactionModel
-
 case class CalcOverview(timestamp: Option[String],
                         income: BigDecimal,
                         deductions: BigDecimal,
@@ -29,7 +27,7 @@ case class CalcOverview(timestamp: Option[String],
 
 object CalcOverview {
 
-  def apply(calculation: Calculation, transaction: Option[TransactionModel]): CalcOverview = {
+  def apply(calculation: Calculation): CalcOverview = {
     val valueDue: BigDecimal = calculation.totalIncomeTaxAndNicsDue.getOrElse(0.00)
     CalcOverview(
       timestamp = calculation.timestamp,
@@ -37,8 +35,8 @@ object CalcOverview {
       deductions = calculation.allowancesAndDeductions.totalAllowancesDeductionsReliefs.getOrElse(0.00),
       totalTaxableIncome = calculation.totalTaxableIncome.getOrElse(0.00),
       taxDue = calculation.totalIncomeTaxAndNicsDue.getOrElse(0.00),
-      payment = transaction.flatMap(_.clearedAmount).getOrElse(0.00),
-      totalRemainingDue = transaction.flatMap(_.outstandingAmount).getOrElse(valueDue),
+      payment = 0.00,
+      totalRemainingDue = valueDue,
       crystallised = calculation.crystallised
     )
   }

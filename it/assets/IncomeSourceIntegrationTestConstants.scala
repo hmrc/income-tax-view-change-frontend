@@ -84,7 +84,11 @@ object IncomeSourceIntegrationTestConstants {
 		List(), None
 	)
 	val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500, "ISE")
-	val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
+	val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("balanceDetails" -> Json.obj(
+		"balanceDueWithin30Days" -> 0.00,
+		"overDueAmount" -> 0.00,
+		"totalBalance" -> 0.00
+	), "documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
 
 	def propertyOnlyResponseWithMigrationData(year: Int,
 																						yearOfMigration: Option[String]): IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
@@ -96,6 +100,7 @@ object IncomeSourceIntegrationTestConstants {
 
 	def testValidFinancialDetailsModelJsonSingleCharge(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
 																										 taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+		"balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
 		"documentDetails" -> Json.arr(
 			Json.obj(
 				"taxYear" -> taxYear,
@@ -128,6 +133,11 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
 																				 dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
 																				 interestLocks: List[String] = noInterestLock): JsValue = Json.obj(
+		"balanceDetails" -> Json.obj(
+			"balanceDueWithin30Days" -> 1.00,
+			"overDueAmount" -> 2.00,
+			"totalBalance" -> 3.00
+		),
 		"documentDetails" -> Json.arr(
 			Json.obj(
 				"taxYear" -> taxYear,
@@ -222,6 +232,7 @@ object IncomeSourceIntegrationTestConstants {
 	def testValidFinancialDetailsModelJsonAccruingInterest(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                          taxYear: String = "2018", dueDate: String = "2018-02-14",
                                                          latePaymentInterestAmount: BigDecimal = 0): JsValue = Json.obj(
+		"balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
 		"documentDetails" -> Json.arr(
 			Json.obj(
 				"taxYear" -> taxYear,

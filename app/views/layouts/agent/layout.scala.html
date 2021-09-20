@@ -11,7 +11,7 @@
     hmrcBanner: HmrcBanner,
     govukBackLink: GovukBackLink,
     govukLayout: GovukLayout,
-    hmrcHeader: HmrcStandardHeader,
+    hmrcHeader:  HmrcHeader,
     phaseBanner: components.phaseBanner,
     footerLinks: HmrcStandardFooter,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
@@ -23,11 +23,13 @@
 @(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = {
-@hmrcHeader(
-        serviceName = Some(messages("agent.base.service_name")),
-        serviceUrl = Some(controllers.agent.routes.HomeController.show().url),
-        signOutUrl = Some(controllers.routes.SignOutController.signOut.url)
-    )
+    @hmrcHeader(HmrcHeaderArgs(
+        homepageUrl = controllers.agent.routes.HomeController.show().url,
+        serviceName = Some(Messages("agent.base.service_name")),
+        serviceUrl = controllers.agent.routes.HomeController.show().url,
+        containerClasses = "govuk-width-container",
+        signOutHref = Some(controllers.routes.SignOutController.signOut.url)
+    ))
 }
 
 @hmrcTrackingConsentSnippet()
@@ -81,7 +83,7 @@
 }
 
 @govukLayout(
-    pageTitle = Some(pageTitle + " - " + messages("agent.base.service_name") + " - " + messages("base.govUk")),
+    pageTitle = Some(messages("agent.titlePattern.serviceName.govUk", pageTitle)),
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
     bodyEndBlock = None,

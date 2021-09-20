@@ -35,9 +35,8 @@ package views.agent
 import assets.BaseTestConstants.{testMtdItUser, testMtditid}
 import config.featureswitch._
 import models.calculation.{AllowancesAndDeductions, CalcOverview, Calculation}
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, SubItem}
-import models.financialTransactions.TransactionModel
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlineModelWithIncomeType, ReportDeadlinesModel}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import models.nextUpdates.{NextUpdateModel, NextUpdateModelWithIncomeType, NextUpdatesModel, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -58,8 +57,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       totalIncomeReceived = Some(150.00),
       allowancesAndDeductions = AllowancesAndDeductions(totalAllowancesAndDeductions = Some(25.00), totalReliefs = Some(25.00)),
       totalTaxableIncome = Some(30.00)
-    ),
-    transaction = Some(TransactionModel())
+    )
   )
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
@@ -89,8 +87,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   val testObligations: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel("XA00001234", List(
-      ReportDeadlineModel(
+    NextUpdatesModel("XA00001234", List(
+      NextUpdateModel(
         start = LocalDate.of(2020, 1, 1),
         end = LocalDate.of(2020, 3, 31),
         due = LocalDate.of(2020, 3, 31),
@@ -98,7 +96,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         dateReceived = Some(LocalDate.of(2020, 3, 30)),
         periodKey = "#001"
       ),
-      ReportDeadlineModel(
+      NextUpdateModel(
         start = LocalDate.of(2020, 4, 1),
         end = LocalDate.of(2020, 6, 30),
         due = LocalDate.of(2020, 6, 30),
@@ -107,8 +105,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         periodKey = "EOPS"
       )
     )),
-    ReportDeadlinesModel("1234", List(
-      ReportDeadlineModel(
+    NextUpdatesModel("1234", List(
+      NextUpdateModel(
         start = LocalDate.of(2020, 1, 1),
         end = LocalDate.of(2020, 3, 31),
         due = LocalDate.of(2020, 3, 31),
@@ -117,8 +115,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         periodKey = "#001"
       )
     )),
-    ReportDeadlinesModel(testMtditid, List(
-      ReportDeadlineModel(
+    NextUpdatesModel(testMtditid, List(
+      NextUpdateModel(
         start = LocalDate.of(2020, 4, 1),
         end = LocalDate.of(2020, 6, 30),
         due = LocalDate.of(2020, 6, 30),
@@ -128,9 +126,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       )
     ))
   ))
-  val groupedObligations: Seq[(LocalDate, Seq[ReportDeadlineModelWithIncomeType])] = {
-    testObligations.allDeadlinesWithSource(previous = true).reverse.groupBy[LocalDate] { reportDeadlineWithIncomeType =>
-      reportDeadlineWithIncomeType.obligation.due
+  val groupedObligations: Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] = {
+    testObligations.allDeadlinesWithSource(previous = true).reverse.groupBy[LocalDate] { nextUpdateWithIncomeType =>
+      nextUpdateWithIncomeType.obligation.due
     }.toList.sortBy(_._1)
   }
 
@@ -170,7 +168,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
     def fromToEstimate(from: String, to: String): String = s"$from to $to estimate"
 
-    val estimateMessage: String = "This calculation is from the last time you viewed your tax calculation in your own software. You will need to view it in your software for the most up to date version."
+    val estimateMessage: String = "This calculation is only based on your completed updates for this tax year up to 5 Jan 2019. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
 
     val contents: String = "Contents"
     val calculationTabLabel: String = "Tax calculation"

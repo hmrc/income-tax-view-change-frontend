@@ -18,16 +18,11 @@ package controllers
 
 import assets.BaseTestConstants
 import assets.FinancialDetailsTestConstants._
-import assets.FinancialTransactionsTestConstants._
-import audit.mocks.MockAuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import implicits.ImplicitDateFormatter
-import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
-import models.financialTransactions.FinancialTransactionsModel
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -38,8 +33,7 @@ import views.html.WhatYouOwe
 
 import scala.concurrent.Future
 
-class WhatYouOweControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockIncomeTaxViewChangeConnector with ImplicitDateFormatter with MockAuditingService {
+class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
 
   trait Setup {
@@ -62,11 +56,10 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate
     )
   }
 
-  def testFinancialTransaction(taxYear: Int): FinancialTransactionsModel = financialTransactionsModel(s"$taxYear-04-05")
-
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00),
     List(documentDetailWithDueDateModel(2019)),
     List(documentDetailWithDueDateModel(2020)),
     List(documentDetailWithDueDateModel(2021)),
@@ -75,11 +68,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(List.empty)
-
-  val noFinancialTransactionErrors = List(testFinancialTransaction(2018))
-  val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
-  val hasAFinancialTransactionError = List(financialTransactionsErrorModel)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00),List.empty)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)

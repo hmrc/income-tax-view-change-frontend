@@ -17,13 +17,12 @@
 package views
 
 import assets.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
-import assets.ReportDeadlinesTestConstants._
+import assets.NextUpdatesTestConstants._
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatterImpl
 import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
-import models.financialTransactions.TransactionModel
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModelWithIncomeType}
+import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -51,11 +50,6 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     crystallised = crystallised
   )
 
-  val transactionModel: TransactionModel = TransactionModel(
-    clearedAmount = Some(7.07),
-    outstandingAmount = Some(8.08)
-  )
-
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")),
     dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
@@ -74,7 +68,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
     testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, "testBackURL")
@@ -98,7 +92,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
     val totalDue: String = "Total Due"
     val taxDue: String = "£4.04"
-    val calcDateInfo: String = "This calculation is from the last time you viewed your tax calculation in your own software. You will need to view it in your software for the most up to date version."
+    val calcDateInfo: String = "This calculation is only based on your completed updates for this tax year up to 5 Jan 2017. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
     val taxCalculation: String = "Tax calculation"
     val taxCalculationNoData: String = "No calculation yet"
     val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
@@ -335,9 +329,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
     "display updates by due-date" in new Setup(estimateView()) {
 
-      testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { reportDeadlineWithIncomeType =>
-        reportDeadlineWithIncomeType.obligation.due
-      }.toList.sortBy(_._1)(localDateOrdering).reverse.map { case (due: LocalDate, obligations: Seq[ReportDeadlineModelWithIncomeType]) =>
+      testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
+        nextUpdateWithIncomeType.obligation.due
+      }.toList.sortBy(_._1)(localDateOrdering).reverse.map { case (due: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
         content.selectHead(s"#table-default-content-$due").text shouldBe taxYearOverviewMessages.dueMessage(due.toLongDate)
         val sectionContent = content.selectHead(s"#updates")
         obligations.zip(1 to obligations.length).foreach {

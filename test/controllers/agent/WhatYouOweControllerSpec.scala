@@ -18,15 +18,10 @@ package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import assets.FinancialDetailsTestConstants._
-import assets.FinancialTransactionsTestConstants._
-import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
-import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
-import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
-import models.financialTransactions.FinancialTransactionsModel
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -40,10 +35,7 @@ import scala.concurrent.Future
 class WhatYouOweControllerSpec extends TestSupport
   with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate
-  with MockIncomeTaxViewChangeConnector
-  with ImplicitDateFormatter
-  with MockItvcErrorHandler
-  with FeatureSwitching {
+  with MockItvcErrorHandler {
 
   trait Setup {
 
@@ -61,11 +53,10 @@ class WhatYouOweControllerSpec extends TestSupport
       mockItvcErrorHandler)
   }
 
-  def testFinancialTransaction(taxYear: Int): FinancialTransactionsModel = financialTransactionsModel(s"$taxYear-04-05")
-
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00),
     List(documentDetailWithDueDateModel(2019)),
     List(documentDetailWithDueDateModel(2020)),
     List(documentDetailWithDueDateModel(2021)),
@@ -74,10 +65,7 @@ class WhatYouOweControllerSpec extends TestSupport
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(List.empty)
-
-  val noFinancialTransactionErrors = List(testFinancialTransaction(2018))
-  val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00), List.empty)
 
 
   "The WhatYouOweController.show function" when {

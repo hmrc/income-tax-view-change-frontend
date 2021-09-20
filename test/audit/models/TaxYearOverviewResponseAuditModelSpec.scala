@@ -26,7 +26,7 @@ import models.calculation.Calculation
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -63,10 +63,10 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
   }
 
   val updates: ObligationsModel = ObligationsModel(Seq(
-    ReportDeadlinesModel(
+    NextUpdatesModel(
       identification = "testId",
       obligations = List(
-        ReportDeadlineModel(
+        NextUpdateModel(
           start = getCurrentTaxYearEnd.minusMonths(3),
           end = getCurrentTaxYearEnd,
           due = getCurrentTaxYearEnd,

@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package models.reportDeadlines
+package models.financialDetails
 
-sealed trait ObligationType
-case object EopsObligation extends ObligationType
-case object QuarterlyObligation extends ObligationType
+import play.api.libs.json.{Json, Reads, Writes}
 
+case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
+                          overDueAmount: BigDecimal,
+                          totalBalance: BigDecimal)
 
+object BalanceDetails {
+  implicit val writes: Writes[BalanceDetails] = Json.writes[BalanceDetails]
+  implicit val reads: Reads[BalanceDetails] = Json.reads[BalanceDetails]
+}

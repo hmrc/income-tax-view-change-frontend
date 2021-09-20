@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class ClientDetailsServiceSpec extends TestSupport
   with MockCitizenDetailsConnector with MockIncomeTaxViewChangeConnector {
 
-  object TestClientDetailsService$ extends ClientDetailsService(
+  object TestClientDetailsService extends ClientDetailsService(
     mockCitizenDetailsConnector,
     mockIncomeTaxViewChangeConnector
   )
@@ -45,7 +45,7 @@ class ClientDetailsServiceSpec extends TestSupport
 					setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
 					setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", None, List(), None)))
 
-					val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
+					val result = await(TestClientDetailsService.checkClientDetails("testSaUtr"))
 
 					result shouldBe Right(ClientDetailsService.ClientDetails(Some("James"), Some("Bond"), "TESTNINO123", "mtdbsaId"))
         }
@@ -59,7 +59,7 @@ class ClientDetailsServiceSpec extends TestSupport
           setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
           setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsError(404, "not found")))
 
-          val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
+          val result = await(TestClientDetailsService.checkClientDetails("testSaUtr"))
 
           result shouldBe Left(BusinessDetailsNotFound)
         }
@@ -73,7 +73,7 @@ class ClientDetailsServiceSpec extends TestSupport
           setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
           setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsError(500, "internal server error")))
 
-          val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
+          val result = await(TestClientDetailsService.checkClientDetails("testSaUtr"))
 
           result shouldBe Left(UnexpectedResponse)
         }
@@ -85,7 +85,7 @@ class ClientDetailsServiceSpec extends TestSupport
 
         setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsErrorModel(404, "not found")))
 
-        val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
+        val result = await(TestClientDetailsService.checkClientDetails("testSaUtr"))
 
         result shouldBe Left(CitizenDetailsNotFound)
       }
@@ -97,7 +97,7 @@ class ClientDetailsServiceSpec extends TestSupport
 
         setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsErrorModel(500, "internal server error")))
 
-        val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
+        val result = await(TestClientDetailsService.checkClientDetails("testSaUtr"))
 
         result shouldBe Left(UnexpectedResponse)
       }

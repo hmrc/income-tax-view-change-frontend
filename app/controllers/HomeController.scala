@@ -23,12 +23,11 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.financialDetails.FinancialDetailsModel
-import models.financialTransactions.FinancialTransactionsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{FinancialDetailsService, ReportDeadlinesService}
+import services.{FinancialDetailsService, NextUpdatesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CurrentDateProvider
 
@@ -38,11 +37,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
-                                val checkSessionTimeout: SessionTimeoutPredicate,
+                               val checkSessionTimeout: SessionTimeoutPredicate,
                                val authenticate: AuthenticationPredicate,
                                val retrieveNino: NinoPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                               val reportDeadlinesService: ReportDeadlinesService,
+                               val nextUpdatesService: NextUpdatesService,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialDetailsService: FinancialDetailsService,
                                override val appConfig: FrontendAppConfig,
@@ -67,20 +66,16 @@ class HomeController @Inject()(val homeView: views.html.Home,
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
 
-      reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
+      nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
         val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYears.map { taxYear =>
             financialDetailsService.getFinancialDetails(taxYear, user.nino)
         }) map {
           _.filter(_ match {
-            case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty =>
-              ftm.financialTransactions.get.exists(!_.isPaid)
             case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty =>
               fdm.documentDetails.exists(!_.isPaid)
             case _ =>
               false
           }) flatMap {
-            case ftm: FinancialTransactionsModel =>
-              ftm.financialTransactions.get.flatMap(_.charges().map(_.dueDate.get))
             case fdm: FinancialDetailsModel =>
               fdm.getAllDueDates
           }

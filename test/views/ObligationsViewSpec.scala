@@ -18,9 +18,9 @@ package views
 
 import assets.BaseTestConstants.testSelfEmploymentId
 import assets.BusinessDetailsTestConstants.business1
-import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
+import assets.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -46,17 +46,17 @@ class ObligationsViewSpec extends TestSupport {
 
   "The Deadline Reports Page" should {
 
-    lazy val businessIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
+    lazy val businessIncomeSource = ObligationsModel(Seq(NextUpdatesModel(
       business1.incomeSourceId,
       twoObligationsSuccessModel.obligations
     )))
 
     val date: LocalDate = LocalDate.now.minusYears(1)
-    val reportDeadline: ReportDeadlineModel = ReportDeadlineModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")
+    val nextUpdate: NextUpdateModel = NextUpdateModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")
 
-    def basicDeadline(identification: String, obligationType: String): ReportDeadlinesModel = ReportDeadlinesModel(identification, List(reportDeadline.copy(obligationType = obligationType)))
+    def basicDeadline(identification: String, obligationType: String): NextUpdatesModel = NextUpdatesModel(identification, List(nextUpdate.copy(obligationType = obligationType)))
 
-    val basicBusinessDeadline: ReportDeadlinesModel = basicDeadline(testSelfEmploymentId, "Quarterly")
+    val basicBusinessDeadline: NextUpdatesModel = basicDeadline(testSelfEmploymentId, "Quarterly")
 
     val obligationModelWithSingleBusiness: ObligationsModel = ObligationsModel(Seq(basicBusinessDeadline))
 

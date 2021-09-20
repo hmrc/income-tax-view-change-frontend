@@ -13,8 +13,8 @@ GET         /assets/*file                                                 contro
 #Home Controller
 GET         /                                                             controllers.HomeController.home
 
-#ReportDeadlines
-GET         /obligations                                                  controllers.ReportDeadlinesController.getReportDeadlines
+#NextUpdates
+GET         /obligations                                                  controllers.NextUpdatesController.getNextUpdates
 
 #Calculation
 GET         /calculation/:taxYear                                         controllers.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear: Int)

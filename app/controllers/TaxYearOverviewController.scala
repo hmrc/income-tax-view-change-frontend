@@ -25,12 +25,12 @@ import controllers.predicates._
 import forms.utils.SessionKeys
 import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.reportDeadlines.ObligationsModel
+import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CalculationService, FinancialDetailsService, ReportDeadlinesService}
+import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
 import views.html.TaxYearOverview
 import views.html.errorPages.StandardError
 
@@ -48,7 +48,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           itvcErrorHandler: ItvcErrorHandler,
                                           retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           retrieveNino: NinoPredicate,
-                                          reportDeadlinesService: ReportDeadlinesService,
+                                          nextUpdatesService: NextUpdatesService,
                                           val auditingService: AuditingService)
                                      (implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
@@ -75,7 +75,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                    (implicit user: MtdItUser[AnyContent]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case financialDetails@FinancialDetailsModel(documentDetails, _) =>
+      case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
@@ -93,7 +93,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   }
 
   private def withObligationsModel(taxYear: Int)(implicit user: MtdItUser[AnyContent]) = {
-    reportDeadlinesService.getReportDeadlines(
+    nextUpdatesService.getNextUpdates(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     )
@@ -112,7 +112,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                 if (isEnabled(TxmEventsApproved)) {
                   auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel))
                 }
-                Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation, None)),
+                Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation)),
                 charge = charges, obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }

@@ -17,7 +17,7 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import java.time.LocalDate
 @import models.calculation.CalcOverview
-@import models.reportDeadlines.ObligationsModel
+@import models.nextUpdates.ObligationsModel
 @import models.financialDetails.DocumentDetailWithDueDate
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
@@ -113,7 +113,7 @@
 }
 
 @groupedObligations = @{
-    obligations.allDeadlinesWithSource(previous = true).reverse.groupBy[LocalDate]{reportDeadlineWithIncomeType => reportDeadlineWithIncomeType.obligation.due}.toList.sortBy(_._1)
+    obligations.allDeadlinesWithSource(previous = true).reverse.groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}.toList.sortBy(_._1)
 }
 
 @updatesContent = {
@@ -136,11 +136,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                @dueObligations.map{reportDeadlineWithIncomeType =>
+                @dueObligations.map{nextUpdateWithIncomeType =>
                     <tr>
-                        <td>@updateTypeHelper(reportDeadlineWithIncomeType.obligation.obligationType)</td>
-                        <td>@obligationsTypeHelper(reportDeadlineWithIncomeType.incomeType)</td>
-                        <td>@reportDeadlineWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
+                        <td>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
+                        <td>@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
+                        <td>@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
                     </tr>
                 }
                 </tbody>
@@ -193,7 +193,7 @@
         </dl>
 
         @if(!overview.crystallised) {
-            <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time")</div>
+            <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)</div>
         }
 
     }

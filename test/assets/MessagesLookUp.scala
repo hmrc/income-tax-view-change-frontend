@@ -102,10 +102,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val title = "Tax years - Business Tax account - GOV.UK"
     val heading = "Tax years"
     val noEstimates = "You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software."
-    val p1 = "Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary."
     val taxYear: (String, String) => String = (year, yearPlusOne) => s"6 April $year to 5 April $yearPlusOne"
-    val ongoing = "ONGOING"
-    val complete = "COMPLETE"
     val overdue = "OVERDUE"
     val updateReturn = "Update return"
     val viewReturn = "View return"
@@ -367,10 +364,10 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val p2 = "Try refreshing the page in a few minutes."
   }
 
-  object NoReportDeadlines {
+  object NoNextUpdates {
     val title = "Report deadlines - Business Tax account - GOV.UK"
     val heading = "Report deadlines"
-    val noReports = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
+    val noUpdates = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
   }
 
   // Statements Page Messages
@@ -473,7 +470,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val signInLink = "Go back to sign in."
   }
 
-  //ReportDeadlines Page Messages
+  //NextUpdates Page Messages
   object Obligations {
     val title = "Updates - Business Tax account - GOV.UK"
     val nextTitle = "Next updates - Business Tax account - GOV.UK"
@@ -574,9 +571,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val lpiHeading = "Late payment interest"
     val lpiLine1   = "This is interest you owe for a late payment."
     val overduePayments = "Overdue payments"
+    val overduePaymentsDue = "Overdue payments due"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
     val futurePayments = "Future payments"
+    val totalPaymentsDue = "Total payments due"
 
     val poa1WithTaxYear = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
     val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
@@ -633,9 +632,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val lpiHeading = "Late payment interest"
     val lpiLine1   = "This is interest you owe for a late payment."
     val overduePayments = "Overdue payments"
+    val overduePaymentsDue = "Overdue payments due"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
     val futurePayments = "Future payments"
+    val totalPaymentsDue = "Total payments due"
 
     val poa1WithTaxYear = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
     val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"

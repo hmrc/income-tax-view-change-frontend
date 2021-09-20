@@ -16,11 +16,14 @@
 
 package views.agent
 
+import assets.BaseTestConstants.{testArn, testCredId, testUserTypeAgent}
 import assets.FinancialDetailsTestConstants._
 import assets.MessagesLookUp.{AgentPaymentDue, WhatYouOwe => whatYouOwe}
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.outstandingCharges.OutstandingChargesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -28,20 +31,33 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import views.html.agent.WhatYouOwe
-import java.time.LocalDate
 
+import java.time.LocalDate
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.retrieve.Name
 
 class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDateFormatter {
   import Selectors.id
 
   class Setup(charges: WhatYouOweChargesList,
-              currentTaxYear: Int = LocalDate.now().getYear) {
+              currentTaxYear: Int = LocalDate.now().getYear,
+              migrationYear: Int = LocalDate.now().getYear - 1) {
+
+    val agentUser: MtdItUser[_] = MtdItUser(
+      mtditid = "XAIT00000000015",
+      nino = "AA111111A",
+      userName = Some(Name(Some("Test"), Some("User"))),
+      incomeSources = IncomeSourceDetailsModel("testMtdItId", Some(migrationYear.toString), List(), None),
+      saUtr = Some("1234567890"),
+      credId = Some(testCredId),
+      userType = Some(testUserTypeAgent),
+      arn = Some(testArn)
+    )(FakeRequest())
 
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear,
-      "testBackURL", Some("1234567890"))(FakeRequest(),implicitly)
+      "testBackURL", Some("1234567890"))(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -76,24 +92,27 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
   )
 
   def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueInterestData(latePaymentInterest).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]],
                                    dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataWithOverdueMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
-    futurePayments = List(),
-
+    futurePayments = List()
   )
 
   def whatYouOweDataTestActiveWithMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
@@ -104,6 +123,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     LocalDate.now().minusDays(15).toString, 0.00
   )
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates(1)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
     futurePayments = List(),
@@ -111,16 +131,30 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
   )
 
   val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = List(),
     dueInThirtyDaysList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates(1)),
     futurePayments = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
-  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList()
+  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00))
 
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
+      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(),
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
+      }
       s"have the title '${AgentPaymentDue.title}' and page header and notes" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
@@ -189,6 +223,19 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       "when showing the Dunning Lock content" should {
+        "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock)) {
+          pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
+          pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+          pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+          pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+          pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
+        }
+        "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock),
+          migrationYear = LocalDate.now().getYear) {
+          pageDocument.getElementById("overdueAmount") shouldBe null
+          pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+          pageDocument.getElementById("totalBalance") shouldBe null
+        }
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
           whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock)) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
@@ -225,6 +272,19 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     }
 
     "the user has charges and access viewer within 30 days of due date" should {
+      "have Balance due in 30 days amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueIn30Days()) {
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe AgentPaymentDue.dueInThirtyDays
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£1.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueIn30Days(),
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
+      }
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
@@ -289,6 +349,19 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       "when showing the Dunning Lock content" should {
+        "have Balance due in 30 days amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
+          pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe AgentPaymentDue.dueInThirtyDays
+          pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+          pageDocument.getElementById("overdueAmount") shouldBe null
+          pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+          pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£1.00"
+        }
+        "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueIn30Days(oneDunningLock),
+          migrationYear = LocalDate.now().getYear) {
+          pageDocument.getElementById("overdueAmount") shouldBe null
+          pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+          pageDocument.getElementById("totalBalance") shouldBe null
+        }
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
           whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
@@ -324,6 +397,19 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     }
 
     "the user has charges and access viewer after due date" should {
+      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithOverdueData()) {
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£3.00"
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithOverdueData(),
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
+      }
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithOverdueData()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
@@ -435,6 +521,19 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       "when showing the Dunning Lock content" should {
+        "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithOverdueData(oneDunningLock)) {
+          pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
+          pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£3.00"
+          pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+          pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+          pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
+        }
+        "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithOverdueData(oneDunningLock),
+          migrationYear = LocalDate.now().getYear) {
+          pageDocument.getElementById("overdueAmount") shouldBe null
+          pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+          pageDocument.getElementById("totalBalance") shouldBe null
+        }
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
           whatYouOweDataWithOverdueData(oneDunningLock)) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
@@ -472,6 +571,20 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     "the user has charges and access viewer with mixed dates" should {
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithMixedData1) {
         pageDocument.title() shouldBe AgentPaymentDue.title
+      }
+      "have Balance due in 30 days, Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithMixedData1) {
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe AgentPaymentDue.dueInThirtyDays
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithMixedData1,
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
       }
       s"not have MTD payments heading" in new Setup(whatYouOweDataWithMixedData1) {
         pageDocument.doesNotHave(id("pre-mtd-payments-heading"))
@@ -532,6 +645,20 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     }
 
     "the user has charges and access viewer with mixed dates and ACI value of zero" should {
+      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe AgentPaymentDue.dueInThirtyDays
+        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
+        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
+        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
+        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
+      }
+      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue,
+        migrationYear = LocalDate.now().getYear) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
+      }
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.title() shouldBe AgentPaymentDue.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
@@ -642,6 +769,11 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("no-payments-due").text shouldBe AgentPaymentDue.noPaymentsDue
         pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe AgentPaymentDue.osChargesNote
+      }
+      "have Overdue amount and Total amount displayed " in new Setup(noChargesModel) {
+        pageDocument.getElementById("overdueAmount") shouldBe null
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
+        pageDocument.getElementById("totalBalance") shouldBe null
       }
 
       "have the link to their previous Self Assessment online account in the sa-note" in new Setup(noChargesModel) {

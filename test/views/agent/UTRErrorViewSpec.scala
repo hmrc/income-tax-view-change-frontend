@@ -55,26 +55,26 @@ class UTRErrorViewSpec extends ViewSpec {
     }
 
     s"have a paragraph stating: ${utrErrorMessages.utrWrong}" in new Setup(utrErrorView) {
-      content.select("article p").text shouldBe utrErrorMessages.utrWrong
+      layoutContent.getElementsByTag("p").get(0).text shouldBe utrErrorMessages.utrWrong
     }
 
     s"have a first bullet point: ${utrErrorMessages.reasonBullet1}" in new Setup(utrErrorView) {
-      content.getElementById("list-bullet1").text shouldBe utrErrorMessages.reasonBullet1
+      layoutContent.getElementById("list-bullet1").text shouldBe utrErrorMessages.reasonBullet1
     }
 
     s"have a second bullet point: ${utrErrorMessages.reasonBullet2}" in new Setup(utrErrorView) {
-      content.select("ul li:nth-child(2)").text shouldBe utrErrorMessages.reasonBullet2
+      layoutContent.select("ul li:nth-child(2)").text shouldBe utrErrorMessages.reasonBullet2
     }
 
 
     s"have a link in the second bullet point: ${utrErrorMessages.reasonBullet2Link}" in new Setup(utrErrorView) {
-      val link: Elements = content.select("ul li:nth-child(2) a")
+      val link: Elements = layoutContent.select("ul li:nth-child(2) a")
       link.text shouldBe utrErrorMessages.reasonBullet2Link
       link.attr("href") shouldBe "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
     }
 
     s"have a button stating: ${utrErrorMessages.goBackButton}" in new Setup(utrErrorView) {
-      content.select("#continue-button").text shouldBe utrErrorMessages.goBackButton
+      layoutContent.select("#continue-button").text shouldBe utrErrorMessages.goBackButton
     }
   }
 }

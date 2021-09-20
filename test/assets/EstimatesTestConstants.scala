@@ -18,11 +18,7 @@ package assets
 
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testTimeStampString}
 import models.calculation._
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
-import models.financialTransactions.{SubItemModel, TransactionModel}
 import play.api.http.Status
-
-import java.time.LocalDate
 
 object EstimatesTestConstants {
 
@@ -65,28 +61,4 @@ object EstimatesTestConstants {
 		CalculationResponseModelWithYear(lastTaxCalcNotFound, testYearPlusOne)
 	)
 
-	def transactionModelStatus(paid: Boolean, overdue: Boolean): TransactionModel = {
-		val outstandingAmount = if (paid) 0 else 1
-		val dueDate = if (overdue) LocalDate.now().minusDays(1) else LocalDate.now().plusDays(1)
-		TransactionModel(
-			outstandingAmount = Some(outstandingAmount),
-			items = Some(Seq(SubItemModel(dueDate = Some(dueDate))))
-		)
-	}
-
-	def chargeModelStatus(paid: Boolean, overdue: Boolean): DocumentDetailWithDueDate = {
-		val outstandingAmount = if (paid) 0 else 1
-		val dueDate = if (overdue) LocalDate.now().minusDays(1) else LocalDate.now().plusDays(1)
-		DocumentDetailWithDueDate(
-			DocumentDetail(
-				taxYear = "2019",
-				transactionId = "id",
-				documentDescription = None,
-				outstandingAmount = Some(outstandingAmount),
-				originalAmount = None,
-				documentDate = LocalDate.of(2018, 3, 29)
-			),
-			Some(dueDate)
-		)
-	}
 }
