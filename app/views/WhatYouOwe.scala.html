@@ -58,11 +58,6 @@
 @paymentDaysNoteParagraph = {
     @p(content = Html(
         messages("whatYouOwe.payment-days-note")), id = Some("payment-days-note"))
-@*
-    @p{
-        @messages("whatYouOwe.payment-days-note")
-    }
-    *@
 }
 
 @creditOnAccountNotePanel = {
@@ -100,13 +95,9 @@
     @if(dunningLock) {
         @p(content = Html(
             messages("whatYouOwe.dunningLock.text", "") +
-                    link(link = "https://www.gov.uk/tax-appeals", messageKey = "whatYouOwe.dunningLock.link", outerMessage = Some("")).toString() ), id = Some("payment-under-review-info"))
-@*
-        @p{
-            @messages("whatYouOwe.dunningLock.text", "")
-            @link(link = "https://www.gov.uk/tax-appeals", messageKey = "whatYouOwe.dunningLock.link", outerMessage = Some("."))
-        }
-        *@
+                    link(link = "https://www.gov.uk/tax-appeals", id=Some("disagree-with-tax-appeal-link"),
+                        messageKey = "whatYouOwe.dunningLock.link", outerMessage = Some("")).toString() ),
+            id = Some("payment-under-review-info"))
     }
 }
 
@@ -202,7 +193,7 @@
                     @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
                         <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
                             @p{
-                                @messages("whatYouOwe.whatYouOwe.balanceDueWithin30Days")
+                                @messages("whatYouOwe.balanceDueWithin30Days")
                             }
                             <p class="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold">@chargesList.balanceDetails.balanceDueWithin30Days.toCurrency</p>
                         </div>
@@ -296,29 +287,11 @@
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
-@*
-                    @p(content = Html(
-                        messages("whatYouOwe.sa-note") +
-                                link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", outerMessage = Some(".")).toString()), id = Some("sa-note-migrated"))
-*@
-
                     @p(content = Html(
                         messages("whatYouOwe.over-due.interest-rate-1", "") +
                            link(link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
                             messageKey = "whatYouOwe.over-due.interest-rate.link", outerMessage = Some("."), id=Some("interest-rate-link")) + messages("whatYouOwe.over-due.interest-rate-2")),
                         id = Some("interest-rate-para"))
-
-
-
-
-@*
-                    @p{
-                        @messages("whatYouOwe.over-due.interest-rate-1", "")
-                        @link(link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
-                            messageKey = "whatYouOwe.over-due.interest-rate.link", outerMessage = Some("."), id=Some("interest-rate-link"))
-                        @messages("whatYouOwe.over-due.interest-rate-2")
-                    }
-                    *@
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty){
