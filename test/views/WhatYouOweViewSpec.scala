@@ -486,10 +486,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have a paragraph explaining interest rates" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
-        pageDocument.getElementsByClass("interest-rate").get(0).text() shouldBe whatYouOwe.interestRatesPara
+        pageDocument.getElementById("interest-rate-para").text().contains("Any overdue payment interest")
 
         val expectedUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
-        pageDocument.getElementById("interest-rate-link").attr("href") shouldBe expectedUrl
+        pageDocument.getElementById("interest-rate-link").toString.contains(expectedUrl)
       }
 
       "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(whatYouOweDataWithOverdueData()) {
@@ -722,7 +722,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
         pageDocument.title() shouldBe whatYouOwe.title
-        pageDocument.selectFirst("header > h1").text shouldBe whatYouOwe.heading
+
+        pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
 
         pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
@@ -736,7 +737,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have note credit-on-account as a panel" in new Setup(noChargesModel) {
-        pageDocument.getElementById("credit-on-account").classNames should contain allOf("panel", "panel-indent", "panel-border-wide")
+        pageDocument.getElementById("credit-on-account").className() shouldBe "govuk-insert-text"
       }
 
       "not have button Pay now" in new Setup(noChargesModel) {
