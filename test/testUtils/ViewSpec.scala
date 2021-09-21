@@ -137,6 +137,11 @@ trait ViewSpec extends TestSupport {
       link.attr("href") shouldBe href
     }
 
+    def hasCorrectHref(href: String): Assertion = {
+      val link = element.link
+      link.attr("href") shouldBe href
+    }
+
     def hasFormWith(method: String, action: String): Assertion = {
       element.form.attr("method") shouldBe method
       element.form.attr("action") shouldBe action
