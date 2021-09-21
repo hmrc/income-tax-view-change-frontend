@@ -292,14 +292,6 @@
                         target="_blank">@messages("whatYouOwe.over-due.interest-rate.link")</a>
                         @messages("whatYouOwe.over-due.interest-rate-2")
                     }
-
-
-                    @p(content = Html(
-                        messages("whatYouOwe.over-due.interest-rate-1", "") +
-                           link(link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
-                            messageKey = "whatYouOwe.over-due.interest-rate.link", outerMessage = Some("."), id=Some("interest-rate-link")) + messages("whatYouOwe.over-due.interest-rate-2")),
-                        id = Some("interest-rate-para"))
-
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty){
