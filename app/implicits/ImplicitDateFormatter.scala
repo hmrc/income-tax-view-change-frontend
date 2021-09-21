@@ -48,22 +48,22 @@ trait ImplicitDateFormatter {
   implicit class longDate(d: LocalDate)(implicit messages: Messages) {
 
     def toLongDateNoYear: String = {
-      val dt = languageUtils.Dates.formatDate(org.joda.time.LocalDate.parse(d.toString))(messages)
+      val dt = languageUtils.Dates.formatDate(d)(messages)
       dt.split(" ")(0) + " " + dt.split(" ")(1)
     }
 
     def toLongDateShort: String = {
-      languageUtils.Dates.formatDateAbbrMonth(org.joda.time.LocalDate.parse(d.toString))(messages)
+      languageUtils.Dates.formatDateAbbrMonth(d)(messages)
     }
 
     def toLongDate: String = {
-      languageUtils.Dates.formatDate(org.joda.time.LocalDate.parse(d.toString))(messages)
+      languageUtils.Dates.formatDate(d)(messages)
     }
   }
 
   implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
     def toLongDateTime: String = {
-      languageUtils.Dates.formatDate(org.joda.time.LocalDate.parse(dt.toLocalDate.toString))(messages)
+      languageUtils.Dates.formatDate(dt.toLocalDate)(messages)
     }
   }
 

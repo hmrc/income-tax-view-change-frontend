@@ -24,4 +24,5 @@
     id: Option[String] = None
 )(implicit messages: Messages)
 
-<a href="@link" class="@classes" @id.map(id => s"id=$id")>@messages(messageKey)</a>@outerMessage.map(outerMessage => s"$outerMessage")
+<h3 class= "govuk-heading-s"><a href="@link" class="@classes" @id.map(id => s"id=$id")>@messages(messageKey)</a>@outerMessage.map(outerMessage => s"$outerMessage")</h3>
+

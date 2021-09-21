@@ -14,17 +14,17 @@
 * limitations under the License.
 *@
 
-@import views.html.templates.MainTemplate
-
+@import views.html.layouts.layout
+@import views.html.components._
 @import config.FormPartialProvider
 
 @this(
-    mainTemplate: MainTemplate
+    layout: layout
 )
 
 @(partialUrl: String, redirectUrl: String)(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
 
-@mainTemplate(title = messages("feedback.title")) {
+@layout(pageTitle = messages("feedback.title")) {
     @formPartialProvider.getPartialContent(partialUrl)
-    <a id="back" href='@redirectUrl' role="button" tabindex="0" class="button">@messages("base.back")</a>
+    <a id="back" href='@redirectUrl' role="button" tabindex="0" class="govuk-button">@messages("base.back")</a>
 }

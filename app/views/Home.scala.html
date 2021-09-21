@@ -15,22 +15,37 @@
  *@
 
 @import java.time.LocalDate
-@import implicits.ImplicitDateFormatterImpl
-@import views.html.templates.MainTemplate
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import views.html.layouts.layout
+@import views.html.components._
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 
 @this(
-    mainTemplate: MainTemplate,
+    layout: layout,
     appConfig: config.FrontendAppConfig,
-    implicitDateFormatter: ImplicitDateFormatterImpl
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    h1: h1,
+    h2: h2,
+    h3link: h3link,
+    p: p,
+    link: link,
+    govukWarningText : GovukWarningText
 )
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int],utr: Option[String], paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate,
+  overDuePayments: Option[Int], overDueUpdates: Option[Int],
+  utr: Option[String], paymentHistoryEnabled: Boolean,
+  ITSASubmissionIntegrationEnabled: Boolean)(
+  implicit request: Request[_], messages: Messages,
+  user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
 <div id="payments-tile" class="tile tile-no-border">
     <div class="tile-body">
-        <h2 class="heading-medium">@messages("home.payments.heading")</h2>
+        @h2(classes = "govuk-heading-m", msg = "home.payments.heading")
         @{overDuePayments.getOrElse(0) match {
 			case 0 => <p>{nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due"))}</p>
 			case 1 =>
@@ -43,9 +58,12 @@
 					<span class="govuk-tag govuk-tag--red"> {messages("home.updates.overdue.payments", overDuePayments.get)}</span>
 				</p>
         }}
-        <p>
-			<a href=@controllers.routes.WhatYouOweController.viewPaymentsDue().url>@messages("home.payments.view")</a>
-        </p>
+        @p{
+            @link(
+                link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
+                messageKey = "home.payments.view"
+            )
+        }
     </div>
 </div>
 }
@@ -53,12 +71,12 @@
 @updatesTile = {
 <div id="updates-tile" class="tile tile-no-border">
     <div class="tile-body">
-        <h2 class="heading-medium">@messages("home.updates.heading")</h2>
+        @h2(classes = "govuk-heading-m", msg = "home.updates.heading")
 		@{overDueUpdates.getOrElse(0) match {
 			case 0 => <p>{nextUpdate.toLongDate}</p>
 			case 1 => {
 				<p>
-					<span class="govuk-tag govuk-tag--red">{messages("taxYears.overdue")}</span>
+					<span classes="govuk-tag govuk-tag--red">{messages("taxYears.overdue")}</span>
 					{nextUpdate.toLongDate}
 				</p>
 			}
@@ -68,9 +86,12 @@
 				</p>
 			}
 		}}
-        <p>
-            <a href=@controllers.routes.NextUpdatesController.getNextUpdates().url>@messages("home.updates.view")</a>
-        </p>
+        @p{
+            @link(
+                link = controllers.routes.NextUpdatesController.getNextUpdates().url,
+                messageKey = "home.updates.view"
+            )
+        }
     </div>
 </div>
 }
@@ -78,40 +99,53 @@
 @taxYearsTile = {
     <div id="tax-years-tile" class="tile tile-no-border">
         <div class="tile-body">
-            <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
-            <ul class="list">
-                <li><a href=@controllers.routes.TaxYearsController.viewTaxYears().url>@messages("home.tax-years.view")</a>
+            @h2(classes= "govuk-heading-m" , msg = "home.tax-years.heading")
+            <div class="govuk-list">
+                <li>
+                @link(
+                    link = controllers.routes.TaxYearsController.viewTaxYears().url,
+                    messageKey = "home.tax-years.view"
+                )
                 </li>
                 @if(paymentHistoryEnabled){
-                    <li><a href=@controllers.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
+                <li>
+                    @link(
+                        link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+                        messageKey = "home.tax-years.viewPayments"
+                    )
+                </li>
                 }
-            </ul>
+            </div>
         </div>
     </div>
 }
 
 @YourIncomeTaxReturnTile= {
     @if(ITSASubmissionIntegrationEnabled){
-        <div id="manage-income-tax-tile" class="grid-row">
-            <div class="column-two-thirds">
-                <h2 class="heading-large">@messages("home.manage-income-tax.heading")</h2>
+        <div id="manage-income-tax-tile" class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @h2(classes = "govuk-heading-l", msg = "home.manage-income-tax.heading")
             </div>
         </div>
-        <div id="submit-your-returns-tile" class="grid-row">
-            <div class="column-one-third">
-                <h3 class ="heading-small" id ="submit-your-returns">
-                    <a href=@appConfig.submissionFrontendUrl>@messages("home.your-returns.updatesLink")</a>
-                </h3>
-                <p>@messages("home.your-returns.description")</p>
+        <div id="submit-your-returns-tile" class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                @h3link(
+                    id =Some("submit-your-returns"),
+                    link = appConfig.submissionFrontendUrl,
+                    messageKey = "home.your-returns.updatesLink")
+
+                @p{@messages("home.your-returns.description")}
             </div>
             @if(utr.isDefined) {
             <div id="saViewLandPTile">
-            <div class="column-one-third">
-                <h3 class ="heading-small" id="saViewLandPService">
-                    <a href="@{appConfig.saViewLandPService(utr.get)}">@messages("home.self-assessment.updatesLink")</a>
-                </h3>
-                <p>@messages("home.self-assessment.description")</p>
-            </div>
+                <div class="govuk-grid-column-one-third">
+                    @h3link(
+                        link = appConfig.saViewLandPService(utr.get),
+                        messageKey = "home.self-assessment.updatesLink",
+                        id = Some("saViewLandPService")
+                    )
+                    @p{@messages("home.self-assessment.description")}
+                </div>
             </div>
             }
         </div>
@@ -120,39 +154,36 @@
 
 
 
-
-
-@mainTemplate(
-    title = messages("home.heading"),
+@layout(
+    pageTitle = messages("home.heading"),
     mainClass = Some("full-width")
 ) {
-    <h1 class="heading-xlarge">
-        <span id="sub-heading" class="heading-secondary">@user.userName.map(_.name)</span>
+    <h1 class="govuk-heading-xl margin-bottom-zero">
+        <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
         <span id="income-tax-heading">@messages("home.heading")</span>
     </h1>
 
     @user.saUtr.map { utr =>
-        <span id="utr-reference-heading" class="form-hint heading-xl-addon">
+        <div id="utr-reference-heading" class="form-hint heading-xl-addon">
             @messages("home.utr", utr)
-        </span>
-    }
-
-    @if(overDuePayments.getOrElse(0) > 0) {
-        <div id="overdue-warning" class="grid-row grid-row-spacing">
-            <div class="column-full">
-                <div class="notice">
-                    <span class="icon icon-important">
-                    <span class="visually-hidden">Warning</span>
-                </span>
-                <strong class="bold-small">
-                    @messages("home.overdue.message")
-                </strong>
-                </div>
-            </div>
         </div>
     }
 
-    <div class="flex-container grid-row">
+    <div class="warning-wrapper">
+        @if(overDuePayments.getOrElse(0) > 0) {
+            <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
+                <div class="column-full">
+                    @govukWarningText(WarningText(
+                    iconFallbackText = "Warning",
+                    content = Text(messages("home.overdue.message"))
+                    ))
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <div class="flex-container govuk-grid-row">
         @paymentsTile
         @updatesTile
         @taxYearsTile
