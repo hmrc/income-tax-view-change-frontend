@@ -58,10 +58,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
-      val anchor: Element = pageDocument.getElementById("sa-note-migrated").selectFirst("a")
+      val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
       anchor.text shouldBe whatYouOwe.saLink
       anchor.attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
-//      anchor.attr("target") shouldBe "_blank"
+      anchor.attr("target") shouldBe "_blank"
     }
   }
 
@@ -321,10 +321,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "display the paragraph about payments under review when there is a dunningLock" in new Setup(
         whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
         val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
-
         pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
         paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
-//        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
+        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
       }
 
       "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
@@ -509,10 +508,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "display the paragraph about payments under review when there is a dunningLock" in new Setup(
         whatYouOweDataWithOverdueData(twoDunningLocks), dunningLock = true) {
         val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
-
         pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
         paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
-//        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
+        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
       }
 
       "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
@@ -725,7 +723,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
 
         pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
-        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
         pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
         pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount

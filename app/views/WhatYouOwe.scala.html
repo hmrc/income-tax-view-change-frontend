@@ -43,14 +43,11 @@
 @saNoteParagraph = {
     @if(utr.isDefined) {
         <div id="payments-due-note" class="govuk-inset-text">
-
-            @p(content = Html(
-                messages("whatYouOwe.sa-note") +
-                        link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link",
-                            outerMessage = Some(".")).toString()), id = Some("sa-note-migrated"))
+            @p{
+                @messages("whatYouOwe.sa-note")
+                <a href="@{appConfig.saViewLandPService(utr.get)}" target="_blank">@messages("whatYouOwe.sa-link")</a>
+            }
             @p(content = Html(messages("whatYouOwe.outstanding-charges-note")), id=Some("outstanding-charges-note-migrated"))
-
-
         </div>
     }
 }
@@ -93,11 +90,13 @@
 
 @dunningLockParagraph = {
     @if(dunningLock) {
-        @p(content = Html(
-            messages("whatYouOwe.dunningLock.text", "") +
-                    link(link = "https://www.gov.uk/tax-appeals", id=Some("disagree-with-tax-appeal-link"),
-                        messageKey = "whatYouOwe.dunningLock.link", outerMessage = Some("")).toString() ),
-            id = Some("payment-under-review-info"))
+        <div id="payment-under-review-info">
+        @p{
+            @messages("whatYouOwe.dunningLock.text", "")
+            <a id="disagree-with-tax-appeal-link" href="https://www.gov.uk/tax-appeals" target="_blank">
+                @messages("whatYouOwe.dunningLock.link")</a>
+        }
+        </div>
     }
 }
 
