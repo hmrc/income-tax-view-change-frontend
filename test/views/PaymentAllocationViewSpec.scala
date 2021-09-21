@@ -63,17 +63,17 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "checking there is a correct date" in new Setup() {
-        val result = document.getElementById("payment-allocation-charge-table").getElementsByTag("td").eq(1).text
+        val result = document.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text
          result shouldBe paymentAllocationMessages.date
       }
 
       "checking there is a correct Amount" in new Setup() {
-        val result = document.getElementById("payment-allocation-charge-table").getElementsByTag("td").last.text
+        val result = document.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text
         result shouldBe paymentAllocationMessages.amount
       }
 
       "checking there is the info text" in new Setup() {
-        document.getElementById("payments-allocation-info").text shouldBe paymentAllocationMessages.info
+        document.getElementsByClass("govuk-inset-text").text shouldBe paymentAllocationMessages.info
       }
     }
 
@@ -85,21 +85,21 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has table headers" in new Setup() {
-        val allTableHeadings = document.getElementById("payment-allocation-table").getElementsByTag("th")
-        allTableHeadings.eq(0).text() shouldBe paymentAllocationMessages.tableHeadings(0)
-        allTableHeadings.eq(1).text() shouldBe paymentAllocationMessages.tableHeadings(1)
-        allTableHeadings.eq(2).text() shouldBe paymentAllocationMessages.tableHeadings(2)
+        val allTableHeadings = document.selectHead("thead")
+        allTableHeadings.selectNth("th", 1).text() shouldBe paymentAllocationMessages.tableHeadings(0)
+        allTableHeadings.selectNth("th", 2).text() shouldBe paymentAllocationMessages.tableHeadings(1)
+        allTableHeadings.selectNth("th", 3).text() shouldBe paymentAllocationMessages.tableHeadings(2)
 
       }
 
       "has a payment within the table" in new Setup() {
-        val allTableData =  document.getElementById("payment-allocation-table").getElementsByTag("td")
+        val allTableData =  document.selectHead("tbody").selectHead("tr")
         "getting payment allocation information"
-        allTableData.get(0).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocation
+        allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocation
         "getting payment allocation Date Allocated"
-        allTableData.get(1).text() shouldBe paymentAllocationMessages.tableDataDateAllocated
+        allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocated
         "getting payment allocation Amount"
-        allTableData.get(2).text() shouldBe paymentAllocationMessages.tableDataAmount
+        allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmount
       }
 
       "has a Credit on account row within payment details" in new Setup() {
