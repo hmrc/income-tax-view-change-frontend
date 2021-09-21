@@ -5,6 +5,10 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header => HmrcHeaderArgs}
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
+@import play.twirl.api.HtmlFormat
+@import play.api.data.Form
+@import play.api.data._
+
 @this(
     appConfig: config.FrontendAppConfig,
     reportAProblemLink: ReportAProblemLink,
@@ -20,7 +24,16 @@
     languageSelection: components.languageSelection
 )
 
-@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+
+@titlePattern = @{
+if(form.exists(_.hasErrors)) {
+messages("agent.error.title_pattern.service_name.govuk", pageTitle)
+} else {
+messages("agent.title_pattern.service_name.govuk", pageTitle)
+}
+}
+
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
@@ -82,8 +95,10 @@
 
 }
 
+
+
 @govukLayout(
-    pageTitle = Some(messages("agent.titlePattern.serviceName.govUk", pageTitle)),
+    pageTitle = Some(titlePattern),
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
     bodyEndBlock = None,

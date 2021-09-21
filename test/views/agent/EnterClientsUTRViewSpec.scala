@@ -48,19 +48,21 @@ class EnterClientsUTRViewSpec extends ViewSpec {
         document.title shouldBe EnterClientsUTRMessages.title
       }
       "have the correct heading" in new Setup(pageWithoutError) {
-        content hasPageHeading EnterClientsUTRMessages.heading
+        layoutContent hasPageHeading EnterClientsUTRMessages.heading
       }
       "have a form with the correct attributes" in new Setup(pageWithoutError) {
-        content.hasFormWith(testCall.method, testCall.url)
+        layoutContent.hasFormWith(testCall.method, testCall.url)
       }
       "have an input with associated hint and label" in new Setup(pageWithoutError) {
-        val form: Element = content.selectHead("form")
+        val form: Element = layoutContent.selectHead("form")
         val label: Element = form.selectHead("label")
-        val hint: Element = form.selectHead(".form-hint")
+        val hint: Element = layoutContent.selectHead(".govuk-form-group")
+
         val input: Element = form.selectHead("input")
 
         label.text shouldBe EnterClientsUTRMessages.heading
         hint.text shouldBe EnterClientsUTRMessages.info
+
 
         label.attr("for") shouldBe input.attr("id")
         input.attr("id") shouldBe ClientsUTRForm.utr
@@ -70,7 +72,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
         hint.attr("id") shouldBe s"${ClientsUTRForm.utr}-hint"
       }
       "have a continue button" in new Setup(pageWithoutError) {
-        val button: Element = content.selectHead("form").selectHead("button")
+        val button: Element = layoutContent.selectHead("form").selectHead("button")
         button.attr("type") shouldBe "submit"
         button.text shouldBe EnterClientsUTRMessages.continue
       }
@@ -86,11 +88,12 @@ class EnterClientsUTRViewSpec extends ViewSpec {
             document.title shouldBe EnterClientsUTRMessages.titleWithError
           }
           "have an error summary" in new Setup(pageWithError(errorKey)) {
-            content.hasErrorSummary(ClientsUTRForm.utr -> errorMessage)
+            layoutContent.hasErrorSummary(ClientsUTRForm.utr -> errorMessage)
           }
+
           "have the error message display with the input described by it" in new Setup(pageWithError(errorKey)) {
-            val form: Element = content.selectHead("form")
-            form.selectHead("div").attr("class").contains("form-field--error") shouldBe true
+            val form: Element = layoutContent.selectHead("form")
+            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
 
             val error: Element = form.selectHead("span")
             val input: Element = form.selectHead("input")
@@ -98,7 +101,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
             error.attr("id") shouldBe s"${ClientsUTRForm.utr}-error"
             error.text shouldBe s"${EnterClientsUTRMessages.errorPrefix} $errorMessage"
             val errorPrefix: Element = error.selectHead("span > span")
-            errorPrefix.attr("class") shouldBe "visuallyhidden"
+            errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
             errorPrefix.text shouldBe EnterClientsUTRMessages.errorPrefix
 
             input.attr("aria-describedby") shouldBe s"${ClientsUTRForm.utr}-hint ${ClientsUTRForm.utr}-error"
