@@ -212,9 +212,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "display the paragraph about payments under review when there is a dunningLock" in new Setup(
         whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
         val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
-
         pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
         paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
+        paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
       }
 
       "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
