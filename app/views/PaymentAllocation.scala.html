@@ -59,7 +59,7 @@
            <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
                 <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("paymentAllocation.tableHead.amount")</th>
+                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
             </tr>
         </thead>
        @for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
