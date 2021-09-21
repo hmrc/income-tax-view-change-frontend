@@ -484,10 +484,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have a paragraph explaining interest rates" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
-        pageDocument.getElementById("interest-rate-para").text().contains("Any overdue payment interest")
-
+        pageDocument.getElementById("interest-rate-link").text().contains("Any overdue payment interest")
         val expectedUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
-        pageDocument.getElementById("interest-rate-link").toString.contains(expectedUrl)
+        pageDocument.getElementById("interest-rate-link").text().contains(expectedUrl)
       }
 
       "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(whatYouOweDataWithOverdueData()) {
