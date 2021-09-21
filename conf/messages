@@ -27,7 +27,7 @@ agent.error.enter_clients_utr.non_numeric                       = A Unique Taxpa
 agent.confirmClient.heading                                     = Confirm your client’s details
 agent.confirmClient.clientName                                  = Client’s name
 agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference
-agent.confirmClient.changeClient                                = Change Client
+agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
 # Agent - Client Relationship Failure
