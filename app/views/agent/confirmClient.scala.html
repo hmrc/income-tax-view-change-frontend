@@ -14,37 +14,53 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.agent.MainTemplate
-@import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import views.html.layouts.agent.layout
+@import views.html.components._
 
 
-@this(mainTemplate: MainTemplate, continueButton: ContinueButton, form: FormWithCSRF)
+@this(
+    mainTemplate: layout,
+    continueButton: ContinueButton,
+    form: FormWithCSRF,
+    h1: h1_large,
+    h2: h2,
+    p: p,
+    link: link)
 
 @(clientName: Option[String], clientUtr: Option[String], postAction: Call, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 
 @mainTemplate(
-    title = messages("agent.confirmClient.heading"),
+    pageTitle = messages("agent.confirmClient.heading"),
     backUrl = Some(backUrl)
 ) {
 
-    <h1>@messages("agent.confirmClient.heading")</h1>
+<article class="content__body">
+    @h1(msg = "agent.confirmClient.heading")
 
-    <h2 class="govuk-heading-m">@messages("agent.confirmClient.clientName")</h2>
+    @h2(msg = "agent.confirmClient.clientName")
 
-    <p id="clientName">@clientName</p>
+    @p{
+    @clientName
+    }
 
-    <h2 class="govuk-heading-m">@messages("agent.confirmClient.clientUtr")</h2>
+    @h2(msg = "agent.confirmClient.clientUtr")
 
-    <p id="clientUTR">@clientUtr</p>
 
-    <p>
-        <a id="changeClientLink" href="@backUrl">@messages("agent.confirmClient.changeClient")</a>
-    </p>
+    @p{
+    @clientUtr
+    }
+
+@p{
+    @link(link = backUrl, messageKey = "agent.confirmClient.changeClient", outerMessage = Some(""))
+}
+
+
 
     @form(postAction){
         @continueButton(Some(messages("agent.confirmClient.confirmContinue")))
     }
 }
 
+    </article>

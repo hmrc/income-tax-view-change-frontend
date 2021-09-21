@@ -16,77 +16,82 @@
 
 
 @import implicits.ImplicitCurrencyFormatter._
-@import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
+@import views.html.components._
+@import views.html.layouts.layout
 
-@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(mainTemplate: layout, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @import implicitDateFormatter._
 
 @mainTemplate(
-    title = messages("paymentAllocation.heading"),
+    pageTitle = messages("paymentAllocation.heading"),
     backUrl = Some(backUrl)
 ) {
 
-<h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
+@h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
 
-<div>
-    <table id="payment-allocation-charge-table" class="govuk-table">
-        <tbody>
-            <tr>
-                <td class="govuk-summary-list__key">@messages("paymentAllocation.date")</td>
-                <td>@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
-            </tr>
-            <tr>
-                <td class="govuk-summary-list__key">@messages("paymentAllocation.amount")</td>
-                <td>@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
-            </tr>
-        </tbody>
-    </table>
+
+    <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
+                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>
+                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</dd>
+
+        </div>
+    </dl>
+
+<div class="govuk-inset-text">
+    @p{@messages("paymentAllocation.info")}
 </div>
-<br>
-<div id="payments-allocation-info" class="panel panel-indent panel-border-wide">
-    <p>@messages("paymentAllocation.info")</p>
-</div>
-<h2>@messages("paymentAllocation.tableSection.heading")</h2>
-<div>
-    <table id="payment-allocation-table">
-        <thead id="payment-allocation-table-head">
-            <tr>
-                <th>@messages("paymentAllocation.tableHead.allocation")</th>
-                <th>@messages("paymentAllocation.tableHead.allocated-date")</th>
-                <th>@messages("paymentAllocation.tableHead.amount")</th>
+
+<h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
+
+   <table class="govuk-table">
+       <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
+
+        <thead class="govuk-table__head">
+           <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
+                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
+                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
             </tr>
         </thead>
-        @paymentAllocations.originalPaymentAllocationWithClearingDate.map { paymentAllocation =>
-        <tbody>
-            <tr>
-                <td>
-					<a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation._2.get.getTaxYear(implicitDateFormatter), paymentAllocation._2.get.transactionId.get)}">
+       @for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
+       <tbody class="govuk-table__body">
+
+             <tr>
+                <td class="govuk-table__cell" id="payment-allocation-@index">
+					<a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation._2.get.getTaxYear(implicitDateFormatter), paymentAllocation._2.get.transactionId.get)}" class="govuk-link">
 						@messages(paymentAllocation._2.get.getPaymentAllocationKeyInPaymentAllocations)
 					</a>
-					<br>
+                    <br>
 					<span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation._2.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation._2.get.getTaxYear(implicitDateFormatter).toString)</span>
-				</td>
-                <td>@paymentAllocation._3.get.toLocalDate.toLongDateShort</td>
-                <td>@paymentAllocation._2.get.amount.get.toCurrencyString</td>
+                </td>
+                <td class="govuk-table__cell">@paymentAllocation._3.get.toLocalDate.toLongDateShort</td>
+                <td class="govuk-table__cell">@paymentAllocation._2.get.amount.get.toCurrencyString</td>
             </tr>
-        </tbody>
-        }
+       </tbody>
+
+       }
         @paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.map { outstandingAmount =>
             @if(outstandingAmount != 0) {
-                <tbody>
-                    <tr id="credit-on-account">
-                        <td>@messages("paymentAllocation.creditOnAccount")</td>
-                        <td></td>
-                        <td>@{outstandingAmount.abs.toCurrencyString}</td>
-                    </tr>
-                </tbody>
-            }
+       <tbody class="govuk-table__body">
+
+             <tr id="credit-on-account">
+                        <td class="govuk-table__cell">@messages("paymentAllocation.creditOnAccount")</td>
+                        <td class="govuk-table__cell"></td>
+                        <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
+             </tr>
+       </tbody>
+
+       }
         }
-    </table>
-</div>
+   </table>
 
 }

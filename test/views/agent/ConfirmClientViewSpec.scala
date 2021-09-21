@@ -55,39 +55,38 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"have the heading ${confirmClientMessages.heading}" in new Setup(confirmClientView) {
-      content hasPageHeading confirmClientMessages.heading
+      layoutContent hasPageHeading confirmClientMessages.heading
     }
 
     s"have a back link" in new Setup(confirmClientView) {
-      content.doesNotHave(Selectors.backLink)
+      layoutContent.doesNotHave(Selectors.backLink)
       document.backLink.text shouldBe confirmClientMessages.backLink
       document.hasBackLinkTo(controllers.agent.routes.EnterClientsUTRController.show().url)
     }
 
     s"have the sub heading ${confirmClientMessages.clientNameHeading}" in new Setup(confirmClientView) {
-      content.selectNth("h2", 1).text shouldBe confirmClientMessages.clientNameHeading
+      layoutContent.selectNth("h2", 1).text shouldBe confirmClientMessages.clientNameHeading
     }
 
     s"display the client name as ${testClientName.get}" in new Setup(confirmClientView) {
-      content.selectById("clientName").text shouldBe testClientName.get
+      layoutContent.selectNth("p",1).text shouldBe testClientName.get
     }
 
     s"have the sub heading ${confirmClientMessages.clientUTRHeading}" in new Setup(confirmClientView) {
-      content.selectNth("h2", 2).text shouldBe confirmClientMessages.clientUTRHeading
+      layoutContent.selectNth("h2", 2).text shouldBe confirmClientMessages.clientUTRHeading
     }
 
     s"display the client UTR as ${testClientUTR.get}" in new Setup(confirmClientView) {
-      content.selectById("clientUTR").text shouldBe testClientUTR.get
+      layoutContent.selectNth("p", 2).text shouldBe testClientUTR.get
     }
 
     s"have a ${confirmClientMessages.changeClient} link" in new Setup(confirmClientView) {
-      val changeClient = content.selectById("changeClientLink")
-      changeClient.text shouldBe confirmClientMessages.changeClient
-      changeClient.attr("href") shouldBe controllers.agent.routes.EnterClientsUTRController.show().url
+      layoutContent.hasCorrectHref(controllers.agent.routes.EnterClientsUTRController.show().url)
+
     }
 
     s"have a ${confirmClientMessages.confirmContinue} button" in new Setup(confirmClientView) {
-      val button = content.selectById("continue-button")
+      val button = layoutContent.selectById("continue-button")
       button.attr("type") shouldBe "submit"
       button.text shouldBe confirmClientMessages.confirmContinue
     }

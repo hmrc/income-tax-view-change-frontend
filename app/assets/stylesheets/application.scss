@@ -10,6 +10,10 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
   font-weight: bold;
 }
 
+.govuk-table__cell {
+  vertical-align: middle;
+}
+
 .nav-bar-wrapper {
   display: flex;
   flex-direction: row-reverse;
