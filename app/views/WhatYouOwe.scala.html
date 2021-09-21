@@ -286,14 +286,6 @@
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
-                    @*
-                    <p id="interest-rate-para" class="interest-rate">
-                    @Html(messages("whatYouOwe.over-due.interest-rate",
-                            <a id="interest-rate-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates" target="_blank">
-                            {messages("whatYouOwe.over-due.interest-rate.link")}</a>
-                    ))
-                    </p>
-                    *@
                     @p{
                         @messages("whatYouOwe.over-due.interest-rate-1", "")
                         <a id="interest-rate-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
