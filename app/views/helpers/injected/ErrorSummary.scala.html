@@ -31,15 +31,16 @@
 @if(form.hasErrors) {
 
     <div
-        class="flash error-summary error-summary--show"
+        class="flash govuk-error-summary govuk-error-summary--show"
         id="error-summary-display"
         role="alert"
         aria-labelledby="error-summary-heading"
         tabindex="-1"
+        data-module="govuk-error-summary"
     >
-        <h2 id="error-summary-heading" class="heading-medium">@messages("base.error_summary.heading")</h2>
-        <div>
-            <ul>
+        <h2 id="error-summary-heading" class="govuk-error-summary__title">@messages("base.error_summary.heading")</h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
                 @errors.map(errMsg)
             </ul>
         </div>
