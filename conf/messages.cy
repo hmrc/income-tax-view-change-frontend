@@ -529,4 +529,4 @@ language-switcher.welsh.hidden                                  = Newid yr iaith
 language-switcher.nav                                           = Switcher iaith
 
 #technical helper
-getpagehelp.linkText                                            = Help gyda’r dudalen hon.
+getpagehelp.linkText                                            = Help gyda’r dudalen hon
