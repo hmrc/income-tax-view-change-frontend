@@ -35,7 +35,7 @@ class BTAPartialController @Inject()(btaPartial: BtaPartial,
                                      mcc: MessagesControllerComponents) extends BaseController with I18nSupport {
 
   def setupPartial: Action[AnyContent] = (checkSessionTimeout andThen authenticate)  {
-        implicit request => Ok(btaPartial())
+        implicit request => Ok("Asdfasdf")
   }
 
 }
