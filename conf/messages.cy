@@ -6,7 +6,7 @@ base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
-base.continue                                                   = Continue
+base.continue                                                   = Yn eich blaen
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Mae problem wedi codi
