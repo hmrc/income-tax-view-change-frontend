@@ -15,14 +15,14 @@
 *@
 
 @import config.FormPartialProvider
-@import views.html.layouts.layout
-@import views.html.components._
+@import views.html.templates.MainTemplate
 
 @this(
-layout: layout)
+    mainTemplate: MainTemplate
+)
 
-@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages, appConfig: config.FrontendAppConfig)
+@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
 
-@layout(pageTitle = messages("feedback.title"), showBtaHeader = false) {
+@mainTemplate(title = messages("feedback.title"), showBtaHeader = false) {
     @formBody.getOrElse(formPartialProvider.getPartialContent(partialUrl))
 }

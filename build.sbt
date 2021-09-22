@@ -13,7 +13,7 @@ val appName = "income-tax-view-change-frontend"
 
 val bootstrapPlayVersion      = "4.0.0"
 val govTemplateVersion        = "5.61.0-play-26"
-val playPartialsVersion       = "8.1.0-play-26"
+val playPartialsVersion       = "8.2.0-play-26"
 val playUiVersion             = "8.15.0-play-26"
 val playLanguageVersion       = "4.10.0-play-26"
 val catsVersion               = "0.9.0"
