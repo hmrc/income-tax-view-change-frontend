@@ -64,6 +64,9 @@ home.overdue.message                                            = Mae gennych da
 home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
+home.self-assessment.updatesLink                                 = Bwrw golwg dros eich blynyddoedd treth ar gyfer Hunanasesiad
+home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+
 
 
 ## Recruitment Banner ##
