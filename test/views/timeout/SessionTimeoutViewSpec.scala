@@ -54,7 +54,5 @@ class SessionTimeoutViewSpec extends TestSupport {
       }
 
     }
-
   }
-
 }
