@@ -43,8 +43,8 @@ class TaxYearsViewSpec extends ViewSpec {
     val back: String = "Back"
     val tableHeadingTaxYear = "Tax year"
     val tableHeadingOptions = "Options"
-		val oldSaServiceMessage = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Online Service (opens in new tab). This will be a different Government Gateway ID and password to your Agent Services account."
-		val oldSaServiceLink = "Self Assessment for Agents Online Service (opens in new tab)"
+		val oldSaServiceMessage = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Account (opens in new tab). This will be a different Government Gateway ID and password to your Agent Services account."
+		val oldSaServiceLink = "Self Assessment for Agents Account (opens in new tab)"
   }
 
   "The Confirm Client page" should {
