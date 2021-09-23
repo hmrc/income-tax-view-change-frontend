@@ -5,8 +5,9 @@ base.phase                                                      = BETA
 base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
+base.error_summary.heading                                      = Mae problem wedi codi
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
-base.continue                                                   = Continue
+base.continue                                                   = Yn eich blaen
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Mae problem wedi codi
@@ -64,6 +65,9 @@ home.overdue.message                                            = Mae gennych da
 home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
+home.self-assessment.updatesLink                                 = Bwrw golwg dros eich blynyddoedd treth ar gyfer Hunanasesiad
+home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+
 
 
 ## Recruitment Banner ##
@@ -373,6 +377,11 @@ whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth
 whatYouOwe.overdueAmount                                        = Taliadau hwyr sy'n ddyledus
 whatYouOwe.balanceDueWithin30Days                               = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.totalBalance                                         = Cyfanswm y taliadau sy'n ddyledus
+whatYouOwe.paymentUnderReview                                   = Taliad dan adolygiad
+whatYouOwe.over-due.interest.line1                              = Llog am dalu’n hwyr
+whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
+whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
+whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 
 
 ## Charge Summary ##
@@ -499,6 +508,11 @@ agent.paymentDue.payment-type.taxYear                           = Blwyddyn dreth
 agent.paymentDue.overdueAmount                                  = Taliadau hwyr sy'n ddyledus
 agent.paymentDue.balanceDueWithin30Days                         = Yn ddyledus cyn pen 30 diwrnod
 agent.paymentDue.totalBalance                                   = Cyfanswm y taliadau sy'n ddyledus
+agent.paymentDue.paymentUnderReview                             = Taliad dan adolygiad
+agent.paymentDue.over-due.interest.line1                        = Llog am dalu’n hwyr
+agent.paymentDue.lpi.paymentOnAccount1.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
+agent.paymentDue.lpi.paymentOnAccount2.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
+agent.paymentDue.lpi.balancingCharge.text                       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 
 #Agent next updates
 agent.nextUpdates.heading                                       = Diweddariadau nesaf
@@ -529,4 +543,4 @@ language-switcher.welsh.hidden                                  = Newid yr iaith
 language-switcher.nav                                           = Switcher iaith
 
 #technical helper
-getpagehelp.linkText                                            = Help gyda’r dudalen hon.
+getpagehelp.linkText                                            = Help gyda’r dudalen hon

@@ -29,7 +29,7 @@
 		</tr>
 	}
 
-	<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+	<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">
 
 		@for(collectedObligations <- obligations.obligationsByDate.zipWithIndex) {
 			<div class="govuk-accordion__section">
@@ -39,12 +39,12 @@
 						@{collectedObligations._1._1.toLongDate}
 						</span>
 					</h3>
-					<div class="govuk-accordion__section-summary govuk-body" id="accordion-with-summary-sections-summary-@{collectedObligations._2}">
+					<div class="govuk-accordion__section-summary govuk-body" id="accordion-with-summary-sections-summary-@{collectedObligations._2 + 1}">
 					@{if(collectedObligations._1._2.head.obligation.obligationType == "Quarterly") messages("nextUpdates.section.heading.updates", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
 					@{if(collectedObligations._1._2.head.obligation.obligationType != "Quarterly") messages("nextUpdates.section.heading.taxYear", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
 					</div>
 				</div>
-				<div class="govuk-accordion__section-content" id="accordion-default-content-@{collectedObligations._2}">
+				<div class="govuk-accordion__section-content" id="accordion-with-summary-sections-content-@{collectedObligations._2}" aria-labelledby="accordion-with-summary-sections-content-@{collectedObligations._2}">
 					<table class="govuk-table">
 						<thead class="govuk-table__head">
 							<tr class="govuk-table__row">

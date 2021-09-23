@@ -83,10 +83,9 @@ agent.paymentDue.over-due.interest.line2                       = {0} to {1} at {
 agent.paymentDue.over-due.interest-rate                        = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
 agent.paymentDue.over-due.interest-rate.link                   = current interest rate for late and early payments (opens in new tab)
 
-
-agent.paymentDue.lpi.paymentOnAccount1.text                    = Late payment interest on payment on account 1 of 2
-agent.paymentDue.lpi.paymentOnAccount2.text                    = Late payment interest on payment on account 2 of 2
-agent.paymentDue.lpi.balancingCharge.text                      = Late payment interest on remaining balance
+agent.paymentDue.lpi.paymentOnAccount1.text                    = Late payment interest for payment on account 1 of 2
+agent.paymentDue.lpi.paymentOnAccount2.text                    = Late payment interest for payment on account 2 of 2
+agent.paymentDue.lpi.balancingCharge.text                      = Late payment interest for remaining balance
 
 agent.paymentDue.overdueAmount                                 = Overdue payments due
 agent.paymentDue.balanceDueWithin30Days                        = Due within 30 days
@@ -497,9 +496,9 @@ whatYouOwe.tableHead.payment-type                                  = Payment typ
 whatYouOwe.tableHead.amount-due                                    = Amount due
 whatYouOwe.paymentOnAccount1.text							       = Payment on account 1 of 2
 whatYouOwe.paymentOnAccount2.text							       = Payment on account 2 of 2
-whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on payment on account 1 of 2
-whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on payment on account 2 of 2
-whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on remaining balance
+whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest for payment on account 1 of 2
+whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest for payment on account 2 of 2
+whatYouOwe.lpi.balancingCharge.text                                = Late payment interest for remaining balance
 
 whatYouOwe.balancingCharge.text  							       = Remaining balance
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on remaining balance
@@ -716,4 +715,4 @@ language-switcher.nav                                           = Language switc
 
 
 #technical helper
-getpagehelp.linkText                                            = Get help with this page.
+getpagehelp.linkText                                            = Get help with this page
