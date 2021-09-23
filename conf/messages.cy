@@ -5,6 +5,7 @@ base.phase                                                      = BETA
 base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
+base.error_summary.heading                                      = Mae problem wedi codi
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 
@@ -376,6 +377,11 @@ whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth
 whatYouOwe.overdueAmount                                        = Taliadau hwyr sy'n ddyledus
 whatYouOwe.balanceDueWithin30Days                               = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.totalBalance                                         = Cyfanswm y taliadau sy'n ddyledus
+whatYouOwe.paymentUnderReview                                   = Taliad dan adolygiad
+whatYouOwe.over-due.interest.line1                              = Llog am dalu’n hwyr
+whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
+whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
+whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 
 
 ## Charge Summary ##
@@ -502,6 +508,11 @@ agent.paymentDue.payment-type.taxYear                           = Blwyddyn dreth
 agent.paymentDue.overdueAmount                                  = Taliadau hwyr sy'n ddyledus
 agent.paymentDue.balanceDueWithin30Days                         = Yn ddyledus cyn pen 30 diwrnod
 agent.paymentDue.totalBalance                                   = Cyfanswm y taliadau sy'n ddyledus
+agent.paymentDue.paymentUnderReview                             = Taliad dan adolygiad
+agent.paymentDue.over-due.interest.line1                        = Llog am dalu’n hwyr
+agent.paymentDue.lpi.paymentOnAccount1.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
+agent.paymentDue.lpi.paymentOnAccount2.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
+agent.paymentDue.lpi.balancingCharge.text                       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 
 #Agent next updates
 agent.nextUpdates.heading                                       = Diweddariadau nesaf
