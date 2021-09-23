@@ -544,3 +544,26 @@ language-switcher.nav                                           = Switcher iaith
 
 #technical helper
 getpagehelp.linkText                                            = Help gyda’r dudalen hon
+
+## Payment Allocation ##
+paymentAllocation.heading                                       = Taliad a wnaed i CThEM
+paymentAllocation.date                                          = Dyddiad
+paymentAllocation.amount                                        = Swm
+paymentAllocation.info                                          = Bydd unrhyw daliadau a wneir yn cael eu dyrannu’n awtomatig tuag at gosbau a blynyddoedd treth cynharach cyn y flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
+paymentAllocation.tableSection.heading                          = Payment allocations
+paymentAllocation.tableHead.allocation                          = Dyrannu taliad
+paymentAllocation.tableHead.allocated-date                      = Dyddiad dyrannu
+paymentAllocation.tableHead.amount                              = Swm
+paymentAllocation.taxYear										= Tax year {0} to {1}
+paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
+
+paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 1 o 2
+paymentAllocation.paymentAllocations.poa1.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
+paymentAllocation.paymentAllocations.poa2.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 2 o 2
+paymentAllocation.paymentAllocations.poa2.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
+paymentAllocation.paymentAllocations.bcd.incomeTax              = Treth Incwm ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.nic2                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.vcnic2                 = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.nic4                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.sl                     = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.cgt                    = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
