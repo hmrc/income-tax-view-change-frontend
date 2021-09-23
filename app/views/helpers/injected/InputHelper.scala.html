@@ -29,7 +29,7 @@
     </label>
 }
 
-<div class="form-group form-field @if(fieldError.isDefined) {form-field--error}">
+<div class="form-group form-field  @if(fieldError.isDefined) {govuk-form-group--error}">
 
     @if(isPageHeading) {
         <h1 class="govuk-label-wrapper">
@@ -40,21 +40,23 @@
     }
 
     @formHint.map { hint =>
-        <div class="form-hint" id="@field.name-hint">
+    <div class="govuk-form-group govuk-label" id="@field.name-hint">
+        <label class = "govuk-hint">
             @hint
-        </div>
+        </label>
+    </div>
     }
 
     @fieldError.map { error =>
-        <span id="@field.name-error" class="error-notification">
-            <span class="visuallyhidden">@messages("base.error-prefix")</span>
+        <span id="@field.name-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">@messages("base.error-prefix")</span>
             @messages(s"${error.message}", error.args:_*)
         </span>
     }
 
     <input
         name="@field.name"
-        class="form-control"
+        class="govuk-input govuk-input--width-20"
         id="@field.name"
         type="text"
         @if(formHint.isDefined && fieldError.isDefined) {
