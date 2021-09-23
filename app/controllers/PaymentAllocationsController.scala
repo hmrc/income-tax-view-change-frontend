@@ -56,7 +56,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
           case Right(paymentAllocations) =>
             if (isEnabled(TxmEventsApproved)) {
-              auditingService.extendedAudit(PaymentAllocationResponseAuditModel(user))
+              auditingService.extendedAudit(PaymentAllocationResponseAuditModel(user, paymentAllocations))
             }
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
