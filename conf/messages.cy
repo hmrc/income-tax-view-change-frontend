@@ -5,6 +5,7 @@ base.phase                                                      = BETA
 base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
+base.error_summary.heading                                      = Mae problem wedi codi
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 
