@@ -47,16 +47,9 @@
     <div class="tile-body">
         @h2(classes = "govuk-heading-m", msg = "home.payments.heading")
         @{overDuePayments.getOrElse(0) match {
-			case 0 => <p>{nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due"))}</p>
-			case 1 =>
-				<p>
-					<span class="govuk-tag govuk-tag--red"> {messages("taxYears.overdue")} </span>
-					{nextPaymentDueDate.get.toLongDate}
-				</p>
-			case _ =>
-				<p>
-					<span class="govuk-tag govuk-tag--red"> {messages("home.updates.overdue.payments", overDuePayments.get)}</span>
-				</p>
+			case 0 => p(paymentsTileContentPaymentsDue0)
+			case 1 => p(paymentsTileContentPaymentsDue1)
+			case _ => p(paymentsTileContentPaymentsDueMany)
         }}
         @p{
             @link(
@@ -68,23 +61,26 @@
 </div>
 }
 
+@paymentsTileContentPaymentsDue0 = { @nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due")) }
+
+@paymentsTileContentPaymentsDue1 = {
+    <span class="govuk-tag govuk-tag--red"> @{messages("taxYears.overdue")} </span>
+    @{nextPaymentDueDate.get.toLongDate}
+}
+
+@paymentsTileContentPaymentsDueMany = {
+    <span class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePayments.get)}</span>
+}
+
+
 @updatesTile = {
 <div id="updates-tile" class="tile tile-no-border">
     <div class="tile-body">
         @h2(classes = "govuk-heading-m", msg = "home.updates.heading")
 		@{overDueUpdates.getOrElse(0) match {
-			case 0 => <p>{nextUpdate.toLongDate}</p>
-			case 1 => {
-				<p>
-					<span classes="govuk-tag govuk-tag--red">{messages("taxYears.overdue")}</span>
-					{nextUpdate.toLongDate}
-				</p>
-			}
-			case _ => {
-				<p>
-					<span class="govuk-tag govuk-tag--red">{messages("home.updates.overdue.updates", overDueUpdates.get)}</span>
-				</p>
-			}
+			case 0 => p(updatesTileContentUpdatesDue0)
+			case 1 => p(updatesTileContentUpdatesDue1)
+			case _ => p(updatesTileContentUpdatesDueMany)
 		}}
         @p{
             @link(
@@ -95,6 +91,18 @@
     </div>
 </div>
 }
+
+@updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
+
+@updatesTileContentUpdatesDue1 = {
+    <span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>
+    @{nextUpdate.toLongDate}
+}
+
+@updatesTileContentUpdatesDueMany = {
+    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdates.get)}</span>
+}
+
 
 @taxYearsTile = {
     <div id="tax-years-tile" class="tile tile-no-border">
@@ -158,7 +166,7 @@
     pageTitle = messages("home.heading"),
     mainClass = Some("full-width")
 ) {
-    <h1 class="govuk-heading-xl margin-bottom-zero">
+    <h1 class="govuk-heading-xl @if(user.saUtr.isDefined){ margin-bottom-zero }">
         <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
         <span id="income-tax-heading">@messages("home.heading")</span>
     </h1>
