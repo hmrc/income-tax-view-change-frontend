@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -57,7 +57,6 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
 
     action.async {
       implicit user =>
-          auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(user))
           calculationService.getCalculationDetail(user.nino, taxYear).map {
             case calcDisplayModel: CalcDisplayModel =>
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
