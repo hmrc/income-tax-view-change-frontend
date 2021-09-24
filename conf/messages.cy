@@ -409,6 +409,27 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	= Remaining balance
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	= Payment on account 1 of 2 reduced due to amended return
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	= Payment on account 2 of 2 reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	= Remaining balance reduced due to amended return
+chargeSummary.remainingYear.text								= This is the remaining tax you owe for the {0} to {1} tax year.
+
+chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
+chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
+chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+chargeSummary.lpi.interestPeriod								   = Cyfnod llog
+chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
+chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
+chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
+chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
+chargeSummary.paymentBreakdown.vcnic2   						   = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
+chargeSummary.paymentBreakdown.nic4   							   = Yswiriant Gwladol Dosbarth 4
+chargeSummary.paymentBreakdown.cgt   							   = Treth Enillion Cyfalaf
+chargeSummary.paymentBreakdown.sl   							   = Benthyciadau Myfyrwyr
+chargeSummary.paymentBreakdown.dunningLocks.underReview            = Dan adolygiad
+chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn codi llog ar y taliad hwn ar hyn o bryd
+chargeSummary.paymentBreakdown.interestLocks.charging              = We are charging you interest on this payment
+chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
+chargeSummary.dunning.locks.banner.title						   = Pwysig
+chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
+chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
 
 ## Regimes
 regimes.UK = Y DU
