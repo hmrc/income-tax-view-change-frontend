@@ -667,7 +667,7 @@ object FinancialDetailsTestConstants {
   )
 
   val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00),
     overduePaymentList =
       testFinancialDetailsModelOneItemInList(documentDescription = List(Some("ITSA- POA 1")),
         mainType = List(Some("SA Payment on Account 1")),

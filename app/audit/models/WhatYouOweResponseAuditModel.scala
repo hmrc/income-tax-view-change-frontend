@@ -29,13 +29,12 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   override val transactionName: String = "what-you-owe-response"
   override val auditType: String = "WhatYouOweResponse"
 
-  private val docDetailsListJson: List[JsObject] = (
-    chargesList.overduePaymentList ++
-      chargesList.dueInThirtyDaysList ++
-      chargesList.futurePayments).map(documentDetails) ++
-    chargesList.outstandingChargesModel.map(outstandingChargeDetails)
+  private val docDetailsListJson: List[JsObject] =
+    chargesList.allCharges.map(documentDetails) ++
+      chargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = userAuditDetails(user) ++
+    Json.obj("balanceDetails" -> chargesList.balanceDetails) ++
     Json.obj("charges" -> docDetailsListJson)
 
   private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(

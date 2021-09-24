@@ -68,6 +68,11 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
         "nationalInsuranceNumber" -> testNino,
         "credId" -> testCredId,
         "mtditid" -> testMtditid,
+        "balanceDetails" -> Json.obj(
+          "balanceDueWithin30Days" -> 1.0,
+          "overDueAmount" -> 2.0,
+          "totalBalance" -> 3.0
+        ),
         "charges" -> Json.arr(
           Json.obj(
             "chargeType" -> "Payment on account 1 of 2",
