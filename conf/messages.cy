@@ -554,7 +554,7 @@ paymentAllocation.tableSection.heading                          = Payment alloca
 paymentAllocation.tableHead.allocation                          = Dyrannu taliad
 paymentAllocation.tableHead.allocated-date                      = Dyddiad dyrannu
 paymentAllocation.tableHead.amount                              = Swm
-paymentAllocation.taxYear										= Blwyddyn dreth  {0} i {1}
+paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 1 o 2
