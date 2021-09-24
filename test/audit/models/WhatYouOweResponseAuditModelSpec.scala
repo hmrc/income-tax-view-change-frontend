@@ -17,9 +17,8 @@
 package audit.models
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import assets.FinancialDetailsTestConstants.whatYouOwePartialChargesList
+import assets.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
 import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
@@ -32,11 +31,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
   val auditEvent = "WhatYouOweResponse"
 
 
-  val dueDateInFuture = LocalDate.now().plusDays(45).toString
-  val dueDateIsSoon = LocalDate.now().plusDays(1).toString
-  val dueDateInPast = LocalDate.now().minusDays(10).toString
+  val dueDateInFuture: String = LocalDate.now().plusDays(45).toString
+  val dueDateIsSoon: String = LocalDate.now().plusDays(1).toString
 
-  val outStandingCharges = LocalDate.now().minusDays(30).toString
+  val outStandingCharges: String = LocalDate.now().minusDays(30).toString
 
   def testWhatYouOweResponseAuditModel(userType: Option[String] = Some("Agent")): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = MtdItUser(
@@ -76,18 +74,27 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
         "charges" -> Json.arr(
           Json.obj(
             "chargeType" -> "Payment on account 1 of 2",
-            "dueDate" -> dueDateInPast,
+            "dueDate" -> dueDateOverdue.head.get,
             "outstandingAmount" -> 50
           ),
           Json.obj(
             "chargeType" -> "Payment on account 2 of 2",
+            "dueDate" -> dueDateOverdue(1).get,
+            "outstandingAmount" -> 75,
+            "accruingInterest" -> 24.05,
+            "interestRate" -> "6.2%",
+            "interestFromDate" -> "2019-05-25",
+            "interestEndDate" -> "2019-06-25"
+          ),
+          Json.obj(
+            "chargeType" -> "Payment on account 2 of 2",
             "dueDate" -> dueDateIsSoon,
-            "outstandingAmount" -> 75
+            "outstandingAmount" -> 100
           ),
           Json.obj(
             "chargeType" -> "Payment on account 1 of 2",
             "dueDate" -> dueDateInFuture,
-            "outstandingAmount" -> 50
+            "outstandingAmount" -> 125
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",

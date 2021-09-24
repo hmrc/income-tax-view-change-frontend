@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.financialDetails.{DocumentDetailWithDueDate, WhatYouOweChargesList}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
 import utils.Utilities.JsonUtil
@@ -41,7 +41,20 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     "outstandingAmount" -> docDateDetail.documentDetail.remainingToPay
   ) ++
     ("chargeType", getChargeType(docDateDetail.documentDetail)) ++
-    ("dueDate", docDateDetail.dueDate)
+    ("dueDate", docDateDetail.dueDate) ++
+    accruingInterestJson(docDateDetail.documentDetail)
+
+  private def accruingInterestJson(documentDetail: DocumentDetail): JsObject = {
+    if (documentDetail.hasAccruingInterest) {
+      Json.obj() ++
+        ("accruingInterest", documentDetail.interestOutstandingAmount) ++
+        ("interestRate", documentDetail.interestRate.map(ratePctString)) ++
+        ("interestFromDate", documentDetail.interestFromDate) ++
+        ("interestEndDate", documentDetail.interestEndDate)
+    } else {
+      Json.obj()
+    }
+  }
 
   private def outstandingChargeDetails(outstandingCharge: OutstandingChargesModel) = Json.obj(
     "chargeType" -> "Remaining balance"
