@@ -1,0 +1,7 @@
+
+@import config.FrontendAppConfig
+
+@this(appConfig: config.FrontendAppConfig)
+@(text: String, id: Option[String] = None, href: String)(implicit messages: Messages)
+
+<a id="@id" class="govuk-button" href="@href" role="button">@text</a>
