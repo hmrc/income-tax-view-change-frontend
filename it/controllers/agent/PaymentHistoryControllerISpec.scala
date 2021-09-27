@@ -18,7 +18,7 @@ package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
 import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
-import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
+import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.featureswitch.{FeatureSwitching, PaymentHistory, TxmEventsApproved}
@@ -120,7 +120,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
         httpStatus(OK)
       )
 
-      verifyAuditContainsDetail(PaymentHistoryRequestAuditModel(testUser).detail)
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
     }
     "the TxmEventsApproved FS disabled" in {

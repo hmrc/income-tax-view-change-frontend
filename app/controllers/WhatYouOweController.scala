@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
+import audit.models.WhatYouOweResponseAuditModel
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -54,10 +54,6 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-        if (isEnabled(TxmEventsApproved)) {
-          auditingService.extendedAudit(WhatYouOweRequestAuditModel(user))
-        }
-
         whatYouOweService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
             if (isEnabled(TxmEventsApproved)) {

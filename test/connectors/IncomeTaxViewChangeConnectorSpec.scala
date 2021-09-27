@@ -238,7 +238,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getNextUpdates()
       await(result) shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser), Some(testReferrerUrl))
       verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
     }
 
@@ -248,7 +247,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getNextUpdates()
       await(result) shouldBe NextUpdatesErrorModel(Status.BAD_REQUEST, "Error Message")
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser))
     }
 
     "return BusinessListError model when bad JSON is received" in new Setup {
@@ -257,7 +255,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getNextUpdates()
       await(result) shouldBe NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser))
     }
 
     "return NextUpdatesErrorModel model in case of future failed scenario" in new Setup {
@@ -266,7 +263,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getNextUpdates()
       await(result) shouldBe NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser))
     }
 
   }
@@ -285,7 +281,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getPreviousObligations()
       await(result) shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser))
       verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
     }
 
@@ -295,7 +290,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getPreviousObligations()
       await(result) shouldBe NextUpdatesErrorModel(Status.BAD_REQUEST, "Error Message")
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser))
     }
 
     "return BusinessListError model when bad JSON is received" in new Setup {
@@ -304,7 +298,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getPreviousObligations()
       await(result) shouldBe NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser))
     }
 
     "return NextUpdatesErrorModel model in case of future failed scenario" in new Setup {
@@ -313,7 +306,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[NextUpdatesResponseModel] = getPreviousObligations()
       await(result) shouldBe NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
 
-      verifyExtendedAudit(NextUpdatesRequestAuditModel(individualUser))
     }
 
   }
