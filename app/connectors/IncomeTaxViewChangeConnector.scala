@@ -139,8 +139,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - GET $url")
 
-    auditingService.extendedAudit(IncomeSourceDetailsRequestAuditModel(mtdItUser))
-
     http.GET[HttpResponse](url) map { response =>
       response.status match {
         case OK =>

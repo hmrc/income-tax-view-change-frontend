@@ -22,7 +22,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import assets.messages.{DeductionsSummaryMessages => messages}
-import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
@@ -100,12 +100,10 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
 
       And("Audit Agent TXM events have been fired with TxmApproved FS true")
       enable(TxmEventsApproved)
-      verifyAuditContainsDetail(AllowanceAndDeductionsRequestAuditModel(testUser).detail)
       verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, true).detail)
 
       And("Audit Agent TXM events have been fired with TxmApproved FS false")
       disable(TxmEventsApproved)
-      verifyAuditContainsDetail(AllowanceAndDeductionsRequestAuditModel(testUser).detail)
       verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, false).detail)
     }
   }

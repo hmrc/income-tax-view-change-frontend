@@ -158,7 +158,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe singleBusinessAndPropertyMigrat2019
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
       verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserNino, List(testSelfEmploymentId), Some(testPropertyIncomeId), Some(testMigrationYear2019), true))
     }
 
@@ -168,7 +167,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
     }
 
     "return IncomeSourceDetailsError model in case of failure" in new Setup {
@@ -177,7 +175,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
@@ -186,7 +183,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
     }
   }
 
