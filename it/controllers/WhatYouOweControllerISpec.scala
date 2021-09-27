@@ -116,7 +116,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
             AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()))
 
@@ -236,7 +236,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
             AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(noDunningLock)))
 
@@ -269,7 +269,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
             AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(oneDunningLock)))
 
@@ -302,7 +302,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
             AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(twoDunningLocks)))
 

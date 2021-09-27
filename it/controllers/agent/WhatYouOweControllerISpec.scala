@@ -157,7 +157,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
+      AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()))
 
@@ -624,8 +624,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
-
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(noDunningLock)))
 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with no dunningLocks")
@@ -656,8 +654,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
-
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(oneDunningLock)))
 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with dunning lock present")
@@ -687,8 +683,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-
-      AuditStub.verifyAuditEvent(WhatYouOweRequestAuditModel(testUser))
 
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(twoDunningLocks)))
 
