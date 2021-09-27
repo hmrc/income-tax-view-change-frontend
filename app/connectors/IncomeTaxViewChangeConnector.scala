@@ -210,8 +210,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     val url = getReportDeadlinesUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getNextUpdates] - GET $url")
 
-    auditingService.extendedAudit(NextUpdatesRequestAuditModel(mtdUser))
-
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
@@ -247,8 +245,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
     val url = getPreviousObligationsUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
-
-    auditingService.extendedAudit(NextUpdatesRequestAuditModel(mtdUser))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
@@ -287,8 +283,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
     val url = getPreviousObligationsUrl(fromDate, toDate, mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
-
-    auditingService.extendedAudit(NextUpdatesRequestAuditModel(mtdUser))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {

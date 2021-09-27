@@ -18,7 +18,7 @@ package controllers.agent
 import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
-import audit.models.{NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel}
+import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
@@ -142,7 +142,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 				pageTitle("Next updates - Your client’s Income Tax details - GOV.UK")
 			)
 
-			verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 			verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 		}
 
@@ -168,8 +167,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 			res should have(
 				httpStatus(INTERNAL_SERVER_ERROR)
 			)
-
-			verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 		}
   }
 }
