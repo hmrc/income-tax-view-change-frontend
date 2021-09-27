@@ -89,7 +89,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
     val balancingChargeCreated = "Remaining balance created"
-    val balancingChargeInterestCreated = "Late payment Interest for remaining balance created"
+    val balancingChargeInterestCreated = "Late payment interest for remaining balance created"
 
     def paymentOnAccountAmended(number: Int) = s"Payment on account $number of 2 reduced due to amended return"
 

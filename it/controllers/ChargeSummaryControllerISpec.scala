@@ -147,7 +147,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("Payment history"),
-        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Late payment Interest for remaining balance created")
+        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Late payment interest for remaining balance created")
       )
     }
 
