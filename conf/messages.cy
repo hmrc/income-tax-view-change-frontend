@@ -492,6 +492,10 @@ updateTab.dateToDate                                            = {0} i {1}
 updateTab.obligationType.property                               = Incwm o eiddo
 updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
+updateTab.due                                                   = Yn ddyledus erbyn {0}
+updateTab.dateSubmitted                                         = Dyddiad cyflwyno
+updateTab.updateType.quarterly                                  = Diweddariad chwarterol
+
 
 ## Agent - Payment Due Page
 agent.paymentDue.heading                                        = Yr hyn sydd arnoch
