@@ -17,11 +17,12 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.PaymentAllocationResponseAuditModel
+import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.Nino
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
@@ -56,7 +57,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
           case Right(paymentAllocations) =>
             if (isEnabled(TxmEventsApproved)) {
-              auditingService.extendedAudit(PaymentAllocationResponseAuditModel(user, paymentAllocations))
+              auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
             }
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
