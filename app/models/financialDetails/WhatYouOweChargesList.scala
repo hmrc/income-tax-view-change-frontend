@@ -36,7 +36,10 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
 
   def hasDunningLock: Boolean = allCharges.exists(charge => charge.dunningLock)
 
-  def interestOnOverdueCharges: Boolean = overduePaymentList.exists(_.documentDetail.hasAccruingInterest)
+  def interestOnOverdueCharges: Boolean =
+    if (overduePaymentList.exists(_.documentDetail.interestOutstandingAmount.isDefined)
+      && overduePaymentList.exists(_.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
+    else false
 
   def sortedOverduePaymentLists: List[DocumentDetailWithDueDate] = overduePaymentList.sortWith((charge1, charge2) =>
     charge1.currentDueDate.exists(date1 => charge2.currentDueDate.exists(_.isAfter(date1))))
