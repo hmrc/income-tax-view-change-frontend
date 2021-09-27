@@ -412,6 +412,10 @@ chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’
 chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
 chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
 chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 1 o 2
+chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 2 o 2
+chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
+chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
 
 
 ## Regimes
