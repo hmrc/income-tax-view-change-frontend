@@ -71,7 +71,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
   def financialDetailsOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): FinancialDetailsModel = testFinancialDetailsModelWithInterest(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+    dueDate = dueDateOverdue,
+    dunningLock = noDunningLocks,
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString,
     interestOutstandingAmount = List(Some(42.50), Some(24.05)),

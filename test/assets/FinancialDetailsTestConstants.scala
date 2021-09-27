@@ -471,6 +471,7 @@ object FinancialDetailsTestConstants {
   def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]],
                                 mainType: List[Option[String]],
                                 dueDate: List[Option[String]],
+                                dunningLock: List[Option[String]],
                                 outstandingAmount: List[Option[BigDecimal]],
                                 taxYear: String,
                                 interestOutstandingAmount: List[Option[BigDecimal]],
@@ -483,8 +484,8 @@ object FinancialDetailsTestConstants {
         DocumentDetail(taxYear, id1040000125, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, Some(id1040000124) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), Some(id1040000125) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, Some(id1040000124) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = dueDate.head, dunningLock = dunningLock.head)))),
+        FinancialDetail(taxYear, mainType(1), Some(id1040000125) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = dueDate(1), dunningLock = dunningLock(1)))))
       )
     )
 
@@ -672,6 +673,7 @@ object FinancialDetailsTestConstants {
       testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
         mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
         dueDate = dueDateOverdue,
+        dunningLock = oneDunningLock,
         outstandingAmount = List(Some(50), Some(75)),
         taxYear = LocalDate.now().getYear.toString,
         interestOutstandingAmount = List(Some(42.50), Some(24.05)),

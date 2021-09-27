@@ -75,7 +75,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           Json.obj(
             "chargeType" -> "Payment on account 1 of 2",
             "dueDate" -> dueDateOverdue.head.get,
-            "outstandingAmount" -> 50
+            "outstandingAmount" -> 50,
+            "chargeUnderReview" -> true
           ),
           Json.obj(
             "chargeType" -> "Payment on account 2 of 2",
@@ -84,17 +85,20 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "accruingInterest" -> 24.05,
             "interestRate" -> "6.2%",
             "interestFromDate" -> "2019-05-25",
-            "interestEndDate" -> "2019-06-25"
+            "interestEndDate" -> "2019-06-25",
+            "chargeUnderReview" -> false
           ),
           Json.obj(
             "chargeType" -> "Payment on account 2 of 2",
             "dueDate" -> dueDateIsSoon,
-            "outstandingAmount" -> 100
+            "outstandingAmount" -> 100,
+            "chargeUnderReview" -> false
           ),
           Json.obj(
             "chargeType" -> "Payment on account 1 of 2",
             "dueDate" -> dueDateInFuture,
-            "outstandingAmount" -> 125
+            "outstandingAmount" -> 125,
+            "chargeUnderReview" -> false
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",
