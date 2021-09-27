@@ -17,7 +17,7 @@
 package controllers.agent
 
 import audit.AuditingService
-import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
+import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -60,10 +60,6 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-						if (isEnabled(TxmEventsApproved)) {
-							auditingService.extendedAudit(WhatYouOweRequestAuditModel(mtdItUser))
-						}
-
 						whatYouOweService.getWhatYouOweChargesList().map {
 							whatYouOweChargesList => {
 								if (isEnabled(TxmEventsApproved)) {

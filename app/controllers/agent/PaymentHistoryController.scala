@@ -17,7 +17,7 @@
 package controllers.agent
 
 import audit.AuditingService
-import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
+import audit.models.PaymentHistoryResponseAuditModel
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -51,7 +51,6 @@ class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHist
       implicit user =>
 				for {
 					mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
-					_ = if (isEnabled(TxmEventsApproved)) auditingService.extendedAudit(PaymentHistoryRequestAuditModel(mtdItUser))
 					paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
 				} yield {
 					paymentHistoryResponse match {
