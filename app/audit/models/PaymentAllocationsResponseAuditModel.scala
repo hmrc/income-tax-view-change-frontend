@@ -43,9 +43,9 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
     "paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
         case (_, allocationDetail: Option[AllocationDetail], dateAllocated) =>
         Json.obj(
-          "paymentAllocationDescription" -> allocationDetail.flatMap(_.getPaymentAllocationKeyInPaymentAllocations).get,
+          "paymentAllocationDescription" -> allocationDetail.flatMap(a => Some(a.getPaymentAllocationKeyInPaymentAllocations)).get,
           "dateAllocated" -> dateAllocated.get,
-          "amount" -> allocationDetail.flatMap {_.amount.toString }.get,
+          "amount" -> allocationDetail.flatMap { _.amount.flatMap(amt => Some(amt.toString)) }.get,
           "taxYear" -> allocationDetail.flatMap { _.to }.map(getTaxYearString).get
         )
       }

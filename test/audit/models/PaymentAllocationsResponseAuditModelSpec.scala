@@ -18,7 +18,7 @@ package audit.models
 
 import assets.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import auth.MtdItUser
-import models.financialDetails.{DocumentDetail, FinancialDetail, Payment, SubItem}
+import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
@@ -34,7 +34,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
   val auditEvent = "PaymentAllocations"
   private val fd1 = FinancialDetail(
     taxYear = "2017",
-    chargeType = Some("Payment on account 1 of 1"),
+    chargeType = Some("ITSA- POA 1"),
     mainType = Some("SA Payment on Account 1"),
     transactionId = Some("transid2"),
     items = Some(Seq(SubItem(Some("2017-02-28")), SubItem(Some("2018-02-28"))))
@@ -47,12 +47,12 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     documentDate = LocalDate.parse("2018-03-21"))
   private val paymentAllocationChargeModel = FinancialDetailsWithDocumentDetailsModel(List(dd1), List(fd1))
   private val allocationDetail = AllocationDetail(transactionId = Some("transid2"), from = Some("2017-03-21"), to = Some("2017-03-20"),
-    chargeType = Some("Payment on account 1 of 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67))
+    chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67))
   private val paymentAllocations = PaymentAllocations(amount = Some(12345.67), method = Some("method"), transactionDate = Some("2017-03-19"),
     reference = Some("ref"), allocations = Seq(allocationDetail))
 
   private val originalPaymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[AllocationDetail], Option[String])] =
-    Seq((paymentAllocations, Some(allocationDetail), Some("string")))
+    Seq((paymentAllocations, Some(allocationDetail), Some("2017-03-21")))
 
   def paymentAllocationsAuditFull(userType: Option[String] = Some("Agent")): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
@@ -69,20 +69,6 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel,originalPaymentAllocationWithClearingDate)
     )
   }
-
-  //  val PaymentAllocationsAuditMin: PaymentAllocationsResponseAuditModel = PaymentAllocationsResponseAuditModel(
-  //    mtdItUser = MtdItUser(
-  //      mtditid = testMtditid,
-  //      nino = testNino,
-  //      userName = None,
-  //      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
-  //      saUtr = None,
-  //      credId = None,
-  //      userType = None,
-  //      arn = None
-  //    ),
-  //    payments = Seq.empty[Payment]
-  //  )
 
   "The PaymentAllocationsRequestAuditModel" should {
 
@@ -103,11 +89,13 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
+            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeAmount" -> "23456.78",
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "adsf",
-                "dateAllocated" -> "2018-02-01",
-                "amount" -> 100.00,
+                "paymentAllocationDescription" -> "paymentAllocation.paymentAllocations.poa1.incomeTax",
+                "dateAllocated" -> "2017-03-21",
+                "amount" -> "12345.67",
                 "taxYear" -> "2016 to 2017"
               )
             )
@@ -121,22 +109,19 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "credId" -> testCredId,
             "userType" -> "Agent",
             "agentReferenceNumber" -> testArn,
-            "PaymentAllocations" -> Json.arr(
+            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeAmount" -> "23456.78",
+            "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentDate" -> "2018-02-01",
-                "amount" -> 100.00
+                "paymentAllocationDescription" -> "paymentAllocation.paymentAllocations.poa1.incomeTax",
+                "dateAllocated" -> "2017-03-21",
+                "amount" -> "12345.67",
+                "taxYear" -> "2016 to 2017"
               )
             )
           )
         }
       }
-//      "the audit is empty" in {
-//        paymentAllocationsAuditMin.detail shouldBe Json.obj(
-//          "mtditid" -> testMtditid,
-//          "nationalInsuranceNumber" -> testNino,
-//          "PaymentAllocations" -> Json.arr()
-//        )
-//      }
     }
   }
 }
