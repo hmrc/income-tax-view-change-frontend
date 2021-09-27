@@ -20,8 +20,10 @@ import java.time.LocalDate
 import assets.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import assets.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
 import auth.MtdItUser
+import models.core.AccountingPeriodModel
+import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -36,17 +38,21 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
   val outStandingCharges: String = LocalDate.now().minusDays(30).toString
 
-  def testWhatYouOweResponseAuditModel(userType: Option[String] = Some("Agent")): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
+  def testWhatYouOweResponseAuditModel(userType: Option[String] = Some("Agent"),
+                                       yearOfMigration: Option[String] = Some("2015"),
+                                       chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList,
+                                      ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = MtdItUser(
       mtditid = testMtditid,
       nino = testNino,
       userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel(testMtditid, None, List.empty, None),
+      incomeSources = IncomeSourceDetailsModel(testMtditid, yearOfMigration, List.empty, None),
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
       userType = userType,
       arn = if (userType.contains("Agent")) Some(testArn) else None
-    ), whatYouOwePartialChargesList
+    ),
+    chargesList = chargesList
   )
 
   "The WhatYouOweResponseAuditModel" should {
@@ -107,6 +113,50 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           )
         )
       )
+    }
+
+    "Have the agent details for the audit event" in {
+      val agentJson = testWhatYouOweResponseAuditModel(Some("Agent")).detail
+
+      (agentJson \ "userType").as[String] shouldBe "Agent"
+      (agentJson \ "agentReferenceNumber").as[String] shouldBe testArn
+    }
+
+    "Not include balanceDetails data in details for the audit event" when {
+      def balanceDetailsJson(auditModel: WhatYouOweResponseAuditModel): Option[JsValue] =
+        (auditModel.detail \ "balanceDetails").toOption
+
+
+      "user's unknown year of migration" in {
+        balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = None)) shouldBe None
+      }
+
+      "user's first year of migration" in {
+        val currentTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now)
+        balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(currentTaxYear.toString))) shouldBe None
+      }
+
+      "user's second or more year of migration and balance details contains all zero amounts" in {
+        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now) - 1
+        val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
+          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0)
+        )
+
+        balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
+          chargesList = chargesModelWithSomeBalanceDetails)) shouldBe None
+      }
+
+      "user's second or more year of migration and balance details contains some zero amounts" in {
+        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now) - 1
+        val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
+          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3)
+        )
+
+        balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
+          chargesList = chargesModelWithSomeBalanceDetails)) shouldBe Some(Json.obj(
+          "totalBalance" -> 3.0
+        ))
+      }
     }
   }
 }

@@ -34,8 +34,24 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
       chargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = userAuditDetails(user) ++
-    Json.obj("balanceDetails" -> chargesList.balanceDetails) ++
+    balanceDetailsJson ++
     Json.obj("charges" -> docDetailsListJson)
+
+
+  private lazy val balanceDetailsJson: JsObject = {
+    def onlyIfPositive(amount: BigDecimal): Option[BigDecimal] = Some(amount).filter(_ > 0)
+
+    lazy val fields: JsObject = Json.obj() ++
+      ("balanceDueWithin30Days", onlyIfPositive(chargesList.balanceDetails.balanceDueWithin30Days)) ++
+      ("overDueAmount", onlyIfPositive(chargesList.balanceDetails.overDueAmount)) ++
+      ("totalBalance", onlyIfPositive(chargesList.balanceDetails.totalBalance))
+
+    val currentTaxYear = user.incomeSources.getCurrentTaxEndYear
+    val secondOrMoreYearOfMigration = user.incomeSources.yearOfMigration.exists(currentTaxYear > _.toInt)
+
+    if (secondOrMoreYearOfMigration && fields.values.nonEmpty) Json.obj("balanceDetails" -> fields)
+    else Json.obj()
+  }
 
   private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(
     "chargeUnderReview" -> docDateDetail.dunningLock,
