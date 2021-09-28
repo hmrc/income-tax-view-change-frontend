@@ -42,7 +42,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
   private val dd1 = DocumentDetail(taxYear = "2017",
     transactionId = "transid2",
     documentDescription = Some("ITSA- POA 1"),
-    outstandingAmount = None,
+    outstandingAmount = Some(543.32),
     originalAmount = Some(23456.78),
     documentDate = LocalDate.parse("2018-03-21"))
   private val paymentAllocationChargeModel = FinancialDetailsWithDocumentDetailsModel(List(dd1), List(fd1))
@@ -98,7 +98,8 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
-            )
+            ),
+            "creditOnAccount" -> 543.32
           )
         }
         "the user is an agent" in {
@@ -118,7 +119,8 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
-            )
+            ),
+            "creditOnAccount" -> 543.32
           )
         }
       }

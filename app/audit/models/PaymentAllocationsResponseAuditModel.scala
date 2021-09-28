@@ -41,6 +41,13 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
     paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.map(_.abs)
   }
 
+  private def getCreditOnAccount: Option[BigDecimal] = {
+    paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.flatMap {
+      outstandingAmount => if (outstandingAmount != 0) Some(outstandingAmount.abs) else None
+    }
+  }
+
+
   private def paymentAllocationDetail(): JsObject = Json.obj() ++
     ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
     ("paymentMadeAmount", getPaymentMadeAmount) ++
@@ -52,7 +59,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
             ("amount", allocationDetail.flatMap { _.amount }) ++
             ("taxYear", allocationDetail.flatMap { _.to }.map(getTaxYearString))
       }
-    )
+    ) ++ ("creditOnAccount", getCreditOnAccount)
 
   override val detail: JsValue = userAuditDetails(mtdItUser) ++ paymentAllocationDetail()
 
