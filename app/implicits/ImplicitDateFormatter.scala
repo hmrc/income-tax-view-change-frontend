@@ -22,24 +22,15 @@ import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
+import scala.language.implicitConversions
 
 
 @Singleton
 class ImplicitDateFormatterImpl @Inject()(val languageUtils: LanguageUtils) extends ImplicitDateFormatter
 
-trait ImplicitDateFormatter {
+trait ImplicitDateFormatter extends ImplicitDateParser {
 
   implicit val languageUtils: LanguageUtils
-
-  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
-
-  implicit class localDate(s: String) {
-    def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
-
-    def toLocalDateTime: LocalDateTime = LocalDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME)
-
-    def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
-  }
 
   implicit class shortDate(date: LocalDate) {
     def toShortDate: String = date.format(DateTimeFormatter.ofPattern("d/MM/uuuu"))
@@ -67,9 +58,23 @@ trait ImplicitDateFormatter {
     }
   }
 
+}
+
+trait ImplicitDateParser {
+
+  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
+
+  implicit class localDate(s: String) {
+    def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
+
+    def toLocalDateTime: LocalDateTime = LocalDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME)
+
+    def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+  }
+
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
 
-	def toTaxYearStartDate(year: String): LocalDate = localDate(s"$year-4-6").toLocalDate
-	def toTaxYearEndDate(year: String): LocalDate = localDate(s"$year-4-5").toLocalDate
+  def toTaxYearStartDate(year: String): LocalDate = localDate(s"$year-4-6").toLocalDate
+  def toTaxYearEndDate(year: String): LocalDate = localDate(s"$year-4-5").toLocalDate
 
 }
