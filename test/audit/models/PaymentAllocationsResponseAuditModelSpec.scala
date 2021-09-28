@@ -90,12 +90,12 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "credId" -> testCredId,
             "userType" -> "Individual",
             "paymentMadeDate" -> "2017-02-28",
-            "paymentMadeAmount" -> "23456.78",
+            "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> "paymentAllocation.paymentAllocations.poa1.incomeTax",
                 "dateAllocated" -> "2017-03-21",
-                "amount" -> "12345.67",
+                "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
             )
@@ -110,12 +110,12 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "userType" -> "Agent",
             "agentReferenceNumber" -> testArn,
             "paymentMadeDate" -> "2017-02-28",
-            "paymentMadeAmount" -> "23456.78",
+            "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> "paymentAllocation.paymentAllocations.poa1.incomeTax",
                 "dateAllocated" -> "2017-03-21",
-                "amount" -> "12345.67",
+                "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
             )

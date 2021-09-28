@@ -16,13 +16,13 @@
 
 package audit.models
 
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.core.AccountingPeriodModel
 import models.paymentAllocationCharges.PaymentAllocationViewModel
-import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
+import models.paymentAllocations.{AllocationDetail}
 import play.api.libs.json.{JsObject, JsValue, Json}
+import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
@@ -37,17 +37,20 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
     s"${taxYear - 1} to $taxYear"
   }
 
-  private def paymentAllocationDetail(): JsObject = Json.obj(
-    "paymentMadeDate" -> paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate,
-    "paymentMadeAmount" -> paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toString,
-    "paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
+  private def getPaymentMadeAmount: Option[BigDecimal] = {
+    paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.map(_.abs)
+  }
+
+  private def paymentAllocationDetail(): JsObject = Json.obj() ++
+    ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
+    ("paymentMadeAmount", getPaymentMadeAmount) ++
+    Json.obj("paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
         case (_, allocationDetail: Option[AllocationDetail], dateAllocated) =>
-        Json.obj(
-          "paymentAllocationDescription" -> allocationDetail.flatMap(a => Some(a.getPaymentAllocationKeyInPaymentAllocations)).get,
-          "dateAllocated" -> dateAllocated.get,
-          "amount" -> allocationDetail.flatMap { _.amount.flatMap(amt => Some(amt.toString)) }.get,
-          "taxYear" -> allocationDetail.flatMap { _.to }.map(getTaxYearString).get
-        )
+          Json.obj() ++
+            ("paymentAllocationDescription", allocationDetail.map(_.getPaymentAllocationKeyInPaymentAllocations)) ++
+            ("dateAllocated", dateAllocated) ++
+            ("amount", allocationDetail.flatMap { _.amount }) ++
+            ("taxYear", allocationDetail.flatMap { _.to }.map(getTaxYearString))
       }
     )
 
