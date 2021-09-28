@@ -125,7 +125,7 @@
 
 @tableRow2(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true, latePaymentCharge: Boolean) = {
     <tr class="govuk-table__row" id="@rowId2">
-        <td class="govuk-table__cell govuk-!-margin-9 govuk-!-width-one-quarter" >
+        <td class="govuk-table__cell govuk-!-width-one-quarter" >
             @if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(documentDetailWithDueDate.documentDetail.interestEndDate.get.toLongDateShort) else (documentDetailWithDueDate.dueDate.get.toLongDateShort)</td>
         <td class="govuk-table__cell">
             @if(isOverduePayment){<span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
@@ -282,24 +282,10 @@
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
-                    @*
-                    @p(content = Html(messages("whatYouOwe.sa-note") +
-                            link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", id=Some("sa-note-migrated"), target=Some("_blank")).toString()),
-                        id=Some("sa-note-migrated"))
-*@
-
                     @p(content = Html(messages("whatYouOwe.over-due.interest-rate-1", "") +
                         link(outerMessage = Some("."), link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
                             messageKey = "whatYouOwe.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank")).toString() + messages("whatYouOwe.over-due.interest-rate-2")),
                         id=Some("interest-rate-para"))
-@*
-                    @p {
-                        @messages("whatYouOwe.over-due.interest-rate-1", "")
-                        @link(link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
-                            messageKey = "whatYouOwe.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank"))
-                        @messages("whatYouOwe.over-due.interest-rate-2")
-                    }
-                    *@
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty) {
