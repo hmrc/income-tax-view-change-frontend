@@ -18,15 +18,18 @@
 @import models.calculation.CalcOverview
 
 @this()
-@(overview: CalcOverview, taxYear: Int)(implicit messages: Messages)
+@(overview: CalcOverview, taxYear: Int, isFinalCalc: Boolean)(implicit messages: Messages)
 
 <table id="income-deductions-table">
+
+    @if(!isFinalCalc){
     <caption class="govuk-table__caption heading-large">@messages("tax-year-overview.tax-calculation")</caption>
 
     <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header bold">@messages("tax-year-overview.section")</th>
         <th scope="col" class="govuk-table__header numeric bold">@messages("tax-year-overview.amount")</th>
     </tr>
+    }
 
     <tr>
         <td>
@@ -45,17 +48,28 @@
         }</td>
     </tr>
     <tr>
-        <td class="total-section">@messages("tax-year-overview.taxable-income")</td>
-        <td class="numeric total-section">@{
-            overview.totalTaxableIncome.toCurrencyString
-        }</td>
+        @if(!isFinalCalc){
+            <td class="total-section">@messages(s"tax-year-overview.taxable-income")</td>
+            <td class="numeric total-section">@{
+                overview.totalTaxableIncome.toCurrencyString
+            }</td>
+        } else {
+            <td>@messages(s"tax-year-overview.taxable-income.finalCalc")</td>
+            <td class="numeric">@{
+                overview.totalTaxableIncome.toCurrencyString
+            }</td>
+        }
     </tr>
 </table>
 
 <table id="taxdue-payments-table" class="table--spaced-top">
     <tr>
         <td class="bold">
-            <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
+            @if(!isFinalCalc){
+                <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
+            } else {
+                <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
+            }
             </td>
         <td class="bold">@{
             overview.taxDue.toCurrencyString

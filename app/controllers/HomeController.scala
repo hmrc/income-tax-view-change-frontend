@@ -44,11 +44,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val nextUpdatesService: NextUpdatesService,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialDetailsService: FinancialDetailsService,
-                               override val appConfig: FrontendAppConfig,
-                               mcc: MessagesControllerComponents,
-                               implicit val ec: ExecutionContext,
                                val currentDateProvider: CurrentDateProvider,
-                               auditingService: AuditingService) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                               auditingService: AuditingService)
+                              (implicit val ec: ExecutionContext,
+                               mcc: MessagesControllerComponents,
+                               val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])
                   (implicit user: MtdItUser[_]): Html = {

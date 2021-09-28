@@ -21,7 +21,7 @@ import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.mocks.MockAuditingService
-import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -71,7 +71,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
             val expectedMtdItUser = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
               businessIncome2018and2019, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
-            verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(expectedMtdItUser))
             verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
               calculationDataSuccessModel.allowancesAndDeductions, true))
           }
@@ -98,7 +97,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
             val expectedMtdItUser = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
               businessIncome2018and2019, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
-            verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(expectedMtdItUser))
             verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
               calculationDataSuccessModel.allowancesAndDeductions, false))
           }

@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -101,9 +101,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
   private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
     implicit user =>
-      if (isEnabled(TxmEventsApproved)) {
-        auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(user, None))
-      }
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
           withTaxYearFinancials(taxYear) { charges =>

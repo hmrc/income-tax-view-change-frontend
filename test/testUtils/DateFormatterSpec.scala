@@ -31,24 +31,37 @@ class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
 
     "given a date as a string" should {
 
-      "convert it to a LocalDate" in new Test{
+      "convert it to a LocalDate" in new Test {
         "2017-04-01".toLocalDate shouldBe LocalDate.parse("2017-04-01")
       }
 
-      "convert it to a LocalDate with single digit values" in new Test{
+      "convert it to a LocalDate with single digit values" in new Test {
         "2017-6-1".toLocalDate shouldBe LocalDate.parse("2017-06-01")
       }
     }
 
     "The implicit date formatter" should {
 
-      "change localDates to full dates" in new Test{
+      "change localDates to full dates" in new Test {
         "2017-04-01".toLocalDate.toLongDate shouldBe "1 April 2017"
       }
 
       "change LocalDateTime to long date output" in new Test {
         "2017-04-01T11:23:45.123Z".toLocalDateTime.toLongDateTime shouldBe "1 April 2017"
       }
+
+      "change localDates to short dates" in new Test {
+        "2017-04-01".toLocalDate.toShortDate shouldBe "1/04/2017"
+      }
+
+      "change localDates to long dates without a year" in new Test {
+        "2017-04-01".toLocalDate.toLongDateNoYear shouldBe "1 April"
+      }
+
+      "change localDates to long dates with a month abbreviation" in new Test {
+        "2017-04-01".toLocalDate.toLongDateShort shouldBe "1 Apr 2017"
+      }
+
     }
   }
 }

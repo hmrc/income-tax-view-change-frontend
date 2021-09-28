@@ -6,6 +6,8 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header => HmrcHeaderArgs}
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import play.twirl.api.HtmlFormat
+@import views.html.layouts.mainContentLayout
+
 @this(
     appConfig: config.FrontendAppConfig,
     reportAProblemLink: ReportAProblemLink,
@@ -18,10 +20,19 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     backLink: components.back_link,
-    languageSelection: components.languageSelection
+    languageSelection: components.languageSelection,
+    mainContentLayout: mainContentLayout
 )
 
-@(pageTitle: String,scriptsBlock: Option[Html] = None, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String,
+    scriptsBlock: Option[Html] = None,
+    backUrl: Option[String] = None,
+    showLogout: Boolean = true,
+    mainClass: Option[String] = None,
+    showBtaHeader: Boolean = true,
+    signOutLink: Boolean = true,
+    timeout: Boolean = true
+)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
@@ -59,6 +70,7 @@
 <script type="text/javascript" src=@routes.Assets.versioned("javascripts/accordian.js")></script>
 <script type="text/javascript" src=@routes.Assets.versioned("javascripts/govuk-frontend.js")></script>
 <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
 
 @scriptsBlock.fold(HtmlFormat.empty)(x => x)
 }
@@ -95,12 +107,25 @@
 
 }
 
-@govukLayout(
-    pageTitle = Some(messages("titlePattern.serviceName.govUk", pageTitle)),
-    headBlock = Some(head),
-    beforeContentBlock = Some(beforeContentBlock),
-    bodyEndBlock = None,
-    headerBlock = Some(siteHeader),
-    footerBlock = Some(footerLinks()),
-    scriptsBlock = Some(head)
-)(content)
+@if(mainClass.isDefined){
+    @govukLayout(
+        pageTitle = Some(messages("titlePattern.serviceName.govUk", pageTitle)),
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        headerBlock = Some(siteHeader),
+        footerBlock = Some(footerLinks()),
+        scriptsBlock = Some(head),
+        mainContentLayout = Some(mainContentLayout(mainClass.get)(_))
+    )(content)
+}else{
+    @govukLayout(
+        pageTitle = Some(messages("titlePattern.serviceName.govUk", pageTitle)),
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        headerBlock = Some(siteHeader),
+        footerBlock = Some(footerLinks()),
+        scriptsBlock = Some(head)
+    )(content)
+}

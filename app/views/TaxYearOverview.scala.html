@@ -47,7 +47,7 @@
 }
 
 @taxCalculationOverview(overview: CalcOverview) = {
-    @breakdownPartial(overview, taxYear)
+    @breakdownPartial(overview, taxYear, isFinalCalc = false)
 }
 
 @paymentsContent = {

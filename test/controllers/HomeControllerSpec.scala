@@ -57,13 +57,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			MockIncomeSourceDetailsPredicate,
 			NextUpdatesService,
 			app.injector.instanceOf[ItvcErrorHandler],
-			financialDetailsService,
-			app.injector.instanceOf[FrontendAppConfig],
-			app.injector.instanceOf[MessagesControllerComponents],
-			ec,
-			currentDateProvider,
-			mockAuditingService
-		)
+			financialDetailsService,currentDateProvider,
+			mockAuditingService)(
+      ec,
+      app.injector.instanceOf[MessagesControllerComponents],
+      app.injector.instanceOf[FrontendAppConfig]
+			)
 		when(currentDateProvider.getCurrentDate()) thenReturn LocalDate.of(2018, 1, 20)
 	}
 
