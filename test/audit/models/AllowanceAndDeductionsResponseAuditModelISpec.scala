@@ -40,7 +40,8 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
         grossAnnualPayments = Some(1235.12),
         qualifyingLoanInterestFromInvestments = Some(4562.78),
         postCessationTradeReceipts = Some(1236.12),
-        paymentsToTradeUnionsForDeathBenefits = Some(4563.78)
+        paymentsToTradeUnionsForDeathBenefits = Some(4563.78),
+        marriageAllowanceTransfer = Some(256.78)
       ), true
     )
 
@@ -68,7 +69,8 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
           "annualPayments" -> 1235.12,
           "qualifyingLoanInterest" -> 4562.78,
           "postCessationTradeReceipts" -> 1236.12,
-          "tradeUnionPayments" -> 4563.78
+          "tradeUnionPayments" -> 4563.78,
+          "marriageAllowanceTransfer" -> 256.78
         )
       }
 
@@ -94,7 +96,8 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
         grossAnnualPayments = Some(1235.12),
         qualifyingLoanInterestFromInvestments = Some(4562.78),
         postCessationTradeReceipts = Some(1236.12),
-        paymentsToTradeUnionsForDeathBenefits = Some(4563.78)
+        paymentsToTradeUnionsForDeathBenefits = Some(4563.78),
+        marriageAllowanceTransfer = Some(256.78)
       ), false
     )
 
