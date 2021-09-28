@@ -58,9 +58,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
-
       val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
-      //val anchor: Element = pageDocument.getElementById("sa-note-migrated").selectFirst("a")
       anchor.text shouldBe whatYouOwe.saLink
       anchor.attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
       anchor.attr("target") shouldBe "_blank"
