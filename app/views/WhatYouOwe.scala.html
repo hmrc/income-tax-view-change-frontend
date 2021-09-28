@@ -238,7 +238,7 @@
                         <tbody>
                             @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
                             @tableRow2(s"over-due-type-$index", charge, isOverduePayment = true, latePaymentCharge = true)
-                                @if(charge.documentDetail.interestOutstandingAmount.isDefined && charge.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0) {
+                                @if(charge.documentDetail.hasAccruingInterest) {
                                     <tr id=@(s"overdue-charge-interest-$index")>
                                         <td></td>
                                         <td>
