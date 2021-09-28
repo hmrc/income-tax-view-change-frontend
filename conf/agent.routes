@@ -57,8 +57,8 @@ GET         /calculation/:taxYear/income                                  contro
 GET         /calculation/:taxYear/tax-due                                 controllers.agent.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
 
 #Final Tax URLs
-GET         /:taxYear/final-tax-overview-and-declaration                  controllers.agent.FinalTaxCalculationController.show(taxYear: Int)
-POST        /:taxYear/final-tax-overview-and-declaration                  controllers.agent.FinalTaxCalculationController.submit(taxYear: Int)
+GET         /:taxYear/final-tax-overview                                  controllers.agent.FinalTaxCalculationController.show(taxYear: Int)
+POST        /:taxYear/final-tax-overview                                  controllers.agent.FinalTaxCalculationController.submit(taxYear: Int)
 
 #Final Tax Calculation
-GET         /:taxYear/final-tax-overview-and-declaration/calculate        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int)
+GET         /:taxYear/final-tax-overview/calculate                        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int)

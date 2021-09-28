@@ -143,7 +143,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       
     def getFinalTaxCalculationPoller(taxYear: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse = {
       val agentString = if(isAgent) "/agents" else ""
-      getWithCalcIdInSession(s"$agentString/$taxYear/final-tax-overview-and-declaration/calculate", additionalCookies)
+      getWithCalcIdInSession(s"$agentString/$taxYear/final-tax-overview/calculate", additionalCookies)
     }
 
     def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): Future[WSResponse] =
