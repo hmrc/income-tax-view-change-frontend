@@ -110,10 +110,9 @@
         <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
         <td class="govuk-table__cell">
             @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
-            @if(isChargeTypeHyperlinked){
+            @if(isChargeTypeHyperlinked) {
                 <a id="@rowId-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
                     documentDetailWithDueDate.documentDetail.transactionId)">
-
                 }
             @messages(s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
             @if(isChargeTypeHyperlinked){</a>}
@@ -164,7 +163,7 @@
     @h1(msg = "whatYouOwe.heading")
 
     @if(chargesList.isChargesListEmpty) {
-        <p id="no-payments-due">@messages("whatYouOwe.no-payments-due")</p>
+        @p(content = Html(messages("whatYouOwe.no-payments-due")), id=Some("no-payments-due"))
         @saNoteParagraph
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
@@ -283,12 +282,24 @@
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
+                    @*
+                    @p(content = Html(messages("whatYouOwe.sa-note") +
+                            link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", id=Some("sa-note-migrated"), target=Some("_blank")).toString()),
+                        id=Some("sa-note-migrated"))
+*@
+
+                    @p(content = Html(messages("whatYouOwe.over-due.interest-rate-1", "") +
+                        link(outerMessage = Some("."), link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
+                            messageKey = "whatYouOwe.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank")).toString() + messages("whatYouOwe.over-due.interest-rate-2")),
+                        id=Some("interest-rate-para"))
+@*
                     @p {
                         @messages("whatYouOwe.over-due.interest-rate-1", "")
                         @link(link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
                             messageKey = "whatYouOwe.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank"))
                         @messages("whatYouOwe.over-due.interest-rate-2")
                     }
+                    *@
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty) {
@@ -307,12 +318,10 @@
                     </table>
                 </div>
                 <div>
-                    <p>
                     @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
                             && chargesList.overduePaymentList.isEmpty) {
                         @paymentTypesDropdown
                     }
-                    </p>
                 </div>
             }
             @if(chargesList.futurePayments.nonEmpty) {
@@ -329,11 +338,9 @@
                         </tbody>
                     </table>
                 </div>
-                <p>
                 @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero && chargesList.overduePaymentList.isEmpty && chargesList.dueInThirtyDaysList.isEmpty) {
                     @paymentTypesDropdown
                 }
-                </p>
             }
         </div>
         @if(utr.isDefined) {
