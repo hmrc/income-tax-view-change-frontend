@@ -83,9 +83,9 @@ GET         /language/:lang                                               contro
 GET         /payments/history                                             controllers.PaymentHistoryController.viewPaymentHistory
 
 #Final Tax URLs
-GET         /:taxYear/final-tax-overview-and-declaration                  controllers.FinalTaxCalculationController.show(taxYear: Int)
-POST        /:taxYear/final-tax-overview-and-declaration                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
-GET         /:taxYear/final-tax-overview-and-declaration/calculate        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
+GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int)
+POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
+GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
 
 GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh
 GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish
