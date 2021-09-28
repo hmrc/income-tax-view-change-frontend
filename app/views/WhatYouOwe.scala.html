@@ -41,7 +41,7 @@
         <div id="payments-due-note" class="govuk-inset-text">
             @p{
                 @messages("whatYouOwe.sa-note")
-                @link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", target=Some("_blank"))
+                @link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", id=Some("sa-note-migrated"), target=Some("_blank"))
             }
             @p(content = Html(messages("whatYouOwe.outstanding-charges-note")), id=Some("outstanding-charges-note-migrated"))
         </div>
