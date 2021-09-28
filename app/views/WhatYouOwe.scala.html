@@ -28,6 +28,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl,
     appConfig: config.FrontendAppConfig,
     h1: h1,
+    h2: h2,
     p: p,
     link: link
 )
@@ -67,17 +68,26 @@
         </summary>
 
         <div class="govuk-details__text" id="payment-details-content-0" data-module="govuk-details" aria-hidden="false">
+            @h2(msg = messages("whatYouOwe.remaining-balance.heading"), optId=Some("remaining-balance-heading"))
+            @*
             <h2 id="remaining-balance-heading" class="heading-medium">@messages("whatYouOwe.remaining-balance.heading")</h2>
+            *@
             <span id="remaining-balance-line1"> @messages("whatYouOwe.remaining-balance.line1")</span>
         </div>
 
         <div class="govuk-details__text" id="payment-details-content-1" data-module="govuk-details" aria-hidden="false">
+            @h2(msg = messages("whatYouOwe.payment-on-account.heading"), optId = Some("payment-on-account-heading"))
+            @*
             <h2 id="payment-on-account-heading" class="heading-medium">@messages("whatYouOwe.payment-on-account.heading")</h2>
+            *@
             <span id="payment-on-account-line1"> @messages("whatYouOwe.payment-on-account.line1")</span>
         </div>
 
         <div class="govuk-details__text" id="payment-details-content-2" data-module="govuk-details" aria-hidden="false">
+            @h2(msg = messages("whatYouOwe.late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
+            @*
             <h2 id="late-payment-interest-heading" class="heading-medium">@messages("whatYouOwe.late-payment-interest.heading")</h2>
+            *@
             <span id="late-payment-interest-line1"> @messages("whatYouOwe.late-payment-interest.line1")</span>
         </div>
     </details>
@@ -204,18 +214,19 @@
             }
         }
         @saNoteParagraph
-
-        <p>
         @paymentTypesDropdown
-        </p>
-
-        <p>
         @dunningLockParagraph
-        </p>
 
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
-                <h2 id="pre-mtd-payments-heading" class="govuk-heading-l">@messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)</h2>
+
+                @h2(msg = messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString), classes = "govuk-heading-l", optId=Some("pre-mtd-payments-heading"))
+
+                @*
+                <h2 id="pre-mtd-payments-heading" class="govuk-heading-l">@messages("whatYouOwe.pre-mtd-payments",
+                    (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)</h2>
+                *@
+
                 <div id="balancing-charge-type-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.pre-mtd-payments")</caption>
@@ -256,7 +267,12 @@
                 </div>
             }
             @if(chargesList.overduePaymentList.nonEmpty) {
+
+                @h2(msg = messages("whatYouOwe.over-due-payments"), classes = "govuk-heading-l",
+                    optId=Some("over-due-payments-heading"))
+                @*
                 <h2 id="over-due-payments-heading" class="govuk-heading-l">@messages("whatYouOwe.over-due-payments")</h2>
+                *@
                 <div id="over-due-payments-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.over-due-payments")</caption>
@@ -297,7 +313,11 @@
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty) {
 
+                @h2(msg = messages("whatYouOwe.due-in-thirty-days-payments"), classes = "govuk-heading-l",
+                    optId=Some("due-in-thirty-days-payments-heading"))
+                @*
                 <h2 id="due-in-thirty-days-payments-heading" class="govuk-heading-l">@messages("whatYouOwe.due-in-thirty-days-payments")</h2>
+                    *@
                 <div id="due-in-thirty-days-payments-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.due-in-thirty-days-payments")</caption>
@@ -319,7 +339,11 @@
                 </div>
             }
             @if(chargesList.futurePayments.nonEmpty) {
+                @h2(msg = messages("whatYouOwe.future-payments"), classes = "govuk-heading-l",
+                    optId=Some("future-payments-heading"))
+                @*
                 <h2 id="future-payments-heading" class="govuk-heading-l">@messages("whatYouOwe.future-payments")</h2>
+                *@
                 <div id="future-payments-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.future-payments")</caption>
@@ -344,7 +368,7 @@
                 @creditOnAccountNotePanel
                 <div id="payment-button">
                 @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
-                    messageKey = "whatYouOwe.payNow", outerMessage = Some("."), classes = "govuk-button",
+                    messageKey = "whatYouOwe.payNow", classes = "govuk-button",
                     id = Some("payment-button-link"), ariaLabel = Some(messages("whatYouOwe.pay-now-aria", (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
                         chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
                 </div>

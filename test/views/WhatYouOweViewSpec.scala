@@ -58,7 +58,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
-      val anchor: Element = pageDocument.getElementById("sa-note-migrated").selectFirst("a")
+      val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
       anchor.text shouldBe whatYouOwe.saLink
       anchor.attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
       anchor.attr("target") shouldBe "_blank"
@@ -486,8 +486,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have a paragraph explaining interest rates" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
-        pageDocument.getElementsByClass("interest-rate").get(0).text() shouldBe whatYouOwe.interestRatesPara
-
+        pageDocument.getElementById("interest-rate-link").text().contains("Any overdue payment interest")
         val expectedUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
         pageDocument.getElementById("interest-rate-link").attr("href") shouldBe expectedUrl
       }
@@ -722,10 +721,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
         pageDocument.title() shouldBe whatYouOwe.title
-        pageDocument.selectFirst("header > h1").text shouldBe whatYouOwe.heading
-
+        pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
         pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
-        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
         pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
         pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
@@ -736,7 +734,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have note credit-on-account as a panel" in new Setup(noChargesModel) {
-        pageDocument.getElementById("credit-on-account").classNames should contain allOf("panel", "panel-indent", "panel-border-wide")
+        pageDocument.getElementById("credit-on-account").className().contains("govuk-insert-text")
       }
 
       "not have button Pay now" in new Setup(noChargesModel) {
