@@ -1,4 +1,3 @@
-
 @*
 * Copyright 2021 HM Revenue & Customs
 *
@@ -15,9 +14,7 @@
 * limitations under the License.
 *@
 
-@import config.FrontendAppConfig
-
-@this(appConfig: config.FrontendAppConfig)
-@(text: String, id: Option[String] = None, href: String)(implicit messages: Messages)
+@this()
+@(text: String, id: Option[String] = None, href: String)
 
 <a @id.map(id => s"id=$id") class="govuk-button" href="@href" role="button">@text</a>
