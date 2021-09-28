@@ -18,7 +18,7 @@ package controllers.agent
 
 
 import audit.AuditingService
-import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import audit.models.AllowanceAndDeductionsResponseAuditModel
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -49,7 +49,6 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
     Authenticated.async { implicit request =>
       implicit user =>
 				getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-					auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(mtdItUser))
 					calculationService.getCalculationDetail(getClientNino, taxYear).map {
 						case calcDisplayModel: CalcDisplayModel =>
 							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(mtdItUser,

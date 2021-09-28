@@ -19,7 +19,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.NextUpdatesIntegrationTestConstants._
 import assets.messages.HomeMessages._
-import audit.models.{HomeAudit, NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel}
+import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
@@ -75,7 +75,6 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
 
         verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
@@ -119,7 +118,6 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
 
         verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)

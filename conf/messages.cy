@@ -430,6 +430,36 @@ chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have pre
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.balancingCharge.text    = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill wedi’i greu
+
+
+chargeSummary.chargeHistory.heading								= Hanes taliadau
+chargeSummary.chargeHistory.date								= Dyddiad
+chargeSummary.chargeHistory.description							= Disgrifiad
+chargeSummary.chargeHistory.amount								= Swm
+chargeSummary.chargeHistory.created.paymentOnAccount1.text		= Taliad ar gyfrif 1 o 2 wedi’i greu
+chargeSummary.chargeHistory.created.paymentOnAccount2.text		= Taliad ar gyfrif 2 o 2 wedi’i greu
+chargeSummary.chargeHistory.created.balancingCharge.text		= Balans sy’n weddill wedi’i greu
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	= Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	= Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.balancingCharge.text	   	= Balans sy’n weddill wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	= Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	= Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	= Balans sy’n weddill wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+
+chargeSummary.paymentAllocations.bcd.incomeTax                  = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.nic2                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 1 o 2
+chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 2 o 2
+chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
+chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
+
 
 ## Regimes
 regimes.UK = Y DU
