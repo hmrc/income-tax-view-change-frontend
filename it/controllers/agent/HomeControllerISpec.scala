@@ -17,7 +17,7 @@ package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
 import assets.messages.HomeMessages.agentTitle
-import audit.models.{HomeAudit, NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel}
+import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import controllers.Assets.INTERNAL_SERVER_ERROR
@@ -206,7 +206,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
-							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 						"there are payments upcoming and nothing is overdue with TxmEventsApproved FS disabled" in {
@@ -272,7 +271,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
-							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 					}
@@ -340,7 +338,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
-							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 						"display the page with no upcoming payment with TxmEventsApproved FS disabled" when {
@@ -407,7 +404,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								verifyAuditDoesNotContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
-								verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
@@ -475,7 +471,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
-								verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
@@ -543,7 +538,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
-								verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
@@ -627,7 +621,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
               verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
-              verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 					}
@@ -710,7 +703,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							)
 
 							verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
-							verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
 							verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 						}
 					}
@@ -754,7 +746,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 						pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
 					)
 
-          verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 				}
 			}

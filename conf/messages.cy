@@ -396,19 +396,36 @@ chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
 chargeSummary.overdue                                           = YN HWYR
-chargeSummary.chargeHistory.heading								= Payment history
-chargeSummary.chargeHistory.date								= Date
-chargeSummary.chargeHistory.description							= Description
-chargeSummary.chargeHistory.amount								= Amount
-chargeSummary.chargeHistory.created.paymentOnAccount1.text		= Payment on account 1 of 2 created
-chargeSummary.chargeHistory.created.paymentOnAccount2.text		= Payment on account 2 of 2 created
-chargeSummary.chargeHistory.created.balancingCharge.text		= Remaining balance created
-chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	= Payment on account 1 of 2 reduced by taxpayer request
-chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	= Payment on account 2 of 2 reduced by taxpayer request
-chargeSummary.chargeHistory.request.balancingCharge.text	   	= Remaining balance reduced by taxpayer request
-chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	= Payment on account 1 of 2 reduced due to amended return
-chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	= Payment on account 2 of 2 reduced due to amended return
-chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	= Remaining balance reduced due to amended return
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.balancingCharge.text    = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill wedi’i greu
+
+
+chargeSummary.chargeHistory.heading								= Hanes taliadau
+chargeSummary.chargeHistory.date								= Dyddiad
+chargeSummary.chargeHistory.description							= Disgrifiad
+chargeSummary.chargeHistory.amount								= Swm
+chargeSummary.chargeHistory.created.paymentOnAccount1.text		= Taliad ar gyfrif 1 o 2 wedi’i greu
+chargeSummary.chargeHistory.created.paymentOnAccount2.text		= Taliad ar gyfrif 2 o 2 wedi’i greu
+chargeSummary.chargeHistory.created.balancingCharge.text		= Balans sy’n weddill wedi’i greu
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	= Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	= Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.balancingCharge.text	   	= Balans sy’n weddill wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	= Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	= Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	= Balans sy’n weddill wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+
+chargeSummary.paymentAllocations.bcd.incomeTax                  = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.nic2                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
+chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 1 o 2
+chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 2 o 2
+chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
+chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
+
 
 ## Regimes
 regimes.UK = Y DU
@@ -475,6 +492,10 @@ updateTab.dateToDate                                            = {0} i {1}
 updateTab.obligationType.property                               = Incwm o eiddo
 updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
+updateTab.due                                                   = Yn ddyledus erbyn {0}
+updateTab.dateSubmitted                                         = Dyddiad cyflwyno
+updateTab.updateType.quarterly                                  = Diweddariad chwarterol
+
 
 ## Agent - Payment Due Page
 agent.paymentDue.heading                                        = Yr hyn sydd arnoch

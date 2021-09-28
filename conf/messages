@@ -580,9 +580,9 @@ chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on paym
 chargeSummary.lpi.balancingCharge.text							   = Late payment interest on remaining balance
 chargeSummary.lpi.interestPeriod								   = Interest period
 chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Created late payment interest on payment on account 1 of 2
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Created late payment interest on payment on account 2 of 2
-chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Created late payment interest on remaining balance
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment interest for payment on account 1 of 2 created
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
+chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest for remaining balance created
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for payment on account 1 of 2
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for payment on account 1 of 2
