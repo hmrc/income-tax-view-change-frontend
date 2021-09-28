@@ -37,7 +37,7 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
                                              paymentAllocationsService: PaymentAllocationsService,
                                              val authorisedFunctions: AuthorisedFunctions,
                                              auditingService: AuditingService,
-                                             incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             incomeSourceDetailsService: IncomeSourceDetailsService
                                             )(implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
