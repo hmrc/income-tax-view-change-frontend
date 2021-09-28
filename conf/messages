@@ -129,9 +129,9 @@ home.your-returns.description                                   = Use this servi
 home.your-returns.agent.description                             = Use this service to report untaxed income and any tax relief you’re claiming.
 home.your-returns.updatesLink                                   = Update and submit an Income Tax Return
 home.update-and-submit-your-returns.Link                        = Update and submit an Income Tax Return
-home.self-assessment.updatesLink                                   = View your Self Assessment tax years
-home.view-self-assessment.Link                                      = View your Self Assessment tax years
-home.self-assessment.description                             = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
+home.self-assessment.updatesLink                                = View your Self Assessment tax years
+home.view-self-assessment.Link                                  = View your Self Assessment tax years
+home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
 
 home.overdue.message                                            = You have overdue payments. You will be charged interest on these until they are paid in full.
 home.agent.overdue.message                                      = You have overdue payments. You will be charged interest on these until they are paid in full.
@@ -175,7 +175,9 @@ tax-year-overview.updates                                           = Updates
 tax-year-overview.income                                            = Income
 tax-year-overview.deductions                                        = Allowances and deductions
 tax-year-overview.taxable-income                                    = Total income on which tax is due
+tax-year-overview.taxable-income.finalCalc                          = Total taxable income
 tax-year-overview.tax-due                                           = Income Tax and National Insurance contributions due
+tax-year-overview.tax-due.finalCalc                                 = Income Tax and National Insurance contributions
 tax-year-overview.payments.payment-type                             = Payment type
 tax-year-overview.payments.due-date                                 = Due date
 tax-year-overview.payments.status                                   = Status
@@ -698,12 +700,12 @@ final-declaration.caption                                       = 6 April {0} to
 final-declaration.inset.1                                       = If you think this information is incorrect, you can
 final-declaration.individual.inset.2                            = check your Income Tax Return.
 final-declaration.declaration                                   = Declaration
-final-declaration.individual.declaration.p                      = The information I have provided is correct and complete to the best of my knowledge and belief. If I give false information I may have to pay financial penalties and face prosecution.
+final-declaration.individual.chargeInfo.p                       = The amount you need to pay might be different if there are other charges or payments on your account.
 final-declaration.submit                                        = I agree - Submit Income Tax Return
 
 ## Final Declaration (Agent Content overrides)
 final-declaration.agent.heading                                 = Your client’s final tax overview
-final-declaration.agent.declaration.p                           = I confirm that my client has reviewed the information provided and confirmed that it is correct and complete to the best of their knowledge to establish the liability for the tax year 2019 to 2020. My client understands that they may have to pay financial penalties or face prosecution if they give false information.
+final-declaration.agent.chargeInfo.p                            = The amount your client needs to pay might be different if there are other charges or payments on their account.
 final-declaration.agent.inset.2                                 = check your client’s Income Tax Return.
 
 #Language Selector

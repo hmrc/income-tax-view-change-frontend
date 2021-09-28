@@ -59,22 +59,21 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
     val insetText = ".panel-border-wide"
     val insetLinkText = ".panel-border-wide > p > a"
 
-    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
-    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td.numeric"
+    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
+    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td.numeric"
 
-    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(3) > td:nth-child(1) > a"
-    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td.numeric"
+    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
+    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td.numeric"
 
-    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(4) > td:nth-child(1)"
-    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(4) > td.numeric"
+    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
+    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td.numeric"
 
     val contributionDueRowText = "#taxdue-payments-table > tbody > tr > td:nth-child(1) > a"
     val contributionDueRowAmount = "#taxdue-payments-table > tbody > tr > td:nth-child(2)"
 
-    val declarationTitle = "h2"
-    val declarationParagraph = "#content > article > p"
+    val chargeInformationParagraph = "#content > article > p"
 
-    val submitButton = ".button"
+    val continueButton = "#continue-button"
   }
 
   object ExpectedValues {
@@ -93,18 +92,16 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
     val allowanceAmount = "−£500.00"
     val allowanceLink = "/report-quarterly/income-and-expenses/view/calculation/2018/deductions"
 
-    val taxIsDueText = "Total income on which tax is due"
+    val taxIsDueText = "Total taxable income"
     val taxIsDueAmount = "£198,500.00"
 
-    val contributionText = "Income Tax and National Insurance contributions due"
+    val contributionText = "Income Tax and National Insurance contributions"
     val contributionAmount = "£90,500.00"
     val contributionLink = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due"
 
-    val declarationTitle = "Declaration"
-    val declarationParagraph: String = "The information I have provided is correct and complete to the best of my knowledge and belief." +
-      " If I give false information I may have to pay financial penalties and face prosecution."
+    val chargeInformationParagraph: String = "The amount you need to pay might be different if there are other charges or payments on your account."
 
-    val submitButtonText = "I agree - Submit Income Tax Return"
+    val continueButtonText = "Continue"
   }
 
   s"calling GET ${controllers.routes.FinalTaxCalculationController.show(taxYear)}" should {
@@ -226,23 +223,19 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
 
       }
 
-      "have a declaration section" that {
-
-        "has the correct title" in {
-          document.getElementById("declaration").text() shouldBe "Declaration"
-        }
+      "have a charge or payment information section" that {
 
         "has the correct paragraph text" in {
-          document.select(Selectors.declarationParagraph).text() shouldBe ExpectedValues.declarationParagraph
+          document.select(Selectors.chargeInformationParagraph).text() shouldBe ExpectedValues.chargeInformationParagraph
         }
 
       }
 
       "have a submit button" that {
-        lazy val submitButton = document.select(Selectors.submitButton)
+        lazy val submitButton = document.select(Selectors.continueButton)
 
         "has the correct text" in {
-          submitButton.text() shouldBe ExpectedValues.submitButtonText
+          submitButton.text() shouldBe ExpectedValues.continueButtonText
         }
       }
     }
@@ -288,7 +281,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
       }
       
       "has the correct redirect url" in {
-        result.headers("Location").head shouldBe "http://localhost:9302/income-through-software/return/2018/income-tax-return-received"
+        result.headers("Location").head shouldBe "http://localhost:9302/income-through-software/return/2018/declaration"
       }
       
     }
