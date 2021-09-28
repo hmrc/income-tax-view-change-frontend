@@ -27,7 +27,6 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
 
 case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
-                                             agentReferenceNumber: Option[String],
                                              calculation: Calculation,
                                              payments: List[DocumentDetailWithDueDate],
                                              updates: ObligationsModel) extends ExtendedAuditModel with ImplicitDateParser {
