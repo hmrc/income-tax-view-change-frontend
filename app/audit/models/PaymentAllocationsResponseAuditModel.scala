@@ -32,6 +32,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
 
   override val transactionName: String = "payment-allocations-response"
   override val auditType: String = "PaymentAllocations"
+
   private def getTaxYearString(periodTo: String): String = {
     val taxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.parse(periodTo))
     s"${taxYear - 1} to $taxYear"
@@ -46,7 +47,6 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
       outstandingAmount => if (outstandingAmount != 0) Some(outstandingAmount.abs) else None
     }
   }
-
 
   private def paymentAllocationDetail(): JsObject = Json.obj() ++
     ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++

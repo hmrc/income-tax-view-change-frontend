@@ -6,7 +6,7 @@ import assets.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndProp
 import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, paymentAllocationViewModel}
 import assets.PaymentAllocationIntegrationTestConstants.{testValidPaymentAllocationsModel, validPaymentAllocationChargesJson}
 import audit.models.PaymentAllocationsResponseAuditModel
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import helpers.ComponentSpecBase
