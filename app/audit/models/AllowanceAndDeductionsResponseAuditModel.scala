@@ -39,7 +39,8 @@ case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUser[_],
         ("annualPayments", aad.grossAnnualPayments) ++
         ("qualifyingLoanInterest", aad.qualifyingLoanInterestFromInvestments) ++
         ("postCessationTradeReceipts", aad.postCessationTradeReceipts) ++
-        ("tradeUnionPayments", aad.paymentsToTradeUnionsForDeathBenefits)
+        ("tradeUnionPayments", aad.paymentsToTradeUnionsForDeathBenefits) ++
+        ("marriageAllowanceTransfer", aad.marriageAllowanceTransfer)
     } else {
       userAuditDetails(mtdItUser) ++
         ("personalAllowance", aad.personalAllowance) ++
