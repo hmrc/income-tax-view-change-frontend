@@ -24,7 +24,7 @@
     languageSelection: components.languageSelection
 )
 
-@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String,scriptsBlock: Option[Html] = None, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @titlePattern = @{
 if(form.exists(_.hasErrors)) {
@@ -61,6 +61,20 @@ messages("agent.title_pattern.service_name.govuk", pageTitle)
             keepAliveButtonText = Some(messages("button.continue"))
         ))
     }
+
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/itvc.js")></script>
+<script>
+		setAccordianMessages("@messages("sections.open.all")", "@messages("sections.close.all")");
+	</script>
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/accordian.js")></script>
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/govuk-frontend.js")></script>
+<script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
+
+@scriptsBlock.fold(HtmlFormat.empty)(x => x)
+
+
+
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
@@ -104,5 +118,5 @@ messages("agent.title_pattern.service_name.govuk", pageTitle)
     bodyEndBlock = None,
     headerBlock = Some(siteHeader),
     footerBlock = Some(footerLinks()),
-    scriptsBlock = Some(scripts)
+    scriptsBlock = Some(head)
 )(content)

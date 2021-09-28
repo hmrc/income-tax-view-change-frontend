@@ -15,21 +15,25 @@
  *@
 
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
-@import views.html.templates.agent.MainTemplate
+@import views.html.components._
+@import views.html.layouts.agent.layout
 
-@this(mainTemplate: MainTemplate, nextUpdatesHelper: NextUpdatesHelper)
-
+@this(
+	mainTemplate: layout,
+	h1: h1,
+	h2: h2,
+	p: p,
+	link: link,
+	nextUpdatesHelper: NextUpdatesHelper
+	)
 @(currentObligations: models.nextUpdates.ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@heading = @{
-	messages("agent.nextUpdates.heading")
-}
+@mainTemplate(pageTitle = messages("agent.nextUpdates.heading"), backUrl = Some(backUrl)) {
 
-@mainTemplate(title = heading, backUrl = Some(backUrl)) {
 
-	<h1 id="page-heading" class="heading-xlarge"> @messages("agent.nextUpdates.heading")</h1>
+@h1(msg = "agent.nextUpdates.heading")
 
-	<p>@messages("agent.nextUpdates.info")</p>
+@p{@messages("agent.nextUpdates.info")}
 
 	<details class="govuk-details" data-module="govuk-details" role="group">
 
@@ -38,32 +42,30 @@
 		</summary>
 
 		<div class="govuk-details__text" id="details-content-0" data-module="govuk-details" aria-hidden="false">
-			<h2 id="quarterlyReturns-heading" class="heading-medium">@messages("agent.obligations.quarterlyUpdates")</h2>
-			<p><span id="quarterly-dropdown-line1">@messages("agent.nextUpdates.dropdown.quarterlyReturn.text")</span> </p>
-			<p><span id="quarterly-dropdown-line2">@Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text.lin2",
-			))
-			</span>
-			</p>
+			@h2(msg = "agent.obligations.quarterlyUpdates")
+			@p(id = Some("quarterly-dropdown-line1"), content = Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text")))
+			@p(id = Some("quarterly-dropdown-line2"), content = Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text.lin2")))
 		</div>
 		<div class="govuk-details__text" id="details-content-1" data-module="govuk-details" aria-hidden="false">
-			<h2 id="annualUpdates-heading" class="heading-medium">@messages("agent.obligations.annualUpdates")</h2>
-			<p><span id="annual-dropdown-line1"> @messages("agent.nextUpdates.dropdown.annualReturn.text")</span> </p>
-			<p><span id="annual-dropdown-line2">@Html(messages("agent.nextUpdates.dropdown.annualReturn.text.lin2"))</span> </p>
+			@h2(msg = "agent.obligations.annualUpdates")
+			@p(id = Some("annual-dropdown-line1"), content = Html(messages("agent.nextUpdates.dropdown.annualReturn.text")))
+			@p(id = Some("annual-dropdown-line2"), content = Html(messages("agent.nextUpdates.dropdown.annualReturn.text.lin2")))
+
 		</div>
 		<div class="govuk-details__text" id="details-content-2" data-module="govuk-details" aria-hidden="false">
-			<h2 id="finalDeclaration-heading" class="heading-medium">@messages("agent.obligations.finalDeclarationUpdate")</h2>
-			<p><span id="final-declaration-line1"> @messages("agent.nextUpdates.dropdown.finalDeclaration.text")</span> </p>
+			@h2(msg = "agent.obligations.finalDeclarationUpdate")
+			@p(id = Some("final-declaration-line1"), content = Html(messages("agent.nextUpdates.dropdown.finalDeclaration.text")))
 		</div>
 
 	</details>
 
-	<h2 class="heading-medium">@messages("agent.nextUpdates.sub-heading")</h2>
+	<h2 class="govuk-heading-m">@messages("agent.nextUpdates.sub-heading")</h2>
 
 	@nextUpdatesHelper(currentObligations)
 
-	<p>
+	@p{
 		@messages("agent.nextUpdates.previousYears.textOne")
-		<a href="@controllers.agent.routes.TaxYearsController.show().url">@messages("agent.nextUpdates.previousYears.link")</a>
+		@link(link = controllers.agent.routes.TaxYearsController.show().url, messageKey = "agent.nextUpdates.previousYears.link")
 		@messages("agent.nextUpdates.previousYears.textTwo")
-	</p>
+	}
 }
