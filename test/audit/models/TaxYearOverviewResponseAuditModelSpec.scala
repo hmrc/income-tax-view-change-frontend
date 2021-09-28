@@ -130,6 +130,10 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
           "credId" -> "credId",
           "userType" -> "Agent",
           "agentReferenceNumber" -> "agentReferenceNumber",
+          "taxYearOverview" -> Json.obj(
+            "calculationDate" -> "2017-07-06",
+            "totalDue" -> 2010
+          ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
@@ -160,6 +164,10 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
           "saUtr" -> "saUtr",
           "credId" -> "credId",
           "userType" -> "Individual",
+          "taxYearOverview" -> Json.obj(
+            "calculationDate" -> "2017-07-06",
+            "totalDue" -> 2010
+          ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
