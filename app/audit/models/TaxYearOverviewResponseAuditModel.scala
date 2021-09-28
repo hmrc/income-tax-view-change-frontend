@@ -57,6 +57,7 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private def paymentsJson(docDateDetail: DocumentDetailWithDueDate): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail.documentDescription),
+      "underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.documentDetail.getChargePaidStatus) ++
       ("amount", docDateDetail.documentDetail.originalAmount) ++
       ("dueDate", docDateDetail.dueDate)
