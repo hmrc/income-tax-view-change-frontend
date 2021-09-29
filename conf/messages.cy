@@ -80,10 +80,15 @@ taxYears.heading                                               = Mlynyddoedd tre
 taxYears.viewReturn                                            = Bwrw ffurflen
 taxYears.updateReturn                                          = Diweddariad ffurflen
 taxYears.taxYears                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
+taxYears.table.taxYear.heading                                 = Blwyddyn dreth
+taxYears.table.options.heading                                 = Opsiynau
 taxYears.ongoing                                               = AR Y GWEILL
 taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
+taxYears.oldSa.content.1									   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
+taxYears.oldSa.content.2									   = Cyfrif Hunanasesiad ar gyfer Asiantau (yn agor tab newydd)
+taxYears.oldSa.content.3									   =. Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Overview Page New##
 tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth
@@ -398,6 +403,30 @@ chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
 chargeSummary.overdue                                           = YN HWYR
+chargeSummary.remainingYear.text								= This is the remaining tax you owe for the {0} to {1} tax year.
+
+chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
+chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
+chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+chargeSummary.lpi.interestPeriod								   = Cyfnod llog
+chargeSummary.lpi.interestPeriod.dates							   = {0} i {1}
+chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
+chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
+chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
+chargeSummary.paymentBreakdown.vcnic2   						   = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
+chargeSummary.paymentBreakdown.nic4   							   = Yswiriant Gwladol Dosbarth 4
+chargeSummary.paymentBreakdown.cgt   							   = Treth Enillion Cyfalaf
+chargeSummary.paymentBreakdown.sl   							   = Benthyciadau Myfyrwyr
+chargeSummary.paymentBreakdown.dunningLocks.underReview            = Dan adolygiad
+chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn codi llog ar y taliad hwn ar hyn o bryd
+chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn codi llog arnoch ar y taliad hwn
+chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
+
+chargeSummary.interestLocks.text                                   = Mae unrhyw log ar y taliad hwn yn ymddangos fel cyfanswm ar y dudalen
+chargeSummary.interestLocks.linkText                               = Yr hyn sydd arnoch
+chargeSummary.dunning.locks.banner.title						   = Pwysig
+chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
+chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text    = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill wedi’i greu
@@ -497,6 +526,8 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad chwarterol
+updateTab.updateType.eops                                       = Diweddariad blynyddol
+updateTab.updateType.crystallised                               = Datganiad terfynol
 
 
 ## Agent - Payment Due Page

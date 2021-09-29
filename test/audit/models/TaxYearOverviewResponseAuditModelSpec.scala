@@ -39,7 +39,10 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
 
   val calculation: Calculation = calculationDataSuccessModel
 
-  val payments: List[DocumentDetailWithDueDate] = financialDetailsModel(2020).getAllDocumentDetailsWithDueDates
+  def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
+    val dunningLock = if (hasDunningLock) Some("Stand over order") else None
+    financialDetailsModel(taxYear = 2020, dunningLock = dunningLock).getAllDocumentDetailsWithDueDates
+  }
 
 
   val docDetail: DocumentDetail = DocumentDetail(
@@ -86,7 +89,8 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
   ))
 
   def taxYearOverviewResponseAuditFull(userType: Option[String] = Some("Agent"),
-                                       agentReferenceNumber: Option[String]): TaxYearOverviewResponseAuditModel =
+                                       agentReferenceNumber: Option[String],
+                                       paymentHasADunningLock: Boolean = false): TaxYearOverviewResponseAuditModel =
     TaxYearOverviewResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = "mtditid",
@@ -98,9 +102,8 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
         userType = userType,
         arn = agentReferenceNumber
       )(FakeRequest()),
-      agentReferenceNumber = agentReferenceNumber,
       calculation = calculation,
-      payments = payments,
+      payments = payments(paymentHasADunningLock),
       updates = updates
     )
 
@@ -130,6 +133,10 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
           "credId" -> "credId",
           "userType" -> "Agent",
           "agentReferenceNumber" -> "agentReferenceNumber",
+          "taxYearOverview" -> Json.obj(
+            "calculationDate" -> "2017-07-06",
+            "totalDue" -> 2010
+          ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
@@ -140,6 +147,7 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
             "amount" -> 1400,
             "dueDate" -> "2019-05-15",
             "paymentType" -> "Payment on account 1 of 2",
+            "underReview" -> false,
             "status" -> "unpaid"
           )),
           "updates" -> Seq(Json.obj(
@@ -154,12 +162,17 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
         taxYearOverviewResponseAuditFull(
           userType = Some("Individual"),
           agentReferenceNumber = None,
+          paymentHasADunningLock = true
         ).detail mustBe Json.obj(
           "nationalInsuranceNumber" -> "nino",
           "mtditid" -> "mtditid",
           "saUtr" -> "saUtr",
           "credId" -> "credId",
           "userType" -> "Individual",
+          "taxYearOverview" -> Json.obj(
+            "calculationDate" -> "2017-07-06",
+            "totalDue" -> 2010
+          ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
@@ -170,6 +183,7 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
             "amount" -> 1400,
             "dueDate" -> "2019-05-15",
             "paymentType" -> "Payment on account 1 of 2",
+            "underReview" -> true,
             "status" -> "unpaid"
           )),
           "updates" -> Seq(Json.obj(

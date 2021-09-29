@@ -25,16 +25,16 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
                                  futurePayments: List[DocumentDetailWithDueDate] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None) {
 
-  private def getAllCharges: List[DocumentDetailWithDueDate] = overduePaymentList ++ dueInThirtyDaysList ++ futurePayments
+  lazy val allCharges: List[DocumentDetailWithDueDate] = overduePaymentList ++ dueInThirtyDaysList ++ futurePayments
 
   def bcdChargeTypeDefinedAndGreaterThanZero: Boolean =
     if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
       && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0) true
     else false
 
-  def isChargesListEmpty: Boolean = getAllCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
+  def isChargesListEmpty: Boolean = allCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
-  def hasDunningLock: Boolean = getAllCharges.exists(allCharges => allCharges.dunningLock)
+  def hasDunningLock: Boolean = allCharges.exists(charge => charge.dunningLock)
 
   def interestOnOverdueCharges: Boolean =
     if (overduePaymentList.exists(_.documentDetail.interestOutstandingAmount.isDefined)
@@ -48,7 +48,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
 
     implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-    val sortedListOfCharges: Option[DocumentDetailWithDueDate] = getAllCharges.sortBy(charge => charge.dueDate.get).headOption
+    val sortedListOfCharges: Option[DocumentDetailWithDueDate] = allCharges.sortBy(charge => charge.dueDate.get).headOption
 
     if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined && sortedListOfCharges.isDefined) {
       val bcdDueDate: LocalDate = LocalDate.parse(outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get)
