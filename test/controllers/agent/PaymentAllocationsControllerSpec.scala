@@ -18,10 +18,11 @@ package controllers.agent
 
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
 import assets.PaymentAllocationsTestConstants._
+import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.MockPaymentAllocationsService
+import mocks.services.{MockIncomeSourceDetailsService, MockPaymentAllocationsService}
 import mocks.views.agent.MockPaymentAllocationView
 import play.api.http.Status._
 import play.api.mvc.MessagesControllerComponents
@@ -31,7 +32,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 
 class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAllocationView with MockFrontendAuthorisedFunctions
-  with FeatureSwitching with MockPaymentAllocationsService with MockItvcErrorHandler {
+  with FeatureSwitching with MockPaymentAllocationsService with MockItvcErrorHandler with MockAuditingService with MockIncomeSourceDetailsService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -44,7 +45,9 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
     val controller: PaymentAllocationsController = new PaymentAllocationsController(
       paymentAllocationView = paymentAllocationView,
       paymentAllocationsService = mockPaymentAllocationsService,
-      authorisedFunctions = mockAuthService
+      authorisedFunctions = mockAuthService,
+      mockAuditingService,
+      mockIncomeSourceDetailsService
     )(
       appConfig,
       app.injector.instanceOf[MessagesControllerComponents],
@@ -126,7 +129,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
       "Successfully retrieve a user's payment allocation and display the page" in new Setup {
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
+        mockSingleBusinessIncomeSource()
         setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModel)
 
         mockPaymentAllocationView(
@@ -143,6 +146,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
+        mockSingleBusinessIncomeSource()
         setupMockGetPaymentAllocationError(testNinoAgent, docNumber)
         mockShowInternalServerError()
 
