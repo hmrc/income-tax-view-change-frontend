@@ -278,6 +278,22 @@
                                         charge.documentDetail.interestOutstandingAmount.get.toCurrency
                                     }</td>
                                 </tr>
+                                @if(charge.documentDetail.hasAccruingInterest) {
+                                    <tr id=@(s"overdue-charge-interest-$index")>
+                                        <td></td>
+                                        <td>
+                                            @messages("whatYouOwe.over-due.interest.line1")
+                                            <div>
+                                                @messages(s"whatYouOwe.over-due.interest.line2",
+                                                charge.documentDetail.interestFromDate.get.toLongDateShort,
+                                                charge.documentDetail.interestEndDate.get.toLongDateShort,
+                                                charge.documentDetail.interestRate.get
+                                                )
+                                            </div>
+                                        </td>
+                                        <td class="numeric">@{charge.documentDetail.interestOutstandingAmount.get.toCurrency}</td>
+                                    </tr>
+                                }
                             }
                         }
                         </tbody>

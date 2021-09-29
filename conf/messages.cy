@@ -97,7 +97,9 @@ tax-year-overview.updates                                       = Diweddariadau
 tax-year-overview.income                                        = Incwm
 tax-year-overview.deductions                                    = Lwfansau a didyniadau
 tax-year-overview.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
+tax-year-overview.taxable-income.finalCalc                      = Total taxable income
 tax-year-overview.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
+tax-year-overview.tax-due.finalCalc                             = Income Tax and National Insurance contributions
 tax-year-overview.payments.payment-type                         = Math o daliad
 tax-year-overview.payments.due-date                             = Dyddiad dyledus
 tax-year-overview.payments.status                               = Statws
@@ -396,6 +398,30 @@ chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
 chargeSummary.overdue                                           = YN HWYR
+chargeSummary.remainingYear.text								= This is the remaining tax you owe for the {0} to {1} tax year.
+
+chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
+chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
+chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+chargeSummary.lpi.interestPeriod								   = Cyfnod llog
+chargeSummary.lpi.interestPeriod.dates							   = {0} i {1}
+chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
+chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
+chargeSummary.paymentBreakdown.nic2   							   = Yswiriant Gwladol Dosbarth 2
+chargeSummary.paymentBreakdown.vcnic2   						   = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
+chargeSummary.paymentBreakdown.nic4   							   = Yswiriant Gwladol Dosbarth 4
+chargeSummary.paymentBreakdown.cgt   							   = Treth Enillion Cyfalaf
+chargeSummary.paymentBreakdown.sl   							   = Benthyciadau Myfyrwyr
+chargeSummary.paymentBreakdown.dunningLocks.underReview            = Dan adolygiad
+chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn codi llog ar y taliad hwn ar hyn o bryd
+chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn codi llog arnoch ar y taliad hwn
+chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
+
+chargeSummary.interestLocks.text                                   = Mae unrhyw log ar y taliad hwn yn ymddangos fel cyfanswm ar y dudalen
+chargeSummary.interestLocks.linkText                               = Yr hyn sydd arnoch
+chargeSummary.dunning.locks.banner.title						   = Pwysig
+chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
+chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text    = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill wedi’i greu
@@ -495,6 +521,8 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad chwarterol
+updateTab.updateType.eops                                       = Diweddariad blynyddol
+updateTab.updateType.crystallised                               = Datganiad terfynol
 
 
 ## Agent - Payment Due Page
@@ -565,3 +593,26 @@ language-switcher.nav                                           = Switcher iaith
 
 #technical helper
 getpagehelp.linkText                                            = Help gyda’r dudalen hon
+
+## Payment Allocation ##
+paymentAllocation.heading                                       = Taliad a wnaed i CThEM
+paymentAllocation.date                                          = Dyddiad
+paymentAllocation.amount                                        = Swm
+paymentAllocation.info                                          = Bydd unrhyw daliadau a wneir yn cael eu dyrannu’n awtomatig tuag at gosbau a blynyddoedd treth cynharach cyn y flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
+paymentAllocation.tableSection.heading                          = Dyraniadau taliad
+paymentAllocation.tableHead.allocation                          = Dyrannu taliad
+paymentAllocation.tableHead.allocated-date                      = Dyddiad dyrannu
+paymentAllocation.tableHead.amount                              = Swm
+paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
+paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
+
+paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 1 o 2
+paymentAllocation.paymentAllocations.poa1.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
+paymentAllocation.paymentAllocations.poa2.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 2 o 2
+paymentAllocation.paymentAllocations.poa2.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
+paymentAllocation.paymentAllocations.bcd.incomeTax              = Treth Incwm ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.nic2                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.vcnic2                 = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.nic4                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.sl                     = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.cgt                    = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill

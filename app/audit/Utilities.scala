@@ -45,4 +45,6 @@ object Utilities {
     case "TRM New Charge" | "TRM Amend Charge" => "Remaining balance"
     case other => other
   }
+
+  def ratePctString(rate: BigDecimal): String = s"$rate%"
 }

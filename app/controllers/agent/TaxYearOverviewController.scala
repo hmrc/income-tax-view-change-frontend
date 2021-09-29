@@ -60,10 +60,10 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
         withCalculation(getClientNino(request), taxYear) { calculationOpt =>
           withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
             withObligationsModel(taxYear) { obligations =>
-              calculationOpt.map(calculation =>
+              calculationOpt.foreach(calculation =>
                 if (isEnabled(TxmEventsApproved)) {
                   auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-                    mtdItUser, user.agentReferenceNumber, calculation,
+                    mtdItUser, calculation,
                     documentDetailsWithDueDates, obligations))
                 }
               )
@@ -118,7 +118,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true,
+            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
           dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
 
         }

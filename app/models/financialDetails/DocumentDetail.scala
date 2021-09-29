@@ -36,6 +36,9 @@ case class DocumentDetail(taxYear: String,
 													paymentLot: Option[String] = None
 												 ) {
 
+  lazy val hasAccruingInterest: Boolean =
+    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+
 	val isPaid: Boolean = outstandingAmount match {
 		case Some(amount) if amount == 0 => true
 		case _ => false

@@ -258,10 +258,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
         )
 
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations))
       }
 
       "should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
@@ -348,10 +348,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
         )
 
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates, allObligations))
       }
 
       "financial details service returns a not found" in {
@@ -415,10 +415,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelector("#payments p")("No payments currently due.")
         )
 
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, emptyPaymentsList, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, emptyPaymentsList, allObligations))
       }
 
       "financial details service returns an error" in {
@@ -732,7 +732,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
       }
 
       "financial details service returns a not found" in {
@@ -799,7 +799,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, emptyPaymentsList, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, emptyPaymentsList, allObligations).detail)
       }
     }
 

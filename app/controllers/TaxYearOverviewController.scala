@@ -83,7 +83,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true,
+            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
@@ -107,7 +107,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
             withObligationsModel(taxYear) map {
               case obligationsModel: ObligationsModel =>
                 if (isEnabled(TxmEventsApproved)) {
-                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel))
+                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, calculation, charges, obligationsModel))
                 }
                 Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation)),
                 charge = charges, obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
