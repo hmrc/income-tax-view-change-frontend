@@ -279,9 +279,9 @@
                                     }</td>
                                 </tr>
                                 @if(charge.documentDetail.hasAccruingInterest) {
-                                    <tr id=@(s"overdue-charge-interest-$index")>
-                                        <td></td>
-                                        <td>
+                                    <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
+                                        <td class="govuk-table__cell"></td>
+                                        <td class="goveuk-table__cell">
                                             @messages("whatYouOwe.over-due.interest.line1")
                                             <div>
                                                 @messages(s"whatYouOwe.over-due.interest.line2",
@@ -291,7 +291,7 @@
                                                 )
                                             </div>
                                         </td>
-                                        <td class="numeric">@{charge.documentDetail.interestOutstandingAmount.get.toCurrency}</td>
+                                        <td class="govuk-table__cell numeric">@{charge.documentDetail.interestOutstandingAmount.get.toCurrency}</td>
                                     </tr>
                                 }
                             }
