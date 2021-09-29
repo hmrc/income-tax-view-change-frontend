@@ -16,13 +16,15 @@
 
 package controllers.agent
 
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import audit.AuditingService
+import audit.models.PaymentAllocationsResponseAuditModel
+import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.core.Nino
 import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PaymentAllocationsService
+import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import views.html.agent.PaymentAllocation
@@ -33,7 +35,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAllocation,
                                              paymentAllocationsService: PaymentAllocationsService,
-                                             val authorisedFunctions: AuthorisedFunctions
+                                             val authorisedFunctions: AuthorisedFunctions,
+                                             auditingService: AuditingService,
+                                             incomeSourceDetailsService: IncomeSourceDetailsService
                                             )(implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
@@ -45,10 +49,15 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        paymentAllocationsService.getPaymentAllocation(Nino(getClientNino(request)), documentNumber) map {
-          case Right(viewModel: PaymentAllocationViewModel) =>
-            Ok(paymentAllocationView(viewModel, backUrl = backUrl))
-          case _ => itvcErrorHandler.showInternalServerError()
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+          paymentAllocationsService.getPaymentAllocation(Nino(getClientNino(request)), documentNumber) map {
+            case Right(viewModel: PaymentAllocationViewModel) =>
+              if (isEnabled(TxmEventsApproved)) {
+                auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(mtdItUser, viewModel))
+              }
+              Ok(paymentAllocationView(viewModel, backUrl = backUrl))
+            case _ => itvcErrorHandler.showInternalServerError()
+          }
         }
       } else Future.failed(new NotFoundException("[PaymentAllocationsController] - PaymentAllocation is disabled"))
   }
