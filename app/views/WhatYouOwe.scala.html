@@ -44,8 +44,6 @@
                 id=Some("sa-note-migrated"))
             @p(content = Html(messages("whatYouOwe.outstanding-charges-note")), id=Some("outstanding-charges-note-migrated"))
         </div>
-    } else {
-        @p(content = Html(""), id = Some("no-payments-due-note"))
     }
 }
 
@@ -63,7 +61,7 @@
 }
 
 @paymentTypesDropdown = {
-    <details class="govuk-details" data-module="govuk-details" role="group">
+    <details class="govuk-details govuk-!-margin-top-8" data-module="govuk-details" role="group">
         <summary class="govuk-details__summary" id="payment-type-dropdown-title" role="button" aria-controls="payment-details-content" aria-expanded="false">
             <span class="govuk-details__summary-text"> @messages("whatYouOwe.dropdown.info") </span>
         </summary>
