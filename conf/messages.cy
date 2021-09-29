@@ -521,6 +521,8 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad chwarterol
+updateTab.updateType.eops                                       = Diweddariad blynyddol
+updateTab.updateType.crystallised                               = Datganiad terfynol
 
 
 ## Agent - Payment Due Page
