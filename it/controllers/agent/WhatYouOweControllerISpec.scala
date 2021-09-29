@@ -6,7 +6,7 @@ import assets.FinancialDetailsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.OutstandingChargesIntegrationTestConstants._
 import assets.PaymentDueTestConstraints.getCurrentTaxYearEnd
-import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
+import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import controllers.Assets.INTERNAL_SERVER_ERROR
@@ -113,8 +113,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
-
       AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days).detail)
 
       Then("The Payment Due what you owe page is returned to the user")
@@ -157,9 +155,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
-
-      AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()))
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
@@ -220,7 +216,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
       AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail)
 
       Then("The Payment Due what you owe page is returned to the user")
@@ -271,8 +266,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
-
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
 
@@ -301,8 +294,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-
-      AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
@@ -333,8 +324,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-
-      AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${currentTaxYearEnd.toInt - 1}-04-06", s"${currentTaxYearEnd.toInt}-04-05")
@@ -409,7 +398,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+      AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
@@ -521,7 +510,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
     val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
     verifyIncomeSourceDetailsCall(testMtditid)
     IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
@@ -573,7 +562,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
     val res = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges).detail)
+    AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
     verifyIncomeSourceDetailsCall(testMtditid)
     IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
@@ -608,7 +597,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   "when showing the Dunning Lock content" should {
     "render the what you owe page with no dunningLocks" in {
-      disable(TxmEventsApproved)
+      enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
       val testTaxYear = LocalDate.now().getYear.toString
 
@@ -624,6 +613,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(noDunningLock)))
+
       Then("the result should have a HTTP status of OK (200) and the what you owe page with no dunningLocks")
       result should have(
         httpStatus(OK),
@@ -635,7 +626,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
 
     "render the what you owe page with a dunningLocks against a charge" in {
-      disable(TxmEventsApproved)
+      enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
       val testTaxYear = LocalDate.now().getYear.toString
 
@@ -652,6 +643,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(oneDunningLock)))
+
       Then("the result should have a HTTP status of OK (200) and the what you owe page with dunning lock present")
       result should have(
         httpStatus(OK),
@@ -663,7 +656,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
 
     "render the what you owe page with multiple dunningLocks" in {
-      disable(TxmEventsApproved)
+      enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
       val testTaxYear = LocalDate.now().getYear.toString
 
@@ -679,6 +672,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(twoDunningLocks)))
 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with multiple dunningLocks")
       result should have(
@@ -707,8 +702,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-
-        AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList).detail)
 
@@ -752,8 +745,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-
-        AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList).detail)
 
@@ -811,8 +802,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-        AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
-
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList).detail)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -866,8 +855,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-        AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
-
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -916,8 +903,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-
-        AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(testUser).detail)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 

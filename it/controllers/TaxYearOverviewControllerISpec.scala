@@ -23,7 +23,7 @@ import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.TaxYearOverviewMessages
-import audit.models.{NextUpdatesRequestAuditModel, NextUpdatesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import helpers.ComponentSpecBase
@@ -230,7 +230,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -259,15 +258,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
         )
 
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations))
       }
 
       "should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
@@ -322,7 +316,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -355,15 +348,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
         )
 
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates, allObligations))
       }
 
       "financial details service returns a not found" in {
@@ -417,7 +405,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
 
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -428,15 +415,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelector("#payments p")("No payments currently due.")
         )
 
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewResponseAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, emptyPaymentsList, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, emptyPaymentsList, allObligations))
       }
 
       "financial details service returns an error" in {
@@ -471,11 +453,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
       }
 
       "retrieving a calculation failed" in {
@@ -537,11 +514,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextByID("no-calc-data-header")(TaxYearOverviewMessages.headingNoCalcData),
           elementTextByID("no-calc-data-note")(TaxYearOverviewMessages.noCalcDataNote)
         )
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
       }
 
       "retrieving a calculation failed with INTERNAL_SERVER_ERROR" in {
@@ -599,11 +571,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
       }
 
       "retrieving a previous obligations error" in {
@@ -643,11 +610,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
       }
 
       "retrieving a current obligations error" in {
@@ -683,17 +645,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
-
         And("Internal server error is returned")
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
-
-        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None).detail)
       }
     }
 
@@ -750,7 +705,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -778,7 +732,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
       }
 
       "financial details service returns a not found" in {
@@ -832,7 +786,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
 
-        verifyAuditContainsDetail(NextUpdatesRequestAuditModel(testUser).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -846,7 +799,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), None, calculationDataSuccessModel, emptyPaymentsList, allObligations).detail)
+          )(FakeRequest()), calculationDataSuccessModel, emptyPaymentsList, allObligations).detail)
       }
     }
 

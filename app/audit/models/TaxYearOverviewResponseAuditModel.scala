@@ -18,6 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
+import implicits.ImplicitDateParser
 import models.calculation.Calculation
 import models.financialDetails.DocumentDetailWithDueDate
 import models.nextUpdates.{ObligationsModel, NextUpdateModelWithIncomeType}
@@ -26,13 +27,16 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
 
 case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
-                                             agentReferenceNumber: Option[String],
                                              calculation: Calculation,
                                              payments: List[DocumentDetailWithDueDate],
-                                             updates: ObligationsModel) extends ExtendedAuditModel {
+                                             updates: ObligationsModel) extends ExtendedAuditModel with ImplicitDateParser {
 
   override val transactionName: String = "tax-year-overview-response"
   override val auditType: String = "TaxYearOverviewResponse"
+
+  private val taxYearOverviewJson = Json.obj() ++
+    ("calculationDate", calculation.timestamp.map(_.toZonedDateTime.toLocalDate)) ++
+    ("totalDue", calculation.totalIncomeTaxAndNicsDue)
 
   private val calculationDetails: JsObject = Json.obj() ++
     ("income", calculation.totalIncomeReceived) ++
@@ -52,6 +56,7 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private def paymentsJson(docDateDetail: DocumentDetailWithDueDate): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail.documentDescription),
+      "underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.documentDetail.getChargePaidStatus) ++
       ("amount", docDateDetail.documentDetail.originalAmount) ++
       ("dueDate", docDateDetail.dueDate)
@@ -87,15 +92,11 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
 
 
   override val detail: JsValue = {
-    Json.obj("nationalInsuranceNumber" -> mtdItUser.nino,
-      "mtditid" -> mtdItUser.mtditid,
+    userAuditDetails(mtdItUser) ++
+    Json.obj("taxYearOverview" -> taxYearOverviewJson,
       "calculation" -> calculationDetails,
       "payments" -> paymentsDetails,
-      "updates" -> updatesDetail) ++
-      ("agentReferenceNumber", agentReferenceNumber) ++
-      ("saUtr", mtdItUser.saUtr) ++
-      ("credId", mtdItUser.credId) ++
-      userType(mtdItUser.userType)
+      "updates" -> updatesDetail)
   }
 
 }

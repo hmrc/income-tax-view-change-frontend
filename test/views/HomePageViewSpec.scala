@@ -54,7 +54,7 @@ class HomePageViewSpec extends TestSupport {
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
   val paymentDateLongDate = "31 January 2019"
   val multipleOverduePayments = "3 OVERDUE PAYMENTS"
-  val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
+  val overdueMessage = "! Warning You have overdue payments. You will be charged interest on these until they are paid in full."
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
               overDueUpdates: Option[Int] = Some(0),utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
@@ -69,7 +69,7 @@ class HomePageViewSpec extends TestSupport {
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled
-    )(FakeRequest(),implicitly, user)
+    )(FakeRequest(),implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))

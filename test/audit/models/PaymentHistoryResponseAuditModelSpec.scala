@@ -81,6 +81,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
             "paymentHistory" -> Json.arr(
               Json.obj(
                 "paymentDate" -> "2018-02-01",
+                "description" -> "Payment Made to HMRC",
                 "amount" -> 100.00
               )
             )
@@ -97,6 +98,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
             "paymentHistory" -> Json.arr(
               Json.obj(
                 "paymentDate" -> "2018-02-01",
+                "description" -> "Payment Made to HMRC",
                 "amount" -> 100.00
               )
             )

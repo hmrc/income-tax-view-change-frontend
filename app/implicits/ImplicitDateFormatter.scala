@@ -22,14 +22,45 @@ import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
+import scala.language.implicitConversions
 
 
 @Singleton
 class ImplicitDateFormatterImpl @Inject()(val languageUtils: LanguageUtils) extends ImplicitDateFormatter
 
-trait ImplicitDateFormatter {
+trait ImplicitDateFormatter extends ImplicitDateParser {
 
   implicit val languageUtils: LanguageUtils
+
+  implicit class shortDate(date: LocalDate) {
+    def toShortDate: String = date.format(DateTimeFormatter.ofPattern("d/MM/uuuu"))
+  }
+
+  implicit class longDate(d: LocalDate)(implicit messages: Messages) {
+
+    def toLongDateNoYear: String = {
+      val dt = languageUtils.Dates.formatDate(d)(messages)
+      dt.split(" ")(0) + " " + dt.split(" ")(1)
+    }
+
+    def toLongDateShort: String = {
+      languageUtils.Dates.formatDateAbbrMonth(d)(messages)
+    }
+
+    def toLongDate: String = {
+      languageUtils.Dates.formatDate(d)(messages)
+    }
+  }
+
+  implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
+    def toLongDateTime: String = {
+      languageUtils.Dates.formatDate(dt.toLocalDate)(messages)
+    }
+  }
+
+}
+
+trait ImplicitDateParser {
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
@@ -41,35 +72,9 @@ trait ImplicitDateFormatter {
     def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
   }
 
-  implicit class shortDate(date: LocalDate) {
-    def toShortDate: String = date.format(DateTimeFormatter.ofPattern("d/MM/uuuu"))
-  }
-
-  implicit class longDate(d: LocalDate)(implicit messages: Messages) {
-
-    def toLongDateNoYear: String = {
-      val dt = languageUtils.Dates.formatDate(org.joda.time.LocalDate.parse(d.toString))(messages)
-      dt.split(" ")(0) + " " + dt.split(" ")(1)
-    }
-
-    def toLongDateShort: String = {
-      languageUtils.Dates.formatDateAbbrMonth(org.joda.time.LocalDate.parse(d.toString))(messages)
-    }
-
-    def toLongDate: String = {
-      languageUtils.Dates.formatDate(org.joda.time.LocalDate.parse(d.toString))(messages)
-    }
-  }
-
-  implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
-    def toLongDateTime: String = {
-      languageUtils.Dates.formatDate(org.joda.time.LocalDate.parse(dt.toLocalDate.toString))(messages)
-    }
-  }
-
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
 
-	def toTaxYearStartDate(year: String): LocalDate = localDate(s"$year-4-6").toLocalDate
-	def toTaxYearEndDate(year: String): LocalDate = localDate(s"$year-4-5").toLocalDate
+  def toTaxYearStartDate(year: String): LocalDate = localDate(s"$year-4-6").toLocalDate
+  def toTaxYearEndDate(year: String): LocalDate = localDate(s"$year-4-5").toLocalDate
 
 }

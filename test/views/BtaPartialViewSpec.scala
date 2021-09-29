@@ -55,8 +55,8 @@ class BtaPartialViewSpec extends TestSupport {
         homeButton.text shouldBe btaPartialMessages.button
       }
 
-      "has the correct button class of 'button'" in {
-        homeButton.hasClass("button") shouldBe true
+      "has the correct button class of 'govuk-button'" in {
+        homeButton.hasClass("govuk-button") shouldBe true
       }
 
     }

@@ -17,7 +17,7 @@
 package controllers.agent
 
 import audit.AuditingService
-import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -57,16 +57,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-        if (isEnabled(TxmEventsApproved)) {
-          auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(mtdItUser, user.agentReferenceNumber))
-        }
         withCalculation(getClientNino(request), taxYear) { calculationOpt =>
           withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
             withObligationsModel(taxYear) { obligations =>
-              calculationOpt.map(calculation =>
+              calculationOpt.foreach(calculation =>
                 if (isEnabled(TxmEventsApproved)) {
                   auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-                    mtdItUser, user.agentReferenceNumber, calculation,
+                    mtdItUser, calculation,
                     documentDetailsWithDueDates, obligations))
                 }
               )
@@ -121,7 +118,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true,
+            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
           dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
 
         }
