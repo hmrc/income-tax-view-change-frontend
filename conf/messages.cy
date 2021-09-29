@@ -80,10 +80,15 @@ taxYears.heading                                               = Mlynyddoedd tre
 taxYears.viewReturn                                            = Bwrw ffurflen
 taxYears.updateReturn                                          = Diweddariad ffurflen
 taxYears.taxYears                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
+taxYears.table.taxYear.heading                                 = Blwyddyn dreth
+taxYears.table.options.heading                                 = Opsiynau
 taxYears.ongoing                                               = AR Y GWEILL
 taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
+taxYears.oldSa.content.1									   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
+taxYears.oldSa.content.2									   = Cyfrif Hunanasesiad ar gyfer Asiantau (yn agor tab newydd)
+taxYears.oldSa.content.3									   =. Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Overview Page New##
 tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth
