@@ -16,7 +16,9 @@
 
 package controllers.agent
 
-import config.featureswitch.FeatureSwitching
+import audit.AuditingService
+import audit.models.TaxCalculationDetailsResponseAuditModel
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation._
@@ -34,7 +36,8 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCa
                                         val appConfig: FrontendAppConfig,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
-                                        incomeSourceDetailsService: IncomeSourceDetailsService
+                                        incomeSourceDetailsService: IncomeSourceDetailsService,
+																				val auditingService: AuditingService
                                        )(implicit mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,
                                          itvcErrorHandler: ItvcErrorHandler)
@@ -45,6 +48,9 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCa
 			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
 				calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
 					case calcDisplayModel: CalcDisplayModel =>
+						if (isEnabled(TxmEventsApproved)) {
+							auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(mtdItUser, calcDisplayModel, taxYear))
+						}
 						Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
 					case CalcDisplayNoDataFound =>
