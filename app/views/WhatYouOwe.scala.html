@@ -44,6 +44,8 @@
                 id=Some("sa-note-migrated"))
             @p(content = Html(messages("whatYouOwe.outstanding-charges-note")), id=Some("outstanding-charges-note-migrated"))
         </div>
+    } else {
+        @p(content = Html(""), id = Some("no-payments-due-note"))
     }
 }
 
@@ -134,7 +136,7 @@
                 <a id="@rowId2-late-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
                     documentDetailWithDueDate.documentDetail.transactionId, latePaymentCharge: Boolean)">
                 } else {
-                <a id="@rowId2-late-link2" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
+                <a  id="@rowId2-late-link2" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
                     documentDetailWithDueDate.documentDetail.transactionId)">
                 }
             @messages(

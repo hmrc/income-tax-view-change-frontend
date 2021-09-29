@@ -136,6 +136,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
 
+  val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
+
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
       "have the link to their previous Self Assessment online account in the sa-note" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
