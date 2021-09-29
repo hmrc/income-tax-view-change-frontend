@@ -28,9 +28,10 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
   override val transactionName: String = "payment-history-response"
   override val auditType: String = "PaymentHistoryResponse"
 
-  private def paymentHistoryDetail(payment: Payment): JsObject = Json.obj() ++
-    ("paymentDate", payment.date) ++
-    ("amount", payment.amount)
+  private def paymentHistoryDetail(payment: Payment): JsObject =
+    Json.obj("description" -> "Payment Made to HMRC") ++
+      ("paymentDate", payment.date) ++
+      ("amount", payment.amount)
 
   private val paymentHistory: Seq[JsObject] = payments.map(paymentHistoryDetail)
 
