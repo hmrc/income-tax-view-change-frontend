@@ -8,6 +8,7 @@
 @import play.twirl.api.HtmlFormat
 @import play.api.data.Form
 @import play.api.data._
+@import views.html.layouts.agent.mainContentTemplate
 
 @this(
     appConfig: config.FrontendAppConfig,
@@ -21,19 +22,19 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     backLink: components.back_link,
-    languageSelection: components.languageSelection
+    languageSelection: components.languageSelection,
+	mainContentTemplate: mainContentTemplate
 )
 
-@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None, mainClass: Option[String] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @titlePattern = @{
-if(form.exists(_.hasErrors)) {
-messages("agent.error.title_pattern.service_name.govuk", pageTitle)
-} else {
-messages("agent.title_pattern.service_name.govuk", pageTitle)
+	if(form.exists(_.hasErrors)) {
+		messages("agent.error.title_pattern.service_name.govuk", pageTitle)
+	} else {
+		messages("agent.title_pattern.service_name.govuk", pageTitle)
+	}
 }
-}
-
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
@@ -51,16 +52,18 @@ messages("agent.title_pattern.service_name.govuk", pageTitle)
 <!--[if lte IE 8]><link href=' @controllers.routes.Assets.at("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
 <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.at("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
-    @if(timeout) {
-        @hmrcTimeoutDialog(TimeoutDialog(
-            language = Some("en"),
-            timeout = Option(900),
-            countdown = Option(120),
-            keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
-            signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
-            keepAliveButtonText = Some(messages("button.continue"))
-        ))
-    }
+	<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
+
+	@if(timeout) {
+			@hmrcTimeoutDialog(TimeoutDialog(
+				language = Some("en"),
+				timeout = Option(900),
+				countdown = Option(120),
+				keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
+				signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
+				keepAliveButtonText = Some(messages("button.continue"))
+			))
+		}
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
@@ -95,14 +98,25 @@ messages("agent.title_pattern.service_name.govuk", pageTitle)
 
 }
 
-
-
-@govukLayout(
-    pageTitle = Some(titlePattern),
-    headBlock = Some(head),
-    beforeContentBlock = Some(beforeContentBlock),
-    bodyEndBlock = None,
-    headerBlock = Some(siteHeader),
-    footerBlock = Some(footerLinks()),
-    scriptsBlock = Some(scripts)
-)(content)
+@if(mainClass.isDefined){
+	@govukLayout.apply(
+		pageTitle = Some(titlePattern),
+		headBlock = Some(head),
+		beforeContentBlock = Some(beforeContentBlock),
+		bodyEndBlock = None,
+		headerBlock = Some(siteHeader),
+		footerBlock = Some(footerLinks()),
+		scriptsBlock = Some(scripts),
+		mainContentLayout = Some(mainContentTemplate(mainClass.get)(_))
+	)(content)
+}else{
+	@govukLayout.apply(
+		pageTitle = Some(titlePattern),
+		headBlock = Some(head),
+		beforeContentBlock = Some(beforeContentBlock),
+		bodyEndBlock = None,
+		headerBlock = Some(siteHeader),
+		footerBlock = Some(footerLinks()),
+		scriptsBlock = Some(scripts)
+	)(content)
+}

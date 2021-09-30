@@ -16,11 +16,21 @@
 
 @import java.time.LocalDate
 
-@import implicits.ImplicitDateFormatter
-@import views.html.templates.agent.MainTemplate
+@import _root_.implicits.ImplicitDateFormatter
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import views.html.components._
+@import views.html.layouts.agent.layout
 
 @this(
-    mainTemplate: MainTemplate
+    layout: layout,
+	govukWarningText: GovukWarningText,
+	home_tile: home_tile,
+	h1: h1,
+	h2: h2,
+	h3link: h3link,
+	p: p,
+	link: link
 )
 
 @(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
@@ -33,103 +43,115 @@
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
-    <div id="payments-tile" class="tile tile-no-border">
-        <div class="tile-body">
-            <h2 class="heading-medium">@messages("home.payments.heading")</h2>
-            @nextPaymentOrOverdue match {
-                case None => {<p>@messages("home.payments.no-payments-due")</p>}
-                case Some(_@Left((date, false))) => {<p>@date.toLongDate</p>}
-                case Some(_@Left((date, true))) => {<p><strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date")</strong> @date.toLongDate</p>}
-                case Some(_@Right(overdueCount)) => {<p><strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date.payment.count", overdueCount)</strong></p>}
-            }
-              <p><a href=@controllers.agent.routes.WhatYouOweController.show().url>@messages("home.payments.view")</a></p>
-        </div>
-    </div>
+	@home_tile("payments-tile", messages("home.payments.heading")) {
+		@{nextPaymentOrOverdue match {
+			case None => p()(Html(messages("home.payments.no-payments-due")))
+			case Some(_@Left((date, false))) => p()(Html(date.toLongDate))
+			case Some(_@Left((date, true))) => p()(paymentsTileContentPaymentsDue1)
+			case Some(_@Right(overdueCount)) => p()(paymentsTileContentPaymentsDueMany)
+		}}
+		@p()(link(
+			link = controllers.agent.routes.WhatYouOweController.show().url,
+			messageKey = messages("home.payments.view")
+		))
+	}
+}
+
+@paymentsTileContentPaymentsDue1 = {
+	<strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date")</strong>
+	@nextPaymentOrOverdue.get.left.get._1.toLongDate
+}
+
+@paymentsTileContentPaymentsDueMany = {
+	<strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date.payment.count", nextPaymentOrOverdue.get.right.get)</strong>
 }
 
 @updatesTile = {
-    <div id="updates-tile" class="tile tile-no-border">
-        <div class="tile-body">
-            <h2 class="heading-medium">@messages("home.updates.heading")</h2>
-            @nextUpdateOrOverdue match {
-                case _@Left((date, false)) => {<p>@date.toLongDate</p>}
-                case _@Left((date, true)) => {<p><strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date")</strong> @date.toLongDate</p>}
-                case _@Right(overdueCount) => {<p><strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date.update.count", overdueCount)</strong></p>}
-            }
-            <p><a href=@controllers.agent.routes.NextUpdatesController.getNextUpdates.url>@messages("home.updates.view")</a></p>
-        </div>
-    </div>
+	@home_tile("updates-tile", messages("home.updates.heading")) {
+		@{nextUpdateOrOverdue match {
+			case _@Left((date, false)) => p()(Html(date.toLongDate))
+			case _@Left((date, true)) => p()(updatesTileContentUpdatesDue1)
+			case _@Right(overdueCount) => p()(updatesTileContentUpdatesDueMany)
+		}}
+		@p()(link(
+			link = controllers.agent.routes.NextUpdatesController.getNextUpdates.url,
+			messageKey = messages("home.updates.view")
+		))
+	}
+}
+
+@updatesTileContentUpdatesDue1 = {
+	<strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date")</strong>
+	@nextUpdateOrOverdue.left.get._1.toLongDate
+}
+
+@updatesTileContentUpdatesDueMany = {
+	<strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date.update.count", nextUpdateOrOverdue.right.get)</strong>
 }
 
 @taxYearsTile = {
-    <div id="tax-years-tile" class="tile tile-no-border">
-        <div class="tile-body">
-            <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
-            <ul class="list">
-                <li><a href="@controllers.agent.routes.TaxYearsController.show().url">@messages("home.tax-years.view")</a></li>
-                @if(paymentHistoryEnabled){
-                    <li><a href=@controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
-                }
-            </ul>
-        </div>
-    </div>
+	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
+		<ul class="list">
+			<li>@link(
+				link = controllers.agent.routes.TaxYearsController.show().url,
+				messageKey = messages("home.tax-years.view")
+				)</li>
+			@if(paymentHistoryEnabled){
+				<li>@link(
+					link = controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
+					messageKey = messages("home.tax-years.viewPayments")
+				)</li>
+			}
+		</ul>
+	}
 }
 
 @YourIncomeTaxReturnTile= {
     <div id="manage-income-tax-tile" class="grid-row">
         <div class="column-two-thirds">
-            <h2 class="heading-large">@messages("home.manage-income-tax.heading")</h2>
+			@h2(messages("home.manage-income-tax.heading"), "govuk-heading-l")
         </div>
     </div>
     <div id="submit-your-returns-tile" class="grid-row">
         <div class="column-one-third">
-            <h3 class ="heading-small">
-                <a href=@appConfig.submissionFrontendUrl>@messages("home.update-and-submit-your-returns.Link")</a>
-            </h3>
-            <p>@messages("home.your-returns.agent.description")</p>
+			@h3link(link = appConfig.submissionFrontendUrl, messageKey = "home.update-and-submit-your-returns.Link")
+            @p()(Html(messages("home.your-returns.agent.description")))
         </div>
     </div>
 }
 
-@mainTemplate(
-    title = messages("home.agent.heading"),
-    mainClass = Some("full-width")
-    ) {
+@layout(pageTitle = messages("home.agent.heading"),
+	mainClass = Some("full-width")) {
 
+	@h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
 
-    <h1 class="heading-xlarge" style="margin-bottom:0px;"><span id="income-tax-heading">@messages("home.agent.heading")</span></h1>
-    <p class="form-hint" style="margin-bottom:0px;">
-        @messages("home.utr", user.saUtr.getOrElse(""))
-        <br>
-        <span class="visuallyhidden">@messages("home.agent.visualHidden.clientsName")</span>
-        @user.userName.map(_.name) @user.userName.map(_.lastName)
-    </p>
+	@p(classes = "govuk-hint margin-bottom-zero") {
+		@messages("home.utr", user.saUtr.getOrElse(""))
+		<br>
+		<span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
+		@user.userName.map(_.name) @user.userName.map(_.lastName)
+	}
 
-    <p style="margin-bottom:60px;" id="changeClientLink">
-        <a href="@controllers.agent.routes.RemoveClientDetailsSessionsController.show().url" class="govuk-link--no-visited-state">@messages("home.agent.changeClientLink")</a>
-    </p>
+	@p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
+		@link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+	}
 
     @if(overduePaymentExists) {
-        <div id="overdue-warning" class="grid-row grid-row-spacing">
+        <div id="overdue-warning" class="grid-row">
             <div class="column-full">
-                <div class="notice">
-                    <span class="icon icon-important">
-                        <span class="visually-hidden">Warning</span>
-                    </span>
-                    <strong class="bold-small">
-                        @messages("home.agent.overdue.message")
-                    </strong>
-                </div>
+				@govukWarningText(WarningText(content = Text(messages("home.overdue.message"))))
             </div>
         </div>
     }
 
 
 
-    <div class="flex-container grid-row">
-        @paymentsTile
-        @updatesTile
-        @taxYearsTile
+    <div class="grid-row">
+		<div class="flex-container">
+			@paymentsTile
+			@updatesTile
+			@taxYearsTile
+		</div>
     </div>
 
     @if(ITSASubmissionIntegrationEnabled) {

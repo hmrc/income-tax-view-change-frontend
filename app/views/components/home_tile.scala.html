@@ -14,12 +14,15 @@
 * limitations under the License.
 *@
 
-@this()
+@import views.html.components.h2
 
-@(classes: String = "govuk-body", id: Option[String] = None)(content: Html)
+@this(h2: h2)
 
-@if(id.isDefined){
-    <p class="@classes" id="@id">@content</p>
-} else {
-    <p class="@classes">@content</p>
-}
+@(id: String, heading: String)(content: Html)(implicit messages: Messages)
+
+<div id="@{id}" class="tile tile-no-border">
+	<div class="tile-body">
+		@h2(classes = "govuk-heading-m", msg = heading)
+		@content
+	</div>
+</div>

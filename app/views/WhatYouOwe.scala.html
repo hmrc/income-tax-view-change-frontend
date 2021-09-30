@@ -39,22 +39,21 @@
 @saNoteParagraph = {
     @if(utr.isDefined) {
         <div id="payments-due-note" class="govuk-inset-text">
-            @p(content = Html(messages("whatYouOwe.sa-note") +
+            @p(id=Some("sa-note-migrated"))(Html(messages("whatYouOwe.sa-note") +
                     link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", id=Some("sa-note-migrated"), target=Some("_blank")).toString()),
-                id=Some("sa-note-migrated"))
-            @p(content = Html(messages("whatYouOwe.outstanding-charges-note")), id=Some("outstanding-charges-note-migrated"))
+                )
+            @p(id=Some("outstanding-charges-note-migrated"))(content = Html(messages("whatYouOwe.outstanding-charges-note")))
         </div>
     }
 }
 
 @paymentDaysNoteParagraph = {
-    @p(content = Html(
-        messages("whatYouOwe.payment-days-note")), id = Some("payment-days-note"))
+    @p(id = Some("payment-days-note"))(Html(messages("whatYouOwe.payment-days-note")) )
 }
 
 @creditOnAccountNotePanel = {
     <div id="credit-on-account" class="govuk-inset-text">
-    @p{
+    @p(){
         @messages("whatYouOwe.credit-on-account")
     }
     </div>
@@ -85,7 +84,7 @@
 @dunningLockParagraph = {
     @if(dunningLock) {
         <div id="payment-under-review-info">
-        @p {
+        @p(){
             @messages("whatYouOwe.dunningLock.text", "")
             @link(link = "https://www.gov.uk/tax-appeals", messageKey = "whatYouOwe.dunningLock.link",
                 id = Some("disagree-with-tax-appeal-link"), target = Some("_blank"))
@@ -160,7 +159,7 @@
 ) {
     @h1(msg = "whatYouOwe.heading")
     @if(chargesList.isChargesListEmpty) {
-        @p(content = Html(messages("whatYouOwe.no-payments-due")), id=Some("no-payments-due"))
+        @p(id=Some("no-payments-due"))(Html(messages("whatYouOwe.no-payments-due")))
         @saNoteParagraph
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
@@ -171,29 +170,26 @@
                 <div class="govuk-grid-row">
                     @if(chargesList.balanceDetails.overDueAmount > 0) {
                         <div id="overdueAmount" class="govuk-grid-column-one-third">
-                            @p{
+                            @p(){
                                 @messages("whatYouOwe.overdueAmount")
                             }
-                            @p(content=Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()),
-                                classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")
+                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
                         </div>
                     }
                     @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
                         <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
-                            @p{
+                            @p(){
                                 @messages("whatYouOwe.balanceDueWithin30Days")
                             }
-                            @p(content=Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()),
-                                classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")
+                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()))
                         </div>
                     }
                     @if(chargesList.balanceDetails.totalBalance > 0) {
                         <div id="totalBalance" class="govuk-grid-column-one-third">
-                            @p{
+                            @p(){
                                 @messages("whatYouOwe.totalBalance")
                             }
-                            @p(content=Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()),
-                                classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")
+                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()))
                         </div>
                     }
                 </div>
@@ -293,10 +289,10 @@
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
-                    @p(content = Html(messages("whatYouOwe.over-due.interest-rate-1", "") +
+                    @p(id=Some("interest-rate-para"))(Html(messages("whatYouOwe.over-due.interest-rate-1", "") +
                         link(outerMessage = ".", link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
                             messageKey = "whatYouOwe.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank")).toString() + messages("whatYouOwe.over-due.interest-rate-2")),
-                        id=Some("interest-rate-para"))
+                        )
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty) {
