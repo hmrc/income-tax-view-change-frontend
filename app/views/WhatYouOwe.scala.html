@@ -59,10 +59,6 @@
     }
     </div>
 }
-    @*
-@paymentTypesDropdown(classes: String = "govuk-details govuk-!-margin-top-8") = {
-    *@
-
 @paymentTypesDropdown(classes: String = "govuk-details") = {
     <details class="@classes" data-module="govuk-details" role="group">
         <summary class="govuk-details__summary" id="payment-type-dropdown-title" role="button" aria-controls="payment-details-content" aria-expanded="false">
@@ -85,8 +81,6 @@
         </div>
     </details>
 }
-
-
 
 @dunningLockParagraph = {
     @if(dunningLock) {
@@ -164,9 +158,7 @@
     pageTitle = messages("whatYouOwe.heading"),
     backUrl = Some(backUrl)
 ) {
-
     @h1(msg = "whatYouOwe.heading")
-
     @if(chargesList.isChargesListEmpty) {
         @p(content = Html(messages("whatYouOwe.no-payments-due")), id=Some("no-payments-due"))
         @saNoteParagraph
@@ -210,7 +202,6 @@
         @saNoteParagraph
         @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
         @dunningLockParagraph
-
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                 @h2(msg = messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString), classes = "govuk-heading-l", optId=Some("pre-mtd-payments-heading"))
@@ -254,7 +245,6 @@
                 </div>
             }
             @if(chargesList.overduePaymentList.nonEmpty) {
-
                 @h2(msg = messages("whatYouOwe.over-due-payments"), classes = "govuk-heading-l",
                     optId=Some("over-due-payments-heading"))
                 <div id="over-due-payments-table">
@@ -310,7 +300,6 @@
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty) {
-
                 @h2(msg = messages("whatYouOwe.due-in-thirty-days-payments"), classes = "govuk-heading-l",
                     optId=Some("due-in-thirty-days-payments-heading"))
                 <div id="due-in-thirty-days-payments-table">
