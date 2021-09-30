@@ -93,7 +93,8 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val totalDue: String = "Total Due"
     val taxDue: String = "£4.04"
     val calcDateInfo: String = "This calculation is only based on your completed updates for this tax year up to 5 Jan 2017. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
-    val taxCalculation: String = "Tax calculation"
+    val taxCalculation: String = s"6 April ${testYear - 1} to 5 January $testYear in year calculation"
+    val inYearTaxCalculation: String = "In year tax calculation"
     val taxCalculationNoData: String = "No calculation yet"
     val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
     val payments: String = "Payments"
@@ -180,7 +181,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "show three tabs with the correct tab headings" in new Setup(estimateView()) {
-      content.selectHead("#tab_taxCalculation").text shouldBe taxYearOverviewMessages.taxCalculation
+      content.selectHead("#tab_taxCalculation").text shouldBe taxYearOverviewMessages.inYearTaxCalculation
       content.selectHead("#tab_payments").text shouldBe taxYearOverviewMessages.payments
       content.selectHead("#tab_updates").text shouldBe taxYearOverviewMessages.updates
     }

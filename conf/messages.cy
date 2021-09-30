@@ -96,7 +96,8 @@ tax-year-overview.heading-secondary                             = 6 Ebrill {0} i
 tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-overview.estimate                                      = Amcangyfrif ar gyfer 6 Ebrill {0} i 28 Ion {1}
 tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
-tax-year-overview.tax-calculation                               = Cyfrifiad Treth
+tax-year-overview.tax-calculation                               = Cyfrifiad yn ystod y flwyddyn
+tax-year-overview.amount                                        = Swm
 tax-year-overview.payments                                      = Taliadau
 tax-year-overview.updates                                       = Diweddariadau
 tax-year-overview.income                                        = Incwm
@@ -119,8 +120,9 @@ tax-year-overview.payments.overdue                              = Yn hwyr
 tax-year-overview.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 
 ## Tax Year Overview Page new ##
-tax-year-overview.tax-calculation.no-calc                           = Dim cyfrifiad eto
-tax-year-overview.tax-calculation.no-calc.note                      = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
+tax-year-overview.tax-calculation.no-calc                       = Dim cyfrifiad eto
+tax-year-overview.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
+tax-year-overview.tax-calculation.in-year                       = Cyfrifiad yn ystod y flwyddyn 6 Ebrill {0} i 5 Ionawr {1}
 
 
 ## Income Breakdown Page ##
