@@ -48,13 +48,26 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
     }
   }
 
+  private def getAllocationDescription(key: String): String = key match {
+    case "paymentAllocation.paymentAllocations.poa1.incomeTax" => "Payment allocated to Income Tax for payment on account 1 of 2"
+    case "paymentAllocation.paymentAllocations.poa1.nic4" => "Payment allocated to Class 4 National Insurance for payment on account 1 of 2"
+    case "paymentAllocation.paymentAllocations.poa2.incomeTax" => "Payment allocated to Income Tax for payment on account 2 of 2"
+    case "paymentAllocation.paymentAllocations.poa2.nic4" => "Payment allocated to Class 4 National Insurance for payment on account 2 of 2"
+    case "paymentAllocation.paymentAllocations.bcd.incomeTax" => "Payment allocated to Income Tax for remaining balance"
+    case "paymentAllocation.paymentAllocations.bcd.nic2" => "Payment allocated to Class 2 National Insurance for remaining balance"
+    case "paymentAllocation.paymentAllocations.bcd.vcnic2" => "Payment allocated to Voluntary Class 2 National Insurance for remaining balance"
+    case "paymentAllocation.paymentAllocations.bcd.nic4" => "Payment allocated to Class 4 National Insurance for remaining balance"
+    case "paymentAllocation.paymentAllocations.bcd.sl" => "Payment allocated to Student Loans for remaining balance"
+    case "paymentAllocation.paymentAllocations.bcd.cgt" => "Payment allocated to Capital Gains Tax for remaining balance"
+  }
+
   private def paymentAllocationDetail(): JsObject = Json.obj() ++
     ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
     ("paymentMadeAmount", getPaymentMadeAmount) ++
     Json.obj("paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
         case (_, allocationDetail: Option[AllocationDetail], dateAllocated) =>
           Json.obj() ++
-            ("paymentAllocationDescription", allocationDetail.map(_.getPaymentAllocationKeyInPaymentAllocations)) ++
+            ("paymentAllocationDescription", allocationDetail.map(a => getAllocationDescription(a.getPaymentAllocationKeyInPaymentAllocations))) ++
             ("dateAllocated", dateAllocated) ++
             ("amount", allocationDetail.flatMap { _.amount }) ++
             ("taxYear", allocationDetail.flatMap { _.to }.map(getTaxYearString))
