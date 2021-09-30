@@ -92,6 +92,7 @@ tax-year-overview.calculation-date                              = Dyddiad y cyfr
 tax-year-overview.estimate                                      = Amcangyfrif ar gyfer 6 Ebrill {0} i 28 Ion {1}
 tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
 tax-year-overview.tax-calculation                               = Cyfrifiad yn ystod y flwyddyn
+tax-year-overview.amount                                        = Swm
 tax-year-overview.payments                                      = Taliadau
 tax-year-overview.updates                                       = Diweddariadau
 tax-year-overview.income                                        = Incwm
