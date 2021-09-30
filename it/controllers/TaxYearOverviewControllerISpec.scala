@@ -38,12 +38,6 @@ import play.api.test.FakeRequest
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
-
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(

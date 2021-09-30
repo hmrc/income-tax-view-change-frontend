@@ -16,7 +16,14 @@
 
 package models.paymentAllocationCharges
 
-import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
+import models.financialDetails.DocumentDetail
+import models.paymentAllocations.AllocationDetail
+
+case class AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], clearingDate: Option[String])
+
+case class LatePaymentInterestPaymentAllocationDetails(documentDetail: DocumentDetail, amount: BigDecimal)
 
 case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDetailsWithDocumentDetailsModel,
-                                      originalPaymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[AllocationDetail], Option[String])])
+                                      originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] = Seq(),
+                                      latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
+                                      isLpiPayment: Boolean = false)

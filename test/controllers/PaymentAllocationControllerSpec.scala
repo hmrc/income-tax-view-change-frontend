@@ -78,8 +78,19 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Successfully retrieving a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any()))
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
+
+        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+
+        status(result) shouldBe Status.OK
+      }
+
+      "Successfully retrieving a user's lpi payment allocation" in new Setup {
+        enable(PaymentAllocation)
+        mockSingleBusinessIncomeSource()
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
+          .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
@@ -89,7 +100,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Failing to retrieve a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any()))
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Left(PaymentAllocationError)))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
@@ -102,7 +113,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "trying to access payments allocation " in new Setup {
         disable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any()))
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))

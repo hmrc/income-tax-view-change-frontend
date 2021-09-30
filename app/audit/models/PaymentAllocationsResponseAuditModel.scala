@@ -19,16 +19,18 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.core.AccountingPeriodModel
-import models.paymentAllocationCharges.PaymentAllocationViewModel
-import models.paymentAllocations.{AllocationDetail}
+import models.financialDetails.DocumentDetail
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
+import models.paymentAllocations.AllocationDetail
+import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
 case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
-                                               paymentAllocations: PaymentAllocationViewModel)
-                                                extends ExtendedAuditModel {
+                                                paymentAllocations: PaymentAllocationViewModel)
+  extends ExtendedAuditModel {
 
   override val transactionName: String = "payment-allocations-response"
   override val auditType: String = "PaymentAllocations"
@@ -59,21 +61,39 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
     case "paymentAllocation.paymentAllocations.bcd.nic4" => "Class 4 National Insurance for remaining balance"
     case "paymentAllocation.paymentAllocations.bcd.sl" => "Student Loans for remaining balance"
     case "paymentAllocation.paymentAllocations.bcd.cgt" => "Capital Gains Tax for remaining balance"
+    case "paymentOnAccount1.text" => "Late payment interest for payment on account 1 of 2"
+    case "paymentOnAccount2.text" => "Late payment interest for payment on account 2 of 2"
+    case "balancingCharge.text" => "Late payment interest for remaining balance"
   }
 
   private def paymentAllocationDetail(): JsObject = Json.obj() ++
     ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
     ("paymentMadeAmount", getPaymentMadeAmount) ++
-    Json.obj("paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
-        case (_, allocationDetail: Option[AllocationDetail], dateAllocated) =>
+    paymentAllocationsAudit() ++
+    ("creditOnAccount", getCreditOnAccount)
+
+  private def paymentAllocationsAudit(): JsObject = {
+    if (paymentAllocations.isLpiPayment) {
+      Json.obj("paymentAllocations" -> Json.arr(
+        paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiad =>
+          Json.obj() ++
+            ("paymentAllocationDescription", Some(getAllocationDescriptionFromKey(lpiad.documentDetail.getChargeTypeKey))) ++
+            ("amount", Some(lpiad.amount)) ++
+            ("taxYear", Some(getTaxYearString(s"${lpiad.documentDetail.taxYear}-04-05")))
+        }
+      ))
+    } else {
+      Json.obj("paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
+        case AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], dateAllocated) =>
           Json.obj() ++
             ("paymentAllocationDescription", allocationDetail.map(ad =>
               getAllocationDescriptionFromKey(ad.getPaymentAllocationKeyInPaymentAllocations))) ++
             ("dateAllocated", dateAllocated) ++
-            ("amount", allocationDetail.flatMap { _.amount }) ++
-            ("taxYear", allocationDetail.flatMap { _.to }.map(getTaxYearString))
-      }
-    ) ++ ("creditOnAccount", getCreditOnAccount)
+            ("amount", allocationDetail.flatMap{_.amount}) ++
+            ("taxYear", allocationDetail.flatMap {_.to}.map(getTaxYearString))
+      })
+    }
+  }
 
   override val detail: JsValue = userAuditDetails(mtdItUser) ++ paymentAllocationDetail()
 

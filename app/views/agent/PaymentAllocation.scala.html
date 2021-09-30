@@ -18,6 +18,7 @@
 @import models.paymentAllocationCharges.PaymentAllocationViewModel
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
+@import models.paymentAllocationCharges.AllocationDetailWithClearingDate
 
 @this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl)
 
@@ -62,7 +63,7 @@
                     <th>@messages("paymentAllocation.tableHead.amount")</th>
                 </tr>
             </thead>
-            @originalPaymentAllocationWithClearingDate.map { case (_, allocationDetail, clearingDate) =>
+            @originalPaymentAllocationWithClearingDate.map { case AllocationDetailWithClearingDate(allocationDetail, clearingDate) =>
                 @defining(allocationDetail.get.getTaxYear(implicitDateFormatter)) { allocationTaxYear =>
                 <tbody>
                     <tr>

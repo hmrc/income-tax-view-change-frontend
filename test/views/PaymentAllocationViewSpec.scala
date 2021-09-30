@@ -46,17 +46,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class Setup(paymentAllocationModel: PaymentAllocationViewModel = paymentAllocationViewModel) {
-    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0)._2.get.chargeType.get
+    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
     val testBackUrl: String = "/test-url"
-
-  paymentAllocationChargesModel.financialDetails.head.chargeType.get + paymentAllocationChargesModel.financialDetails.head.mainType.get
 
     val page: Html = paymentAllocationView(paymentAllocationModel, "testBackURL")
     val document: Document = Jsoup.parse(page.body)
 
   }
 
-  "Payment Allocation Page" should {
+  "Payment Allocation Page for non LPI" should {
     "check that the first section information is present" when {
       "checking the heading" in new Setup() {
         document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
@@ -113,6 +111,51 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "should not have Credit on account row within payment details" in new Setup(paymentAllocationViewModel.copy(
         paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
         document.getElementById("credit-on-account") shouldBe null
+      }
+    }
+  }
+  "Payment Allocation Page for LPI" should {
+    "check that the first section information is present" when {
+      "checking the heading" in new Setup(paymentAllocationViewModelLpi) {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+      }
+
+      "checking there is a correct date" in new Setup(paymentAllocationViewModelLpi) {
+        val result = document.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text
+        result shouldBe paymentAllocationMessages.date
+      }
+
+      "checking there is a correct Amount" in new Setup(paymentAllocationViewModelLpi) {
+        val result = document.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text
+        result shouldBe paymentAllocationMessages.amount
+      }
+
+      "checking there is the info text" in new Setup(paymentAllocationViewModelLpi) {
+        document.getElementsByClass("govuk-inset-text").text shouldBe paymentAllocationMessages.info
+      }
+    }
+
+    "check that the second section information is present" when {
+      "has a main heading" in  new Setup(paymentAllocationViewModelLpi){
+        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
+      }
+
+      "has table headers" in new Setup(paymentAllocationViewModelLpi) {
+        val allTableHeadings = document.selectHead("thead")
+        allTableHeadings.selectNth("th", 1).text() shouldBe paymentAllocationMessages.tableHeadings(0)
+        allTableHeadings.selectNth("th", 2).text() shouldBe paymentAllocationMessages.tableHeadings(1)
+        allTableHeadings.selectNth("th", 3).text() shouldBe paymentAllocationMessages.tableHeadings(2)
+
+      }
+
+      "has a payment within the table" in new Setup(paymentAllocationViewModelLpi) {
+        val allTableData =  document.selectHead("tbody").selectHead("tr")
+        "getting payment allocation information"
+        allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocationLpi
+        "getting payment allocation Date Allocated"
+        allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocatedLpi
+        "getting payment allocation Amount"
+        allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmountLpi
       }
     }
   }

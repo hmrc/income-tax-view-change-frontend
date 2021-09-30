@@ -19,11 +19,12 @@
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.components._
 @import views.html.layouts.layout
+@import views.html.partials.paymentAllocations._
 
-@this(mainTemplate: layout, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p)
+@this(mainTemplate: layout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+        paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages)
-
 @import implicitDateFormatter._
 
 @mainTemplate(
@@ -62,36 +63,10 @@
                 <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
             </tr>
         </thead>
-       @for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
-       <tbody class="govuk-table__body">
-
-             <tr>
-                <td class="govuk-table__cell" id="payment-allocation-@index">
-					<a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation._2.get.getTaxYear(implicitDateFormatter), paymentAllocation._2.get.transactionId.get)}" class="govuk-link">
-						@messages(paymentAllocation._2.get.getPaymentAllocationKeyInPaymentAllocations)
-					</a>
-                    <br>
-					<span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation._2.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation._2.get.getTaxYear(implicitDateFormatter).toString)</span>
-                </td>
-                <td class="govuk-table__cell">@paymentAllocation._3.get.toLocalDate.toLongDateShort</td>
-                <td class="govuk-table__cell">@paymentAllocation._2.get.amount.get.toCurrencyString</td>
-            </tr>
-       </tbody>
-
+       @if(paymentAllocations.isLpiPayment) {
+           @paymentAllocationsForLpi(paymentAllocations)
+       } else {
+           @paymentAllocationsForNonLpi(paymentAllocations)
        }
-        @paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.map { outstandingAmount =>
-            @if(outstandingAmount != 0) {
-       <tbody class="govuk-table__body">
-
-             <tr id="credit-on-account">
-                        <td class="govuk-table__cell">@messages("paymentAllocation.creditOnAccount")</td>
-                        <td class="govuk-table__cell"></td>
-                        <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
-             </tr>
-       </tbody>
-
-       }
-        }
    </table>
-
 }

@@ -20,7 +20,7 @@ import assets.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, tes
 import auth.MtdItUser
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
 import play.api.libs.json.Json
 import testUtils.TestSupport
@@ -47,12 +47,10 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     documentDate = LocalDate.parse("2018-03-21"))
   private val paymentAllocationChargeModel = FinancialDetailsWithDocumentDetailsModel(List(dd1), List(fd1))
   private val allocationDetail = AllocationDetail(transactionId = Some("transid2"), from = Some("2017-03-21"), to = Some("2017-03-20"),
-    chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67))
-  private val paymentAllocations = PaymentAllocations(amount = Some(12345.67), method = Some("method"), transactionDate = Some("2017-03-19"),
-    reference = Some("ref"), allocations = Seq(allocationDetail))
+    chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67), Some("chargeReference1"))
 
-  private val originalPaymentAllocationWithClearingDate: Seq[(PaymentAllocations, Option[AllocationDetail], Option[String])] =
-    Seq((paymentAllocations, Some(allocationDetail), Some("2017-03-21")))
+  private val originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] =
+    Seq(AllocationDetailWithClearingDate(Some(allocationDetail), Some("2017-03-21")))
 
   def paymentAllocationsAuditFull(userType: Option[String] = Some("Agent")): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
@@ -66,7 +64,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         userType = userType,
         arn = if (userType.contains("Agent")) Some(testArn) else None
       ),
-      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel,originalPaymentAllocationWithClearingDate)
+      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate)
     )
   }
 
