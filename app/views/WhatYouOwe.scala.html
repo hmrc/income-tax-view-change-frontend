@@ -316,7 +316,7 @@
                 <div>
                     @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
                             && chargesList.overduePaymentList.isEmpty) {
-                        @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
+                        @paymentTypesDropdown()
                     }
                 </div>
             }
@@ -335,7 +335,7 @@
                     </table>
                 </div>
                 @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero && chargesList.overduePaymentList.isEmpty && chargesList.dueInThirtyDaysList.isEmpty) {
-                    @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
+                    @paymentTypesDropdown()
                 }
             }
         </div>
