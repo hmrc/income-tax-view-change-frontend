@@ -50,7 +50,7 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
 @if(saUtr.isDefined) {
     @p{
         @messages("paymentHistory.info")
-        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "paymentHistory.textLink1", outerMessage = Some("."))
+        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "paymentHistory.textLink1", outerMessage = ".")
         }
     }
 
