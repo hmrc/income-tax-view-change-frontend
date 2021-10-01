@@ -20,8 +20,10 @@
     link: String,
     classes: String = "govuk-link govuk-body",
     messageKey: String,
-    outerMessage: Option[String] = None,
-    id: Option[String] = None
+    id: Option[String] = None,
+    target: Option[String] = None,
+    ariaLabel: Option[String] = None,
+    outerMessage: String = "",
 )(implicit messages: Messages)
 
-<a href="@link" class="@classes" @id.map(id => s"id=$id")>@messages(messageKey)</a>@outerMessage.map(outerMessage => s"$outerMessage")
+<a href="@link" class="@classes" @id.map(id => s"id=$id") @target.map(target => s"target=$target") @ariaLabel.map(ariaLabel=>s"aria-label=$ariaLabel")>@messages(messageKey)</a>@outerMessage

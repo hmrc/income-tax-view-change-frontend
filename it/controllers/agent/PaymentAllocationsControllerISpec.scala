@@ -2,10 +2,14 @@
 package controllers.agent
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, paymentAllocationChargesModel, testValidPaymentAllocationsModelJson, validPaymentAllocationChargesJson}
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import assets.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, paymentHistoryBusinessAndPropertyResponse}
+import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, paymentAllocationChargesModel, paymentAllocationViewModel, testValidPaymentAllocationsModelJson, validPaymentAllocationChargesJson}
+import audit.models.PaymentAllocationsResponseAuditModel
+import auth.MtdItUser
+import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
@@ -13,6 +17,7 @@ import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 
 import java.time.LocalDate
 
@@ -29,6 +34,11 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
   )
 
   val docNumber = "docNumber1"
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None,
+    paymentHistoryBusinessAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+  )(FakeRequest())
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.now
@@ -138,10 +148,12 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       }
     }
 
-    s"return $OK and display the Payment Allocations page" in {
+    s"return $OK and display the Payment Allocations page and with TxmEventsApproved FS enabled" in {
+      enable(TxmEventsApproved)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
       IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino,
         paymentAllocationChargesModel.documentDetails.head.paymentLot.get,
@@ -155,12 +167,15 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         httpStatus(OK),
         pageTitle("Payment made to HMRC - Your client’s Income Tax details - GOV.UK")
       )
+
+      verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
     }
 
     s"return $INTERNAL_SERVER_ERROR when the payment allocations call fails" in {
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(INTERNAL_SERVER_ERROR, Json.obj())
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)

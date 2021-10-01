@@ -3,9 +3,12 @@ package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
 import assets.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
-import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, testValidPaymentAllocationsModel, validPaymentAllocationChargesJson}
+import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, paymentAllocationViewModel}
+import assets.PaymentAllocationIntegrationTestConstants.{testValidPaymentAllocationsModel, validPaymentAllocationChargesJson}
+import audit.models.PaymentAllocationsResponseAuditModel
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail}
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
@@ -75,8 +78,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     }
 
     s"return $OK with the payment allocation page" when {
-      "the payment allocation feature switch is enabled" in {
-
+      "the payment allocation feature switch is enabled and with TxmEventsApproved FS enabled" in {
+        enable(TxmEventsApproved)
         enable(PaymentAllocation)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
@@ -94,6 +97,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           httpStatus(OK),
           pageTitle("Payment made to HMRC - Business Tax account - GOV.UK")
         )
+
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
       }
     }
   }

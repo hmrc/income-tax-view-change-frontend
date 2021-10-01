@@ -47,7 +47,7 @@
 
 @taxCalculationOverview(overview: CalcOverview) = {
     <table id="income-deductions-table">
-        <caption class="govuk-table__caption heading-large">@messages("taxCal_breakdown.heading")</caption>
+        <caption class="govuk-table__caption heading-large">@messages("tax-year-overview.tax-calculation")</caption>
 
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header bold">@messages("tax-year-overview.section")</th>
@@ -207,7 +207,7 @@
                         @messages("tax-year-overview.total-due")
                     } else {
                         @overview.timestamp.map { timestamp =>
-                            @{messages("tax-year-overview.estimate", (taxYear - 1).toString, timestamp.toZonedDateTime.toLocalDate.toLongDate)}
+                            @{messages("tax-year-overview.tax-calculation.in-year", s"${taxYear - 1}", s"$taxYear")}
                         }
                     }
                 </dd>
