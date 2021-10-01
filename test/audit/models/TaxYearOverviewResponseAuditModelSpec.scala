@@ -17,7 +17,6 @@
 package audit.models
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.taxYear
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.FinancialDetailsTestConstants.financialDetailsModel
@@ -26,7 +25,7 @@ import models.calculation.Calculation
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -149,6 +148,12 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
             "paymentType" -> "Payment on account 1 of 2",
             "underReview" -> false,
             "status" -> "unpaid"
+          ), Json.obj(
+            "amount" -> 100,
+            "dueDate" -> "2019-05-15",
+            "paymentType" -> "Late payment interest for payment on account 1 of 2",
+            "underReview" -> false,
+            "status" -> "part-paid"
           )),
           "updates" -> Seq(Json.obj(
             "incomeSource" -> "Test Trading Name",
@@ -185,6 +190,12 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
             "paymentType" -> "Payment on account 1 of 2",
             "underReview" -> true,
             "status" -> "unpaid"
+          ), Json.obj(
+            "amount" -> 100,
+            "dueDate" -> "2019-05-15",
+            "paymentType" -> "Late payment interest for payment on account 1 of 2",
+            "underReview" -> true,
+            "status" -> "part-paid"
           )),
           "updates" -> Seq(Json.obj(
             "incomeSource" -> "Test Trading Name",

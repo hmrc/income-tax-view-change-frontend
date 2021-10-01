@@ -16,13 +16,12 @@
 
 package audit.models
 
-import audit.Utilities._
+import audit.Utilities.{getChargeType, userAuditDetails}
 import auth.MtdItUser
 import implicits.ImplicitDateParser
 import models.calculation.Calculation
 import models.financialDetails.DocumentDetailWithDueDate
-import models.nextUpdates.{ObligationsModel, NextUpdateModelWithIncomeType}
-import play.api.Logger
+import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
 
@@ -44,25 +43,24 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
     ("taxableIncome", calculation.totalTaxableIncome) ++
     ("taxDue", calculation.totalIncomeTaxAndNicsDue)
 
-  private def getChargeType(chargeType: Option[String]): String = chargeType match {
-    case Some("ITSA- POA 1") => "Payment on account 1 of 2"
-    case Some("ITSA - POA 2") => "Payment on account 2 of 2"
-    case Some("TRM New Charge") | Some("TRM Amend Charge") => "Remaining balance"
-    case error => {
-      Logger.error(s"[TaxYearOverview][getChargeType] Missing or non-matching charge type: $error found")
-      "unknownCharge"
-    }
-  }
-
   private def paymentsJson(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail.documentDescription),
-      "underReview" -> docDateDetail.dunningLock,
+    Json.obj(("paymentType", getChargeType(docDateDetail.documentDetail, false))) ++
+    Json.obj("underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.documentDetail.getChargePaidStatus) ++
       ("amount", docDateDetail.documentDetail.originalAmount) ++
       ("dueDate", docDateDetail.dueDate)
   }
 
-  private val paymentsDetails: Seq[JsObject] = payments.map(paymentsJson)
+  private def paymentsJsonLPI(docDateDetail: DocumentDetailWithDueDate): JsObject = {
+    Json.obj(("paymentType", getChargeType(docDateDetail.documentDetail, true))) ++
+      Json.obj("underReview" -> docDateDetail.dunningLock,
+        "status" -> docDateDetail.documentDetail.getInterestPaidStatus) ++
+      ("amount", docDateDetail.documentDetail.latePaymentInterestAmount) ++
+      ("dueDate", docDateDetail.dueDate)
+  }
+
+  private val paymentsDetails: Seq[JsObject] = payments.map(paymentsJson) ++
+    payments.filter(_.documentDetail.latePaymentInterestAmount.isDefined).map(paymentsJsonLPI)
 
   private def getObligationsType(obligationType: String) = {
     obligationType match {
