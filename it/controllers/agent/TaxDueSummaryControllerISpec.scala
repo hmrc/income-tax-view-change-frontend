@@ -17,14 +17,20 @@
 package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
+import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import assets.CalcDataIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import assets.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitleAgent}
-import config.featureswitch.FeatureSwitching
+import audit.models.TaxCalculationDetailsResponseAuditModel
+import auth.MtdItUser
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
+import enums.Crystallised
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.calculation.{CalculationItem, ListCalculationItems}
+import models.calculation.{CalcDisplayModel, Calculation, CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status._
@@ -35,6 +41,11 @@ import play.api.test.FakeRequest
 import java.time.{LocalDate, LocalDateTime}
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None,
+    multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+  )(FakeRequest())
 
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
@@ -131,8 +142,10 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       }
     }
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch AgentViewer is enabled" should {
+      "feature switch TxMEventsApproved is enabled" should {
       "return the correct tax due page" in {
+        enable(TxmEventsApproved)
+
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -159,6 +172,9 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           pageTitle(taxDueSummaryTitleAgent),
           elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
         )
+
+        val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
+        verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
       }
     }
   }
