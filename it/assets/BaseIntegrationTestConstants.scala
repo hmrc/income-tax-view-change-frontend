@@ -16,10 +16,7 @@
 
 package assets
 
-import assets.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
-import auth.MtdItUser
 import play.api.http.Status
-import play.api.test.FakeRequest
 
 import java.time.LocalDate
 
