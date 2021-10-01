@@ -80,10 +80,10 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
     }
 
   private def rateBandToMessage(taxBand: TaxBand): String =
-    taxBandNameToString(taxBand.name) + s" (£${taxBand.bandLimit} at ${taxBand.rate}%)"
+    s"${taxBandNameToString(taxBand.name)} (£${taxBand.bandLimit} at ${taxBand.rate}%)"
 
   private def rateBandToMessage(nicBand: NicBand): String =
-    taxBandNameToString(nicBand.name) + s" (£${nicBand.income} at ${nicBand.rate}%)"
+    s"${taxBandNameToString(nicBand.name)} (£${nicBand.income} at ${nicBand.rate}%)"
 
   private def taxBandRateMessageJson(taxBand: TaxBand): JsObject = Json.obj(
     "rateBand" -> rateBandToMessage(taxBand),
@@ -205,7 +205,7 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
     "amount" -> cgtTaxBand.taxAmount
   )
 
-  private def capitalGainsTaxJson(cgt: CapitalGainsTax): JsObject = Json.obj() ++
+  private def capitalGainsTaxExtrasJson(cgt: CapitalGainsTax): JsObject = Json.obj() ++
     ("taxableCapitalGains", cgt.totalTaxableGains) ++
       ("capitalGainsTaxAdjustment", cgt.adjustments) ++
       ("foreignTaxCreditReliefOnCapitalGains", cgt.foreignTaxCreditRelief) ++
@@ -226,13 +226,16 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
       case (Some(ba), Some(pai), Some(og)) => Some(ba ++ pai ++ og)
       case (Some(ba), Some(pai), _) => Some(ba ++ pai)
       case (Some(ba), _, Some(og)) => Some(ba ++ og)
-      case (_, Some(two), Some(og)) => Some(two ++ og)
+      case (_, Some(pai), Some(og)) => Some(pai ++ og)
+      case (Some(ba), _, _) => Some(ba)
+      case (_, Some(pai), _) => Some(pai)
+      case (_, _, Some(og)) => Some(og)
       case _  => None
     }
   }
 
-  private def capitalGainsJson(cgt: CapitalGainsTax): JsObject =
-    capitalGainsTaxJson(cgt) ++
+  private def capitalGainsTaxJson(cgt: CapitalGainsTax): JsObject =
+    capitalGainsTaxExtrasJson(cgt) ++
       ("rates", capitalGainsTaxRatesJson(cgt))
 
 
@@ -286,7 +289,7 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private val additionChargesDetail: Option[Seq[JsObject]] = optDetail(additionalChargesSeq.map(lineItemJson))
 
-  private val capitalGainsTaxDetail: Option[JsObject] = optDetail(capitalGainsJson(calculation.capitalGainsTax))
+  private val capitalGainsTaxDetail: Option[JsObject] = optDetail(capitalGainsTaxJson(calculation.capitalGainsTax))
 
   private val otherChargesDetail: Option[Seq[JsObject]] = optDetail(otherChargesSeq.map(lineItemJson))
 
