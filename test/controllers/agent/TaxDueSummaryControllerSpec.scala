@@ -45,7 +45,8 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       appConfig = appConfig,
       authorisedFunctions = mockAuthService,
       calculationService = mockCalculationService,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService
+      incomeSourceDetailsService = mockIncomeSourceDetailsService,
+			auditingService = mockAuditingService
     )(
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[ExecutionContext],

@@ -54,7 +54,6 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
       case _ => None
     }
 
-
   private val allowedCalcMessages: Seq[Option[String]] = {
     calculation.messages.map(_.allMessages).getOrElse(Seq.empty).map(_.id).map(calcMessageCodeToString).filter(code => code.isDefined)
   }
@@ -86,18 +85,12 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
   private def rateBandToMessage(nicBand: NicBand): String =
     taxBandNameToString(nicBand.name) + s" (£${nicBand.income} at ${nicBand.rate}%)"
 
-  private def taxBandWithRateMessageJson(taxBand: TaxBand): JsObject = Json.obj(
-    "rateBand" -> rateBandToMessage(taxBand),
-    "amount" -> taxBand.taxAmount,
-    "rateMessage" -> s"${taxBand.rate}%"
-  )
-
-  private def taxBandWithoutRateMessageJson(taxBand: TaxBand): JsObject = Json.obj(
+  private def taxBandRateMessageJson(taxBand: TaxBand): JsObject = Json.obj(
     "rateBand" -> rateBandToMessage(taxBand),
     "amount" -> taxBand.taxAmount
   )
 
-  private def taxBandWithoutRateMessageJson(nicBand: NicBand): JsObject = Json.obj(
+  private def nicBandRateMessageJson(nicBand: NicBand): JsObject = Json.obj(
     "rateBand" -> rateBandToMessage(nicBand),
     "amount" -> nicBand.amount
   )
@@ -183,13 +176,14 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
     } else None
   }
 
-  private def businessAssetsTaxBandJson(cgtTaxBand: SingleBandCgtDetail): List[JsObject] =
+  private def businessAssetsTaxBandJson(cgtTaxBand: SingleBandCgtDetail): Option[Seq[JsObject]] = {
     if (cgtTaxBand.taxAmount.nonEmpty) {
-      List(Json.obj(
+      Some(Seq(Json.obj(
         "rateBand" -> s"Business Asset Disposal Relief and or Investors' Relief gains (£${cgtTaxBand.taxableGains.getOrElse(0)} at ${cgtTaxBand.rate.getOrElse(0)} %)",
         "amount" -> cgtTaxBand.taxAmount
-      ))
-    } else List()
+      )))
+    } else None
+  }
 
 
   private def taxBandRateString(cgtTaxBand: CgtTaxBand): String = {
@@ -211,20 +205,36 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
     "amount" -> cgtTaxBand.taxAmount
   )
 
-  private def capitalGainsTaxSeq(cgt: CapitalGainsTax): Seq[TaxCalcLineItem] = Seq() ++
-    optLineItem("Taxable Capital Gains", cgt.totalTaxableGains) ++
-    optLineItem("Capital Gains Tax adjustment", cgt.adjustments) ++
-    optLineItem("Foreign Tax Credit Relief on capital gains", cgt.foreignTaxCreditRelief) ++
-    optLineItem("Tax on gains already paid", cgt.taxOnGainsAlreadyPaid) ++
-    optLineItem("Capital Gains Tax due", cgt.capitalGainsTaxDue) ++
-    optLineItem("Capital Gains Tax calculated as overpaid", cgt.capitalGainsOverpaid)
+  private def capitalGainsTaxJson(cgt: CapitalGainsTax): JsObject = Json.obj() ++
+    ("taxableCapitalGains", cgt.totalTaxableGains) ++
+      ("capitalGainsTaxAdjustment", cgt.adjustments) ++
+      ("foreignTaxCreditReliefOnCapitalGains", cgt.foreignTaxCreditRelief) ++
+      ("taxOnGainsAlreadyPaid", cgt.taxOnGainsAlreadyPaid) ++
+      ("capitalGainsTaxDue", cgt.capitalGainsTaxDue) ++
+      ("capitalGainsTaxCalculatedAsOverpaid", cgt.capitalGainsOverpaid)
 
-  private def capitalGainsTaxJson(cgt: CapitalGainsTax): Seq[JsObject] = {
-      capitalGainsTaxSeq(cgt).map(lineItemJson) ++
-      businessAssetsTaxBandJson(cgt.businessAssetsDisposalsAndInvestorsRel) ++
-      cgt.propertyAndInterestTaxBands.map(propertyInterestTaxBandJson) ++
-      cgt.otherGainsTaxBands.map(otherGainsTaxBandString)
+  private def capitalGainsTaxRatesJson(cgt: CapitalGainsTax): Option[Seq[JsObject]] = {
+    val businessAssets: Option[Seq[JsObject]] = businessAssetsTaxBandJson(cgt.businessAssetsDisposalsAndInvestorsRel)
+    val propertyAndInterest: Option[Seq[JsObject]] = if(cgt.propertyAndInterestTaxBands.nonEmpty) {
+      Option(cgt.propertyAndInterestTaxBands.map(propertyInterestTaxBandJson))
+    } else None
+    val otherGains: Option[Seq[JsObject]] = if(cgt.otherGainsTaxBands.nonEmpty) {
+      Option(cgt.otherGainsTaxBands.map(otherGainsTaxBandString))
+    } else None
+
+    (businessAssets, propertyAndInterest, otherGains) match {
+      case (Some(ba), Some(pai), Some(og)) => Some(ba ++ pai ++ og)
+      case (Some(ba), Some(pai), _) => Some(ba ++ pai)
+      case (Some(ba), _, Some(og)) => Some(ba ++ og)
+      case (_, Some(two), Some(og)) => Some(two ++ og)
+      case _  => None
+    }
   }
+
+  private def capitalGainsJson(cgt: CapitalGainsTax): JsObject =
+    capitalGainsTaxJson(cgt) ++
+      ("rates", capitalGainsTaxRatesJson(cgt))
+
 
   private def deductionsString(deduction: String): String =
     deduction match {
@@ -250,47 +260,53 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
     totalDeductions.fold(calculation.taxDeductedAtSource.allFields)(total => calculation.taxDeductedAtSource.allFields :+ ("Income Tax due after deductions", total))
   }
 
+  private def optDetail(optDetail: Seq[JsObject]): Option[Seq[JsObject]] =
+    if(optDetail.nonEmpty) Some(optDetail) else None
 
-  private val calculationMessagesDetail: Seq[JsObject] = allowedCalcMessages.map(calcMessagesJson)
+  private def optDetail(optDetail: JsObject): Option[JsObject] = {
+    if(optDetail.equals(Json.obj())) None else Some(optDetail)
+  }
 
-  private val payPensionsProfitDetail: Seq[JsObject] = calculation.payPensionsProfit.bands.map(taxBandWithRateMessageJson)
 
-  private val savingsDetail: Seq[JsObject] = calculation.savingsAndGains.bands.map(taxBandWithoutRateMessageJson)
+  private val calculationMessagesDetail: Option[Seq[JsObject]] = optDetail(allowedCalcMessages.map(calcMessagesJson))
 
-  private val dividendsDetail: Seq[JsObject] = calculation.dividends.bands.map(taxBandWithoutRateMessageJson)
+  private val payPensionsProfitDetail: Option[Seq[JsObject]] = optDetail(calculation.payPensionsProfit.bands.map(taxBandRateMessageJson))
 
-  private val employmentLumpSumsDetail: Seq[JsObject] = calculation.lumpSums.bands.map(taxBandWithoutRateMessageJson)
+  private val savingsDetail: Option[Seq[JsObject]] = optDetail(calculation.savingsAndGains.bands.map(taxBandRateMessageJson))
 
-  private val gainsOnLifePoliciesDetail: Seq[JsObject] = calculation.gainsOnLifePolicies.bands.map(taxBandWithoutRateMessageJson)
+  private val dividendsDetail: Option[Seq[JsObject]] = optDetail(calculation.dividends.bands.map(taxBandRateMessageJson))
 
-  private val class4NationInsuranceDetail: Seq[JsObject] = calculation.nic.class4Bands.getOrElse(Seq.empty).map(taxBandWithoutRateMessageJson)
+  private val employmentLumpSumsDetail: Option[Seq[JsObject]] = optDetail(calculation.lumpSums.bands.map(taxBandRateMessageJson))
 
-  private val taxReductionsDetails: Seq[JsObject] = taxReductionsFullSeq.map(taxReductionsJson)
+  private val gainsOnLifePoliciesDetail: Option[Seq[JsObject]] = optDetail(calculation.gainsOnLifePolicies.bands.map(taxBandRateMessageJson))
 
-  private val additionChargesDetail: Seq[JsObject] = additionalChargesSeq.map(lineItemJson)
+  private val class4NationInsuranceDetail: Option[Seq[JsObject]] = optDetail(calculation.nic.class4Bands.getOrElse(Seq.empty).map(nicBandRateMessageJson))
 
-  private val capitalGainsTaxDetail: Seq[JsObject] = capitalGainsTaxJson(calculation.capitalGainsTax)
+  private val taxReductionsDetails: Option[Seq[JsObject]] = optDetail(taxReductionsFullSeq.map(taxReductionsJson))
 
-  private val otherChargesDetail: Seq[JsObject] = otherChargesSeq.map(lineItemJson)
+  private val additionChargesDetail: Option[Seq[JsObject]] = optDetail(additionalChargesSeq.map(lineItemJson))
 
-  private val taxDeductionsDetail: Seq[JsObject] = taxDeductionsFullSeq.map(taxDeductionsJson)
+  private val capitalGainsTaxDetail: Option[JsObject] = optDetail(capitalGainsJson(calculation.capitalGainsTax))
+
+  private val otherChargesDetail: Option[Seq[JsObject]] = optDetail(otherChargesSeq.map(lineItemJson))
+
+  private val taxDeductionsDetail: Option[Seq[JsObject]] = optDetail(taxDeductionsFullSeq.map(taxDeductionsJson))
 
   override val detail: JsValue =
     userAuditDetails(mtdItUser) ++
-      Json.obj("taxCalculationMessage" -> calculationMessagesDetail,
-        "payPensionsProfit" -> payPensionsProfitDetail,
-        "savings" -> savingsDetail,
-        "dividends" -> dividendsDetail,
-        "employmentLumpSums" -> employmentLumpSumsDetail,
-        "gainsOnLifePolicies" -> gainsOnLifePoliciesDetail,
-        "class4NationalInsurance" -> class4NationInsuranceDetail,
-        "taxReductions" -> taxReductionsDetails,
-        "additionalCharges" -> additionChargesDetail,
-        "capitalGainsTax" -> capitalGainsTaxDetail,
-        "otherCharges" -> otherChargesDetail,
-        "taxDeductions" -> taxDeductionsDetail) ++
       ("calculationOnTaxableIncome", calculation.totalTaxableIncome) ++
-      ("incomeTaxAndNationalInsuranceContributionsDue", calculation.totalIncomeTaxAndNicsDue)
-
+      ("incomeTaxAndNationalInsuranceContributionsDue", calculation.totalIncomeTaxAndNicsDue) ++
+      ("taxCalculationMessage", calculationMessagesDetail) ++
+      ("payPensionsProfit", payPensionsProfitDetail) ++
+      ("savings", savingsDetail) ++
+      ("dividends", dividendsDetail) ++
+      ("employmentLumpSums", employmentLumpSumsDetail) ++
+      ("gainsOnLifePolicies", gainsOnLifePoliciesDetail) ++
+      ("class4NationalInsurance", class4NationInsuranceDetail) ++
+      ("capitalGainsTax", capitalGainsTaxDetail) ++
+      ("taxReductions", taxReductionsDetails) ++
+      ("additionalCharges", additionChargesDetail) ++
+      ("otherCharges", otherChargesDetail) ++
+      ("taxDeductions", taxDeductionsDetail)
 
 }
