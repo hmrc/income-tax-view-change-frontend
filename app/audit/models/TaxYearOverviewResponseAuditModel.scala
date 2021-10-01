@@ -44,16 +44,16 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
     ("taxDue", calculation.totalIncomeTaxAndNicsDue)
 
   private def paymentsJson(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    Json.obj(("paymentType", getChargeType(docDateDetail.documentDetail, false))) ++
-    Json.obj("underReview" -> docDateDetail.dunningLock,
+    Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail, latePaymentCharge = false),
+      "underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.documentDetail.getChargePaidStatus) ++
       ("amount", docDateDetail.documentDetail.originalAmount) ++
       ("dueDate", docDateDetail.dueDate)
   }
 
   private def paymentsJsonLPI(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    Json.obj(("paymentType", getChargeType(docDateDetail.documentDetail, true))) ++
-      Json.obj("underReview" -> docDateDetail.dunningLock,
+    Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail, latePaymentCharge = true),
+      "underReview" -> docDateDetail.dunningLock,
         "status" -> docDateDetail.documentDetail.getInterestPaidStatus) ++
       ("amount", docDateDetail.documentDetail.latePaymentInterestAmount) ++
       ("dueDate", docDateDetail.dueDate)
