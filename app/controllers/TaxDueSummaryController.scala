@@ -59,6 +59,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
           case calcDisplayModel: CalcDisplayModel =>
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear))
+              println(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear).detail)
             }
             Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 

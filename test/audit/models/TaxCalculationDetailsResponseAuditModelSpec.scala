@@ -203,13 +203,13 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "gainsOnLifePolicies" -> Json.arr(
       Json.obj(
-      "rateBand" -> "Basic rate (£15000 at 20%)",
+      "rateBand" -> "Basic rate (£20000 at 20%)",
       "amount" -> 4000
       )
     ),
     "payPensionsProfit" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate (£15000 at 20%)",
+        "rateBand" -> "Basic rate (£20000 at 20%)",
         "amount" -> 4000
       )
     ),
@@ -221,17 +221,17 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "employmentLumpSums" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate (£15000 at 20%)",
+        "rateBand" -> "Basic rate (£20000 at 20%)",
         "amount" -> 4000
       )
     ),
     "taxDeductions" -> Json.arr(
       Json.obj(
-        "deductionsType" -> "CIS and trading income",
+        "deductionType" -> "CIS and trading income",
         "amount" -> 1350
       ),
       Json.obj(
-        "deductionsType" -> "Income Tax due after deductions",
+        "deductionType" -> "Income Tax due after deductions",
         "amount" -> 1350
       )
     ),
@@ -253,7 +253,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "dividends" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate band at nil rate (£15000 at 0%)",
+        "rateBand" -> "Basic rate band at nil rate (£10000 at 0%)",
         "amount" -> 0
       )
     ),
@@ -281,7 +281,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "savings" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Zero rate (£15000 at 0%)",
+        "rateBand" -> "Zero rate (£10000 at 0%)",
         "amount" -> 0
       )
     )
