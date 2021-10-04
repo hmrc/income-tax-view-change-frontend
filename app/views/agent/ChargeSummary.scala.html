@@ -189,7 +189,7 @@
 						)
  					}
 				}
-				@if(paymentAllocationEnabled && paymentAllocations.nonEmpty) {
+				@if(paymentAllocationEnabled && paymentAllocations.nonEmpty && !latePaymentInterestCharge) {
 					@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
 						<tr>
 							<td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>

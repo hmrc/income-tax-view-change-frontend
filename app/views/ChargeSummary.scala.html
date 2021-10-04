@@ -194,7 +194,7 @@
                 }
             }
 
-            @if(paymentAllocationEnabled) {
+            @if(paymentAllocationEnabled && !latePaymentInterestCharge) {
                 @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.date.get).toLongDateShort</td>
