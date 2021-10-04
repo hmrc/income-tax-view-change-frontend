@@ -661,6 +661,9 @@ paymentAllocation.paymentAllocations.bcd.vcnic2                 = Voluntary Clas
 paymentAllocation.paymentAllocations.bcd.nic4                   = Class 4 National Insurance for remaining balance
 paymentAllocation.paymentAllocations.bcd.sl                     = Student Loans for remaining balance
 paymentAllocation.paymentAllocations.bcd.cgt                    = Capital Gains Tax for remaining balance
+paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment interest for payment on account 1 of 2
+paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for payment on account 2 of 2
+paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest for remaining balance
 
 
 ##Tax Years Overview Update Tab##

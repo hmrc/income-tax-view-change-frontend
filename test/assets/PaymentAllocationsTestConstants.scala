@@ -17,12 +17,11 @@
 package assets
 
 import java.time.LocalDate
-
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
 import play.api.libs.json.{JsValue, Json}
 import BaseTestConstants._
-import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
 
 object PaymentAllocationsTestConstants {
 
@@ -131,7 +130,8 @@ object PaymentAllocationsTestConstants {
         "chargeType" -> "NIC4 Wales",
         "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.10,
-        "clearedAmount" -> 5.50
+        "clearedAmount" -> 5.50,
+				"chargeReference" -> "chargeReference1"
       ),
       Json.obj(
         "transactionId" -> "1040000873",
@@ -140,7 +140,8 @@ object PaymentAllocationsTestConstants {
         "chargeType" -> "NIC4 Wales",
         "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.90,
-        "clearedAmount" -> 5.90
+        "clearedAmount" -> 5.90,
+				"chargeReference" -> "chargeReference2"
       )
     )
   )
@@ -148,11 +149,20 @@ object PaymentAllocationsTestConstants {
   val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50)),
-      AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))
+      AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
+      AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
     )
   )
-  val testInvalidPaymentAllocationsModelJson: JsValue = Json.obj(
+
+	val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
+		Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
+		Seq(
+			AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
+			AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
+		)
+	)
+
+	val testInvalidPaymentAllocationsModelJson: JsValue = Json.obj(
     "amount" -> "invalidAmount",
     "payMethod" -> "Payment by Card",
     "valDate" -> "2019-05-27"
@@ -172,16 +182,55 @@ object PaymentAllocationsTestConstants {
 
 	val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
 		Seq(
-			(
-				testValidPaymentAllocationsModel,
-				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50))),
+			AllocationDetailWithClearingDate(
+				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
 				Some("2021-01-31")),
-			(
-				testValidPaymentAllocationsModel,
-				Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))),
+			AllocationDetailWithClearingDate(
+				Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
 				Some("2021-01-31")
 			)
 		))
+
+	val lpiParentChargeDocumentDetail = DocumentDetail(
+		taxYear = "2020",
+		transactionId = "transactionId",
+		documentDescription = Some("TRM New Charge"),
+		outstandingAmount = Some(100.00),
+		originalAmount = Some(100.00),
+		documentDate = LocalDate.of(2018, 3, 29),
+		interestOutstandingAmount = Some(100),
+		interestRate = Some(100),
+		interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+		interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+		latePaymentInterestAmount = Some(100),
+		latePaymentInterestId = Some("latePaymentInterestId")
+	)
+
+	val lpiPaymentsDocumentDetail = DocumentDetail(
+		taxYear = "2020",
+		transactionId = "transactionId",
+		documentDescription = Some("TRM New Charge"),
+		outstandingAmount = Some(100.00),
+		originalAmount = Some(-300.00),
+		documentDate = LocalDate.of(2018, 3, 29),
+		paymentLotItem = Some("paymentLotItem"),
+		paymentLot = Some("paymentLot")
+	)
+
+	val lpiPaymentAllocationParentChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+		documentDetails = List(lpiPaymentsDocumentDetail), List(financialDetail))
+
+	val paymentAllocationViewModelLpi: PaymentAllocationViewModel = PaymentAllocationViewModel(lpiPaymentAllocationParentChargesModel,
+		Seq(),
+		Some(LatePaymentInterestPaymentAllocationDetails(lpiParentChargeDocumentDetail, -300.00)),
+		true
+	)
+
+	val lpiFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
+		balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+		documentDetails = List(lpiParentChargeDocumentDetail),
+		financialDetails = List(financialDetail)
+	)
 
 	val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
 		List(documentDetail.copy(outstandingAmount = Some(0))),

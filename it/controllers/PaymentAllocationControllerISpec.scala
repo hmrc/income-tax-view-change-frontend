@@ -2,11 +2,10 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
-import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, paymentAllocationViewModel}
-import assets.PaymentAllocationIntegrationTestConstants.{testValidPaymentAllocationsModel, validPaymentAllocationChargesJson}
+import assets.IncomeSourceIntegrationTestConstants.{paymentHistoryBusinessAndPropertyResponse, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, lpiPaymentAllocationViewModel, paymentAllocationViewModel, testValidLpiPaymentAllocationsModel, testValidPaymentAllocationsModel, validPaymentAllocationChargesJson}
 import audit.models.PaymentAllocationsResponseAuditModel
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail}
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import helpers.ComponentSpecBase
@@ -77,7 +76,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
       }
     }
 
-    s"return $OK with the payment allocation page" when {
+    s"return $OK with the payment allocation page for non LPI" when {
       "the payment allocation feature switch is enabled and with TxmEventsApproved FS enabled" in {
         enable(TxmEventsApproved)
         enable(PaymentAllocation)
@@ -99,6 +98,38 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
+      }
+    }
+
+    s"return $OK with the payment allocation page for LPI" when {
+      "the payment allocation feature switch is enabled and with TxmEventsApproved FS enabled" in {
+        enable(TxmEventsApproved)
+        enable(PaymentAllocation)
+        isAuthorisedUser(authorised = true)
+        stubUserDetails()
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
+          to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidLpiPaymentAllocationsModel))
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
+
+        Then("The Payment allocation page is returned to the user")
+        result should have(
+          httpStatus(OK),
+          pageTitle("Payment made to HMRC - Business Tax account - GOV.UK"),
+          elementAttributeBySelector("#payment-allocation-0 a", "href")(
+            "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&latePaymentCharge=true"),
+          elementTextBySelector("#payment-allocation-0 a")("Late payment interest for remaining balance")
+        )
+
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)
       }
     }
   }

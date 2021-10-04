@@ -1,9 +1,8 @@
 package assets
 
 import java.time.LocalDate
-
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
 import play.api.libs.json.{JsValue, Json}
 
@@ -220,23 +219,43 @@ object PaymentAllocationIntegrationTestConstants {
 	val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
 		Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
 		Seq(
-			AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50)),
-			AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))
+			AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
+			AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+		)
+	)
+
+	val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
+		Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
+		Seq(
+			AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
+			AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("ITSA NIC2 Interest GB"), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
 		)
 	)
 
 	val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
 		Seq(
-			(
-				testValidPaymentAllocationsModel,
-				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50))),
+			AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
 				Some("2021-01-31")),
-			(
-				testValidPaymentAllocationsModel,
-				Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90))),
-				Some("2021-01-31")
-			)
+			AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+				Some("2021-01-31"))
 		))
+
+	val lpiDocumentDetail = DocumentDetail(
+		taxYear = "9999",
+		transactionId = "1040000125",
+		documentDescription = Some("TRM Amend Charge"),
+		originalAmount = Some(10.34),
+		outstandingAmount = Some(1.2),
+		documentDate = LocalDate.of(2018, 3, 29),
+		interestOutstandingAmount = Some(42.50),
+		interestRate = Some(3),
+		interestFromDate = Some(LocalDate.of(2018, 2, 14)),
+		interestEndDate = Some(LocalDate.of(2019, 1, 1)),
+		latePaymentInterestAmount = Some(0)
+	)
+
+	val lpiPaymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+		Seq(), Some(LatePaymentInterestPaymentAllocationDetails(lpiDocumentDetail, -300.00)), true)
 
 	val validPaymentAllocationChargesJson: JsValue = Json.parse(
 		"""{
@@ -249,7 +268,8 @@ object PaymentAllocationIntegrationTestConstants {
 			|            "taxYear": "2018",
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
-			|            "paymentLotItem": "paymentLotItem"
+			|            "paymentLotItem": "paymentLotItem",
+			|            "totalAmount": 100.00
 			|        }
 			|    ],
 			|    "financialDetails": [

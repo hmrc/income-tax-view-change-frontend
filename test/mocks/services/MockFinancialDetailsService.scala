@@ -45,7 +45,7 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
     when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(testNino))
     (ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def setupMockGetFinancialDetails(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+  def setupMockGetFinancialDetailsWithTaxYearAndNino(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
     when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))
     (ArgumentMatchers.any())).thenReturn(Future.successful(response))
   }
