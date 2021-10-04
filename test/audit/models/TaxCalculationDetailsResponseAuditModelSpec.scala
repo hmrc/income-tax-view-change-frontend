@@ -197,19 +197,19 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     "incomeTaxAndNationalInsuranceContributionsDue" -> 10000.00,
     "class4NationalInsurance" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Starter rate (£12000 at 10%)",
+        "rateBand" -> "Starter rate (£12,000.00 at 10%)",
         "amount" -> 1200
       )
     ),
     "gainsOnLifePolicies" -> Json.arr(
       Json.obj(
-      "rateBand" -> "Basic rate (£20000 at 20%)",
+      "rateBand" -> "Basic rate (£20,000.00 at 20%)",
       "amount" -> 4000
       )
     ),
     "payPensionsProfit" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate (£20000 at 20%)",
+        "rateBand" -> "Basic rate (£20,000.00 at 20%)",
         "amount" -> 4000
       )
     ),
@@ -221,7 +221,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "employmentLumpSums" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate (£20000 at 20%)",
+        "rateBand" -> "Basic rate (£20,000.00 at 20%)",
         "amount" -> 4000
       )
     ),
@@ -253,18 +253,18 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "dividends" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate band at nil rate (£10000 at 0%)",
+        "rateBand" -> "Basic rate band at nil rate (£10,000.00 at 0%)",
         "amount" -> 0
       )
     ),
     "capitalGainsTax" -> Json.obj(
       "taxOnGainsAlreadyPaid" -> 3570,
       "rates" -> Json.arr(
-        Json.obj("rateBand" -> "Business Asset Disposal Relief and or Investors' Relief gains (£12000 at 12 %)",
+        Json.obj("rateBand" -> "Business Asset Disposal Relief and or Investors' Relief gains (£12,000.00 at 12%)",
           "amount" -> 1000),
-        Json.obj("rateBand" -> "Residential property and carried interest basic rate (£10000 at 23%)",
+        Json.obj("rateBand" -> "Residential property and carried interest basic rate (£10,000.00 at 23%)",
           "amount" -> 2300),
-        Json.obj("rateBand" -> "Other gains higher rate (£35000 at 44%)",
+        Json.obj("rateBand" -> "Other gains higher rate (£35,000.00 at 44%)",
           "amount" -> 3400)
       )
     ),
@@ -281,7 +281,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "savings" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Zero rate (£10000 at 0%)",
+        "rateBand" -> "Zero rate (£10,000.00 at 0%)",
         "amount" -> 0
       )
     )

@@ -81,10 +81,10 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
     }
 
   private def rateBandToMessage(taxBand: TaxBand): String =
-    s"${taxBandNameToString(taxBand.name)} (£${taxBand.income} at ${taxBand.rate}%)"
+    s"${taxBandNameToString(taxBand.name)} (${taxBand.income.toCurrencyString} at ${taxBand.rate}%)"
 
   private def rateBandToMessage(nicBand: NicBand): String =
-    s"${taxBandNameToString(nicBand.name)} (£${nicBand.income} at ${nicBand.rate}%)"
+    s"${taxBandNameToString(nicBand.name)} (${nicBand.income.toCurrencyString} at ${nicBand.rate}%)"
 
   private def taxBandRateMessageJson(taxBand: TaxBand): JsObject = Json.obj(
     "rateBand" -> rateBandToMessage(taxBand),
@@ -173,7 +173,7 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
   private def businessAssetsTaxBandJson(cgtTaxBand: SingleBandCgtDetail): Option[Seq[JsObject]] = {
     for { amt <- cgtTaxBand.taxAmount; taxableGains <- cgtTaxBand.taxableGains; rate <- cgtTaxBand.rate } yield
       Seq(Json.obj(
-        "rateBand" -> s"Business Asset Disposal Relief and or Investors' Relief gains (£$taxableGains at $rate %)",
+        "rateBand" -> s"Business Asset Disposal Relief and or Investors' Relief gains (${taxableGains.toCurrencyString} at $rate%)",
         "amount" -> amt
       ))
   }
@@ -184,7 +184,7 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
       case "higherRate" => "higher rate"
       case _ => cgtTaxBand.name
     }
-    s"$taxBandName (£${cgtTaxBand.income} at ${cgtTaxBand.rate}%)"
+    s"$taxBandName (${cgtTaxBand.income.toCurrencyString} at ${cgtTaxBand.rate}%)"
   }
 
   private def propertyInterestTaxBandJson(cgtTaxBand: CgtTaxBand): JsObject = Json.obj(
