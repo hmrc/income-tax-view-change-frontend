@@ -61,4 +61,4 @@ GET         /:taxYear/final-tax-overview                                  contro
 POST        /:taxYear/final-tax-overview                                  controllers.agent.FinalTaxCalculationController.submit(taxYear: Int)
 
 #Final Tax Calculation
-GET         /:taxYear/final-tax-overview/calculate                        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int)
+GET         /:taxYear/final-tax-overview/calculate                        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
