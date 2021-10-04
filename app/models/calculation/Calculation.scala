@@ -268,7 +268,8 @@ object TaxDeductedAtSource {
 		implicit val format: OFormat[Message] = Json.format[Message]
 	}
 
-	case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
+  case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
+    // When updating the accepted messages also update the audit for the TaxCalculationDetailsResponseAuditModel
     private val acceptedMessages: Seq[String] = Seq("C22202","C22203","C22206","C22207","C22210","C22211",
       "C22212","C22213","C22214","C22215","C22216","C22217","C22218")
 		val allMessages: Seq[Message] = {
