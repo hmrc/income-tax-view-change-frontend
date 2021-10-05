@@ -16,16 +16,18 @@
 
 package audit.models
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants._
+import assets.FinancialDetailsTestConstants.financialDetail
 import auth.MtdItUser
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import models.chargeHistory.ChargeHistoryModel
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.retrieve.Name
-
-import java.time.LocalDate
 
 class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
 
@@ -41,8 +43,38 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     documentDate = LocalDate.of(2018, 3, 29)
   )
 
+  val docDetailWithInterest: DocumentDetail = DocumentDetail(
+    taxYear = taxYear,
+    transactionId = "1040000124",
+    documentDescription = Some("ITSA- POA 1"),
+    originalAmount = Some(10.34),
+    outstandingAmount = Some(0),
+    documentDate = LocalDate.of(2018, 3, 29),
+    interestOutstandingAmount = Some(2),
+    interestFromDate = Some(LocalDate.of(2021, 10, 6)),
+    interestEndDate = Some(LocalDate.of(2022, 1, 6))
+  )
+
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6).toString, "documentDescription", 1500, LocalDate.now, "")
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6).toString, "documentDescription", 1500, LocalDate.now , "")
+
+  val chargeHistory: List[ChargeHistoryModel] = List(
+    chargeHistoryModel,
+    chargeHistoryModel2)
+
+  val paymentBreakdowns: List[FinancialDetail] = List(
+    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal")),
+    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetail(originalAmount = 3456.78, chargeType = "Voluntary NIC2-NI", dunningLock = Some("Stand over order")),
+    financialDetail(originalAmount = 9876.54, chargeType = "CGT"))
+
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
+    dueDate = Some(LocalDate.now())
+  )
+
+  val docDateDetailWithInterest: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+    documentDetail = docDetailWithInterest,
     dueDate = Some(LocalDate.now())
   )
 
@@ -57,7 +89,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
 
   def chargeSummaryAuditFull(userType: Option[String] = Some("Agent"),
                              docDateDetails: DocumentDetailWithDueDate,
-                             agentReferenceNumber: Option[String] = Some("agentReferenceNumber")): ChargeSummaryAudit = ChargeSummaryAudit(
+                             paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
+                             agentReferenceNumber: Option[String] = Some("agentReferenceNumber"), interestPeriod:Boolean = false): ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(
       mtditid = "mtditid",
       nino = "nino",
@@ -68,7 +101,9 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       userType = userType,
       arn = agentReferenceNumber
     ),
-    docDateDetail = docDateDetail,
+    docDateDetail = docDateDetailWithInterest,
+    paymentBreakdown = paymentBreakdowns,
+    chargeHistories = chargeHistory,
     agentReferenceNumber = Some("agentReferenceNumber")
   )
 
@@ -84,6 +119,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       arn = None
     ),
     docDateDetail = docDateDetail,
+    paymentBreakdown = List.empty,
+    chargeHistories = List.empty,
     agentReferenceNumber = None
   )
 
@@ -92,6 +129,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     s"have the correct transaction name of '$transactionName'" in {
       chargeSummaryAuditFull(None,
         docDateDetail,
+        paymentBreakdown = paymentBreakdowns,
+        chargeHistories = chargeHistory,
         agentReferenceNumber = Some("arn")
       ).transactionName mustBe transactionName
     }
@@ -99,6 +138,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     s"have the correct audit event type of '$auditType'" in {
       chargeSummaryAuditFull(None,
         docDateDetail,
+        paymentBreakdown = paymentBreakdowns,
+        chargeHistories = chargeHistory,
         agentReferenceNumber = Some("arn")
       ).auditType mustBe auditType
     }
@@ -109,34 +150,79 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
           chargeSummaryAuditFull(
             userType = Some("Agent"),
             docDateDetail,
+            paymentBreakdown = paymentBreakdowns,
+            chargeHistories = chargeHistory,
             agentReferenceNumber = Some("agentReferenceNumber")
           ).detail mustBe Json.obj(
-            "agentReferenceNumber" -> "agentReferenceNumber",
-            "nationalInsuranceNumber" -> "nino",
+            "charge" -> Json.obj(
+              "remainingToPay" -> docDetailWithInterest.remainingToPay,
+              "fullPaymentAmount" -> docDetailWithInterest.originalAmount,
+              "interestPeriod" -> "2021-10-06 to 2022-01-06",
+              "paymentBreakdown" -> Json.arr(
+                Json.obj(
+                  "breakdownType" -> "SA Payment on Account 1",
+                  "total" -> 100,
+                  "chargeUnderReview" -> true,
+                  "interestLock" -> true
+                ),
+                Json.obj(
+                  "breakdownType" -> "SA Payment on Account 1",
+                  "total" -> 100,
+                  "chargeUnderReview" -> false,
+                  "interestLock" -> true
+                ),
+                Json.obj(
+                  "breakdownType"->"SA Payment on Account 1",
+                  "total" -> 100,
+                  "chargeUnderReview" -> true,
+                  "interestLock"-> false
+                ),
+                Json.obj(
+                  "breakdownType" -> "SA Payment on Account 1",
+                  "total" -> 100,
+                  "chargeUnderReview" -> false,
+                  "interestLock" -> false
+                )
+              ),
+              "dueDate" -> docDateDetail.dueDate,
+              "chargeType" -> getChargeType,
+              "chargeHistory" -> Json.arr(
+                Json.obj(
+                  "date" -> "2018-07-06",
+                  "description" -> "documentDescription",
+                  "amount" -> 1500
+                ),
+                Json.obj(
+                  "date" -> "2018-07-06",
+                  "description" -> "documentDescription",
+                  "amount" -> 1500
+                )
+              )
+            ),
             "saUtr" -> "saUtr",
+            "nationalInsuranceNumber" -> "nino",
+            "agentReferenceNumber" -> "agentReferenceNumber",
             "userType" -> "Agent",
             "credId" -> "credId",
             "mtditid" -> "mtditid",
-            "agentReferenceNumber" -> "agentReferenceNumber",
-            "charge" -> Json.obj(
-              "chargeType" -> getChargeType,
-              "dueDate" -> docDateDetail.dueDate,
-              "paymentAmount" -> docDetail.originalAmount,
-              "remainingToPay" -> docDetail.remainingToPay
             )
-          )
+
         }
 
         "the charge summary audit has minimal details" in {
+
           chargeSummaryAuditMin.detail mustBe Json.obj(
-            "nationalInsuranceNumber" -> "nino",
-            "mtditid" -> "mtditid",
             "charge" -> Json.obj(
-              "chargeType" -> getChargeType,
+              "remainingToPay" -> docDetail.remainingToPay,
+              "fullPaymentAmount" -> docDetail.originalAmount,
+              "paymentBreakdown" -> Json.arr(),
               "dueDate" -> docDateDetail.dueDate,
-              "paymentAmount" -> docDetail.originalAmount,
-              "remainingToPay" -> docDetail.remainingToPay
-            )
+              "chargeType" -> getChargeType,
+              "chargeHistory" -> Json.arr()
+              ),
+              "nationalInsuranceNumber" -> "nino",
+              "mtditid" -> "mtditid"
+
           )
         }
       }

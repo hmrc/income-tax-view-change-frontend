@@ -18,7 +18,7 @@ package assets
 
 import java.time.LocalDate
 import assets.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
-import assets.IncomeSourceIntegrationTestConstants.noDunningLock
+import assets.IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
 import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
@@ -76,9 +76,6 @@ object FinancialDetailsIntegrationTestConstants {
   )
 
 
-
-
-
   def documentDetailWithDueDateModel(taxYear: Int = 2018,
                                      documentDescription: Option[String] = Some("ITSA- POA 1"),
                                      outstandingAmount: Option[BigDecimal] = Some(1400.00),
@@ -98,6 +95,39 @@ object FinancialDetailsIntegrationTestConstants {
       financialDetails = List(financialDetail(taxYear))
     )
 
+  def financialDetailModelPartial(taxYear: Int = 2018,
+                      mainType: String = "SA Payment on Account 1",
+                      chargeType: String = "NIC4 Wales",
+                      originalAmount: BigDecimal = 100,
+                      dunningLock: Option[String] = None,
+                      interestLock: Option[String] = None,
+                      accruedInterest: Option[BigDecimal] = None,
+                      additionalSubItems: Seq[SubItem] = Seq()): FinancialDetail = FinancialDetail.apply(
+    taxYear = taxYear.toString,
+    mainType = Some(mainType),
+    transactionId = Some(id1040000123),
+    transactionDate = Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(originalAmount),
+    outstandingAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some(chargeType),
+    accruedInterest = accruedInterest,
+    items =
+      Some(Seq(
+        SubItem(
+          dueDate = Some(LocalDate.of(2019, 5, 15).toString),
+          subItemId = Some("1"),
+          amount = Some(100),
+          dunningLock = dunningLock,
+          interestLock = interestLock,
+          clearingDate = Some("2019-07-23"),
+          clearingReason = Some("clearingReason")
+        )
+      ) ++ additionalSubItems)
+  )
+
   def testFinancialDetailsModel(documentDescription: List[Option[String]],
                                 mainType: List[Option[String]],
                                 transactionIds: List[Option[String]],
@@ -108,7 +138,8 @@ object FinancialDetailsIntegrationTestConstants {
                                 clearedAmount: Option[BigDecimal],
                                 chargeType: Option[String],
                                 dueDate: List[Option[String]],
-                                dunningLock: List[String],
+                                dunningLock: List[String] = noDunningLock,
+                                interestLock: List[String] = noInterestLock,
                                 subItemId: Option[String],
                                 amount: Option[BigDecimal],
                                 clearingDate: Option[String],
@@ -131,10 +162,12 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head))))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1))))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)),interestLock = Some(interestLock(1))))))
       )
     )
+
+
 
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
                                                      mainType: List[Option[String]],
@@ -199,6 +232,7 @@ object FinancialDetailsIntegrationTestConstants {
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
     noDunningLock,
+    noInterestLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
@@ -226,6 +260,7 @@ object FinancialDetailsIntegrationTestConstants {
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().toString)),
     noDunningLock,
+    noInterestLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
@@ -241,7 +276,7 @@ object FinancialDetailsIntegrationTestConstants {
     taxYear = LocalDate.now().getYear.toString
   )
 
-  def financialDetailsOverdueData(dunningLock: List[String] = noDunningLock): FinancialDetailsModel = testFinancialDetailsModel(
+  def financialDetailsOverdueData(dunningLock: List[String] = noDunningLock, interestLock: List[String] = noInterestLock): FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
@@ -253,6 +288,7 @@ object FinancialDetailsIntegrationTestConstants {
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().minusDays(15).toString), Some(LocalDate.now().minusDays(15).toString)),
     dunningLock,
+    interestLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
@@ -332,6 +368,7 @@ object FinancialDetailsIntegrationTestConstants {
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(1).toString), Some(LocalDate.now().toString)),
     noDunningLock,
+    noInterestLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),

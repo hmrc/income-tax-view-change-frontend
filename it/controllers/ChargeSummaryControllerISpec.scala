@@ -17,22 +17,37 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+import assets.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
+import assets.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch.{ChargeHistory, PaymentAllocation, TxmEventsApproved}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.docDateDetail
+import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.chargeHistory.ChargeHistoryModel
+import models.financialDetails.FinancialDetail
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now, "")
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now , "")
+
+  val chargeHistories: List[ChargeHistoryModel] = List(
+    chargeHistoryModel)
+
+  val paymentBreakdown: List[FinancialDetail] = List(
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" should {
 
-    "load the page with right data for Payments Breakdown" in {
+    "load the page with right data for Payments Breakdown with TxmEventsApproved enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -58,40 +73,56 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
         elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
       )
+
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          Some("12345-credId"), Some("Individual"), None
+        )(FakeRequest()),
+        docDateDetail("2018-02-14", "ITSA- POA 1"),
+        paymentBreakdown = List(financialDetailModelPartial(dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
+        chargeHistories = List.empty,
+        None
+      ))
     }
 
-    "load the page with right audit events when TxmEventsApproved FS enabled" in {
+    "load the page with right audit events when TxmEventsApproved and ChargeHistory FS enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = oneDunningLock, interestLocks = twoInterestLocks))
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(OK, testChargeHistoryJson(testMtditid, "1040000123", 2500))
 
       Given("the TxmEventsApproved feature switch is on")
       enable(TxmEventsApproved)
+      enable(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      AuditStub.verifyAuditContainsDetail(ChargeSummaryAudit(
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
-        docDateDetail("2018-02-14", "TRM New Charge"),
+        docDateDetailWithInterest("2018-02-14", "TRM New Charge"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = chargeHistories,
         None
-      ).detail)
+      ))
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
         pageTitle("Remaining balance - Business Tax account - GOV.UK"),
-        elementTextBySelector("main h2")("Payment breakdown")
+        elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
     "load the page with right audit events when TxmEventsApproved FS disabled" in {
@@ -103,6 +134,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       Given("the TxmEventsApproved feature switch is off")
       disable(TxmEventsApproved)
+      disable(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
 
@@ -115,6 +147,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "TRM New Charge"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = chargeHistories,
         None
       ).detail)
 

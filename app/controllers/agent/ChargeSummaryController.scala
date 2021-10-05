@@ -25,7 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.IncomeTaxAgentUser
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.chargeHistory.ChargeHistoryModel
+import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel}
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -119,7 +119,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 
 
     getChargeHistory(id, isLatePaymentCharge).map { chargeHistoryOpt =>
-      auditChargeSummary(documentDetailWithDueDate)
+      auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistoryOpt.getOrElse(List.empty))
       Ok(view(documentDetailWithDueDate, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
         paymentAllocations = paymentAllocations,
         paymentBreakdown = paymentBreakdown,
@@ -128,12 +128,16 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     }
   }
 
-  private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate)
+  private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
+                                 paymentBreakdown: List[FinancialDetail],
+                                 chargeHistories: List[ChargeHistoryModel])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], incomeTaxAgentUser: IncomeTaxAgentUser): Unit = {
     if (isEnabled(TxmEventsApproved)) {
       auditingService.extendedAudit(ChargeSummaryAudit(
         mtdItUser = user,
         docDateDetail = documentDetailWithDueDate,
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = chargeHistories,
         agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber
       ))
     }

@@ -16,21 +16,22 @@
 
 package controllers.agent
 
-import java.time.LocalDate
 import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, testValidFinancialDetailsModelJson}
+import assets.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
+import assets.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.docDateDetail
+import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.chargeHistory.ChargeHistoryModel
+import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+import java.time.LocalDate
 
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -43,6 +44,18 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     SessionKeys.clientMTDID -> testMtditid,
     SessionKeys.confirmedClient -> "true"
   )
+
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now, "")
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now , "")
+
+  val chargeHistories: List[ChargeHistoryModel] = List(
+    chargeHistoryModel)
+
+  val paymentBreakdown: List[FinancialDetail] = List(
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+
 
   val currentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.now
@@ -99,7 +112,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.now().toString, "TRM New Charge"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = List.empty,
         agentReferenceNumber = Some("1")
       ))
 
@@ -128,7 +143,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = chargeHistories,
         agentReferenceNumber = Some("1")
       ).detail)
 
@@ -145,7 +162,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-      stubGetFinancialDetailsSuccess()
+      stubGetFinancialDetailsSuccess(Some("ITSA NI"))
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
@@ -163,7 +180,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = chargeHistories,
         agentReferenceNumber = Some("1")
       ))
     }
@@ -191,7 +210,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = List.empty,
+        chargeHistories = List.empty,
         agentReferenceNumber = Some("1")
       ))
     }
@@ -252,8 +273,27 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           FinancialDetail(
             taxYear = currentTaxYearEnd.getYear.toString,
             transactionId = Some("testId"),
+            mainType = Some("TRM New Charge"),
+            chargeType = chargeType,
+            totalAmount = Some(100),
+            originalAmount = Some(10.34),
+            items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+          ),
+          FinancialDetail(
+            taxYear = currentTaxYearEnd.getYear.toString,
+            transactionId = Some("testId"),
             mainType = Some("SA Payment on Account 1"),
             chargeType = chargeType,
+            totalAmount = Some(100),
+            originalAmount = Some(10.34),
+            items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+          ),
+          FinancialDetail(
+            taxYear = currentTaxYearEnd.getYear.toString,
+            transactionId = Some("testId"),
+            mainType = Some("SA Payment on Account 2"),
+            chargeType = chargeType,
+            totalAmount = Some(100),
             originalAmount = Some(10.34),
             items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
           )

@@ -130,6 +130,8 @@ object IncomeSourceIntegrationTestConstants {
 	val noInterestLock: List[String] = List("Interest lock", "Interest lock")
 	val twoInterestLocks: List[String] = List("Breathing Space Moratorium Act", "Manual RPI Signal")
 
+	val id1040000123 = "1040000123"
+
   def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
 																				 dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
 																				 interestLocks: List[String] = noInterestLock): JsValue = Json.obj(
@@ -184,6 +186,7 @@ object IncomeSourceIntegrationTestConstants {
 				"mainType" -> "SA Balancing Charge",
 				"transactionId" -> "1040000123",
 				"chargeType" -> "ITSA NI",
+				"totalAmount" -> Some(100),
 				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
 					Json.obj("amount" -> 10000,
@@ -197,6 +200,7 @@ object IncomeSourceIntegrationTestConstants {
 				"mainType" -> "SA Payment on Account 1",
 				"transactionId" -> "1040000124",
 				"chargeType" -> "ITSA NI",
+				"totalAmount" -> Some(100),
 				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
 					Json.obj("amount" -> 9000,
@@ -214,6 +218,7 @@ object IncomeSourceIntegrationTestConstants {
 				"mainType" -> "SA Payment on Account 2",
 				"transactionId" -> "1040000125",
 				"chargeType" -> "ITSA NI",
+				"totalAmount" -> Some(100),
 				"originalAmount" -> originalAmount,
 				"items" -> Json.arr(
 					Json.obj("amount" -> 8000,
@@ -336,6 +341,108 @@ object IncomeSourceIntegrationTestConstants {
 		)
 	)
 
+	def testAuditFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
+																				 dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+																				 interestLocks: List[String] = noInterestLock, totalAmount:BigDecimal = 100): JsValue = Json.obj(
+		"balanceDetails" -> Json.obj(
+			"balanceDueWithin30Days" -> 1.00,
+			"overDueAmount" -> 2.00,
+			"totalBalance" -> 3.00
+		),
+		"documentDetails" -> Json.arr(
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000123",
+				"documentDescription" -> "TRM New Charge",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29",
+				"interestFromDate" -> "2018-03-29",
+				"interestEndDate" -> "2018-03-29",
+				"latePaymentInterestAmount" -> 100.0,
+				"interestOutstandingAmount" -> 80.0
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000124",
+				"documentDescription" -> "ITSA- POA 1",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29"
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000125",
+				"documentDescription" -> "ITSA - POA 2",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29"
+			),
+			Json.obj(
+				"taxYear" -> "9999",
+				"transactionId" -> "PAYID01",
+				"documentDescription" -> "Payment On Account",
+				"outstandingAmount" -> -outstandingAmount,
+				"originalAmount" -> -originalAmount,
+				"documentDate" -> "2018-03-29",
+				"paymentLot" -> "081203010024",
+				"paymentLotItem" -> "000001"
+			)
+		),
+		"financialDetails" -> Json.arr(
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Balancing Charge",
+				"transactionId" -> "1040000123",
+				"chargeType" -> "ITSA NI",
+				"originalAmount" -> originalAmount,
+				"totalAmount" -> totalAmount,
+				"items" -> Json.arr(
+					Json.obj("amount" -> 10000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Payment on Account 1",
+				"transactionId" -> "1040000123",
+				"chargeType" -> "ITSA NI",
+				"originalAmount" -> originalAmount,
+				"totalAmount" -> totalAmount,
+				"items" -> Json.arr(
+					Json.obj("amount" -> 9000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"),
+					Json.obj(
+						"interestLock" -> interestLocks.head,
+						"dunningLock" -> dunningLock.head
+					))
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Payment on Account 2",
+				"transactionId" -> "1040000123",
+				"chargeType" -> "ITSA NI",
+				"originalAmount" -> originalAmount,
+				"totalAmount" -> totalAmount,
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"),
+					Json.obj(
+						"interestLock" -> interestLocks(1),
+						"dunningLock" -> dunningLock(1)
+					))
+			)
+		)
+	)
+
 	def testFinancialDetailsErrorModelJson(status: String = "500"): JsValue = Json.obj(
 		"code" -> status,
 		"message" -> "ERROR MESSAGE"
@@ -350,7 +457,7 @@ object IncomeSourceIntegrationTestConstants {
 				"taxYear" -> "2019",
 				"documentId" -> documentId,
 				"documentDate" -> "2018-02-14",
-				"documentDescription" -> "DESC",
+				"documentDescription" -> "ITSA- POA 1",
 				"totalAmount" -> amount,
 				"reversalDate" -> "2019-02-14",
 				"reversalReason" -> "random reason"

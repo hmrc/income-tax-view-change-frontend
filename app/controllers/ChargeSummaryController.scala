@@ -108,7 +108,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
 		chargeHistoryFuture.map {
 			case Right(chargeHistory) =>
-				auditChargeSummary(id, chargeDetails)
+				auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory)
 				Ok(chargeSummaryView(
 					documentDetail = documentDetail,
 					dueDate = chargeDetails.getDueDateFor(documentDetail),
@@ -127,13 +127,17 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 		}
 	}
 
-	private def auditChargeSummary(id: String, financialDetailsModel: FinancialDetailsModel)
+	private def auditChargeSummary(id: String, financialDetailsModel: FinancialDetailsModel,
+																 paymentBreakdown: List[FinancialDetail],
+																 chargeHistories: List[ChargeHistoryModel])
 																(implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
 		if (isEnabled(TxmEventsApproved)) {
 			val documentDetailWithDueDate: DocumentDetailWithDueDate = financialDetailsModel.findDocumentDetailByIdWithDueDate(id).get
 			auditingService.extendedAudit(ChargeSummaryAudit(
 				mtdItUser = user,
 				docDateDetail = documentDetailWithDueDate,
+				paymentBreakdown = paymentBreakdown,
+				chargeHistories = chargeHistories,
 				None
 			))
 		}
