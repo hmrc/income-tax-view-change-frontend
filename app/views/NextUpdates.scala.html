@@ -40,7 +40,7 @@
 
 	@h1(msg = "nextUpdates.heading")
 
-	@p{@messages("nextUpdates.info")}
+	@p(){@messages("nextUpdates.info")}
 
 	<details class="govuk-details" data-module="govuk-details" role="group">
 
@@ -50,17 +50,17 @@
 
 		<div class="govuk-details__text" id="details-content-0" data-module="govuk-details" aria-hidden="false">
 			<h2 id="quarterlyReturns-heading" class="govuk-heading-m">@messages("obligations.quarterlyUpdates")</h2>
-			@p(id = Some("quarterly-dropdown-line1"), content = Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
-			@p(id = Some("quarterly-dropdown-line2"), content = Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
+			@p(id = Some("quarterly-dropdown-line1"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
+			@p(id = Some("quarterly-dropdown-line2"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
 		</div>
 		<div class="govuk-details__text" id="details-content-1" data-module="govuk-details" aria-hidden="false">
 			<h2 id="annualUpdates-heading" class="govuk-heading-m">@messages("obligations.annualUpdates")</h2>
-			@p(id = Some("annual-dropdown-line1"), content = Html(messages("nextUpdates.dropdown.annualReturn.text")))
-			@p(id = Some("annual-dropdown-line2"), content = Html(messages("nextUpdates.dropdown.annualReturn.text.lin2")))
+			@p(id = Some("annual-dropdown-line1"))(Html(messages("nextUpdates.dropdown.annualReturn.text")))
+			@p(id = Some("annual-dropdown-line2"))(Html(messages("nextUpdates.dropdown.annualReturn.text.lin2")))
 		</div>
 		<div class="govuk-details__text" id="details-content-2" data-module="govuk-details" aria-hidden="false">
 			<h2 id="finalDeclaration-heading" class="govuk-heading-m">@messages("obligations.finalDeclarationUpdate")</h2>
-			@p(id = Some("final-declaration-line1"), content = Html(messages("nextUpdates.dropdown.finalDeclaration.text")))
+			@p(id = Some("final-declaration-line1"))(Html(messages("nextUpdates.dropdown.finalDeclaration.text")))
 		</div>
 
 	</details>
@@ -69,7 +69,7 @@
 
 	@nextUpdatesHelper(currentObligations)
 
-	@p{
+	@p(){
 		@messages("nextUpdates.previousYears.textOne")
 		@link(link = controllers.routes.TaxYearsController.viewTaxYears().url, messageKey = "nextUpdates.previousYears.link")
 		@messages("nextUpdates.previousYears.textTwo")
