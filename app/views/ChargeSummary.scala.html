@@ -55,7 +55,7 @@
                 <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">@messages("chargeSummary.dunning.locks.banner.title")</h2>
             </div>
             <div class="govuk-notification-banner__content">
-                @p{
+                @p(){
                     <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
                     @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
                 }
@@ -128,12 +128,12 @@
     }
 
     @if(hasInterestLocks && hasAccruedInterest) {
-        @p{
+        @p(){
             @messages("chargeSummary.interestLocks.text")
             @link(link = controllers.routes.WhatYouOweController.viewPaymentsDue().url, messageKey = "chargeSummary.interestLocks.linkText")
         }
     }else{
-        @p{
+        @p(){
             @messages("chargeSummary.whatYouOwe.textOne")
             <a href="@controllers.routes.WhatYouOweController.viewPaymentsDue().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
             @messages("chargeSummary.whatYouOwe.textTwo")

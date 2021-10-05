@@ -16,10 +16,10 @@
 
 @this()
 
-@(classes: String = "govuk-body", id: Option[String] = None)(content: Html)
+@(mainClass: String)(contentBlock: Html)
 
-@if(id.isDefined){
-    <p class="@classes" id="@id">@content</p>
-} else {
-    <p class="@classes">@content</p>
-}
+<div class="govuk-grid-row">
+	<div class="@mainClass">
+		@contentBlock
+	</div>
+</div>
