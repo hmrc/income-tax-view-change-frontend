@@ -91,7 +91,7 @@
 
 @taxYearsTile = {
 	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
-		<ul class="list">
+		<ul class="govuk-list">
 			<li>@link(
 				link = controllers.agent.routes.TaxYearsController.show().url,
 				messageKey = messages("home.tax-years.view")
@@ -107,13 +107,13 @@
 }
 
 @YourIncomeTaxReturnTile= {
-    <div id="manage-income-tax-tile" class="grid-row">
-        <div class="column-two-thirds">
+	<div id="manage-income-tax-tile" class="govuk-grid-row">
+		<div class="govuk-grid-column-two-thirds">
 			@h2(messages("home.manage-income-tax.heading"), "govuk-heading-l")
         </div>
     </div>
-    <div id="submit-your-returns-tile" class="grid-row">
-        <div class="column-one-third">
+	<div id="submit-your-returns-tile" class="govuk-grid-row">
+		<div class="govuk-grid-column-one-third">
 			@h3link(link = appConfig.submissionFrontendUrl, messageKey = "home.update-and-submit-your-returns.Link")
             @p()(Html(messages("home.your-returns.agent.description")))
         </div>
