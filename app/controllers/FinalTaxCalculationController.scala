@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import models.calculation.{CalcDisplayModel, CalcOverview}
+import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -52,8 +52,11 @@ class FinalTaxCalculationController @Inject()(
       case CalcDisplayModel(_, _, calcDataModel, _) =>
         val calcOverview = CalcOverview(calcDataModel)
         Ok(view(calcOverview, taxYear))
+      case CalcDisplayNoDataFound =>
+        Logger.info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
+        itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger.warn("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
+        Logger.error("[FinalTaxCalculationController][show] Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
   }
@@ -83,11 +86,14 @@ class FinalTaxCalculationController @Inject()(
             )
             
           case _ =>
-            Logger.warn("[FinalTaxCalculationController][submit] Name or UTR missing.")
+            Logger.error("[FinalTaxCalculationController][submit] Name or UTR missing.")
             itvcErrorHandler.showInternalServerError()
         }
+      case CalcDisplayNoDataFound =>
+        Logger.info("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+        itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger.warn("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+        Logger.error("[FinalTaxCalculationController][submit] Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
     
