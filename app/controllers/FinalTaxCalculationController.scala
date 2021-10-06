@@ -22,6 +22,7 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import forms.utils.SessionKeys
 import models.calculation.{CalcDisplayModel, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.CalculationService
@@ -51,7 +52,9 @@ class FinalTaxCalculationController @Inject()(
       case CalcDisplayModel(_, _, calcDataModel, _) =>
         val calcOverview = CalcOverview(calcDataModel)
         Ok(view(calcOverview, taxYear))
-      case _ => itvcErrorHandler.showInternalServerError()
+      case _ =>
+        Logger.warn("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
+        itvcErrorHandler.showInternalServerError()
     }
   }
   
@@ -79,9 +82,13 @@ class FinalTaxCalculationController @Inject()(
               SessionKeys.summaryData -> submissionOverview.asJsonString
             )
             
-          case _ => itvcErrorHandler.showInternalServerError()
+          case _ =>
+            Logger.warn("[FinalTaxCalculationController][submit] Name or UTR missing.")
+            itvcErrorHandler.showInternalServerError()
         }
-      case _ => itvcErrorHandler.showInternalServerError()
+      case _ =>
+        Logger.warn("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+        itvcErrorHandler.showInternalServerError()
     }
     
   }
