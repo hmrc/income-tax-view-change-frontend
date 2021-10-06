@@ -11,15 +11,14 @@ import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "4.0.0"
-val govTemplateVersion        = "5.61.0-play-26"
-val playPartialsVersion       = "8.2.0-play-26"
-val playUiVersion             = "8.15.0-play-26"
-val playLanguageVersion       = "4.10.0-play-26"
+val bootstrapPlayVersion      = "5.9.0"
+val govTemplateVersion        = "5.70.0-play-27"
+val playPartialsVersion       = "8.2.0-play-27"
+val playUiVersion             = "9.7.0-play-27"
+val playLanguageVersion       = "5.1.0-play-27"
 val catsVersion               = "0.9.0"
 
-val scalaTestPlusVersion      = "3.1.3"
-val hmrcTestVersion           = "3.9.0-play-26"
+val scalaTestPlusVersion      = "4.0.0"
 val pegdownVersion            = "1.6.0"
 val jsoupVersion              = "1.11.3"
 val mockitoVersion            = "2.27.0"
@@ -28,21 +27,20 @@ val wiremockVersion           = "2.26.1"
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % bootstrapPlayVersion,
+  "uk.gov.hmrc" %% "bootstrap-backend-play-27" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "org.typelevel" %% "cats" % catsVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
-  "uk.gov.hmrc" %% "logback-json-logger" % "4.8.0",
+  "uk.gov.hmrc" %% "logback-json-logger" % "5.1.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
-  "uk.gov.hmrc" %% "mongo-lock" % "6.23.0-play-26",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26",
-  "uk.gov.hmrc" %% "play-frontend-hmrc" % "0.74.0-play-26"
+  "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-27",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-27",
+  "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.9.0-play-27"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
@@ -50,7 +48,7 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "4.21.0-play-26" % scope
+  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-27" % scope
 )
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
