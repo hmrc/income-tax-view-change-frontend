@@ -576,7 +576,6 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	   = Remaining bala
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	   = Payment on account 1 of 2 reduced due to amended return
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	   = Payment on account 2 of 2 reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	   = Remaining balance reduced due to amended return
-chargeSummary.remainingYear.text								   = This is the remaining tax you owe for the {0} to {1} tax year.
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on payment on account 1 of 2
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on payment on account 2 of 2
