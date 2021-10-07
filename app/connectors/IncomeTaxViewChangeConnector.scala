@@ -437,12 +437,17 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
             valid => valid
           )
         case status =>
-          if (status >= 500) {
-            Logger.error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+          if (status == 404 || status == 403) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - No charge history found for $docNumber")
+            ChargesHistoryModel("", "", "", Some(List()))
           } else {
-            Logger.warn(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+            if (status >= 500) {
+              Logger.error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+            } else {
+              Logger.warn(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+            }
+            ChargesHistoryErrorModel(response.status, response.body)
           }
-          ChargesHistoryErrorModel(response.status, response.body)
       }
     } recover {
       case ex =>
