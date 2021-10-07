@@ -172,7 +172,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK"),
-        elementTextBySelector("main h2")("Payment history")
+        elementTextBySelector("main h2")("Payment history"),
+        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
+
       )
     }
 
