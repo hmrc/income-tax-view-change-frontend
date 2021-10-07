@@ -405,7 +405,6 @@ chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
 chargeSummary.overdue                                           = YN HWYR
-chargeSummary.remainingYear.text								= This is the remaining tax you owe for the {0} to {1} tax year.
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
@@ -623,3 +622,6 @@ paymentAllocation.paymentAllocations.bcd.vcnic2                 = Taliad wedi’
 paymentAllocation.paymentAllocations.bcd.nic4                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
 paymentAllocation.paymentAllocations.bcd.sl                     = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
 paymentAllocation.paymentAllocations.bcd.cgt                    = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
+paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
+paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill

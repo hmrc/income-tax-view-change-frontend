@@ -1,4 +1,20 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 @import config.FrontendAppConfig
+@import views.helpers.CurrentLanguage
 @import views.html.helpers.injected.BetaBanner
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
@@ -8,6 +24,7 @@
 @import play.twirl.api.HtmlFormat
 @import play.api.data.Form
 @import play.api.data._
+@import views.html.layouts.agent.mainContentTemplate
 
 @this(
     appConfig: config.FrontendAppConfig,
@@ -21,19 +38,19 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     backLink: components.back_link,
-    languageSelection: components.languageSelection
+    languageSelection: components.languageSelection,
+	mainContentTemplate: mainContentTemplate
 )
 
-@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None, mainClass: Option[String] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @titlePattern = @{
-if(form.exists(_.hasErrors)) {
-messages("agent.error.title_pattern.service_name.govuk", pageTitle)
-} else {
-messages("agent.title_pattern.service_name.govuk", pageTitle)
+	if(form.exists(_.hasErrors)) {
+		messages("agent.error.title_pattern.service_name.govuk", pageTitle)
+	} else {
+		messages("agent.title_pattern.service_name.govuk", pageTitle)
+	}
 }
-}
-
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
@@ -41,6 +58,7 @@ messages("agent.title_pattern.service_name.govuk", pageTitle)
         serviceName = Some(Messages("agent.base.service_name")),
         serviceUrl = controllers.agent.routes.HomeController.show().url,
         containerClasses = "govuk-width-container",
+        language = CurrentLanguage(),
         signOutHref = Some(controllers.routes.SignOutController.signOut.url)
     ))
 }
@@ -51,23 +69,25 @@ messages("agent.title_pattern.service_name.govuk", pageTitle)
 <!--[if lte IE 8]><link href=' @controllers.routes.Assets.at("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
 <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.at("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
-    @if(timeout) {
-        @hmrcTimeoutDialog(TimeoutDialog(
-            language = Some("en"),
-            timeout = Option(900),
-            countdown = Option(120),
-            keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
-            signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
-            keepAliveButtonText = Some(messages("button.continue"))
-        ))
-    }
+	<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
+
+	@if(timeout) {
+			@hmrcTimeoutDialog(TimeoutDialog(
+				language = Some("en"),
+				timeout = Option(900),
+				countdown = Option(120),
+				keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
+				signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
+				keepAliveButtonText = Some(messages("button.continue"))
+			))
+		}
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
 
 @beforeContentBlock = {
     @phaseBanner("beta")
-    @hmrcBanner(Banner(if(messages.lang.code == "cy") {Cy} else {En}))
+    @hmrcBanner(Banner(CurrentLanguage()))
     <div class="nav-bar-wrapper">
     @languageSelection()
     @backUrl.map(backLink(_))
@@ -95,14 +115,25 @@ messages("agent.title_pattern.service_name.govuk", pageTitle)
 
 }
 
-
-
-@govukLayout(
-    pageTitle = Some(titlePattern),
-    headBlock = Some(head),
-    beforeContentBlock = Some(beforeContentBlock),
-    bodyEndBlock = None,
-    headerBlock = Some(siteHeader),
-    footerBlock = Some(footerLinks()),
-    scriptsBlock = Some(scripts)
-)(content)
+@if(mainClass.isDefined){
+	@govukLayout.apply(
+		pageTitle = Some(titlePattern),
+		headBlock = Some(head),
+		beforeContentBlock = Some(beforeContentBlock),
+		bodyEndBlock = None,
+		headerBlock = Some(siteHeader),
+		footerBlock = Some(footerLinks()),
+		scriptsBlock = Some(scripts),
+		mainContentLayout = Some(mainContentTemplate(mainClass.get)(_))
+	)(content)
+}else{
+	@govukLayout.apply(
+		pageTitle = Some(titlePattern),
+		headBlock = Some(head),
+		beforeContentBlock = Some(beforeContentBlock),
+		bodyEndBlock = None,
+		headerBlock = Some(siteHeader),
+		footerBlock = Some(footerLinks()),
+		scriptsBlock = Some(scripts)
+	)(content)
+}

@@ -78,7 +78,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
 
     def getHintNth(index: Int = 0): Option[String] =
-      Option(document.getElementsByClass("form-hint").get(index).map(_.text))
+      Option(document.getElementsByClass("govuk-hint").get(index).map(_.text))
   }
 
 
@@ -95,7 +95,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       s"have the page heading '${homeMessages.agentHeading}'" in new Setup {
-        getTextOfElementById("income-tax-heading") shouldBe Some(homeMessages.agentHeading)
+        document.select("h1").text() shouldBe homeMessages.agentHeading
       }
 
       s"have the hint with the users name '$testUserName' and utr '$testSaUtr' " in new Setup {
@@ -136,7 +136,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "display an overdue warning message when a payment is overdue" in new Setup(overduePaymentExists = true) {
-        val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
+        val overdueMessage = "! You have overdue payments. You will be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
       }
 
