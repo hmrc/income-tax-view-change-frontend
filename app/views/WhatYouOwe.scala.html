@@ -40,7 +40,7 @@
     @if(utr.isDefined) {
         <div id="payments-due-note" class="govuk-inset-text">
             @p(id=Some("sa-note-migrated"))(Html(messages("whatYouOwe.sa-note") +
-                    link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", id=Some("sa-note-migrated"), target=Some("_blank")).toString()),
+                    link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
                 )
             @p(id=Some("outstanding-charges-note-migrated"))(content = Html(messages("whatYouOwe.outstanding-charges-note")))
         </div>
@@ -268,7 +268,7 @@
                                     }</td>
                                 </tr>
                                 @if(charge.documentDetail.hasAccruingInterest) {
-                                    <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
+                                    <tr class="govuk-table__row" id=@(s"overdue-charge-interest-accrued-$index")>
                                         <td class="govuk-table__cell"></td>
                                         <td class="goveuk-table__cell">
                                             @messages("whatYouOwe.over-due.interest.line1")
@@ -340,10 +340,12 @@
                 @paymentDaysNoteParagraph
                 @creditOnAccountNotePanel
                 <div id="payment-button">
-                @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
-                    messageKey = "whatYouOwe.payNow", classes = "govuk-button",
-                    id = Some("payment-button-link"), ariaLabel = Some(messages("whatYouOwe.pay-now-aria", (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
-                        chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
+                    @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
+                        messageKey = "whatYouOwe.payNow", classes = "govuk-button",
+                        id = Some("payment-button-link"),
+                        ariaLabel = Some(messages("whatYouOwe.pay-now-aria",
+                            (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
+                            chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
                 </div>
             </div>
         }
