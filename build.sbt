@@ -27,7 +27,7 @@ val wiremockVersion           = "2.26.1"
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-backend-play-27" % bootstrapPlayVersion,
+  "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
@@ -37,7 +37,7 @@ val compile = Seq(
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
   "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-27",
   "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-27",
-  "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.9.0-play-27"
+  "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.17.0-play-27"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
@@ -95,12 +95,16 @@ lazy val microservice = Project(appName, file("."))
     addTestReportOption(IntegrationTest, "int-test-reports"),
     parallelExecution in IntegrationTest := false,
     TwirlKeys.templateImports ++= Seq(
-      "uk.gov.hmrc.govukfrontend.views.html.helpers._",
+//      "uk.gov.hmrc.govukfrontend.views.html.helpers._",
       "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
-    )
+    ),
+    sourceDirectories in (Compile, TwirlKeys.compileTemplates) := (unmanagedSourceDirectories in Compile).value
   )
   .settings(resolvers ++= Seq(
     Resolver.jcenterRepo
   ))
+//  .settings(
+//    Compile / sources := Seq(file("/Users/joe/projects/hmrc/income-tax-view-change-frontend/app/testOnly/views/templates/StubTemplate.scala.html"))
+//  )

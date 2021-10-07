@@ -25,7 +25,7 @@ import models.finalTaxCalculation.TaxReturnRequestModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.CalculationService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.FinalTaxCalculationView
 
 import javax.inject.Inject

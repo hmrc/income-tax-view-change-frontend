@@ -26,7 +26,7 @@ import testOnly.connectors.MatchingStubConnector
 import testOnly.forms.StubClientDetailsForm
 import testOnly.models.StubClientDetailsModel
 import testOnly.views.html.StubClientDetails
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
