@@ -42,7 +42,7 @@
 	mainContentTemplate: mainContentTemplate
 )
 
-@(pageTitle: String,scriptsBlock: Option[Html] = None, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String,scriptsBlock: Option[Html] = None, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None, mainClass: Option[String] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @titlePattern = @{
 	if(form.exists(_.hasErrors)) {
@@ -135,7 +135,7 @@
 		bodyEndBlock = None,
 		headerBlock = Some(siteHeader),
 		footerBlock = Some(footerLinks()),
-		scriptsBlock = Some(scripts),
+		scriptsBlock = Some(head),
 		mainContentLayout = Some(mainContentTemplate(mainClass.get)(_))
 	)(content)
 }else{

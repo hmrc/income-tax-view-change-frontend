@@ -33,7 +33,7 @@
 
 @h1(msg = "agent.nextUpdates.heading")
 
-@p{@messages("agent.nextUpdates.info")}
+@p(){@messages("agent.nextUpdates.info")}
 
 	<details class="govuk-details" data-module="govuk-details" role="group">
 
@@ -43,18 +43,18 @@
 
 		<div class="govuk-details__text" id="details-content-0" data-module="govuk-details" aria-hidden="false">
 			@h2(msg = "agent.obligations.quarterlyUpdates")
-			@p(id = Some("quarterly-dropdown-line1"), content = Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text")))
-			@p(id = Some("quarterly-dropdown-line2"), content = Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text.lin2")))
+			@p(id = Some("quarterly-dropdown-line1"))(Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text")))
+			@p(id = Some("quarterly-dropdown-line2"))(Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text.lin2")))
 		</div>
 		<div class="govuk-details__text" id="details-content-1" data-module="govuk-details" aria-hidden="false">
 			@h2(msg = "agent.obligations.annualUpdates")
-			@p(id = Some("annual-dropdown-line1"), content = Html(messages("agent.nextUpdates.dropdown.annualReturn.text")))
-			@p(id = Some("annual-dropdown-line2"), content = Html(messages("agent.nextUpdates.dropdown.annualReturn.text.lin2")))
+			@p(id = Some("annual-dropdown-line1"))(Html(messages("agent.nextUpdates.dropdown.annualReturn.text")))
+			@p(id = Some("annual-dropdown-line2"))(Html(messages("agent.nextUpdates.dropdown.annualReturn.text.lin2")))
 
 		</div>
 		<div class="govuk-details__text" id="details-content-2" data-module="govuk-details" aria-hidden="false">
 			@h2(msg = "agent.obligations.finalDeclarationUpdate")
-			@p(id = Some("final-declaration-line1"), content = Html(messages("agent.nextUpdates.dropdown.finalDeclaration.text")))
+			@p(id = Some("final-declaration-line1"))(Html(messages("agent.nextUpdates.dropdown.finalDeclaration.text")))
 		</div>
 
 	</details>
@@ -63,7 +63,7 @@
 
 	@nextUpdatesHelper(currentObligations)
 
-	@p{
+	@p(){
 		@messages("agent.nextUpdates.previousYears.textOne")
 		@link(link = controllers.agent.routes.TaxYearsController.show().url, messageKey = "agent.nextUpdates.previousYears.link")
 		@messages("agent.nextUpdates.previousYears.textTwo")
