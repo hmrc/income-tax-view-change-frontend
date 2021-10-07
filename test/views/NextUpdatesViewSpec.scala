@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.test.Helpers.contentAsString
+import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.NextUpdates
 
@@ -32,7 +32,7 @@ class NextUpdatesViewSpec extends TestSupport {
 	val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
 
 	class Setup(currentObligations: ObligationsModel) {
-		val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL"))(defaultTimeout))
+		val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
 	}
 
 	object obligationsMessages {

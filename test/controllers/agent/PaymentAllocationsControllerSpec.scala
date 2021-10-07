@@ -24,9 +24,8 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockIncomeSourceDetailsService, MockPaymentAllocationsService}
 import mocks.views.agent.MockPaymentAllocationView
-import play.api.http.Status._
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
@@ -150,7 +149,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         setupMockGetPaymentAllocationError(testNinoAgent, docNumber)
         mockShowInternalServerError()
 
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient()))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

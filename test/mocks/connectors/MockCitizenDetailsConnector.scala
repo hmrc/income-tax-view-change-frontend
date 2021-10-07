@@ -37,6 +37,6 @@ trait MockCitizenDetailsConnector extends UnitSpec with MockitoSugar with Before
 
   def setupMockCitizenDetails(saUtr: String)(response: Future[CitizenDetailsResponseModel]): Unit = {
     when(mockCitizenDetailsConnector.getCitizenDetailsBySaUtr(ArgumentMatchers.eq(saUtr))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn(response)
   }
 }

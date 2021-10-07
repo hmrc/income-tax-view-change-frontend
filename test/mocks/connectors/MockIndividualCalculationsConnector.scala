@@ -23,6 +23,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
+import scala.concurrent.Future
 
 trait MockIndividualCalculationsConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -32,14 +33,14 @@ trait MockIndividualCalculationsConnector extends UnitSpec with MockitoSugar wit
     when(mockIndividualCalculationsConnector.getLatestCalculationId(
       ArgumentMatchers.eq(nino),
       ArgumentMatchers.eq(taxYear)
-    )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn response
+    )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 
   def mockGetCalculation(nino: String, id: String)(response: CalculationResponseModel): Unit = {
     when(mockIndividualCalculationsConnector.getCalculation(
       ArgumentMatchers.eq(nino),
       ArgumentMatchers.eq(id)
-    )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn response
+    )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 
   override def beforeEach(): Unit = {

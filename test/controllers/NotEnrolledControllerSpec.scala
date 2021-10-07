@@ -23,6 +23,7 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 import views.html.notEnrolled.NotEnrolled
+import play.api.test.Helpers._
 
 class NotEnrolledControllerSpec extends TestSupport {
 
@@ -33,7 +34,7 @@ class NotEnrolledControllerSpec extends TestSupport {
   "the NotEnrolledController.show() action" should {
 
     lazy val result = TestNotEnrolledController.show(fakeRequestNoSession)
-    lazy val document = Jsoup.parse(bodyOf(result))
+    lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {
       status(result) shouldBe Status.OK

@@ -168,7 +168,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
 			status(result) shouldBe SEE_OTHER
 			redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
-			result.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
+			result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
 		}
   }
 

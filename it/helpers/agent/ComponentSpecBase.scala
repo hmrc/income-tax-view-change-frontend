@@ -106,14 +106,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
-      await(buildClient("/agents" + uri)
+      buildClient("/agents" + uri.futureValue
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies))
         .get())
     }
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
-      await(buildClient("/agents" + uri)
+      buildClient("/agents" + uri.futureValue
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body)
       )

@@ -69,7 +69,7 @@ trait MockNextUpdatesService extends UnitSpec with MockitoSugar with BeforeAndAf
 
   def mockGetObligationDueDates(response: Future[Either[(LocalDate, Boolean), Int]]): Unit = {
     when(mockNextUpdatesService.getObligationDueDates()(any(), any(), any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn(response)
   }
 
   def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: NextUpdatesResponseModel): Unit = {

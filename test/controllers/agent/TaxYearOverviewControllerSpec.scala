@@ -30,7 +30,7 @@ import models.financialDetails.DocumentDetailWithDueDate
 import models.nextUpdates.{ObligationsModel, NextUpdatesErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -108,7 +108,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockErrorIncomeSource()
 				mockShowInternalServerError()
 
-				intercept[InternalServerException](await(controller.show(taxYear = testYear)(fakeRequestConfirmedClient())))
+				intercept[InternalServerException](controller.show(taxYear = testYear)(fakeRequestConfirmedClient()).futureValue)
 					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}

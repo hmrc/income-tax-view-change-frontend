@@ -82,7 +82,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
           mockShowInternalServerError()
 
-          intercept[InternalServerException](await(controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())))
+          intercept[InternalServerException](controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient()).futureValue)
             .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
         }
 

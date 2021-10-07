@@ -32,6 +32,7 @@ import testUtils.{TestSupport, ViewSpec}
 import views.html.agent.Home
 
 import java.time.LocalDate
+import scala.util.Try
 
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -77,8 +78,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
 
-    def getHintNth(index: Int = 0): Option[String] =
-      Option(document.getElementsByClass("govuk-hint").get(index).map(_.text))
+    def getHintNth(index: Int = 0): Option[String] = {
+      Try(document.getElementsByClass("govuk-hint").get(index).text).toOption
+    }
   }
 
 

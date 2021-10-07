@@ -31,6 +31,7 @@ import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -75,7 +76,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   implicit val serviceInfo: Html = Html("")
 
   implicit class JsoupParse(x: Future[Result]) {
-    def toHtmlDocument: Document = Jsoup.parse(bodyOf(x))
+    def toHtmlDocument: Document = Jsoup.parse(contentAsString(x))
   }
 
   lazy val fakeRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(

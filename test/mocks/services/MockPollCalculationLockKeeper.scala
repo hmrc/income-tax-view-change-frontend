@@ -25,6 +25,7 @@ import uk.gov.hmrc.lock.LockRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.PollCalculationLockKeeper
+import scala.concurrent.Future
 
 trait MockPollCalculationLockKeeper extends UnitSpec with MongoSpecSupport with MockitoSugar with BeforeAndAfterEach {
 
@@ -46,7 +47,7 @@ trait MockPollCalculationLockKeeper extends UnitSpec with MongoSpecSupport with 
   }
 
   def setupLockRepositoryLock(locked: Boolean): Unit = when(mockLockRepository.lock(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
-    .thenReturn(locked)
+    .thenReturn(Future.successful(locked))
 
   def mockLockRepositoryIsLockedTrue(): Unit = setupLockRepositoryLock(true)
   def mockLockRepositoryIsLockedFalse(): Unit = setupLockRepositoryLock(false)

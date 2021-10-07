@@ -139,18 +139,18 @@ class EnterClientsUTRControllerSpec extends TestSupport
 						response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
 					)
 
-					val result = await(TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+					val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
 						ClientsUTRForm.utr -> validUTR
-					)))
+					))
 
 					status(result) shouldBe SEE_OTHER
 					redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
 
-					result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
-					result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
-					result.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
-					result.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
-					result.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
+					result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+					result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+					result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+					result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+					result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
 					verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
 					verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
 				}
@@ -163,18 +163,18 @@ class EnterClientsUTRControllerSpec extends TestSupport
 						response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
 					)
 
-					val result = await(TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+					val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
 						ClientsUTRForm.utr -> utrWithSpaces
-					)))
+					))
 
 					status(result) shouldBe SEE_OTHER
 					redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
 
-					result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
-					result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
-					result.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
-					result.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
-					result.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
+					result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+					result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+					result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+					result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+					result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
 					verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
 					verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
 				}
@@ -241,7 +241,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 						ClientsUTRForm.utr -> validUTR
 					))
 
-					intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
+					intercept[InternalServerException](result.futureValue).message shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
 				}
 			}
     }

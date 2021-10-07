@@ -22,8 +22,11 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
 import play.api.http.Status
+import play.api.test.Helpers._
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
+
+import scala.concurrent.Future
 
 
 class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService {
@@ -45,7 +48,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
       "return the expected MtdItUser" in {
         mockSingleBusinessIncomeSource()
         val result = IncomeSourceDetailsPredicate.refine(userWithNino)
-        result.right.get shouldBe successResponse
+        result.futureValue.right.get shouldBe successResponse
       }
 
     }
@@ -55,7 +58,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
       "Return Status of 500 (ISE)" in {
         mockErrorIncomeSource()
         val result = IncomeSourceDetailsPredicate.refine(userWithNino)
-        status(result.left.get) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(Future.successful(result.futureValue.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
