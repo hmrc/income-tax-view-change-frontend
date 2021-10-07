@@ -94,7 +94,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
       overviewOpt = calculationOverview,
       documentDetailsWithDueDates = documentDetailsWithDueDates,
       obligations = obligations,
-      backUrl = backUrl()
+      backUrl = backUrl(),
+      isAgent = true
     )
   }
 

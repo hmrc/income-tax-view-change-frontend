@@ -24,7 +24,7 @@
 
 @this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(taxYear: Int, overviewOpt: Option[CalcOverview], documentDetailsWithDueDates: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(taxYear: Int, overviewOpt: Option[CalcOverview], documentDetailsWithDueDates: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String, isAgent: Boolean = true)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
