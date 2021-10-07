@@ -68,10 +68,6 @@
         @messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}")
     </h1>
 
-    @if(documentDetail.getChargeTypeKey.equals("balancingCharge.text")) {
-        @p(){@messages("chargeSummary.remainingYear.text", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)}
-    }
-
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
