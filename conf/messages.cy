@@ -383,14 +383,18 @@ whatYouOwe.over-due                                             = YN HWYR
 whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
 whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth {0} i {1}
-whatYouOwe.overdueAmount                                        = Taliadau hwyr sy'n ddyledus
+whatYouOwe.overdueAmount                                        = Taliadau sy’n hwyr
 whatYouOwe.balanceDueWithin30Days                               = Yn ddyledus cyn pen 30 diwrnod
-whatYouOwe.totalBalance                                         = Cyfanswm y taliadau sy'n ddyledus
+whatYouOwe.totalBalance                                         = Cyfanswm y taliadau
 whatYouOwe.paymentUnderReview                                   = Taliad dan adolygiad
 whatYouOwe.over-due.interest.line1                              = Llog am dalu’n hwyr
 whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+whatYouOwe.over-due.interest-rate                               = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
+whatYouOwe.over-due.interest-rate-1                             = Mae unrhyw log am dalu’n hwyr ar y {0}
+whatYouOwe.over-due.interest-rate-2                             = Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
+whatYouOwe.over-due.interest-rate.link                          = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd)
 
 
 ## Charge Summary ##
@@ -560,9 +564,9 @@ agent.paymentDue.over-due                                       = YN HWYR
 agent.paymentDue.future-payments                                = Taliadau yn y dyfodol
 agent.paymentDue.due-in-thirty-days-payments                    = Yn ddyledus cyn pen 30 diwrnod
 agent.paymentDue.payment-type.taxYear                           = Blwyddyn dreth {0} i {1}
-agent.paymentDue.overdueAmount                                  = Taliadau hwyr sy'n ddyledus
+agent.paymentDue.overdueAmount                                  = Taliadau sy’n hwyr
 agent.paymentDue.balanceDueWithin30Days                         = Yn ddyledus cyn pen 30 diwrnod
-agent.paymentDue.totalBalance                                   = Cyfanswm y taliadau sy'n ddyledus
+agent.paymentDue.totalBalance                                   = Cyfanswm y taliadau
 agent.paymentDue.paymentUnderReview                             = Taliad dan adolygiad
 agent.paymentDue.over-due.interest.line1                        = Llog am dalu’n hwyr
 agent.paymentDue.lpi.paymentOnAccount1.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2

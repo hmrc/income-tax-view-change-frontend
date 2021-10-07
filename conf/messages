@@ -87,9 +87,9 @@ agent.paymentDue.lpi.paymentOnAccount1.text                    = Late payment in
 agent.paymentDue.lpi.paymentOnAccount2.text                    = Late payment interest for payment on account 2 of 2
 agent.paymentDue.lpi.balancingCharge.text                      = Late payment interest for remaining balance
 
-agent.paymentDue.overdueAmount                                 = Overdue payments due
+agent.paymentDue.overdueAmount                                 = Overdue payments
 agent.paymentDue.balanceDueWithin30Days                        = Due within 30 days
-agent.paymentDue.totalBalance                                  = Total payments due
+agent.paymentDue.totalBalance                                  = Total payments
 
 
 ## Agent Error Page ##
@@ -526,9 +526,9 @@ whatYouOwe.payment-type.taxYear                                    = Tax year {0
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review and your {0}
 whatYouOwe.dunningLock.link                                        = tax decision is being investigated (opens in new tab).
-whatYouOwe.overdueAmount                                           = Overdue payments due
+whatYouOwe.overdueAmount                                           = Overdue payments
 whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
-whatYouOwe.totalBalance                                            = Total payments due
+whatYouOwe.totalBalance                                            = Total payments
 
 
 ## Charge Summary ##
