@@ -21,8 +21,9 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.{IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.summaryData
-import models.calculation.{CalcDisplayModel, CalcOverview}
+import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{CalculationService, IncomeSourceDetailsService}
@@ -53,7 +54,12 @@ class FinalTaxCalculationController @Inject()(
         case CalcDisplayModel(_, _, calcDataModel, _) =>
           val calcOverview = CalcOverview(calcDataModel)
           Ok(view(calcOverview, taxYear, isAgent = true))
-        case _ => itvcErrorHandler.showInternalServerError()
+        case CalcDisplayNoDataFound =>
+          Logger.info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
+          itvcErrorHandler.showInternalServerError()
+        case _ =>
+          Logger.error("[FinalTaxCalculationController][show] Unexpected error has occurred while retrieving calculation data.")
+          itvcErrorHandler.showInternalServerError()
       }
     }
   }
@@ -82,9 +88,16 @@ class FinalTaxCalculationController @Inject()(
                   summaryData -> submissionOverview.asJsonString
                 )
 
-              case _ => itvcErrorHandler.showInternalServerError()
+              case _ =>
+                Logger.error("[FinalTaxCalculationController][submit] Name or UTR missing.")
+                itvcErrorHandler.showInternalServerError()
             }
-          case _ => itvcErrorHandler.showInternalServerError()
+          case CalcDisplayNoDataFound =>
+            Logger.info("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+            itvcErrorHandler.showInternalServerError()
+          case _ =>
+            Logger.error("[FinalTaxCalculationController][submit] Unexpected error has occurred while retrieving calculation data.")
+            itvcErrorHandler.showInternalServerError()
         }
         
       }
