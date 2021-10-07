@@ -87,7 +87,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
         val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
 
-        intercept[InternalServerException](result).futureValue
+        intercept[InternalServerException](result.futureValue)
 
       }
 

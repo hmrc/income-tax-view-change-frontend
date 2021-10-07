@@ -98,7 +98,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
-        result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
       }
 
       s"getFinancialDetails returns a $NOT_FOUND" should {
@@ -125,7 +125,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           status(result) shouldBe Status.OK
           contentAsString(result) shouldBe expectedContent
           contentType(result) shouldBe Some("text/html")
-          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
+          result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
         }
       }
 
@@ -202,7 +202,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             status(result) shouldBe Status.OK
             contentAsString(result) shouldBe expectedContent
             contentType(result) shouldBe Some("text/html")
-            result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
+            result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
           }
         }
 
