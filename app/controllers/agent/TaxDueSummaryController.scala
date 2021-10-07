@@ -16,7 +16,9 @@
 
 package controllers.agent
 
-import config.featureswitch.FeatureSwitching
+import audit.AuditingService
+import audit.models.TaxCalculationDetailsResponseAuditModel
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation._
@@ -34,7 +36,8 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCa
                                         val appConfig: FrontendAppConfig,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
-                                        incomeSourceDetailsService: IncomeSourceDetailsService
+                                        incomeSourceDetailsService: IncomeSourceDetailsService,
+                                        val auditingService: AuditingService
                                        )(implicit mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,
                                          itvcErrorHandler: ItvcErrorHandler)
@@ -42,20 +45,23 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCa
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-				calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
-					case calcDisplayModel: CalcDisplayModel =>
-						Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+        calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
+          case calcDisplayModel: CalcDisplayModel =>
+            if (isEnabled(TxmEventsApproved)) {
+              auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(mtdItUser, calcDisplayModel, taxYear))
+            }
+            Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
-					case CalcDisplayNoDataFound =>
-						Logger.warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
-						Future.successful(itvcErrorHandler.showInternalServerError())
+          case CalcDisplayNoDataFound =>
+            Logger.warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
+            Future.successful(itvcErrorHandler.showInternalServerError())
 
-					case CalcDisplayError =>
-						Logger.error(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
-						Future.successful(itvcErrorHandler.showInternalServerError())
-				}
-			}
+          case CalcDisplayError =>
+            Logger.error(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
+            Future.successful(itvcErrorHandler.showInternalServerError())
+        }
+      }
   }
 
   def backUrl(taxYear: Int): String = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url

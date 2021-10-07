@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package audit.models
+package views.helpers
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
-import play.api.libs.json.JsValue
+import play.api.i18n.Messages
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language._
 
+object CurrentLanguage {
 
-case class WhatYouOweRequestAuditModel(user: MtdItUser[_]) extends ExtendedAuditModel {
-
-  override val transactionName: String = "what-you-owe-request"
-  override val auditType: String = "WhatYouOweRequest"
-
-  override val detail: JsValue = userAuditDetails(user)
+  def apply(default: Language = En)(implicit messages: Messages): Language = {
+    messages.lang.code match {
+      case En.code => En
+      case Cy.code => Cy
+      case _ => default
+    }
+  }
 
 }

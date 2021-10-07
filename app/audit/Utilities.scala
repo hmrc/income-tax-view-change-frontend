@@ -39,10 +39,12 @@ object Utilities {
     case None => Json.obj()
   }
 
-  def getChargeType(docDetail: DocumentDetail): Option[String] = docDetail.documentDescription map {
-    case "ITSA- POA 1" => "Payment on account 1 of 2"
-    case "ITSA - POA 2" => "Payment on account 2 of 2"
-    case "TRM New Charge" | "TRM Amend Charge" => "Remaining balance"
+  def getChargeType(docDetail: DocumentDetail, latePaymentCharge: Boolean = false): Option[String] = docDetail.documentDescription map {
+    case "ITSA- POA 1" => if (latePaymentCharge) "Late payment interest for payment on account 1 of 2" else "Payment on account 1 of 2"
+    case "ITSA - POA 2" => if (latePaymentCharge) "Late payment interest for payment on account 2 of 2" else "Payment on account 2 of 2"
+    case "TRM New Charge" | "TRM Amend Charge" => if (latePaymentCharge) "Late payment interest for remaining balance" else "Remaining balance"
     case other => other
   }
+
+  def ratePctString(rate: BigDecimal): String = s"$rate%"
 }

@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.financialDetails.{DocumentDetailWithDueDate, WhatYouOweChargesList}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
 import utils.Utilities.JsonUtil
@@ -29,20 +29,59 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   override val transactionName: String = "what-you-owe-response"
   override val auditType: String = "WhatYouOweResponse"
 
-  private val docDetailsListJson: List[JsObject] = (
-    chargesList.overduePaymentList ++
-      chargesList.dueInThirtyDaysList ++
-      chargesList.futurePayments).map(documentDetails) ++
-    chargesList.outstandingChargesModel.map(outstandingChargeDetails)
+  private val docDetailsListJson: List[JsObject] =
+    chargesList.allCharges.map(documentDetails) ++
+      chargesList.overduePaymentList
+        .filter(_.documentDetail.latePaymentInterestAmount.isDefined)
+        .map(latePaymentInterestDetails) ++
+      chargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = userAuditDetails(user) ++
+    balanceDetailsJson ++
     Json.obj("charges" -> docDetailsListJson)
 
+
+  private lazy val balanceDetailsJson: JsObject = {
+    def onlyIfPositive(amount: BigDecimal): Option[BigDecimal] = Some(amount).filter(_ > 0)
+
+    lazy val fields: JsObject = Json.obj() ++
+      ("balanceDueWithin30Days", onlyIfPositive(chargesList.balanceDetails.balanceDueWithin30Days)) ++
+      ("overDueAmount", onlyIfPositive(chargesList.balanceDetails.overDueAmount)) ++
+      ("totalBalance", onlyIfPositive(chargesList.balanceDetails.totalBalance))
+
+    val currentTaxYear = user.incomeSources.getCurrentTaxEndYear
+    val secondOrMoreYearOfMigration = user.incomeSources.yearOfMigration.exists(currentTaxYear > _.toInt)
+
+    if (secondOrMoreYearOfMigration && fields.values.nonEmpty) Json.obj("balanceDetails" -> fields)
+    else Json.obj()
+  }
+
   private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(
+    "chargeUnderReview" -> docDateDetail.dunningLock,
     "outstandingAmount" -> docDateDetail.documentDetail.remainingToPay
   ) ++
     ("chargeType", getChargeType(docDateDetail.documentDetail)) ++
-    ("dueDate", docDateDetail.dueDate)
+    ("dueDate", docDateDetail.dueDate) ++
+    accruingInterestJson(docDateDetail.documentDetail)
+
+  private def accruingInterestJson(documentDetail: DocumentDetail): JsObject = {
+    if (documentDetail.hasAccruingInterest) {
+      Json.obj() ++
+        ("accruingInterest", documentDetail.interestOutstandingAmount) ++
+        ("interestRate", documentDetail.interestRate.map(ratePctString)) ++
+        ("interestFromDate", documentDetail.interestFromDate) ++
+        ("interestEndDate", documentDetail.interestEndDate)
+    } else {
+      Json.obj()
+    }
+  }
+
+  private def latePaymentInterestDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(
+    "chargeUnderReview" -> docDateDetail.dunningLock,
+    "outstandingAmount" -> docDateDetail.documentDetail.interestRemainingToPay
+  ) ++
+    ("chargeType", getChargeType(docDateDetail.documentDetail, latePaymentCharge = true)) ++
+    ("dueDate", docDateDetail.documentDetail.interestEndDate)
 
   private def outstandingChargeDetails(outstandingCharge: OutstandingChargesModel) = Json.obj(
     "chargeType" -> "Remaining balance"

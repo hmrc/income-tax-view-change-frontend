@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
+import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -52,9 +52,6 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       if (!isEnabled(PaymentHistory)) {
         Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
       } else {
-        if (isEnabled(TxmEventsApproved)) {
-          auditingService.extendedAudit(PaymentHistoryRequestAuditModel(user))
-        }
         paymentHistoryService.getPaymentHistory.map {
           case Right(payments) =>
             if (isEnabled(TxmEventsApproved)) {
@@ -65,7 +62,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
         }
       }
   }
-
+  
   lazy val backUrl: String = controllers.routes.HomeController.home().url
 
 }

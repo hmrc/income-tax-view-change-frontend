@@ -22,7 +22,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{DeductionsSummaryMessages => messages}
-import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
@@ -74,7 +74,6 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
         And("Audit TXM events have been fired with TxmApproved FS true")
         val expectedAllowancesAndDeductionsTrue = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
-        verifyAuditEvent(AllowanceAndDeductionsRequestAuditModel(testUser))
         verifyAuditEvent(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductionsTrue, true))
 
 
@@ -91,7 +90,6 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
         And("Audit TXM events have been fired with TxmApproved FS false")
         val expectedAllowancesAndDeductionsFalse = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions.copy(giftOfInvestmentsAndPropertyToCharity = None)
-        verifyAuditEvent(AllowanceAndDeductionsRequestAuditModel(testUser))
         verifyAuditEvent(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductionsFalse, false))
       }
     }

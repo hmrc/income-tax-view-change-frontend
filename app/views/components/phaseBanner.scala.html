@@ -14,24 +14,22 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *@
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 
-@this(govukPhaseBanner: GovukPhaseBanner, appConfig: config.FrontendAppConfig)
+@this(govukPhaseBanner: GovukPhaseBanner, appConfig: config.FrontendAppConfig, a: link)
 
 @(phase: String)(implicit messages: Messages)
 
 @feedbackBanner = {
-@messages("betaBanner.newService")
-@messages("betaBanner.your")
-<a class='govuk-link' href="@appConfig.betaFeedbackUrl" id="feedback-url" target="_blank">
-    @messages("betaBanner.feedback")</a>
-@messages("betaBanner.improve")
+    @messages("betaBanner.newService")
+    @messages("betaBanner.your")
+    @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("feedback-url"))
+    @messages("betaBanner.improve")
 }
 
 @govukPhaseBanner(PhaseBanner(
-tag = Some(Tag(content = Text(phase))),
-content = HtmlContent(feedbackBanner)
+    tag = Some(Tag(content = Text(phase))),
+    content = HtmlContent(feedbackBanner)
 ))

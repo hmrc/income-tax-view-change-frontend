@@ -17,22 +17,35 @@
 package controllers
 
 import java.time.LocalDateTime
-
 import assets.BaseIntegrationTestConstants._
+import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{TaxDueSummaryMessages => messages}
+import audit.models.TaxCalculationDetailsResponseAuditModel
+import auth.MtdItUser
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import enums.Crystallised
+import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
-import models.calculation.{CalculationItem, ListCalculationItems}
+import models.calculation.{CalcDisplayModel, Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
+import play.api.test.FakeRequest
 
-class TaxDueSummaryControllerISpec extends ComponentSpecBase {
+
+class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None,
+    multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+  )(FakeRequest())
 
   "Calling the TaxDueSummaryController.showTaxDueSummary(taxYear)" when {
 
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "return the correct tax due summary page" in {
+      "return the correct tax due summary page with the TxMEventsApproved FS enabled" in {
+        enable(TxmEventsApproved)
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -53,6 +66,9 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+
+      val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
+      verifyAuditEvent(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt))
 
         res should have(
           httpStatus(OK),

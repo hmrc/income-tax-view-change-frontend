@@ -21,12 +21,11 @@ package controllers
 import assets.PaymentAllocationsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
-import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.{ImplicitDateFormatter}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.core.Nino
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -63,7 +62,8 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       app.injector.instanceOf[ItvcErrorHandler],
-      paymentAllocation
+      paymentAllocation,
+      mockAuditingService
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig])
@@ -78,8 +78,19 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Successfully retrieving a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any()))
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
+
+        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+
+        status(result) shouldBe Status.OK
+      }
+
+      "Successfully retrieving a user's lpi payment allocation" in new Setup {
+        enable(PaymentAllocation)
+        mockSingleBusinessIncomeSource()
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
+          .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
 
@@ -89,7 +100,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Failing to retrieve a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any()))
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Left(PaymentAllocationError)))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
@@ -102,7 +113,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "trying to access payments allocation " in new Setup {
         disable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any()))
+        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
 
         val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))

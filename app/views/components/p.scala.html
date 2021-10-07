@@ -16,7 +16,7 @@
 
 @this()
 
-@(content: Html, classes: String = "govuk-body", id: Option[String] = None)
+@(classes: String = "govuk-body", id: Option[String] = None)(content: Html)
 
 @if(id.isDefined){
     <p class="@classes" id="@id">@content</p>

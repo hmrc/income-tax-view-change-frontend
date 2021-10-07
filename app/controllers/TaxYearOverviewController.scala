@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -83,7 +83,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, true,
+            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
@@ -101,16 +101,13 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
   private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
     implicit user =>
-      if (isEnabled(TxmEventsApproved)) {
-        auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(user, None))
-      }
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
           withTaxYearFinancials(taxYear) { charges =>
             withObligationsModel(taxYear) map {
               case obligationsModel: ObligationsModel =>
                 if (isEnabled(TxmEventsApproved)) {
-                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel))
+                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, calculation, charges, obligationsModel))
                 }
                 Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation)),
                 charge = charges, obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")

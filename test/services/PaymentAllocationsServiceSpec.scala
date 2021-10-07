@@ -19,14 +19,15 @@ package services
 import assets.BaseTestConstants._
 import assets.PaymentAllocationsTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.services.MockFinancialDetailsService
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationViewModel}
 import models.paymentAllocations.PaymentAllocationsError
 import services.PaymentAllocationsService.PaymentAllocationError
 import testUtils.TestSupport
 
-class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector  {
+class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockFinancialDetailsService {
 
-  object TestPaymentAllocationsService extends PaymentAllocationsService(mockIncomeTaxViewChangeConnector, appConfig)
+  object TestPaymentAllocationsService extends PaymentAllocationsService(mockIncomeTaxViewChangeConnector, mockFinancialDetailsService, appConfig)
 
   "get paymentAllocations" should {
     "return successful payment allocation details" when {
@@ -39,6 +40,20 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
         val result = await(TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber))
 
         result shouldBe Right(paymentAllocationViewModel)
+      }
+    }
+
+    "return successful payment allocation details for LPI" when {
+      "all fields are present" in {
+        setupGetPaymentAllocationCharges(testNino, docNumber)(lpiPaymentAllocationParentChargesModel)
+        setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidLpiPaymentAllocationsModel)
+        setupGetPaymentAllocationCharges(testNino, "1040000872")(lpiPaymentAllocationParentChargesModel)
+        setupGetPaymentAllocationCharges(testNino, "1040000873")(lpiPaymentAllocationParentChargesModel)
+        mockGetAllFinancialDetails(List((2020, lpiFinancialDetailsModel)))
+
+        val result = await(TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber))
+
+        result shouldBe Right(paymentAllocationViewModelLpi)
       }
     }
 

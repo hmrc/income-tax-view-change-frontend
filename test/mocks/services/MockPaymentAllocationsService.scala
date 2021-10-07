@@ -43,7 +43,7 @@ trait MockPaymentAllocationsService extends UnitSpec with MockitoSugar with Befo
       .getPaymentAllocation(
         Nino(matches(nino)),
         matches(docNumber)
-      )(any()))
+      )(any(), any()))
       .thenReturn(response)
 
   def setupMockGetPaymentAllocationSuccess(nino: String, docNumber: String)(model: PaymentAllocationViewModel): Unit =

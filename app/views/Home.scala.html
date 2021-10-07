@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
@@ -31,7 +31,8 @@
     h3link: h3link,
     p: p,
     link: link,
-    govukWarningText : GovukWarningText
+    govukWarningText : GovukWarningText,
+	home_tile: home_tile
 )
 
 @(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate,
@@ -43,22 +44,19 @@
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
-<div id="payments-tile" class="tile tile-no-border">
-    <div class="tile-body">
-        @h2(classes = "govuk-heading-m", msg = "home.payments.heading")
-        @{overDuePayments.getOrElse(0) match {
-			case 0 => p(paymentsTileContentPaymentsDue0)
-			case 1 => p(paymentsTileContentPaymentsDue1)
-			case _ => p(paymentsTileContentPaymentsDueMany)
-        }}
-        @p{
-            @link(
-                link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
-                messageKey = "home.payments.view"
-            )
-        }
-    </div>
-</div>
+	@home_tile("payments-tile", messages("home.payments.heading")) {
+		@{overDuePayments.getOrElse(0) match {
+			case 0 => p()(paymentsTileContentPaymentsDue0)
+			case 1 => p()(paymentsTileContentPaymentsDue1)
+			case _ => p()(paymentsTileContentPaymentsDueMany)
+		}}
+		@p(){
+			@link(
+				link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
+				messageKey = "home.payments.view"
+			)
+		}
+	}
 }
 
 @paymentsTileContentPaymentsDue0 = { @nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due")) }
@@ -74,22 +72,19 @@
 
 
 @updatesTile = {
-<div id="updates-tile" class="tile tile-no-border">
-    <div class="tile-body">
-        @h2(classes = "govuk-heading-m", msg = "home.updates.heading")
+	@home_tile("updates-tile", messages("home.updates.heading")) {
 		@{overDueUpdates.getOrElse(0) match {
-			case 0 => p(updatesTileContentUpdatesDue0)
-			case 1 => p(updatesTileContentUpdatesDue1)
-			case _ => p(updatesTileContentUpdatesDueMany)
+			case 0 => p()(updatesTileContentUpdatesDue0)
+			case 1 => p()(updatesTileContentUpdatesDue1)
+			case _ => p()(updatesTileContentUpdatesDueMany)
 		}}
-        @p{
-            @link(
-                link = controllers.routes.NextUpdatesController.getNextUpdates().url,
-                messageKey = "home.updates.view"
-            )
-        }
-    </div>
-</div>
+		@p(){
+			@link(
+				link = controllers.routes.NextUpdatesController.getNextUpdates().url,
+				messageKey = "home.updates.view"
+			)
+		}
+	}
 }
 
 @updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
@@ -105,27 +100,24 @@
 
 
 @taxYearsTile = {
-    <div id="tax-years-tile" class="tile tile-no-border">
-        <div class="tile-body">
-            @h2(classes= "govuk-heading-m" , msg = "home.tax-years.heading")
-            <div class="govuk-list">
-                <li>
-                @link(
-                    link = controllers.routes.TaxYearsController.viewTaxYears().url,
-                    messageKey = "home.tax-years.view"
-                )
-                </li>
-                @if(paymentHistoryEnabled){
-                <li>
-                    @link(
-                        link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
-                        messageKey = "home.tax-years.viewPayments"
-                    )
-                </li>
-                }
-            </div>
-        </div>
-    </div>
+	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
+		<ul class="govuk-list">
+			<li>
+			@link(
+				link = controllers.routes.TaxYearsController.viewTaxYears().url,
+				messageKey = "home.tax-years.view"
+			)
+			</li>
+			@if(paymentHistoryEnabled){
+				<li>
+				@link(
+					link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+					messageKey = "home.tax-years.viewPayments"
+				)
+				</li>
+			}
+		</ul>
+	}
 }
 
 @YourIncomeTaxReturnTile= {
@@ -142,7 +134,7 @@
                     link = appConfig.submissionFrontendUrl,
                     messageKey = "home.your-returns.updatesLink")
 
-                @p{@messages("home.your-returns.description")}
+                @p(){@messages("home.your-returns.description")}
             </div>
             @if(utr.isDefined) {
             <div id="saViewLandPTile">
@@ -152,7 +144,7 @@
                         messageKey = "home.self-assessment.updatesLink",
                         id = Some("saViewLandPService")
                     )
-                    @p{@messages("home.self-assessment.description")}
+                    @p(){@messages("home.self-assessment.description")}
                 </div>
             </div>
             }

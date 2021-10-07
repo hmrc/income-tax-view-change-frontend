@@ -86,10 +86,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
-    def paymentOnAccountInterestCreated(number: Int) = s"Created late payment interest on payment on account $number of 2"
+    def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
     val balancingChargeCreated = "Remaining balance created"
-    val balancingChargeInterestCreated = "Created late payment interest on remaining balance"
+    val balancingChargeInterestCreated = "Late payment interest for remaining balance created"
 
     def paymentOnAccountAmended(number: Int) = s"Payment on account $number of 2 reduced due to amended return"
 
@@ -156,7 +156,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, Some("lotItem"), Some("lot"))),
+    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
   )
 

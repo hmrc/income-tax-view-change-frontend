@@ -166,12 +166,13 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val calculationDate: String = "Calculation date"
     val totalDue: String = "Total Due"
 
-    def fromToEstimate(from: String, to: String): String = s"$from to $to estimate"
+    def fromToEstimate(from: String, to: String): String = s"$from to $to in year calculation"
 
     val estimateMessage: String = "This calculation is only based on your completed updates for this tax year up to 5 Jan 2019. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
 
     val contents: String = "Contents"
     val calculationTabLabel: String = "Tax calculation"
+    val inYearTaxCalcTab: String = "In year tax calculation"
     val paymentsTabLabel: String = "Payments"
     val updatesTabLabel: String = "Updates"
 
@@ -258,7 +259,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         }
         "the calculation is a crystallised calculation" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
           val listRow: Element = content.selectHead("dl").selectNth("div", 2)
-          listRow.selectNth("dd", 1).text shouldBe TaxYearOverviewMessages.fromToEstimate("6 April 2019", "6 April 2020")
+          listRow.selectNth("dd", 1).text shouldBe TaxYearOverviewMessages.fromToEstimate("6 April 2019", "5 January 2020")
           listRow.selectNth("dd", 2).text shouldBe "£100.00"
         }
       }
@@ -283,7 +284,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "has a calculation tab" which {
         "has a tab label" in new Setup(view()) {
           val tab: Element = content.selectHead("div.govuk-tabs").selectHead("ul").selectNth("li", 1).selectHead("a")
-          tab.text shouldBe TaxYearOverviewMessages.calculationTabLabel
+          tab.text shouldBe TaxYearOverviewMessages.inYearTaxCalcTab
           tab.attr("href") shouldBe "#taxCalculation"
           tab.attr("role") shouldBe "tab"
           tab.attr("aria-controls") shouldBe "taxCalculation"

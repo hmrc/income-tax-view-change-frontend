@@ -33,6 +33,7 @@ import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
@@ -76,6 +77,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
   val btaPartialUrl = "/business-account/partial/service-info"
   val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
+
+  val getCurrentTaxYearEnd: LocalDate = {
+    val currentDate: LocalDate = LocalDate.now
+    if(currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6)))LocalDate.of(currentDate.getYear, 4, 5)
+    else LocalDate.of(currentDate.getYear + 1, 4, 5)
+  }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
@@ -143,7 +150,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       
     def getFinalTaxCalculationPoller(taxYear: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse = {
       val agentString = if(isAgent) "/agents" else ""
-      getWithCalcIdInSession(s"$agentString/$taxYear/final-tax-overview-and-declaration/calculate", additionalCookies)
+      getWithCalcIdInSession(s"$agentString/$taxYear/final-tax-overview/calculate", additionalCookies)
     }
 
     def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): Future[WSResponse] =

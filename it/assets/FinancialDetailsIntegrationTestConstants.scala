@@ -18,6 +18,7 @@ package assets
 
 import java.time.LocalDate
 import assets.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
+import assets.IncomeSourceIntegrationTestConstants.noDunningLock
 import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
@@ -107,6 +108,7 @@ object FinancialDetailsIntegrationTestConstants {
                                 clearedAmount: Option[BigDecimal],
                                 chargeType: Option[String],
                                 dueDate: List[Option[String]],
+                                dunningLock: List[String],
                                 subItemId: Option[String],
                                 amount: Option[BigDecimal],
                                 clearingDate: Option[String],
@@ -123,14 +125,14 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head))))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1))))))
       )
     )
 
@@ -160,9 +162,9 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
@@ -196,6 +198,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
+    noDunningLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
@@ -222,6 +225,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().toString)),
+    noDunningLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
@@ -237,7 +241,7 @@ object FinancialDetailsIntegrationTestConstants {
     taxYear = LocalDate.now().getYear.toString
   )
 
-  val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
+  def financialDetailsOverdueData(dunningLock: List[String] = noDunningLock): FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
@@ -248,6 +252,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().minusDays(15).toString), Some(LocalDate.now().minusDays(15).toString)),
+    dunningLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
@@ -326,6 +331,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
     dueDate = List(Some(LocalDate.now().plusDays(1).toString), Some(LocalDate.now().toString)),
+    noDunningLock,
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some("clearingDate"),
@@ -355,19 +361,19 @@ object FinancialDetailsIntegrationTestConstants {
 
   val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
+    overduePaymentList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataFullData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
+    overduePaymentList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  val whatYouOweDataFullDataWithoutOutstandingCharges: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataFullDataWithoutOutstandingCharges(overduePaymentsDunningLocks: List[String] = noDunningLock): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates
+    overduePaymentList = financialDetailsOverdueData(overduePaymentsDunningLocks).getAllDocumentDetailsWithDueDates
   )
 
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(

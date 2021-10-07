@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -37,7 +39,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              itvcErrorHandler: ItvcErrorHandler,
-                                             paymentAllocations: PaymentAllocationsService)
+                                             paymentAllocations: PaymentAllocationsService,
+                                             auditingService: AuditingService)
                                             (implicit mcc: MessagesControllerComponents,
                                              ec: ExecutionContext,
                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
@@ -52,6 +55,9 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
       if (isEnabled(PaymentAllocation)) {
         paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
           case Right(paymentAllocations) =>
+            if (isEnabled(TxmEventsApproved)) {
+              auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+            }
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
           case _ => itvcErrorHandler.showInternalServerError()
         }
