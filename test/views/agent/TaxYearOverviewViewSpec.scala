@@ -389,7 +389,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               firstColumn.selectNth("div", 2).selectHead("a").attr("href") shouldBe
                 controllers.agent.routes.ChargeSummaryController.showChargeSummary(testYear, "testId2").url
 
-              row.selectNth("td", 2).text shouldBe "7 April 2020"
+              row.selectNth("td", 2).text shouldBe "7 Apr 2020"
               row.selectNth("td", 3).text shouldBe TaxYearOverviewMessages.paymentsTabPartPaid
               row.selectNth("td", 4).text shouldBe "£200.00"
             }
@@ -402,7 +402,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               firstColumn.selectNth("div", 2).selectHead("a").attr("href") shouldBe
                 controllers.agent.routes.ChargeSummaryController.showChargeSummary(testYear, "testId3").url
 
-              row.selectNth("td", 2).text shouldBe "8 April 2020"
+              row.selectNth("td", 2).text shouldBe "8 Apr 2020"
               row.selectNth("td", 3).text shouldBe TaxYearOverviewMessages.paymentsTabUnpaid
               row.selectNth("td", 4).text shouldBe "£100.00"
             }
@@ -411,7 +411,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 1).selectHead("div").selectHead("a").text shouldBe TaxYearOverviewMessages.paymentsTabPaymentOnAccount1
               row.selectNth("td", 1).selectHead("div").selectHead("a").attr("href") shouldBe
                 controllers.agent.routes.ChargeSummaryController.showChargeSummary(testYear, "testId").url
-              row.selectNth("td", 2).text shouldBe LocalDate.now.toLongDate
+              row.selectNth("td", 2).text shouldBe LocalDate.now.toLongDateShort
               row.selectNth("td", 3).text shouldBe TaxYearOverviewMessages.paymentsTabPaid
               row.selectNth("td", 4).text shouldBe "£100.00"
             }
@@ -423,7 +423,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             }
 
             "display the Due date in the Payments tab for late payment interest POA1" in new Setup(view()) {
-              content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(1).toLongDate
+              content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(1).toLongDateShort
             }
 
             "display the Status in the payments tab for late payment interest POA1" in new Setup(view()) {
@@ -442,7 +442,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             }
 
             "display the Due date in the Payments tab for late payment interest POA2" in new Setup(view()) {
-              content.selectHead("#payments-table tr:nth-child(6) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(2).toLongDate
+              content.selectHead("#payments-table tr:nth-child(6) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(2).toLongDateShort
             }
 
             "display the Status in the payments tab for late payment interest POA2" in new Setup(view()) {
@@ -461,7 +461,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             }
 
             "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(view()) {
-              content.selectHead("#payments-table tr:nth-child(7) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(3).toLongDate
+              content.selectHead("#payments-table tr:nth-child(7) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(3).toLongDateShort
             }
 
             "display the Status in the payments tab for late payment interest remaining balance" in new Setup(view()) {

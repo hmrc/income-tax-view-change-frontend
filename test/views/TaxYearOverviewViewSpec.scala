@@ -273,7 +273,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Due date in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 June 2019"
+      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Jun 2019"
     }
 
     "display the Status in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
@@ -292,7 +292,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Due date in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 July 2019"
+      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 Jul 2019"
     }
 
     "display the Status in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
@@ -311,7 +311,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe "15 August 2019"
+      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe "15 Aug 2019"
     }
 
     "display the Status in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
