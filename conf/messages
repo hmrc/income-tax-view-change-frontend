@@ -133,8 +133,8 @@ home.self-assessment.updatesLink                                = View your Self
 home.view-self-assessment.Link                                  = View your Self Assessment tax years
 home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
 
-home.overdue.message                                            = You have overdue payments. You will be charged interest on these until they are paid in full.
-home.agent.overdue.message                                      = You have overdue payments. You will be charged interest on these until they are paid in full.
+home.overdue.message                                            = You have overdue payments. You may be charged interest on these until they are paid in full.
+home.agent.overdue.message                                      = You have overdue payments. You may be charged interest on these until they are paid in full.
 
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
@@ -155,9 +155,11 @@ taxYears.complete                                              = COMPLETE
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
-taxYears.oldSa.content.1									   = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
-taxYears.oldSa.content.2									   = Self Assessment for Agents Account (opens in new tab)
-taxYears.oldSa.content.3									   =. This will be a different Government Gateway ID and password to your Agent Services account.
+taxYears.oldSa.content.text                                    = To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
+taxYears.oldSa.content.link                                    = Self Assessment online account (opens in new tab)
+taxYears.oldSa.agent.content.1								   = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
+taxYears.oldSa.agent.content.2								   = Self Assessment for Agents Account (opens in new tab)
+taxYears.oldSa.agent.content.3								   =. This will be a different Government Gateway ID and password to your Agent Services account.
 
 ## Tax Year Overview ##
 tax-year-overview.heading                                           = Tax year overview

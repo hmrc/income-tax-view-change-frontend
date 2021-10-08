@@ -108,6 +108,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val viewReturn = "View return"
     val tableHeadingTaxYear = "Tax year"
     val tableHeadingOptions = "Options"
+    val saLink = "Self Assessment online account (opens in new tab)"
+    val saNote = s"To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous $saLink."
   }
 
   // Home Page Messages
