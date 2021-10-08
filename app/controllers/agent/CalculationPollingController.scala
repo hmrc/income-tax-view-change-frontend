@@ -38,8 +38,15 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching {
   
-  def calculationPoller(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
+  def calculationPoller(taxYear: Int, isFinalCalc: Boolean): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit agent =>
+
+      lazy val successfulPollRedirect: Call = if (isFinalCalc) {
+        controllers.agent.routes.FinalTaxCalculationController.show(taxYear)
+      } else {
+        controllers.agent.routes.TaxYearOverviewController.show(taxYear)
+      }
+
       getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
         (request.session.get(SessionKeys.calculationId), user.nino) match {
           case (Some(calculationId), nino) => {
@@ -47,7 +54,7 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
             pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino) flatMap {
               case OK =>
                 Logger.info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
-                Future.successful(Redirect(controllers.agent.routes.FinalTaxCalculationController.show(taxYear)))
+                Future.successful(Redirect(successfulPollRedirect))
               case _ =>
                 Logger.info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
                 Future.successful(itvcErrorHandler.showInternalServerError())

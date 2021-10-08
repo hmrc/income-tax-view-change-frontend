@@ -40,8 +40,12 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
   
-  val url: String = s"http://localhost:$port" + controllers.agent.routes.CalculationPollingController.calculationPoller(taxYear).url
-  
+  val urlFinalCalcFalse: String = s"http://localhost:$port" + controllers.agent.routes.CalculationPollingController
+    .calculationPoller(taxYear, isFinalCalc = false).url
+
+  val urlFinalCalcTrue: String = s"http://localhost:$port" + controllers.agent.routes.CalculationPollingController
+    .calculationPoller(taxYear, isFinalCalc = true).url
+
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
   def calculationStub(taxYearString: String = "2017-18"): Unit = {
@@ -107,11 +111,11 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
   lazy val playSessionCookieNoCalcId: String = bakeSessionCookie(clientDetailsWithConfirmationNoCalcId)
   
-  s"calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testYearInt).url}" when {
+  s"calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}" when {
     
     "the user is authorised with an active enrolment" should {
       
-      "redirect the user to the final tax calculation page" which {
+      "redirect the user to the tax year overview page" which {
         lazy val result = {
           stubAuthorisedAgentUser(authorised = true)
           calculationStub()
@@ -121,7 +125,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           )
 
           await(
-            ws.url(url)
+            ws.url(urlFinalCalcFalse)
               .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
               .withFollowRedirects(false)
               .get()
@@ -132,8 +136,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           result.status shouldBe SEE_OTHER
         }
         
-        s"redirect to '${controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url}''" in {
-          result.header("Location").head shouldBe controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url
+        s"redirect to '${controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url}''" in {
+          result.header("Location").head shouldBe controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url
         }
         
       }
@@ -150,7 +154,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             )
 
             await(
-              ws.url(url)
+              ws.url(urlFinalCalcFalse)
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
                 .withFollowRedirects(false)
                 .get()
@@ -172,7 +176,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             )
 
             await(
-              ws.url(url)
+              ws.url(urlFinalCalcFalse)
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
                 .withFollowRedirects(false)
                 .get()
@@ -195,7 +199,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             )
 
             await(
-              ws.url(url)
+              ws.url(urlFinalCalcFalse)
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
                 .withFollowRedirects(false)
                 .get()
@@ -209,6 +213,40 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       
     }
     
+  }
+
+  s"Calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testTaxYear, isFinalCalc = true).url}" when {
+
+    "the user is authorised with active enrolment and at the end of year" should {
+
+      "redirect to the final tax year overview page" which {
+
+        lazy val result = {
+          stubAuthorisedAgentUser(authorised = true)
+          calculationStub()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          await(
+            ws.url(urlFinalCalcTrue)
+              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
+              .withFollowRedirects(false)
+              .get()
+          )
+        }
+
+        "has the result of SEE_OTHER (303)" in {
+          result.status shouldBe SEE_OTHER
+        }
+
+        s"redirect to '${controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url}''" in {
+          result.header("Location").head shouldBe controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url
+        }
+      }
+    }
+
   }
 
 }
