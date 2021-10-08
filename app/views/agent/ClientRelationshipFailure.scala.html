@@ -36,7 +36,7 @@
 @mainTemplate(pageTitle = messages("agent.client_relationship_failure.heading")) {
 
 @h1(msg ="agent.client_relationship_failure.heading", classes="govuk-heading-l")
-    @p{
+    @p(){
         @Html(messages(
            "agent.client_relationship_failure.info",
            <a href={appConfig.clientAuthorisationGuidance} target="_blank">{messages("agent.client_relationship_failure.info.link")}</a>

@@ -19,7 +19,7 @@ package views.agent
 import assets.PaymentAllocationsTestConstants._
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.paymentAllocationCharges.PaymentAllocationViewModel
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.select.Elements
 import testUtils.ViewSpec
@@ -86,14 +86,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       def allocationDetail(sapDocNumber: String, taxPeriodEndDate: String,
                            mainType: String, chargeType: String, amount: BigDecimal): AllocationDetail =
         AllocationDetail(transactionId = Some(sapDocNumber), Some("2017-03-23"), to = Some(taxPeriodEndDate),
-          chargeType = Some(chargeType), mainType = Some(mainType), amount = Some(amount), Some(1.23))
+          chargeType = Some(chargeType), mainType = Some(mainType), amount = Some(amount), Some(1.23), Some("chargeReference1"))
 
       def viewModel(allocationDetailWithClearingDate: (AllocationDetail, String)*): PaymentAllocationViewModel = {
         val paymentAllocations = testValidPaymentAllocationsModel.copy(allocations = allocationDetailWithClearingDate.map(_._1))
 
         PaymentAllocationViewModel(paymentAllocationChargesModel,
           originalPaymentAllocationWithClearingDate = allocationDetailWithClearingDate.map {
-            case (allocationDetail, clearingDate) => (paymentAllocations, Some(allocationDetail), Some(clearingDate))
+            case (allocationDetail, clearingDate) => AllocationDetailWithClearingDate(Some(allocationDetail), Some(clearingDate))
           }
         )
       }

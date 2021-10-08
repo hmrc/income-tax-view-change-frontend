@@ -217,6 +217,56 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ))
     }
 
+    s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
+      enable(ChargeHistory)
+      enable(PaymentAllocation)
+      stubAuthorisedAgentUser(authorised = true)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      stubGetFinancialDetailsSuccess()
+
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(NOT_FOUND, Json.parse(
+        """
+          |{
+          |   "code": "NO_DATA_FOUND",
+          |   "reason": "The remote endpoint has indicated that no match found for the reference provided."
+          |}
+          |""".stripMargin))
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+      )
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+      )
+    }
+
+    s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
+      enable(ChargeHistory)
+      enable(PaymentAllocation)
+      stubAuthorisedAgentUser(authorised = true)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      stubGetFinancialDetailsSuccess()
+
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(FORBIDDEN, Json.parse(
+        """
+          |{
+          |   "code": "REQUEST_NOT_PROCESSED",
+          |   "reason": "The remote endpoint has indicated that request could not be processed."
+          |}
+          |""".stripMargin))
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+      )
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+      )
+    }
+
     "return a technical difficulties page to the user" when {
       "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
         enable(ChargeHistory)
@@ -225,11 +275,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         stubGetFinancialDetailsSuccess()
 
-        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(NOT_FOUND, Json.parse(
+        IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "testId")(INTERNAL_SERVER_ERROR, Json.parse(
           """
             |{
-            |   "code": "NO_DATA_FOUND",
-            |   "reason": "The remote endpoint has indicated that no match found for the reference provided."
+            |   "code": "SERVER_ERROR",
+            |   "reason": "DES is currently experiencing problems that require live service intervention."
             |}
             |""".stripMargin))
 

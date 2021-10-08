@@ -47,7 +47,7 @@
 
 @taxCalculationOverview(overview: CalcOverview) = {
     <table id="income-deductions-table">
-        <caption class="govuk-table__caption heading-large">@messages("taxCal_breakdown.heading")</caption>
+        <caption class="govuk-table__caption heading-large">@messages("tax-year-overview.tax-calculation")</caption>
 
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header bold">@messages("tax-year-overview.section")</th>
@@ -113,11 +113,11 @@
                         @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     </td>
                     @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                        <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                         <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
                         <td>@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
                     } else {
-                        <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                         <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
                         <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
                     }
@@ -207,7 +207,7 @@
                         @messages("tax-year-overview.total-due")
                     } else {
                         @overview.timestamp.map { timestamp =>
-                            @{messages("tax-year-overview.estimate", (taxYear - 1).toString, timestamp.toZonedDateTime.toLocalDate.toLongDate)}
+                            @{messages("tax-year-overview.tax-calculation.in-year", s"${taxYear - 1}", s"$taxYear")}
                         }
                     }
                 </dd>

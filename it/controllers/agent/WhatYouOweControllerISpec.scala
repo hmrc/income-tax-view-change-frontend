@@ -14,6 +14,7 @@ import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -146,16 +147,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         OK, propertyOnlyResponseWithMigrationData(previousTaxYearEnd.toInt, Some(currentTaxYearEnd.toString)))
 
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, currentTaxYearEnd.toString, LocalDate.now().minusDays(15).toString)
+      val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
-      )(OK, testValidFinancialDetailsModelJson(
-        2000, 2000, currentTaxYearEnd.toString, LocalDate.now().minusDays(15).toString))
+      )(OK, financialDetailsResponseJson)
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()))
+      val whatYouOweChargesList = {
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == currentTaxYearEnd.toString)
+        WhatYouOweChargesList(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+        )
+      }
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
@@ -605,15 +615,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear.toInt - 1, Some(testTaxYear)))
 
       And("I wiremock stub a multiple financial details response")
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock)
+      val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-        testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock))
+        financialDetailsResponseJson)
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(noDunningLock)))
+      val whatYouOweChargesList = {
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        WhatYouOweChargesList(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+        )
+      }
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with no dunningLocks")
       result should have(
@@ -635,15 +655,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
       And("I wiremock stub a multiple financial details response with dunning lock present")
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock)
+      val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-        testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock))
+        financialDetailsResponseJson)
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(oneDunningLock)))
+      val whatYouOweChargesList = {
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        WhatYouOweChargesList(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+        )
+      }
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with dunning lock present")
       result should have(
@@ -665,15 +695,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
       And("I wiremock stub a multiple financial details response with dunning locks present")
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks)
+      val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-        testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks))
+        financialDetailsResponseJson)
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(twoDunningLocks)))
+      val whatYouOweChargesList = {
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+        WhatYouOweChargesList(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+        )
+      }
+      AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with multiple dunningLocks")
       result should have(

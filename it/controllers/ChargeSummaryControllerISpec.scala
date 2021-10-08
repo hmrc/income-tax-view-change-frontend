@@ -185,6 +185,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
+
     "load the page when the late payment interest flag is true and paymentAllocation FS is enabled but chargeHistory FS is disabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -206,9 +207,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("Payment history"),
-        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Payment allocated to Income Tax for remaining balance")
+        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
+
       )
     }
+
     "load the page when the late payment interest flag is true and both paymentAllocation and chargeHistory FS are disabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -268,6 +271,75 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitle("Late payment interest on payment on account 2 of 2 - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("")
+      )
+    }
+  }
+
+
+  s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
+    enable(ChargeHistory)
+    enable(PaymentAllocation)
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(NOT_FOUND, Json.parse(
+      """
+        |{
+        |   "code": "NO_DATA_FOUND",
+        |   "reason": "The remote endpoint has indicated that no match found for the reference provided."
+        |}
+        |""".stripMargin))
+
+    val result = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
+
+    result should have(
+      httpStatus(OK),
+      pageTitle("Remaining balance - Business Tax account - GOV.UK")
+    )
+  }
+
+  s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
+    enable(ChargeHistory)
+    enable(PaymentAllocation)
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(FORBIDDEN, Json.parse(
+      """
+        |{
+        |   "code": "REQUEST_NOT_PROCESSED",
+        |   "reason": "The remote endpoint has indicated that request could not be processed."
+        |}
+        |""".stripMargin))
+
+    val result = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
+
+    result should have(
+      httpStatus(OK),
+      pageTitle("Remaining balance - Business Tax account - GOV.UK")
+    )
+  }
+
+  "return a technical difficulties page to the user" when {
+    "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
+      enable(ChargeHistory)
+      enable(PaymentAllocation)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(INTERNAL_SERVER_ERROR, Json.parse(
+        """
+          |{
+          |   "code": "SERVER_ERROR",
+          |   "reason": "DES is currently experiencing problems that require live service intervention."
+          |}
+          |""".stripMargin))
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
+
+      result should have(
+        httpStatus(INTERNAL_SERVER_ERROR),
+        pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
       )
     }
   }

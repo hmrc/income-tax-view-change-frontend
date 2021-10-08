@@ -130,7 +130,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-				setupMockGetFinancialDetails(testYear, "AA111111A")(testFinancialDetailsErrorModel)
+				setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(testFinancialDetailsErrorModel)
 				mockShowInternalServerError()
 
 				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
@@ -144,7 +144,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
+				setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
 				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
 					NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
 				)
@@ -161,7 +161,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayNoDataFound)
-				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
+				setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
 				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
 					ObligationsModel(Nil)
 				)
@@ -187,7 +187,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-				setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
+				setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
 				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
 					ObligationsModel(Nil)
 				)

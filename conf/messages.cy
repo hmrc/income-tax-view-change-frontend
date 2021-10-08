@@ -61,8 +61,8 @@ home.tax-years.viewPayments                                     = Bwrw golwg dro
 home.manage-income-tax.heading                                  = Rheoli Treth Incwm
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno Ffurflen Treth Incwm
 home.update-and-submit-your-returns.Link                        = Diweddaru a chyflwyno Ffurflen Treth Incwm
-home.overdue.message                                            = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.overdue.message                                            = Mae gennych daliadau sy’n hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 home.self-assessment.updatesLink                                 = Bwrw golwg dros eich blynyddoedd treth ar gyfer Hunanasesiad
@@ -86,9 +86,11 @@ taxYears.ongoing                                               = AR Y GWEILL
 taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
-taxYears.oldSa.content.1									   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
-taxYears.oldSa.content.2									   = Cyfrif Hunanasesiad ar gyfer Asiantau (yn agor tab newydd)
-taxYears.oldSa.content.3									   =. Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros eich blynyddoedd treth o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
+taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
+taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
+taxYears.oldSa.agent.content.2								   = Cyfrif Hunanasesiad ar gyfer Asiantau (yn agor tab newydd)
+taxYears.oldSa.agent.content.3								   =. Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Overview Page New##
 tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth
@@ -96,7 +98,8 @@ tax-year-overview.heading-secondary                             = 6 Ebrill {0} i
 tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-overview.estimate                                      = Amcangyfrif ar gyfer 6 Ebrill {0} i 28 Ion {1}
 tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
-tax-year-overview.tax-calculation                               = Cyfrifiad Treth
+tax-year-overview.tax-calculation                               = Cyfrifiad yn ystod y flwyddyn
+tax-year-overview.amount                                        = Swm
 tax-year-overview.payments                                      = Taliadau
 tax-year-overview.updates                                       = Diweddariadau
 tax-year-overview.income                                        = Incwm
@@ -119,8 +122,9 @@ tax-year-overview.payments.overdue                              = Yn hwyr
 tax-year-overview.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 
 ## Tax Year Overview Page new ##
-tax-year-overview.tax-calculation.no-calc                           = Dim cyfrifiad eto
-tax-year-overview.tax-calculation.no-calc.note                      = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
+tax-year-overview.tax-calculation.no-calc                       = Dim cyfrifiad eto
+tax-year-overview.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
+tax-year-overview.tax-calculation.in-year                       = Cyfrifiad yn ystod y flwyddyn 6 Ebrill {0} i 5 Ionawr {1}
 
 
 ## Income Breakdown Page ##
@@ -403,7 +407,6 @@ chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
 chargeSummary.overdue                                           = YN HWYR
-chargeSummary.remainingYear.text								= This is the remaining tax you owe for the {0} to {1} tax year.
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
@@ -621,3 +624,6 @@ paymentAllocation.paymentAllocations.bcd.vcnic2                 = Taliad wedi’
 paymentAllocation.paymentAllocations.bcd.nic4                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
 paymentAllocation.paymentAllocations.bcd.sl                     = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
 paymentAllocation.paymentAllocations.bcd.cgt                    = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
+paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
+paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill

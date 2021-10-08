@@ -31,6 +31,9 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
 
   private val docDetailsListJson: List[JsObject] =
     chargesList.allCharges.map(documentDetails) ++
+      chargesList.overduePaymentList
+        .filter(_.documentDetail.latePaymentInterestAmount.isDefined)
+        .map(latePaymentInterestDetails) ++
       chargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = userAuditDetails(user) ++
@@ -72,6 +75,13 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
       Json.obj()
     }
   }
+
+  private def latePaymentInterestDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(
+    "chargeUnderReview" -> docDateDetail.dunningLock,
+    "outstandingAmount" -> docDateDetail.documentDetail.interestRemainingToPay
+  ) ++
+    ("chargeType", getChargeType(docDateDetail.documentDetail, latePaymentCharge = true)) ++
+    ("dueDate", docDateDetail.documentDetail.interestEndDate)
 
   private def outstandingChargeDetails(outstandingCharge: OutstandingChargesModel) = Json.obj(
     "chargeType" -> "Remaining balance"

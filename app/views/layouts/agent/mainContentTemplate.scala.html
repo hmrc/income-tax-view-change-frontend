@@ -16,16 +16,10 @@
 
 @this()
 
-@(
-    link: String,
-    classes: String = "govuk-link govuk-body",
-    messageKey: String,
-    id: Option[String] = None,
-    target: Option[String] = None,
-    ariaLabel: Option[String] = None,
-    outerMessage: String = "",
-)(implicit messages: Messages)
+@(mainClass: String)(contentBlock: Html)
 
-<a href="@link" class="@classes" @id.map(id => s"id=$id") @target.map(target => s"target=$target")
-    aria-label="@ariaLabel.map(c=>s"$c")">@messages(messageKey)</a>@outerMessage
-
+<div class="govuk-grid-row">
+	<div class="@mainClass">
+		@contentBlock
+	</div>
+</div>

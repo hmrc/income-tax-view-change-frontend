@@ -1,0 +1,54 @@
+@*
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+
+@import implicits.ImplicitDateFormatterImpl
+@import implicits.ImplicitCurrencyFormatter._
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel)(implicit messages: Messages)
+@import implicitDateFormatter._
+
+@for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
+    <tbody class="govuk-table__body">
+
+        <tr>
+            <td class="govuk-table__cell" id="payment-allocation-@index">
+                <a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)}" class="govuk-link">
+                @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+                </a>
+                <br>
+                <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
+            </td>
+            <td class="govuk-table__cell">@paymentAllocation.clearingDate.get.toLocalDate.toLongDateShort</td>
+            <td class="govuk-table__cell">@paymentAllocation.allocationDetail.get.amount.get.toCurrencyString</td>
+        </tr>
+    </tbody>
+
+}
+@paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.map { outstandingAmount =>
+    @if(outstandingAmount != 0) {
+        <tbody class="govuk-table__body">
+
+            <tr id="credit-on-account">
+                <td class="govuk-table__cell">@messages("paymentAllocation.creditOnAccount")</td>
+                <td class="govuk-table__cell"></td>
+                <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
+            </tr>
+        </tbody>
+    }
+}
+

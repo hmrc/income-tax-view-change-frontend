@@ -106,6 +106,12 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "outstandingAmount" -> 125,
             "chargeUnderReview" -> false
           ),
+          Json.obj(
+            "chargeType" -> "Late payment interest for payment on account 1 of 2",
+            "dueDate" -> "2019-06-25",
+            "outstandingAmount" -> 42.5,
+            "chargeUnderReview" -> true
+          ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",
             "dueDate" -> outStandingCharges,

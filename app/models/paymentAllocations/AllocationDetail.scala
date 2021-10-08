@@ -28,7 +28,8 @@ case class AllocationDetail(transactionId: Option[String],
                             chargeType: Option[String],
                             mainType: Option[String],
                             amount: Option[BigDecimal],
-                            clearedAmount: Option[BigDecimal]) {
+                            clearedAmount: Option[BigDecimal],
+                            chargeReference: Option[String]) {
 
   def getPaymentAllocationKeyInPaymentAllocations: String = {
     FinancialDetail.getMessageKeyByTypes(mainType, chargeType)

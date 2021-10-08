@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components._
-@import views.html.layouts.layout
+package views.helpers
 
-@this(
-        mainTemplate: layout,
-        h1: h1,
-        p: p
-)
+import play.api.i18n.Messages
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language._
 
-@(backUrl: String)(implicit request: Request[_], messages: Messages)
+object CurrentLanguage {
 
-@mainTemplate(
-    pageTitle = messages("obligations.heading"),
-    backUrl = Some(backUrl)
-) {
-
-    @h1(msg = "obligations.heading")
-
-    @p(){@messages("obligations.noReports")}
+  def apply(default: Language = En)(implicit messages: Messages): Language = {
+    messages.lang.code match {
+      case En.code => En
+      case Cy.code => Cy
+      case _ => default
+    }
+  }
 
 }

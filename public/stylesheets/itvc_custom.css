@@ -89,6 +89,10 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
     margin-bottom: 0;
 }
 
+.margin-bottom-sixty {
+	margin-bottom: 60px;
+}
+
 @media(max-width: 1024px){
     .warning-wrapper{
         padding: 0 15px;

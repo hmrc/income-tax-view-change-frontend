@@ -16,13 +16,13 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.TaxCalculationDetailsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
-
-import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -31,6 +31,7 @@ import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxCalcBreakdown
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -40,7 +41,8 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
                                         retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                         calculationService: CalculationService,
                                         itvcErrorHandler: ItvcErrorHandler,
-                                        taxCalcBreakdown: TaxCalcBreakdown)
+                                        taxCalcBreakdown: TaxCalcBreakdown,
+                                        val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
@@ -55,6 +57,9 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
       implicit user => {
         calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
           case calcDisplayModel: CalcDisplayModel =>
+            if (isEnabled(TxmEventsApproved)) {
+              auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear))
+            }
             Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
           case CalcDisplayNoDataFound =>

@@ -17,7 +17,7 @@
 package assets
 
 import assets.BusinessDetailsIntegrationTestConstants._
-import assets.PaymentHistoryTestConstraints.oldBusiness1
+import assets.PaymentHistoryTestConstraints.{getCurrentTaxYearEnd, oldBusiness1}
 import assets.PropertyDetailsIntegrationTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.libs.json.{JsValue, Json}
@@ -57,7 +57,7 @@ object IncomeSourceIntegrationTestConstants {
 
 	val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
 		testMtdItId,
-		None,
+		Some(getCurrentTaxYearEnd.getYear.toString),
 		businesses = List(oldBusiness1),
 		property = Some(oldProperty)
 	)
@@ -172,12 +172,13 @@ object IncomeSourceIntegrationTestConstants {
 			Json.obj(
 				"taxYear" -> "9999",
 				"transactionId" -> "PAYID01",
-				"documentDescription" -> "Payment On Account",
+				"documentDescription" -> "TRM Amend Charge",
 				"outstandingAmount" -> -outstandingAmount,
 				"originalAmount" -> -originalAmount,
 				"documentDate" -> "2018-03-29",
 				"paymentLot" -> "081203010024",
-				"paymentLotItem" -> "000001"
+				"paymentLotItem" -> "000001",
+				"latePaymentInterestId" -> "latePaymentInterestId"
 			)
 		),
 		"financialDetails" -> Json.arr(

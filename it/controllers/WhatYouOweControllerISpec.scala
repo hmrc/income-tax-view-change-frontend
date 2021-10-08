@@ -25,6 +25,7 @@ import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -105,8 +106,11 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a multiple financial details response")
+            val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString)
+            val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString))
+              financialDetailsResponseJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -114,7 +118,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()))
+            val whatYouOweChargesList = {
+              val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+              WhatYouOweChargesList(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+                overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              )
+            }
+            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
@@ -222,15 +233,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a multiple financial details response")
+            val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock)
+            val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock))
+              financialDetailsResponseJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(noDunningLock)))
+            val whatYouOweChargesList = {
+              val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+              WhatYouOweChargesList(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+                overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              )
+            }
+            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
@@ -253,15 +274,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a multiple financial details response")
+            val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock)
+            val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock))
+              financialDetailsResponseJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(oneDunningLock)))
+            val whatYouOweChargesList = {
+              val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+              WhatYouOweChargesList(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+                overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              )
+            }
+            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
@@ -284,15 +315,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
             And("I wiremock stub a multiple financial details response")
+            val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks)
+            val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
+
             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks))
+              financialDetailsResponseJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges(twoDunningLocks)))
+            val whatYouOweChargesList = {
+              val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
+              WhatYouOweChargesList(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+                overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              )
+            }
+            AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")

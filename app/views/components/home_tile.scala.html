@@ -14,18 +14,15 @@
 * limitations under the License.
 *@
 
-@this()
+@import views.html.components.h2
 
-@(
-    link: String,
-    classes: String = "govuk-link govuk-body",
-    messageKey: String,
-    id: Option[String] = None,
-    target: Option[String] = None,
-    ariaLabel: Option[String] = None,
-    outerMessage: String = "",
-)(implicit messages: Messages)
+@this(h2: h2)
 
-<a href="@link" class="@classes" @id.map(id => s"id=$id") @target.map(target => s"target=$target")
-    aria-label="@ariaLabel.map(c=>s"$c")">@messages(messageKey)</a>@outerMessage
+@(id: String, heading: String)(content: Html)(implicit messages: Messages)
 
+<div id="@{id}" class="tile tile-no-border">
+	<div class="tile-body">
+		@h2(classes = "govuk-heading-m", msg = heading)
+		@content
+	</div>
+</div>
