@@ -95,8 +95,7 @@ class PaymentHistoryControllerSpec extends TestSupport
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
 
         val result: Future[Result] = controller.viewPaymentHistory()(fakeRequestConfirmedClient())
-
-        intercept[InternalServerException](result.futureValue)
+        result.failed.futureValue shouldBe an[InternalServerException]
 
       }
 
@@ -108,8 +107,7 @@ class PaymentHistoryControllerSpec extends TestSupport
         mockErrorIncomeSource()
 
         val result: Future[Result] = controller.viewPaymentHistory()(fakeRequestConfirmedClient())
-
-        intercept[InternalServerException](result.futureValue)
+        result.failed.futureValue shouldBe an[InternalServerException]
       }
     }
 

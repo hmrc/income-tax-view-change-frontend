@@ -29,7 +29,6 @@ import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{FinancialDetail, FinancialDetailsModel}
 import org.mockito.ArgumentMatchers.{any, eq => ameq}
 import org.mockito.Mockito.{never, verify}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -249,7 +248,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
-					intercept[Throwable](result.futureValue) shouldBe emulatedServiceError
+					result.failed.futureValue shouldBe an[Throwable]
+					result.failed.futureValue shouldBe emulatedServiceError
 				}
 			}
 		}

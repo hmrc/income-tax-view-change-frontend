@@ -43,8 +43,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "return an internal server exception when an error model is returned from the connector" in new Setup {
       setupMockNextUpdates(obligationsDataErrorModel)
 
-      intercept[InternalServerException](getObligationDueDates().futureValue)
-        .message shouldBe "Unexpected Exception getting obligation due dates"
+      getObligationDueDates().failed.futureValue shouldBe an[InternalServerException]
+      getObligationDueDates().failed.futureValue.getMessage shouldBe "Unexpected Exception getting obligation due dates"
     }
     "return a single overdue date" when {
       "the connector returns obligations with a single overdue date" in new Setup {
@@ -122,12 +122,16 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        the[Exception] thrownBy getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).futureValue should have message "Unexpected Exception getting next deadline due and Overdue Obligations"
+        val result = getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).failed.futureValue
+        result shouldBe an[Exception]
+        result.getMessage shouldBe "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        the[Exception] thrownBy getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).futureValue should have message "Dummy Error Message"
+        val result = getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).failed.futureValue
+        result shouldBe an[Exception]
+        result.getMessage shouldBe "Dummy Error Message"
       }
     }
   }

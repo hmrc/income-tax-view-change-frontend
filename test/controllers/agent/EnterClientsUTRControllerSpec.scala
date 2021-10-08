@@ -240,8 +240,8 @@ class EnterClientsUTRControllerSpec extends TestSupport
 					val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
 						ClientsUTRForm.utr -> validUTR
 					))
-
-					intercept[InternalServerException](result.futureValue).message shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
+					result.failed.futureValue shouldBe an[InternalServerException]
+					result.failed.futureValue.getMessage shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
 				}
 			}
     }

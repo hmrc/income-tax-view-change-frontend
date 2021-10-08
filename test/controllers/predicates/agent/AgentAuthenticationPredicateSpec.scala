@@ -74,7 +74,8 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     }
 
     "return a MissingAgentReferenceNumber where a user does not have it in their enrolments" in {
-      intercept[MissingAgentReferenceNumber](arnPredicate().apply(FakeRequest())(blankUser).left.value.futureValue)
+      val result = arnPredicate().apply(FakeRequest())(blankUser).left.value.failed.futureValue
+      result shouldBe an[MissingAgentReferenceNumber]
     }
 
     "return a custom result when a user does not have AgentReferenceNumber in their enrolments" in {

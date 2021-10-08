@@ -102,7 +102,7 @@ class PaymentControllerSpec extends TestSupport
 
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
 
-        intercept[Exception](result.futureValue)
+        result.failed.futureValue shouldBe an[Exception]
       }
 
       "an exception is returned by the connector" in new SetupTestPaymentController(Future.failed(new Exception("Exception Message"))) {
@@ -111,7 +111,8 @@ class PaymentControllerSpec extends TestSupport
 
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
 
-        intercept[Exception](result.futureValue)
+        result.failed.futureValue shouldBe an[Exception]
+        result.failed.futureValue.getMessage shouldBe "Exception Message"
 
       }
     }

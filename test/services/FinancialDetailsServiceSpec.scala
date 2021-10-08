@@ -142,8 +142,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
         }
 
-        intercept[InternalServerException](result.futureValue)
-          .message shouldBe "[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details"
+        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details"
       }
     }
     "financial details are returned successfully" should {
@@ -313,8 +313,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
 
-        intercept[InternalServerException](result.futureValue)
-          .message shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
+        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
       }
     }
 

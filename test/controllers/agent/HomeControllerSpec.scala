@@ -100,8 +100,8 @@ class HomeControllerSpec extends TestSupport
 
 				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-				intercept[InternalServerException](result.futureValue)
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				result.failed.futureValue shouldBe an[InternalServerException]
+				result.failed.futureValue.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 		"the call to retrieve income sources for the client is successful" when {
@@ -114,8 +114,8 @@ class HomeControllerSpec extends TestSupport
 
 					val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-					intercept[InternalServerException](result.futureValue)
-						.message shouldBe "obligation test exception"
+					result.failed.futureValue shouldBe an[InternalServerException]
+					result.failed.futureValue.getMessage shouldBe "obligation test exception"
 				}
 			}
 			"retrieving their obligation due date details was successful" when {
@@ -129,8 +129,8 @@ class HomeControllerSpec extends TestSupport
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-						intercept[InternalServerException](result.futureValue)
-							.message shouldBe "charge test exception"
+						result.failed.futureValue shouldBe an[InternalServerException]
+						result.failed.futureValue.getMessage shouldBe "charge test exception"
 					}
 				}
 				"retrieving their charge due date details was successful" should {

@@ -107,7 +107,8 @@ class WhatYouOweServiceSpec extends TestSupport {
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
-          val ex = intercept[Exception](res.futureValue)
+          val ex = res.failed.futureValue
+          ex shouldBe an[Exception]
           ex.getMessage shouldBe "[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges"
         }
       }
@@ -120,7 +121,8 @@ class WhatYouOweServiceSpec extends TestSupport {
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
-          val ex = intercept[Exception](res.futureValue)
+          val ex = res.failed.futureValue
+          ex shouldBe an[Exception]
           ex.getMessage shouldBe "[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details"
         }
       }

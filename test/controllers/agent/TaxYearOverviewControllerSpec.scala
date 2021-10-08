@@ -107,9 +107,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockErrorIncomeSource()
 				mockShowInternalServerError()
-
-				intercept[InternalServerException](controller.show(taxYear = testYear)(fakeRequestConfirmedClient()).futureValue)
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				val result = controller.show(taxYear = testYear)(fakeRequestConfirmedClient()).failed.futureValue
+				result shouldBe an[InternalServerException]
+				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 		"there was a problem retrieving the calculation for the user" should {

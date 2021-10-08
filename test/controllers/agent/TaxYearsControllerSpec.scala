@@ -90,8 +90,9 @@ class TaxYearsControllerSpec extends TestSupport
 				mockErrorIncomeSource()
 				mockShowInternalServerError()
 
-				intercept[InternalServerException](controller.show()(fakeRequestConfirmedClient()).futureValue)
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				val result = controller.show()(fakeRequestConfirmedClient()).failed.futureValue
+				result shouldBe an[InternalServerException]
+				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 		"there was a problem retrieving a list of calculations and their years" should {

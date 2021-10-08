@@ -65,6 +65,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
     "when MongoLock is acquired and retryable response(502) is received from calculation service for all retries" should {
       "return a retryable(502) response back" in {
+
         mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.BAD_GATEWAY, "bad gateway"))
 
