@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *@
-@import config.FrontendAppConfig
+
 @import views.helpers.CurrentLanguage
-@import views.html.helpers.injected.BetaBanner
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header => HmrcHeaderArgs}
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import play.twirl.api.HtmlFormat
 @import views.html.layouts.mainContentLayout
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 
 @this(
     appConfig: config.FrontendAppConfig,
@@ -57,7 +56,8 @@
         serviceUrl = controllers.routes.HomeController.home.url,
         containerClasses = "govuk-width-container",
         language = CurrentLanguage(),
-        signOutHref = Some(controllers.routes.SignOutController.signOut.url)
+        signOutHref = Some(controllers.routes.SignOutController.signOut.url),
+        userResearchBanner =  Some(UserResearchBanner(language = CurrentLanguage(), url = appConfig.enterSurveyUrl))
     ))
 }
 
