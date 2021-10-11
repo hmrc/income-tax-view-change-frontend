@@ -1,3 +1,4 @@
+
 # IF THE MICRO-SERVICE DOES NOT NEED ANY TEST-ONLY END-POINTS (ALWAYS PREFERRED) DELETE THIS FILE.
 
 # !!!WARNING!!! This file MUST NOT be referenced in the "application.conf" file to avoid risk of rolling test routes in the production environment.
@@ -17,30 +18,30 @@ POST        /report-quarterly/income-and-expenses/view/test-only/stub-client    
 GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.show
 POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.submit
 
-
++ nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/proxy                    testOnly.controllers.StubSchemaController.stubProxy
 
-
++ nocsrf
 DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy
 
 
 GET         /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.show
 POST        /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.submit
 
-
++ nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/stub-data/proxy                      testOnly.controllers.StubDataController.stubProxy
 
-
++ nocsrf
 DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy                       testOnly.controllers.StubDataController.deleteAllProxy
 
 GET         /report-quarterly/income-and-expenses/view/test-only/add-user                             testOnly.controllers.StubUsersController.show
 POST        /report-quarterly/income-and-expenses/view/test-only/add-user                             testOnly.controllers.StubUsersController.submit
 
-
++ nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       testOnly.controllers.StubUsersController.stubUsers
 
 GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show
-
++ nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.submit
 
 GET         /report-quarterly/income-and-expenses/view/test-only/test-headers                         testOnly.controllers.TestHeadersController.showTestHeaders

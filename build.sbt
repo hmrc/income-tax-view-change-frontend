@@ -95,7 +95,6 @@ lazy val microservice = Project(appName, file("."))
     addTestReportOption(IntegrationTest, "int-test-reports"),
     parallelExecution in IntegrationTest := false,
     TwirlKeys.templateImports ++= Seq(
-//      "uk.gov.hmrc.govukfrontend.views.html.helpers._",
       "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
@@ -105,6 +104,3 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers ++= Seq(
     Resolver.jcenterRepo
   ))
-//  .settings(
-//    Compile / sources := Seq(file("/Users/joe/projects/hmrc/income-tax-view-change-frontend/app/testOnly/views/templates/StubTemplate.scala.html"))
-//  )
