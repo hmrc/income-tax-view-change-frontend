@@ -116,9 +116,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val updateType: String = "Update type"
     val updateIncomeSource: String = "Income source"
     val updateDateSubmitted: String = "Date submitted"
-    val lpiPaymentOnAccount1: String = "Late payment interest on payment on account 1 of 2"
-    val lpiPaymentOnAccount2: String = "Late payment interest on payment on account 2 of 2"
-    val lpiRemainingBalance: String = "Late payment interest on remaining balance"
+    val lpiPaymentOnAccount1: String = "Late payment interest for payment on account 1 of 2"
+    val lpiPaymentOnAccount2: String = "Late payment interest for payment on account 2 of 2"
+    val lpiRemainingBalance: String = "Late payment interest for remaining balance"
     val paymentUnderReview: String = "Payment under review"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
@@ -273,7 +273,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Due date in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 June 2019"
+      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Jun 2019"
     }
 
     "display the Status in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
@@ -292,7 +292,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Due date in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 July 2019"
+      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 Jul 2019"
     }
 
     "display the Status in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
@@ -311,7 +311,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe "15 August 2019"
+      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe "15 Aug 2019"
     }
 
     "display the Status in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
