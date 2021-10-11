@@ -45,14 +45,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     SessionKeys.confirmedClient -> "true"
   )
 
-  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now, "")
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now , "")
-
-  val chargeHistories: List[ChargeHistoryModel] = List(
-    chargeHistoryModel)
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29).toString, "ITSA- POA 1", 123456789012345.67, LocalDate.now, ""))
 
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
@@ -112,7 +107,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "TRM New Charge"),
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         agentReferenceNumber = Some("1")
@@ -121,7 +116,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
-        elementTextBySelector("main h2")("Payment breakdown")
+        elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
 
@@ -152,7 +147,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
-        elementTextBySelector("main h2")("Payment breakdown")
+        elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
 
@@ -172,7 +167,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
-        elementTextBySelector("main h2")("Payment history")
+        elementTextBySelector("main h2")("Important Payment breakdown"),
+        elementTextBySelector("main h3")("Payment history")
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -323,20 +319,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           FinancialDetail(
             taxYear = currentTaxYearEnd.getYear.toString,
             transactionId = Some("testId"),
-            mainType = Some("TRM New Charge"),
-            chargeType = chargeType,
-            totalAmount = Some(100),
-            originalAmount = Some(10.34),
-            items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
-          ),
-          FinancialDetail(
-            taxYear = currentTaxYearEnd.getYear.toString,
-            transactionId = Some("testId"),
             mainType = Some("SA Payment on Account 1"),
             chargeType = chargeType,
             totalAmount = Some(100),
             originalAmount = Some(10.34),
-            items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+            items = Some(Seq(SubItem(Some(LocalDate.now.toString), dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal"))))
           ),
           FinancialDetail(
             taxYear = currentTaxYearEnd.getYear.toString,
@@ -345,7 +332,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             chargeType = chargeType,
             totalAmount = Some(100),
             originalAmount = Some(10.34),
-            items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+            items = Some(Seq(SubItem(Some(LocalDate.now.toString), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
           )
         )
       ))

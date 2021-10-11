@@ -34,11 +34,7 @@ import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
-  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now, "")
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now , "")
-
-  val chargeHistories: List[ChargeHistoryModel] = List(
-    chargeHistoryModel)
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now, ""))
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
@@ -60,6 +56,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       Given("the TxmEventsApproved feature switch is on")
       enable(TxmEventsApproved)
+      disable(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
 
@@ -185,7 +182,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-
     "load the page when the late payment interest flag is true and paymentAllocation FS is enabled but chargeHistory FS is disabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -274,7 +270,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
   }
-
 
   s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
     enable(ChargeHistory)

@@ -17,7 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
-import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel}
+import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
