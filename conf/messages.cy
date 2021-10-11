@@ -99,6 +99,7 @@ tax-year-overview.calculation-date                              = Dyddiad y cyfr
 tax-year-overview.estimate                                      = Amcangyfrif ar gyfer 6 Ebrill {0} i 28 Ion {1}
 tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
 tax-year-overview.tax-calculation                               = Cyfrifiad yn ystod y flwyddyn
+tax-year-overview.section                                       = Adran
 tax-year-overview.amount                                        = Swm
 tax-year-overview.payments                                      = Taliadau
 tax-year-overview.updates                                       = Diweddariadau
@@ -115,8 +116,11 @@ tax-year-overview.payments.amount                               = Swm
 tax-year-overview.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
 tax-year-overview.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
 tax-year-overview.payments.balancingCharge.text                 = Balans sy’n weddill
+tax-year-overview.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
+tax-year-overview.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
+tax-year-overview.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 tax-year-overview.payments.paid                                 = Talwyd
-tax-year-overview.payments.unpaid                               = Na dalwyd
+tax-year-overview.payments.unpaid                               = Na thalwyd
 tax-year-overview.payments.part-paid                            = Talwyd yn rhannol
 tax-year-overview.payments.overdue                              = Yn hwyr
 tax-year-overview.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
@@ -393,7 +397,7 @@ whatYouOwe.over-due.interest.line1                              = Llog am dalu�
 whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
-
+whatYouOwe.balancingCharge.interest.line1.text                  = Llog ar y balans sy’n weddill
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2

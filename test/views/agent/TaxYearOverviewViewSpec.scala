@@ -200,9 +200,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val paymentsTabPaymentOnAccount1: String = "Payment on account 1 of 2"
     val paymentsTabPaymentOnAccount2: String = "Payment on account 2 of 2"
     val paymentsTabBalancingCharge: String = "Remaining balance"
-    val lpiPaymentOnAccount1: String = "Late payment interest on payment on account 1 of 2"
-    val lpiPaymentOnAccount2: String = "Late payment interest on payment on account 2 of 2"
-    val lpiRemainingBalance: String = "Late payment interest on remaining balance"
+    val lpiPaymentOnAccount1: String = "Late payment interest for payment on account 1 of 2"
+    val lpiPaymentOnAccount2: String = "Late payment interest for payment on account 2 of 2"
+    val lpiRemainingBalance: String = "Late payment interest for remaining balance"
 
     val paymentsTabPaid: String = "Paid"
     val paymentsTabPartPaid: String = "Part Paid"
