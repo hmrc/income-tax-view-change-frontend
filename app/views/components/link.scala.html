@@ -26,4 +26,6 @@
     outerMessage: String = "",
 )(implicit messages: Messages)
 
-<a href="@link" class="@classes" @id.map(id => s"id=$id") @target.map(target => s"target=$target") @ariaLabel.map(ariaLabel=>s"aria-label=$ariaLabel")>@messages(messageKey)</a>@outerMessage
+<a href="@link" class="@classes" @id.map(id => s"id=$id") @target.map(target => s"target=$target")
+    aria-label="@ariaLabel.map(c=>s"$c")">@messages(messageKey)</a>@outerMessage
+

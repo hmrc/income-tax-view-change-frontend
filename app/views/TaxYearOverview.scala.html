@@ -80,11 +80,11 @@
                         @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     </td>
                     @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                        <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                         <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
                         <td>@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
                     } else {
-                        <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                         <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
                         <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
                     }

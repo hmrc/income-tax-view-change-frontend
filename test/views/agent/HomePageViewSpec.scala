@@ -136,7 +136,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "display an overdue warning message when a payment is overdue" in new Setup(overduePaymentExists = true) {
-        val overdueMessage = "! You have overdue payments. You will be charged interest on these until they are paid in full."
+        val overdueMessage = "! You have overdue payments. You may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
       }
 
