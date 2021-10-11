@@ -44,7 +44,7 @@ import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 

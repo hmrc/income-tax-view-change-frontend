@@ -24,7 +24,7 @@ import play.api.Logger
 import play.api.http.Status._
 import testOnly.models.TestHeadersModel
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
