@@ -95,28 +95,25 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-    await(
-      buildClient(uri)
-        .withHttpHeaders(headers: _*)
-        .get()
-    )
+    buildClient(uri)
+      .withHttpHeaders(headers: _*)
+      .get().futureValue
   }
 
   object IncomeTaxViewChangeFrontend {
 
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
-      buildClient("/agents" + uri.futureValue
+      buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies))
-        .get())
+        .get().futureValue
     }
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
-      buildClient("/agents" + uri.futureValue
+      buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
-        .post(body)
-      )
+        .post(body).futureValue
     }
 
     def getEnterClientsUTR: WSResponse = get("/client-utr")

@@ -17,8 +17,8 @@
 package models.financialDetails
 
 import assets.FinancialDetailsTestConstants.financialDetail
-import models.financialDetails.FinancialDetail.{getMessageKeyForChargeType, getMessageKeyForMainType, getMessageKeyByTypes}
-import uk.gov.hmrc.play.test.UnitSpec
+import models.financialDetails.FinancialDetail.{getMessageKeyByTypes, getMessageKeyForChargeType, getMessageKeyForMainType}
+import testUtils.UnitSpec
 
 class FinancialDetailSpec extends UnitSpec {
 

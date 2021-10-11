@@ -17,7 +17,6 @@
 package mocks.services
 
 import java.time.LocalDate
-
 import assets.IncomeSourcesWithDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
@@ -28,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import services.NextUpdatesService
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

@@ -38,9 +38,8 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
-import uk.gov.hmrc.play.test.UnitSpec
-import scala.concurrent.duration._
 
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with MaterializerSupport {

@@ -4,6 +4,7 @@ package controllers
 import helpers.ComponentSpecBase
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.SEE_OTHER
+import org.scalatest.Matchers._
 
 class ItvcLanguageControllerISpec extends ComponentSpecBase {
 

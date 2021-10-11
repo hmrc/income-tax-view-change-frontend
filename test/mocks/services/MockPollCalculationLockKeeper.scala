@@ -21,10 +21,11 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import repositories.MongoLockRepository
+import testUtils.UnitSpec
 import uk.gov.hmrc.lock.LockRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.PollCalculationLockKeeper
+
 import scala.concurrent.Future
 
 trait MockPollCalculationLockKeeper extends UnitSpec with MongoSpecSupport with MockitoSugar with BeforeAndAfterEach {
