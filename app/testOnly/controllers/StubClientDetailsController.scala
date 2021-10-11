@@ -59,7 +59,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
         postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
       ))), { data =>
         matchingStubConnector.stubClient(data) map { response =>
-          Logger.info(s"[StubClientDetailsController][submit] - matching stub, status: ${response.status}, body: ${response.body}")
+          Logger("application").info(s"[StubClientDetailsController][submit] - matching stub, status: ${response.status}, body: ${response.body}")
           Redirect(controllers.agent.routes.EnterClientsUTRController.show())
         }
       }

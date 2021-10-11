@@ -43,16 +43,16 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
 
   private def handleExceptions(request: Request[_]): PartialFunction[Throwable, Result] = {
     case _: BearerTokenExpired =>
-      Logger.info("[BaseFrontendController][handleExceptions] - User's bearer token expired, redirecting to timeout page")
+      Logger("application").info("[BaseFrontendController][handleExceptions] - User's bearer token expired, redirecting to timeout page")
       Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
     case ex: MissingAgentReferenceNumber =>
-      Logger.warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
+      Logger("application").warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
       itvcErrorHandler.showOkTechnicalDifficulties()(request)
     case ex: InsufficientEnrolments =>
-      Logger.warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
+      Logger("application").warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
       Redirect(controllers.agent.routes.ClientRelationshipFailureController.show())
     case ex: AuthorisationException =>
-      Logger.warn(s"[BaseFrontendController][handleExceptions] - AuthorisationException occurred - ${ex.reason}")
+      Logger("application").warn(s"[BaseFrontendController][handleExceptions] - AuthorisationException occurred - ${ex.reason}")
       Redirect(controllers.routes.SignInController.signIn())
     case _: NotFoundException =>
       NotFound(itvcErrorHandler.notFoundTemplate(request))

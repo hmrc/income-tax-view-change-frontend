@@ -64,7 +64,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
         } recover {
           case ex: Exception =>
-            Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")
+            Logger("application").error(s"Error received while getting what you page details: ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
         }
   }

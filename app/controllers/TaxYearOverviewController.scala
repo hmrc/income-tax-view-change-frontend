@@ -123,7 +123,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
             }
           }
         case CalcDisplayError =>
-          Logger.error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
+          Logger("application").error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
           Future.successful(itvcErrorHandler.showInternalServerError())
       }
   }

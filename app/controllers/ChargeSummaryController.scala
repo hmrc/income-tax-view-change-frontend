@@ -69,10 +69,10 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 						case Some(success: FinancialDetailsModel) if success.documentDetails.exists(_.transactionId == id) =>
 							doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments)
 						case Some(_: FinancialDetailsModel) =>
-							Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
+							Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
 							Future.successful(Redirect(controllers.routes.HomeController.home().url))
 						case _ =>
-							Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
+							Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
 							Future.successful(itvcErrorHandler.showInternalServerError())
 					}
 				}
@@ -122,7 +122,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 					latePaymentInterestCharge = isLatePaymentCharge
 				))
 			case _ =>
-				Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
+				Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
 				itvcErrorHandler.showInternalServerError()
 		}
 	}
