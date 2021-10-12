@@ -21,8 +21,9 @@
 @import models.nextUpdates.ObligationsModel
 @import java.time.LocalDate
 @import models.financialDetails.DocumentDetailWithDueDate
+@import views.html.partials.taxOverviewBreakdownPartial
 
-@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
 
 @(taxYear: Int, overviewOpt: Option[CalcOverview], documentDetailsWithDueDates: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String, isAgent: Boolean = true)(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -46,41 +47,7 @@
 }
 
 @taxCalculationOverview(overview: CalcOverview) = {
-    <table id="income-deductions-table">
-        <caption class="govuk-table__caption heading-large">@messages("tax-year-overview.tax-calculation")</caption>
-
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header bold">@messages("tax-year-overview.section")</th>
-            <th scope="col" class="govuk-table__header numeric bold">@messages("tax-year-overview.amount")</th>
-        </tr>
-
-        <tbody>
-        <tr>
-            <td>
-                <a href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
-            </td>
-            <td class="numeric">@{overview.income.toCurrencyString}</td>
-        </tr>
-        <tr>
-            <td>
-                <a href=@controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
-            </td>
-            <td class="numeric no-wrap">@{overview.deductions.toNegativeCurrency}</td>
-        </tr>
-        <tr>
-            <td class="total-section">@messages("tax-year-overview.taxable-income")</td>
-            <td class="numeric total-section">@{overview.totalTaxableIncome.toCurrencyString}</td>
-        </tr>
-    </table>
-
-    <table id="taxdue-payments-table" class="table--spaced-top">
-        <tr>
-            <td class="bold">
-                <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
-            </td>
-            <td  class="bold">@{overview.taxDue.toCurrencyString}</td>
-        </tr>
-    </table>
+    @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 }
 
 @paymentsContent = {
