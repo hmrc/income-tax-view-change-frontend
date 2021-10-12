@@ -29,7 +29,7 @@
 }
 
 @updateReturnLink(year: Int) = {
-	<a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="updateReturn-link-@year" href="@appConfig.submissionFrontendTaxOverviewUrl">
+	<a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="updateReturn-link-@year" href="@appConfig.submissionFrontendUrl">
 		@messages("taxYears.updateReturn")
 		<span class="visuallyhidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
 	</a>
