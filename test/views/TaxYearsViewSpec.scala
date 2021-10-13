@@ -118,6 +118,7 @@ class TaxYearsViewSpec extends ViewSpec {
         layoutContent.select(Selectors.p).text shouldBe taxYears.saNote
         layoutContent.selectFirst(Selectors.p).hasCorrectLinkWithNewTab(taxYears.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
       }
+
       "not appear if the user does not have a UTR" in new Setup(lastTaxCalcWithYearList){
         Option(document.selectFirst("#content p")) shouldBe None
       }
