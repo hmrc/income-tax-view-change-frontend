@@ -27,19 +27,19 @@
 @import viewModel.paymentAllocationChargeModel
 @import viewModel.originalPaymentAllocationWithClearingDate
 
-@originalPaymentAllocationWithClearingDate.map { case AllocationDetailWithClearingDate(allocationDetail, clearingDate) =>
-@defining(allocationDetail.get.getTaxYear(implicitDateFormatter)) { allocationTaxYear =>
+@originalPaymentAllocationWithClearingDate.map { allocation =>
+@defining(allocation.allocationDetail.get.getTaxYear(implicitDateFormatter)) { allocationTaxYear =>
 <tbody>
 <tr>
     <td>
-        <a href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocationDetail.get.transactionId.get)">
-            @messages(allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+        <a href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocation.allocationDetail.get.transactionId.get)">
+            @messages(allocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
         </a>
         <br>
         <span class="govuk-body-s">@messages("paymentAllocation.taxYear", s"${allocationTaxYear - 1}", s"$allocationTaxYear")</span>
     </td>
-    <td>@clearingDate.get.toLocalDate.toLongDateShort</td>
-    <td class="numeric">@allocationDetail.get.amount.get.toCurrencyString</td>
+    <td>@allocation.clearingDate.get.toLocalDate.toLongDateShort</td>
+    <td class="numeric">@allocation.allocationDetail.get.amount.get.toCurrencyString</td>
 </tr>
 </tbody>
 }
