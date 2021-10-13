@@ -25,7 +25,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.CalculationService
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
@@ -57,7 +57,7 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     when(mockCalculationService.getLatestCalculation(
       ArgumentMatchers.eq(nino),
       ArgumentMatchers.eq(idResult)
-    )(ArgumentMatchers.any())) thenReturn response
+    )(ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 
   def setupMockGetAllLatestCalculations(nino: String, orderedYears: List[Int])(response: List[CalculationResponseModelWithYear]): Unit =

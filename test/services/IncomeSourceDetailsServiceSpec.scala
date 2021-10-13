@@ -36,35 +36,35 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
 
       "return an IncomeSourceDetailsModel with business and property options" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(businessesAndPropertyIncome)
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe businessesAndPropertyIncome
+        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe businessesAndPropertyIncome
       }
     }
 
     "a result with just business details is returned" should {
       "return an IncomeSourceDetailsModel with just a business option" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(singleBusinessIncome)
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe singleBusinessIncome
+        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe singleBusinessIncome
       }
     }
 
     "a result with just property details is returned" should {
       "return an IncomeSourceDetailsModel with just a property option" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(propertyIncomeOnly)
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe propertyIncomeOnly
+        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe propertyIncomeOnly
       }
     }
 
     "a result with no income source details is returned" should {
       "return an IncomeSourceDetailsModel with no options" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(noIncomeDetails)
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe noIncomeDetails
+        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe noIncomeDetails
       }
     }
 
     "a result where the Income Source Details are error" should {
       "return an IncomeSourceError" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(errorResponse)
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe errorResponse
+        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe errorResponse
       }
     }
   }

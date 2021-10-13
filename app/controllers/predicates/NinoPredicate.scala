@@ -48,20 +48,20 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
 
     (request.nino, request.session.get("nino")) match {
       case (Some(nino), _) =>
-        Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from request")
+        Logger("application").debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from request")
         Future.successful(Right(buildMtdUserWithNino(nino)))
       case (_, Some(nino)) =>
-        Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from stored session")
+        Logger("application").debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from stored session")
         Future.successful(Right(buildMtdUserWithNino(nino)))
       case (_, _) =>
-        Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO not found for user.  Requesting from NinoLookupService")
+        Logger("application").debug(s"[NinoPredicate][buildMtdUserWithNino] NINO not found for user.  Requesting from NinoLookupService")
         ninoLookupService.getNino(request.mtditid).map {
           case nino: NinoResponseSuccess =>
-            Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from NinoLookupService")
+            Logger("application").debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from NinoLookupService")
             auditNinoLookup(nino, request.mtditid)
             Left(Redirect(request.uri).addingToSession("nino" -> nino.nino))
           case error: NinoResponseError =>
-            Logger.error(s"[NinoPredicate][buildMtdUserWithNino] NINO could not be retrieved from NinoLookupService")
+            Logger("application").error(s"[NinoPredicate][buildMtdUserWithNino] NINO could not be retrieved from NinoLookupService")
             auditNinoLookupError(error, request.mtditid)
             Left(itvcErrorHandler.showInternalServerError)
         }

@@ -63,11 +63,11 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
             Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
           case CalcDisplayNoDataFound =>
-            Logger.warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
+            Logger("application").warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
             Future.successful(itvcErrorHandler.showInternalServerError())
 
           case CalcDisplayError =>
-            Logger.error(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
+            Logger("application").error(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
       }

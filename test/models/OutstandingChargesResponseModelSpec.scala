@@ -20,7 +20,7 @@ import assets.OutstandingChargesTestConstants._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class OutstandingChargesResponseModelSpec extends UnitSpec with Matchers {
 

@@ -25,7 +25,7 @@ import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,16 +52,16 @@ class PayApiConnector @Inject()(val http: HttpClient,
       case response if response.status == CREATED =>
         response.json.validate[PaymentJourneyModel].fold(
           invalid => {
-            Logger.error(s"Invalid Json with $invalid")
+            Logger("application").error(s"Invalid Json with $invalid")
             PaymentJourneyErrorResponse(response.status, "Invalid Json")
           },
           valid => valid
         )
       case response =>
         if(response.status >= 500) {
-          Logger.error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
         } else {
-          Logger.warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
         }
         PaymentJourneyErrorResponse(response.status, response.body)
     }

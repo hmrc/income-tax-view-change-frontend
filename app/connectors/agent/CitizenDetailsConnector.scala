@@ -24,7 +24,7 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,30 +46,30 @@ class CitizenDetailsConnector @Inject()(val http: HttpClient,
 
     val url = getCitizenDetailsBySaUtrUrl(saUtr)
 
-    Logger.debug(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - GET $url")
+    Logger("application").debug(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - GET $url")
 
     http.GET[HttpResponse](url)(implicitly, updatedHeaderCarrier(headerCarrier), implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger.debug(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[CitizenDetailsModel].fold(
             invalid => {
-              Logger.error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - Json Validation Error. Parsing Citizen Details Response. Invalid=$invalid")
+              Logger("application").error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - Json Validation Error. Parsing Citizen Details Response. Invalid=$invalid")
               CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Citizen Details response")
             },
             valid => valid
           )
         case status =>
           if(status >= 500) {
-            Logger.error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
-            Logger.warn(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, body: ${response.body}")
           }
           CitizenDetailsErrorModel(response.status, response.body)
         }
     } recover {
       case ex =>
-        Logger.error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - Unexpected future failed error, ${ex.getMessage}")
+        Logger("application").error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - Unexpected future failed error, ${ex.getMessage}")
         CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed, ${ex.getMessage}")
     }
   }

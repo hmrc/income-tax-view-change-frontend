@@ -1,7 +1,6 @@
 # microservice specific routes
 
 # Play frontend hmrc routes
-->          /govuk-frontend                                               govuk.Routes
 ->          /hmrc-frontend                                                hmrcfrontend.Routes
 
 # Play frontend hmrc route for Assets

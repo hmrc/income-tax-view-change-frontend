@@ -38,7 +38,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
     case Some("ITSA - POA 2") => "Payment on account 2 of 2"
     case Some("TRM New Charge") | Some("TRM Amend Charge") => "Remaining balance"
     case error => {
-      Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+      Logger("application").error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
     }
   }

@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
@@ -37,6 +37,6 @@ trait MockCitizenDetailsConnector extends UnitSpec with MockitoSugar with Before
 
   def setupMockCitizenDetails(saUtr: String)(response: Future[CitizenDetailsResponseModel]): Unit = {
     when(mockCitizenDetailsConnector.getCitizenDetailsBySaUtr(ArgumentMatchers.eq(saUtr))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn(response)
   }
 }

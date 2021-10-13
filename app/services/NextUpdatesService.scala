@@ -41,7 +41,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
         (latestDeadline, overdueObligations)
       case error: NextUpdatesErrorModel => throw new Exception(s"${error.message}")
       case _ =>
-        Logger.error("Unexpected Exception getting next deadline due and Overdue Obligations")
+        Logger("application").error("Unexpected Exception getting next deadline due and Overdue Obligations")
         throw new Exception(s"Unexpected Exception getting next deadline due and Overdue Obligations")
     }
   }
@@ -69,10 +69,10 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
 
   def getNextUpdates(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
     if (previous) {
-      Logger.debug(s"[NextUpdatesService][getNextUpdates] - Requesting previous Next Updates for nino: ${mtdUser.nino}")
+      Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting previous Next Updates for nino: ${mtdUser.nino}")
       incomeTaxViewChangeConnector.getPreviousObligations()
     } else {
-      Logger.debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
+      Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
       incomeTaxViewChangeConnector.getNextUpdates()
     }
   }

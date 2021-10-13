@@ -52,7 +52,7 @@ class TaxYearsController @Inject() (taxYears: TaxYears)
             .addingToSession("singleEstimate" -> "false"))
       }.recover {
           case ex => {
-            Logger.error(s"[TaxYearsController][viewTaxYears] Downstream error, ${ex.getMessage}")
+            Logger("application").error(s"[TaxYearsController][viewTaxYears] Downstream error, ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
           }
         }

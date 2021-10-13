@@ -35,7 +35,7 @@ case class AllocationDetail(transactionId: Option[String],
     FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
       .map(typesKey => s"paymentAllocation.paymentAllocations.$typesKey")
       .getOrElse {
-        Logger.error(s"[PaymentAllocations] Non-matching document/charge found with main charge: $mainType and sub-charge: $chargeType")
+        Logger("application").error(s"[PaymentAllocations] Non-matching document/charge found with main charge: $mainType and sub-charge: $chargeType")
         ""
       }
   }

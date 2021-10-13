@@ -24,7 +24,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import repositories.MongoLockRepository
 import services.CalculationPollingService
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 import utils.PollCalculationLockKeeper
 
 import scala.concurrent.Future

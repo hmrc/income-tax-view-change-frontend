@@ -109,27 +109,21 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-    await(
       buildClient(uri)
         .withHttpHeaders(headers: _*)
-        .get()
-    )
+        .get().futureValue
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-    await(
       buildClient(uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
-        .get()
-    )
+        .get().futureValue
   }
 
   def getWithCalcIdInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-    await(
       buildClient(uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
-        .get()
-    )
+        .get().futureValue
   }
 
   def getWithCalcIdInSessionAndWithoutAwait(uri: String, additionalCookies: Map[String, String] = Map.empty): Future[WSResponse] = {
@@ -139,7 +133,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   object IncomeTaxViewChangeFrontend {
-    def get(uri: String): WSResponse = await(buildClient(uri).get())
+    def get(uri: String): WSResponse = buildClient(uri).get().futureValue
 
     def getTaxYears: WSResponse = get("/tax-years")
 
