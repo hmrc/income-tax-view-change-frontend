@@ -124,7 +124,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             response = incomeSourceDetailsSuccess
           )
 
-          await(
             ws.url(urlFinalCalcFalse)
               .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
               .withFollowRedirects(false)
@@ -152,7 +151,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               response = incomeSourceDetailsSuccess
             )
 
-            await(
               ws.url(urlFinalCalcFalse)
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
                 .withFollowRedirects(false)
@@ -173,7 +171,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               response = incomeSourceDetailsSuccess
             )
 
-            await(
+
               ws.url(urlFinalCalcFalse)
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
                 .withFollowRedirects(false)
@@ -195,7 +193,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               response = incomeSourceDetailsSuccess
             )
 
-            await(
+
               ws.url(urlFinalCalcFalse)
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
                 .withFollowRedirects(false)
@@ -211,12 +209,11 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
     
   }
 
-  s"Calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testTaxYear, isFinalCalc = true).url}" when {
+  s"calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = true).url}" when {
 
-    "the user is authorised with active enrolment and at the end of year" should {
+    "the user is authorised with an active enrolment" should {
 
-      "redirect to the final tax year overview page" which {
-
+      "redirect the user to the tax year overview page" which {
         lazy val result = {
           stubAuthorisedAgentUser(authorised = true)
           calculationStub()
@@ -225,24 +222,90 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             response = incomeSourceDetailsSuccess
           )
 
-          await(
+          ws.url(urlFinalCalcTrue)
+            .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
+            .withFollowRedirects(false)
+            .get()
+        }.futureValue
+
+        "has the status of SEE_OTHER (303)" in {
+          result.status shouldBe SEE_OTHER
+        }
+
+        s"redirect to '${controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url}''" in {
+          result.header("Location").head shouldBe controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url
+        }
+
+      }
+
+      "redirect to internal server error" when {
+
+        "a non 200 status is returned from Calc service" which {
+          lazy val result = {
+            stubAuthorisedAgentUser(authorised = true)
+            failedCalculationStub()
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsSuccess
+            )
+
+            ws.url(urlFinalCalcTrue)
+              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
+              .withFollowRedirects(false)
+              .get()
+          }.futureValue
+
+          "has a result of 500" in {
+            result.status shouldBe INTERNAL_SERVER_ERROR
+          }
+        }
+
+        "the calc ID is not in session" which {
+          lazy val result = {
+            stubAuthorisedAgentUser(authorised = true)
+            calculationStub()
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsSuccess
+            )
+
+
+            ws.url(urlFinalCalcTrue)
+              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
+              .withFollowRedirects(false)
+              .get()
+          }.futureValue
+
+          "has a status of 500" in {
+            result.status shouldBe INTERNAL_SERVER_ERROR
+          }
+
+        }
+
+        "calculation service returns non-retryable response back" in {
+          lazy val res = {
+            stubAuthorisedAgentUser(authorised = true)
+            IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsSuccess
+            )
+
+
             ws.url(urlFinalCalcTrue)
               .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
               .withFollowRedirects(false)
               .get()
-          )
+          }.futureValue
+
+          res.status shouldBe INTERNAL_SERVER_ERROR
         }
 
-        "has the result of SEE_OTHER (303)" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        s"redirect to '${controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url}''" in {
-          result.header("Location").head shouldBe controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url
-        }
       }
+
     }
 
   }
+
 
 }
