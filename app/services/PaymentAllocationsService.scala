@@ -84,7 +84,7 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
               LatePaymentInterestPaymentAllocationDetails(documentDetailsWithLpiId,
                 documentDetailsWithFinancialDetails.documentDetails.head.originalAmount.get)
           }
-        case _ =>
+        case _ => None
       }.headOption
     }
   }

@@ -26,8 +26,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class TestBTAPartialController @Inject()(testBTAPartial: TestBTAPartial)
-                                        (implicit appConfig: FrontendAppConfig,
-                                         mcc: MessagesControllerComponents,
+                                        (mcc: MessagesControllerComponents,
                                          val executionContext: ExecutionContext) extends BaseController {
 
   def viewBTAPartial: Action[AnyContent] = Action { implicit request =>

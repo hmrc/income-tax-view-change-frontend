@@ -86,7 +86,7 @@ class FinalTaxCalculationController @Inject()(
                 )
 
               case _ =>
-                Logger("application")v.error("[FinalTaxCalculationController][submit] Name or UTR missing.")
+                Logger("application").error("[FinalTaxCalculationController][submit] Name or UTR missing.")
                 itvcErrorHandler.showInternalServerError()
             }
           case CalcDisplayNoDataFound =>

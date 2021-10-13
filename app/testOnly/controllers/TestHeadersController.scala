@@ -28,7 +28,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class TestHeadersController @Inject()(testHeaders: TestHeaders)
-                                     (implicit appConfig: FrontendAppConfig, mcc: MessagesControllerComponents,
+                                     (mcc: MessagesControllerComponents,
                                      val executionContext: ExecutionContext) extends BaseController {
 
   def showTestHeaders: Action[AnyContent] = Action { implicit request =>
