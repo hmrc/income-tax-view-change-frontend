@@ -195,6 +195,21 @@
                 </div>
             }
         }
+
+        @if(utr.isDefined) {
+        <div>
+            @creditOnAccountNotePanel
+            <div id="payment-button">
+                @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
+                messageKey = "whatYouOwe.payNow", classes = "govuk-button",
+                id = Some("payment-button-link"),
+                ariaLabel = Some(messages("whatYouOwe.pay-now-aria",
+                (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
+                chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
+            </div>
+            @paymentDaysNoteParagraph
+        </div>
+        }
         @saNoteParagraph
         @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
         @dunningLockParagraph
