@@ -21,11 +21,14 @@ import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockNinoLookupService
-import models.core.{NinoResponseSuccess, NinoResponseError}
+import models.core.{NinoResponseError, NinoResponseSuccess}
 import org.scalatest.EitherValues
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
+import play.api.test.Helpers._
 import testUtils.TestSupport
+
+import scala.concurrent.Future
 
 class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLookupService with EitherValues {
 
@@ -52,14 +55,14 @@ class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLooku
     "called with a user with a NINO enrolment" should {
       "return the expected MtdItUserWithNino" in {
         val result = TestPredicate.refine(userWithNino)
-        await(result) shouldBe Right(successResponse)
+        result.futureValue shouldBe Right(successResponse)
       }
     }
 
     "called with a NINO in Session" should {
       "return the expected MtdItUserWithNino" in {
         val result = TestPredicate.refine(userNinoInSession)
-        await(result) shouldBe Right(successResponse)
+        result.futureValue shouldBe Right(successResponse)
       }
     }
     "there is no HMRC-NI enrolment and no NINO in session" should {
@@ -67,12 +70,12 @@ class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLooku
       "retrieve the NINO from the NINO lookup service and redirect" in {
         setupMockGetNino(testMtditid)(ninoServiceSuccess)
         val result = TestPredicate.refine(userNoNino)
-        status(await(result.left.get)) shouldBe Status.SEE_OTHER
+        status(result.map(_.left.get)) shouldBe Status.SEE_OTHER
       }
       "throw an ISE if no NINO can be retrieved from lookup service" in {
         setupMockGetNino(testMtditid)(ninoServiceError)
         val result = TestPredicate.refine(userNoNino)
-        status(await(result.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result.map(_.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }

@@ -61,7 +61,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
       "return a payment history error" in {
         setupGetPayments(getCurrentTaxEndYear)(PaymentsError(500, "ERROR"))
         setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List.empty))
-        await(TestPaymentHistoryService.getPaymentHistory) shouldBe Left(PaymentHistoryError)
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
     }
@@ -70,7 +70,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
       "return a list of payments and ignore any payment data not found (404s)" in {
         setupGetPayments(getCurrentTaxEndYear)(PaymentsError(404, "NOT FOUND"))
         setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List(paymentFull)))
-        await(TestPaymentHistoryService.getPaymentHistory) shouldBe Right(List(paymentFull))
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(List(paymentFull))
       }
 
     }

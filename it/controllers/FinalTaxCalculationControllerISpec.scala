@@ -113,11 +113,9 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
         calculationStub()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-        await(
-          ws.url(url)
-            .get()
-        )
-      }
+        ws.url(url)
+          .get()
+      }.futureValue
 
       lazy val document: Document = Jsoup.parse(result.body)
 
@@ -248,11 +246,9 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
           calculationStubEmptyCalculations()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          await(
-            ws.url(url)
-              .get()
-          )
-        }
+          ws.url(url)
+            .get()
+        }.futureValue
 
         "has a status of INTERNAL_SERVER_ERROR (500)" in {
           result.status shouldBe INTERNAL_SERVER_ERROR
@@ -269,12 +265,10 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
         calculationStub()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-        await(
-          ws.url(url)
-            .withFollowRedirects(false)
-            .post("{}")
-        )
-      }
+        ws.url(url)
+          .withFollowRedirects(false)
+          .post("{}")
+      }.futureValue
       
       "has a status of SEE_OTHER (303)" in {
         result.status shouldBe SEE_OTHER
@@ -294,12 +288,10 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
           calculationStub()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          await(
-            ws.url(url)
-              .withFollowRedirects(false)
-              .post("{}")
-          )
-        }
+          ws.url(url)
+            .withFollowRedirects(false)
+            .post("{}")
+        }.futureValue
         
         result.status shouldBe INTERNAL_SERVER_ERROR
       }
@@ -310,12 +302,10 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
           calculationStubEmptyCalculations()
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          await(
-            ws.url(url)
-              .withFollowRedirects(false)
-              .post("{}")
-          )
-        }
+          ws.url(url)
+            .withFollowRedirects(false)
+            .post("{}")
+        }.futureValue
 
         result.status shouldBe INTERNAL_SERVER_ERROR
       }

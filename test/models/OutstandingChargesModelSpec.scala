@@ -18,7 +18,7 @@ package models
 
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class OutstandingChargesModelSpec extends UnitSpec with Matchers {
 

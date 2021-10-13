@@ -20,7 +20,7 @@ import assets.CitizenDetailsTestConstants._
 import models.citizenDetails._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class CitizenDetailsResponseModelSpec  extends UnitSpec with Matchers {
 

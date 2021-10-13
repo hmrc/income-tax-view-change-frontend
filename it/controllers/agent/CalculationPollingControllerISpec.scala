@@ -129,8 +129,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
               .withFollowRedirects(false)
               .get()
-          )
-        }
+        }.futureValue
         
         "has the status of SEE_OTHER (303)" in {
           result.status shouldBe SEE_OTHER
@@ -158,8 +157,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
                 .withFollowRedirects(false)
                 .get()
-            )
-          }
+          }.futureValue
           
           "has a result of 500" in {
             result.status shouldBe INTERNAL_SERVER_ERROR
@@ -180,8 +178,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
                 .withFollowRedirects(false)
                 .get()
-            )
-          }
+          }.futureValue
           
           "has a status of 500" in {
             result.status shouldBe INTERNAL_SERVER_ERROR
@@ -203,8 +200,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
                 .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
                 .withFollowRedirects(false)
                 .get()
-            )
-          }
+          }.futureValue
           
           res.status shouldBe INTERNAL_SERVER_ERROR
         }

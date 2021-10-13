@@ -17,7 +17,6 @@
 package mocks.services
 
 import java.time.LocalDate
-
 import assets.IncomeSourcesWithDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
@@ -28,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import services.NextUpdatesService
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
@@ -69,7 +68,7 @@ trait MockNextUpdatesService extends UnitSpec with MockitoSugar with BeforeAndAf
 
   def mockGetObligationDueDates(response: Future[Either[(LocalDate, Boolean), Int]]): Unit = {
     when(mockNextUpdatesService.getObligationDueDates()(any(), any(), any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn(response)
   }
 
   def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: NextUpdatesResponseModel): Unit = {

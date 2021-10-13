@@ -104,7 +104,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
       case CalcDisplayModel(_, _, calculation, _) => f(Some(calculation))
       case CalcDisplayNoDataFound => f(None)
       case _ =>
-        Logger.error(s"[TaxYearOverviewController][withCalculation] - Could not retrieve calculation for year: $taxYear")
+        Logger("application").error(s"[TaxYearOverviewController][withCalculation] - Could not retrieve calculation for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
@@ -126,7 +126,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ =>
-        Logger.error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Logger("application").error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
@@ -138,7 +138,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     ) flatMap {
       case obligationsModel: ObligationsModel => f(obligationsModel)
       case _ =>
-        Logger.error(s"[TaxYearOverviewController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
+        Logger("application").error(s"[TaxYearOverviewController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }

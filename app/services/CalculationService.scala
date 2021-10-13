@@ -38,13 +38,13 @@ class CalculationService @Inject()(val individualCalculationsConnector: Individu
       lastCalc <- getLatestCalculation(nino, calcIdOrError)
     } yield lastCalc match {
       case calc: Calculation =>
-        Logger.debug("[CalculationService] Retrieved all Financial Data")
+        Logger("application").debug("[CalculationService] Retrieved all Financial Data")
         CalcDisplayModel(calc.timestamp.getOrElse(""), calc.totalIncomeTaxAndNicsDue.getOrElse(0.0), calc, if (calc.crystallised) Crystallised else Estimate)
       case errorModel: CalculationErrorModel if errorModel.code == Status.NOT_FOUND =>
-        Logger.debug("[CalculationService] No Financial Data found")
+        Logger("application").debug("[CalculationService] No Financial Data found")
         CalcDisplayNoDataFound
       case _: CalculationErrorModel =>
-        Logger.error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
+        Logger("application").error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
     }
   }
@@ -66,14 +66,14 @@ class CalculationService @Inject()(val individualCalculationsConnector: Individu
     calcIdOrResponse match {
       case Left(error) => Future.successful(error)
       case Right(calcId) =>
-        Logger.debug("[CalculationService][getLatestCalculation] - Requesting calc data from the backend")
+        Logger("application").debug("[CalculationService][getLatestCalculation] - Requesting calc data from the backend")
         individualCalculationsConnector.getCalculation(nino, calcId)
     }
   }
 
   def getCalculationId(nino: String, taxYear: Int)
                       (implicit headerCarrier: HeaderCarrier): Future[Either[CalculationResponseModel, String]] = {
-    Logger.debug("[CalculationService][getCalculationId] - Requesting latest calc id from the backend")
+    Logger("application").debug("[CalculationService][getCalculationId] - Requesting latest calc id from the backend")
     individualCalculationsConnector.getLatestCalculationId(nino, taxYearIntToString(taxYear))
   }
 

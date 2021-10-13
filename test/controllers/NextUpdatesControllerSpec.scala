@@ -82,7 +82,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     "the Next Updates feature switch is disabled" should {
 
       lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-      lazy val document = Jsoup.parse(bodyOf(result))
+      lazy val document = Jsoup.parse(contentAsString(result))
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
@@ -108,7 +108,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "successfully retrieves a set of Property NextUpdates and Previous from the NextUpdates service" should {
 
           lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
             mockPropertyIncomeSource()
@@ -130,7 +130,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "successfully retrieves a set of both Business & Property NextUpdates and Previous Obligations from the NextUpdates service" should {
 
           lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
             mockBothIncomeSourcesBusinessAligned()
@@ -171,7 +171,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "successfully retrieves a set of only Property NextUpdates and no Previous from the NextUpdates service" should {
 
           lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
             mockPropertyIncomeSource()
@@ -193,7 +193,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "successfully retrieves a set of only both Business & Property NextUpdates and no Previous Obligations from the NextUpdates service" should {
 
           lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
             mockBothIncomeSourcesBusinessAligned()
@@ -215,7 +215,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "receives an Error from the NextUpdates Service" should {
 
           lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status ISE (500)" in {
             mockSingleBusinessIncomeSource()
@@ -232,7 +232,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "doesn't have any Income Source" should {
 
           lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(bodyOf(result))
+          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
             mockNoIncomeSources()
@@ -271,7 +271,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
 		"the Next Updates feature switch is enabled" should {
 			lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-			lazy val document = Jsoup.parse(bodyOf(result))
+			lazy val document = Jsoup.parse(contentAsString(result))
 
 			"set Next Updates enabled" in {
 				enable(NextUpdates)

@@ -92,8 +92,6 @@
 @scriptsBlock.fold(HtmlFormat.empty)(x => x)
 }
 
-@getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
-
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(CurrentLanguage()))

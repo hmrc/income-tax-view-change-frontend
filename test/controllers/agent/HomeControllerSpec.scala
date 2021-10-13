@@ -20,14 +20,13 @@ import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRet
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import config.featureswitch._
-import controllers.Assets.{NOT_FOUND, OK, SEE_OTHER}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockHome
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -101,8 +100,8 @@ class HomeControllerSpec extends TestSupport
 
 				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-				intercept[InternalServerException](await(result))
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				result.failed.futureValue shouldBe an[InternalServerException]
+				result.failed.futureValue.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 		"the call to retrieve income sources for the client is successful" when {
@@ -115,8 +114,8 @@ class HomeControllerSpec extends TestSupport
 
 					val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-					intercept[InternalServerException](await(result))
-						.message shouldBe "obligation test exception"
+					result.failed.futureValue shouldBe an[InternalServerException]
+					result.failed.futureValue.getMessage shouldBe "obligation test exception"
 				}
 			}
 			"retrieving their obligation due date details was successful" when {
@@ -130,8 +129,8 @@ class HomeControllerSpec extends TestSupport
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-						intercept[InternalServerException](await(result))
-							.message shouldBe "charge test exception"
+						result.failed.futureValue shouldBe an[InternalServerException]
+						result.failed.futureValue.getMessage shouldBe "charge test exception"
 					}
 				}
 				"retrieving their charge due date details was successful" should {

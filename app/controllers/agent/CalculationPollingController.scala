@@ -50,23 +50,23 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
       getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
         (request.session.get(SessionKeys.calculationId), user.nino) match {
           case (Some(calculationId), nino) => {
-            Logger.info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
+            Logger("application").info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
             pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino) flatMap {
               case OK =>
-                Logger.info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
+                Logger("application").info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
                 Future.successful(Redirect(successfulPollRedirect))
               case _ =>
-                Logger.info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
+                Logger("application").info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
                 Future.successful(itvcErrorHandler.showInternalServerError())
             } recover {
               case ex: Exception => {
-                Logger.error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage}")
+                Logger("application").error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage}")
                 itvcErrorHandler.showInternalServerError()
               }
             }
           }
           case _ =>
-            Logger.error(s"[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
+            Logger("application").error(s"[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
       }

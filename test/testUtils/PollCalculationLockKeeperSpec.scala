@@ -38,14 +38,14 @@ class PollCalculationLockKeeperSpec extends TestSupport with MockPollCalculation
   "lockKeeper is locked" should {
     "return true if a lock exists in the repo" in {
       when(mockLockRepository.isLocked(ArgumentMatchers.eq("lockId"), ArgumentMatchers.any())).thenReturn(Future.successful(true))
-      val result = await(lockKeeper.isLocked)
-      result shouldBe true
+      val result = lockKeeper.isLocked
+      result.futureValue shouldBe true
     }
 
     "return false if a lock does not exist in the repo" in {
       when(mockLockRepository.isLocked(ArgumentMatchers.eq("lockId"), ArgumentMatchers.any())).thenReturn(Future.successful(false))
-      val result = await(lockKeeper.isLocked)
-      result shouldBe false
+      val result = lockKeeper.isLocked
+      result.futureValue shouldBe false
     }
   }
 
@@ -54,8 +54,8 @@ class PollCalculationLockKeeperSpec extends TestSupport with MockPollCalculation
       when(mockLockRepository.lock(ArgumentMatchers.eq("lockId"), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(false))
 
-      val result = await(lockKeeper.tryLock()(ec))
-      result shouldBe false
+      val result = lockKeeper.tryLock()(ec)
+      result.futureValue shouldBe false
     }
 
     "fail when the repo throws an exception" in {
@@ -63,7 +63,7 @@ class PollCalculationLockKeeperSpec extends TestSupport with MockPollCalculation
         .thenReturn(Future.failed(new RuntimeException("test exception")))
       when(mockLockRepository.releaseLock(ArgumentMatchers.eq("lockId"), ArgumentMatchers.any())).thenReturn(Future.successful(()))
 
-      val result = await(lockKeeper.tryLock()(ec).failed)
+      val result = lockKeeper.tryLock()(ec).failed.futureValue
 
       verify(mockLockRepository, atLeastOnce()).releaseLock(ArgumentMatchers.eq("lockId"), ArgumentMatchers.any())
       result.isInstanceOf[RuntimeException] shouldBe true

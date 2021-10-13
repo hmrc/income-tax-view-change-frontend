@@ -24,7 +24,7 @@ import play.api.Logger
 import play.api.http.Status._
 import testOnly.models.TestHeadersModel
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,22 +50,22 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
           case OK =>
             response.json.validate[ListCalculationItems].fold(
               invalid => {
-                Logger.error(s"[IndividualCalculationsConnector][getLatestCalculationId] - Json validation error parsing calculation list response, error: $invalid.")
+                Logger("application").error(s"[IndividualCalculationsConnector][getLatestCalculationId] - Json validation error parsing calculation list response, error: $invalid.")
                 Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, s"Json validation error parsing calculation list response"))
               },
               valid => {
-                Logger.debug("[IndividualCalculationsConnector][getLatestCalculationId] - Successfully parsed calculation list response")
+                Logger("application").debug("[IndividualCalculationsConnector][getLatestCalculationId] - Successfully parsed calculation list response")
                 Right(valid.calculations.sortWith((x, y) => x.calculationTimestamp.isAfter(y.calculationTimestamp)).head.id)
               }
             )
           case NOT_FOUND =>
-            Logger.warn(s"[IndividualCalculationsConnector][getLatestCalculationId] - No calculation found for tax year $taxYear")
+            Logger("application").warn(s"[IndividualCalculationsConnector][getLatestCalculationId] - No calculation found for tax year $taxYear")
             Left(CalculationErrorModel(NOT_FOUND, s"No calculation found for tax year $taxYear"))
           case status =>
             if (status >= 500) {
-              Logger.error(s"[IndividualCalculationsConnector][getLatestCalculationId] - Response status: ${response.status}, json: ${response.body}")
+              Logger("application").error(s"[IndividualCalculationsConnector][getLatestCalculationId] - Response status: ${response.status}, json: ${response.body}")
             } else {
-              Logger.warn(s"[IndividualCalculationsConnector][getLatestCalculationId] - Response status: ${response.status}, json: ${response.body}")
+              Logger("application").warn(s"[IndividualCalculationsConnector][getLatestCalculationId] - Response status: ${response.status}, json: ${response.body}")
             }
             Left(CalculationErrorModel(response.status, response.body))
         }
@@ -86,16 +86,16 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[Calculation].fold(
             invalid => {
-              Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
+              Logger("application").error(s"[IndividualCalculationsConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
               CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
             },
             valid => valid
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger.warn(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
           }
           CalculationErrorModel(response.status, response.body)
       }
