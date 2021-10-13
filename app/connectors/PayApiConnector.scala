@@ -18,7 +18,7 @@ package connectors
 
 import audit.AuditingService
 import config.FrontendAppConfig
-import implicits.ImplicitJsonValidationFormatter._
+//import implicits.ImplicitJsonValidationFormatter._
 import javax.inject.Inject
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
@@ -26,6 +26,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
 import scala.concurrent.{ExecutionContext, Future}
 
