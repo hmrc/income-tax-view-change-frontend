@@ -31,7 +31,7 @@
     @dataItem.map { data =>
         <tr id="@messageCode" class="govuk-table__row">
             <td class="govuk-table__cell">@messages(s"deduction_breakdown.table.$messageCode")</td>
-            <td class="govuk-table__cell numeric">@{ if(isNegative) data.toNegativeCurrency else data.toCurrency }</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@{ if(isNegative) data.toNegativeCurrency else data.toCurrency }</td>
         </tr>
     }
 }
@@ -53,7 +53,7 @@
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("deduction_breakdown.table.header")</th>
-                <th scope="col" class="govuk-table__header numeric">@messages("deduction_breakdown.table.header.amount")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("deduction_breakdown.table.header.amount")</th>
             </tr>
             </thead>
             <tbody class = "govuk-table__body">
@@ -68,7 +68,7 @@
             @tableRow("trade_union_payments", calcModel.calcDataModel.allowancesAndDeductions.paymentsToTradeUnionsForDeathBenefits)
             <tr class="govuk-table__row">
                 <td class="govuk-table__header total-section">@messages("deduction_breakdown.total")</td>
-                <td class="govuk-table__header numeric total-section">@calcModel.calcDataModel.allowancesAndDeductions.totalAllowancesDeductionsReliefs.getOrElse(BigDecimal(0)).toCurrency</td>
+                <td class="govuk-table__header govuk-table__header--numeric total-section">@calcModel.calcDataModel.allowancesAndDeductions.totalAllowancesDeductionsReliefs.getOrElse(BigDecimal(0)).toCurrency</td>
             </tr>
             </tbody>
         </table>
