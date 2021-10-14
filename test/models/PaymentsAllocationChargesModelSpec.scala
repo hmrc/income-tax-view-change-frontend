@@ -20,7 +20,7 @@ import assets.PaymentAllocationsTestConstants._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
 

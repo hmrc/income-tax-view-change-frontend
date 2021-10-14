@@ -69,14 +69,14 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
       case ok: ChargesHistoryModel => Future.successful(ok.chargeHistoryDetails)
 
       case error: ChargesHistoryErrorModel =>
-        Logger.error(s"[FinancialDetailsService][getChargeHistoryDetails] $error")
+        Logger("application").error(s"[FinancialDetailsService][getChargeHistoryDetails] $error")
         Future.failed(new InternalServerException("[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"))
     }
   }
 
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
-    Logger.debug(
+    Logger("application").debug(
       s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     Future.sequence(user.incomeSources.orderedTaxYears.map {

@@ -59,16 +59,16 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
                   if paymentAllocationWithClearingDate.find(_.allocationDetail == None).isEmpty =>
                   Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, paymentAllocationWithClearingDate))
                 case _ =>
-                  Logger.error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment allocations")
+                  Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment allocations")
                   Left(PaymentAllocationError)
               }
             }
           case _ =>
-            Logger.error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve payment allocations with document details")
+            Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve payment allocations with document details")
             Future.successful(Left(PaymentAllocationError))
         }
       case _ =>
-        Logger.error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment charge model")
+        Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment charge model")
         Future.successful(Left(PaymentAllocationError))
     }
   }

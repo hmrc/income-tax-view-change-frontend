@@ -21,14 +21,13 @@ import assets.CalcBreakdownTestConstants.{calculationDataErrorModel, calculation
 import config.FrontendAppConfig
 import mocks.services.{MockCalculationService, MockPollCalculationLockKeeper}
 import models.calculation.CalculationErrorModel
-import play.api.{Configuration, Mode}
 import play.api.http.Status
 import testUtils.TestSupport
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class CalculationPollingServiceSpec extends TestSupport with MockCalculationService with MockPollCalculationLockKeeper {
 
-  def fakeServicesConfig(interval : Int, timeout: Int): ServicesConfig = new ServicesConfig(conf, new RunMode(conf, Mode.Test)) {
+  def fakeServicesConfig(interval : Int, timeout: Int): ServicesConfig = new ServicesConfig(conf) {
     override def getInt(key: String): Int = key match {
       case "calculation-polling.interval" => interval
       case "calculation-polling.timeout" => timeout
@@ -49,8 +48,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testNino, Right(testCalcId))(calculationDataSuccessModel)
 
-        await(TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)) shouldBe Status.OK
+        TestCalculationPollingService
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.OK
       }
     }
 
@@ -59,18 +58,19 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testNino, Right(testCalcId))(calculationDataErrorModel)
 
-        await(TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)) shouldBe Status.INTERNAL_SERVER_ERROR
+        TestCalculationPollingService
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
     "when MongoLock is acquired and retryable response(502) is received from calculation service for all retries" should {
       "return a retryable(502) response back" in {
+
         mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.BAD_GATEWAY, "bad gateway"))
 
-        await(TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)) shouldBe Status.INTERNAL_SERVER_ERROR
+        TestCalculationPollingService
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
@@ -79,8 +79,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.NOT_FOUND, "Not found"))
 
-        await(TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)) shouldBe Status.INTERNAL_SERVER_ERROR
+        TestCalculationPollingService
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
@@ -95,7 +95,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         Thread.sleep(1000)
         setupMockGetLatestCalculation(testNino, Right(testCalcId))(calculationDataSuccessModel)
 
-        await(result) shouldBe Status.OK
+        result.futureValue shouldBe Status.OK
       }
     }
 
@@ -110,7 +110,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         Thread.sleep(1000)
         setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.GATEWAY_TIMEOUT, "Gateway timeout"))
 
-        await(result) shouldBe Status.GATEWAY_TIMEOUT
+        result.futureValue shouldBe Status.GATEWAY_TIMEOUT
       }
     }
 
@@ -121,7 +121,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         val result = TestCalculationPollingService
           .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)
 
-        await(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        result.futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }

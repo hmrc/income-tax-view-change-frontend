@@ -56,7 +56,7 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
         HttpResponse(status = OK, json = Json.toJson(ListCalculationItems(Seq(CalculationItem("testId", LocalDateTime.now())))), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
-        await(result) shouldBe Right("testId")
+        result.futureValue shouldBe Right("testId")
       }
 
       "receiving an OK with multiple valid data items" in new LatestCalculationIdTest(nino, taxYear,
@@ -66,7 +66,7 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
         ))), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
-        await(result) shouldBe Right("correctId")
+        result.futureValue shouldBe Right("correctId")
       }
     }
 
@@ -75,7 +75,7 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
       "receiving a not found response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(status = NOT_FOUND, body = "")) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
-        await(result) shouldBe Left(CalculationErrorModel(NOT_FOUND, "No calculation found for tax year 2019/20"))
+        result.futureValue shouldBe Left(CalculationErrorModel(NOT_FOUND, "No calculation found for tax year 2019/20"))
       }
     }
 
@@ -85,21 +85,21 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
         json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
-        await(result) shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message""""))
+        result.futureValue shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message""""))
       }
 
       "receiving a 499- response" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(status = 499,
         json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
-        await(result) shouldBe Left(CalculationErrorModel(499, """"Error message""""))
+        result.futureValue shouldBe Left(CalculationErrorModel(499, """"Error message""""))
       }
 
       "receiving an OK with invalid json" in new LatestCalculationIdTest(nino, taxYear, HttpResponse(status = OK,
         json = Json.toJson(""), headers = Map.empty)) {
         val result: Future[Either[CalculationResponseModel, String]] = connector.getLatestCalculationId(nino, taxYear)
 
-        await(result) shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response"))
+        result.futureValue shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response"))
       }
     }
   }
@@ -110,25 +110,25 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
         json = calculationJson, headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe calculation
+        result.futureValue shouldBe calculation
       }
     }
     "return an error" when {
       "receiving a 500+ response" in new GetCalculationTest(nino, calculationId, HttpResponse(status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message"""")
+        result.futureValue shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message"""")
       }
       "receiving a 499- response" in new GetCalculationTest(nino, calculationId, HttpResponse(status = 499,
         json = Json.toJson("Error message"), headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe CalculationErrorModel(499, """"Error message"""")
+        result.futureValue shouldBe CalculationErrorModel(499, """"Error message"""")
       }
       "receiving OK with invalid json" in new GetCalculationTest(nino, calculationId, HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty)) {
         val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+        result.futureValue shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
       }
     }
   }

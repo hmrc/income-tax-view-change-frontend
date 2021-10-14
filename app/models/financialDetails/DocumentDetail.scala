@@ -86,7 +86,7 @@ case class DocumentDetail(taxYear: String,
 		case Some("ITSA - POA 2") => "paymentOnAccount2.text"
 		case Some("TRM New Charge") | Some("TRM Amend Charge") => "balancingCharge.text"
 		case error =>
-			Logger.error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
+			Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
 			"unknownCharge"
 	}
 }

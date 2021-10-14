@@ -21,7 +21,7 @@
 @this(
     tableRow: TableRow
 )
-@(capitalGainsTax: models.calculation.CapitalGainsTax)(implicit messages: Messages)
+@(capitalGainsTax: CapitalGainsTax)(implicit messages: Messages)
 
 @cgtBandRow(taxTypeKey: String, band: CgtTaxBand) = @{ cgtBandTableRow(taxTypeKey, band.name, band.income, band.rate, band.taxAmount) }
 

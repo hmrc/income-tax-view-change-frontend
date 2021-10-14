@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import assets.FinancialDetailsTestConstants.fullDocumentDetailModel
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class DocumentDetailSpec extends UnitSpec {
 

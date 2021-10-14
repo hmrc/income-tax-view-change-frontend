@@ -22,7 +22,6 @@ import assets.BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfE
 import implicits.ImplicitDateFormatter
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
-import play.api.libs.json.{JsArray, JsValue, Json}
 
 object BusinessDetailsIntegrationTestConstants {
 

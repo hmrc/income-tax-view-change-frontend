@@ -51,11 +51,11 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.In
 					case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
 					case CalcDisplayNoDataFound =>
-						Logger.warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
+						Logger("application").warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
 						Future.successful(itvcErrorHandler.showInternalServerError())
 
 					case CalcDisplayError =>
-						Logger.error(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
+						Logger("application").error(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
 						Future.successful(itvcErrorHandler.showInternalServerError())
 				}
 			}
