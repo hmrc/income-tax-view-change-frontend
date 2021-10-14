@@ -66,7 +66,7 @@
         <p>@insetContent</p>
     </div>
 
-    @breakdownPartial(overview, taxYear, isFinalCalc = true)
+    @breakdownPartial(overview, taxYear, isFinalCalc = true, isAgent)
     @* TODO Need a small space adding before and after the p tag using the GovUk element classes when the migration has been completed. Included appropriate margin styles for the time being. *@
     <p style="margin-bottom:40px; margin-top:40px">@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.chargeInfo.p")</p>
 
