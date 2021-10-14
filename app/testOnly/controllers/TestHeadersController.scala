@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
 import controllers.BaseController
 import forms.utils.SessionKeys
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,7 +27,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class TestHeadersController @Inject()(testHeaders: TestHeaders)
-                                     (mcc: MessagesControllerComponents,
+                                     (implicit mcc: MessagesControllerComponents,
                                      val executionContext: ExecutionContext) extends BaseController {
 
   def showTestHeaders: Action[AnyContent] = Action { implicit request =>
