@@ -28,6 +28,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers._
 import services.WhatYouOweService
 import views.html.WhatYouOwe
 
@@ -84,10 +85,10 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-          val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
-          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+          result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
 
         }
 
@@ -100,10 +101,10 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-          val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
-          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+          result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
 
         }
 
@@ -116,7 +117,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-          val result: Result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }

@@ -18,7 +18,7 @@ package models
 
 import models.chargeHistory.ChargeHistoryModel
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import java.time.LocalDate
 

@@ -20,12 +20,13 @@ import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import enums.{CalcStatus, Crystallised, Estimate}
 import implicits.ImplicitDateFormatter
+
 import javax.inject.Inject
 import models.calculation._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
+import testUtils.UnitSpec
 import uk.gov.hmrc.play.language.LanguageUtils
-import uk.gov.hmrc.play.test.UnitSpec
 
 class CalculationResponseModelSpec @Inject() (val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
 

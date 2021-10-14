@@ -18,7 +18,7 @@ package controllers.errors
 
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.notEnrolled.NotEnrolled
 
 import scala.concurrent.Future

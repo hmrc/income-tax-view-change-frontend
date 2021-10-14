@@ -82,8 +82,9 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
 				mockShowInternalServerError()
 
-				intercept[InternalServerException](await(controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())))
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient()).failed.futureValue
+				result shouldBe an[InternalServerException]
+				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 

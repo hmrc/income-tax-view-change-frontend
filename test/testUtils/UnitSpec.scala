@@ -14,26 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package testUtils
 
-import assets.PaymentDetailsTestConstants._
-import models.paymentAllocations._
-import org.scalatest.Matchers
-import play.api.libs.json.{JsSuccess, Json}
-import testUtils.UnitSpec
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class PaymentDetailsSpec extends UnitSpec with Matchers {
-
-  "PaymentDetails" should {
-
-    "be formatted to JSON correctly" in {
-      Json.toJson[PaymentDetails](testValidPaymentDetails) shouldBe testValidPaymentDetailsJson
-    }
-
-    "be able to parse a JSON into the Model" in {
-      Json.fromJson[PaymentDetails](testValidPaymentDetailsJson) shouldBe JsSuccess(testValidPaymentDetails)
-    }
-
-  }
-
-}
+trait UnitSpec extends WordSpecLike with Matchers with OptionValues with ScalaFutures

@@ -54,11 +54,11 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCa
             Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
           case CalcDisplayNoDataFound =>
-            Logger.warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
+            Logger("application").warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
             Future.successful(itvcErrorHandler.showInternalServerError())
 
           case CalcDisplayError =>
-            Logger.error(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
+            Logger("application").error(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
       }

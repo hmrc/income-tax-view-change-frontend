@@ -17,11 +17,12 @@
 package models
 
 import assets.FinancialDetailsTestConstants._
+
 import java.time.LocalDate
 import models.financialDetails._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
 
