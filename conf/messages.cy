@@ -133,9 +133,11 @@ tax-year-overview.tax-calculation.in-year                       = Cyfrifiad yn y
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
+income_breakdown.table.header                                   = Math o incwm
+income_breakdown.table.header.amount                            = Swm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
-income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0} i {1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
-income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
+income_breakdown.guidance_software                              = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+income_breakdown.table.employment	                              = Cyflog o bob cyflogaeth
 income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
 income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
