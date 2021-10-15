@@ -47,11 +47,11 @@ appConfig: config.FrontendAppConfig
 @taxYearRow(year: Int) = {
     <tr class="govuk-table__row">
         <td class="govuk-table__header">
-            <ul class="govuk-list">
+            <ul class="govuk-list" style="margin-bottom:0; display:inline-block;">
                 <li>@messages("taxYears.taxYears", s"${year - 1}", s"$year")</li>
             </ul>
         </td>
-        <td class="govuk-table__header govuk-table__header--numeric">
+        <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">
             <ul class="govuk-list" style="margin-bottom:0; display:inline-block;">
                 <li>@viewReturnLink(year)</li>
                 @if(itsaSubmissionIntegrationEnabled) {
