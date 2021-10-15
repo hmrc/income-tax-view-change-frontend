@@ -133,9 +133,11 @@ tax-year-overview.tax-calculation.in-year                       = Cyfrifiad yn y
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
+income_breakdown.table.header                                   = Math o incwm
+income_breakdown.table.header.amount                            = Swm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
-income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0} i {1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
-income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
+income_breakdown.guidance_software                              = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+income_breakdown.table.employment	                              = Cyflog o bob cyflogaeth
 income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
 income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
@@ -160,9 +162,10 @@ income_breakdown.total                                          = Cyfanswm yr in
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
-deduction_breakdown.guidance_software                                  = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0} i {1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+deduction_breakdown.guidance_software                                  = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
+deduction_breakdown.table.marriage_allowance_transfer                  = Trosglwyddiad Lwfans Priodasol
 deduction_breakdown.table.pension_contributions                        = Cyfraniadau pensiwn
 deduction_breakdown.table.loss_relief                                  = Rhyddhad colledion
 deduction_breakdown.table.annual_payments                              = Taliadau blynyddol
@@ -170,6 +173,7 @@ deduction_breakdown.table.qualifying_loan_interest                     = Llog ar
 deduction_breakdown.table.post_cessasation_trade_receipts              = Derbynebau ar ôl i fasnachu ddod i ben
 deduction_breakdown.table.trade_union_payments                         = Taliadau Undeb Llafur
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
+deduction_breakdown.table.header.amount                                = Swm
 
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth
@@ -384,20 +388,29 @@ whatYouOwe.remaining-balance.heading                            = Balans sy’n 
 whatYouOwe.remaining-balance.line1                              = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
 whatYouOwe.payment-on-account.heading                           = Taliad ar gyfrif
 whatYouOwe.payment-on-account.line1                             = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
+whatYouOwe.late-payment-interest.heading                        = Llog am dalu’n hwyr
+whatYouOwe.late-payment-interest.line1                          = Dyma log sydd arnoch am dalu’n hwyr.
 whatYouOwe.over-due-payments                                    = Taliadau sy’n hwyr
 whatYouOwe.over-due                                             = YN HWYR
 whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
 whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth {0} i {1}
-whatYouOwe.overdueAmount                                        = Taliadau hwyr sy'n ddyledus
+whatYouOwe.overdueAmount                                        = Taliadau sy’n hwyr
 whatYouOwe.balanceDueWithin30Days                               = Yn ddyledus cyn pen 30 diwrnod
-whatYouOwe.totalBalance                                         = Cyfanswm y taliadau sy'n ddyledus
+whatYouOwe.totalBalance                                         = Cyfanswm y taliadau
 whatYouOwe.paymentUnderReview                                   = Taliad dan adolygiad
 whatYouOwe.over-due.interest.line1                              = Llog am dalu’n hwyr
 whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
 whatYouOwe.balancingCharge.interest.line1.text                  = Llog ar y balans sy’n weddill
+whatYouOwe.over-due.interest-rate                               = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
+whatYouOwe.over-due.interest-rate-1                             = Mae unrhyw log am dalu’n hwyr ar y {0}
+whatYouOwe.over-due.interest-rate-2                             = Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
+whatYouOwe.over-due.interest-rate.link                          = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd)
+whatYouOwe.dunningLock.text                                     = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd ac {0}
+whatYouOwe.dunningLock.link                                     = mae ymchwiliad i’ch penderfyniad treth ar y gweill (yn agor tab newydd).
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -566,14 +579,18 @@ agent.paymentDue.over-due                                       = YN HWYR
 agent.paymentDue.future-payments                                = Taliadau yn y dyfodol
 agent.paymentDue.due-in-thirty-days-payments                    = Yn ddyledus cyn pen 30 diwrnod
 agent.paymentDue.payment-type.taxYear                           = Blwyddyn dreth {0} i {1}
-agent.paymentDue.overdueAmount                                  = Taliadau hwyr sy'n ddyledus
+agent.paymentDue.overdueAmount                                  = Taliadau sy’n hwyr
 agent.paymentDue.balanceDueWithin30Days                         = Yn ddyledus cyn pen 30 diwrnod
-agent.paymentDue.totalBalance                                   = Cyfanswm y taliadau sy'n ddyledus
+agent.paymentDue.totalBalance                                   = Cyfanswm y taliadau
 agent.paymentDue.paymentUnderReview                             = Taliad dan adolygiad
 agent.paymentDue.over-due.interest.line1                        = Llog am dalu’n hwyr
 agent.paymentDue.lpi.paymentOnAccount1.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 agent.paymentDue.lpi.paymentOnAccount2.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 agent.paymentDue.lpi.balancingCharge.text                       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+agent.paymentDue.dunningLock.text                               = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd ac {0}
+agent.paymentDue.dunningLock.link                               = mae ymchwiliad i’ch penderfyniad treth ar y gweill (yn agor tab newydd).
+agent.paymentDue.over-due.interest-rate                         = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
+agent.paymentDue.over-due.interest-rate.link                    = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd)
 
 #Agent next updates
 agent.nextUpdates.heading                                       = Diweddariadau nesaf

@@ -27,8 +27,13 @@ import mocks.views.agent.MockPaymentAllocationView
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import services.PaymentAllocationsService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
+import org.mockito.Mockito.when
+import models.core.Nino
+import org.mockito.ArgumentMatchers.any
+import scala.concurrent.Future
 
 class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAllocationView with MockFrontendAuthorisedFunctions
   with FeatureSwitching with MockPaymentAllocationsService with MockItvcErrorHandler with MockAuditingService with MockIncomeSourceDetailsService {
@@ -40,6 +45,9 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
 
   class Setup {
     val docNumber = "docNumber1"
+
+    val paymentAllocation: PaymentAllocationsService = mock[PaymentAllocationsService]
+
 
     val controller: PaymentAllocationsController = new PaymentAllocationsController(
       paymentAllocationView = paymentAllocationView,
@@ -133,6 +141,22 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
+          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
+        )(HtmlFormat.empty)
+
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
+      }
+
+      "Successfully retrieving a user's lpi payment allocation" in new Setup {
+        enable(PaymentAllocation)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockSingleBusinessIncomeSource()
+        setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModelLpi)
+
+        mockPaymentAllocationView(
+          paymentAllocationViewModelLpi,
           controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
         )(HtmlFormat.empty)
 
