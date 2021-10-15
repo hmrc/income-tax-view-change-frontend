@@ -160,7 +160,7 @@ income_breakdown.total                                          = Cyfanswm yr in
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
-deduction_breakdown.guidance_software                                  = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0} i {1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+deduction_breakdown.guidance_software                                  = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
 deduction_breakdown.table.pension_contributions                        = Cyfraniadau pensiwn
