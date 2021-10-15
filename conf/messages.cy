@@ -133,9 +133,11 @@ tax-year-overview.tax-calculation.in-year                       = Cyfrifiad yn y
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
+income_breakdown.table.header                                   = Math o incwm
+income_breakdown.table.header.amount                            = Swm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
-income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0} i {1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
-income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
+income_breakdown.guidance_software                              = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+income_breakdown.table.employment	                              = Cyflog o bob cyflogaeth
 income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
 income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
@@ -160,9 +162,10 @@ income_breakdown.total                                          = Cyfanswm yr in
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
-deduction_breakdown.guidance_software                                  = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0} i {1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+deduction_breakdown.guidance_software                                  = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
+deduction_breakdown.table.marriage_allowance_transfer                  = Trosglwyddiad Lwfans Priodasol
 deduction_breakdown.table.pension_contributions                        = Cyfraniadau pensiwn
 deduction_breakdown.table.loss_relief                                  = Rhyddhad colledion
 deduction_breakdown.table.annual_payments                              = Taliadau blynyddol
@@ -170,6 +173,7 @@ deduction_breakdown.table.qualifying_loan_interest                     = Llog ar
 deduction_breakdown.table.post_cessasation_trade_receipts              = Derbynebau ar ôl i fasnachu ddod i ben
 deduction_breakdown.table.trade_union_payments                         = Taliadau Undeb Llafur
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
+deduction_breakdown.table.header.amount                                = Swm
 
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth
@@ -369,7 +373,7 @@ whatYouOwe.sa-note                                              = Mae gennych da
 whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 whatYouOwe.dropdown.info                                        = Beth yw’r mathau o daliadau?
-whatYouOwe.payment-days-note                                    = Gall gymryd hyd at 3 diwrnod i brosesu taliadau.
+whatYouOwe.payment-days-note                                    = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
 whatYouOwe.credit-on-account                                    = Os ydych yn gwneud taliad fwy na 30 diwrnod cyn bod taliad yn ddyledus, byddwch yn ei weld fel credyd ar gyfrif.
 whatYouOwe.payNow                                               = Talu nawr
 whatYouOwe.pay-now-aria                                         = Talu nawr ar gyfer Blwyddyn dreth  {0} i {1}
