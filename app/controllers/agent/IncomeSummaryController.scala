@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
+//import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.Inject
@@ -39,7 +39,6 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.In
                                        )(implicit val appConfig: FrontendAppConfig,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
-                                         dateFormatter: ImplicitDateFormatterImpl,
                                          implicit val ec: ExecutionContext,
                                          val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {

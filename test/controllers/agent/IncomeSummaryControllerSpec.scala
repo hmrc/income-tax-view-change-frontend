@@ -49,9 +49,8 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
       app.injector.instanceOf[ExecutionContext],
-      itvcErrorHandler = mockItvcErrorHandler
+      mockItvcErrorHandler
     )
   }
   "backUrl" should {

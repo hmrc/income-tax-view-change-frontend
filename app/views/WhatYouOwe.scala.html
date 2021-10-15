@@ -121,7 +121,7 @@
     </tr>
 }
 
-@tableRow2(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true, latePaymentCharge: Boolean) = {
+@tableRow2(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean, isChargeTypeHyperlinked: Boolean = true, latePaymentCharge: Boolean) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
             @if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(documentDetailWithDueDate.documentDetail.interestEndDate.get.toLongDateShort) else (documentDetailWithDueDate.dueDate.get.toLongDateShort)</td>
