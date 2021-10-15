@@ -547,7 +547,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
     val dropDownInfo = "What are the payment types?"
-    val paymentDaysNote = "Payments can take up to 3 days to process."
+    val paymentDaysNote = "Payments can take up to 7 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
     val paymentUnderReviewParaLink = "tax decision is being investigated (opens in new tab)."
     val paymentUnderReviewPara = s"One or more of your payments are currently under review and your $paymentUnderReviewParaLink"
