@@ -163,6 +163,7 @@ deduction_breakdown.dates                                              = 6 Ebril
 deduction_breakdown.guidance_software                                  = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
+deduction_breakdown.table.marriage_allowance_transfer                  = Trosglwyddiad Lwfans Priodasol
 deduction_breakdown.table.pension_contributions                        = Cyfraniadau pensiwn
 deduction_breakdown.table.loss_relief                                  = Rhyddhad colledion
 deduction_breakdown.table.annual_payments                              = Taliadau blynyddol
@@ -170,6 +171,7 @@ deduction_breakdown.table.qualifying_loan_interest                     = Llog ar
 deduction_breakdown.table.post_cessasation_trade_receipts              = Derbynebau ar ôl i fasnachu ddod i ben
 deduction_breakdown.table.trade_union_payments                         = Taliadau Undeb Llafur
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
+deduction_breakdown.table.header.amount                                = Swm
 
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth
