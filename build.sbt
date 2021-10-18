@@ -11,10 +11,10 @@ import play.sbt.routes.RoutesKeys
 val appName = "income-tax-view-change-frontend"
 
 val bootstrapPlayVersion      = "5.9.0"
-val govTemplateVersion        = "5.70.0-play-27"
-val playPartialsVersion       = "8.2.0-play-27"
-val playUiVersion             = "9.7.0-play-27"
-val playLanguageVersion       = "5.1.0-play-27"
+val govTemplateVersion        = "5.72.0-play-28"
+val playPartialsVersion       = "8.2.0-play-28"
+val playUiVersion             = "9.7.0-play-28"
+val playLanguageVersion       = "5.1.0-play-28"
 val catsVersion               = "0.9.0"
 
 val scalaTestPlusVersion      = "4.0.0"
@@ -26,7 +26,7 @@ val wiremockVersion           = "2.26.1"
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % bootstrapPlayVersion,
+  "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
@@ -34,9 +34,9 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % "5.1.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
-  "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-27",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-27",
-  "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.17.0-play-27"
+  "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-28",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
+  "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.17.0-play-28"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
@@ -47,7 +47,7 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-27" % scope
+  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-28" % scope
 )
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()

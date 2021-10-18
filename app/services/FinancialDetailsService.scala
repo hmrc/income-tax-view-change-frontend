@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.Assets.NOT_FOUND
+import play.api.mvc.Results.{NotFound}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
@@ -48,7 +48,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
         case fdm: FinancialDetailsModel => fdm.documentDetails.filterNot(_.isPaid) flatMap { documentDetail =>
           fdm.getDueDateFor(documentDetail)
         }
-        case FinancialDetailsErrorModel(NOT_FOUND, _) => List.empty[LocalDate]
+        case FinancialDetailsErrorModel(404, _) => List.empty[LocalDate]
         case _ => throw new InternalServerException(s"[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
       }.sortWith(_ isBefore _)
 
