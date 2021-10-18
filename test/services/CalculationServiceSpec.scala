@@ -46,7 +46,7 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
             mockGetLatestCalculationId(testNino, "2018-19")(Right("testIdTwo"))
             mockGetCalculation(testNino, "testIdTwo")(lastTaxCalcSuccess)
 
-            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
+            TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne)).futureValue shouldBe lastTaxCalcWithYearList
           }
         }
 
@@ -58,13 +58,13 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
             mockGetLatestCalculationId(testNino, "2018-19")(Right("testIdTwo"))
             mockGetCalculation(testNino, "testIdTwo")(lastTaxCalcCrystallisedSuccess)
 
-            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
+            TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne)).futureValue shouldBe lastTaxCalcWithYearCrystallisedList
           }
         }
       }
 
       "passed an empty list of Ints" in {
-        await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
+        TestCalculationService.getAllLatestCalculations(testNino, List()).futureValue shouldBe List()
       }
     }
   }
@@ -79,7 +79,7 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
           mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
           mockGetCalculation(testNino, "testIdOne")(calculationDataSuccessModel)
 
-          await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
+          TestCalculationService.getCalculationDetail(testNino, testYear).futureValue shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
 
         }
         "NOT_FOUND response is returned from the IndividualCalculationConnector" should {
@@ -88,7 +88,7 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
               Left(CalculationErrorModel(Status.NOT_FOUND, "not found"))
             )
 
-            await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayNoDataFound
+            TestCalculationService.getCalculationDetail(testNino, testYear).futureValue shouldBe CalcDisplayNoDataFound
           }
         }
         "error response is returned from the IndividualCalculationConnector" should {
@@ -97,7 +97,7 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
               Left(CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Internal server error"))
             )
 
-            await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayError
+            TestCalculationService.getCalculationDetail(testNino, testYear).futureValue shouldBe CalcDisplayError
           }
         }
       }

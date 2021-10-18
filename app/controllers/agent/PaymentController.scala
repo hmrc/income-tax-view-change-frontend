@@ -57,7 +57,7 @@ class PaymentController @Inject()(val incomeSourceDetailsService: IncomeSourceDe
                   case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
                 }
               case _ =>
-                Logger.error("Failed to start payments journey due to missing UTR")
+                Logger("application").error("Failed to start payments journey due to missing UTR")
                 Future.failed(new Exception("Failed to start payments journey due to missing UTR"))
             }
         }

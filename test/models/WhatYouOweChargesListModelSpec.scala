@@ -20,7 +20,7 @@ import assets.FinancialDetailsTestConstants._
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import java.time.LocalDate
 

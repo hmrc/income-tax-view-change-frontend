@@ -87,10 +87,10 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
               case Some(financialDetailsModel: FinancialDetailsModel) if financialDetailsModel.documentDetails.exists(_.transactionId == chargeId) =>
                 doShowChargeSummary(taxYear, chargeId, isLatePaymentCharge, financialDetailsModel, payments)(hc, mtdItUser, user)
               case Some(_: FinancialDetailsModel) =>
-                Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
+                Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
                 Future.successful(Redirect(controllers.agent.routes.HomeController.show().url))
               case _ =>
-                Logger.warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
+                Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
                 Future.successful(itvcErrorHandler.showInternalServerError())
             }
           }

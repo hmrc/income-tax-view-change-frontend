@@ -83,7 +83,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     case Some("ITSA - POA 2") => "Payment on account 2 of 2"
     case Some("TRM New Charge") | Some("TRM Amend Charge") => "balancingCharge.text"
     case error =>
-      Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+      Logger("application").error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
   }
 

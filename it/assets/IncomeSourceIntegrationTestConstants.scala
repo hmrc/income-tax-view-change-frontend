@@ -28,14 +28,14 @@ object IncomeSourceIntegrationTestConstants {
 		testMtdItId,
 		businesses = List(business1),
 		property = None,
-		yearOfMigration = None
+		yearOfMigration = Some("2018")
 	)
 
 	val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
 		testMtdItId,
 		businesses = List(business2),
 		property = Some(property),
-		yearOfMigration = None
+		yearOfMigration = Some("2018")
 	)
 
 	val multipleBusinessesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
@@ -52,12 +52,12 @@ object IncomeSourceIntegrationTestConstants {
 		testMtdItId,
 		businesses = List(business1),
 		property = Some(property),
-		yearOfMigration = None
+		yearOfMigration = Some("2018")
 	)
 
 	val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
 		testMtdItId,
-		Some(getCurrentTaxYearEnd.getYear.toString),
+		Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
 		businesses = List(oldBusiness1),
 		property = Some(oldProperty)
 	)
@@ -69,7 +69,7 @@ object IncomeSourceIntegrationTestConstants {
 			business2
 		),
 		property = Some(property),
-		yearOfMigration = None
+		yearOfMigration = Some("2018")
 	)
 
 	val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(

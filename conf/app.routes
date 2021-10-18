@@ -1,7 +1,6 @@
 # microservice specific routes
 
 # Play frontend hmrc routes
-->          /govuk-frontend                                               govuk.Routes
 ->          /hmrc-frontend                                                hmrcfrontend.Routes
 
 # Play frontend hmrc route for Assets
@@ -73,7 +72,7 @@ GET         /uplift-success                                               contro
 #BTA Partial
 GET         /partial                                                      controllers.BTAPartialController.setupPartial
 
-#Calculationd details poller
+#CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false)
 
 #Language Controller

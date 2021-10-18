@@ -56,11 +56,11 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
 							Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear)))
 
 						case CalcDisplayNoDataFound =>
-							Logger.warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
+							Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
 							itvcErrorHandler.showInternalServerError()
 
 						case CalcDisplayError =>
-							Logger.error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+							Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
 							itvcErrorHandler.showInternalServerError()
 					}
 				}

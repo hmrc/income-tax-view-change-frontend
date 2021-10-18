@@ -20,7 +20,7 @@ import javax.inject.Inject
 import play.api.http.HeaderNames
 import play.api.mvc.{MessagesControllerComponents, RequestHeader, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 

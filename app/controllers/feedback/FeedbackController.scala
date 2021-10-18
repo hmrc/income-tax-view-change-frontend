@@ -23,9 +23,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.partials._
 
 import java.net.URLEncoder
@@ -78,11 +78,11 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
               case HttpStatus.BAD_REQUEST => BadRequest(feedbackView(feedbackFormPartialUrl, Some(Html(resp.body))))
-              case status => Logger.error(s"Unexpected status code from feedback form: $status"); InternalServerError
+              case status => Logger("application").error(s"Unexpected status code from feedback form: $status"); InternalServerError
             }
         }
       }.getOrElse {
-        Logger.error("Trying to submit an empty feedback form")
+        Logger("application").error("Trying to submit an empty feedback form")
         Future.successful(InternalServerError)
       }
   }

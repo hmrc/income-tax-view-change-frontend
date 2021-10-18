@@ -30,6 +30,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -63,7 +64,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(
       testMtditid,
-      None,
+      Some(getTaxEndYear(LocalDate.now.minusYears(numYears - 1)).toString),
       businesses = (1 to numYears).toList.map { count =>
         BusinessDetailsModel(
           incomeSourceId = s"income-id-$count",
@@ -87,7 +88,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
   val testUserWithRecentYears: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
-    yearOfMigration = None,
+    yearOfMigration = Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     businesses = List(
       BusinessDetailsModel(
         "testId",
@@ -103,13 +104,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     "a successful financial details response is returned from the connector" should {
       "return a valid FinancialDetails model" in {
         setupMockGetFinancialDetails(testTaxYear, testNino)(financialDetailsModel(testTaxYear))
-        await(TestFinancialDetailsService.getFinancialDetails(testTaxYear, testNino)) shouldBe financialDetailsModel(testTaxYear)
+        TestFinancialDetailsService.getFinancialDetails(testTaxYear, testNino).futureValue shouldBe financialDetailsModel(testTaxYear)
       }
     }
     "a error model is returned from the connector" should {
       "return a FinancialDetailsError model" in {
         setupMockGetFinancialDetails(testTaxYear, testNino)(testFinancialDetailsErrorModel)
-        await(TestFinancialDetailsService.getFinancialDetails(testTaxYear, testNino)) shouldBe testFinancialDetailsErrorModel
+        TestFinancialDetailsService.getFinancialDetails(testTaxYear, testNino).futureValue shouldBe testFinancialDetailsErrorModel
       }
     }
   }
@@ -141,8 +142,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
         }
 
-        intercept[InternalServerException](await(result))
-          .message shouldBe "[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details"
+        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details"
       }
     }
     "financial details are returned successfully" should {
@@ -183,7 +184,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
           }
 
-          await(result) shouldBe Some(Left(LocalDate.now.minusDays(1) -> true))
+          result.futureValue shouldBe Some(Left(LocalDate.now.minusDays(1) -> true))
         }
       }
       "return a single non-overdue date" when {
@@ -223,7 +224,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
           }
 
-          await(result) shouldBe Some(Left(LocalDate.now.plusDays(3) -> false))
+          result.futureValue shouldBe Some(Left(LocalDate.now.plusDays(3) -> false))
         }
       }
       "return the count of overdue dates" when {
@@ -263,7 +264,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
           }
 
-          await(result) shouldBe Some(Right(2))
+          result.futureValue shouldBe Some(Right(2))
         }
       }
       "return none" when {
@@ -282,7 +283,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
           }
 
-          await(result) shouldBe None
+          result.futureValue shouldBe None
         }
       }
     }
@@ -296,11 +297,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         val hc = implicitly[HeaderCarrier]
 
         when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
-          .thenReturn(testValidChargeHistoryModel)
+          .thenReturn(Future.successful(testValidChargeHistoryModel))
 
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, docNumber)(hc)
 
-        await(result) shouldBe testValidChargeHistoryModel.chargeHistoryDetails
+        result.futureValue shouldBe testValidChargeHistoryModel.chargeHistoryDetails
         verify(mockIncomeTaxViewChangeConnector).getChargeHistory(testMtditid, docNumber)(hc)
       }
     }
@@ -308,12 +309,12 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     "the connector returns an erroneous ChargesHistoryErrorModel" should {
       "generate a failure with InternalServerException" in {
         when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
-          .thenReturn(testChargeHistoryErrorModel)
+          .thenReturn(Future.successful(testChargeHistoryErrorModel))
 
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
 
-        intercept[InternalServerException](await(result))
-          .message shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
+        result.failed.futureValue shouldBe an[InternalServerException]
+        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"
       }
     }
 
@@ -342,7 +343,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
         "successful responses are returned for multiple years" in {
           val financialDetailLastYear = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
@@ -357,7 +358,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
         "a successful response and a not found response are returned" in {
           val financialDetailLastYear = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
@@ -371,7 +372,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
         "only not found response is returned" in {
           val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")
@@ -381,7 +382,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
       }
       "return a set of financial transactions with error transactions" when {
@@ -395,7 +396,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
         "an error response is returned for multiple years" in {
           val financialDetailsError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
@@ -409,7 +410,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
         "an error response is returned along with a successful response" in {
           val financialDetailsErrorLastYear = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
@@ -424,7 +425,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
       }
   }
@@ -465,7 +466,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
         "a mix of unpaid, paid and non charge transactions exist" in {
 
@@ -515,7 +516,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
         "no unpaid transactions exist" in {
 
@@ -544,7 +545,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe List.empty[FinancialDetailsResponseModel]
+          result.futureValue shouldBe List.empty[FinancialDetailsResponseModel]
         }
         "errored financial transactions exist" in {
 
@@ -576,7 +577,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
 
-          await(result) shouldBe expectedResult
+          result.futureValue shouldBe expectedResult
         }
       }
   }

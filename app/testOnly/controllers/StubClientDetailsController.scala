@@ -26,7 +26,7 @@ import testOnly.connectors.MatchingStubConnector
 import testOnly.forms.StubClientDetailsForm
 import testOnly.models.StubClientDetailsModel
 import testOnly.views.html.StubClientDetails
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +59,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
         postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
       ))), { data =>
         matchingStubConnector.stubClient(data) map { response =>
-          Logger.info(s"[StubClientDetailsController][submit] - matching stub, status: ${response.status}, body: ${response.body}")
+          Logger("application").info(s"[StubClientDetailsController][submit] - matching stub, status: ${response.status}, body: ${response.body}")
           Redirect(controllers.agent.routes.EnterClientsUTRController.show())
         }
       }

@@ -20,7 +20,7 @@ import controllers.Assets.{InternalServerError, Ok}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.templates.ErrorTemplate
 
 import javax.inject.Inject
