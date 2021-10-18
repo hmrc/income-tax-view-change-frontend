@@ -19,7 +19,6 @@ package controllers.agent
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
-import controllers.predicates.{IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.summaryData
 import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel
@@ -38,9 +37,6 @@ class FinalTaxCalculationController @Inject()(
                                                val ec: ExecutionContext,
                                                val authorisedFunctions: AuthorisedFunctions,
                                                view: FinalTaxCalculationView,
-                                               checkSessionTimeout: SessionTimeoutPredicate,
-                                               retrieveNino: NinoPredicate,
-                                               retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                calcService: CalculationService,
                                                itvcErrorHandler: ItvcErrorHandler,
                                                appConfig: FrontendAppConfig,
@@ -55,10 +51,10 @@ class FinalTaxCalculationController @Inject()(
           val calcOverview = CalcOverview(calcDataModel)
           Ok(view(calcOverview, taxYear, isAgent = true))
         case CalcDisplayNoDataFound =>
-          Logger.info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
+          Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
           itvcErrorHandler.showInternalServerError()
         case _ =>
-          Logger.error("[FinalTaxCalculationController][show] Unexpected error has occurred while retrieving calculation data.")
+          Logger("application").error("[FinalTaxCalculationController][show] Unexpected error has occurred while retrieving calculation data.")
           itvcErrorHandler.showInternalServerError()
       }
     }
@@ -89,14 +85,14 @@ class FinalTaxCalculationController @Inject()(
                 )
 
               case _ =>
-                Logger.error("[FinalTaxCalculationController][submit] Name or UTR missing.")
+                Logger("application").error("[FinalTaxCalculationController][submit] Name or UTR missing.")
                 itvcErrorHandler.showInternalServerError()
             }
           case CalcDisplayNoDataFound =>
-            Logger.info("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+            Logger("application").info("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
             itvcErrorHandler.showInternalServerError()
           case _ =>
-            Logger.error("[FinalTaxCalculationController][submit] Unexpected error has occurred while retrieving calculation data.")
+            Logger("application").error("[FinalTaxCalculationController][submit] Unexpected error has occurred while retrieving calculation data.")
             itvcErrorHandler.showInternalServerError()
         }
         

@@ -24,7 +24,7 @@
 @import play.twirl.api.HtmlFormat
 @import play.api.data.Form
 @import play.api.data._
-@import views.html.layouts.agent.mainContentTemplate
+@import views.html.layouts.agent._
 
 @this(
     appConfig: config.FrontendAppConfig,
@@ -95,8 +95,6 @@
 
 }
 
-@getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
-
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(CurrentLanguage()))
@@ -104,14 +102,6 @@
     @languageSelection()
     @backUrl.map(backLink(_))
     </div>
-}
-
-@scripts = {
-<script src='@controllers.routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
-<script src='@controllers.routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
-<script>window.GOVUKFrontend.initAll();
-    window.HMRCFrontend.initAll()</script>
-
 }
 
 @content = {

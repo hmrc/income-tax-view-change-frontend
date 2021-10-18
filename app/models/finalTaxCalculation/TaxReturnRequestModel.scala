@@ -16,7 +16,7 @@
 
 package models.finalTaxCalculation
 
-import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 
 case class TaxReturnRequestModel(
                                   name: String,

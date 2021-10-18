@@ -78,6 +78,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           }) flatMap {
             case fdm: FinancialDetailsModel =>
               fdm.getAllDueDates
+            case _ => List.empty
           }
         }
 

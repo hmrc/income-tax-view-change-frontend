@@ -27,12 +27,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
 import services._
-import uk.gov.hmrc.http.NotFoundException
 import views.html.agent.Home
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext}
 
 @Singleton
 class HomeController @Inject()(home: Home,
