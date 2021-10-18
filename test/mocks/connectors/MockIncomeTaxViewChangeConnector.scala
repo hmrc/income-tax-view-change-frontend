@@ -28,7 +28,7 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -80,7 +80,7 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
 
   def setupBusinessDetails(nino: String)(response: Future[IncomeSourceDetailsResponse]): Unit = {
     when(mockIncomeTaxViewChangeConnector.getBusinessDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn(response)
   }
 
   def setupGetPayments(taxYear: Int)(response: PaymentsResponse): Unit = {

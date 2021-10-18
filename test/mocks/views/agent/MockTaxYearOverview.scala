@@ -40,14 +40,16 @@ trait MockTaxYearOverview extends BeforeAndAfterEach with MockitoSugar {
                           calcOverview: Option[CalcOverview],
                           documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                           obligations: ObligationsModel,
-                          backUrl: String)
+                          backUrl: String,
+                          isAgent: Boolean = true)
                          (response: Html): Unit = {
     when(taxYearOverview.apply(
       matches(taxYear),
       matches(calcOverview),
       matches(documentDetailsWithDueDates),
       matches(obligations),
-      matches(backUrl)
+      matches(backUrl),
+      matches(isAgent)
     )(any(), any()))
       .thenReturn(response)
   }

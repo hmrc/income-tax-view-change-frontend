@@ -34,14 +34,14 @@ class NinoLookupServiceSpec extends TestSupport with MockIncomeTaxViewChangeConn
 
         setupNinoLookupResponse(testMtditid)(testNinoModel)
 
-        await(TestNinoLookupService.getNino(testMtditid)) shouldBe testNinoModel
+        TestNinoLookupService.getNino(testMtditid).futureValue shouldBe testNinoModel
       }
     }
     "an error model is returned from the connector" should {
       "return a Nino Error model" in {
         setupNinoLookupResponse(testMtditid)(testNinoErrorModel)
 
-        await(TestNinoLookupService.getNino(testMtditid)) shouldBe testNinoErrorModel
+        TestNinoLookupService.getNino(testMtditid).futureValue shouldBe testNinoErrorModel
       }
     }
   }

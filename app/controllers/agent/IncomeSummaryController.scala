@@ -26,7 +26,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.Inject
@@ -39,7 +38,6 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.In
                                        )(implicit val appConfig: FrontendAppConfig,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
-                                         dateFormatter: ImplicitDateFormatterImpl,
                                          implicit val ec: ExecutionContext,
                                          val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
@@ -51,11 +49,11 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.In
 					case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
 					case CalcDisplayNoDataFound =>
-						Logger.warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
+						Logger("application").warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
 						Future.successful(itvcErrorHandler.showInternalServerError())
 
 					case CalcDisplayError =>
-						Logger.error(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
+						Logger("application").error(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
 						Future.successful(itvcErrorHandler.showInternalServerError())
 				}
 			}

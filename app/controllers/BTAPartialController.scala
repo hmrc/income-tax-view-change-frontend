@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.predicates._
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
@@ -31,7 +30,6 @@ class BTAPartialController @Inject()(btaPartial: BtaPartial,
                                      checkSessionTimeout: SessionTimeoutPredicate,
                                      authenticate: AuthenticationPredicate)
                                     (implicit val executionContext:ExecutionContext,
-                                     config: FrontendAppConfig,
                                      mcc: MessagesControllerComponents) extends BaseController with I18nSupport {
 
   def setupPartial: Action[AnyContent] = (checkSessionTimeout andThen authenticate)  {

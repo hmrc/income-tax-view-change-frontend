@@ -22,6 +22,7 @@
 @import play.twirl.api.HtmlFormat
 @import views.html.layouts.mainContentLayout
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
+@import views.html.layouts._
 
 @this(
     appConfig: config.FrontendAppConfig,
@@ -92,8 +93,6 @@
 @scriptsBlock.fold(HtmlFormat.empty)(x => x)
 }
 
-@getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
-
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(CurrentLanguage()))
@@ -101,14 +100,6 @@
     @languageSelection()
     @backUrl.map(backLink(_))
     </div>
-}
-
-@scripts = {
-<script src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
-<script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
-<script>window.GOVUKFrontend.initAll();
-    window.HMRCFrontend.initAll()</script>
-
 }
 
 @content = {

@@ -74,7 +74,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                      calcId: String, nino: String)
                                     (implicit hc: HeaderCarrier): Future[Int] = {
 
-    Logger.debug(s"[CalculationPollingService][getCalculationResponse] Starting polling for  calcId: $calcId and nino: $nino")
+    Logger("application").debug(s"[CalculationPollingService][getCalculationResponse] Starting polling for  calcId: $calcId and nino: $nino")
     while(System.currentTimeMillis() < endTimeForEachInterval) {
       //Waiting until interval time is complete
     }

@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
 import controllers.BaseController
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,8 +25,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class TestBTAPartialController @Inject()(testBTAPartial: TestBTAPartial)
-                                        (implicit appConfig: FrontendAppConfig,
-                                         mcc: MessagesControllerComponents,
+                                        (implicit mcc: MessagesControllerComponents,
                                          val executionContext: ExecutionContext) extends BaseController {
 
   def viewBTAPartial: Action[AnyContent] = Action { implicit request =>

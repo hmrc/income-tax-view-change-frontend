@@ -21,7 +21,7 @@ import assets.BusinessDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import assets.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 

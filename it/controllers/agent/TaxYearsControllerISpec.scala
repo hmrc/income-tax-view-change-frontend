@@ -26,7 +26,7 @@ import helpers.servicemocks.{IncomeTaxViewChangeStub, IndividualCalculationStub}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
@@ -67,7 +67,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
-    yearOfMigration = None,
+    yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
       "testId",
       AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),

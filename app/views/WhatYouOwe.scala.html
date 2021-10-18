@@ -121,7 +121,7 @@
     </tr>
 }
 
-@tableRow2(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true, latePaymentCharge: Boolean) = {
+@tableRow2(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean, isChargeTypeHyperlinked: Boolean = true, latePaymentCharge: Boolean) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
             @if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(documentDetailWithDueDate.documentDetail.interestEndDate.get.toLongDateShort) else (documentDetailWithDueDate.dueDate.get.toLongDateShort)</td>
@@ -194,6 +194,21 @@
                     }
                 </div>
             }
+        }
+
+        @if(utr.isDefined) {
+        <div>
+            @creditOnAccountNotePanel
+            <div id="payment-button">
+                @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
+                messageKey = "whatYouOwe.payNow", classes = "govuk-button",
+                id = Some("payment-button-link"),
+                ariaLabel = Some(messages("whatYouOwe.pay-now-aria",
+                (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
+                chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
+            </div>
+            @paymentDaysNoteParagraph
+        </div>
         }
         @saNoteParagraph
         @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
@@ -335,19 +350,5 @@
                 }
             }
         </div>
-        @if(utr.isDefined) {
-            <div>
-                @paymentDaysNoteParagraph
-                @creditOnAccountNotePanel
-                <div id="payment-button">
-                    @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
-                        messageKey = "whatYouOwe.payNow", classes = "govuk-button",
-                        id = Some("payment-button-link"),
-                        ariaLabel = Some(messages("whatYouOwe.pay-now-aria",
-                            (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
-                            chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
-                </div>
-            </div>
-        }
     }
 }

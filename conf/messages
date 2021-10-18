@@ -87,9 +87,9 @@ agent.paymentDue.lpi.paymentOnAccount1.text                    = Late payment in
 agent.paymentDue.lpi.paymentOnAccount2.text                    = Late payment interest for payment on account 2 of 2
 agent.paymentDue.lpi.balancingCharge.text                      = Late payment interest for remaining balance
 
-agent.paymentDue.overdueAmount                                 = Overdue payments due
+agent.paymentDue.overdueAmount                                 = Overdue payments
 agent.paymentDue.balanceDueWithin30Days                        = Due within 30 days
-agent.paymentDue.totalBalance                                  = Total payments due
+agent.paymentDue.totalBalance                                  = Total payments
 
 
 ## Agent Error Page ##
@@ -188,9 +188,9 @@ tax-year-overview.payments.amount                                   = Amount
 tax-year-overview.payments.paymentOnAccount1.text                   = Payment on account 1 of 2
 tax-year-overview.payments.paymentOnAccount2.text                   = Payment on account 2 of 2
 tax-year-overview.payments.balancingCharge.text                     = Remaining balance
-tax-year-overview.payments.lpi.paymentOnAccount1.text               = Late payment interest on payment on account 1 of 2
-tax-year-overview.payments.lpi.paymentOnAccount2.text               = Late payment interest on payment on account 2 of 2
-tax-year-overview.payments.lpi.balancingCharge.text                 = Late payment interest on remaining balance
+tax-year-overview.payments.lpi.paymentOnAccount1.text               = Late payment interest for payment on account 1 of 2
+tax-year-overview.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
+tax-year-overview.payments.lpi.balancingCharge.text                 = Late payment interest for remaining balance
 tax-year-overview.payments.paid                                     = Paid
 tax-year-overview.payments.unpaid                                   = Unpaid
 tax-year-overview.payments.part-paid                                = Part Paid
@@ -528,9 +528,9 @@ whatYouOwe.payment-type.taxYear                                    = Tax year {0
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review and your {0}
 whatYouOwe.dunningLock.link                                        = tax decision is being investigated (opens in new tab).
-whatYouOwe.overdueAmount                                           = Overdue payments due
+whatYouOwe.overdueAmount                                           = Overdue payments
 whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
-whatYouOwe.totalBalance                                            = Total payments due
+whatYouOwe.totalBalance                                            = Total payments
 
 
 ## Charge Summary ##
@@ -651,6 +651,7 @@ paymentAllocation.tableHead.allocated-date                      = Date allocated
 paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
+paymentAllocation.na                                            = N/A
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
 paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance for payment on account 1 of 2

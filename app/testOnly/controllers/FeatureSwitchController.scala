@@ -21,11 +21,11 @@ import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 
 import javax.inject.Inject
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
 import testOnly.views.html.FeatureSwitchView
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.collection.immutable.ListMap
 

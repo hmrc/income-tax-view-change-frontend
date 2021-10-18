@@ -44,22 +44,22 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp{
 
     "return a CitizenDetailsModel with JSON in case of success" in {
       setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe testValidCitizenDetailsModel
+      result.futureValue shouldBe testValidCitizenDetailsModel
     }
 
     "return CitizenDetailsErrorModel when bad Json is recieved" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe CitizenDetailsModel(None, None, None)
+      result.futureValue shouldBe CitizenDetailsModel(None, None, None)
     }
 
     "return CitizenDetailErrorModel when bad request recieved" in {
       setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe CitizenDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
+      result.futureValue shouldBe CitizenDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return CitizenDetailErrorModel when GET fails" in {
       setupMockFailedHttpGet(testUrl)
-      await(result) shouldBe CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed, unknown error")
+      result.futureValue shouldBe CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed, unknown error")
     }
 
   }

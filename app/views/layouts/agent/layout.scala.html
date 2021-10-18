@@ -21,6 +21,7 @@
 @import play.api.data.Form
 @import views.html.layouts.agent.mainContentTemplate
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
+@import play.twirl.api.HtmlFormat
 
 @this(
     appConfig: config.FrontendAppConfig,
@@ -38,7 +39,7 @@
 	mainContentTemplate: mainContentTemplate
 )
 
-@(pageTitle: String, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None, mainClass: Option[String] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String,scriptsBlock: Option[Html] = None, backUrl: Option[String] = None, signOutLink: Boolean = true, timeout: Boolean = true, form: Option[Form[_]] = None, mainClass: Option[String] = None)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @titlePattern = @{
 	if(form.exists(_.hasErrors)) {
@@ -66,21 +67,31 @@
 <!--[if lte IE 8]><link href=' @controllers.routes.Assets.at("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
 <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.at("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
-	<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
+    @if(timeout) {
+        @hmrcTimeoutDialog(TimeoutDialog(
+            language = Some("en"),
+            timeout = Option(900),
+            countdown = Option(120),
+            keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
+            signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
+            keepAliveButtonText = Some(messages("button.continue"))
+        ))
+    }
 
-	@if(timeout) {
-			@hmrcTimeoutDialog(TimeoutDialog(
-				language = Some("en"),
-				timeout = Option(900),
-				countdown = Option(120),
-				keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
-				signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
-				keepAliveButtonText = Some(messages("button.continue"))
-			))
-		}
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/itvc.js")></script>
+<script>
+		setAccordianMessages("@messages("sections.open.all")", "@messages("sections.close.all")");
+	</script>
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/accordian.js")></script>
+<script type="text/javascript" src=@routes.Assets.versioned("javascripts/govuk-frontend.js")></script>
+<script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
+
+@scriptsBlock.fold(HtmlFormat.empty)(x => x)
+
+
+
 }
-
-@getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
 
 @beforeContentBlock = {
     @phaseBanner("beta")
@@ -89,14 +100,6 @@
     @languageSelection()
     @backUrl.map(backLink(_))
     </div>
-}
-
-@scripts = {
-<script src='@controllers.routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
-<script src='@controllers.routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
-<script>window.GOVUKFrontend.initAll();
-    window.HMRCFrontend.initAll()</script>
-
 }
 
 @content = {
@@ -120,7 +123,7 @@
 		bodyEndBlock = None,
 		headerBlock = Some(siteHeader),
 		footerBlock = Some(footerLinks()),
-		scriptsBlock = Some(scripts),
+		scriptsBlock = Some(head),
 		mainContentLayout = Some(mainContentTemplate(mainClass.get)(_))
 	)(content)
 }else{
@@ -131,6 +134,6 @@
 		bodyEndBlock = None,
 		headerBlock = Some(siteHeader),
 		footerBlock = Some(footerLinks()),
-		scriptsBlock = Some(scripts)
+		scriptsBlock = Some(head)
 	)(content)
 }

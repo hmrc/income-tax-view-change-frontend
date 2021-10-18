@@ -18,9 +18,8 @@ package controllers.timeout
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.timeout.Timeout
 
 import scala.concurrent.Future

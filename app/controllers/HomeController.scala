@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{FinancialDetailsService, NextUpdatesService}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.CurrentDateProvider
 
 import java.time.LocalDate
@@ -78,6 +78,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           }) flatMap {
             case fdm: FinancialDetailsModel =>
               fdm.getAllDueDates
+            case _ => List.empty
           }
         }
 
@@ -100,7 +101,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       }.recover {
         case ex =>
-          Logger.error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
+          Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
           itvcErrorHandler.showInternalServerError()
       }
   }

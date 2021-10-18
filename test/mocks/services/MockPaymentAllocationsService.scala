@@ -24,7 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.PaymentAllocationsService
 import services.PaymentAllocationsService.PaymentAllocationError
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
