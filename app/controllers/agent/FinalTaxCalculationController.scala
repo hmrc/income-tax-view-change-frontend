@@ -19,7 +19,6 @@ package controllers.agent
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
-//import controllers.predicates.{IncomeSourceDetailsPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.summaryData
 import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel

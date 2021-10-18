@@ -18,7 +18,6 @@ package connectors
 
 import audit.AuditingService
 import config.FrontendAppConfig
-//import implicits.ImplicitJsonValidationFormatter._
 import javax.inject.Inject
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
