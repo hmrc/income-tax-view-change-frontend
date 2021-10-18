@@ -7,7 +7,6 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 import play.core.PlayVersion
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 import play.sbt.routes.RoutesKeys
-import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
@@ -62,7 +61,7 @@ lazy val scoverageSettings = {
     ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;models/.data/..*;" +
       "filters.*;.handlers.*;components.*;.*BuildInfo.*;.*FrontendAuditConnector.*;.*Routes.*;views.html.*;appConfig.*;" +
       "controllers.feedback.*;app.*;prod.*;appConfig.*;com.*;testOnly.*;\"",
-    ScoverageKeys.coverageMinimum := 90,
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true
   )
