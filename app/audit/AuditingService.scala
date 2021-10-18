@@ -20,8 +20,6 @@ import audit.models.{AuditModel, ExtendedAuditModel}
 import config.FrontendAppConfig
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json, Writes}
-import play.api.libs.json.JodaWrites._
-import play.api.libs.json.JodaReads._
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions

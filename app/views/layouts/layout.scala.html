@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header => HmrcHeaderArgs}
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import play.twirl.api.HtmlFormat
-@import views.html.layouts.mainContentLayout
+@import views.html.layouts._
 
 @this(
     appConfig: config.FrontendAppConfig,
@@ -99,14 +99,6 @@
     @languageSelection()
     @backUrl.map(backLink(_))
     </div>
-}
-
-@scripts = {
-<script src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
-<script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
-<script>window.GOVUKFrontend.initAll();
-    window.HMRCFrontend.initAll()</script>
-
 }
 
 @content = {

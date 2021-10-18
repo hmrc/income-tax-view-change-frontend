@@ -65,6 +65,7 @@ paymentAllocationsForLpi: AgentPaymentAllocationsForLpi, implicitDateFormatter: 
                     <th>@messages("paymentAllocation.tableHead.amount")</th>
                 </tr>
             </thead>
+
             @if(viewModel.isLpiPayment) {
             @paymentAllocationsForLpi(viewModel)
             } else {

@@ -49,7 +49,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   }
 
   def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
-    implicit user =>
+		implicit user =>
 			Future.successful(Ok(enterClientsUTR(
 				clientUTRForm = ClientsUTRForm.form,
 				postAction = routes.EnterClientsUTRController.submit()
@@ -57,7 +57,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   }
 
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
-    implicit user =>
+		implicit user =>
 			ClientsUTRForm.form.bindFromRequest.fold(
 				hasErrors => Future.successful(BadRequest(enterClientsUTR(
 					clientUTRForm = hasErrors,

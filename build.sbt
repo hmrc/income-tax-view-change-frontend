@@ -6,8 +6,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import play.core.PlayVersion
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-
-import sbt.Tests.{Group, SubProcess}
+import play.sbt.routes.RoutesKeys
 
 val appName = "income-tax-view-change-frontend"
 
@@ -62,7 +61,7 @@ lazy val scoverageSettings = {
     ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;models/.data/..*;" +
       "filters.*;.handlers.*;components.*;.*BuildInfo.*;.*FrontendAuditConnector.*;.*Routes.*;views.html.*;appConfig.*;" +
       "controllers.feedback.*;app.*;prod.*;appConfig.*;com.*;testOnly.*;\"",
-    ScoverageKeys.coverageMinimum := 90,
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -73,7 +72,7 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(playSettings : _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.12.12")
+  .settings(scalaVersion := "2.12.13")
   .settings(publishingSettings: _*)
   .settings(scoverageSettings: _*)
   .settings(defaultSettings(): _*)
@@ -84,8 +83,7 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(
     libraryDependencies ++= appDependencies,
-    retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
+    retrieveManaged := true
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
@@ -99,7 +97,8 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
     ),
-    sourceDirectories in (Compile, TwirlKeys.compileTemplates) := (unmanagedSourceDirectories in Compile).value
+    RoutesKeys.routesImport := Seq.empty,
+    scalacOptions += "-Wconf:cat=unused-imports:s,cat=unused-params:s"
   )
   .settings(resolvers ++= Seq(
     Resolver.jcenterRepo

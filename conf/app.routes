@@ -4,7 +4,7 @@
 ->          /hmrc-frontend                                                hmrcfrontend.Routes
 
 # Play frontend hmrc route for Assets
-GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file: Asset)
+GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
 
 # Assets
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)

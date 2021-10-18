@@ -56,8 +56,8 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
 
       (overdueDates, nextDueDates) match {
         case (Nil, Nil) => None
-        case (Nil, nextDueDate :: _) => Some(Left(nextDueDate, false))
-        case (overdueDate :: Nil, _) => Some(Left(overdueDate, true))
+        case (Nil, nextDueDate :: _) => Some(Left((nextDueDate, false)))
+        case (overdueDate :: Nil, _) => Some(Left((overdueDate, true)))
         case _ => Some(Right(overdueDates.size))
       }
     }
