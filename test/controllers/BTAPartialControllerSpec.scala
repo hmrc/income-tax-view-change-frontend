@@ -33,7 +33,6 @@ class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredic
     MockAuthenticationPredicate
     )(
     ec,
-    appConfig,
     app.injector.instanceOf[MessagesControllerComponents]
   )
 
