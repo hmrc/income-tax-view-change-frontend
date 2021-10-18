@@ -16,7 +16,16 @@
 
 @import views.html.templates.MainTemplate
 @import models.calculation.CalculationResponseModelWithYear
-@this(mainTemplate: MainTemplate, appConfig: config.FrontendAppConfig)
+@import views.html.components._
+@import views.html.layouts.layout
+
+@this(
+mainTemplate: layout,
+h1: h1,
+p: p,
+link: link,
+appConfig: config.FrontendAppConfig
+)
 
 @(taxYears: List[CalculationResponseModelWithYear], backUrl: String, utr: Option[String], itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
@@ -24,26 +33,26 @@
         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewReturn-link-@year"
         href="@{controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url}">
             @messages("taxYears.viewReturn")
-            <span class="visuallyhidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+            <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
         </a>
 }
 
 @updateReturnLink(year: Int) = {
     <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="updateReturn-link-@year" href="@appConfig.submissionFrontendUrl">
         @messages("taxYears.updateReturn")
-        <span class="visuallyhidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
     </a>
 }
 
 @taxYearRow(year: Int) = {
     <tr class="govuk-table__row">
-        <td class="govuk-table__cell">
-            <ul class="govuk-list-taxYears">
+        <td class="govuk-table__header">
+            <ul class="govuk-list" style="margin-bottom:0; display:inline-block;">
                 <li>@messages("taxYears.taxYears", s"${year - 1}", s"$year")</li>
             </ul>
         </td>
-        <td class="govuk-table__cell">
-            <ul class="govuk-list-taxYears">
+        <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">
+            <ul class="govuk-list" style="margin-bottom:0; display:inline-block;">
                 <li>@viewReturnLink(year)</li>
                 @if(itsaSubmissionIntegrationEnabled) {
                     <li>@updateReturnLink(year)</li>
@@ -53,33 +62,41 @@
     </tr>
 }
 
-@mainTemplate(title = messages("taxYears.heading"), backUrl = Some(backUrl)) {
 
-    <header class="page-heading">
-        <h1 class="heading-xlarge" id="heading">@messages("taxYears.heading")</h1>
-    </header>
+@mainTemplate(
+    pageTitle = messages("taxYears.heading"),
+    backUrl = Some(backUrl)
+) {
+
+    @h1(msg = "taxYears.heading")
+
+
     @if(taxYears.isEmpty){
         <p id="no-taxYears">@messages("taxYears.noEstimates")</p>
     } else {
-        <table class="govuk-table-taxYears">
-            <caption class="govuk-table__caption heading-xlarge visually-hidden">@messages("taxYears.heading")</caption>
+        <div class="column-two-thirds">
+        <table class="govuk-table">
+            <caption class="govuk-table__caption govuk-table__caption--xl heading-xlarge govuk-visually-hidden">@messages("taxYears.heading")</caption>
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">@messages("taxYears.table.taxYear.heading")</th>
-                    <th scope="col" class="govuk-table__header numeric">@messages("taxYears.table.options.heading")</th>
+                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("taxYears.table.options.heading")</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
                 @taxYears.sortBy(_.year).reverse.map(_.year).map(taxYearRow)
             </tbody>
         </table>
+        </div>
     }
 
     @if(utr.isDefined) {
-        <p>
+        @p(){
             @messages("taxYears.oldSa.content.text")
-            <a id="self-assessment-online-account-link" target="_blank" href="@appConfig.saViewLandPService(utr.get)">@messages("taxYears.oldSa.content.link")</a>.
-        </p>
+            @link(link = appConfig.saViewLandPService(utr.get), messageKey = "taxYears.oldSa.content.link", id=Some("self-assessment-online-account-link"), outerMessage = ".", target = Some("_blank"))
+        }
     }
+
+
 }
 
