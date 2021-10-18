@@ -35,7 +35,7 @@
 			<div class="govuk-accordion__section">
 				<div class="govuk-accordion__section-header">
 					<h3 class="govuk-accordion__section-heading">
-						<span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@{collectedObligations._2}">
+						<span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}">
 						@{collectedObligations._1._1.toLongDate}
 						</span>
 					</h3>
@@ -44,7 +44,7 @@
 					@{if(collectedObligations._1._2.head.obligation.obligationType != "Quarterly") messages("nextUpdates.section.heading.taxYear", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
 					</div>
 				</div>
-				<div class="govuk-accordion__section-content" id="accordion-with-summary-sections-content-@{collectedObligations._2}" aria-labelledby="accordion-with-summary-sections-content-@{collectedObligations._2}">
+				<div class="govuk-accordion__section-content" id="accordion-with-summary-sections-content-@{collectedObligations._2 + 1}" aria-labelledby="accordion-with-summary-sections-content-@{collectedObligations._2 + 1}">
 					<table class="govuk-table">
 						<thead class="govuk-table__head">
 							<tr class="govuk-table__row">
