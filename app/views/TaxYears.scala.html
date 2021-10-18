@@ -93,7 +93,7 @@ appConfig: config.FrontendAppConfig
     @if(utr.isDefined) {
         @p(){
             @messages("taxYears.oldSa.content.text")
-            @link(link = appConfig.saViewLandPService(utr.get), messageKey = "taxYears.oldSa.content.link", outerMessage = ".", target = Some("_blank"))
+            @link(link = appConfig.saViewLandPService(utr.get), messageKey = "taxYears.oldSa.content.link", id=Some("self-assessment-online-account-link"), outerMessage = ".", target = Some("_blank"))
         }
     }
 
