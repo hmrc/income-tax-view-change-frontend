@@ -124,7 +124,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
 
   // Submission service
-  @deprecated("This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.")
+  // This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.
   lazy val submissionFrontendUrl: String = servicesConfig.getString("income-tax-submission-frontend.url")
   lazy val submissionFrontendTaxOverviewUrl: String => String = taxYear =>
     servicesConfig.getString("income-tax-submission-frontend.host") + s"/income-through-software/return/$taxYear/view"

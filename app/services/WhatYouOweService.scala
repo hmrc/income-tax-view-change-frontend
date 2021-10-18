@@ -41,20 +41,22 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 	}
 
   def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
-    financialDetailsService.getAllUnpaidFinancialDetails flatMap {
+    (financialDetailsService.getAllUnpaidFinancialDetails) flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
-      case financialDetails: List[FinancialDetailsModel] =>
-        val balanceDetails = financialDetails.headOption.map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00))
+      case financialDetails =>
+        val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
+        val balanceDetails = financialDetailsModelList.headOption
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00))
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {
           case Some(outstandingChargesModel) => WhatYouOweChargesList(
             balanceDetails = balanceDetails,
-            overduePaymentList = getOverduePaymentsList(financialDetails),
-            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetails), futurePayments = getFuturePaymentsList(financialDetails),
+            overduePaymentList = getOverduePaymentsList(financialDetailsModelList),
+            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList), futurePayments = getFuturePaymentsList(financialDetailsModelList),
             outstandingChargesModel = Some(outstandingChargesModel))
           case _ => WhatYouOweChargesList(balanceDetails = balanceDetails,
-            overduePaymentList = getOverduePaymentsList(financialDetails),
-            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetails), futurePayments = getFuturePaymentsList(financialDetails))
+            overduePaymentList = getOverduePaymentsList(financialDetailsModelList),
+            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList), futurePayments = getFuturePaymentsList(financialDetailsModelList))
         }
     }
   }

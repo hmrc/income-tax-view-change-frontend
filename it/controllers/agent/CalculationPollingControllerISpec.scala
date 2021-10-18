@@ -124,10 +124,10 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             response = incomeSourceDetailsSuccess
           )
 
-            ws.url(urlFinalCalcFalse)
-              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
-              .withFollowRedirects(false)
-              .get()
+          ws.url(urlFinalCalcFalse)
+            .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
+            .withFollowRedirects(false)
+            .get()
         }.futureValue
         
         "has the status of SEE_OTHER (303)" in {
@@ -151,10 +151,10 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               response = incomeSourceDetailsSuccess
             )
 
-              ws.url(urlFinalCalcFalse)
-                .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
-                .withFollowRedirects(false)
-                .get()
+            ws.url(urlFinalCalcFalse)
+              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
+              .withFollowRedirects(false)
+              .get()
           }.futureValue
           
           "has a result of 500" in {
@@ -171,11 +171,10 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               response = incomeSourceDetailsSuccess
             )
 
-
-              ws.url(urlFinalCalcFalse)
-                .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
-                .withFollowRedirects(false)
-                .get()
+            ws.url(urlFinalCalcFalse)
+              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookieNoCalcId)
+              .withFollowRedirects(false)
+              .get()
           }.futureValue
           
           "has a status of 500" in {
@@ -193,11 +192,10 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               response = incomeSourceDetailsSuccess
             )
 
-
-              ws.url(urlFinalCalcFalse)
-                .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
-                .withFollowRedirects(false)
-                .get()
+            ws.url(urlFinalCalcFalse)
+              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
+              .withFollowRedirects(false)
+              .get()
           }.futureValue
           
           res.status shouldBe INTERNAL_SERVER_ERROR

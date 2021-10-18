@@ -24,7 +24,6 @@ import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.Logger
-import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
