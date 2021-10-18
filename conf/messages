@@ -651,6 +651,7 @@ paymentAllocation.tableHead.allocated-date                      = Date allocated
 paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
+paymentAllocation.na                                            = N/A
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
 paymentAllocation.paymentAllocations.poa1.nic4                  = Class 4 National Insurance for payment on account 1 of 2

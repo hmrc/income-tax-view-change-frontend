@@ -32,7 +32,7 @@
                 <br>
                 <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear)</span>
             </td>
-            <td class="govuk-table__cell">N/A</td>
+            <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
             <td class="govuk-table__cell">@lpiAllocationDetails.amount.abs.toCurrencyString</td>
         </tr>
     </tbody>
