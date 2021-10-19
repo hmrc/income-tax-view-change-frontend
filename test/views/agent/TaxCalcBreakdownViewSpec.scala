@@ -31,4 +31,9 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override val expectedPageTitle: String = TaxCalcBreakdown.agentTitle
 
+  override val pageContentSelector = "#content"
+
+  override val messageContentSelector = "div.panel-border-wide"
+
+  override val headingSelector = ".heading-secondary"
 }
