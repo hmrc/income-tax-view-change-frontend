@@ -20,7 +20,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgent
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import config.FrontendAppConfig
 import config.featureswitch._
-import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}

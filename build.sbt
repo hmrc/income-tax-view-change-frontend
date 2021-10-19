@@ -17,7 +17,7 @@ val playUiVersion             = "9.7.0-play-28"
 val playLanguageVersion       = "5.1.0-play-28"
 val catsVersion               = "0.9.0"
 
-val scalaTestPlusVersion      = "4.0.0"
+val scalaTestPlusVersion      = "5.0.0"
 val pegdownVersion            = "1.6.0"
 val jsoupVersion              = "1.11.3"
 val mockitoVersion            = "2.27.0"

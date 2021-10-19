@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import audit.models.ExtendedAuditModel
-import controllers.Assets.NO_CONTENT
+import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.{JsValue, Json}
 
 object AuditStub extends WiremockMethods {
