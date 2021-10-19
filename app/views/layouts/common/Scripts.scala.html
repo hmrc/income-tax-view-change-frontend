@@ -47,7 +47,7 @@ window.HMRCFrontend.initAll()</script>
     }
     setAccordionMessage()
     openAllButton.addEventListener("click", setAccordionMessage);
-    for (let i = 0; i <= accordionSections.length - 1; i++) {
+    for (let i = 1; i <= accordionSections.length; i++) {
         document.getElementById('accordion-with-summary-sections-heading-'+i).addEventListener("click", setAccordionMessageForSections);
     }
 </script>
