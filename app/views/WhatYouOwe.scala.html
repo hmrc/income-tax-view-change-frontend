@@ -266,6 +266,7 @@
                         @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
                             @tableRow2(s"over-due-type-$index", charge, isOverduePayment = true, latePaymentCharge = true)
                             @if(charge.documentDetail.interestOutstandingAmount.isDefined && charge.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0) {
+                            @if(charge.documentDetail.hasAccruingInterest) {
                                 <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
                                     <td class="govuk-table__cell"></td>
                                     <td class="govuk-table__cell">
@@ -282,21 +283,6 @@
                                         charge.documentDetail.interestOutstandingAmount.get.toCurrency
                                     }</td>
                                 </tr>
-                                @if(charge.documentDetail.hasAccruingInterest) {
-                                    <tr class="govuk-table__row" id=@(s"overdue-charge-interest-accrued-$index")>
-                                        <td class="govuk-table__cell"></td>
-                                        <td class="goveuk-table__cell">
-                                            @messages("whatYouOwe.over-due.interest.line1")
-                                            <div>
-                                                @messages(s"whatYouOwe.over-due.interest.line2",
-                                                charge.documentDetail.interestFromDate.get.toLongDateShort,
-                                                charge.documentDetail.interestEndDate.get.toLongDateShort,
-                                                charge.documentDetail.interestRate.get
-                                                )
-                                            </div>
-                                        </td>
-                                        <td class="govuk-table__cell numeric">@{charge.documentDetail.interestOutstandingAmount.get.toCurrency}</td>
-                                    </tr>
                                 }
                             }
                         }
