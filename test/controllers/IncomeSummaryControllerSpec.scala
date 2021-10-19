@@ -16,8 +16,8 @@
 
 package controllers
 
-import assets.EstimatesTestConstants.testYear
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.EstimatesTestConstants.testYear
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}

@@ -16,7 +16,7 @@
 
 package mocks.auth
 
-import assets.BaseTestConstants._
+import testConstants.BaseTestConstants._
 import auth.FrontendAuthorisedFunctions
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

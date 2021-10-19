@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.FinancialDetailsTestConstants._
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}

@@ -18,10 +18,10 @@ package controllers.agent
 
 import java.time.{LocalDate, LocalDateTime}
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
-import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
-import assets.messages.{DeductionsSummaryMessages => messages}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
+import testConstants.messages.{DeductionsSummaryMessages => messages}
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}

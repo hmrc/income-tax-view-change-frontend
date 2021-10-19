@@ -16,11 +16,11 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
-import assets.CalcDataIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import assets.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitleAgent}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import testConstants.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitleAgent}
 import audit.models.TaxCalculationDetailsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}

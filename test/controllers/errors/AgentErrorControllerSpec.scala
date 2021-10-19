@@ -16,7 +16,7 @@
 
 package controllers.errors
 
-import assets.MessagesLookUp.{AgentErrorMessages => pageMessages}
+import testConstants.MessagesLookUp.{AgentErrorMessages => pageMessages}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import org.jsoup.Jsoup

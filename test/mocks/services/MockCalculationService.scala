@@ -16,9 +16,9 @@
 
 package mocks.services
 
-import assets.BaseTestConstants._
-import assets.CalcBreakdownTestConstants._
-import assets.EstimatesTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.CalcBreakdownTestConstants._
+import testConstants.EstimatesTestConstants._
 import models.calculation._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

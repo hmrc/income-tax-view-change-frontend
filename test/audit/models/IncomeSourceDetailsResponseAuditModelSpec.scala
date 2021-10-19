@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants._
+import testConstants.BaseTestConstants._
 import auth.MtdItUserWithNino
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

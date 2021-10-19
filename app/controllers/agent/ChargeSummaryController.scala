@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -36,8 +36,8 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.ChargeSummary
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -119,7 +119,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 
 
     getChargeHistory(id, isLatePaymentCharge).map { chargeHistoryOpt =>
-      auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistoryOpt.getOrElse(List.empty))
+      auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistoryOpt.getOrElse(List.empty), paymentAllocations, isLatePaymentCharge)
       Ok(view(documentDetailWithDueDate, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
         paymentAllocations = paymentAllocations,
         paymentBreakdown = paymentBreakdown,
@@ -129,8 +129,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   }
 
   private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
-                                 paymentBreakdown: List[FinancialDetail],
-                                 chargeHistories: List[ChargeHistoryModel])
+                                 paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
+                                 paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], incomeTaxAgentUser: IncomeTaxAgentUser): Unit = {
     if (isEnabled(TxmEventsApproved)) {
       auditingService.extendedAudit(ChargeSummaryAudit(
@@ -138,7 +138,10 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         docDateDetail = documentDetailWithDueDate,
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
-        agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber
+        paymentAllocations = paymentAllocations,
+        agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber,
+        isEnabled(TxmEventsR6),
+        isLatePaymentCharge = isLatePaymentCharge
       ))
     }
   }

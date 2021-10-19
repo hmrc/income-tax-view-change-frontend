@@ -16,8 +16,8 @@
 
 package testUtils
 
-import assets.BaseTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils

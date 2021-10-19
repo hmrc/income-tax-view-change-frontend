@@ -19,12 +19,11 @@ package controllers
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, PaymentsWithChargeType}
@@ -108,7 +107,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
 		chargeHistoryFuture.map {
 			case Right(chargeHistory) =>
-				auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory)
+				auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
 				Ok(chargeSummaryView(
 					documentDetail = documentDetail,
 					dueDate = chargeDetails.getDueDateFor(documentDetail),
@@ -128,8 +127,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 	}
 
 	private def auditChargeSummary(id: String, financialDetailsModel: FinancialDetailsModel,
-																 paymentBreakdown: List[FinancialDetail],
-																 chargeHistories: List[ChargeHistoryModel])
+																 paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
+																 paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean)
 																(implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
 		if (isEnabled(TxmEventsApproved)) {
 			val documentDetailWithDueDate: DocumentDetailWithDueDate = financialDetailsModel.findDocumentDetailByIdWithDueDate(id).get
@@ -138,7 +137,10 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 				docDateDetail = documentDetailWithDueDate,
 				paymentBreakdown = paymentBreakdown,
 				chargeHistories = chargeHistories,
-				None
+				paymentAllocations = paymentAllocations,
+				None,
+				isEnabled(TxmEventsR6),
+				isLatePaymentCharge = isLatePaymentCharge
 			))
 		}
 	}

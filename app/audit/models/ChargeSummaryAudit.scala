@@ -18,7 +18,7 @@ package audit.models
 
 import auth.MtdItUser
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, Payment, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
@@ -26,7 +26,8 @@ import utils.Utilities._
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDetailWithDueDate,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
-                              agentReferenceNumber: Option[String]) extends ExtendedAuditModel {
+                              paymentAllocations: List[PaymentsWithChargeType], agentReferenceNumber: Option[String],
+                              txmEventsR6: Boolean, isLatePaymentCharge: Boolean) extends ExtendedAuditModel {
 
   private val userType: JsObject = mtdItUser.userType match {
     case Some("Agent") => Json.obj("userType" -> "Agent")
@@ -44,7 +45,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     }
   }
 
-  private val interestPeriod: Option[String] = (docDateDetail.documentDetail.interestFromDate,docDateDetail.documentDetail.interestEndDate) match {
+  private val interestPeriod: Option[String] = (docDateDetail.documentDetail.interestFromDate, docDateDetail.documentDetail.interestEndDate) match {
     case (Some(fromDate), Some(endDate)) => Some(fromDate + " to " + endDate)
     case _ => None
   }
@@ -57,24 +58,39 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     "amount" -> chargeHistory.totalAmount
   )
 
+  private val paymentAllocationsChargeHistory: Seq[JsObject] =
+    if(!isLatePaymentCharge) paymentAllocations.flatMap(paymentAllocationsChargeHistoryJSon)
+    else Seq.empty
+
+  private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] =
+    paymentAllocation.payments.map( payment => Json.obj()++
+      ("date", payment.date)++
+      ("description", payment.lotItem)++
+      ("amount", payment.amount)
+  )
+
   private val paymentBreakdowns: Seq[JsObject] = paymentBreakdown.map(paymentBreakdownsJson)
 
-  private def paymentBreakdownsJson(paymentBreakdown:FinancialDetail): JsObject = Json.obj(
-    "breakdownType" -> paymentBreakdown.mainType,
-    "total" -> paymentBreakdown.totalAmount,
+  private def paymentBreakdownsJson(paymentBreakdown: FinancialDetail): JsObject = Json.obj(
+    "breakdownType" -> paymentBreakdown.messageKeyForChargeType,
+    "total" -> paymentBreakdown.originalAmount,
     "chargeUnderReview" -> paymentBreakdown.dunningLockExists,
-    "interestLock" -> paymentBreakdown.interestLockExists
-  )
+    "interestLock" -> paymentBreakdown.interestLockExists)
 
   private val chargeDetails: JsObject = Json.obj(
     "chargeType" -> getChargeType)++
     ("interestPeriod", interestPeriod) ++
     ("dueDate", docDateDetail.dueDate) ++
-    ("fullPaymentAmount", docDateDetail.documentDetail.originalAmount)++
-    Json.obj("remainingToPay"-> docDateDetail.documentDetail.remainingToPay) ++
-    Json.obj("paymentBreakdown" -> paymentBreakdowns)++
-    Json.obj("chargeHistory" -> chargeHistory)
+    ("fullPaymentAmount", docDateDetail.documentDetail.originalAmount) ++
+    Json.obj("remainingToPay" -> docDateDetail.documentDetail.remainingToPay)
 
+  def release6Update: JsObject = {
+    if (txmEventsR6) {
+      Json.obj("paymentBreakdown" -> paymentBreakdowns) ++
+      Json.obj("chargeHistory" -> chargeHistory)++
+      Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
+    } else Json.obj()
+  }
 
   override val transactionName: String = "charge-summary"
   override val detail: JsValue = {
@@ -84,7 +100,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
       ("agentReferenceNumber", mtdItUser.arn) ++
       ("saUtr", mtdItUser.saUtr) ++
       ("credId", mtdItUser.credId) ++
-      Json.obj("charge" -> chargeDetails)
+      Json.obj("charge" -> chargeDetails) ++
+      release6Update
   }
   override val auditType: String = "ChargeSummary"
 

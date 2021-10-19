@@ -17,7 +17,7 @@ package controllers.agent
 
 import java.time.LocalDate
 
-import assets.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants._
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching

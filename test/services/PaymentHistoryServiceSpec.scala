@@ -16,8 +16,8 @@
 
 package services
 
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import assets.IncomeSourceDetailsTestConstants.oldUserDetails
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIncomeTaxViewChangeConnector

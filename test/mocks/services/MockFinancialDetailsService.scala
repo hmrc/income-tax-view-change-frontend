@@ -17,8 +17,8 @@
 package mocks.services
 
 import java.time.LocalDate
-import assets.BaseTestConstants.{testNino, testTaxYear}
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants.{testNino, testTaxYear}
+import testConstants.FinancialDetailsTestConstants._
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers

@@ -16,9 +16,9 @@
 
 package views.agent
 
-import assets.BaseTestConstants.{testArn, testCredId, testUserTypeAgent}
-import assets.FinancialDetailsTestConstants._
-import assets.MessagesLookUp.{AgentPaymentDue, WhatYouOwe => whatYouOwe}
+import testConstants.BaseTestConstants.{testArn, testCredId, testUserTypeAgent}
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.MessagesLookUp.{AgentPaymentDue, WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter

@@ -16,8 +16,8 @@
 
 package services
 
-import assets.BaseTestConstants.testMtditid
-import assets.NinoLookupTestConstants._
+import testConstants.BaseTestConstants.testMtditid
+import testConstants.NinoLookupTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import testUtils.TestSupport
 

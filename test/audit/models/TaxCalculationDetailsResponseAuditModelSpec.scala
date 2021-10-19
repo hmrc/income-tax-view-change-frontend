@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import auth.MtdItUser
 import enums.{Crystallised, Estimate}
 import models.calculation.TaxDeductedAtSource.{Message, Messages}

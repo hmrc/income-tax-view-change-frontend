@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants.{testAuthSuccessResponse, testAuthSuccessResponseOrgNoNino, testMtditid, testNino}
+import testConstants.BaseTestConstants.{testAuthSuccessResponse, testAuthSuccessResponseOrgNoNino, testMtditid, testNino}
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, IvUplift}

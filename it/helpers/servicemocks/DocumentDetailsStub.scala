@@ -1,7 +1,7 @@
 
 package helpers.servicemocks
 
-import assets.BaseIntegrationTestConstants.taxYear
+import testConstants.BaseIntegrationTestConstants.taxYear
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 
 import java.time.LocalDate
@@ -26,7 +26,7 @@ object DocumentDetailsStub {
     taxYear = taxYear,
     transactionId = "1040000124",
     documentDescription = Some(documentDescription),
-    originalAmount = Some(10.34),
+    originalAmount = Some(123.45),
     outstandingAmount = Some(1.2),
     documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = Some(2),

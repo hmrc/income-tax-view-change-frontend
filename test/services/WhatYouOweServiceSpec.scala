@@ -16,9 +16,9 @@
 
 package services
 
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import assets.FinancialDetailsTestConstants._
-import assets.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, WhatYouOweChargesList}

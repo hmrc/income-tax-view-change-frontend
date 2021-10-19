@@ -16,7 +16,7 @@
 
 package views.agent
 
-import assets.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants._
 import config.featureswitch.FeatureSwitching
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, Payment, PaymentsWithChargeType, SubItem}

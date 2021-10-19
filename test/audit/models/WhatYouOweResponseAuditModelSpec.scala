@@ -17,8 +17,8 @@
 package audit.models
 
 import java.time.LocalDate
-import assets.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import assets.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
 import auth.MtdItUser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}

@@ -16,8 +16,8 @@
 
 package services
 
-import assets.BaseTestConstants._
-import assets.CalcBreakdownTestConstants.{calculationDataErrorModel, calculationDataSuccessModel}
+import testConstants.BaseTestConstants._
+import testConstants.CalcBreakdownTestConstants.{calculationDataErrorModel, calculationDataSuccessModel}
 import config.FrontendAppConfig
 import mocks.services.{MockCalculationService, MockPollCalculationLockKeeper}
 import models.calculation.CalculationErrorModel
