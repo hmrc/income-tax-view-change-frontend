@@ -293,8 +293,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val statePensionLumpSum: String = "State pension lump sum"
     val totalStudentLoansRepaymentAmount: String = "Student Loan repayments"
     //other charges table
-    val payeUnderpaymentsCodedOut: String = "Underpaid tax for earlier years in your tax code for 2017 to 2018"
-    val saUnderpaymentsCodedOut: String = "Underpaid tax for earlier years in your self assessment for 2017 to 2018"
+    val payeUnderpaymentsCodedOut: String = "Underpaid for earlier years in your tax code for 2017 to 2018"
+    val saUnderpaymentsCodedOut: String = "Underpaid for earlier years in your self assessment for 2017 to 2018"
     //additional charges table
     val Nic2: String = "Class 2 National Insurance"
     val VoluntaryNic2: String = "Voluntary Class 2 National Insurance"
