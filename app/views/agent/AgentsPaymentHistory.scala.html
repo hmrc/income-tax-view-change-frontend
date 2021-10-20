@@ -49,7 +49,7 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
     <div class="govuk-accordion__section">
         <div class="govuk-accordion__section-header">
             <h2 class="govuk-accordion__section-heading">
-    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@{index + 1}">
+    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@year">
         @messages("paymentHistory.button", year.toString)
       </span>
             </h2>
