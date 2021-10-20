@@ -16,7 +16,7 @@
 
 package models
 
-import assets.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import org.scalatest.Matchers

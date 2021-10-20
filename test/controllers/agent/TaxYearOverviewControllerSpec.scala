@@ -16,9 +16,9 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import assets.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler

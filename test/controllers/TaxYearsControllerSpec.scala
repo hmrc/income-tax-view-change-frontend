@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.EstimatesTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
-import assets.MessagesLookUp
+import testConstants.EstimatesTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.MessagesLookUp
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}

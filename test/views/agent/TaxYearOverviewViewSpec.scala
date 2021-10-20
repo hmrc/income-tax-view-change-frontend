@@ -32,7 +32,7 @@
 
 package views.agent
 
-import assets.BaseTestConstants.{testMtdItUser, testMtditid}
+import testConstants.BaseTestConstants.{testMtdItUser, testMtditid}
 import config.featureswitch._
 import models.calculation.{AllowancesAndDeductions, CalcOverview, Calculation}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}

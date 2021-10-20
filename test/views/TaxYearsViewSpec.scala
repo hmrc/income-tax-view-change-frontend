@@ -16,8 +16,8 @@
 
 package views
 
-import assets.EstimatesTestConstants._
-import assets.MessagesLookUp.{TaxYears => taxYears}
+import testConstants.EstimatesTestConstants._
+import testConstants.MessagesLookUp.{TaxYears => taxYears}
 import config.FrontendAppConfig
 import models.calculation.CalculationResponseModelWithYear
 import org.jsoup.Jsoup

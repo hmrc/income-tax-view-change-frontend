@@ -15,9 +15,9 @@
  */
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import assets.messages.MyTaxYearsMessages.agentTitle
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
+import testConstants.messages.MyTaxYearsMessages.agentTitle
 import config.featureswitch._
 import controllers.Assets.INTERNAL_SERVER_ERROR
 import controllers.agent.utils.SessionKeys

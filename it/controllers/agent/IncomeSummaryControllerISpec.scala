@@ -16,9 +16,9 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
-import assets.messages.IncomeSummaryMessages.{agentTitle, incomeSummaryAgentHeading}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.messages.IncomeSummaryMessages.{agentTitle, incomeSummaryAgentHeading}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase

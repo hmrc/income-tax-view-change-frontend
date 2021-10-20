@@ -16,7 +16,7 @@
 
 package controllers.predicates.agent
 
-import assets.BaseTestConstants._
+import testConstants.BaseTestConstants._
 import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName, clientUTR, confirmedClient}
 import controllers.predicates.AuthPredicate.AuthPredicateSuccess
 import controllers.predicates.IncomeTaxAgentUser

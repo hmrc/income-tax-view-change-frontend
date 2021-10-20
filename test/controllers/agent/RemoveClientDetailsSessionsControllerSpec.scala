@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions

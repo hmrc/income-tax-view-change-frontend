@@ -16,7 +16,7 @@
 
 package models
 
-import assets.OutstandingChargesTestConstants._
+import testConstants.OutstandingChargesTestConstants._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}

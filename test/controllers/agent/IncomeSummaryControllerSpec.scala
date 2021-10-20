@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler

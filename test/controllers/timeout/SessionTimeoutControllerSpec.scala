@@ -16,7 +16,7 @@
 
 package controllers.timeout
 
-import assets.MessagesLookUp.{Timeout => timeoutMessages}
+import testConstants.MessagesLookUp.{Timeout => timeoutMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.http.Status

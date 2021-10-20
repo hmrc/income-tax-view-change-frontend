@@ -16,7 +16,7 @@
 
 package views.errorPages
 
-import assets.MessagesLookUp.{StandardErrorView => standardErrorMessages}
+import testConstants.MessagesLookUp.{StandardErrorView => standardErrorMessages}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._

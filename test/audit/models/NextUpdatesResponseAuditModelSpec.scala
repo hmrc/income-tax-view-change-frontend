@@ -16,8 +16,8 @@
 
 package audit.models
 
-import assets.BaseTestConstants._
-import assets.NextUpdatesTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.NextUpdatesTestConstants._
 import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json

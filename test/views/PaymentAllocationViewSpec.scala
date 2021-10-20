@@ -16,9 +16,9 @@
 
 package views
 
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import assets.PaymentAllocationsTestConstants._
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import testConstants.PaymentAllocationsTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.PaymentAllocation
-import assets.MessagesLookUp.{PaymentAllocation => paymentAllocationMessages}
+import testConstants.MessagesLookUp.{PaymentAllocation => paymentAllocationMessages}
 
 
 class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {

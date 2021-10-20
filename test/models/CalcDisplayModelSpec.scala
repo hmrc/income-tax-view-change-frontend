@@ -16,7 +16,7 @@
 
 package models
 
-import assets.CalcBreakdownTestConstants
+import testConstants.CalcBreakdownTestConstants
 import enums.Estimate
 import models.calculation.{CalcDisplayModel, Calculation, Dividends, GainsOnLifePolicies, LumpSums, PayPensionsProfit, SavingsAndGains, TaxBand}
 import org.scalatest.Matchers

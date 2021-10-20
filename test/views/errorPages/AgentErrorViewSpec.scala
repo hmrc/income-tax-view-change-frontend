@@ -16,7 +16,7 @@
 
 package views.errorPages
 
-import assets.MessagesLookUp.{AgentErrorMessages => pageMessages}
+import testConstants.MessagesLookUp.{AgentErrorMessages => pageMessages}
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.errorPages.AgentError

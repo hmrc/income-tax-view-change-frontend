@@ -15,7 +15,7 @@
  */
 
 package views
-import assets.MessagesLookUp.{NoNextUpdates => NoNextUpdates}
+import testConstants.MessagesLookUp.{NoNextUpdates => NoNextUpdates}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
