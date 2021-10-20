@@ -30,7 +30,7 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
 
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYears.reverse.take(appConfig.paymentHistoryLimit)
+    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
     Future.sequence(orderedTaxYears.map(incomeTaxViewChangeConnector.getPayments)) map { paymentResponses =>
       val paymentsContainsFailure: Boolean = paymentResponses.exists {

@@ -62,7 +62,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           "return 200 OK " in {
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
             And("I stub a successful get calculation response for 2017-18")
             IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(

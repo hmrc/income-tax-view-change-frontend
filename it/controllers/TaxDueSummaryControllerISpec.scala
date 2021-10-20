@@ -48,7 +48,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         enable(TxmEventsApproved)
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
         And("I stub a successful calculation response for 2017-18")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
