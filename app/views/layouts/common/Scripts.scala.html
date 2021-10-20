@@ -37,10 +37,12 @@ window.HMRCFrontend.initAll()</script>
         if (openAllButton.getAttribute('aria-expanded') == 'false') {
             setTimeout(function() {
                 openAllButton.textContent = '@messages("sections.open.all")'
+                setAccordionMessage()
             })
         } else {
             setTimeout(function() {
                 openAllButton.textContent = '@messages("sections.close.all")'
+                setAccordionMessage()
             })
         }
         openAllButton.innerHTML = '<span class="govuk-visually-hidden"> sections</span>'
