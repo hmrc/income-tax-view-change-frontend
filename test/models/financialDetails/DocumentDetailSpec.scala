@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import assets.FinancialDetailsTestConstants.fullDocumentDetailModel
+import testConstants.FinancialDetailsTestConstants.fullDocumentDetailModel
 import testUtils.UnitSpec
 
 class DocumentDetailSpec extends UnitSpec {

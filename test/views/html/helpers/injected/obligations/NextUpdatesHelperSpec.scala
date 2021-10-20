@@ -16,9 +16,9 @@
 
 package views.html.helpers.injected.obligations
 
-import assets.BaseTestConstants.testMtdItUser
-import assets.BusinessDetailsTestConstants.business1
-import assets.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
+import testConstants.BaseTestConstants.testMtdItUser
+import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
 import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

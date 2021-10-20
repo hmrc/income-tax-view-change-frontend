@@ -16,8 +16,8 @@
 
 package mocks.services
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import assets.IncomeSourceDetailsTestConstants._
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import testConstants.IncomeSourceDetailsTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}

@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
 import controllers.agent.utils.SessionKeys._
 import forms.utils.SessionKeys
 import helpers.ComponentSpecBase

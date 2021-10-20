@@ -1,9 +1,9 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.{paymentHistoryBusinessAndPropertyResponse, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
-import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, lpiPaymentAllocationViewModel, paymentAllocationViewModel, testValidLpiPaymentAllocationsModel, testValidPaymentAllocationsModel, validPaymentAllocationChargesJson}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.PaymentAllocationIntegrationTestConstants._
 import audit.models.PaymentAllocationsResponseAuditModel
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import auth.MtdItUser

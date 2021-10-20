@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
 import controllers.agent.utils.SessionKeys
 import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, IndividualCalculationStub}

@@ -16,7 +16,7 @@
 
 package views.helpers.injected
 
-import assets.MessagesLookUp
+import testConstants.MessagesLookUp
 import testUtils.ViewSpec
 import views.html.helpers.injected.RecruitmentBannerHelper
 

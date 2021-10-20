@@ -16,7 +16,7 @@
 
 package models
 
-import assets.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails._
 import org.scalatest.{Matchers, WordSpecLike}
 import play.api.libs.json.{JsObject, JsSuccess, Json}

@@ -16,8 +16,8 @@
 
 package models
 
-import assets.BaseTestConstants._
-import assets.CalcBreakdownTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.CalcBreakdownTestConstants._
 import enums.{CalcStatus, Crystallised, Estimate}
 import implicits.ImplicitDateFormatter
 

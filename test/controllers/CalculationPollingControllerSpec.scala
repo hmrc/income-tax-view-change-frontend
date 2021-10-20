@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.EstimatesTestConstants._
+import testConstants.EstimatesTestConstants._
 import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}

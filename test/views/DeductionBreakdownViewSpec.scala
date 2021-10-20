@@ -16,8 +16,8 @@
 
 package views
 
-import assets.CalcBreakdownTestConstants
-import assets.MessagesLookUp.DeductionBreakdown
+import testConstants.CalcBreakdownTestConstants
+import testConstants.MessagesLookUp.DeductionBreakdown
 import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element

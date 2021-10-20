@@ -16,8 +16,8 @@
 
 package views
 
-import assets.BusinessDetailsTestConstants.business1
-import assets.NextUpdatesTestConstants.twoObligationsSuccessModel
+import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
 import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
 import org.jsoup.Jsoup

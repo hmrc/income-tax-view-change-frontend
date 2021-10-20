@@ -16,8 +16,8 @@
 
 package models
 
-import assets.BaseTestConstants._
-import assets.NinoLookupTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.NinoLookupTestConstants._
 import models.core.{NinoResponseError, NinoResponseSuccess}
 import org.scalatest.Matchers
 import play.api.libs.json.Json

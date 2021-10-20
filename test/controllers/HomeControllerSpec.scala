@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.MessagesLookUp
+import testConstants.MessagesLookUp
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}

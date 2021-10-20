@@ -18,7 +18,7 @@ package controllers
 
 
 
-import assets.PaymentAllocationsTestConstants._
+import testConstants.PaymentAllocationsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}

@@ -18,10 +18,10 @@ package controllers
 
 import java.time.LocalDateTime
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.{DeductionsSummaryMessages => messages}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.{DeductionsSummaryMessages => messages}
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved
