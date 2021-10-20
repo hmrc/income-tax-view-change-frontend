@@ -22,8 +22,19 @@
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.partials.taxOverviewBreakdownPartial
+@import views.html.layouts.layout
+@import views.html.components._
 
-@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
+@this(
+        mainTemplate: MainTemplate,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    breakdownPartial: taxOverviewBreakdownPartial,
+    h1_large: h1_large,
+    h2: h2,
+        h1: h1,
+    p: p,
+    link: link
+)
 
 @(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
@@ -151,10 +162,23 @@
 
 @mainTemplate(title = heading, backUrl = Some(backUrl)) {
 
-    <header class="hmrc-page-heading heading-xlarge">
-        <h1 class="heading-xlarge">@heading</h1>
-        <p class="heading-secondary">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</p>
+    <h1 class="govuk-heading-xl">
+        <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
+        @messages("tax-year-overview.heading")
+    </h1>
+
+@*
+    <header class="govuk-heading-xl">
+        @h1(msg = "tax-year-overview.heading")
+        @p() {
+            @messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)
+        }
+
     </header>
+*@
+
+
+
 
     @overviewOpt.map{overview =>
         <dl class="govuk-summary-list">
