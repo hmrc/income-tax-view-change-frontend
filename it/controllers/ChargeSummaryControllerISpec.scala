@@ -46,7 +46,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", 8000.0, lotItem = "000001")
   )
 
-  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now, ""))
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
@@ -144,7 +144,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page with right audit events when TxmEvents PaymentAllocations and ChargeHistory FS enabled with no LPI" in {
+    "load the page with right audit events when TxmEvents PaymentAllocations and ChargeHistory FS enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -173,7 +173,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         )(FakeRequest()),
         docDateDetailWithInterest("2018-02-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
-        chargeHistories = List.empty,
+        chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
         None,
         txmEventsR6 = true,

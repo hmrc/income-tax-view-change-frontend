@@ -66,8 +66,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2018-03-31", 1600.0)
   )
 
-  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6).toString, "documentDescription", 1500, LocalDate.now, "")
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6).toString, "documentDescription", 1500, LocalDate.now , "")
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6).toString, "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return")
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6).toString, "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
 
   val chargeHistory: List[ChargeHistoryModel] = List(
     chargeHistoryModel,
@@ -185,25 +185,25 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
             "nationalInsuranceNumber" -> "nino",
             "paymentBreakdown" -> Json.arr(
               Json.obj(
-                "breakdownType" -> "incomeTax",
+                "breakdownType" -> "Income Tax",
                 "total" -> 123.45,
                 "chargeUnderReview" -> true,
                 "interestLock" -> true
               ),
               Json.obj(
-                "breakdownType" -> "nic2",
+                "breakdownType" -> "Class 2 National Insurance",
                 "total" -> 2345.67,
                 "chargeUnderReview" -> false,
                 "interestLock" -> true
               ),
               Json.obj(
-                "breakdownType"->"vcnic2",
+                "breakdownType"->"Voluntary Class 2 National Insurance",
                 "total" -> 3456.78,
                 "chargeUnderReview" -> true,
                 "interestLock"-> false
               ),
               Json.obj(
-                "breakdownType" -> "cgt",
+                "breakdownType" -> "Capital Gains Tax",
                 "total" -> 9876.54,
                 "chargeUnderReview" -> false,
                 "interestLock" -> false
@@ -223,12 +223,12 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
             "chargeHistory" -> Json.arr(
                 Json.obj(
                   "date" -> "2018-07-06",
-                  "description" -> "documentDescription",
+                  "description" -> "Payment on account 1 of 2 reduced due to amended return",
                   "amount" -> 1500
                 ),
                 Json.obj(
                   "date" -> "2018-07-06",
-                  "description" -> "documentDescription",
+                  "description" -> "Payment on account 1 of 2 reduced by taxpayer request",
                   "amount" -> 1500
                 )
               ),

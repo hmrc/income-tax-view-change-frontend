@@ -45,23 +45,6 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     }
   }
 
-  private val interestPeriod: Option[String] = (docDateDetail.documentDetail.interestFromDate, docDateDetail.documentDetail.interestEndDate) match {
-    case (Some(fromDate), Some(endDate)) => Some(fromDate + " to " + endDate)
-    case _ => None
-  }
-
-  private val chargeHistory: Seq[JsObject] = chargeHistories.map(chargeHistoryJson)
-
-  private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
-    "date" -> chargeHistory.documentDate,
-    "description" -> chargeHistory.documentDescription,
-    "amount" -> chargeHistory.totalAmount
-  )
-
-  private val paymentAllocationsChargeHistory: Seq[JsObject] =
-    if(!isLatePaymentCharge) paymentAllocations.flatMap(paymentAllocationsChargeHistoryJSon)
-    else Seq.empty
-
   private def getAllocationDescriptionFromKey(key: Option[String]): String = key match {
     case Some("chargeSummary.paymentAllocations.poa1.incomeTax") => "Income Tax for payment on account 1 of 2"
     case Some("chargeSummary.paymentAllocations.poa1.nic4") => "Class 4 National Insurance for payment on account 1 of 2"
@@ -78,6 +61,44 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     case Some("balancingCharge.text") => "Late payment interest for remaining balance"
   }
 
+  private def getBreakdownTypeFromKey(key: Option[String]): String = key match {
+    case Some("incomeTax") => "Income Tax"
+    case Some("nic2") => "Class 2 National Insurance"
+    case Some("vcnic2") => "Voluntary Class 2 National Insurance"
+    case Some("nic4") => "Class 4 National Insurance"
+    case Some("cgt") => "Capital Gains Tax"
+    case Some("sl") => "Student Loans"
+  }
+
+  private def getChargeTypeFromKey(key: Option[String]): String = key match {
+    case Some("chargeSummary.chargeHistory.created.paymentOnAccount1.text") => "Payment on account 1 of 2 created"
+    case Some("chargeSummary.chargeHistory.created.paymentOnAccount2.text") => "Payment on account 2 of 2 created"
+    case Some("chargeSummary.chargeHistory.created.balancingCharge.text") => "Remaining balance created"
+    case Some("chargeSummary.chargeHistory.request.paymentOnAccount1.text") => "Payment on account 1 of 2 reduced by taxpayer request"
+    case Some("chargeSummary.chargeHistory.request.paymentOnAccount2.text") => "Payment on account 2 of 2 reduced by taxpayer request"
+    case Some("chargeSummary.chargeHistory.request.balancingCharge.text") => "Remaining balance reduced by taxpayer request"
+    case Some("chargeSummary.chargeHistory.amend.paymentOnAccount1.text") => "Payment on account 1 of 2 reduced due to amended return"
+    case Some("chargeSummary.chargeHistory.amend.paymentOnAccount2.text") => "Payment on account 2 of 2 reduced due to amended return"
+    case Some("chargeSummary.chargeHistory.amend.balancingCharge.text") => "Remaining balance reduced due to amended return"
+  }
+
+  private val interestPeriod: Option[String] = (docDateDetail.documentDetail.interestFromDate, docDateDetail.documentDetail.interestEndDate) match {
+    case (Some(fromDate), Some(endDate)) => Some(fromDate + " to " + endDate)
+    case _ => None
+  }
+
+  private val chargeHistory: Seq[JsObject] = chargeHistories.map(chargeHistoryJson)
+
+  private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
+    "date" -> chargeHistory.reversalDate,
+    "description" -> getChargeTypeFromKey(Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode}.${docDateDetail.documentDetail.getChargeTypeKey}")),
+    "amount" -> chargeHistory.totalAmount
+  )
+
+  private val paymentAllocationsChargeHistory: Seq[JsObject] =
+    if(!isLatePaymentCharge) paymentAllocations.flatMap(paymentAllocationsChargeHistoryJSon)
+    else Seq.empty
+
   private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] =
     paymentAllocation.payments.map( payment => Json.obj()++
       ("date", payment.date)++
@@ -88,7 +109,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   private val paymentBreakdowns: Seq[JsObject] = paymentBreakdown.map(paymentBreakdownsJson)
 
   private def paymentBreakdownsJson(paymentBreakdown: FinancialDetail): JsObject = Json.obj(
-    "breakdownType" -> paymentBreakdown.messageKeyForChargeType,
+    "breakdownType" -> getBreakdownTypeFromKey(paymentBreakdown.messageKeyForChargeType),
     "total" -> paymentBreakdown.originalAmount,
     "chargeUnderReview" -> paymentBreakdown.dunningLockExists,
     "interestLock" -> paymentBreakdown.interestLockExists)
