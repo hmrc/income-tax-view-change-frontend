@@ -26,12 +26,10 @@
 @import views.html.components._
 
 @this(
-        mainTemplate: MainTemplate,
+    mainTemplate: layout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     breakdownPartial: taxOverviewBreakdownPartial,
-    h1_large: h1_large,
     h2: h2,
-        h1: h1,
     p: p,
     link: link
 )
@@ -61,20 +59,26 @@
     @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 }
 
-@paymentsContent = {
-    <h2 class="heading-large">@messages("tax-year-overview.payments")</h2>
-    @if(charges.isEmpty){
-        <p>@messages("tax-year-overview.payments.no-payments")</p>
-    } else {
-        <table class="govuk-table-paymentsTab" id="payments-table">
-            <caption class="govuk-table__caption heading-large visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
-            <tr>
-                <th id="paymentTypeHeading" class="bold">@messages("tax-year-overview.payments.payment-type")</th>
-                <th id="paymentDueDateHeading" class="bold">@messages("tax-year-overview.payments.due-date")</th>
-                <th id="paymentStatusHeading" class="bold">@messages("tax-year-overview.payments.status")</th>
-                <th id="paymentAmountHeading" class="bold">@messages("tax-year-overview.payments.amount")</th>
-            </tr>
+@paymentsTableHead(headId: String) = {
+    <thead class="govuk-table__head" id="@headId">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header" id="paymentTypeHeading">@messages("tax-year-overview.payments.payment-type")</th>
+            <th scope="col" class="govuk-table__header" id="paymentDueDateHeading">@messages("tax-year-overview.payments.due-date")</th>
+            <th scope="col" class="govuk-table__header" id="paymentStatusHeading">@messages("tax-year-overview.payments.status")</th>
+            <th scope="col" class="govuk-table__header" id="paymentAmountHeading">@messages("tax-year-overview.payments.amount")</th>
+        </tr>
+    </thead>
+}
 
+@paymentsContent = {
+
+    @h2(msg = messages("tax-year-overview.payments"), classes = "govuk-heading-l")
+    @if(charges.isEmpty){
+        @p()(content = Html(messages("tax-year-overview.payments.no-payments")))
+    } else {
+        <table class="govuk-table" id="payments-table">
+            <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
+            @paymentsTableHead("payments-table-head")
             @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
                 <tr>
                     <td>
@@ -128,7 +132,7 @@
 }
 
 @updatesContent = {
-    <h2 class="heading-large">@messages("tax-year-overview.updates")</h2>
+    @h2(msg = messages("tax-year-overview.updates"), classes = "govuk-heading-l")
 
     @groupedObligations.map{case (due, dueObligations) =>
         <div class="govuk-tax-years-updates-table">
@@ -160,32 +164,22 @@
     }
 }
 
-@mainTemplate(title = heading, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = heading, backUrl = Some(backUrl)) {
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")
     </h1>
 
-@*
-    <header class="govuk-heading-xl">
-        @h1(msg = "tax-year-overview.heading")
-        @p() {
-            @messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)
-        }
-
-    </header>
-*@
-
-
 
 
     @overviewOpt.map{overview =>
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
-                <dd class="govuk-summary-list__value bold">
-                    @messages("tax-year-overview.calculation-date")
-                </dd>
+                <dt class="govuk-summary-list__key">
+                    <span class="govuk-details__summary-text">@messages("tax-year-overview.calculation-date")</span>
+
+                </dt>
                 <dd class="govuk-summary-list__value">
                     @overview.timestamp.map { timestamp =>
                         <p id="calculation-date">
@@ -197,7 +191,8 @@
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dd class="govuk-summary-list__value bold">
+                <dt class="govuk-summary-list__key">
+
                 @if(overview.crystallised) {
                     @messages("tax-year-overview.total-due")
                 } else {
@@ -207,7 +202,8 @@
                         }
                     }
                 }
-                </dd>
+                </dt>
+
                 <dd class="govuk-summary-list__value">
                 @{
                     overview.taxDue.toCurrencyString
@@ -217,7 +213,9 @@
         </dl>
 
         @if(!overview.crystallised) {
-            <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)</div>
+            <div class="govuk-inset-text">
+                @p()(content = Html(messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)))
+            </div>
         }
 
     }

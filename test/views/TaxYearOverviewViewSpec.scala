@@ -150,7 +150,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "have the correct heading" in new Setup(estimateView()) {
-      content.selectHead("  h1").text shouldBe taxYearOverviewMessages.heading
+      content.selectHead("h1").text shouldBe taxYearOverviewMessages.heading
     }
 
     "have the correct secondary heading" in new Setup(estimateView()) {
