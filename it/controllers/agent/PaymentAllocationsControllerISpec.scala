@@ -1,9 +1,9 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, paymentHistoryBusinessAndPropertyResponse, testValidFinancialDetailsModelJson}
-import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, lpiPaymentAllocationViewModel, paymentAllocationChargesModel, paymentAllocationViewModel, testValidLpiPaymentAllocationsModel, testValidPaymentAllocationsModelJson, validPaymentAllocationChargesJson}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.PaymentAllocationIntegrationTestConstants._
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}

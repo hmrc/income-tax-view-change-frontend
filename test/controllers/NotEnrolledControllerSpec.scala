@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.MessagesLookUp.{NotEnrolled => notEnrolleMessages}
+import testConstants.MessagesLookUp.{NotEnrolled => notEnrolleMessages}
 import controllers.errors.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status

@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import assets.MessagesLookUp
+import testConstants.MessagesLookUp
 import testUtils.ViewSpec
 import views.html.helpers.injected.BackLink
 

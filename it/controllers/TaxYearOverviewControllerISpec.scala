@@ -18,11 +18,11 @@ package controllers
 
 import java.time.{LocalDate, LocalDateTime}
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
-import assets.CalcDataIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.TaxYearOverviewMessages
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.TaxYearOverviewMessages
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
@@ -31,7 +31,7 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.financialDetails._
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import models.calculation.{CalculationItem, ListCalculationItems}

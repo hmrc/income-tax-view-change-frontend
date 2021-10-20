@@ -16,9 +16,9 @@
 
 package services
 
-import assets.BaseTestConstants._
-import assets.CalcBreakdownTestConstants._
-import assets.EstimatesTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.CalcBreakdownTestConstants._
+import testConstants.EstimatesTestConstants._
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIndividualCalculationsConnector
 import models.calculation._

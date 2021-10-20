@@ -16,8 +16,8 @@
 
 package views.agent
 
-import assets.CalcBreakdownTestConstants
-import assets.MessagesLookUp.DeductionBreakdown
+import testConstants.CalcBreakdownTestConstants
+import testConstants.MessagesLookUp.DeductionBreakdown
 import config.FrontendAppConfig
 import enums.Estimate
 import models.calculation.CalcDisplayModel

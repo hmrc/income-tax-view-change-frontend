@@ -17,9 +17,9 @@
 package audit.models
 
 import java.time.LocalDate
-import assets.BaseTestConstants.taxYear
-import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
-import assets.FinancialDetailsTestConstants.financialDetailsModel
+import testConstants.BaseTestConstants.taxYear
+import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
+import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import auth.MtdItUser
 import models.calculation.Calculation
 import models.core.AccountingPeriodModel

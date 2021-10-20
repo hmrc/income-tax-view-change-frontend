@@ -16,8 +16,8 @@
 
 package services
 
-import assets.BaseTestConstants._
-import assets.PaymentAllocationsTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.PaymentAllocationsTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockFinancialDetailsService
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationViewModel}

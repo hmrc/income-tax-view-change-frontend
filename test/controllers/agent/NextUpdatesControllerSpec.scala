@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BaseTestConstants
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler

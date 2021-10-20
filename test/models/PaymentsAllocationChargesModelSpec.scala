@@ -16,7 +16,7 @@
 
 package models
 
-import assets.PaymentAllocationsTestConstants._
+import testConstants.PaymentAllocationsTestConstants._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}

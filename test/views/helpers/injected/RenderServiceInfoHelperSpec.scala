@@ -16,8 +16,8 @@
 
 package views.helpers.injected
 
-import assets.BaseTestConstants.testUserName
-import assets.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
+import testConstants.BaseTestConstants.testUserName
+import testConstants.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
 import testUtils.ViewSpec
 import views.html.helpers.injected.RenderServiceInfoHelper
 

@@ -16,8 +16,8 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
 import forms.utils.SessionKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks._

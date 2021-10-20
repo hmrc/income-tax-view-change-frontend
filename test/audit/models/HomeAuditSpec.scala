@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants._
+import testConstants.BaseTestConstants._
 import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}

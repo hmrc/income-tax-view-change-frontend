@@ -16,10 +16,10 @@
 
 package controllers
 
-import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
-import assets.EstimatesTestConstants._
-import assets.FinancialDetailsTestConstants.fullDocumentDetailWithDueDateModel
-import assets.MessagesLookUp
+import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
+import testConstants.EstimatesTestConstants._
+import testConstants.FinancialDetailsTestConstants.fullDocumentDetailWithDueDateModel
+import testConstants.MessagesLookUp
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching

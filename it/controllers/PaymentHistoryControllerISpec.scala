@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock

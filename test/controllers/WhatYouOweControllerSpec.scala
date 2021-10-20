@@ -16,8 +16,8 @@
 
 package controllers
 
-import assets.BaseTestConstants
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants
+import testConstants.FinancialDetailsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys

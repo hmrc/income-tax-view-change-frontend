@@ -16,8 +16,8 @@
 
 package controllers
 
-import assets.EstimatesTestConstants.testYear
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.EstimatesTestConstants.testYear
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}

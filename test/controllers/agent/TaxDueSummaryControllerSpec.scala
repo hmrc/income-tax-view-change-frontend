@@ -16,9 +16,9 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}

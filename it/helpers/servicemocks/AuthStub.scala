@@ -16,7 +16,7 @@
 
 package helpers.servicemocks
 
-import assets.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants._
 import helpers.{ComponentSpecBase, WiremockHelper}
 import play.api.http.Status
 import play.api.libs.json.Json

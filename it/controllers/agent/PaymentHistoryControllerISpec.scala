@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock

@@ -1,11 +1,11 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.FinancialDetailsIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.OutstandingChargesIntegrationTestConstants._
-import assets.PaymentDueTestConstraints.getCurrentTaxYearEnd
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.FinancialDetailsIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.OutstandingChargesIntegrationTestConstants._
+import testConstants.PaymentDueTestConstraints.getCurrentTaxYearEnd
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}

@@ -16,7 +16,7 @@
 
 package views
 
-import assets.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants._
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
 import org.jsoup.Jsoup

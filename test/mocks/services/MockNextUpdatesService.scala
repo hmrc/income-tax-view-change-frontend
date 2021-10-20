@@ -17,7 +17,7 @@
 package mocks.services
 
 import java.time.LocalDate
-import assets.IncomeSourcesWithDeadlinesTestConstants._
+import testConstants.IncomeSourcesWithDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import org.mockito.ArgumentMatchers

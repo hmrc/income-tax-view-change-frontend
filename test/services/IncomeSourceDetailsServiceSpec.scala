@@ -16,8 +16,8 @@
 
 package services
 
-import assets.BaseTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import javax.inject.Inject
 import mocks.connectors.MockIncomeTaxViewChangeConnector

@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
-import assets.PaymentAllocationsTestConstants._
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
+import testConstants.PaymentAllocationsTestConstants._
 import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import mocks.MockItvcErrorHandler
