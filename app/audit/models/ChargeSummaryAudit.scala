@@ -18,7 +18,7 @@ package audit.models
 
 import auth.MtdItUser
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, Payment, PaymentsWithChargeType}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
@@ -62,10 +62,26 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     if(!isLatePaymentCharge) paymentAllocations.flatMap(paymentAllocationsChargeHistoryJSon)
     else Seq.empty
 
+  private def getAllocationDescriptionFromKey(key: Option[String]): String = key match {
+    case Some("chargeSummary.paymentAllocations.poa1.incomeTax") => "Income Tax for payment on account 1 of 2"
+    case Some("chargeSummary.paymentAllocations.poa1.nic4") => "Class 4 National Insurance for payment on account 1 of 2"
+    case Some("chargeSummary.paymentAllocations.poa2.incomeTax") => "Income Tax for payment on account 2 of 2"
+    case Some("chargeSummary.paymentAllocations.poa2.nic4") => "Class 4 National Insurance for payment on account 2 of 2"
+    case Some("chargeSummary.paymentAllocations.bcd.incomeTax") => "Income Tax for remaining balance"
+    case Some("chargeSummary.paymentAllocations.bcd.nic2") => "Class 2 National Insurance for remaining balance"
+    case Some("chargeSummary.paymentAllocations.bcd.vcnic2") => "Voluntary Class 2 National Insurance for remaining balance"
+    case Some("chargeSummary.paymentAllocations.bcd.nic4") => "Class 4 National Insurance for remaining balance"
+    case Some("chargeSummary.paymentAllocations.bcd.sl") => "Student Loans for remaining balance"
+    case Some("chargeSummary.paymentAllocations.bcd.cgt") => "Capital Gains Tax for remaining balance"
+    case Some("paymentOnAccount1.text") => "Late payment interest for payment on account 1 of 2"
+    case Some("paymentOnAccount2.text") => "Late payment interest for payment on account 2 of 2"
+    case Some("balancingCharge.text") => "Late payment interest for remaining balance"
+  }
+
   private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] =
     paymentAllocation.payments.map( payment => Json.obj()++
       ("date", payment.date)++
-      ("description", payment.lotItem)++
+      ("description", Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary)))++
       ("amount", payment.amount)
   )
 

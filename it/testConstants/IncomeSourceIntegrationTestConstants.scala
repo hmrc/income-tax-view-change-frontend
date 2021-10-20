@@ -406,7 +406,7 @@ object IncomeSourceIntegrationTestConstants {
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 1",
 				"transactionId" -> "1040000123",
-				"chargeType" -> "ITSA NI",
+				"chargeType" -> "NIC4 Scotland",
 				"originalAmount" -> originalAmount,
 				"totalAmount" -> totalAmount,
 				"items" -> Json.arr(
@@ -424,7 +424,7 @@ object IncomeSourceIntegrationTestConstants {
 				"taxYear" -> taxYear,
 				"mainType" -> "SA Payment on Account 2",
 				"transactionId" -> "1040000123",
-				"chargeType" -> "ITSA NI",
+				"chargeType" -> "NIC4 Scotland",
 				"originalAmount" -> originalAmount,
 				"totalAmount" -> totalAmount,
 				"items" -> Json.arr(

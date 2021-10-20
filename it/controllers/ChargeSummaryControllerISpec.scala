@@ -41,17 +41,17 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       mainType = Some(mainType) , chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2019-08-13", 10000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Balancing Charge", "ITSA NI", "2019-08-13", 10000.0, lotItem = "000001"),
     paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2019-08-13", 9000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2019-08-13", 8000.0, lotItem = "000001")
+    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", 8000.0, lotItem = "000001")
   )
 
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.now, ""))
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" should {
 
