@@ -57,16 +57,16 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
 @if(payments.nonEmpty) {
 <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
 
- @groupedPayments.map{case (year, yearPayments) =>
+ @for(((year, yearPayments), index) <- groupedPayments.zipWithIndex) {
  <div class="govuk-accordion__section">
   <div class="govuk-accordion__section-header">
    <h2 class="govuk-accordion__section-heading">
-    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@year" >
+    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@year">
         @messages("paymentHistory.button", year.toString)
       </span>
    </h2>
   </div>
-  <div class="govuk-accordion__section-content" id="accordion-default-content-@year" aria-labelledby="accordion-with-summary-sections-heading-@year">
+  <div class="govuk-accordion__section-content" id="accordion-default-content-@{index + 1}" aria-labelledby="accordion-with-summary-sections-heading-@{index + 1}">
     <table class="govuk-table">
      <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
      <thead class="govuk-table__head">
@@ -77,7 +77,7 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
       </tr>
      </thead>
      <tbody>
-     @yearPayments.map{payment =>
+     @for(payment <- yearPayments) {
      <tr class = "govuk-table__row">
       <td class = "govuk-table__cell">@LocalDate.parse(payment.date.get).toLongDate</td>
       <td class="govuk-table__cell"><a href="@controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)">@messages("paymentHistory.paymentToHmrc")</a></td>
