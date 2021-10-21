@@ -184,6 +184,14 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         CalcBreakdownTestConstants.calculationAllIncomeSources,
         Crystallised), taxYear, backUrl)
 
+      lazy val viewMarriageAllowanceTransfer = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.calculationJustMarriageAllowance,
+        Crystallised), taxYear, backUrl)
+
+      lazy val viewTopSlicingRelief = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.calculationTopSlicingRelief,
+        Crystallised), taxYear, backUrl)
+
       lazy val zeroIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.testCalcModelZeroIncome,
         Crystallised), taxYear, backUrl)
@@ -368,6 +376,30 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           )
         )
 
+      }
+
+      "have a Tax reductions table when only MarriageAllowanceTransfer is set" which {
+        shouldHaveACorrectTableContent(viewMarriageAllowanceTransfer)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.marriageAllowanceTransfer, "−£1,234.00"),
+          )
+        )
+      }
+
+      "have a Tax reductions table when only TopSlicingRelief is set" which {
+        shouldHaveACorrectTableContent(viewTopSlicingRelief)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.topSlicingRelief, "−£2,345.00"),
+          )
+        )
       }
 
       "have no additional charges table and heading when there is no any other charges value" in new Setup(viewAllIncome) {
