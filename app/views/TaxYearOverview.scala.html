@@ -29,6 +29,7 @@
     mainTemplate: layout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     breakdownPartial: taxOverviewBreakdownPartial,
+        h1: h1,
     h2: h2,
     p: p,
     link: link
@@ -165,12 +166,13 @@
 }
 
 @mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl)) {
-@*
+
+
     <header class="hmrc-page-heading heading-xlarge">
         <h1 class="govuk-heading-xl">@heading</h1>
         <p class="heading-secondary">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</p>
     </header>
-    *@
+
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
@@ -183,7 +185,10 @@
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
+                    @messages("tax-year-overview.calculation-date")
+                @*
                     <span class="govuk-details__summary-text">@messages("tax-year-overview.calculation-date")</span>
+                *@
 
                 </dt>
                 <dd class="govuk-summary-list__value">
