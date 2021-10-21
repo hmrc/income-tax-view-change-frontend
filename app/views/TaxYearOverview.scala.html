@@ -164,7 +164,13 @@
     }
 }
 
-@mainTemplate(pageTitle = heading, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl)) {
+@*
+    <header class="hmrc-page-heading heading-xlarge">
+        <h1 class="govuk-heading-xl">@heading</h1>
+        <p class="heading-secondary">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</p>
+    </header>
+    *@
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
