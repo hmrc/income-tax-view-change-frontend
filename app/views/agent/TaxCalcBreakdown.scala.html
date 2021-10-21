@@ -17,13 +17,13 @@
 @import models.calculation.{CalcDisplayModel, TaxBand}
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.templates.agent.MainTemplate
-@import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTable
-@import views.html.partials.taxcalcbreakdown.TableRow
+@import views.html.partials.taxcalcbreakdown.AgentCapitalGainsTaxTable
+@import views.html.partials.taxcalcbreakdown.AgentTableRow
 
 @this(
     mainTemplate: MainTemplate,
-    tableRow: TableRow,
-    capitalGainsTaxTable: CapitalGainsTaxTable
+    tableRow: AgentTableRow,
+    capitalGainsTaxTable: AgentCapitalGainsTaxTable
 )
 @(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages)
 

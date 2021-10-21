@@ -258,8 +258,8 @@
 
             @calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.map { incomeTaxDueAfterTaxReductions =>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell total-section">@messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions")</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric total-section">@{
+                    <td class="govuk-table__header total-section">@messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions")</td>
+                    <td class="govuk-table__header govuk-table__header--numeric total-section">@{
                         calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.get.toCurrency
                     }</td>
                 </tr>
@@ -389,8 +389,8 @@
                     </tr>
                 }
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell total-section">@messages("taxCal_breakdown.table.taxDeductedAtSource.total")</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric total-section">@{
+                    <td class="govuk-table__header total-section">@messages("taxCal_breakdown.table.taxDeductedAtSource.total")</td>
+                    <td class="govuk-table__header govuk-table__header--numeric total-section-with-spacing">@{
                         calcModel.calcDataModel.taxDeductedAtSource.total.get.toCurrency
                     }</td>
                 </tr>
@@ -399,8 +399,8 @@
     }
     <table class="govuk-table">
         <tr class="govuk-table__row">
-            <td class="govuk-table__cell total-section-with-spacing">@messages("taxCal_breakdown.table.totalIncomeTaxAndNicsDue") </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric total-section-with-spacing">@calcModel.calcDataModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrency</td>
+            <td class="govuk-table__header total-section-with-spacing">@messages("taxCal_breakdown.table.totalIncomeTaxAndNicsDue") </td>
+            <td class="govuk-table__header govuk-table__header--numeric total-section-with-spacing">@calcModel.calcDataModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrency</td>
         </tr>
     </table>
 }

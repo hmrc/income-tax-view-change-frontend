@@ -21,8 +21,8 @@
 
     @if(amount.isDefined) {
         <tr id="@messageCode">
-            <td @if(isTotalsRow){class="govuk-table__cell total-section"} else {class="govuk-table__cell"}>@messages(s"taxCal_breakdown.table.$messageCode")</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric no-wrap @if(isTotalsRow){govuk-table__header govuk-table__header--numeric total-section}">@{
+            <td @if(isTotalsRow){class="govuk-table__header total-section"} else {class="govuk-table__cell"}>@messages(s"taxCal_breakdown.table.$messageCode")</td>
+            <td @if(isTotalsRow){class="govuk-table__header govuk-table__header--numeric total-section"} else { class="govuk-table__cell govuk-table__cell--numeric no-wrap"}>@{
                 if(isNegative) amount.get.toNegativeCurrency
                 else amount.get.toCurrency
             }
