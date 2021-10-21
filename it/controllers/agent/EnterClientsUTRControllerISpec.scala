@@ -15,9 +15,9 @@
  */
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.BusinessDetailsIntegrationTestConstants.testMtdItId
-import assets.IncomeSourceIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
+import testConstants.IncomeSourceIntegrationTestConstants._
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}

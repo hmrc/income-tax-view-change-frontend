@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants._
-import assets.PaymentDataTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
 import connectors.agent.PayApiConnector

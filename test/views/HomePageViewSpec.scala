@@ -16,8 +16,8 @@
 
 package views
 
-import assets.BaseTestConstants._
-import assets.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
+import testConstants.BaseTestConstants._
+import testConstants.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.incomeSourceDetails.IncomeSourceDetailsModel

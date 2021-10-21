@@ -44,7 +44,7 @@ class TaxYearsController @Inject() (taxYears: TaxYears)
 
   val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears).flatMap {
+      calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYearsByAccountingPeriods).flatMap {
         case taxYearCalResponse if taxYearCalResponse.exists(_.isError) =>
           Future.successful(itvcErrorHandler.showInternalServerError)
         case taxYearCalResponse =>

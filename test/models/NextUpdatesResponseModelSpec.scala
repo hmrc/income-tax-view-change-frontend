@@ -16,9 +16,9 @@
 
 package models
 
-import assets.BaseTestConstants._
-import assets.NextUpdatesTestConstants._
-import assets.{BaseTestConstants, NextUpdatesTestConstants}
+import testConstants.BaseTestConstants._
+import testConstants.NextUpdatesTestConstants._
+import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 import implicits.ImplicitDateFormatter
 
 import javax.inject.Inject

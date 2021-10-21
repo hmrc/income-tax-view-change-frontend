@@ -16,10 +16,10 @@
 
 package services
 
-import assets.BaseTestConstants._
-import assets.BusinessDetailsTestConstants.getCurrentTaxYearEnd
-import assets.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
+import testConstants.FinancialDetailsTestConstants._
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIncomeTaxViewChangeConnector

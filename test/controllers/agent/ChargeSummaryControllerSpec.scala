@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}

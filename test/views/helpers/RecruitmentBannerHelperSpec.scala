@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import assets.MessagesLookUp
+import testConstants.MessagesLookUp
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import testUtils.TestSupport

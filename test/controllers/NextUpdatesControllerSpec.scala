@@ -18,8 +18,8 @@ package controllers
 
 import java.time.LocalDate
 
-import assets.BaseTestConstants
-import assets.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
+import testConstants.BaseTestConstants
+import testConstants.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}

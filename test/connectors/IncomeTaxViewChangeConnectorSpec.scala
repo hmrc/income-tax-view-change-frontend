@@ -16,14 +16,14 @@
 
 package connectors
 
-import assets.BaseTestConstants._
-import assets.ChargeHistoryTestConstants._
-import assets.FinancialDetailsTestConstants._
-import assets.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
-import assets.NinoLookupTestConstants.{testNinoModelJson, _}
-import assets.OutstandingChargesTestConstants._
-import assets.PaymentAllocationsTestConstants._
-import assets.NextUpdatesTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.ChargeHistoryTestConstants._
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
+import testConstants.NinoLookupTestConstants.{testNinoModelJson, _}
+import testConstants.OutstandingChargesTestConstants._
+import testConstants.PaymentAllocationsTestConstants._
+import testConstants.NextUpdatesTestConstants._
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models._

@@ -16,7 +16,7 @@
 
 package models
 
-import assets.ChargeHistoryTestConstants._
+import testConstants.ChargeHistoryTestConstants._
 import models.chargeHistory.ChargesHistoryModel
 import org.scalatest.Matchers
 import play.api.libs.json.Json

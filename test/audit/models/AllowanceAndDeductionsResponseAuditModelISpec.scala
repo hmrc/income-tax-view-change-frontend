@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants._
+import testConstants.BaseTestConstants._
 import models.calculation.AllowancesAndDeductions
 import play.api.libs.json.Json
 import testUtils.TestSupport

@@ -67,7 +67,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     implicit user =>
 
       nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
-        val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYears.map { taxYear =>
+        val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYear =>
             financialDetailsService.getFinancialDetails(taxYear, user.nino)
         }) map {
           _.filter(_ match {

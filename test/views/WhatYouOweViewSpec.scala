@@ -16,9 +16,9 @@
 
 package views
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeIndividual}
-import assets.FinancialDetailsTestConstants._
-import assets.MessagesLookUp.{WhatYouOwe => whatYouOwe}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeIndividual}
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.MessagesLookUp.{WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter

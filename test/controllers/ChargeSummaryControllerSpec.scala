@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}

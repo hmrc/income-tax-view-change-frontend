@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.BaseTestConstants
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtrId}
-import assets.PaymentDataTestConstants._
+import testConstants.BaseTestConstants
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtrId}
+import testConstants.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
 import connectors.PayApiConnector

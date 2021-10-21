@@ -16,11 +16,11 @@
 
 package views.html.helpers.injected.obligations
 
-import assets.BaseTestConstants.testMtdItUser
-import assets.BusinessDetailsTestConstants.{business1, testTradeName}
-import assets.MessagesLookUp.{CurrentObligationsHelper => currentObligations}
-import assets.PropertyDetailsTestConstants.propertyDetails
-import assets.NextUpdatesTestConstants.{twoObligationsSuccessModel, _}
+import testConstants.BaseTestConstants.testMtdItUser
+import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.MessagesLookUp.{CurrentObligationsHelper => currentObligations}
+import testConstants.PropertyDetailsTestConstants.propertyDetails
+import testConstants.NextUpdatesTestConstants.{twoObligationsSuccessModel, _}
 import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

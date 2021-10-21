@@ -16,7 +16,7 @@
 
 package views.html.helpers.injected.obligations
 
-import assets.BaseTestConstants.{testMtdItUser, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testMtdItUser, testPropertyIncomeId, testSelfEmploymentId}
 import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec

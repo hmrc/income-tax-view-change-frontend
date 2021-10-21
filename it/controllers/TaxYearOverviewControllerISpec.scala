@@ -18,11 +18,11 @@ package controllers
 
 import java.time.{LocalDate, LocalDateTime}
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
-import assets.CalcDataIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.TaxYearOverviewMessages
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.TaxYearOverviewMessages
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
@@ -31,7 +31,7 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.financialDetails._
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -176,7 +176,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         enable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
@@ -262,7 +262,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         enable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
@@ -351,7 +351,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       "financial details service returns a not found" in {
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
@@ -418,7 +418,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       "financial details service returns an error" in {
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And("A non crystallised calculation for 2017-18 is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
@@ -452,7 +452,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       "retrieving a calculation failed" in {
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And("A calculation call for 2017-18 responds with http status 404:NOT_FOUND")
         IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
@@ -513,7 +513,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       "retrieving a calculation failed with INTERNAL_SERVER_ERROR" in {
         enable(TxmEventsApproved)
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And("A calculation call for 2017-18 fails")
         IndividualCalculationStub.stubGetCalculationListInternalServerError(testNino, "2017-18")
@@ -571,7 +571,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         enable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And("A non crystallised calculation for 2017-18 is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
@@ -610,7 +610,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         enable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And("A non crystallised calculation for 2017-18 is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
@@ -651,7 +651,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         disable(TxmEventsApproved)
 
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
@@ -732,7 +732,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       "financial details service returns a not found" in {
         disable(TxmEventsApproved)
         Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
@@ -799,7 +799,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         "retrieving a calculation failed" in {
           Given("Business details returns a successful response back")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
           And("A calculation call for 2017-18 fails")
           IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
@@ -819,7 +819,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         "retrieving a financial transaction failed" in {
           Given("Business details returns a successful response back")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
           And("A non crystallised calculation for 2017-18 is returned")
           IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(

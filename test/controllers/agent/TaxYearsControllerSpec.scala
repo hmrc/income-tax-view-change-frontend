@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import assets.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import config.FrontendAppConfig
 import config.featureswitch._
 import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}

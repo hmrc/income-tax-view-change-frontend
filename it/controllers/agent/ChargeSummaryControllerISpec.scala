@@ -16,21 +16,22 @@
 
 package controllers.agent
 
-import java.time.LocalDate
-import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, testValidFinancialDetailsModelJson}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
+import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved}
+import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.docDateDetail
+import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.chargeHistory.ChargeHistoryModel
+import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+import java.time.LocalDate
 
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -43,6 +44,25 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     SessionKeys.clientMTDID -> testMtditid,
     SessionKeys.confirmedClient -> "true"
   )
+
+  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
+    PaymentsWithChargeType(
+      payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
+        lot = Some("lot"), lotItem = Some(lotItem), date = Some(date), transactionId = None)),
+      mainType = Some(mainType) , chargeType = Some(chargeType))
+
+  val paymentAllocation: List[PaymentsWithChargeType] = List(
+    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2019-08-13", 10000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", 9000.0, lotItem = "000001")
+  )
+
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29).toString,
+    "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020,2,24), "amended return"))
+
+  val paymentBreakdown: List[FinancialDetail] = List(
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+
 
   val currentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.now
@@ -81,14 +101,15 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when TxEventsApproved FS is enabled" in {
+    s"return $OK with correct page title and audit events when TxmEvents FS is enabled" in {
 
       enable(TxmEventsApproved)
+      enable(TxmEventsR6)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-      stubGetFinancialDetailsSuccess(Some("ITSA NI"))
+      stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
         currentTaxYearEnd.getYear.toString, "testId", clientDetails
@@ -99,20 +120,63 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
-        agentReferenceNumber = Some("1")
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = List.empty,
+        paymentAllocations = List.empty,
+        agentReferenceNumber = Some("1"),
+        txmEventsR6 = true,
+        isLatePaymentCharge = false
       ))
 
       result should have(
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
-        elementTextBySelector("main h2")("Payment breakdown")
+        elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
 
-    s"return $OK with correct page title and no audit events when TxEventsApproved FS is disabled" in {
+    s"return $OK with correct page title and audit events when TxmEvents and PaymentAllocations FS is enabled" in {
+
+      enable(TxmEventsApproved)
+      enable(TxmEventsR6)
+      enable(PaymentAllocation)
+      disable(ChargeHistory)
+      stubAuthorisedAgentUser(authorised = true)
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+      stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+      )
+
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+        )(FakeRequest()),
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = List.empty,
+        paymentAllocations = paymentAllocation,
+        agentReferenceNumber = Some("1"),
+        txmEventsR6 = true,
+        isLatePaymentCharge = false
+      ))
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("main h2")("Important Payment breakdown")
+      )
+    }
+
+    s"return $OK with correct page title and no audit events when TxmEvents FS are disabled" in {
 
       disable(TxmEventsApproved)
+      disable(TxmEventsR6)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -128,24 +192,30 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
-        agentReferenceNumber = Some("1")
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = chargeHistories,
+        paymentAllocations = List.empty,
+        agentReferenceNumber = Some("1"),
+        txmEventsR6 = true,
+        false
       ).detail)
 
       result should have(
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
-        elementTextBySelector("main h2")("Payment breakdown")
+        elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
 
-    s"return $OK with correct page title and audit events when TxEventsApproved and ChargeHistory and PaymentAllocation FSs are enabled" in {
+    s"return $OK with correct page title and audit events when TxmEvents and ChargeHistory and PaymentAllocation FSs are enabled" in {
       enable(TxmEventsApproved)
+      enable(TxmEventsR6)
       enable(ChargeHistory)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-      stubGetFinancialDetailsSuccess()
+      stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
@@ -155,7 +225,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
-        elementTextBySelector("main h2")("Payment history")
+        elementTextBySelector("main h2")("Important Payment breakdown"),
+        elementTextBySelector("main h3")("Payment history")
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -163,13 +234,19 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
-        agentReferenceNumber = Some("1")
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = paymentBreakdown,
+        chargeHistories = chargeHistories,
+        paymentAllocations = paymentAllocation,
+        agentReferenceNumber = Some("1"),
+        txmEventsR6 = true,
+        isLatePaymentCharge = false
       ))
     }
 
-    s"return $OK with correct page title and audit events when TxEventsApproved ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
+    s"return $OK with correct page title and audit events when TxmEvents ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
       enable(TxmEventsApproved)
+      enable(TxmEventsR6)
       enable(ChargeHistory)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
@@ -191,8 +268,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
-        agentReferenceNumber = Some("1")
+        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        paymentBreakdown = List.empty,
+        chargeHistories = List.empty,
+        paymentAllocations = List.empty,
+        agentReferenceNumber = Some("1"),
+        txmEventsR6 = true,
+        isLatePaymentCharge = true
       ))
     }
 
@@ -275,7 +357,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
   }
 
-  private def stubGetFinancialDetailsSuccess(chargeType: Option[String] = None): Unit = {
+  private def stubGetFinancialDetailsSuccess(chargeType1: Option[String] = Some("ITSA NI"), chargeType2: Option[String] = Some("ITSA NI")): Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
       from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -290,7 +372,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             transactionId = "testId",
             documentDescription = Some("ITSA- POA 1"),
             outstandingAmount = Some(1.2),
-            originalAmount = Some(10.34),
+            originalAmount = Some(123.45),
             documentDate = LocalDate.of(2018, 3, 29),
             interestFromDate = Some(LocalDate.of(2018, 3, 29)),
             interestEndDate = Some(LocalDate.of(2018, 3, 29)),
@@ -303,9 +385,19 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = currentTaxYearEnd.getYear.toString,
             transactionId = Some("testId"),
             mainType = Some("SA Payment on Account 1"),
-            chargeType = chargeType,
-            originalAmount = Some(10.34),
-            items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+            chargeType = chargeType1,
+            originalAmount = Some(123.45),
+            items = Some(Seq(SubItem(Some(LocalDate.now.toString), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
+              amount = Some(10000), clearingDate = Some("2019-08-13"), dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal"))))
+          ),
+          FinancialDetail(
+            taxYear = currentTaxYearEnd.getYear.toString,
+            transactionId = Some("testId"),
+            mainType = Some("SA Payment on Account 2"),
+            chargeType = chargeType2,
+            originalAmount = Some(123.45),
+            items = Some(Seq(SubItem(Some(LocalDate.now.toString), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
+              amount = Some(9000), clearingDate = Some("2019-08-13"), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
           )
         )
       ))

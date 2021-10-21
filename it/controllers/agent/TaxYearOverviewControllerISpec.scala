@@ -15,10 +15,10 @@
  */
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
-import assets.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import assets.messages.TaxYearOverviewMessages.agentTitle
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
+import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
+import testConstants.messages.TaxYearOverviewMessages.agentTitle
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._

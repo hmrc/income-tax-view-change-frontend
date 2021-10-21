@@ -16,10 +16,10 @@
 
 package models
 
-import assets.BaseTestConstants._
-import assets.BusinessDetailsTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
-import assets.PropertyDetailsTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
 import testUtils.UnitSpec
 

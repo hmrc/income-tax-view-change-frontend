@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
 import play.api.libs.json.Json
 import testUtils.TestSupport
 

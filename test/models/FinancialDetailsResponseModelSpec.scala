@@ -16,7 +16,7 @@
 
 package models
 
-import assets.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants._
 
 import java.time.LocalDate
 import models.financialDetails._

@@ -17,11 +17,11 @@
 package controllers
 
 import java.time.LocalDateTime
-import assets.BaseIntegrationTestConstants._
-import assets.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
-import assets.CalcDataIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.{TaxDueSummaryMessages => messages}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.{TaxDueSummaryMessages => messages}
 import audit.models.TaxCalculationDetailsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
@@ -48,7 +48,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         enable(TxmEventsApproved)
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
         And("I stub a successful calculation response for 2017-18")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(

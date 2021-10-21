@@ -15,8 +15,8 @@
  */
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.messages.HomeMessages.agentTitle
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.messages.HomeMessages.agentTitle
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._

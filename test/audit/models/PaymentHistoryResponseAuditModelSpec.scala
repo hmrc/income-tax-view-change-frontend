@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import auth.MtdItUser
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel

@@ -18,15 +18,14 @@ package controllers
 
 import java.time.LocalDateTime
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.{IncomeSummaryMessages => messages}
-import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.{IncomeSummaryMessages => messages}
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
@@ -36,7 +35,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
       "return the correct income summary page" in {
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
         And("I stub a successful calculation response for 2017-18")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(

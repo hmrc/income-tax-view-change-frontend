@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testRetrievedUserName}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testRetrievedUserName}
 import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
