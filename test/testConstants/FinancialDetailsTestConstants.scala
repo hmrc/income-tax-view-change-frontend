@@ -49,6 +49,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate"-> "2018-03-29",
         "interestEndDate"-> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
+        "lpiWithDunningBlock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       ),
@@ -65,6 +66,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate"-> "2018-03-29",
         "interestEndDate"-> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
+        "lpiWithDunningBlock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       )
@@ -147,6 +149,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate"-> "2018-03-29",
         "interestEndDate"-> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
+        "lpiWithDunningBlock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       ),
@@ -162,6 +165,7 @@ object FinancialDetailsTestConstants {
         "interestFromDate"-> "2018-03-29",
         "interestEndDate"-> "2018-03-29",
         "latePaymentInterestAmount" -> 100,
+        "lpiWithDunningBlock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
       )
@@ -327,6 +331,7 @@ object FinancialDetailsTestConstants {
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
       interestEndDate = Some(LocalDate.of(2018, 6, 15)),
       latePaymentInterestAmount = Some(100),
+      lpiWithDunningBlock = Some(100),
       paymentLotItem = paymentLotItem,
       paymentLot = paymentLot
     )
@@ -402,9 +407,9 @@ object FinancialDetailsTestConstants {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     documentDetails = List(
       DocumentDetail("2019", id1040000123, Some("TRM New Charge"), Some(10.33), Some(10.33), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
-        Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
+        Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot")),
       DocumentDetail("2020", id1040000124, Some("TRM New Charge"), Some(10.34), Some(10.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
-        Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
+        Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
     ),
     financialDetails = List(
       FinancialDetail("2019", Some("SA Balancing Charge"),Some(id1040000123)  ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(Some("2019-05-15"),Some("1"),Some(100),
@@ -436,9 +441,9 @@ object FinancialDetailsTestConstants {
       balanceDetails = balanceDetails,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
+          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot")),
         DocumentDetail(taxYear, id1040000125, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
+          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, Some(id1040000124) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
@@ -455,9 +460,9 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),None,Some("paymentLotItem"), Some("paymentLot")),
+          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),None,None,Some("paymentLotItem"), Some("paymentLot")),
         DocumentDetail(taxYear, id1040000125, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),None,Some("paymentLotItem"), Some("paymentLot"))
+          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),None,None,Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, Some(id1040000124) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -534,9 +539,9 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
         DocumentDetail(taxYear, id1040000123, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot")),
+          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot")),
         DocumentDetail(taxYear, id1040000124, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
+          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, Some(id1040000123) ,Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -553,7 +558,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription, outstandingAmount, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100),
-          Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some("paymentLotItem"), Some("paymentLot"))
+          Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType, Some(id1040000124), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate))))
