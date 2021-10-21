@@ -231,7 +231,10 @@
     @if(calcModel.calcDataModel.reductionsAndCharges.totalResidentialFinanceCostsRelief.nonEmpty ||
             calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax.nonEmpty ||
             calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief.nonEmpty ||
-            calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.nonEmpty) {
+            calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.nonEmpty ||
+            calcModel.calcDataModel.reductionsAndCharges.marriageAllowanceTransferredInAmount.nonEmpty ||
+            calcModel.calcDataModel.reductionsAndCharges.topSlicingRelief.nonEmpty
+    ) {
         <table>
             <caption id ="reductions-title" class="govuk-table__caption heading-large">@messages("taxCal_breakdown.table.tax_reductions")
             </caption>
