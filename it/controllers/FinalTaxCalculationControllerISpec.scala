@@ -18,7 +18,7 @@ package controllers
 
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -111,7 +111,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
       lazy val result = {
         isAuthorisedUser(authorised = true)
         calculationStub()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
         ws.url(url)
           .get()
