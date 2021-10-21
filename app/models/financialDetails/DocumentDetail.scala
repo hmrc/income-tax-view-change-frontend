@@ -33,9 +33,11 @@ case class DocumentDetail(taxYear: String,
 													interestFromDate: Option[LocalDate] = None,
 													interestEndDate: Option[LocalDate] = None,
 													latePaymentInterestAmount: Option[BigDecimal] = None,
+													lpiWithDunningBlock: Option[BigDecimal] = None,
 													paymentLotItem: Option[String] = None,
 													paymentLot: Option[String] = None
 												 ) {
+
 
   lazy val hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
