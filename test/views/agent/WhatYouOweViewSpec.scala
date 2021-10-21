@@ -201,7 +201,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(45).toLongDateShort
-        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
+        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         futurePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
@@ -211,7 +211,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
         futurePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().plusDays(50).toLongDateShort
-        futurePaymentsTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.poa2Text + " " +
+        futurePaymentsTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.poa2Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         futurePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
@@ -324,7 +324,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().toLongDateShort
-        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
@@ -335,7 +335,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       s"have data with POA2 with hyperlink and no overdue" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(4)
         dueWithInThirtyDaysTableRow2.select("td").first().text() shouldBe LocalDate.now().plusDays(1).toLongDateShort
-        dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.poa2Text + " " +
+        dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.poa2Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         dueWithInThirtyDaysTableRow2.select("td").last().text() shouldBe "£75.00"
 
@@ -457,7 +457,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " +
-            AgentPaymentDue.latePoa1Text + " " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+            AgentPaymentDue.latePoa1Text + s" $currentYear " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
           pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
@@ -477,7 +477,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " +
-          AgentPaymentDue.poa1Text + " " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          AgentPaymentDue.poa1Text + s" $currentYear " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
@@ -498,7 +498,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
                 overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
         */
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " +
-          AgentPaymentDue.poa1Text + " " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          AgentPaymentDue.poa1Text + s" $currentYear " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
@@ -508,7 +508,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       s"have overdue payments with POA2 charge type with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
         val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
         overduePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
-        overduePaymentsTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + " " +
+        overduePaymentsTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
@@ -598,7 +598,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(1)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + " " +
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
@@ -614,7 +614,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
-        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
@@ -632,7 +632,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
-        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
+        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         futurePaymentsTableRow1.select("td").last().text() shouldBe "£25.00"
 
@@ -689,7 +689,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + " " +
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
@@ -736,7 +736,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(5)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
-        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
@@ -754,7 +754,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(5)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
-        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
+        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         futurePaymentsTableRow1.select("td").last().text() shouldBe "£25.00"
 

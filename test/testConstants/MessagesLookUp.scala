@@ -579,14 +579,14 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val futurePayments = "Future payments"
     val totalPaymentsDue = "Total payments"
 
-    val poa1WithTaxYear = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa2WithTaxYear = s"$poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa1WithTaxYearAndUnderReview = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa2WithTaxYearAndUnderReview = s"$poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa1WithTaxYear = s"$poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa2WithTaxYear = s"$poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa1WithTaxYearAndUnderReview = s"$poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa2WithTaxYearAndUnderReview = s"$poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
 
     def interestFromToDate(from: String, to: String, rate: String) = s"Interest for late payment $from to $to at $rate%"
 
@@ -642,11 +642,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     val poa1WithTaxYear = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
     val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa2WithTaxYear = s"$poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
+    val poa2WithTaxYear = s"$poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
     val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa1WithTaxYearAndUnderReview = s"$poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa2WithTaxYearAndUnderReview = s"$poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa1WithTaxYearAndUnderReview = s"$poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa2WithTaxYearAndUnderReview = s"$poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
     val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
