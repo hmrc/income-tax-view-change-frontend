@@ -2061,4 +2061,20 @@ object CalcBreakdownTestConstants {
 
   )
 
+  val calculationJustMarriageAllowance = Calculation(
+    crystallised = false,
+
+    reductionsAndCharges = ReductionsAndCharges(
+      marriageAllowanceTransferredInAmount = Some(1234)
+    )
+  )
+
+  val calculationTopSlicingRelief = Calculation(
+    crystallised = false,
+
+    reductionsAndCharges = ReductionsAndCharges(
+      topSlicingRelief = Some(2345)
+    )
+  )
+
 }
