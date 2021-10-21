@@ -16,13 +16,13 @@
 
 package views.agent
 
-import assets.BusinessDetailsTestConstants.business1
-import assets.NextUpdatesTestConstants.twoObligationsSuccessModel
+import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
 import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.test.Helpers.contentAsString
+import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.agent.NextUpdates
 
@@ -32,7 +32,7 @@ class NextUpdatesViewSpec extends TestSupport {
 	val agentNextUpdates: NextUpdates = app.injector.instanceOf[NextUpdates]
 
 	class Setup(currentObligations: ObligationsModel) {
-		val pageDocument: Document = Jsoup.parse(contentAsString(agentNextUpdates(currentObligations, "testBackURL"))(defaultTimeout))
+		val pageDocument: Document = Jsoup.parse(contentAsString(agentNextUpdates(currentObligations, "testBackURL")))
 	}
 
 	object obligationsMessages {

@@ -38,7 +38,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
   }
 
   def getChargeDueDates(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-    val orderedTaxYear: List[Int] = user.incomeSources.orderedTaxYears
+    val orderedTaxYear: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration
 
     Future.sequence(orderedTaxYear.map(item =>
       getFinancialDetails(item, user.nino)
@@ -56,8 +56,8 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
 
       (overdueDates, nextDueDates) match {
         case (Nil, Nil) => None
-        case (Nil, nextDueDate :: _) => Some(Left(nextDueDate, false))
-        case (overdueDate :: Nil, _) => Some(Left(overdueDate, true))
+        case (Nil, nextDueDate :: _) => Some(Left((nextDueDate, false)))
+        case (overdueDate :: Nil, _) => Some(Left((overdueDate, true)))
         case _ => Some(Right(overdueDates.size))
       }
     }
@@ -69,17 +69,17 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
       case ok: ChargesHistoryModel => Future.successful(ok.chargeHistoryDetails)
 
       case error: ChargesHistoryErrorModel =>
-        Logger.error(s"[FinancialDetailsService][getChargeHistoryDetails] $error")
+        Logger("application").error(s"[FinancialDetailsService][getChargeHistoryDetails] $error")
         Future.failed(new InternalServerException("[FinancialDetailsService][getChargeHistoryDetails] - Failed to retrieve successful charge history"))
     }
   }
 
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
-    Logger.debug(
+    Logger("application").debug(
       s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYears.map {
+    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
         incomeTaxViewChangeConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))

@@ -16,7 +16,7 @@
 
 package controllers.predicates.agent
 
-import assets.BaseTestConstants._
+import testConstants.BaseTestConstants._
 import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName, clientUTR, confirmedClient}
 import controllers.predicates.AuthPredicate.AuthPredicateSuccess
 import controllers.predicates.IncomeTaxAgentUser
@@ -74,7 +74,8 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     }
 
     "return a MissingAgentReferenceNumber where a user does not have it in their enrolments" in {
-      intercept[MissingAgentReferenceNumber](await(arnPredicate().apply(FakeRequest())(blankUser).left.value))
+      val result = arnPredicate().apply(FakeRequest())(blankUser).left.value.failed.futureValue
+      result shouldBe an[MissingAgentReferenceNumber]
     }
 
     "return a custom result when a user does not have AgentReferenceNumber in their enrolments" in {
@@ -94,7 +95,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
 
     "return the timeout page where the lastRequestTimestamp is set but the auth token is not" in {
       lazy val request = FakeRequest().withSession(lastRequestTimestamp -> "")
-      await(timeoutPredicate(request)(blankUser).left.value) mustBe timeoutRoute
+      timeoutPredicate(request)(blankUser).left.value.futureValue mustBe timeoutRoute
     }
   }
 
@@ -104,7 +105,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     }
 
     "return the Enter Client UTR page where the client's details are not in session" in {
-      await(detailsPredicate(FakeRequest())(blankUser).left.value) mustBe noClientDetailsRoute
+      detailsPredicate(FakeRequest())(blankUser).left.value.futureValue mustBe noClientDetailsRoute
     }
   }
 
@@ -114,7 +115,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     }
 
     "return an Enter Client UTR page where the confirmedClient key is not in session" in {
-      await(selectedClientPredicate(FakeRequest())(blankUser).left.value) mustBe noClientDetailsRoute
+      selectedClientPredicate(FakeRequest())(blankUser).left.value.futureValue mustBe noClientDetailsRoute
     }
   }
 }

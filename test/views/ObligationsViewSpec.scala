@@ -16,9 +16,9 @@
 
 package views
 
-import assets.BaseTestConstants.testSelfEmploymentId
-import assets.BusinessDetailsTestConstants.business1
-import assets.NextUpdatesTestConstants.twoObligationsSuccessModel
+import testConstants.BaseTestConstants.testSelfEmploymentId
+import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
 import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.jsoup.Jsoup

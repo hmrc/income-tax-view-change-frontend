@@ -23,7 +23,6 @@ import controllers.agent.utils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

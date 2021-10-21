@@ -18,7 +18,7 @@
 @import models.calculation.CalcOverview
 
 @this()
-@(overview: CalcOverview, taxYear: Int, isFinalCalc: Boolean)(implicit messages: Messages)
+@(overview: CalcOverview, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean)(implicit messages: Messages)
 
 <table id="income-deductions-table">
 
@@ -33,7 +33,11 @@
 
     <tr>
         <td>
-            <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+            @if(isAgent){
+            <a href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+                } else {
+                    <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+                }
             </td>
         <td class="numeric">@{
             overview.income.toCurrencyString
@@ -41,7 +45,11 @@
     </tr>
     <tr>
         <td>
+            @if(isAgent){
+            <a href=@controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
+                } else {
             <a href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
+                }
             </td>
         <td class="numeric no-wrap">@{
             overview.deductions.toNegativeCurrency
@@ -66,11 +74,22 @@
     <tr>
         <td class="bold">
             @if(!isFinalCalc){
+
+                @if(isAgent){
+                <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
+                } else {
                 <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
-            } else {
+                }
+
+                } else {
+
+                @if(isAgent){
+                <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
+                    } else {
                 <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
+                }
             }
-            </td>
+        </td>
         <td class="bold">@{
             overview.taxDue.toCurrencyString
         }</td>

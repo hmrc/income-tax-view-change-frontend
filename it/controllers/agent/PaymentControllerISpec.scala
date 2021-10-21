@@ -18,7 +18,7 @@ package controllers.agent
 
 import java.time.LocalDate
 
-import assets.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants._
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub

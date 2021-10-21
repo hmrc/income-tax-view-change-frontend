@@ -16,7 +16,7 @@
 
 package views.notEnrolled
 
-import assets.MessagesLookUp.{NotEnrolled => notEnrolledMessages}
+import testConstants.MessagesLookUp.{NotEnrolled => notEnrolledMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.test.Helpers._

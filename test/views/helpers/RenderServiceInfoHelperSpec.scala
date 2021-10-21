@@ -16,8 +16,8 @@
 
 package views.helpers
 
-import assets.BaseTestConstants._
-import assets.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
+import testConstants.BaseTestConstants._
+import testConstants.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
 import org.jsoup.Jsoup
 import play.twirl.api.Html
 import testUtils.TestSupport

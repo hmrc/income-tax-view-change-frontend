@@ -16,12 +16,12 @@
 
 package models
 
-import assets.BaseTestConstants._
-import assets.NinoLookupTestConstants._
-import models.core.{NinoResponseSuccess, NinoResponseError}
+import testConstants.BaseTestConstants._
+import testConstants.NinoLookupTestConstants._
+import models.core.{NinoResponseError, NinoResponseSuccess}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class NinoResponseModelSpec  extends UnitSpec with Matchers {
 

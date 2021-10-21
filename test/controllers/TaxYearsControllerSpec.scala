@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.EstimatesTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
-import assets.MessagesLookUp
+import testConstants.EstimatesTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.MessagesLookUp
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -30,6 +30,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.Helpers._
 import services.CalculationService
 import testUtils.TestSupport
 import views.html.TaxYears

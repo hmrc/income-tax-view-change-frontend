@@ -16,9 +16,9 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import assets.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
@@ -30,7 +30,7 @@ import models.financialDetails.DocumentDetailWithDueDate
 import models.nextUpdates.{ObligationsModel, NextUpdatesErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -107,9 +107,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockErrorIncomeSource()
 				mockShowInternalServerError()
-
-				intercept[InternalServerException](await(controller.show(taxYear = testYear)(fakeRequestConfirmedClient())))
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				val result = controller.show(taxYear = testYear)(fakeRequestConfirmedClient()).failed.futureValue
+				result shouldBe an[InternalServerException]
+				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 		"there was a problem retrieving the calculation for the user" should {

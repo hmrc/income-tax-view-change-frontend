@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants._
-import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -63,7 +63,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
-    yearOfMigration = None,
+    yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
       "testId",
       AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),

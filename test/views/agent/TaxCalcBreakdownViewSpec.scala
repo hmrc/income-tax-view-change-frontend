@@ -16,7 +16,7 @@
 
 package views.agent
 
-import assets.MessagesLookUp.TaxCalcBreakdown
+import testConstants.MessagesLookUp.TaxCalcBreakdown
 import models.calculation.CalcDisplayModel
 import play.twirl.api.Html
 import views.TaxCalcBreakdownViewBehaviour

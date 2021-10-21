@@ -16,12 +16,12 @@
 
 package models
 
-import assets.BaseTestConstants._
-import assets.PaymentDataTestConstants._
+import testConstants.BaseTestConstants._
+import testConstants.PaymentDataTestConstants._
 import models.core.PaymentDataModel
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class PaymentDataModelSpec extends UnitSpec with Matchers {
 

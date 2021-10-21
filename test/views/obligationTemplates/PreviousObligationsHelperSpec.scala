@@ -19,7 +19,7 @@ package views.obligationTemplates
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import assets.BaseTestConstants.{testMtdItUser, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testMtdItUser, testPropertyIncomeId, testSelfEmploymentId}
 import implicits.ImplicitDateFormatterImpl
 import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
 import org.jsoup.nodes.Element

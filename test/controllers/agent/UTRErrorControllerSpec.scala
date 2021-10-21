@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
@@ -147,7 +147,7 @@ class UTRErrorControllerSpec extends TestSupport
 
 			status(result) shouldBe SEE_OTHER
 			redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
-			result.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
+			result.futureValue.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
 			verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
 			verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
 		}

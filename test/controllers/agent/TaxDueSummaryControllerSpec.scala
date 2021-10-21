@@ -16,9 +16,9 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -82,8 +82,9 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
 				mockShowInternalServerError()
 
-				intercept[InternalServerException](await(controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())))
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient()).failed.futureValue
+				result shouldBe an[InternalServerException]
+				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 

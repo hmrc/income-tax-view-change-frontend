@@ -19,10 +19,8 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.core.AccountingPeriodModel
-import models.financialDetails.DocumentDetail
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
-import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 

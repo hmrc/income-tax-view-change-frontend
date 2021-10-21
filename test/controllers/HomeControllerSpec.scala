@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.MessagesLookUp
+import testConstants.MessagesLookUp
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -27,6 +27,7 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import play.api.http.Status
+import play.api.test.Helpers._
 import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{FinancialDetailsService, NextUpdatesService}
 import utils.CurrentDateProvider
@@ -84,7 +85,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
 					status(result) shouldBe Status.OK
-					val document: Document = Jsoup.parse(bodyOf(result))
+					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
 					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2019"
 				}
@@ -122,7 +123,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
 					status(result) shouldBe Status.OK
-					val document: Document = Jsoup.parse(bodyOf(result))
+					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
 					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2018"
 				}
@@ -137,7 +138,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
 						status(result) shouldBe Status.OK
-						val document: Document = Jsoup.parse(bodyOf(result))
+						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
 
@@ -152,7 +153,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
 						status(result) shouldBe Status.OK
-						val document: Document = Jsoup.parse(bodyOf(result))
+						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
 					}
@@ -171,7 +172,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
 						status(result) shouldBe Status.OK
-						val document: Document = Jsoup.parse(bodyOf(result))
+						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
 					}
@@ -192,7 +193,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
 					status(result) shouldBe Status.OK
-					val document: Document = Jsoup.parse(bodyOf(result))
+					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
 					document.select("#updates-tile > div > p:nth-child(2)").text() shouldBe "1 January 2018"
 				}

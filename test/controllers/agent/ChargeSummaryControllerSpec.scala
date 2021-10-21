@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
@@ -29,9 +29,8 @@ import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{FinancialDetail, FinancialDetailsModel}
 import org.mockito.ArgumentMatchers.{any, eq => ameq}
 import org.mockito.Mockito.{never, verify}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import play.twirl.api.Html
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -100,7 +99,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
-					status(await(result)) shouldBe OK
+					status(result) shouldBe OK
 					JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
 					JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
 					JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
@@ -119,7 +118,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123, isLatePaymentCharge = true)
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
-					status(await(result)) shouldBe OK
+					status(result) shouldBe OK
 					JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
 					JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
 				}
@@ -150,8 +149,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 
 					mockSingleBusinessIncomeSource()
 
-					val result: Result = await(chargeSummaryController.showChargeSummary(currentYear, id1040000124)
-						.apply(fakeRequestConfirmedClient("AB123456C")))
+					val result = chargeSummaryController.showChargeSummary(currentYear, id1040000124)
+						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe SEE_OTHER
 					redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/income-tax-account")
@@ -170,10 +169,10 @@ class ChargeSummaryControllerSpec extends TestSupport
 
 				mockSingleBusinessIncomeSource()
 
-				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, "testid")
+				val result = chargeSummaryController.showChargeSummary(currentYear, "testid")
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
-				status(await(result)) shouldBe INTERNAL_SERVER_ERROR
+				status(result) shouldBe INTERNAL_SERVER_ERROR
 				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
 
 			}
@@ -193,7 +192,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 				mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 				mockSingleBusinessIncomeSource()
 
-				mockGetChargeHistoryDetails(Some(chargeHistoryListInAscendingOrder.reverse))
+				mockGetChargeHistoryDetails(Future.successful(Some(chargeHistoryListInAscendingOrder.reverse)))
 
 				val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
 					.apply(fakeRequestConfirmedClient("AB123456C"))
@@ -211,7 +210,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
 					mockSingleBusinessIncomeSource()
 
-					mockGetChargeHistoryDetails(response = None)
+					mockGetChargeHistoryDetails(response = Future.successful(None))
 
 					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
 						.apply(fakeRequestConfirmedClient("AB123456C"))
@@ -249,7 +248,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 					val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, id1040000123)
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
-					intercept[Throwable](await(result)) shouldBe emulatedServiceError
+					result.failed.futureValue shouldBe an[Throwable]
+					result.failed.futureValue shouldBe emulatedServiceError
 				}
 			}
 		}

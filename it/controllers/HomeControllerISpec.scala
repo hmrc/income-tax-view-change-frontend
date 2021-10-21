@@ -15,10 +15,10 @@
  */
 package controllers
 
-import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
-import assets.NextUpdatesIntegrationTestConstants._
-import assets.messages.HomeMessages._
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
+import testConstants.NextUpdatesIntegrationTestConstants._
+import testConstants.messages.HomeMessages._
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved

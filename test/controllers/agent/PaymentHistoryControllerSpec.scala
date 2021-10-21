@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -29,6 +29,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers._
 import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
 import testUtils.TestSupport
@@ -79,7 +80,7 @@ class PaymentHistoryControllerSpec extends TestSupport
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
 
-        val result: Future[Result] = controller.viewPaymentHistory()(fakeRequestConfirmedClient())
+        val result = controller.viewPaymentHistory()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
       }
@@ -94,8 +95,7 @@ class PaymentHistoryControllerSpec extends TestSupport
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
 
         val result: Future[Result] = controller.viewPaymentHistory()(fakeRequestConfirmedClient())
-
-        intercept[InternalServerException](await(result))
+        result.failed.futureValue shouldBe an[InternalServerException]
 
       }
 
@@ -107,15 +107,14 @@ class PaymentHistoryControllerSpec extends TestSupport
         mockErrorIncomeSource()
 
         val result: Future[Result] = controller.viewPaymentHistory()(fakeRequestConfirmedClient())
-
-        intercept[InternalServerException](await(result))
+        result.failed.futureValue shouldBe an[InternalServerException]
       }
     }
 
     "User fails to be authorised" in new Setup {
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
-      val result = await(controller.viewPaymentHistory()(fakeRequestWithActiveSession))
+      val result: Future[Result] = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
 
       status(result) shouldBe Status.SEE_OTHER
 

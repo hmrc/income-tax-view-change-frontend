@@ -139,6 +139,13 @@ trait ViewSpec extends TestSupport {
       link.attr("href") shouldBe href
     }
 
+    def hasCorrectLinkWithNewTab(message: String, href: String): Assertion = {
+      val link = element.link
+      link.text() shouldBe message
+      link.attr("href") shouldBe href
+      link.attr("target") shouldBe "_blank"
+    }
+
     def hasCorrectHref(href: String): Assertion = {
       val link = element.link
       link.attr("href") shouldBe href

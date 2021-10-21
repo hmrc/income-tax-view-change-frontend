@@ -240,7 +240,8 @@ case class TaxCalculationDetailsResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private val taxDeductionsFullSeq: Seq[(String, BigDecimal)] = {
     val totalDeductions = calculation.taxDeductedAtSource.total
-    totalDeductions.fold(calculation.taxDeductedAtSource.allFields)(total => calculation.taxDeductedAtSource.allFields :+ ("Income Tax due after deductions", total))
+    totalDeductions.fold(calculation.taxDeductedAtSource.allFields)(total =>
+      calculation.taxDeductedAtSource.allFields :+ (("Income Tax due after deductions", total)))
   }
 
   private def optDetail(optDetail: Seq[JsObject]): Option[Seq[JsObject]] =

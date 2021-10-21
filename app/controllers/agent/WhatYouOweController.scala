@@ -71,7 +71,7 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
 							}
 						} recover {
 							case ex: Exception =>
-								Logger.error(s"Error received while getting agent what you page details: ${ex.getMessage}")
+								Logger("application").error(s"Error received while getting agent what you page details: ${ex.getMessage}")
 								itvcErrorHandler.showInternalServerError()
 						}
         }

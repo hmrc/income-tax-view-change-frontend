@@ -16,8 +16,8 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
 import forms.utils.SessionKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
@@ -55,7 +55,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
           )
 
-          await(mongoDbConnection.repo.findById("idOne")) shouldBe None
+          mongoDbConnection.repo.findById("idOne").futureValue shouldBe None
         }
         "calculation service returns non-retryable response back" in {
           Given("Calculation service returns a 500 error response back")
@@ -73,7 +73,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR)
           )
-          await(mongoDbConnection.repo.findById("idTwo")) shouldBe None
+          mongoDbConnection.repo.findById("idTwo").futureValue shouldBe None
         }
         "calculation service returns retryable response back" in {
           Given("Calculation service returns a 404 error response back during total duration of timeout interval")
@@ -90,7 +90,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR)
           )
-          await(mongoDbConnection.repo.findById("idThree")) shouldBe None
+          mongoDbConnection.repo.findById("idThree").futureValue shouldBe None
         }
         "calculation service returns retryable response back initially and then returns success response before interval time completed" in {
           Given("Calculation service returns a 404 error response back during total duration of timeout interval")
@@ -102,7 +102,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear,Map(SessionKeys.calculationId -> "idFour"))
 
           Thread.sleep(100)
-          await(mongoDbConnection.repo.findById("idFour")).get.id shouldBe "idFour"
+          mongoDbConnection.repo.findById("idFour").futureValue.get.id shouldBe "idFour"
 
           //After 1.5 seconds responding with success message
           Thread.sleep(1500)
@@ -112,7 +112,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           )
 
           And("The expected result is returned")
-          await(res) should have(
+          res.futureValue should have(
             httpStatus(SEE_OTHER),
             redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
           )
@@ -120,7 +120,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           Then("I check all calls expected were made")
           IndividualCalculationStub.verifyGetCalculation(testNino, "idFour")
 
-          await(mongoDbConnection.repo.findById("idFour")) shouldBe None
+          mongoDbConnection.repo.findById("idFour").futureValue shouldBe None
         }
         "calculation service returns retryable response back initially and then returns non-retryable error before interval time completed" in {
           Given("Calculation service returns a 404 error response back during total duration of timeout interval")
@@ -132,21 +132,21 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear,Map(SessionKeys.calculationId -> "idFive"))
 
           Thread.sleep(100)
-          await(mongoDbConnection.repo.findById("idFive")).get.id shouldBe "idFive"
+          mongoDbConnection.repo.findById("idFive").futureValue.get.id shouldBe "idFive"
 
           //After 1.5 seconds responding with success message
           Thread.sleep(1500)
           IndividualCalculationStub.stubGetCalculationError(testNino, "idFive")
 
           And("The expected result is returned")
-          await(res) should have(
+          res.futureValue should have(
             httpStatus(INTERNAL_SERVER_ERROR)
           )
 
           Then("I check all calls expected were made")
           IndividualCalculationStub.verifyGetCalculation(testNino, "idFive")
 
-          await(mongoDbConnection.repo.findById("idFive")) shouldBe None
+          mongoDbConnection.repo.findById("idFive").futureValue shouldBe None
         }
     }
   }

@@ -1,9 +1,9 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
-import assets.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, paymentHistoryBusinessAndPropertyResponse}
-import assets.PaymentAllocationIntegrationTestConstants.{documentDetail, financialDetail, paymentAllocationChargesModel, paymentAllocationViewModel, testValidPaymentAllocationsModelJson, validPaymentAllocationChargesJson}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.PaymentAllocationIntegrationTestConstants._
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
@@ -18,7 +18,6 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-
 import java.time.LocalDate
 
 class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -169,6 +168,28 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       )
 
       verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
+    }
+
+    s"return $OK and display the Payment Allocations page and with TxmEventsApproved FS enabled and new LPI layout" in {
+      enable(TxmEventsApproved)
+      enable(PaymentAllocation)
+      stubAuthorisedAgentUser(authorised = true)
+
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
+        to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+      IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+      IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidLpiPaymentAllocationsModel))
+      IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
+      IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
+
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
+
+      result should have(
+        httpStatus(OK)
+      )
+
+      verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)
     }
 
     s"return $INTERNAL_SERVER_ERROR when the payment allocations call fails" in {

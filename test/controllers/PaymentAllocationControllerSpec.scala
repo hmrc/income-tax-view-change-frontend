@@ -18,7 +18,7 @@ package controllers
 
 
 
-import assets.PaymentAllocationsTestConstants._
+import testConstants.PaymentAllocationsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -31,7 +31,7 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import services.PaymentAllocationsService
 import services.PaymentAllocationsService.PaymentAllocationError
 import views.html.PaymentAllocation
@@ -81,7 +81,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
 
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
       }
@@ -92,7 +92,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
 
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
       }
@@ -103,7 +103,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Left(PaymentAllocationError)))
 
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -116,7 +116,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
 
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.NOT_FOUND
       }
@@ -125,7 +125,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
         mockErrorIncomeSource()
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -134,7 +134,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
     "User fails to be authorised" should {
       "redirect the user to the login page" in new Setup {
         setupMockAuthorisationException()
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
 

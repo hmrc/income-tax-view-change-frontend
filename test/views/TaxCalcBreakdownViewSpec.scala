@@ -16,9 +16,9 @@
 
 package views
 
-import assets.CalcBreakdownTestConstants
-import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
-import assets.MessagesLookUp.TaxCalcBreakdown
+import testConstants.CalcBreakdownTestConstants
+import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
+import testConstants.MessagesLookUp.TaxCalcBreakdown
 import enums.Crystallised
 import models.calculation.TaxDeductedAtSource.{Message, Messages}
 import models.calculation.{AllowancesAndDeductions, CalcDisplayModel}

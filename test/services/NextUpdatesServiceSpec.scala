@@ -18,9 +18,9 @@ package services
 
 import java.time.LocalDate
 
-import assets.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
-import assets.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIncomeDetails, propertyIncomeOnly}
-import assets.NextUpdatesTestConstants._
+import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
+import testConstants.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIncomeDetails, propertyIncomeOnly}
+import testConstants.NextUpdatesTestConstants._
 import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
@@ -43,8 +43,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "return an internal server exception when an error model is returned from the connector" in new Setup {
       setupMockNextUpdates(obligationsDataErrorModel)
 
-      intercept[InternalServerException](await(getObligationDueDates()))
-        .message shouldBe "Unexpected Exception getting obligation due dates"
+      getObligationDueDates().failed.futureValue shouldBe an[InternalServerException]
+      getObligationDueDates().failed.futureValue.getMessage shouldBe "Unexpected Exception getting obligation due dates"
     }
     "return a single overdue date" when {
       "the connector returns obligations with a single overdue date" in new Setup {
@@ -62,7 +62,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
         val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
 
-        await(result) shouldBe Left(LocalDate.now.minusDays(1) -> true)
+        result.futureValue shouldBe Left(LocalDate.now.minusDays(1) -> true)
       }
     }
     "return a count of overdue dates" when {
@@ -82,7 +82,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
         val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
 
-        await(result) shouldBe Right(2)
+        result.futureValue shouldBe Right(2)
       }
     }
     "return a single non-overdue date" when {
@@ -100,7 +100,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
         val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
 
-        await(result) shouldBe Left(LocalDate.now -> false)
+        result.futureValue shouldBe Left(LocalDate.now -> false)
       }
     }
   }
@@ -109,25 +109,29 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
-        await(getNextDeadlineDueDateAndOverDueObligations(businessAndPropertyAligned))._1 shouldBe LocalDate.of(2017, 10, 1)
+        getNextDeadlineDueDateAndOverDueObligations(businessAndPropertyAligned).futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
-        await(getNextDeadlineDueDateAndOverDueObligations(propertyIncomeOnly))._1 shouldBe LocalDate.of(2017, 10, 1)
+        getNextDeadlineDueDateAndOverDueObligations(propertyIncomeOnly).futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
-        await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails))._1 shouldBe LocalDate.of(2017, 10, 31)
+        getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).futureValue._1 shouldBe LocalDate.of(2017, 10, 31)
       }
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        the[Exception] thrownBy await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails)) should have message "Unexpected Exception getting next deadline due and Overdue Obligations"
+        val result = getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).failed.futureValue
+        result shouldBe an[Exception]
+        result.getMessage shouldBe "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        the[Exception] thrownBy await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails)) should have message "Dummy Error Message"
+        val result = getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).failed.futureValue
+        result shouldBe an[Exception]
+        result.getMessage shouldBe "Dummy Error Message"
       }
     }
   }
@@ -138,12 +142,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
       "return a valid list of Next Updates" in {
         setupMockNextUpdates(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
-        await(TestNextUpdatesService.getNextUpdates()) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
+        TestNextUpdatesService.getNextUpdates().futureValue shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
 
       "return a valid list of previous Next Updates" in {
         setupMockPreviousObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
-        await(TestNextUpdatesService.getNextUpdates(previous = true)) shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
+        TestNextUpdatesService.getNextUpdates(previous = true).futureValue shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
     }
 
@@ -151,12 +155,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
       "return the error" in {
         setupMockNextUpdates(obligationsDataErrorModel)
-        await(TestNextUpdatesService.getNextUpdates()) shouldBe obligationsDataErrorModel
+        TestNextUpdatesService.getNextUpdates().futureValue shouldBe obligationsDataErrorModel
       }
 
       "return the error for previous deadlines" in {
         setupMockPreviousObligations(obligationsDataErrorModel)
-        await(TestNextUpdatesService.getNextUpdates(previous = true)) shouldBe obligationsDataErrorModel
+        TestNextUpdatesService.getNextUpdates(previous = true).futureValue shouldBe obligationsDataErrorModel
       }
     }
   }
@@ -176,10 +180,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestNextUpdatesService.getNextUpdates(
+          val result = TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
-          ))
+          ).futureValue
 
           result shouldBe ObligationsModel(Seq(
             NextUpdatesModel("idOne", List(previousObligation)),
@@ -198,10 +202,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestNextUpdatesService.getNextUpdates(
+          val result = TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
-          ))
+          ).futureValue
 
           result shouldBe ObligationsModel(Seq(
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
@@ -220,10 +224,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(3))))
         )))
 
-        val result = await(TestNextUpdatesService.getNextUpdates(
+        val result = TestNextUpdatesService.getNextUpdates(
           fromDate = LocalDate.now.minusDays(1),
           toDate = LocalDate.now.plusDays(1)
-        ))
+        ).futureValue
 
         result shouldBe ObligationsModel(Seq(
           NextUpdatesModel("idOne", List(previousObligation)),
@@ -240,10 +244,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           )))
           setupMockNextUpdates(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error"))
 
-          val result = await(TestNextUpdatesService.getNextUpdates(
+          val result = TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(1)
-          ))
+          ).futureValue
 
           result shouldBe NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error")
         }
@@ -257,10 +261,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
-          val result = await(TestNextUpdatesService.getNextUpdates(
+          val result = TestNextUpdatesService.getNextUpdates(
             fromDate = LocalDate.now.minusDays(1),
             toDate = LocalDate.now.plusDays(2)
-          ))
+          ).futureValue
 
           result shouldBe NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "not found")
         }

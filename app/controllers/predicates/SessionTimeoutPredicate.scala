@@ -20,7 +20,6 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import controllers.BaseController
 
 
@@ -35,9 +34,6 @@ class SessionTimeoutPredicate @Inject()(implicit mcc: MessagesControllerComponen
 
 
   override def invokeBlock[A](request: Request[A], f: Request[A] => Future[Result]): Future[Result] = {
-
-    implicit val hc = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
     //Add test headers if found in session
     val updatedHeaders = request.session.get("Gov-Test-Scenario") match {
       case Some(data) => request.headers.add(("Gov-Test-Scenario", data))
@@ -49,9 +45,9 @@ class SessionTimeoutPredicate @Inject()(implicit mcc: MessagesControllerComponen
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
-        Logger.warn("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
+        Logger("application").warn("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-      case (_, _) => f(Request(request.copy(headers = updatedHeaders), request.body))
+      case (_, _) => f(Request(request.withHeaders(updatedHeaders), request.body))
     }
   }
 }

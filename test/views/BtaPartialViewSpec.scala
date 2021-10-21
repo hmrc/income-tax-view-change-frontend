@@ -16,7 +16,7 @@
 
 package views
 
-import assets.MessagesLookUp.{BtaPartial => btaPartialMessages}
+import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat

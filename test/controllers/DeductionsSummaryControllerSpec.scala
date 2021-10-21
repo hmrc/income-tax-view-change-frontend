@@ -16,10 +16,10 @@
 
 package controllers
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
-import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
-import assets.EstimatesTestConstants.testYear
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
+import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
+import testConstants.EstimatesTestConstants.testYear
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.mocks.MockAuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser

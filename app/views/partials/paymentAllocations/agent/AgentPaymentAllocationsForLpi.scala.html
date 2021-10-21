@@ -1,0 +1,46 @@
+@*
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+
+@import implicits.ImplicitDateFormatterImpl
+@import implicits.ImplicitCurrencyFormatter._
+@import views.html.templates.agent.MainTemplate
+@import models.paymentAllocationCharges.PaymentAllocationViewModel
+@import models.paymentAllocationCharges.AllocationDetailWithClearingDate
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(viewModel: PaymentAllocationViewModel)(implicit messages: Messages)
+@import implicitDateFormatter._
+@import viewModel.paymentAllocationChargeModel
+@import viewModel.originalPaymentAllocationWithClearingDate
+
+
+@viewModel.latePaymentInterestPaymentAllocationDetails.map { lpiAllocationDetails =>
+    <tbody class="govuk-table__body">
+        <tr>
+            <td class="govuk-table__cell" id="payment-allocation-0">
+                <a href="@{controllers.agent.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
+                @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey}")
+                </a>
+                <br>
+                <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear)</span>
+            </td>
+            <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
+            <td class="govuk-table__cell">@lpiAllocationDetails.amount.abs.toCurrencyString</td>
+        </tr>
+    </tbody>
+
+}

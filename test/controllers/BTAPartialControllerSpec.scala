@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.MessagesLookUp.{BtaPartial => btaPartialMessages}
+import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status
@@ -33,7 +33,6 @@ class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredic
     MockAuthenticationPredicate
     )(
     ec,
-    appConfig,
     app.injector.instanceOf[MessagesControllerComponents]
   )
 

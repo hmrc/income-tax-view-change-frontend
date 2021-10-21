@@ -16,10 +16,10 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
-import assets.FinancialDetailsIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.OutstandingChargesIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import testConstants.FinancialDetailsIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.OutstandingChargesIntegrationTestConstants._
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.TxmEventsApproved

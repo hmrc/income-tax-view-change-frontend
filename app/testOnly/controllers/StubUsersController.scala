@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.BaseController
 import javax.inject.Inject
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.api.{Configuration, Environment}

@@ -16,12 +16,12 @@
 
 package views
 
-import assets.EstimatesTestConstants._
-import assets.MessagesLookUp.{TaxYears => taxYears}
+import testConstants.EstimatesTestConstants._
+import testConstants.MessagesLookUp.{TaxYears => taxYears}
 import config.FrontendAppConfig
 import models.calculation.CalculationResponseModelWithYear
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,6 +40,7 @@ class TaxYearsViewSpec extends ViewSpec {
     lazy val page: HtmlFormat.Appendable =
       taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch)(FakeRequest(),implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
+    lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
 
@@ -50,7 +51,7 @@ class TaxYearsViewSpec extends ViewSpec {
       }
 
       "have a header" in new Setup(lastTaxCalcWithYearList) {
-        document.getElementById("heading").text shouldBe taxYears.heading
+        layoutContent.selectHead("h1").text shouldBe taxYears.heading
       }
 
       "have a table header" in new Setup(lastTaxCalcWithYearList) {
@@ -114,14 +115,10 @@ class TaxYearsViewSpec extends ViewSpec {
 
     "the paragraph explaining about previous Self Assessments" should {
       "appear if the user has a UTR" in new Setup(lastTaxCalcWithYearList, utr = Some("1234567890")){
-        val saPara: Elements = document.select("#content p")
-        val saLink: Elements = saPara.select("a")
-
-        saPara.text() shouldBe taxYears.saNote
-        saLink.text() shouldBe taxYears.saLink
-        saLink.attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
-        saLink.attr("target") shouldBe "_blank"
+        layoutContent.select(Selectors.p).text shouldBe taxYears.saNote
+        layoutContent.selectFirst(Selectors.p).hasCorrectLinkWithNewTab(taxYears.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
       }
+
       "not appear if the user does not have a UTR" in new Setup(lastTaxCalcWithYearList){
         Option(document.selectFirst("#content p")) shouldBe None
       }

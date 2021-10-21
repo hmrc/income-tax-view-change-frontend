@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import assets.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import config.FrontendAppConfig
 import config.featureswitch._
 import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
@@ -27,7 +27,7 @@ import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
 import mocks.views.agent.MockTaxYears
 import models.calculation.{Calculation, CalculationErrorModel, CalculationResponseModelWithYear}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -90,8 +90,9 @@ class TaxYearsControllerSpec extends TestSupport
 				mockErrorIncomeSource()
 				mockShowInternalServerError()
 
-				intercept[InternalServerException](await(controller.show()(fakeRequestConfirmedClient())))
-					.message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+				val result = controller.show()(fakeRequestConfirmedClient()).failed.futureValue
+				result shouldBe an[InternalServerException]
+				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
 		"there was a problem retrieving a list of calculations and their years" should {

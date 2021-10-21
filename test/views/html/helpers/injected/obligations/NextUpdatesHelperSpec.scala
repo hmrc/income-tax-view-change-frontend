@@ -16,13 +16,13 @@
 
 package views.html.helpers.injected.obligations
 
-import assets.BaseTestConstants.testMtdItUser
-import assets.BusinessDetailsTestConstants.business1
-import assets.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
+import testConstants.BaseTestConstants.testMtdItUser
+import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
 import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.test.Helpers.contentAsString
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
@@ -32,7 +32,7 @@ class NextUpdatesHelperSpec extends TestSupport {
     val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
 
     val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
-    val pageDocument: Document = Jsoup.parse(contentAsString(html)(defaultTimeout))
+    val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
   lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(

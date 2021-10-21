@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -31,7 +31,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import services.FinancialDetailsService
 import testUtils.TestSupport
 
@@ -95,7 +95,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "redirect a user back to the home page" when {
 
       "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(2018)) {
-        val result: Result = await(controller.showChargeSummary(2018, "fakeId")(fakeRequestWithActiveSession))
+        val result = controller.showChargeSummary(2018, "fakeId")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
@@ -107,7 +107,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
 				enable(ChargeHistory)
 				enable(PaymentAllocation)
-				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+				val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -119,7 +119,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
 				enable(ChargeHistory)
         disable(PaymentAllocation)
-				val result: Result = await(controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession))
+				val result = controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
 
 				status(result) shouldBe Status.OK
 				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
@@ -130,7 +130,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
         financialDetailsModel(2018).copy(financialDetails = financialDetailsWithLocks(2018))) {
 
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession))
+        val result = controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
@@ -140,7 +140,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with a matching id in the financial response with dunning locks, showing the locks banner" in new Setup(
         financialDetailsModel(2018).copy(financialDetails = financialDetailsWithLocks(2018))) {
 
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
@@ -150,7 +150,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled and allocations present" in new Setup(chargesWithAllocatedPaymentModel(2018)) {
         disable(ChargeHistory)
         enable(PaymentAllocation)
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -161,7 +161,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS enabled but without allocations" in new Setup(chargesWithAllocatedPaymentModel(2018)) {
         disable(ChargeHistory)
         enable(PaymentAllocation)
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -172,7 +172,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with a matching id with the Charge History FS disabled and the Payment allocation FS disabled" in new Setup(financialDetailsModel(2018)) {
         disable(ChargeHistory)
         disable(PaymentAllocation)
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -185,14 +185,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
 			"the charge history response is an error" in new Setup(financialDetailsModel(2018), chargeHistory = ChargesHistoryErrorModel(500, "Failure")) {
 				enable(ChargeHistory)
-				val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+				val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
 				status(result) shouldBe Status.INTERNAL_SERVER_ERROR
 				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
 			}
 
       "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
-        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading

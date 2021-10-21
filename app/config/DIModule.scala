@@ -23,7 +23,7 @@ import repositories.{MongoLockRepository, MongoLockRepositoryImpl}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 class DIModule extends AbstractModule{
-  def configure(): Unit = {
+  override def configure(): Unit = {
     bind(classOf[MongoLockRepository]).to(classOf[MongoLockRepositoryImpl]).asEagerSingleton()
     bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
     bind(classOf[IncomeTaxViewChangeConnector]).to(classOf[IncomeTaxViewChangeConnectorImpl]).asEagerSingleton()

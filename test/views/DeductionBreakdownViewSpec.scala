@@ -16,8 +16,8 @@
 
 package views
 
-import assets.CalcBreakdownTestConstants
-import assets.MessagesLookUp.DeductionBreakdown
+import testConstants.CalcBreakdownTestConstants
+import testConstants.MessagesLookUp.DeductionBreakdown
 import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
@@ -47,33 +47,33 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        content hasPageHeading DeductionBreakdown.heading(taxYear)
-        content.h1.select(".heading-secondary").text() shouldBe DeductionBreakdown.subHeading(taxYear)
+        layoutContent hasPageHeading DeductionBreakdown.heading(taxYear)
+        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe DeductionBreakdown.subHeading(taxYear)
       }
 
       "have the correct caption" in new Setup(view) {
-        content.selectHead(" caption").text.contains(deductions)
+        layoutContent.selectHead(" caption").text.contains(deductions)
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.select("p").get(0)
+        val guidance: Element = layoutContent.select("p").get(0)
         guidance.text() shouldBe DeductionBreakdown.guidance
       }
 
       "have an deduction table" which {
 
         "has only two table row" in new Setup(view) {
-          content hasTableWithCorrectSize (1, 2)
+          layoutContent hasTableWithCorrectSize (1, 2)
         }
 
         "has a table header and amount section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
+          val row: Element = layoutContent.table().select("tr").get(0)
           row.select("th").first().text() shouldBe DeductionBreakdown.deductionBreakdownHeader
           row.select("th").last().text() shouldBe DeductionBreakdown.deductionBreakdownHeaderAmount
         }
 
         "has a total line with a zero value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(1)
+          val row: Element = layoutContent.table().select("tr").get(1)
           row.select("td").first().text() shouldBe DeductionBreakdown.total
           row.select("td").last().text() shouldBe "£0.00"
         }
@@ -92,16 +92,16 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        content hasPageHeading DeductionBreakdown.heading(taxYear)
-        content.h1.select(".heading-secondary").text() shouldBe DeductionBreakdown.subHeading(taxYear)
+        layoutContent hasPageHeading DeductionBreakdown.heading(taxYear)
+        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe DeductionBreakdown.subHeading(taxYear)
       }
 
       "have the correct caption" in new Setup(view) {
-        content.selectHead(" caption").text.contains(deductions)
+        layoutContent.selectHead(" caption").text.contains(deductions)
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.select("p").get(0)
+        val guidance: Element = layoutContent.select("p").get(0)
         guidance.text() shouldBe DeductionBreakdown.guidance
       }
 
@@ -122,11 +122,11 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         )
 
         "has all eleven table rows, including a header row" in new Setup(view) {
-          content hasTableWithCorrectSize (1, 11)
+          layoutContent hasTableWithCorrectSize (1, 11)
         }
 
         "has a table header and amount section" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
+          val row: Element = layoutContent.table().select("tr").get(0)
           row.select("th").first().text() shouldBe DeductionBreakdown.deductionBreakdownHeader
           row.select("th").last().text() shouldBe DeductionBreakdown.deductionBreakdownHeaderAmount
         }
@@ -134,7 +134,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         forAll(expectedBreakdownTableDataRows) { (rowIndex: Int, deductionType: String, formattedAmount: String) =>
 
           s"has the row $rowIndex for $deductionType line with the correct amount value" in new Setup(view) {
-            val row: Element = content.table().select("tr").get(rowIndex)
+            val row: Element = layoutContent.table().select("tr").get(rowIndex)
             row.select("td").first().text() shouldBe deductionType
             row.select("td").last().text() shouldBe formattedAmount
           }

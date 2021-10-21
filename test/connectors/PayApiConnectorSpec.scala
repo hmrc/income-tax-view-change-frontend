@@ -50,8 +50,8 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
 
       "a 201 response is received with valid json" in {
         setupMockHttpPost(testUrl, testBody)(successResponse)
-        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000)
-        await(result) shouldBe PaymentJourneyModel("journeyId", "http://www.redirect-url.com")
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000).futureValue
+        result shouldBe PaymentJourneyModel("journeyId", "http://www.redirect-url.com")
       }
     }
 
@@ -59,14 +59,14 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
 
       "a non 200 response is received" in {
         setupMockHttpPost(testUrl, testBody)(badResponse)
-        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000)
-        await(result) shouldBe PaymentJourneyErrorResponse(400, "Error Message")
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000).futureValue
+        result shouldBe PaymentJourneyErrorResponse(400, "Error Message")
       }
 
       "a 201 response with invalid json is received" in {
         setupMockHttpPost(testUrl, testBody)(successResponseBadJson)
-        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000)
-        await(result) shouldBe PaymentJourneyErrorResponse(201, "Invalid Json")
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000).futureValue
+        result shouldBe PaymentJourneyErrorResponse(201, "Invalid Json")
       }
     }
   }

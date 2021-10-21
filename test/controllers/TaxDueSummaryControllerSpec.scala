@@ -16,8 +16,8 @@
 
 package controllers
 
-import assets.EstimatesTestConstants.testYear
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.EstimatesTestConstants.testYear
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -25,7 +25,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{charset, contentType, _}
+import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.TaxCalcBreakdown
 

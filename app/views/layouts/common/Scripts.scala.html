@@ -1,0 +1,55 @@
+@*
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+
+@this()
+
+@()(implicit messages: Messages)
+
+<script src='@controllers.routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
+<script src='@controllers.routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
+<script>window.GOVUKFrontend.initAll();
+window.HMRCFrontend.initAll()</script>
+<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
+<script>
+    const openAllButton = document.getElementsByClassName('govuk-accordion__open-all')[0]
+    const accordionSections = document.getElementsByClassName('govuk-accordion__section')
+    const setAccordionMessage = function() {
+        if (openAllButton.getAttribute('aria-expanded') == 'false') {
+            openAllButton.textContent = "@messages("sections.open.all")"
+        } else {
+            openAllButton.textContent = "@messages("sections.close.all")"
+        }
+    }
+    const setAccordionMessageForSections = function() {
+        if (openAllButton.getAttribute('aria-expanded') == 'false') {
+            setTimeout(function() {
+                openAllButton.textContent = '@messages("sections.open.all")'
+                setAccordionMessage()
+            })
+        } else {
+            setTimeout(function() {
+                openAllButton.textContent = '@messages("sections.close.all")'
+                setAccordionMessage()
+            })
+        }
+        openAllButton.innerHTML = '<span class="govuk-visually-hidden"> sections</span>'
+    }
+    setAccordionMessage()
+    openAllButton.addEventListener("click", setAccordionMessage);
+    for (let i = 0; i <= accordionSections.length -1; i++) {
+        document.getElementsByClassName('govuk-accordion__section-button')[i].addEventListener("click", setAccordionMessageForSections);
+    }
+</script>

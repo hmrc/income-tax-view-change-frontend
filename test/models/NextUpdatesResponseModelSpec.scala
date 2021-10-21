@@ -16,16 +16,17 @@
 
 package models
 
-import assets.BaseTestConstants._
-import assets.NextUpdatesTestConstants._
-import assets.{BaseTestConstants, NextUpdatesTestConstants}
+import testConstants.BaseTestConstants._
+import testConstants.NextUpdatesTestConstants._
+import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 import implicits.ImplicitDateFormatter
+
 import javax.inject.Inject
 import models.nextUpdates._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
+import testUtils.UnitSpec
 import uk.gov.hmrc.play.language.LanguageUtils
-import uk.gov.hmrc.play.test.UnitSpec
 
 class NextUpdatesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
 

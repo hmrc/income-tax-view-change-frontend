@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
@@ -49,9 +49,8 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
       app.injector.instanceOf[ExecutionContext],
-      itvcErrorHandler = mockItvcErrorHandler
+      mockItvcErrorHandler
     )
   }
   "backUrl" should {
@@ -81,9 +80,9 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           mockErrorIncomeSource()
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
           mockShowInternalServerError()
-
-          intercept[InternalServerException](await(controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())))
-            .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+          val exception = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient()).failed.futureValue
+          exception shouldBe an[InternalServerException]
+          exception.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
         }
 
       }

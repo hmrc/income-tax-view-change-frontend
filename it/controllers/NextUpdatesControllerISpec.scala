@@ -15,11 +15,11 @@
  */
 package controllers
 
-import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.NextUpdatesIntegrationTestConstants._
-import assets.PreviousObligationsIntegrationTestConstants._
-import assets.messages.{NextUpdatesMessages => obligationsMessages}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.NextUpdatesIntegrationTestConstants._
+import testConstants.PreviousObligationsIntegrationTestConstants._
+import testConstants.messages.{NextUpdatesMessages => obligationsMessages}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.ObligationsModel

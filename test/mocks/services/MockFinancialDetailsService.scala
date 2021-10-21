@@ -17,8 +17,8 @@
 package mocks.services
 
 import java.time.LocalDate
-import assets.BaseTestConstants.{testNino, testTaxYear}
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants.{testNino, testTaxYear}
+import testConstants.FinancialDetailsTestConstants._
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers
@@ -27,7 +27,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.FinancialDetailsService
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

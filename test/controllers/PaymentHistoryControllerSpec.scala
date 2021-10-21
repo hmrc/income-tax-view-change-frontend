@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
 import views.html.PaymentHistory
@@ -73,7 +73,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
 
-        val result = await(controller.viewPaymentHistory(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
       }
@@ -86,7 +86,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
 
-        val result = await(controller.viewPaymentHistory(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -96,7 +96,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
         mockErrorIncomeSource()
-        val result = await(controller.viewPaymentHistory(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -105,7 +105,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     "User fails to be authorised" should {
       "redirect the user to the login page" in new Setup {
         setupMockAuthorisationException()
-        val result = await(controller.viewPaymentHistory(fakeRequestWithActiveSession))
+        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
 

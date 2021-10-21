@@ -25,7 +25,7 @@
 
 @this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
 
-@(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
@@ -47,7 +47,7 @@
 }
 
 @taxCalculationOverview(overview: CalcOverview) = {
-    @breakdownPartial(overview, taxYear, isFinalCalc = false)
+    @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 }
 
 @paymentsContent = {

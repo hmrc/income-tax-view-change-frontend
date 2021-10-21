@@ -16,9 +16,9 @@
 
 package services
 
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import assets.FinancialDetailsTestConstants._
-import assets.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, WhatYouOweChargesList}
@@ -56,7 +56,7 @@ class WhatYouOweServiceSpec extends TestSupport {
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
-        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueInMoreThan30Days()
+        TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days()
       }
     }
     "when both financial details and outstanding charges return success response and valid data of due in 30 days" should {
@@ -66,7 +66,7 @@ class WhatYouOweServiceSpec extends TestSupport {
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueIn30Days())))
 
-        await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithDataDueIn30Days()
+        TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweDataWithDataDueIn30Days()
       }
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
@@ -75,7 +75,7 @@ class WhatYouOweServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsOverdueData())))
 
-          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithOverdueData()
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweDataWithOverdueData()
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
@@ -85,7 +85,7 @@ class WhatYouOweServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData1)))
 
-          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithMixedData1
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweDataWithMixedData1
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
@@ -95,7 +95,7 @@ class WhatYouOweServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData2)))
 
-          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe whatYouOweDataWithMixedData2
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweDataWithMixedData2
         }
       }
       "when both financial details return success and outstanding charges return 500" should {
@@ -107,7 +107,8 @@ class WhatYouOweServiceSpec extends TestSupport {
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
-          val ex = intercept[Exception](await(res))
+          val ex = res.failed.futureValue
+          ex shouldBe an[Exception]
           ex.getMessage shouldBe "[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges"
         }
       }
@@ -120,7 +121,8 @@ class WhatYouOweServiceSpec extends TestSupport {
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)
 
-          val ex = intercept[Exception](await(res))
+          val ex = res.failed.futureValue
+          ex shouldBe an[Exception]
           ex.getMessage shouldBe "[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details"
         }
       }
@@ -131,7 +133,7 @@ class WhatYouOweServiceSpec extends TestSupport {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
-          await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(0.00, 2.00, 2.00),
             futurePayments = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates
           )
@@ -145,7 +147,7 @@ class WhatYouOweServiceSpec extends TestSupport {
 					when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 						.thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
 
-					await(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser)) shouldBe WhatYouOweChargesList(
+					TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 						overduePaymentList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates
 					)

@@ -17,10 +17,10 @@ package controllers
 
 import java.time.LocalDateTime
 
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.{MyTaxYearsMessages => messages}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.CalcDataIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.{MyTaxYearsMessages => messages}
 import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
@@ -62,7 +62,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           "return 200 OK " in {
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
             And("I stub a successful get calculation response for 2017-18")
             IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(

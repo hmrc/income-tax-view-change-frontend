@@ -26,12 +26,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{IncomeSourceDetailsService, PaymentHistoryService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.AgentsPaymentHistory
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext}
 
 class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHistory,
                                          auditingService: AuditingService,

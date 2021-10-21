@@ -16,11 +16,11 @@
 
 package models
 
-import assets.ChargeHistoryTestConstants._
+import testConstants.ChargeHistoryTestConstants._
 import models.chargeHistory.ChargesHistoryModel
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.UnitSpec
 
 class ChargeHistoryResponseModelSpec extends UnitSpec with Matchers {
 

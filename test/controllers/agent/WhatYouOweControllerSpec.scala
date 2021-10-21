@@ -16,8 +16,8 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.FinancialDetailsTestConstants._
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers._
 import services.WhatYouOweService
 import testUtils.TestSupport
 
@@ -79,10 +80,10 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-        val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
+        val result = controller.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
 
 
       }
@@ -95,10 +96,10 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-        val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
+        val result = controller.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
 
 
       }
@@ -112,7 +113,7 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-        val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
+        val result = controller.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -121,7 +122,7 @@ class WhatYouOweControllerSpec extends TestSupport
     "User fails to be authorised" in new Setup {
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
-      val result: Result = await(controller.show()(fakeRequestWithActiveSession))
+      val result = controller.show()(fakeRequestWithActiveSession)
 
       status(result) shouldBe Status.SEE_OTHER
 

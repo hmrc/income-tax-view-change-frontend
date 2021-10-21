@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
@@ -168,7 +168,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
 			status(result) shouldBe SEE_OTHER
 			redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
-			result.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
+			result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
 		}
   }
 

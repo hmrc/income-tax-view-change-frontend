@@ -16,20 +16,24 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
-import assets.PaymentAllocationsTestConstants._
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
+import testConstants.PaymentAllocationsTestConstants._
 import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockIncomeSourceDetailsService, MockPaymentAllocationsService}
 import mocks.views.agent.MockPaymentAllocationView
-import play.api.http.Status._
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{HTML, contentType, defaultAwaitTimeout, redirectLocation}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import services.PaymentAllocationsService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
+import org.mockito.Mockito.when
+import models.core.Nino
+import org.mockito.ArgumentMatchers.any
+import scala.concurrent.Future
 
 class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAllocationView with MockFrontendAuthorisedFunctions
   with FeatureSwitching with MockPaymentAllocationsService with MockItvcErrorHandler with MockAuditingService with MockIncomeSourceDetailsService {
@@ -41,6 +45,9 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
 
   class Setup {
     val docNumber = "docNumber1"
+
+    val paymentAllocation: PaymentAllocationsService = mock[PaymentAllocationsService]
+
 
     val controller: PaymentAllocationsController = new PaymentAllocationsController(
       paymentAllocationView = paymentAllocationView,
@@ -142,6 +149,22 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         status(result) shouldBe OK
       }
 
+      "Successfully retrieving a user's lpi payment allocation" in new Setup {
+        enable(PaymentAllocation)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockSingleBusinessIncomeSource()
+        setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModelLpi)
+
+        mockPaymentAllocationView(
+          paymentAllocationViewModelLpi,
+          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
+        )(HtmlFormat.empty)
+
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
+      }
+
       "Fail to retrieve a user's payment allocation and return a 500" in new Setup {
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -150,7 +173,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
         setupMockGetPaymentAllocationError(testNinoAgent, docNumber)
         mockShowInternalServerError()
 
-        val result = await(controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient()))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

@@ -24,7 +24,6 @@ import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.Logger
-import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +52,7 @@ class PaymentController @Inject()(implicit val config: FrontendAppConfig,
           case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
         }
         case _ =>
-          Logger.error("Failed to start payments journey due to missing UTR")
+          Logger("application").error("Failed to start payments journey due to missing UTR")
           Future.failed( new Exception("Failed to start payments journey due to missing UTR"))
       }
   }
