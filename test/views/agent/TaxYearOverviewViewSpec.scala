@@ -323,10 +323,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             }
 
             "has a row for the user's income" in new Setup(view()) {
-              val incomeLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
+              val incomeLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
               incomeLink.text shouldBe TaxYearOverviewMessages.calculationTabIncome
               incomeLink.attr("href") shouldBe controllers.agent.routes.IncomeSummaryController.showIncomeSummary(2020).url
-              content.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "£150.00"
+              content.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe "£150.00"
             }
             "has a row for the user's allowances and deductions" in new Setup(view()) {
               val row: Element = content.selectHead("#taxCalculation").selectNth("table", 1).selectNth("tr", 3)
