@@ -16,8 +16,8 @@
 
 package views
 
-import assets.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
-import assets.NextUpdatesTestConstants._
+import testConstants.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import testConstants.NextUpdatesTestConstants._
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatterImpl
 import models.calculation.CalcOverview
