@@ -13,85 +13,93 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *@
-    
+
 @import implicits.ImplicitCurrencyFormatter._
 @import models.calculation.CalcOverview
 
 @this()
 @(overview: CalcOverview, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean)(implicit messages: Messages)
 
-<table id="income-deductions-table">
+<table class="govuk-table" id="income-deductions-table">
 
     @if(!isFinalCalc){
-    <caption class="govuk-table__caption heading-large">@messages("tax-year-overview.tax-calculation")</caption>
+        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-overview.tax-calculation")</caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-overview.amount")</th>
+            </tr>
+        </thead>
 
-    <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header bold">@messages("tax-year-overview.section")</th>
-        <th scope="col" class="govuk-table__header numeric bold">@messages("tax-year-overview.amount")</th>
-    </tr>
+
+
+
     }
-
-    <tr>
-        <td>
-            @if(isAgent){
+<tbody class="govuk-table__body">
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell">
+        @if(isAgent){
             <a href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
-                } else {
-                    <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
-                }
-            </td>
-        <td class="numeric">@{
-            overview.income.toCurrencyString
+        } else {
+            <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+        }
+        </td>
+        <td class="govuk-table__cell govuk-table__cell--numeric total-section">@{
+            overview.income.toCurrency
         }</td>
     </tr>
-    <tr>
-        <td>
-            @if(isAgent){
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell total-section">
+        @if(isAgent){
             <a href=@controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
-                } else {
+        } else {
             <a href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
-                }
-            </td>
-        <td class="numeric no-wrap">@{
+        }
+        </td>
+        <td class="govuk-table__cell govuk-table__cell--numeric total-section">@{
             overview.deductions.toNegativeCurrency
         }</td>
     </tr>
-    <tr>
-        @if(!isFinalCalc){
-            <td class="total-section">@messages(s"tax-year-overview.taxable-income")</td>
-            <td class="numeric total-section">@{
-                overview.totalTaxableIncome.toCurrencyString
-            }</td>
-        } else {
-            <td>@messages(s"tax-year-overview.taxable-income.finalCalc")</td>
-            <td class="numeric">@{
-                overview.totalTaxableIncome.toCurrencyString
-            }</td>
-        }
+    <tr class="govuk-table__row">
+    @if(!isFinalCalc){
+        <td class="govuk-table__cell total-section">@messages(s"tax-year-overview.taxable-income")</td>
+        <td class="govuk-table__cell govuk-table__cell--numeric total-section">@{
+            overview.totalTaxableIncome.toCurrency
+        }</td>
+    } else {
+        <td class="govuk-table__cell total-section">@messages(s"tax-year-overview.taxable-income.finalCalc")</td>
+        <td class="govuk-table__cell govuk-table__cell--numeric total-section">@{
+            overview.totalTaxableIncome.toCurrency
+        }</td>
+    }
     </tr>
+</tbody>
 </table>
 
-<table id="taxdue-payments-table" class="table--spaced-top">
-    <tr>
-        <td class="bold">
+<table class="govuk-table" id="taxdue-payments-table">
+    <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell total-section">
             @if(!isFinalCalc){
 
                 @if(isAgent){
-                <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
+                    <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
                 } else {
-                <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
+                    <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
                 }
 
-                } else {
+            } else {
 
                 @if(isAgent){
-                <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
-                    } else {
-                <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
+                    <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
+                } else {
+                    <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
                 }
             }
-        </td>
-        <td class="bold">@{
-            overview.taxDue.toCurrencyString
-        }</td>
-    </tr>
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--numeric total-section">@{
+                overview.taxDue.toCurrencyString
+            }</td>
+        </tr>
+    </tbody>
 </table>
