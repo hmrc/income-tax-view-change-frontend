@@ -50,6 +50,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     originalAmount = Some(10.34),
     outstandingAmount = Some(0),
     documentDate = LocalDate.of(2018, 3, 29),
+    latePaymentInterestAmount = Some(54.32),
     interestOutstandingAmount = Some(2),
     interestFromDate = Some(LocalDate.of(2021, 10, 6)),
     interestEndDate = Some(LocalDate.of(2022, 1, 6))
@@ -243,7 +244,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
         "there are late payment charge details" in {
           chargeSummaryAuditFull(
             userType = Some("Agent"),
-            docDateDetail,
+            docDateDetailWithInterest,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
             paymentAllocations = paymentAllocation,
@@ -251,9 +252,9 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
             isLateInterestCharge = true
           ).detail mustBe Json.obj(
             "charge" -> Json.obj(
-              "remainingToPay" -> docDetailWithInterest.remainingToPay,
-              "fullPaymentAmount" -> docDetailWithInterest.originalAmount,
-              "dueDate" -> docDateDetail.dueDate,
+              "remainingToPay" -> docDetailWithInterest.interestRemainingToPay,
+              "fullPaymentAmount" -> docDetailWithInterest.latePaymentInterestAmount,
+              "dueDate" -> docDetailWithInterest.interestEndDate,
               "chargeType" -> getChargeType(true),
               "interestPeriod" -> "2021-10-06 to 2022-01-06"
             ),

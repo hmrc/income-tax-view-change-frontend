@@ -118,12 +118,20 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     "chargeUnderReview" -> paymentBreakdown.dunningLockExists,
     "interestLock" -> paymentBreakdown.interestLockExists)
 
+  private val fullPaymentAmount = if(isLatePaymentCharge)
+    docDateDetail.documentDetail.latePaymentInterestAmount else docDateDetail.documentDetail.originalAmount
+
+  private val remainingToPay = if(isLatePaymentCharge)
+    docDateDetail.documentDetail.interestRemainingToPay else docDateDetail.documentDetail.remainingToPay
+
+  private val dueDate = if(isLatePaymentCharge) docDateDetail.documentDetail.interestEndDate else docDateDetail.dueDate
+
   private val chargeDetails: JsObject = Json.obj(
     "chargeType" -> getChargeType)++
     ("interestPeriod", interestPeriod) ++
-    ("dueDate", docDateDetail.dueDate) ++
-    ("fullPaymentAmount", docDateDetail.documentDetail.originalAmount) ++
-    Json.obj("remainingToPay" -> docDateDetail.documentDetail.remainingToPay)
+    ("dueDate", dueDate) ++
+    ("fullPaymentAmount", fullPaymentAmount) ++
+    Json.obj("remainingToPay" -> remainingToPay)
 
   def release6Update: JsObject = {
     if (txmEventsR6) {
