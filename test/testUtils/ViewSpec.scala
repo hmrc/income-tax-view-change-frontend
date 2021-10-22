@@ -37,6 +37,8 @@ trait ViewSpec extends TestSupport {
     val document: Document = Jsoup.parse(page.body)
     lazy val content: Element = document.selectHead("#content")
     lazy val layoutContent: Element = document.selectHead("#main-content")
+
+    def pageContent(pageContentSelector: String) = document.selectHead(pageContentSelector)
   }
 
   object Selectors {
