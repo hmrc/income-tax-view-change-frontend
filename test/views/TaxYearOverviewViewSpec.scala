@@ -52,7 +52,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")),
-    dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
+      dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")),
       dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")),
