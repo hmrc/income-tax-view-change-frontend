@@ -261,7 +261,7 @@ taxCal_breakdown.table.top_slicing_relief                       = Rhyddhad Haene
 taxCal_breakdown.table.head.charge_type                         = Math o gost
 taxCal_breakdown.table.head.deduction                           = Math o ddidyniad
 taxCal_breakdown.table.amount                                   = Swm
-
+taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
 
 taxCal_breakdown.table.capital_gains_tax                        = Treth Enillion Cyfalaf
 taxCal_breakdown.table.head.cgt_type                            = Math o Dreth Enillion Cyfalaf
