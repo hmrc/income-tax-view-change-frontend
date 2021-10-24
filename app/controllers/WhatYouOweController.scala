@@ -59,7 +59,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
             }
-
+            println(s"\n\n\n\n\n chandrre in controller \n\n\n")
             Ok(whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr, dunningLock = whatYouOweChargesList.hasDunningLock)
             ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
         } recover {

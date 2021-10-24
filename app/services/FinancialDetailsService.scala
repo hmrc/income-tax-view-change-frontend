@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
 import controllers.Assets.NOT_FOUND
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -94,10 +94,12 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     getAllFinancialDetails.map { chargesWithYears =>
       chargesWithYears.collect {
         case (_, errorModel: FinancialDetailsErrorModel) => errorModel
-        case (_, financialDetails: FinancialDetailsModel) if !financialDetails.isAllPaid =>
-          financialDetails.copy(
-            documentDetails = financialDetails.documentDetails.filterNot(_.isPaid)
-          )
+        case (_, financialDetails: FinancialDetailsModel) if !financialDetails.isAllPaid && !financialDetails.isAllInterestPaid =>
+          val unpaidDocumentDetails: List[DocumentDetail] = financialDetails.documentDetails.collect {
+            case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+            case documentDetail: DocumentDetail if !documentDetail.isPaid => documentDetail
+          }
+          financialDetails.copy(documentDetails = unpaidDocumentDetails)
       }
     }
   }

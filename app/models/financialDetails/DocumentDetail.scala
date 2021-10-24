@@ -75,6 +75,11 @@ case class DocumentDetail(taxYear: String,
 		else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
 	}
 
+	def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
+		if(latePaymentInterestAmount.isDefined) interestRemainingToPay > 0
+		else remainingToPay > 0
+	}
+
 	def getChargePaidStatus: String = {
 		if (isPaid) "paid"
 		else if (isPartPaid) "part-paid"
