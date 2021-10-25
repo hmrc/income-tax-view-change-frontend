@@ -189,7 +189,7 @@ class WhatYouOweServiceSpec extends TestSupport {
             overduePaymentList = List(DocumentDetailWithDueDate(
               DocumentDetail("2021","1040000124",Some("ITSA - POA 2"),Some(0),Some(12.34),LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"),Some(LocalDate.of(2018, 3, 29)),
-                Some(LocalDate.of(2018, 3, 29)),Some(10),Some("paymentLotItem"),Some("paymentLot")),
+                Some(LocalDate.of(2018, 3, 29)),Some(10),Some(100),Some("paymentLotItem"),Some("paymentLot")),
               Some(LocalDate.now().minusDays(1)))))
         }
       }
