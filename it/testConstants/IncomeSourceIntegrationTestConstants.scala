@@ -31,6 +31,13 @@ object IncomeSourceIntegrationTestConstants {
 		yearOfMigration = Some("2018")
 	)
 
+	val singleBusinessResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+		testMtdItId,
+		businesses = List(business1),
+		property = None,
+		yearOfMigration = None
+	)
+
 	val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
 		testMtdItId,
 		businesses = List(business2),
@@ -55,6 +62,13 @@ object IncomeSourceIntegrationTestConstants {
 		yearOfMigration = Some("2018")
 	)
 
+	val businessAndPropertyResponseWoMigration: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+		testMtdItId,
+		businesses = List(business1),
+		property = Some(property),
+		yearOfMigration = None
+	)
+
 	val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
 		testMtdItId,
 		Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
@@ -70,6 +84,16 @@ object IncomeSourceIntegrationTestConstants {
 		),
 		property = Some(property),
 		yearOfMigration = Some("2018")
+	)
+
+	val multipleBusinessesAndPropertyResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+		testMtdItId,
+		businesses = List(
+			business1,
+			business2
+		),
+		property = Some(property),
+		yearOfMigration = None
 	)
 
 	val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
@@ -233,7 +257,7 @@ object IncomeSourceIntegrationTestConstants {
 	)
 
 	def testValidFinancialDetailsModelJsonAccruingInterest(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
-                                                         taxYear: String = "2018", dueDate: String = "2018-02-14",
+                                                         taxYear: String = "2018", dueDate: String = "2018-04-14",
                                                          latePaymentInterestAmount: BigDecimal = 0): JsValue = Json.obj(
 		"balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
 		"documentDetails" -> Json.arr(
@@ -246,7 +270,7 @@ object IncomeSourceIntegrationTestConstants {
 				"documentDate" -> "2018-03-29",
 				"interestOutstandingAmount" -> "42.50",
 				"interestRate" -> "3",
-				"interestFromDate" -> "2018-02-14",
+				"interestFromDate" -> "2018-04-14",
 				"interestEndDate" -> "2019-01-01",
 				"latePaymentInterestAmount" -> latePaymentInterestAmount
 			),
@@ -340,7 +364,7 @@ object IncomeSourceIntegrationTestConstants {
 	)
 
 	def testAuditFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
-																				 dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+																				 dueDate: String = "2018-04-14", dunningLock: List[String] = noDunningLock,
 																				 interestLocks: List[String] = noInterestLock, totalAmount:BigDecimal = 100): JsValue = Json.obj(
 		"balanceDetails" -> Json.obj(
 			"balanceDueWithin30Days" -> 1.00,
@@ -355,8 +379,8 @@ object IncomeSourceIntegrationTestConstants {
 				"outstandingAmount" -> outstandingAmount,
 				"originalAmount" -> originalAmount,
 				"documentDate" -> "2018-03-29",
-				"interestFromDate" -> "2018-03-29",
-				"interestEndDate" -> "2018-03-29",
+				"interestFromDate" -> "2018-04-14",
+				"interestEndDate" -> "2019-01-01",
 				"latePaymentInterestAmount" -> 100.0,
 				"interestOutstandingAmount" -> 80.0
 			),

@@ -38,7 +38,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
   }
 
   def getChargeDueDates(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-    val orderedTaxYear: List[Int] = user.incomeSources.orderedTaxYears
+    val orderedTaxYear: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration
 
     Future.sequence(orderedTaxYear.map(item =>
       getFinancialDetails(item, user.nino)
@@ -79,7 +79,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     Logger("application").debug(
       s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYears.map {
+    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
         incomeTaxViewChangeConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))

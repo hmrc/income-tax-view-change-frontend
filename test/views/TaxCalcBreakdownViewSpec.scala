@@ -39,8 +39,14 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override val expectedPageTitle: String = TaxCalcBreakdown.title
 
-}
+  override val pageContentSelector = "#main-content"
 
+  override val messageContentSelector = ".govuk-inset-text"
+
+  override val headingSelector = ".govuk-caption-xl"
+
+
+}
 
 abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
@@ -49,6 +55,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
   def taxCalcBreakdown(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String): Html
 
   def expectedPageTitle: String
+
+  def pageContentSelector: String
+
+  def messageContentSelector: String
+
+  def headingSelector: String
 
   "The taxCalc breakdown view with Scotland tax regime" when {
 
@@ -158,12 +170,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        content hasPageHeading TaxCalcBreakdown.heading(taxYear)
-        content.h1.select(".heading-secondary").text() shouldBe TaxCalcBreakdown.subHeading(taxYear)
+        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear)
+        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear)
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.getElementById("explanation")
+        val guidance: Element = pageContent(pageContentSelector).getElementById("explanation")
         guidance.text() shouldBe TaxCalcBreakdown.guidance
       }
     }
@@ -184,6 +196,14 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         CalcBreakdownTestConstants.calculationAllIncomeSources,
         Crystallised), taxYear, backUrl)
 
+      lazy val viewMarriageAllowanceTransfer = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.calculationJustMarriageAllowance,
+        Crystallised), taxYear, backUrl)
+
+      lazy val viewTopSlicingRelief = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.calculationTopSlicingRelief,
+        Crystallised), taxYear, backUrl)
+
       lazy val zeroIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.testCalcModelZeroIncome,
         Crystallised), taxYear, backUrl)
@@ -193,12 +213,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        content hasPageHeading TaxCalcBreakdown.heading(taxYear)
-        content.h1.select(".heading-secondary").text() shouldBe TaxCalcBreakdown.subHeading(taxYear)
+        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear)
+        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear)
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.getElementById("explanation")
+        val guidance: Element = pageContent(pageContentSelector).getElementById("explanation")
         guidance.text() shouldBe TaxCalcBreakdown.guidance
       }
 
@@ -220,7 +240,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Pay, pensions and profit Income" which {
         "has no Pay, pensions and profit heading" in new Setup(zeroIncome) {
-          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingPPP
+          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingPPP
         }
       }
 
@@ -245,7 +265,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Savings and Gains Income" which {
         "has no Savings and Gains heading" in new Setup(zeroIncome) {
-          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingSavings
+          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingSavings
         }
       }
 
@@ -270,7 +290,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Dividend Income" which {
         "has no dividend heading" in new Setup(zeroIncome) {
-          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingDividends
+          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingDividends
         }
       }
 
@@ -292,7 +312,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Lump Sum Income" which {
         "has no Lump Sum heading" in new Setup(zeroIncome) {
-          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingLumpSums
+          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingLumpSums
         }
       }
 
@@ -314,7 +334,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Gains on Life Policy Income" which {
         "has no Gains on Life Policy heading" in new Setup(zeroIncome) {
-          content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies
+          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies
         }
       }
 
@@ -339,7 +359,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have no Tax reductions table and heading when there is no any reductions value" in new Setup(viewAllIncome) {
-        content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingTaxReductions
+        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingTaxReductions
       }
 
       "have a Tax reductions table" which {
@@ -370,42 +390,66 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       }
 
+      "have a Tax reductions table when only MarriageAllowanceTransfer is set" which {
+        shouldHaveACorrectTableContent(viewMarriageAllowanceTransfer)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.marriageAllowanceTransfer, "−£1,234.00"),
+          )
+        )
+      }
+
+      "have a Tax reductions table when only TopSlicingRelief is set" which {
+        shouldHaveACorrectTableContent(viewTopSlicingRelief)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.topSlicingRelief, "−£2,345.00"),
+          )
+        )
+      }
+
       "have no additional charges table and heading when there is no any other charges value" in new Setup(viewAllIncome) {
-        content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
+        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
       }
 
       "have an additional charges table" which {
         val tableNumber = 8
 
         "has all four table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(tableNumber, 5)
+          pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, 5)
         }
 
         "has the correct heading" in new Setup(view) {
-          content.selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
         }
 
         "has a table header section" in new Setup(view) {
-          val row: Element = content.table(tableNumber).select("tr").get(0)
+          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(0)
           row.select("th").first().text() shouldBe TaxCalcBreakdown.chargeTypeTableHeader
           row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
         }
 
         "has a Voluntary Nic line with the correct value" in new Setup(view) {
-          val row: Element = content.table(tableNumber).select("tr").get(1)
+          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.VoluntaryNic2
           row.select("td").last().text() shouldBe "£10,000.00"
         }
 
         "has a Nic2 line with the correct value" in new Setup(viewNic2) {
-          val row: Element = content.table(tableNumber).select("tr").get(1)
+          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic2
           row.select("td").last().text() shouldBe "£10,000.00"
         }
       }
 
       "have no Capital Gains Tax table and heading when there is no any CGT value" in new Setup(zeroIncome) {
-        content.select("caption").text should not include TaxCalcBreakdown.sectionHeadingCapitalGainsTax
+        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingCapitalGainsTax
       }
 
       "have a Capital Gains Tax table" which {
@@ -500,20 +544,20 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
 			val document: Document = Jsoup.parse(view.body)
 
-			document.select("div.panel-border-wide").size shouldBe 13
-			document.select("div.panel-border-wide").get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
-			document.select("div.panel-border-wide").get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
-			document.select("div.panel-border-wide").get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
-			document.select("div.panel-border-wide").get(3).text shouldBe "Your payroll giving amount has been included in your adjusted taxable income"
-			document.select("div.panel-border-wide").get(4).text shouldBe "Employment related expenses are capped at the total amount of employment income"
-			document.select("div.panel-border-wide").get(5).text shouldBe "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
-      document.select("div.panel-border-wide").get(6).text shouldBe "Employment and Deduction related expenses have been limited to employment income."
-      document.select("div.panel-border-wide").get(7).text shouldBe "Due to your employed earnings, paying Class 2 Voluntary may not be beneficial."
-      document.select("div.panel-border-wide").get(8).text shouldBe "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
-      document.select("div.panel-border-wide").get(9).text shouldBe "Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation."
-      document.select("div.panel-border-wide").get(10).text shouldBe "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
-      document.select("div.panel-border-wide").get(11).text shouldBe "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
-      document.select("div.panel-border-wide").get(12).text shouldBe "The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation."
+			document.select(messageContentSelector).size shouldBe 13
+			document.select(messageContentSelector).get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
+			document.select(messageContentSelector).get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
+			document.select(messageContentSelector).get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
+			document.select(messageContentSelector).get(3).text shouldBe "Your payroll giving amount has been included in your adjusted taxable income"
+			document.select(messageContentSelector).get(4).text shouldBe "Employment related expenses are capped at the total amount of employment income"
+			document.select(messageContentSelector).get(5).text shouldBe "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
+      document.select(messageContentSelector).get(6).text shouldBe "Employment and Deduction related expenses have been limited to employment income."
+      document.select(messageContentSelector).get(7).text shouldBe "Due to your employed earnings, paying Class 2 Voluntary may not be beneficial."
+      document.select(messageContentSelector).get(8).text shouldBe "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
+      document.select(messageContentSelector).get(9).text shouldBe "Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation."
+      document.select(messageContentSelector).get(10).text shouldBe "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
+      document.select(messageContentSelector).get(11).text shouldBe "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
+      document.select(messageContentSelector).get(12).text shouldBe "The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation."
 		}
 
 		"provided with message C22201" in {
@@ -530,8 +574,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
 			val document: Document = Jsoup.parse(view.body)
 
-			document.select("div.panel-border-wide").size shouldBe 1
-			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
+			document.select(messageContentSelector).size shouldBe 1
+			document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
 		}
 
 		"provided with message C22205" in {
@@ -550,8 +594,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
 			val document: Document = Jsoup.parse(view.body)
 
-			document.select("div.panel-border-wide").size shouldBe 1
-			document.select("div.panel-border-wide").text shouldBe "Total loss from all income sources was capped at £1,000.00"
+			document.select(messageContentSelector).size shouldBe 1
+			document.select(messageContentSelector).text shouldBe "Total loss from all income sources was capped at £1,000.00"
 		}
 
 		"provided with message C22208" in {
@@ -568,8 +612,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
 			val document: Document = Jsoup.parse(view.body)
 
-			document.select("div.panel-border-wide").size shouldBe 1
-			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
+			document.select(messageContentSelector).size shouldBe 1
+			document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
 		}
 
 		"provided with message C22209" in {
@@ -586,8 +630,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
 			val document: Document = Jsoup.parse(view.body)
 
-			document.select("div.panel-border-wide").size shouldBe 1
-			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
+			document.select(messageContentSelector).size shouldBe 1
+			document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
 		}
 	}
 
@@ -600,18 +644,18 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
     lazy val expectedRowsCount = expectedTableRows.length
 
     s"has $expectedRowsCount rows in total" in new Setup(view) {
-      content hasTableWithCorrectSize(tableNumber, expectedRowsCount)
+      pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, expectedRowsCount)
     }
 
     s"has the heading $expectedCaption" in new Setup(view) {
-      content.select("caption").get(tableIndex).text() shouldBe expectedCaption
+      pageContent(pageContentSelector).select("caption").get(tableIndex).text() shouldBe expectedCaption
     }
 
     forAll(expectedTableRows) { (rowIndex: Int, firstColumnText: String, secondColumnText: String) =>
       if(rowIndex == 0) {
 
         s"has a table headers: [$firstColumnText, $secondColumnText]" in new Setup(view) {
-          val row: Element = content.table(tableNumber).select("tr").get(0)
+          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(0)
           row.select("th").first().text() shouldBe firstColumnText
           row.select("th").last().text() shouldBe secondColumnText
         }
@@ -619,7 +663,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       } else {
 
         s"has the row $rowIndex for $firstColumnText line with the correct amount value" in new Setup(view) {
-          val row: Element = content.table(tableNumber).select("tr").get(rowIndex)
+          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(rowIndex)
           row.select("td").first().text() shouldBe firstColumnText
           row.select("td").last().text() shouldBe secondColumnText
         }

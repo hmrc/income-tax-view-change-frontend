@@ -55,7 +55,7 @@ class TaxYearsController @Inject()(taxYears: TaxYears,
   def backUrl: String = controllers.agent.routes.HomeController.show().url
 
   private def withCalculationYears(f: List[Int] => Result)(implicit user: MtdItUser[_]): Future[Result] = {
-    calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears) map {
+    calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYearsByAccountingPeriods) map {
       case taxYearsResponse if taxYearsResponse.exists(_.isError) =>
         itvcErrorHandler.showInternalServerError()
       case taxYearsResponse => f(taxYearsResponse.map(_.year).reverse)

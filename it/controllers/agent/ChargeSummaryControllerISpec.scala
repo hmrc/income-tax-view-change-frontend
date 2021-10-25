@@ -24,7 +24,7 @@ import auth.MtdItUser
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
+import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
@@ -257,12 +257,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         currentTaxYearEnd.getYear.toString, "testId", clientDetails
       )
 
-      result should have(
-        httpStatus(OK),
-        pageTitle("Late payment interest on payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
-        elementTextBySelector("main h2")("Payment history")
-      )
-
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
@@ -271,11 +265,17 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
-        paymentAllocations = List.empty,
+        paymentAllocations = paymentAllocation,
         agentReferenceNumber = Some("1"),
         txmEventsR6 = true,
         isLatePaymentCharge = true
       ))
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Late payment interest on payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("main h2")("Payment history")
+      )
     }
 
     s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
@@ -357,7 +357,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
   }
 
-  private def stubGetFinancialDetailsSuccess(chargeType1: Option[String] = Some("ITSA NI"), chargeType2: Option[String] = Some("ITSA NI")): Unit = {
+  private def stubGetFinancialDetailsSuccess(chargeType1: Option[String] = Some("ITSA NI"),
+                                             chargeType2: Option[String] = Some("ITSA NI"), isLatePaymentInterest:Boolean = false): Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
       from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -374,10 +375,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             outstandingAmount = Some(1.2),
             originalAmount = Some(123.45),
             documentDate = LocalDate.of(2018, 3, 29),
-            interestFromDate = Some(LocalDate.of(2018, 3, 29)),
-            interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-            latePaymentInterestAmount = Some(100.0),
-            interestOutstandingAmount = Some(80.0)
+            interestFromDate = Some(LocalDate.of(2018, 4, 14)),
+            interestEndDate = Some(LocalDate.of(2019, 1, 1)),
+            latePaymentInterestAmount = Some(54.32),
+            interestOutstandingAmount = Some(42.5)
           )
         ),
         financialDetails = List(
