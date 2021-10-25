@@ -353,7 +353,7 @@ taxCal_breakdown.message.C22214                                 = Your Class 4 h
 taxCal_breakdown.message.C22215                                 = Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
-taxCal_breakdown.message.C22218                                 = The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation.
+taxCal_breakdown.message.C22218                                 = The Capital Gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation.
 
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
