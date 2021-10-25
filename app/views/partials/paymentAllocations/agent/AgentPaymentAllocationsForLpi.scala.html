@@ -34,6 +34,7 @@
             <td class="govuk-table__cell" id="payment-allocation-0">
                 <a href="@{controllers.agent.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
                 @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey}")
+                    <span class="govuk-visually-hidden"> @lpiAllocationDetails.documentDetail.taxYear</span>
                 </a>
                 <br>
                 <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear)</span>

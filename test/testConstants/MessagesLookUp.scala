@@ -684,8 +684,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
     val paymentAllocationHeading = "Payment allocations"
     val tableHeadings = Seq("Payment allocation", "Date allocated", "Amount")
-    val tableDataPaymentAllocation = "Class 4 National Insurance for payment on account 1 of 2 Tax year 2019 to 2020"
-    val tableDataPaymentAllocationLpi = "Late payment interest for remaining balance Tax year 2019 to 2020"
+    val tableDataPaymentAllocation = "Class 4 National Insurance for payment on account 1 of 2 2020 Tax year 2019 to 2020"
+    val tableDataPaymentAllocationLpi = "Late payment interest for remaining balance 2020 Tax year 2019 to 2020"
     val tableDataDateAllocated = "31 Jan 2021"
     val tableDataDateAllocatedLpi = "N/A"
     val tableDataAmount = "£10.10"

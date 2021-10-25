@@ -127,14 +127,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         content.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
-             |Income Tax for payment on account 1 of 2 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
-             |Income Tax for payment on account 1 of 2 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
-             |Income Tax for payment on account 1 of 2 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
-             |Income Tax for payment on account 1 of 2 Tax year 2018 to 2019 30 Jun 2019 £4,567.89
-             |Class 4 National Insurance for payment on account 1 of 2 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
-             |Class 4 National Insurance for payment on account 1 of 2 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
-             |Class 4 National Insurance for payment on account 1 of 2 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
-             |Class 4 National Insurance for payment on account 1 of 2 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
+             |Income Tax for payment on account 1 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
+             |Income Tax for payment on account 1 of 2 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
+             |Income Tax for payment on account 1 of 2 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
+             |Income Tax for payment on account 1 of 2 2019 Tax year 2018 to 2019 30 Jun 2019 £4,567.89
+             |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
+             |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
+             |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
+             |Class 4 National Insurance for payment on account 1 of 2 2020 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
              |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
@@ -167,14 +167,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         content.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
-             |Income Tax for payment on account 2 of 2 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
-             |Income Tax for payment on account 2 of 2 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
-             |Income Tax for payment on account 2 of 2 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
-             |Income Tax for payment on account 2 of 2 Tax year 2018 to 2019 30 Jun 2019 £4,567.89
-             |Class 4 National Insurance for payment on account 2 of 2 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
-             |Class 4 National Insurance for payment on account 2 of 2 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
-             |Class 4 National Insurance for payment on account 2 of 2 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
-             |Class 4 National Insurance for payment on account 2 of 2 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
+             |Income Tax for payment on account 2 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
+             |Income Tax for payment on account 2 of 2 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
+             |Income Tax for payment on account 2 of 2 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
+             |Income Tax for payment on account 2 of 2 2019 Tax year 2018 to 2019 30 Jun 2019 £4,567.89
+             |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
+             |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
+             |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
+             |Class 4 National Insurance for payment on account 2 of 2 2020 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
              |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
@@ -203,12 +203,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         content.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
-             |Income Tax for remaining balance Tax year 2017 to 2018 27 Jun 2019 £1,234.56
-             |Class 4 National Insurance for remaining balance Tax year 2017 to 2018 28 Jun 2019 £2,345.67
-             |Class 2 National Insurance for remaining balance Tax year 2018 to 2019 29 Jun 2019 £3,456.78
-             |Capital Gains Tax for remaining balance Tax year 2018 to 2019 27 Aug 2019 £9,876.54
-             |Student Loans for remaining balance Tax year 2018 to 2019 28 Aug 2019 £8,765.43
-             |Voluntary Class 2 National Insurance for remaining balance Tax year 2019 to 2020 29 Aug 2019 £7,654.32
+             |Income Tax for remaining balance 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
+             |Class 4 National Insurance for remaining balance 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
+             |Class 2 National Insurance for remaining balance 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
+             |Capital Gains Tax for remaining balance 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
+             |Student Loans for remaining balance 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
+             |Voluntary Class 2 National Insurance for remaining balance 2020 Tax year 2019 to 2020 29 Aug 2019 £7,654.32
              |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 

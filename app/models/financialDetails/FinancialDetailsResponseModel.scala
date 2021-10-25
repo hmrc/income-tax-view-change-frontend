@@ -35,7 +35,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def getAllDueDates: List[LocalDate] = {
-    documentDetails.map(getDueDateFor).flatten
+    documentDetails.flatMap(getDueDateFor)
   }
 
   def dunningLockExists(documentId: String): Boolean = {

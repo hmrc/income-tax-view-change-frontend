@@ -29,6 +29,7 @@
             <td class="govuk-table__cell" id="payment-allocation-@index">
                 <a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)}" class="govuk-link">
                 @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+                    <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter)</span>
                 </a>
                 <br>
                 <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>

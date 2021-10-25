@@ -68,7 +68,12 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
                 @for(payment <- yearPayments) {
                 <tr>
                     <td>@LocalDate.parse(payment.date.get).toLongDate</td>
-                    <td><a href="@controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)">@messages("paymentHistory.paymentToHmrc")</a></td>
+                    <td>
+                        <a href="@controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)">
+                            @messages("paymentHistory.paymentToHmrc")
+                            <span class="govuk-visually-hidden">@payment.transactionId.get</span>
+                        </a>
+                    </td>
                     <td class="numeric"> @payment.amount.map(_.abs.toCurrency) </td>
                 </tr>
                 }
