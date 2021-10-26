@@ -254,6 +254,28 @@ taxCal_breakdown.message.C22216                                 = Oherwydd lefel
 taxCal_breakdown.message.C22217                                 = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEM.
 taxCal_breakdown.message.C22218                                 = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
 
+taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
+taxCal_breakdown.table.head.reduction                           = Gostyngiad
+taxCal_breakdown.table.marriage_allowance_transfer              = Trosglwyddo Lwfans Priodasol
+taxCal_breakdown.table.top_slicing_relief                       = Rhyddhad Haenen Uchaf
+taxCal_breakdown.table.head.charge_type                         = Math o gost
+taxCal_breakdown.table.head.deduction                           = Math o ddidyniad
+taxCal_breakdown.table.amount                                   = Swm
+taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
+
+taxCal_breakdown.table.capital_gains_tax                        = Treth Enillion Cyfalaf
+taxCal_breakdown.table.head.cgt_type                            = Math o Dreth Enillion Cyfalaf
+taxCal_breakdown.table.cgt.taxable_capital_gains                = Enillion Cyfalaf trethadwy
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single = Enillion Rhyddhad Gwaredu Ased Busnes a neu Ryddhad Buddsoddwyr ({0} at {1}%)
+taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate   = Eiddo preswyl a budd a drosglwyddir ar y gyfradd sylfaenol ({0} at {1}%)
+taxCal_breakdown.table.cgt.adjustment                           = Addasiad ar gyfer Treth Enillion Cyfalaf
+taxCal_breakdown.table.cgt.already_paid                         = Treth ar enillion a dalwyd yn barod
+taxCal_breakdown.table.cgt.due                                  = Treth Enillion Cyfalaf sy’n ddyledus
+taxCal_breakdown.table.cgt.overpaid                             = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
+taxCal_breakdown.table.payeUnderpaymentsCodedOut                = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
+taxCal_breakdown.table.saUnderpaymentsCodedOut                  = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
+
+
 ## NextUpdates Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
 obligations.quarterly.to                                        = i

@@ -100,7 +100,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     financialDetailsList.flatMap{financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYourOwePageDataExists(documentDetailWithDueDate)
 				&& validChargeTypeCondition(documentDetailWithDueDate.documentDetail.documentDescription.get)
-        && documentDetailWithDueDate.documentDetail.remainingToPay > 0
+        && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay
         && documentDetailWithDueDate.dueDate.get.isBefore(LocalDate.now()))}.sortBy(_.dueDate.get)
   }
 

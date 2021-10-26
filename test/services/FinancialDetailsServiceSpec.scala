@@ -474,6 +474,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             getFinancialDetailSuccess(
               taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
               documentDetails = List(
+                fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(50.0)),
                 fullDocumentDetailModel.copy(outstandingAmount = Some(100.00), originalAmount = Some(100.00)),
               ),
               financialDetails = List(
@@ -484,6 +485,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               taxYear = getTaxEndYear(LocalDate.now),
               documentDetails = List(
                 fullDocumentDetailModel.copy(outstandingAmount = Some(300.00), originalAmount = Some(300.00)),
+                fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(25.0))
               ),
               financialDetails = List(
                 fullFinancialDetailModel
@@ -494,9 +496,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
             documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00)),
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(50.0)),
               fullDocumentDetailModel.copy(outstandingAmount = Some(100.00), originalAmount = Some(100.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0), originalAmount = Some(-200.00))
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0), originalAmount = Some(-200.00), latePaymentInterestAmount = None)
             ),
             financialDetails = List(
               fullFinancialDetailModel
@@ -506,8 +508,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             taxYear = getTaxEndYear(LocalDate.now),
             documentDetails = List(
               fullDocumentDetailModel.copy(outstandingAmount = Some(300.00), originalAmount = Some(300.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), originalAmount = Some(-400.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00))
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), originalAmount = Some(-400.00), latePaymentInterestAmount = None),
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(25.0))
             ),
             financialDetails = List(
               fullFinancialDetailModel
@@ -523,8 +525,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
             documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0))
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None),
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None)
             ),
             financialDetails = List(
               fullFinancialDetailModel,
@@ -534,8 +536,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now),
             documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0))
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None),
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0), latePaymentInterestAmount = None)
             ),
             financialDetails = List(
               fullFinancialDetailModel,
@@ -567,7 +569,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
             documentDetails = List(
               fullDocumentDetailModel.copy(outstandingAmount = Some(100.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00))
+              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
             ),
             financialDetails = List(
               fullFinancialDetailModel
