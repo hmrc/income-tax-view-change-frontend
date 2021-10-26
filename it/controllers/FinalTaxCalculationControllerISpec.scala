@@ -53,31 +53,31 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object Selectors {
-    val caption = ".heading-secondary"
+    val caption = "h1 > span"
     val title = "h1"
 
-    val insetText = ".panel-border-wide"
-    val insetLinkText = ".panel-border-wide > p > a"
+    val insetText = "#main-content > div > div > div > p.govuk-inset-text"
+    val insetLinkText = "#main-content > div > div > div > p > a"
 
-    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
-    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td.numeric"
+    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > th > a"
+    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td"
 
-    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
-    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td.numeric"
+    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > th > a"
+    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td"
 
-    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
-    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td.numeric"
+    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > th"
+    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td"
 
-    val contributionDueRowText = "#taxdue-payments-table > tbody > tr > td:nth-child(1) > a"
-    val contributionDueRowAmount = "#taxdue-payments-table > tbody > tr > td:nth-child(2)"
+    val contributionDueRowText = "#taxdue-payments-table > tbody > tr > th > a"
+    val contributionDueRowAmount = "#taxdue-payments-table > tbody > tr > td"
 
-    val chargeInformationParagraph = "#content > article > p"
+    val chargeInformationParagraph = "#main-content > div > div > div > p.govuk-body"
 
     val continueButton = "#continue-button"
   }
 
   object ExpectedValues {
-    val title = "Your final tax overview - Your client’s Income Tax details - GOV.UK"
+    val title = "Your final tax overview - Business Tax account - GOV.UK"
     val caption = "6 April 2017 to 5 April 2018"
 
     val insetTextFull = "If you think this information is incorrect, you can check your Income Tax Return."
@@ -99,7 +99,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
     val contributionAmount = "£90,500.00"
     val contributionLink = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due"
 
-    val chargeInformationParagraph: String = "The amount you need to pay might be different if there are other charges or payments on your account."
+    val chargeInformationParagraph: String = "The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest."
 
     val continueButtonText = "Continue"
   }
