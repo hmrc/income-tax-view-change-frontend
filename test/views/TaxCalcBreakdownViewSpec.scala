@@ -557,7 +557,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(9).text shouldBe "Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation."
       document.select(messageContentSelector).get(10).text shouldBe "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
       document.select(messageContentSelector).get(11).text shouldBe "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
-      document.select(messageContentSelector).get(12).text shouldBe "The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation."
+      document.select(messageContentSelector).get(12).text shouldBe "The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation."
 		}
 
 		"provided with message C22201" in {
