@@ -94,7 +94,7 @@
         <td>
             @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
             @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">}
-            @messages(s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
+            @messages(s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
             @if(isChargeTypeHyperlinked){</a>}
             <div>@messages("agent.paymentDue.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
             @if(documentDetailWithDueDate.dunningLock) {<div class="form-hint govuk-body-s"> @messages("agent.paymentDue.paymentUnderReview") </div>}
@@ -115,8 +115,8 @@
             } else {
             <a id="@rowId2-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">
                 }
-                @messages(if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) s"agent.paymentDue.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}"
-                else s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
+                @messages(if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) s"agent.paymentDue.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
+                else s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
                 @if(isChargeTypeHyperlinked){</a>}
 
             <div>@messages("agent.paymentDue.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>

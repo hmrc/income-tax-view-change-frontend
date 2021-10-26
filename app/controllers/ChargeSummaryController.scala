@@ -19,11 +19,12 @@ package controllers
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
+
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, PaymentsWithChargeType}
@@ -95,6 +96,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 			} else Nil
 
 		val chargeHistoryEnabled = isEnabled(ChargeHistory)
+		val codingOutEnabled = isEnabled(CodingOut)
 		val chargeHistoryFuture: Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] =
 			if (!isLatePaymentCharge && chargeHistoryEnabled) {
 				incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
@@ -118,7 +120,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 					payments = payments,
 					chargeHistoryEnabled = chargeHistoryEnabled,
 					paymentAllocationEnabled = paymentAllocationEnabled,
-					latePaymentInterestCharge = isLatePaymentCharge
+					latePaymentInterestCharge = isLatePaymentCharge,
+					codingOutEnabled = codingOutEnabled
 				))
 			case _ =>
 				Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")

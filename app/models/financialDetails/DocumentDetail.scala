@@ -95,10 +95,10 @@ case class DocumentDetail(taxYear: String,
 		case _ => false
 	}
 
-	def getChargeTypeKey: String = documentDescription match {
+	def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
 		case Some("ITSA- POA 1") => "paymentOnAccount1.text" //todo: fix the actual document descriptions
 		case Some("ITSA - POA 2") => "paymentOnAccount2.text"
-		case Some("TRM New Charge") | Some("TRM Amend Charge") => if (isClass2Nic) "class2Nic.text" else "balancingCharge.text"
+		case Some("TRM New Charge") | Some("TRM Amend Charge") => if (isClass2Nic && codedOutEnabled) "class2Nic.text" else "balancingCharge.text"
 		case error =>
 			Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
 			"unknownCharge"

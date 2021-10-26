@@ -43,12 +43,12 @@
 @chargeHistoryRow(dateStr: LocalDate, reasonCode: String, amount: Option[BigDecimal]) = {
 	<tr>
 		<td style="white-space: nowrap;">@{dateStr.toLongDateShort}</td>
-		<td>@messages(s"chargeSummary.chargeHistory.$reasonCode.${documentDetail.getChargeTypeKey}")</td>
+		<td>@messages(s"chargeSummary.chargeHistory.$reasonCode.${documentDetail.getChargeTypeKey()}")</td>
 		<td class="numeric">@{amount.map(_.toCurrency)}</td>
 	</tr>
 }
 
-@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"), backUrl = Some(backUrl)){
+@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey()}"), backUrl = Some(backUrl)){
 
 	@if(hasDunningLocks) {
 		<br>
@@ -68,7 +68,7 @@
 
 	<h1 class="heading-xlarge">
 		<span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetail.taxYear).toLongDate)</span>
-		@messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}")
+		@messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey()}")
 	</h1>
 
 	<dl class="govuk-summary-list">
@@ -172,7 +172,7 @@
 					<td style="white-space: nowrap;">@{
 						documentDetail.interestEndDate.get.toLongDateShort
 						}</td>
-					<td>@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey}")
+					<td>@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")
 					</td>
 					<td class="numeric">@{
 						documentDetail.latePaymentInterestAmount.get.toCurrency
