@@ -197,7 +197,7 @@
 								@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
 									<a href="@{controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
 										@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
-										<span class="govuk-visually-hidden"> @documentDetail.taxYear</span>
+										<span class="govuk-visually-hidden visuallyhidden"> @documentDetail.taxYear</span>
 									</a>
 								}
 

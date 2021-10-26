@@ -96,7 +96,7 @@
             @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">}
             @messages(s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
             @if(isChargeTypeHyperlinked){
-                <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
+                <span class="govuk-visually-hidden visuallyhidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
                 </a>
             }
             <div>@messages("agent.paymentDue.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
@@ -120,7 +120,7 @@
         }
         @messages(if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) s"agent.paymentDue.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}"
         else s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
-            <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
+            <span class="govuk-visually-hidden visuallyhidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
         @if(isChargeTypeHyperlinked){
             </a>
         }
