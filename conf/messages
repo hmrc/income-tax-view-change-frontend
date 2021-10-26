@@ -537,6 +537,7 @@ whatYouOwe.totalBalance                                            = Total payme
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
 chargeSummary.paymentOnAccount2.text							   = Payment on account 2 of 2
 chargeSummary.balancingCharge.text  							   = Remaining balance
+chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Full payment amount
 chargeSummary.paidToDate    									   = Paid to date
@@ -546,6 +547,8 @@ chargeSummary.overdue                                              = OVERDUE
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab)
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
+
+chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
@@ -564,6 +567,7 @@ chargeSummary.interestLocks.linkText                               = What you ow
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
+chargeSummary.payment-days-note                                    = Payments can take up to 7 days to process.
 
 chargeSummary.chargeHistory.heading								   = Payment history
 chargeSummary.chargeHistory.date								   = Date
@@ -572,6 +576,7 @@ chargeSummary.chargeHistory.amount								   = Amount
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		   = Payment on account 1 of 2 created
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		   = Payment on account 2 of 2 created
 chargeSummary.chargeHistory.created.balancingCharge.text		   = Remaining balance created
+chargeSummary.chargeHistory.created.class2Nic.text                 = Class 2 National Insurance created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	   = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	   = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	   = Remaining balance reduced by taxpayer request

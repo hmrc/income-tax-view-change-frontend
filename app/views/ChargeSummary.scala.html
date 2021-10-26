@@ -68,6 +68,12 @@
         @messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}")
     </h1>
 
+    @if(documentDetail.isClass2Nic){
+        @p(){
+            @messages("chargeSummary.nic2TaxYear", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)
+        }
+    }
+
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
@@ -144,6 +150,9 @@
         <div id="payment-link-@{documentDetail.taxYear}">
             <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
         </div>
+        @p(){
+            @messages("chargeSummary.payment-days-note")
+        }
     }
 
     @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){

@@ -16,14 +16,16 @@
 
 package models.financialDetails
 
-import java.time.LocalDate
+import org.scalacheck.Prop.True
 
+import java.time.LocalDate
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 
 case class DocumentDetail(taxYear: String,
 													transactionId: String,
 													documentDescription: Option[String],
+													documentText: Option[String],
 													outstandingAmount: Option[BigDecimal],
 													originalAmount: Option[BigDecimal],
 													documentDate: LocalDate,
@@ -35,7 +37,8 @@ case class DocumentDetail(taxYear: String,
 													latePaymentInterestAmount: Option[BigDecimal] = None,
 													lpiWithDunningBlock: Option[BigDecimal] = None,
 													paymentLotItem: Option[String] = None,
-													paymentLot: Option[String] = None
+													paymentLot: Option[String] = None,
+													amountCodedOut: Option[BigDecimal] = None
 												 ) {
 
 
@@ -83,10 +86,15 @@ case class DocumentDetail(taxYear: String,
 		else "unpaid"
 	}
 
+	val isClass2Nic: Boolean = documentText match {
+		case Some(documentText) if documentText == "Class 2 National Insurance" => true
+		case _ => false
+	}
+
 	def getChargeTypeKey: String = documentDescription match {
 		case Some("ITSA- POA 1") => "paymentOnAccount1.text" //todo: fix the actual document descriptions
 		case Some("ITSA - POA 2") => "paymentOnAccount2.text"
-		case Some("TRM New Charge") | Some("TRM Amend Charge") => "balancingCharge.text"
+		case Some("TRM New Charge") | Some("TRM Amend Charge") => if (isClass2Nic) "class2Nic.text" else "balancingCharge.text"
 		case error =>
 			Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
 			"unknownCharge"

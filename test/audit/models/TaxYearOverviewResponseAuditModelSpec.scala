@@ -48,6 +48,7 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
     taxYear = taxYear,
     transactionId = "1040000124",
     documentDescription = Some("ITSA- POA 1"),
+    documentText = Some("documentText"),
     originalAmount = Some(10.34),
     outstandingAmount = Some(0),
     documentDate = LocalDate.of(2018, 3, 29)

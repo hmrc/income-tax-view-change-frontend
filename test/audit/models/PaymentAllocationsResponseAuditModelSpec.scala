@@ -42,6 +42,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
   private val dd1 = DocumentDetail(taxYear = "2017",
     transactionId = "transid2",
     documentDescription = Some("ITSA- POA 1"),
+    documentText = Some("documentText"),
     outstandingAmount = Some(543.32),
     originalAmount = Some(23456.78),
     documentDate = LocalDate.parse("2018-03-21"))
