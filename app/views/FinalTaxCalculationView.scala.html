@@ -21,15 +21,20 @@
 @import views.html.templates.agent.MainTemplate
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.FrontendAppConfig
+@import views.html.components._
+@import views.html.layouts.layout
 
-@this(breakdownPartial: taxOverviewBreakdownPartial,
-      mainTemplate: MainTemplate,
+@this(layout: layout,
+      breakdownPartial: taxOverviewBreakdownPartial,
       inset: GovukInsetText,
       form: FormWithCSRF,
-      continueButton: ContinueButton
+      continueButton: ContinueButton,
+      p: p,
+      h1Caption: h1_caption,
+      govukInsetText : GovukInsetText
 )
 
-@(overview: CalcOverview, taxYear: Int, isAgent: Boolean = false)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
+@(overview: CalcOverview, taxYear: Int, isAgent: Boolean = false, backUrl: String)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
 
 @headingText = @{
     val key = s"final-declaration.${if(isAgent) "agent" else "individual"}.heading"
@@ -43,7 +48,7 @@
 }
 
 @insetContent = {
-    @messages("final-declaration.inset.1") <a href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear.toString)}>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.inset.2")</a>
+    @messages("final-declaration.inset.1") <a href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear)}>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.inset.2")</a>
 }
 
 @formCall = @{
@@ -54,21 +59,21 @@
     }
 }
     
-@mainTemplate(
-    title = headingText
+@layout(
+    pageTitle = headingText,
+    backUrl = Some(backUrl)
 ) {
-    <h1 class="heading-xlarge">
-        <span class="heading-secondary">@subHeadingText</span>
-        @headingText
-    </h1>
+    @h1Caption(headingText, Some(subHeadingText))
 
-    <div class="panel panel-border-wide" style="margin-bottom:30px;">
-        <p>@insetContent</p>
-    </div>
+    @p(classes = "govuk-inset-text govuk-!-margin-bottom-6"){
+        @insetContent
+    }
 
     @breakdownPartial(overview, taxYear, isFinalCalc = true, isAgent)
-    @* TODO Need a small space adding before and after the p tag using the GovUk element classes when the migration has been completed. Included appropriate margin styles for the time being. *@
-    <p style="margin-bottom:40px; margin-top:40px">@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.chargeInfo.p")</p>
+
+    @p(classes = "govuk-body govuk-!-margin-top-7 govuk-!-margin-bottom-7") {
+        @messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.chargeInfo.p")
+    }
 
     @form(formCall) {
         @continueButton()

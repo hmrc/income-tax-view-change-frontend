@@ -113,7 +113,10 @@
                     documentDetailWithDueDate.documentDetail.transactionId)">
                 }
             @messages(s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
-            @if(isChargeTypeHyperlinked){</a>}
+                    @if(isChargeTypeHyperlinked){
+                    <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
+                </a>
+            }
             <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
             @if(documentDetailWithDueDate.dunningLock) {<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
         </td>
@@ -141,7 +144,10 @@
                 else
                     s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
             )
-            @if(isChargeTypeHyperlinked){</a>}
+            @if(isChargeTypeHyperlinked){
+                <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
+            </a>
+            }
 
             <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
             @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}

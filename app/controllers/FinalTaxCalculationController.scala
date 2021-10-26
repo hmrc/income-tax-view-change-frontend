@@ -47,11 +47,13 @@ class FinalTaxCalculationController @Inject()(
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
+
   def show(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
     calcService.getCalculationDetail(user.nino, taxYear).map {
       case CalcDisplayModel(_, _, calcDataModel, _) =>
         val calcOverview = CalcOverview(calcDataModel)
-        Ok(view(calcOverview, taxYear))
+        lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
+        Ok(view(calcOverview, taxYear, isAgent = false, backUrl))
       case CalcDisplayNoDataFound =>
         Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()

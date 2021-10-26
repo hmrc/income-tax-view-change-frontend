@@ -208,6 +208,7 @@
 
                                 <a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
                                     @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                                    <span class="govuk-visually-hidden"> @documentDetail.taxYear</span>
                                 </a>
                             }
 

@@ -34,6 +34,7 @@
     <td>
         <a href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocation.allocationDetail.get.transactionId.get)">
             @messages(allocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+            <span class="govuk-visually-hidden visuallyhidden"> @allocationTaxYear</span>
         </a>
         <br>
         <span class="govuk-body-s">@messages("paymentAllocation.taxYear", s"${allocationTaxYear - 1}", s"$allocationTaxYear")</span>
