@@ -708,12 +708,12 @@ final-declaration.caption                                       = 6 April {0} to
 final-declaration.inset.1                                       = If you think this information is incorrect, you can
 final-declaration.individual.inset.2                            = check your Income Tax Return.
 final-declaration.declaration                                   = Declaration
-final-declaration.individual.chargeInfo.p                       = The amount you need to pay might be different if there are other charges or payments on your account.
+final-declaration.individual.chargeInfo.p                       = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
 final-declaration.submit                                        = I agree - Submit Income Tax Return
 
 ## Final Declaration (Agent Content overrides)
 final-declaration.agent.heading                                 = Your client’s final tax overview
-final-declaration.agent.chargeInfo.p                            = The amount your client needs to pay might be different if there are other charges or payments on their account.
+final-declaration.agent.chargeInfo.p                            = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
 final-declaration.agent.inset.2                                 = check your client’s Income Tax Return.
 
 #Language Selector
