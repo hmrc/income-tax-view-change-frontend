@@ -126,7 +126,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   // Submission service
   // This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.
   lazy val submissionFrontendUrl: String = servicesConfig.getString("income-tax-submission-frontend.url")
-  lazy val submissionFrontendTaxOverviewUrl: String => String = taxYear =>
+  lazy val submissionFrontendTaxOverviewUrl: Int => String = taxYear =>
     servicesConfig.getString("income-tax-submission-frontend.host") + s"/income-through-software/return/$taxYear/view"
   lazy val submissionFrontendFinalDeclarationUrl: Int => String = taxYear =>
     servicesConfig.getString("income-tax-submission-frontend.host") + s"/income-through-software/return/$taxYear/declaration"
