@@ -467,16 +467,16 @@ class ChargeSummaryViewSpec extends ViewSpec {
         )
 
         val expectedPaymentAllocationRows = List(
-          "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 £1,500.00",
-          "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 £1,600.00",
-          "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 £2,400.00",
-          "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 £2,500.00",
-          "10 Dec 2019 Payment allocated to Income Tax for remaining balance £3,400.00",
-          "11 Dec 2019 Payment allocated to Class 4 National Insurance for remaining balance £3,500.00",
-          "12 Dec 2019 Payment allocated to Class 2 National Insurance for remaining balance £3,600.00",
-          "13 Dec 2019 Payment allocated to Capital Gains Tax for remaining balance £3,700.00",
-          "14 Dec 2019 Payment allocated to Student Loans for remaining balance £3,800.00",
-          "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance £3,900.00"
+          "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 2018 £1,500.00",
+          "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 2018 £1,600.00",
+          "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 2018 £2,400.00",
+          "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 2018 £2,500.00",
+          "10 Dec 2019 Payment allocated to Income Tax for remaining balance 2018 £3,400.00",
+          "11 Dec 2019 Payment allocated to Class 4 National Insurance for remaining balance 2018 £3,500.00",
+          "12 Dec 2019 Payment allocated to Class 2 National Insurance for remaining balance 2018 £3,600.00",
+          "13 Dec 2019 Payment allocated to Capital Gains Tax for remaining balance 2018 £3,700.00",
+          "14 Dec 2019 Payment allocated to Student Loans for remaining balance 2018 £3,800.00",
+          "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance 2018 £3,900.00"
         )
 
         "chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
