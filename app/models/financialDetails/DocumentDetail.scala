@@ -16,11 +16,10 @@
 
 package models.financialDetails
 
-import org.scalacheck.Prop.True
-
-import java.time.LocalDate
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
+
+import java.time.LocalDate
 
 case class DocumentDetail(taxYear: String,
 													transactionId: String,

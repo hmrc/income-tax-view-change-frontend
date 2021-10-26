@@ -40,6 +40,7 @@ object FinancialDetailsTestConstants {
         "taxYear" -> "2019",
         "transactionId" -> id1040000123,
         "documentDescription" -> "TRM New Charge",
+        "documentText" -> "documentText",
         "outstandingAmount" -> 10.33,
         "originalAmount" -> 10.33,
 				"documentDate" -> "2018-03-29",
@@ -57,6 +58,7 @@ object FinancialDetailsTestConstants {
         "taxYear" -> "2020",
         "transactionId" -> id1040000124,
         "documentDescription" -> "TRM New Charge",
+        "documentText" -> "documentText",
         "outstandingAmount" -> 10.34,
         "originalAmount" -> 10.34,
 				"documentDate" -> "2018-03-29",
@@ -315,6 +317,7 @@ object FinancialDetailsTestConstants {
 
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
+                          documentText: Option[String] = Some("documentText"),
                           outstandingAmount: Option[BigDecimal] = Some(1400.00),
                           originalAmount: Option[BigDecimal] = Some(1400.00),
 													paymentLotItem: Option[String] = Some("paymentLotItem"),
@@ -325,7 +328,7 @@ object FinancialDetailsTestConstants {
       taxYear = taxYear.toString,
       transactionId = id1040000123,
       documentDescription,
-      documentText = Some("documentText"),
+      documentText = documentText,
       outstandingAmount = outstandingAmount,
       originalAmount = originalAmount,
 			documentDate = LocalDate.of(2018, 3, 29),
@@ -377,7 +380,7 @@ object FinancialDetailsTestConstants {
                                      outstandingAmount: Option[BigDecimal] = Some(1400.00),
                                      originalAmount: Option[BigDecimal] = Some(1400.00),
                                      dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetailWithDueDate =
-    DocumentDetailWithDueDate(documentDetailModel(taxYear, documentDescription, outstandingAmount, originalAmount), dueDate)
+    DocumentDetailWithDueDate(documentDetailModel(taxYear =  taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount, originalAmount = originalAmount), dueDate)
 
 
   val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))

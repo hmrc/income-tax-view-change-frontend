@@ -178,6 +178,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											transactionId = "testTransactionId",
 											documentDescription = Some("ITSA- POA 1"),
+											documentText = Some("documentText"),
 											outstandingAmount = Some(500.00),
 											originalAmount = Some(1000.00),
 											documentDate = LocalDate.of(2018, 3, 29)
@@ -243,6 +244,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											transactionId = "testTransactionId",
 											documentDescription = Some("ITSA- POA 1"),
+											documentText = Some("documentText"),
 											outstandingAmount = Some(500.00),
 											originalAmount = Some(1000.00),
 											documentDate = LocalDate.of(2018, 3, 29)
@@ -311,6 +313,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											transactionId = "testTransactionId",
 											documentDescription = Some("ITSA- POA 1"),
+											documentText = Some("documentText"),
 											outstandingAmount = Some(0),
 											originalAmount = Some(1000.00),
 											documentDate = LocalDate.of(2018, 3, 29)
@@ -377,6 +380,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
 												transactionId = "testTransactionId",
 												documentDescription = Some("ITSA- POA 1"),
+												documentText = Some("documentText"),
 												outstandingAmount = Some(0),
 												originalAmount = Some(1000.00),
 												documentDate = LocalDate.of(2018, 3, 29)
@@ -444,6 +448,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
 												transactionId = "testTransactionId",
 												documentDescription = Some("ITSA- POA 1"),
+												documentText = Some("documentText"),
 												outstandingAmount = Some(500.00),
 												originalAmount = Some(1000.00),
 												documentDate = LocalDate.of(2018, 3, 29)
@@ -511,6 +516,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 												taxYear = getCurrentTaxYearEnd.getYear.toString,
 												transactionId = "testTransactionId",
 												documentDescription = Some("ITSA- POA 1"),
+												documentText = Some("documentText"),
 												outstandingAmount = Some(500.00),
 												originalAmount = Some(1000.00),
 												documentDate = LocalDate.of(2018, 3, 29)
@@ -579,6 +585,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											transactionId = "testTransactionId1",
+											documentText = Some("documentText"),
 											documentDescription = Some("ITSA- POA 1"),
 											outstandingAmount = Some(500.00),
 											originalAmount = Some(1000.00),
@@ -587,6 +594,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											transactionId = "testTransactionId2",
+											documentText = Some("documentText"),
 											documentDescription = Some("ITSA - POA 2"),
 											outstandingAmount = Some(500.00),
 											originalAmount = Some(1000.00),
@@ -661,6 +669,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											transactionId = "testTransactionId",
+											documentText = Some("documentText"),
 											documentDescription = Some("ITSA- POA 1"),
 											outstandingAmount = Some(500.00),
 											originalAmount = Some(1000.00),
@@ -669,6 +678,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										DocumentDetail(
 											taxYear = getCurrentTaxYearEnd.getYear.toString,
 											transactionId = "testTransactionId2",
+											documentText = Some("documentText"),
 											documentDescription = Some("ITSA - POA 2"),
 											outstandingAmount = Some(500.00),
 											originalAmount = Some(1000.00),

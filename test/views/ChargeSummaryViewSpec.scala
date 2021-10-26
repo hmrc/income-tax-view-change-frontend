@@ -76,6 +76,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def balancingChargeInterestHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
 
+    def class2NicHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Class 2 National Insurance"
+
     val dueDate = "Due date"
     val interestPeriod = "Interest period"
     val fullPaymentAmount = "Full payment amount"
@@ -96,6 +98,9 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val balancingChargeAmended = "Remaining balance reduced due to amended return"
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
+
+    def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
+    val class2NicChargeCreated = "Class 2 National Insurance created"
 
     val balancingChargeRequest = "Remaining balance reduced by taxpayer request"
     val dunningLockBannerHeader = "Important"
@@ -185,6 +190,14 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     "have the correct heading for a POA 2 late interest charge" in new Setup(documentDetailModel(documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe Messages.poaInterestHeading(2018, 2)
+    }
+
+    "have the correct heading for a Class 2 National Insurance charge" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))) {
+      document.select("h1").text() shouldBe Messages.class2NicHeading(2018)
+    }
+
+    "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))) {
+      document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
     }
 
     "have the correct heading for a new balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
@@ -328,14 +341,18 @@ class ChargeSummaryViewSpec extends ViewSpec {
       document.select("div#payment-link-2018").text() shouldBe "Pay now"
     }
 
+    "have a paragraph explaining how many days a payment can take to process" in new Setup(documentDetailModel()) {
+      document.select("#main-content p:nth-child(5)").text() shouldBe "Payments can take up to 7 days to process."
+    }
+
     "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
       document.select("#main-content p a").text() shouldBe "What you owe page"
-      document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+      document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
     "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
       document.select("#main-content p a").text() shouldBe "What you owe page"
-      document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+      document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
     "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
@@ -379,6 +396,11 @@ class ChargeSummaryViewSpec extends ViewSpec {
     "display only the charge creation item when no history found for a new balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM New Charge"))) {
       document.select("tbody tr").size() shouldBe 1
       document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.balancingChargeCreated
+    }
+
+    "display only the charge creation item for a Class 2 National Insurance charge" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))) {
+      document.select("tbody tr").size() shouldBe 1
+      document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.class2NicChargeCreated
     }
 
     "display only the charge creation item for a payment on account 1 of 2 late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(0)), latePaymentInterestCharge = true) {

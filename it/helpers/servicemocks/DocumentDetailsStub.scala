@@ -11,6 +11,7 @@ object DocumentDetailsStub {
     taxYear = taxYear,
     transactionId = "1040000124",
     documentDescription = Some(documentDescription),
+    documentText = Some("documentText"),
     originalAmount = Some(10.34),
     outstandingAmount = Some(1.2),
     documentDate = LocalDate.of(2018, 3, 29)
@@ -26,6 +27,7 @@ object DocumentDetailsStub {
     taxYear = taxYear,
     transactionId = "1040000124",
     documentDescription = Some(documentDescription),
+    documentText = Some("documentText"),
     originalAmount = Some(123.45),
     outstandingAmount = Some(1.2),
     documentDate = LocalDate.of(2018, 3, 29),

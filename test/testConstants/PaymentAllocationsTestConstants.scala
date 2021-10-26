@@ -247,6 +247,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -302,6 +303,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -358,6 +360,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -441,6 +444,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -451,6 +455,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription2",
+			|            "documentText": "documentText2",
 			|            "originalAmount": -100.0,
 			|            "outstandingAmount": -50.0,
 			|            "taxYear": "2019",
