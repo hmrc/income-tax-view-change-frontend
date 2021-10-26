@@ -65,6 +65,8 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)
 
+  def isAllInterestPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.interestIsPaid)
+
   def filterPayments(): FinancialDetailsModel = {
     val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
     FinancialDetailsModel(

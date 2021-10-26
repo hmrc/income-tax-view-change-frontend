@@ -34,7 +34,8 @@ object FeatureSwitch {
 		ChargeHistory,
     TxmEventsApproved,
     PaymentAllocation,
-    TxmEventsR6
+    TxmEventsR6,
+    CodingOut
   )
 
   def apply(str: String): FeatureSwitch =
@@ -87,3 +88,7 @@ case object TxmEventsR6 extends FeatureSwitch {
   override val displayText: String = "Txm Events R6"
 }
 
+case object CodingOut extends FeatureSwitch {
+  override val name: String = s"$prefix.enable-coding-out"
+  override val displayText: String = "Coding Out"
+}
