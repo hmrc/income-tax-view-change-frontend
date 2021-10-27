@@ -61,27 +61,27 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   )
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
-      documentDescription = Some("ITSA- POA 1"), documentDate = date(29, 3, 2018)), Some(LocalDate.now), dunningLock = true) ,
+      documentDescription = Some("ITSA- POA 1"), documentText = Some("documentText"), documentDate = date(29, 3, 2018)), Some(LocalDate.now), dunningLock = true) ,
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00),
-      documentDescription = Some("ITSA - POA 2"), documentDate = date(29, 3, 2018)), Some(date(7, 4, 2020))),
+      documentDescription = Some("ITSA - POA 2"), documentText = Some("documentText"), documentDate = date(29, 3, 2018)), Some(date(7, 4, 2020))),
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00),
-      documentDescription = Some("TRM New Charge"), documentDate = date(29, 3, 2018)), Some(date(8, 4, 2020)), dunningLock = true))
+      documentDescription = Some("TRM New Charge"), documentText = Some("documentText"), documentDate = date(29, 3, 2018)), Some(date(8, 4, 2020)), dunningLock = true))
 
   def date(day: Int, month: Int, year: Int): LocalDate = LocalDate.of(year, month, day)
 
   val testCharges: List[DocumentDetailWithDueDate] = List(
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
-      documentDescription = Some("ITSA- POA 1"), documentDate = date(29, 3, 2018)), Some(LocalDate.now)),
+      documentDescription = Some("ITSA- POA 1"), documentText = Some("documentText"), documentDate = date(29, 3, 2018)), Some(LocalDate.now)),
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00),
-      documentDescription = Some("ITSA - POA 2"), documentDate = date(29, 3, 2018)), Some(date(7, 4, 2020))),
+      documentDescription = Some("ITSA - POA 2"), documentText = Some("documentText"), documentDate = date(29, 3, 2018)), Some(date(7, 4, 2020))),
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00),
-      documentDescription = Some("TRM New Charge"), documentDate = date(29, 3, 2018)), Some(date(8, 4, 2020))),
+      documentDescription = Some("TRM New Charge"), documentText = Some("documentText"), documentDate = date(29, 3, 2018)), Some(date(8, 4, 2020))),
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00),
-      documentDescription = Some("ITSA- POA 1"), documentDate = date(29, 3, 2018), latePaymentInterestAmount = Some(200.0)), Some(LocalDate.now.plusMonths(1)), true),
+      documentDescription = Some("ITSA- POA 1"), documentText = Some("documentText"), documentDate = date(29, 3, 2018), latePaymentInterestAmount = Some(200.0)), Some(LocalDate.now.plusMonths(1)), true),
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00),
-      documentDescription = Some("ITSA - POA 2"), documentDate = date(29, 3, 2018), latePaymentInterestAmount = Some(80.0)), Some(LocalDate.now.plusMonths(2)), true),
+      documentDescription = Some("ITSA - POA 2"), documentText = Some("documentText"), documentDate = date(29, 3, 2018), latePaymentInterestAmount = Some(80.0)), Some(LocalDate.now.plusMonths(2)), true),
     DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00),
-      documentDescription = Some("TRM New Charge"), documentDate = date(29, 3, 2018), interestOutstandingAmount = Some(0.0)), Some(LocalDate.now.plusMonths(3)), true)
+      documentDescription = Some("TRM New Charge"), documentText = Some("documentText"), documentDate = date(29, 3, 2018), interestOutstandingAmount = Some(0.0)), Some(LocalDate.now.plusMonths(3)), true)
   )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)

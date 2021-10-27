@@ -81,13 +81,15 @@
                         @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                         }
-                    <div>
-                    @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                        <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
-                    } else {
-                        <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
-                    }
-                    </div>
+
+                        <div>
+                            @if(documentDetailWithDueDate.isLatePaymentInterest) {
+                                <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                            } else {
+                                <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                            }
+                        </div>
+
                         @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     </td>
                     @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {

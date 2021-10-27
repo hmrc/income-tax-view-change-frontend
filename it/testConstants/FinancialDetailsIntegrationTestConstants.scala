@@ -33,6 +33,7 @@ object FinancialDetailsIntegrationTestConstants {
       taxYear = taxYear.toString,
       transactionId = "1040000123",
       documentDescription,
+      documentText = Some("documentText"),
       outstandingAmount = outstandingAmount,
       originalAmount = originalAmount,
       documentDate = LocalDate.of(2018, 3, 29),
@@ -156,9 +157,9 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
@@ -195,9 +196,9 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
           Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(

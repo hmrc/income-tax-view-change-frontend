@@ -88,6 +88,7 @@ class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
     val dd1 = DocumentDetail(taxYear = "2017",
       transactionId = "transid2",
       documentDescription = Some("ITSA- POA 1"),
+      documentText = Some("documentText"),
       outstandingAmount = None,
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
@@ -130,6 +131,7 @@ class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
     val dd1 = DocumentDetail(taxYear = "2017",
       transactionId = "transid1",
       documentDescription = Some("ITSA- POA 1"),
+      documentText = Some("documentText"),
       outstandingAmount = None,
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
@@ -137,6 +139,7 @@ class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
     val dd2 = DocumentDetail(taxYear = "2018",
       transactionId = "transid2",
       documentDescription = Some("ITSA - POA 2"),
+      documentText = Some("documentText2"),
       outstandingAmount = None,
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
