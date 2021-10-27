@@ -17,6 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, PaymentsWithChargeType}
 import play.api.Logger
@@ -107,7 +108,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     paymentAllocation.payments.map( payment => Json.obj()++
       ("date", payment.date)++
       ("description", Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary)))++
-      ("amount", payment.amount)
+      ("amount", payment.amount.map(_.abs))
   )
 
   private val paymentBreakdowns: Seq[JsObject] = paymentBreakdown.map(paymentBreakdownsJson)
