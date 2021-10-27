@@ -63,8 +63,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       mainType = Some(mainType) , chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2018-03-30", 1500.0),
-    paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2018-03-31", 1600.0)
+    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2018-03-30", -1500.0),
+    paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2018-03-31", -1600.0)
   )
 
   val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6).toString, "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return")

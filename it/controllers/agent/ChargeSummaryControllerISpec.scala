@@ -52,8 +52,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       mainType = Some(mainType) , chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2019-08-13", 10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", 9000.0, lotItem = "000001")
+    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2019-08-13", -10000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", -9000.0, lotItem = "000001")
   )
 
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29).toString,
