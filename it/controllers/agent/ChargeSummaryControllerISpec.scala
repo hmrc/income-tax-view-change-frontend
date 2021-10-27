@@ -372,6 +372,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = currentTaxYearEnd.getYear.toString,
             transactionId = "testId",
             documentDescription = Some("ITSA- POA 1"),
+            documentText = Some("documentText"),
             outstandingAmount = Some(1.2),
             originalAmount = Some(123.45),
             documentDate = LocalDate.of(2018, 3, 29),

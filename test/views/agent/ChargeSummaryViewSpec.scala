@@ -442,7 +442,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
             mainType = Some(mainType), chargeType = Some(chargeType))
 
 				def payments() = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),
-          List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(10000.0), Some(1000.0), LocalDate.now(), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))), List())
+          List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(10000.0), Some(1000.0), LocalDate.now(), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))), List())
 
         val paymentAllocationsPOA1 = List(
           paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0),

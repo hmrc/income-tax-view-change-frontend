@@ -35,7 +35,7 @@
 )
 @(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backUrl: String,
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
-    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
@@ -45,7 +45,7 @@
 
 @hasAccruedInterest = @{ paymentBreakdown.exists(_.hasAccruedInterest) }
 
-@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}"), backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl)) {
 
     @if(hasDunningLocks) {
         <br>
@@ -65,8 +65,14 @@
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetail.taxYear).toLongDate)</span>
-        @messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey}" else s"chargeSummary.${documentDetail.getChargeTypeKey}")
+        @messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
     </h1>
+
+    @if(documentDetail.isClass2Nic){
+        @p(){
+            @messages("chargeSummary.nic2TaxYear", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)
+        }
+    }
 
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
@@ -144,6 +150,9 @@
         <div id="payment-link-@{documentDetail.taxYear}">
             <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
         </div>
+        @p(){
+            @messages("chargeSummary.payment-days-note")
+        }
     }
 
     @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
@@ -168,7 +177,7 @@
                 @if(!latePaymentInterestCharge) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")</td>
                         <td class="govuk-table__cell numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
                     </tr>
                 }
@@ -176,7 +185,7 @@
                 @if(latePaymentInterestCharge) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey}")</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
                         <td class="govuk-table__cell numeric">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
                     </tr>
                 }
@@ -184,7 +193,7 @@
                 @for(charge <- chargeHistory) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.reversalDate.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey}")</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey()}")</td>
                         <td class="govuk-table__cell numeric">@{charge.totalAmount.toCurrency}</td>
                     </tr>
                 }
