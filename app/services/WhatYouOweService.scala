@@ -75,13 +75,13 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def whatYourOwePageDataExists(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
+  private def whatYouOwePageDataExists(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
     documentDetailWithDueDate.documentDetail.documentDescription.isDefined && documentDetailWithDueDate.dueDate.isDefined
   }
 
   private def getDueWithinThirtyDaysList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
     financialDetailsList.flatMap(financialDetails =>
-      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYourOwePageDataExists(documentDetailWithDueDate)
+      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
         && validChargeTypeCondition(documentDetailWithDueDate.documentDetail.documentDescription.get)
         && documentDetailWithDueDate.documentDetail.remainingToPay > 0
         && LocalDate.now().isAfter(documentDetailWithDueDate.dueDate.get.minusDays(31))
@@ -90,7 +90,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   private def getFuturePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
     financialDetailsList.flatMap(financialDetails =>
-      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYourOwePageDataExists(documentDetailWithDueDate)
+      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
 				&& validChargeTypeCondition(documentDetailWithDueDate.documentDetail.documentDescription.get)
         && documentDetailWithDueDate.documentDetail.remainingToPay > 0
         && LocalDate.now().isBefore(documentDetailWithDueDate.dueDate.get.minusDays(30)))).sortBy(_.dueDate.get)
@@ -98,7 +98,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   private def getOverduePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
     financialDetailsList.flatMap{financialDetails =>
-      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYourOwePageDataExists(documentDetailWithDueDate)
+      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
 				&& validChargeTypeCondition(documentDetailWithDueDate.documentDetail.documentDescription.get)
         && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay
         && documentDetailWithDueDate.dueDate.get.isBefore(LocalDate.now()))}.sortBy(_.dueDate.get)

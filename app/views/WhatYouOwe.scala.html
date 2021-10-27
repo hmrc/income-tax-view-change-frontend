@@ -33,7 +33,8 @@
     link: link
 )
 
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String], dunningLock: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String], dunningLock: Boolean,
+    codingOutEnabled: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -127,7 +128,10 @@
 @tableRow2(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean, isChargeTypeHyperlinked: Boolean = true, latePaymentCharge: Boolean) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(documentDetailWithDueDate.documentDetail.interestEndDate.get.toLongDateShort) else (documentDetailWithDueDate.dueDate.get.toLongDateShort)</td>
+            @if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(
+                documentDetailWithDueDate.documentDetail.interestEndDate.get.toLongDateShort
+            ) else (documentDetailWithDueDate.dueDate.get.toLongDateShort)
+        </td>
         <td class="govuk-table__cell">
             @if(isOverduePayment){<span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
             <br>
@@ -272,23 +276,23 @@
                         @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
                             @tableRow2(s"over-due-type-$index", charge, isOverduePayment = true, latePaymentCharge = true)
                             @if(charge.documentDetail.interestOutstandingAmount.isDefined && charge.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0) {
-                            @if(charge.documentDetail.hasAccruingInterest) {
-                                <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
-                                    <td class="govuk-table__cell"></td>
-                                    <td class="govuk-table__cell">
-                                        @messages("whatYouOwe.over-due.interest.line1")
-                                        <div>
-                                        @messages(s"whatYouOwe.over-due.interest.line2",
-                                            charge.documentDetail.interestFromDate.get.toLongDateShort,
-                                            charge.documentDetail.interestEndDate.get.toLongDateShort,
-                                            charge.documentDetail.interestRate.get
-                                        )
-                                        </div>
-                                    </td>
-                                    <td class="govuk-table__cell numeric">@{
-                                        charge.documentDetail.interestOutstandingAmount.get.toCurrency
-                                    }</td>
-                                </tr>
+                                @if(charge.documentDetail.hasAccruingInterest) {
+                                    <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
+                                        <td class="govuk-table__cell"></td>
+                                        <td class="govuk-table__cell">
+                                            @messages("whatYouOwe.over-due.interest.line1")
+                                            <div>
+                                            @messages(s"whatYouOwe.over-due.interest.line2",
+                                                charge.documentDetail.interestFromDate.get.toLongDateShort,
+                                                charge.documentDetail.interestEndDate.get.toLongDateShort,
+                                                charge.documentDetail.interestRate.get
+                                            )
+                                            </div>
+                                        </td>
+                                        <td class="govuk-table__cell numeric">@{
+                                            charge.documentDetail.interestOutstandingAmount.get.toCurrency
+                                        }</td>
+                                    </tr>
                                 }
                             }
                         }
@@ -341,6 +345,24 @@
                     @paymentTypesDropdown()
                 }
             }
+            @if(codingOutEnabled) {
+                @if(chargesList.overduePaymentList.exists(_.documentDetail.amountCodedOut.isDefined)) {
+                    @h2(msg = messages("whatYouOwe.codingOutHeading"), classes = "govuk-heading-l",
+                        optId=Some("coding-out-header"))
+                }
+                @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
+                    @if(charge.documentDetail.amountCodedOut.isDefined) {
+                        <div id="coding-out-wrapper" class="govuk-inset-text">
+                           <p id="coding-out-p">
+                               @messages("whatYouOwe.codingOut-1", "£" + charge.documentDetail.amountCodedOut.get)
+                               <b>@messages("whatYouOwe.codingOut-2", (charge.documentDetail.taxYear.toInt - 1).toString(), charge.documentDetail.taxYear)</b>
+                               @messages("whatYouOwe.codingOut-3")
+                           </p>
+                        </div>
+                    }
+                }
+            }
+
         </div>
     }
 }
