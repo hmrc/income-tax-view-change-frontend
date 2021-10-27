@@ -33,11 +33,6 @@
         p: p
 )
 
-
-@*
-test 2
-*@
-
 @(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate],
         obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_],
         messages: Messages, user: auth.MtdItUser[_])
@@ -53,12 +48,12 @@ test 2
 }
 
 @taxCalculationNotPresent = {
-@h2(msg = messages("tax-year-overview.tax-calculation.no-calc"), classes = "govuk-heading-l")
-@p(id=Some("no-calc-data-note"))(Html(messages("tax-year-overview.tax-calculation.no-calc.note")))
+    @h2(msg = messages("tax-year-overview.tax-calculation.no-calc"), classes = "govuk-heading-l")
+    @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-overview.tax-calculation.no-calc.note")))
 }
 
 @taxCalculationOverview(overview: CalcOverview) = {
-@breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
+    @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 }
 
 @paymentsTableHead(headId: String) = {
@@ -73,41 +68,41 @@ test 2
 }
 
 @paymentsContent = {
-@h2(msg = messages("tax-year-overview.payments"), classes = "govuk-heading-l")
-@if(charges.isEmpty){
-    @p()(content = Html(messages("tax-year-overview.payments.no-payments")))
-} else {
-    <table class="govuk-table" id="payments-table">
-        <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
-        @paymentsTableHead("payments-table-head")
-        @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
-            <tr>
-                <td>
-                    @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
-                        <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
+    @h2(msg = messages("tax-year-overview.payments"), classes = "govuk-heading-l")
+    @if(charges.isEmpty){
+        @p()(content = Html(messages("tax-year-overview.payments.no-payments")))
+    } else {
+        <table class="govuk-table" id="payments-table">
+            <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
+            @paymentsTableHead("payments-table-head")
+            @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
+                <tr>
+                    <td>
+                        @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
+                            <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
+                        }
+                    <div>
+                    @if(documentDetailWithDueDate.isLatePaymentInterest) {
+                        <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
+                    } else {
+                        <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
                     }
-                <div>
-                @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                    <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
-                } else {
-                    <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
-                }
-                </div>
-                    @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
-                </td>
-                @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                    <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
-                    <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
-                    <td>@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
-                } else {
-                    <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
-                    <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
-                    <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
-                }
-            </tr>
-        }
-    </table>
-}
+                    </div>
+                        @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
+                    </td>
+                    @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
+                        <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
+                        <td>@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
+                    } else {
+                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
+                        <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
+                        <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                    }
+                </tr>
+            }
+        </table>
+    }
 }
 
 @obligationsTypeHelper(obligationType: String) = @{
@@ -133,36 +128,36 @@ test 2
 }
 
 @updatesContent = {
-@h2(msg = messages("tax-year-overview.updates"), classes = "govuk-heading-l")
+    @h2(msg = messages("tax-year-overview.updates"), classes = "govuk-heading-l")
+    @groupedObligations.map{case (due, dueObligations) =>
 
-@groupedObligations.map{case (due, dueObligations) =>
-<div class="govuk-tax-years-updates-table">
-    <h3 class="heading-medium">
-        <span class="govuk-tax-years-updates-table__section-title" id="table-default-content-@due">
-        @messages("updateTab.due", due.toLongDate)
-        </span>
-    </h3>
-    <table class="govuk-table-updatesTab">
-        <caption>@messages("updateTab.dateToDate", dueObligations.head.obligation.start.toLongDate, dueObligations.head.obligation.end.toLongDate)</caption>
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header">@messages("updateTab.updateType")</th>
-                <th class="govuk-table__header">@messages("updateTab.incomeSource")</th>
-                <th class="govuk-table__header">@messages("updateTab.dateSubmitted")</th>
-            </tr>
-        </thead>
-        <tbody>
-        @dueObligations.map{nextUpdateWithIncomeType =>
-            <tr>
-                <td>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
-                <td>@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
-                <td>@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
-            </tr>
-        }
-</tbody>
-</table>
-</div>
-}
+        <div class="govuk-tax-years-updates-table">
+            <h3 class="heading-medium">
+                <span class="govuk-tax-years-updates-table__section-title" id="table-default-content-@due">
+                @messages("updateTab.due", due.toLongDate)
+                </span>
+            </h3>
+            <table class="govuk-table-updatesTab">
+                <caption>@messages("updateTab.dateToDate", dueObligations.head.obligation.start.toLongDate, dueObligations.head.obligation.end.toLongDate)</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header">@messages("updateTab.updateType")</th>
+                        <th class="govuk-table__header">@messages("updateTab.incomeSource")</th>
+                        <th class="govuk-table__header">@messages("updateTab.dateSubmitted")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @dueObligations.map{nextUpdateWithIncomeType =>
+                        <tr>
+                            <td>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
+                            <td>@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
+                            <td>@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
+                        </tr>
+                    }
+    </tbody>
+    </table>
+      </div>
+      }
 }
 
 @mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl)) {
