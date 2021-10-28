@@ -468,7 +468,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
-            whatYouOwe.latePoa1Text + " " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear) + " " + paymentUnderReview
+            whatYouOwe.latePoa1Text + s" $currentYear " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)  + " " + paymentUnderReview
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
           pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -488,7 +488,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
-            whatYouOwe.latePoa1Text + " " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
+            whatYouOwe.latePoa1Text + s" $currentYear " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
           pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
