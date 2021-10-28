@@ -40,6 +40,8 @@ case class DocumentDetail(taxYear: String,
 													amountCodedOut: Option[BigDecimal] = None
 												 ) {
 
+	lazy val hasLpiWithDunningBlock: Boolean =
+		lpiWithDunningBlock.isDefined && lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0
 
   lazy val hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
