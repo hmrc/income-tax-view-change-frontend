@@ -104,60 +104,66 @@
     </thead>
 }
 
-@tableRow(rowId: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true) = {
-    <tr class="govuk-table__row" id="@rowId">
-        <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
-        <td class="govuk-table__cell">
-            @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
-            @if(isChargeTypeHyperlinked) {
-                <a id="@rowId-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
-                    documentDetailWithDueDate.documentDetail.transactionId)">
-                }
-            @messages(s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
-                    @if(isChargeTypeHyperlinked){
-                    <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
-                </a>
-            }
-            <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
-            @if(documentDetailWithDueDate.dunningLock) {<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
-        </td>
-        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency}</td>
-    </tr>
+@paymentTypeEntry(documentDetailWithDueDate: DocumentDetailWithDueDate, rowId: String, isLatePaymentInterest: Boolean = false,
+    showTaxYear: Boolean = true, linkSuffix: String) = {
+    @{
+        val chargeTypeKey = documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)
+        val lpi = if (isLatePaymentInterest) "lpi." else ""
+        val linkText = messages(s"whatYouOwe.${lpi}${chargeTypeKey}")
+        val taxYear = documentDetailWithDueDate.documentDetail.taxYear
+        val linkHref = controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
+            documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentInterest)
+        paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
+            linkSuffix: String)
+    }
 }
 
-@tableRow2(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean, isChargeTypeHyperlinked: Boolean = true, latePaymentCharge: Boolean) = {
+@paymentTypeEntryHTML(showTaxYear: Boolean = true, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String) = {
+    <a id="@rowId-@linkSuffix" href="@linkHref">
+        @linkText
+        <span class="govuk-visually-hidden">@taxYear</span>
+    </a>
+    @if(showTaxYear) {
+        <div>
+            @messages("whatYouOwe.payment-type.taxYear", (taxYear.toInt - 1).toString, taxYear)
+        </div>
+    }
+}
+
+@tableRow(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(
+            @if(isOverduePayment && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(
                 documentDetailWithDueDate.documentDetail.interestEndDate.get.toLongDateShort
             ) else (documentDetailWithDueDate.dueDate.get.toLongDateShort)
         </td>
         <td class="govuk-table__cell">
-            @if(isOverduePayment){<span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
-            <br>
-            @if(isChargeTypeHyperlinked && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                <a id="@rowId2-late-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
-                    documentDetailWithDueDate.documentDetail.transactionId, latePaymentCharge: Boolean)">
+            @if(isOverduePayment){
+                <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>
+                <br>
+            }
+            @if(!isOverduePayment) {
+                @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = true,
+                    linkSuffix = "link")
+            } else {
+                @if(documentDetailWithDueDate.documentDetail.documentText.isDefined &&
+                    documentDetailWithDueDate.documentDetail.documentText.get == "Class 2 National Insurance") {
+                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = false,
+                        linkSuffix = "late-link")
+                } else if (documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
+                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = true, showTaxYear = true,
+                        linkSuffix = "late-link")
                 } else {
-                <a  id="@rowId2-late-link2" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
-                    documentDetailWithDueDate.documentDetail.transactionId)">
+                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = true,
+                        linkSuffix = "late-link2")
                 }
-            @messages(
-                if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)
-                    s"whatYouOwe.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
-                else
-                    s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
-            )
-            @if(isChargeTypeHyperlinked){
-                <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
-            </a>
             }
 
-            <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
             @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
-            if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
+            if(isOverduePayment && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)
+                documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
             else documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency
         }</td>
     </tr>
@@ -274,26 +280,24 @@
                         @tableHead("over-due-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
-                            @tableRow2(s"over-due-type-$index", charge, isOverduePayment = true, latePaymentCharge = true)
-                            @if(charge.documentDetail.interestOutstandingAmount.isDefined && charge.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0) {
-                                @if(charge.documentDetail.hasAccruingInterest) {
-                                    <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
-                                        <td class="govuk-table__cell"></td>
-                                        <td class="govuk-table__cell">
-                                            @messages("whatYouOwe.over-due.interest.line1")
-                                            <div>
-                                            @messages(s"whatYouOwe.over-due.interest.line2",
-                                                charge.documentDetail.interestFromDate.get.toLongDateShort,
-                                                charge.documentDetail.interestEndDate.get.toLongDateShort,
-                                                charge.documentDetail.interestRate.get
-                                            )
-                                            </div>
-                                        </td>
-                                        <td class="govuk-table__cell numeric">@{
-                                            charge.documentDetail.interestOutstandingAmount.get.toCurrency
-                                        }</td>
-                                    </tr>
-                                }
+                            @tableRow(s"over-due-type-$index", charge, isOverduePayment = true)
+                            @if(charge.documentDetail.hasAccruingInterest) {
+                                <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
+                                    <td class="govuk-table__cell"></td>
+                                    <td class="govuk-table__cell">
+                                        @messages("whatYouOwe.over-due.interest.line1")
+                                        <div>
+                                        @messages(s"whatYouOwe.over-due.interest.line2",
+                                            charge.documentDetail.interestFromDate.get.toLongDateShort,
+                                            charge.documentDetail.interestEndDate.get.toLongDateShort,
+                                            charge.documentDetail.interestRate.get
+                                        )
+                                        </div>
+                                    </td>
+                                    <td class="govuk-table__cell numeric">@{
+                                        charge.documentDetail.interestOutstandingAmount.get.toCurrency
+                                    }</td>
+                                </tr>
                             }
                         }
                         </tbody>
@@ -315,7 +319,7 @@
                         @tableHead("due-in-thirty-days-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
-                            @tableRow(s"due-in-thirty-days-type-$index", charge)
+                            @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false)
                         }
                         </tbody>
                     </table>
@@ -336,7 +340,7 @@
                         @tableHead("future-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.futurePayments.zipWithIndex) {
-                            @tableRow(s"future-payments-type-$index", charge)
+                            @tableRow(s"future-payments-type-$index", charge, isOverduePayment = false)
                         }
                         </tbody>
                     </table>
@@ -350,16 +354,14 @@
                     @h2(msg = messages("whatYouOwe.codingOutHeading"), classes = "govuk-heading-l",
                         optId=Some("coding-out-header"))
                 }
-                @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
-                    @if(charge.documentDetail.amountCodedOut.isDefined) {
-                        <div id="coding-out-wrapper" class="govuk-inset-text">
-                           <p id="coding-out-p">
-                               @messages("whatYouOwe.codingOut-1", "£" + charge.documentDetail.amountCodedOut.get)
-                               <b>@messages("whatYouOwe.codingOut-2", (charge.documentDetail.taxYear.toInt - 1).toString(), charge.documentDetail.taxYear)</b>
-                               @messages("whatYouOwe.codingOut-3")
-                           </p>
-                        </div>
-                    }
+                @for((charge, index) <- chargesList.sortedOverduePaymentLists.filter(_.documentDetail.amountCodedOut.isDefined).zipWithIndex) {
+                    <div id=@{s"coding-out-wrapper-$index"} class="govuk-inset-text">
+                       <p id=@{s"coding-out-notice-$index"} class="govuk-body coding-out-notice">
+                           @messages("whatYouOwe.codingOut-1", "£" + charge.documentDetail.amountCodedOut.get)
+                           <b>@messages("whatYouOwe.codingOut-2", (charge.documentDetail.taxYear.toInt - 1).toString(), charge.documentDetail.taxYear)</b>
+                           @messages("whatYouOwe.codingOut-3")
+                       </p>
+                    </div>
                 }
             }
 
