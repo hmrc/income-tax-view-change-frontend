@@ -22,6 +22,7 @@
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.partials.taxOverviewBreakdownPartial
+@import models.financialDetails._
 
 @this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
 
@@ -78,6 +79,7 @@
                             }
                         </div>
                         @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
+                        @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     </td>
                     @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
                         <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
