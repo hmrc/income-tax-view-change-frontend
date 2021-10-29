@@ -66,6 +66,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true),
     fullDocumentDetailWithDueDateModel)
 
+
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
@@ -266,6 +267,11 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       layoutContent.selectHead("#payments").doesNotHave("table")
     }
 
+    "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
+      val paymentType: Element = content.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
+      paymentType.text shouldBe taxYearOverviewMessages.paymentUnderReview
+    }
+
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
       val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiPaymentOnAccount1
@@ -327,6 +333,11 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       layoutContent.selectHead("#payments-table tbody tr:nth-child(1) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
       layoutContent.doesNotHave("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)")
       layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+/*
+      content.selectHead("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+      content.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+      content.selectHead("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+*/
     }
 
     "display updates by due-date" in new Setup(estimateView()) {
