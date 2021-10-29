@@ -173,6 +173,10 @@ case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
 
   val totalAllowancesDeductionsReliefs: Option[BigDecimal] = (totalAllowancesAndDeductions ++ totalReliefs).reduceOption(_ + _)
 
+  val personalAllowanceDisplayValue: Option[BigDecimal] =
+    if(marriageAllowanceTransfer.isDefined) {
+      personalAllowanceBeforeTransferOut.fold(reducedPersonalAllowance.fold(personalAllowance)(Some(_)))(Some(_))
+    } else { personalAllowance }
 }
 
 object AllowancesAndDeductions {

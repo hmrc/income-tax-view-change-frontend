@@ -22,6 +22,7 @@ import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import testConstants.CalcBreakdownTestConstants.allowancesAndDeductions
 import testUtils.ViewSpec
 import views.html.DeductionBreakdown
 
@@ -32,6 +33,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
 
   def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
+
 
   "The deduction breakdown view" when {
 
@@ -141,6 +143,50 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
         }
 
+      }
+    }
+
+    "presenting personal allowances" should {
+      val taxYear2018 = 2018
+
+      class DeductionBreakdownSetupVariedAllowances(personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
+                                                    reducedPersonalAllowance: Option[BigDecimal] = None,
+                                                    personalAllowance: Option[BigDecimal] = Some(11500.00)) extends Setup(
+        deductionBreakdownView(
+          CalcDisplayModel("", 1,
+            CalcBreakdownTestConstants.calculationAllDeductionSources.copy(
+              allowancesAndDeductions = allowancesAndDeductions.copy(
+                personalAllowance = personalAllowance,
+                reducedPersonalAllowance = reducedPersonalAllowance,
+                personalAllowanceBeforeTransferOut = personalAllowanceBeforeTransferOut
+              )
+            ),
+            Estimate
+          ),
+          taxYear2018, "testBackURL")
+      )
+
+      "only show one of the following: personalAllowanceBeforeTransferOut reducedPersonalAllowance personalAllowance" when {
+
+        "all fields are present" in new DeductionBreakdownSetupVariedAllowances(Some(1200.00), Some(600.00)) {
+          val row: Element = layoutContent.select("tr").get(1)
+          row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
+          row.select("td").last().text() shouldBe "£1,200.00"
+        }
+
+        "all fields except personalAllowanceBeforeTransferOut" in
+          new DeductionBreakdownSetupVariedAllowances(reducedPersonalAllowance = Some(600.00)){
+            val row: Element = layoutContent.select("tr").get(1)
+            row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
+            row.select("td").last().text() shouldBe "£600.00"
+
+          }
+
+        "only personal Allowance is present" in new DeductionBreakdownSetupVariedAllowances(){
+          val row: Element = layoutContent.select("tr").get(1)
+          row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
+          row.select("td").last().text() shouldBe "£11,500.00"
+        }
       }
     }
   }
