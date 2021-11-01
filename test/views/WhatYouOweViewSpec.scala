@@ -216,7 +216,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "table header and data for future payments" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days(noDunningLocks)) {
-        val charges2 = whatYouOweDataWithDataDueInMoreThan30Days(noDunningLocks)
         pageDocument.getElementById("future-payments-heading").text shouldBe whatYouOwe.futurePayments
         val futurePaymentsHeader: Element = pageDocument.select("tr").get(2)
         futurePaymentsHeader.select("th").first().text() shouldBe whatYouOwe.dueDate

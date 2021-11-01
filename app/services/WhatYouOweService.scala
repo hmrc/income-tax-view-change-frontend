@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
+import config.featureswitch.{CodingOut, FeatureSwitching}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,11 +26,12 @@ import models.financialDetails.DocumentDetail
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import config.FrontendAppConfig
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
-                                 (implicit ec: ExecutionContext) {
+                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -48,21 +50,20 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00))
-        val codedOutDocumentDetail: Option[DocumentDetail] = financialDetailsModelList.flatMap(fdm =>
-          fdm.documentDetails.filter(_.isCodingOut)
-        ).headOption
+        val codedOutDocumentDetail: Option[DocumentDetail] = if (isEnabled(CodingOut))
+            financialDetailsModelList.flatMap(fdm =>
+            fdm.documentDetails.filter(_.isCodingOut)
+          ).headOption else None
+
+        val whatYouOweChargesList = WhatYouOweChargesList(balanceDetails = balanceDetails,
+          overduePaymentList = getOverduePaymentsList(financialDetailsModelList).filter(!_.documentDetail.isCodingOut),
+          dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList).filter(!_.documentDetail.isCodingOut),
+          futurePayments = getFuturePaymentsList(financialDetailsModelList).filter(!_.documentDetail.isCodingOut),
+          codedOutDocumentDetail = codedOutDocumentDetail)
 
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {
-          case Some(outstandingChargesModel) => WhatYouOweChargesList(
-            balanceDetails = balanceDetails,
-            overduePaymentList = getOverduePaymentsList(financialDetailsModelList),
-            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList), futurePayments = getFuturePaymentsList(financialDetailsModelList),
-            outstandingChargesModel = Some(outstandingChargesModel),
-            codedOutDocumentDetail = codedOutDocumentDetail)
-          case _ => WhatYouOweChargesList(balanceDetails = balanceDetails,
-            overduePaymentList = getOverduePaymentsList(financialDetailsModelList),
-            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList), futurePayments = getFuturePaymentsList(financialDetailsModelList),
-            codedOutDocumentDetail = codedOutDocumentDetail)
+          case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
+          case _ => whatYouOweChargesList
         }
     }
   }
