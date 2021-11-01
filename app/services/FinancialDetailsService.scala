@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.Assets.NOT_FOUND
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
@@ -31,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
-                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
+                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) extends FeatureSwitching {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
@@ -96,7 +97,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
         case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
         case (_, financialDetails: FinancialDetailsModel) =>
           val unpaidDocumentDetails: List[DocumentDetail] = financialDetails.documentDetails.collect {
-            case documentDetail: DocumentDetail if documentDetail.isCodingOut => documentDetail
+            case documentDetail: DocumentDetail if isEnabled(CodingOut) && documentDetail.isCodingOut => documentDetail
             case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
             case documentDetail: DocumentDetail if !documentDetail.isPaid => documentDetail
           }

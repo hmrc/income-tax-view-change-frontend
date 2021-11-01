@@ -323,10 +323,12 @@ object FinancialDetailsTestConstants {
 													paymentLotItem: Option[String] = Some("paymentLotItem"),
 													paymentLot: Option[String] = Some("paymentLot"),
                           latePaymentInterestAmount: Option[BigDecimal] = Some(100),
-                          interestOutstandingAmount: Option[BigDecimal] = Some(80)): DocumentDetail =
+                          interestOutstandingAmount: Option[BigDecimal] = Some(80),
+                          amountCodedOut: Option[BigDecimal] = None,
+                          transactionId: String = id1040000123): DocumentDetail =
     DocumentDetail(
       taxYear = taxYear.toString,
-      transactionId = id1040000123,
+      transactionId = transactionId,
       documentDescription,
       documentText = documentText,
       outstandingAmount = outstandingAmount,
@@ -339,7 +341,8 @@ object FinancialDetailsTestConstants {
       latePaymentInterestAmount = latePaymentInterestAmount,
       lpiWithDunningBlock = Some(100),
       paymentLotItem = paymentLotItem,
-      paymentLot = paymentLot
+      paymentLot = paymentLot,
+      amountCodedOut = amountCodedOut
     )
 
   def financialDetail(taxYear: Int = 2018,
