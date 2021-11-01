@@ -15,17 +15,13 @@
  */
 package controllers
 
-import java.time.LocalDateTime
-
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.CalcDataIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.{MyTaxYearsMessages => messages}
 import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
-import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.{MyTaxYearsMessages => messages}
 
 class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -33,18 +29,12 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
       "isAuthorisedUser with an active enrolment and income source has retrieved successfully" when {
 
-        "the get all latest calculations brings back an error" should {
+        "no firstAccountingPeriodEndDate does not exists for both business and property" should {
 
           "return 500 INTERNAL_SERVER_ERROR " in {
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-            And("I stub a get calculation list response brings back an error for 2017-18")
-            IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-              status = INTERNAL_SERVER_ERROR,
-              body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-            )
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
             When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
             val res = IncomeTaxViewChangeFrontend.getTaxYears
@@ -57,48 +47,23 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           }
         }
 
-        "the get all latest calculations brings back two successful tax years" should {
+        "income sources has firstAccountingPeriodEndDate and hence valid tax years" should {
 
           "return 200 OK " in {
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
-            And("I stub a successful get calculation response for 2017-18")
-            IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-              status = OK,
-              body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-            )
-
-            IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-              status = OK,
-              body = estimatedCalculationFullJson
-            )
-
-            And("I stub a successful calculation response for 2018-19")
-            IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
-              status = OK,
-              body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
-            )
-            IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
-              status = OK,
-              body = estimatedCalculationFullJson
-            )
-
             When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
             val res = IncomeTaxViewChangeFrontend.getTaxYears
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-            IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-            IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
-            IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
-            Then("The view should have the correct headings and a single tax year display")
+            Then("The view should have the correct headings and all tax years display")
             res should have(
               httpStatus(OK),
               pageTitle(messages.taxYearsTitle),
-              nElementsWithClass("govuk-table__row")(3)
+              nElementsWithClass("govuk-table__row")(7)
             )
           }
         }
