@@ -2043,22 +2043,23 @@ object CalcBreakdownTestConstants {
     )
   )
 
+  val allowancesAndDeductions = AllowancesAndDeductions(
+    personalAllowance = Some(11500),
+    marriageAllowanceTransfer = Some(7500),
+    totalPensionContributions = Some(12500),
+    lossesAppliedToGeneralIncome = Some(13500),
+    giftOfInvestmentsAndPropertyToCharity = Some(10000),
+    totalAllowancesAndDeductions = Some(47000),
+    totalReliefs = Some(500),
+    grossAnnualPayments = Some(1000),
+    qualifyingLoanInterestFromInvestments = Some(1001),
+    postCessationTradeReceipts = Some(1002),
+    paymentsToTradeUnionsForDeathBenefits = Some(1003)
+  )
+
   val calculationAllDeductionSources = Calculation(
     crystallised = false,
-    allowancesAndDeductions = AllowancesAndDeductions(
-      personalAllowance = Some(11500),
-      marriageAllowanceTransfer = Some(7500),
-      totalPensionContributions = Some(12500),
-      lossesAppliedToGeneralIncome = Some(13500),
-      giftOfInvestmentsAndPropertyToCharity = Some(10000),
-      totalAllowancesAndDeductions = Some(47000),
-      totalReliefs = Some(500),
-      grossAnnualPayments = Some(1000),
-      qualifyingLoanInterestFromInvestments = Some(1001),
-      postCessationTradeReceipts = Some(1002),
-      paymentsToTradeUnionsForDeathBenefits = Some(1003)
-    )
-
+    allowancesAndDeductions = allowancesAndDeductions
   )
 
   val calculationJustMarriageAllowance = Calculation(

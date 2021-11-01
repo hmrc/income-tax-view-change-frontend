@@ -57,7 +57,7 @@
             </tr>
             </thead>
             <tbody class = "govuk-table__body">
-            @tableRow("personal_allowance", calcModel.calcDataModel.allowancesAndDeductions.personalAllowance)
+            @tableRow("personal_allowance", calcModel.calcDataModel.allowancesAndDeductions.personalAllowanceDisplayValue)
             @tableRow("marriage_allowance_transfer", calcModel.calcDataModel.allowancesAndDeductions.marriageAllowanceTransfer, isNegative = true)
             @tableRow("pension_contributions", calcModel.calcDataModel.allowancesAndDeductions.totalPensionContributions)
             @tableRow("loss_relief", calcModel.calcDataModel.allowancesAndDeductions.lossesAppliedToGeneralIncome)
