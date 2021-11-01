@@ -15,23 +15,21 @@
  */
 package controllers.agent
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import testConstants.messages.MyTaxYearsMessages.agentTitle
 import config.featureswitch._
 import controllers.Assets.INTERNAL_SERVER_ERROR
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{IncomeTaxViewChangeStub, IndividualCalculationStub}
-import models.calculation.{CalculationItem, ListCalculationItems}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.messages.MyTaxYearsMessages.agentTitle
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 
 class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -80,6 +78,24 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
         None, None, None, None,
         Some(getCurrentTaxYearEnd)
+      )
+    )
+  )
+
+  val incomeSourceDetailsWithNoAccountingPeriodEndDate: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    mtdbsa = testMtditid,
+    yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
+    businesses = List(BusinessDetailsModel(
+      "testId",
+      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      Some("Test Trading Name"), None, None, None, None, None, None, None,
+      None
+    )),
+    property = Some(
+      PropertyDetailsModel(
+        "testId2",
+        AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+        None, None, None, None, None
       )
     )
   )
@@ -137,27 +153,13 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   s"GET ${routes.TaxYearsController.show().url}" should {
     "return the tax years page" when {
-      "all calls were successful and returned data and the submission integration feature switch is enabled" in {
+      "all calls were successful and has accounting period end date" in {
         enable(ITSASubmissionIntegration)
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
           response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
         )
 
         val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
@@ -173,42 +175,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           ),
           elementTextBySelectorList("#content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "li:nth-of-type(2)")(
             expectedValue = s"Update return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-          )
-        )
-
-      }
-      "all calls were successful and returned data and the submission integration feature switch is disabled" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)", "li:nth-of-type(1)")(
-            expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-          ),
-          elementTextBySelectorList("#content", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "li:nth-of-type(1)")(
-            expectedValue = s"View return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           )
         )
 
@@ -230,48 +196,12 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
         )
       }
-      "there was a problem retrieving the calculation list for a year" in {
+      "when firstAccountingPeriodEndDate is missing from income sources" in {
         stubAuthorisedAgentUser(authorised = true)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = INTERNAL_SERVER_ERROR,
-          body = ListCalculationItems(Seq())
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
-        )
-      }
-      "there was a problem retrieving a calculation for a year" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = INTERNAL_SERVER_ERROR,
-          body = estimatedCalculationFullJson
+          response = incomeSourceDetailsWithNoAccountingPeriodEndDate
         )
 
         val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
