@@ -538,6 +538,48 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def testFinancialDetailsModelWithLPIDunningLock(documentDescription: List[Option[String]],
+                                       mainType: List[Option[String]],
+                                       dueDate: List[Option[String]],
+                                       outstandingAmount: List[Option[BigDecimal]],
+                                       taxYear: String,
+                                       interestRate: List[Option[BigDecimal]],
+                                       latePaymentInterestAmount: Option[BigDecimal],
+                                       lpiWithDunningBlock: Option[BigDecimal]
+                                      ): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      documentDetails = List(
+        DocumentDetail(taxYear, id1040000124, documentDescription.head,Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29),None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount,lpiWithDunningBlock = Some(1000)),
+        DocumentDetail(taxYear, id1040000125, documentDescription(1),Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount,lpiWithDunningBlock= Some(1000))
+      ),
+      financialDetails = List(
+        FinancialDetail(taxYear, mainType.head, Some(id1040000124) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), Some(id1040000125) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1)))))
+      )
+    )
+
+  def testFinancialDetailsModelWithLpiDunningLockZero(documentDescription: List[Option[String]],
+                                                  mainType: List[Option[String]],
+                                                  dueDate: List[Option[String]],
+                                                  outstandingAmount: List[Option[BigDecimal]],
+                                                  taxYear: String,
+                                                  interestRate: List[Option[BigDecimal]],
+                                                  latePaymentInterestAmount: Option[BigDecimal],
+                                                  lpiWithDunningBlock: Option[BigDecimal]
+                                                 ): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      documentDetails = List(
+        DocumentDetail(taxYear, id1040000124, documentDescription.head,Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29),None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount,lpiWithDunningBlock = Some(0)),
+        DocumentDetail(taxYear, id1040000125, documentDescription(1),Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount,lpiWithDunningBlock= Some(0))
+      ),
+      financialDetails = List(
+        FinancialDetail(taxYear, mainType.head, Some(id1040000124) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), Some(id1040000125) , Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1)))))
+      )
+    )
+
   def testFinancialDetailsModelWithNoLpi(documentDescription: List[Option[String]],
                                             mainType: List[Option[String]],
                                             dueDate: List[Option[String]],

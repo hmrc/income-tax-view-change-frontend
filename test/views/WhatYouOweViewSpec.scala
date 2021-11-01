@@ -31,9 +31,10 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.WhatYouOwe
-
 import java.time.LocalDate
+
 import play.api.test.FakeRequest
+import testConstants.MessagesLookUp.WhatYouOwe.paymentUnderReview
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
 
@@ -41,6 +42,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
+              hasLpiWithDunningBlock: Boolean = false,
               dunningLock: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true
@@ -55,7 +57,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       userType = Some(testUserTypeIndividual),
       arn = None
     )(FakeRequest())
+
     val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock, codingOutEnabled)(FakeRequest(),individualUser, implicitly)
+    val html: HtmlFormat.Appendable = whatYouOweView(charges,hasLpiWithDunningBlock, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock, codingOutEnabled)(FakeRequest(),individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -89,6 +93,28 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     latePaymentInterestAmount = latePaymentInterest
   )
 
+  def financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest: Option[BigDecimal],lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+    outstandingAmount = List(Some(50), Some(75)),
+    taxYear = LocalDate.now().getYear.toString,
+    interestRate = List(Some(2.6), Some(6.2)),
+    latePaymentInterestAmount = latePaymentInterest,
+      lpiWithDunningBlock = lpiWithDunningBlock
+  )
+
+  def financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest: Option[BigDecimal],lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+    outstandingAmount = List(Some(50), Some(75)),
+    taxYear = LocalDate.now().getYear.toString,
+    interestRate = List(Some(2.6), Some(6.2)),
+    latePaymentInterestAmount = latePaymentInterest,
+    lpiWithDunningBlock = lpiWithDunningBlock
+  )
+
   def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueInterestData(latePaymentInterest).getAllDocumentDetailsWithDueDates,
@@ -99,6 +125,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                                    dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     overduePaymentList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock).getAllDocumentDetailsWithDueDates,
+    outstandingChargesModel = Some(outstandingChargesOverdueData)
+  )
+
+  def whatYouOweDataWithOverdueLPIDunningBlock(latePaymentInterest: Option[BigDecimal],
+                                               lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    overduePaymentList = financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest,lpiWithDunningBlock).getAllDocumentDetailsWithDueDates,
+    outstandingChargesModel = Some(outstandingChargesOverdueData)
+  )
+
+  def whatYouOweDataWithOverdueLPIDunningBlockZero(latePaymentInterest: Option[BigDecimal],
+                                               lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    overduePaymentList = financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest,lpiWithDunningBlock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
@@ -451,6 +491,44 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
       }
 
+      "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
+        new Setup(whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56),Some(1000))) {
+          pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.overduePayments
+
+          val overdueTableHeader: Element = pageDocument.select("tr").get(3)
+          overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+          overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+          overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
+          overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
+            whatYouOwe.latePoa1Text + s" $currentYear " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)  + " " + paymentUnderReview
+          overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
+
+          pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+            LocalDate.now().getYear, "1040000124",latePaymentCharge = true).url
+          pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
+          pageDocument.getElementById("LpiDunningBlock").text shouldBe "Payment under review"
+        }
+
+      "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
+        new Setup(whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56),Some(0))) {
+          pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.overduePayments
+
+          val overdueTableHeader: Element = pageDocument.select("tr").get(3)
+          overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+          overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+          overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
+          overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
+            whatYouOwe.latePoa1Text + s" $currentYear " + whatYouOwe.taxYearForChargesText(currentYearMinusOne, currentYear)
+          overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
+
+          pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+            LocalDate.now().getYear, "1040000124",latePaymentCharge = true).url
+          pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
+        }
 
       "have overdue payments header and data with POA1 charge type and No Late payment interest" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
         pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.overduePayments

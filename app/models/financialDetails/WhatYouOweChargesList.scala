@@ -37,6 +37,12 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
 
   def hasDunningLock: Boolean = allCharges.exists(charge => charge.dunningLock)
 
+  def hasLpiWithDunningBlock: Boolean =
+    if (overduePaymentList.exists(_.documentDetail.lpiWithDunningBlock.isDefined)
+      && overduePaymentList.exists(_.documentDetail.lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0)) true
+    else false
+
+
   def interestOnOverdueCharges: Boolean =
     if (overduePaymentList.exists(_.documentDetail.interestOutstandingAmount.isDefined)
       && overduePaymentList.exists(_.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true

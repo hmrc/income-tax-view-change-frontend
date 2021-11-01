@@ -156,6 +156,8 @@ object ReliefsClaimed {
 
 
 case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
+                                   reducedPersonalAllowance: Option[BigDecimal] = None,
+                                   personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
                                    marriageAllowanceTransfer: Option[BigDecimal] = None,
                                    totalPensionContributions: Option[BigDecimal] = None,
                                    lossesAppliedToGeneralIncome: Option[BigDecimal] = None,
@@ -171,11 +173,15 @@ case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
 
   val totalAllowancesDeductionsReliefs: Option[BigDecimal] = (totalAllowancesAndDeductions ++ totalReliefs).reduceOption(_ + _)
 
+  val personalAllowanceDisplayValue: Option[BigDecimal] =
+    personalAllowanceBeforeTransferOut.fold(reducedPersonalAllowance.fold(personalAllowance)(Some(_)))(Some(_))
 }
 
 object AllowancesAndDeductions {
   implicit val reads: Reads[AllowancesAndDeductions] = (
     readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "personalAllowance") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "reducedPersonalAllowance") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "marriageAllowanceTransferOut" \ "personalAllowanceBeforeTransferOut") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "marriageAllowanceTransferOut" \ "transferredOutAmount") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "pensionContributions" \ "totalPensionContributions") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "lossesAppliedToGeneralIncome") and
