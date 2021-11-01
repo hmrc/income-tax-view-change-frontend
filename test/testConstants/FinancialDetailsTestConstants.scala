@@ -497,6 +497,24 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def testFinancialDetailsModelWithCodingOut(): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      documentDetails = List(
+        DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
+          documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+          originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+          interestOutstandingAmount = None, interestRate = None,
+          latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+          interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+          amountCodedOut = Some(0))
+      ),
+      financialDetails = List(
+        FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124) , Some("transactionDate"),Some("type"),Some(100),Some(100),
+          Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+      )
+    )
+
   def testFinancialDetailsModelWithLPI(documentDescription: List[Option[String]],
                                        mainType: List[Option[String]],
                                        dueDate: List[Option[String]],

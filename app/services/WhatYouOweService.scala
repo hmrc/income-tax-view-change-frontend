@@ -21,7 +21,7 @@ import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
-
+import models.financialDetails.DocumentDetail
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,15 +48,21 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00))
+        val codedOutDocumentDetail: Option[DocumentDetail] = financialDetailsModelList.flatMap(fdm =>
+          fdm.documentDetails.filter(_.isCodingOut)
+        ).headOption
+
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {
           case Some(outstandingChargesModel) => WhatYouOweChargesList(
             balanceDetails = balanceDetails,
             overduePaymentList = getOverduePaymentsList(financialDetailsModelList),
             dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList), futurePayments = getFuturePaymentsList(financialDetailsModelList),
-            outstandingChargesModel = Some(outstandingChargesModel))
+            outstandingChargesModel = Some(outstandingChargesModel),
+            codedOutDocumentDetail = codedOutDocumentDetail)
           case _ => WhatYouOweChargesList(balanceDetails = balanceDetails,
             overduePaymentList = getOverduePaymentsList(financialDetailsModelList),
-            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList), futurePayments = getFuturePaymentsList(financialDetailsModelList))
+            dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList), futurePayments = getFuturePaymentsList(financialDetailsModelList),
+            codedOutDocumentDetail = codedOutDocumentDetail)
         }
     }
   }

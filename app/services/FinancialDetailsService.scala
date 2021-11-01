@@ -92,14 +92,15 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
 
   def getAllUnpaidFinancialDetails(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
     getAllFinancialDetails.map { chargesWithYears =>
-      chargesWithYears.collect {
-        case (_, errorModel: FinancialDetailsErrorModel) => errorModel
-        case (_, financialDetails: FinancialDetailsModel) if !financialDetails.isAllPaid && !financialDetails.isAllInterestPaid =>
+      chargesWithYears.flatMap {
+        case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
+        case (_, financialDetails: FinancialDetailsModel) =>
           val unpaidDocumentDetails: List[DocumentDetail] = financialDetails.documentDetails.collect {
+            case documentDetail: DocumentDetail if documentDetail.isCodingOut => documentDetail
             case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
             case documentDetail: DocumentDetail if !documentDetail.isPaid => documentDetail
           }
-          financialDetails.copy(documentDetails = unpaidDocumentDetails)
+          if (unpaidDocumentDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocumentDetails)) else None
       }
     }
   }

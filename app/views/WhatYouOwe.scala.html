@@ -105,17 +105,16 @@
 }
 
 @paymentTypeEntry(documentDetailWithDueDate: DocumentDetailWithDueDate, rowId: String, isLatePaymentInterest: Boolean = false,
-    showTaxYear: Boolean = true, linkSuffix: String) = {
-    @{
-        val chargeTypeKey = documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)
-        val lpi = if (isLatePaymentInterest) "lpi." else ""
-        val linkText = messages(s"whatYouOwe.${lpi}${chargeTypeKey}")
-        val taxYear = documentDetailWithDueDate.documentDetail.taxYear
-        val linkHref = controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
-            documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentInterest)
-        paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
-            linkSuffix: String)
-    }
+    showTaxYear: Boolean = true, linkSuffix: String) = @{
+
+    val chargeTypeKey = documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)
+    val lpi = if (isLatePaymentInterest) "lpi." else ""
+    val linkText = messages(s"whatYouOwe.${lpi}${chargeTypeKey}")
+    val taxYear = documentDetailWithDueDate.documentDetail.taxYear
+    val linkHref = controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
+        documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentInterest)
+    paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
+        linkSuffix: String)
 }
 
 @paymentTypeEntryHTML(showTaxYear: Boolean = true, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String) = {
@@ -142,12 +141,17 @@
                 <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>
                 <br>
             }
+
             @if(!isOverduePayment) {
-                @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = true,
-                    linkSuffix = "link")
+                @if(documentDetailWithDueDate.documentDetail.isClass2Nic) {
+                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = false,
+                        linkSuffix = "link")
+                } else {
+                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = true,
+                        linkSuffix = "link")
+                }
             } else {
-                @if(documentDetailWithDueDate.documentDetail.documentText.isDefined &&
-                    documentDetailWithDueDate.documentDetail.documentText.get == "Class 2 National Insurance") {
+                @if(documentDetailWithDueDate.documentDetail.isClass2Nic) {
                     @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = false,
                         linkSuffix = "late-link")
                 } else if (documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
@@ -158,6 +162,7 @@
                         linkSuffix = "late-link2")
                 }
             }
+
 
             @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
         </td>
@@ -350,17 +355,16 @@
                 }
             }
             @if(codingOutEnabled) {
-                @if(chargesList.overduePaymentList.exists(_.documentDetail.amountCodedOut.isDefined)) {
+                @chargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
                     @h2(msg = messages("whatYouOwe.codingOutHeading"), classes = "govuk-heading-l",
                         optId=Some("coding-out-header"))
-                }
-                @for((charge, index) <- chargesList.sortedOverduePaymentLists.filter(_.documentDetail.amountCodedOut.isDefined).zipWithIndex) {
-                    <div id=@{s"coding-out-wrapper-$index"} class="govuk-inset-text">
-                       <p id=@{s"coding-out-notice-$index"} class="govuk-body coding-out-notice">
-                           @messages("whatYouOwe.codingOut-1", "£" + charge.documentDetail.amountCodedOut.get)
-                           <b>@messages("whatYouOwe.codingOut-2", (charge.documentDetail.taxYear.toInt - 1).toString(), charge.documentDetail.taxYear)</b>
-                           @messages("whatYouOwe.codingOut-3")
-                       </p>
+                    <div id="coding-out-wrapper" class="govuk-inset-text">
+                        <p id="coding-out-notice" class="govuk-body coding-out-notice">
+                            @messages("whatYouOwe.codingOut-1", "£" + codedOutDocumentDetail.amountCodedOut.get)
+                            <b>@messages("whatYouOwe.codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
+                                codedOutDocumentDetail.taxYear)</b>
+                            @messages("whatYouOwe.codingOut-3")
+                        </p>
                     </div>
                 }
             }
