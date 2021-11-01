@@ -166,7 +166,9 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
 
 
             @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
-                    @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s" id="LpiDunningBlock"> @messages("whatYouOwe.paymentUnderReview") </div>}
+            @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){
+                <div class="form-hint govuk-body-s" id="LpiDunningBlock"> @messages("whatYouOwe.paymentUnderReview") </div>
+            }
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
             if(isOverduePayment && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)

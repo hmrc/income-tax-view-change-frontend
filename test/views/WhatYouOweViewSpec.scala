@@ -58,8 +58,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       arn = None
     )(FakeRequest())
 
-    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock, codingOutEnabled)(FakeRequest(),individualUser, implicitly)
-    val html: HtmlFormat.Appendable = whatYouOweView(charges,hasLpiWithDunningBlock, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock, codingOutEnabled)(FakeRequest(),individualUser, implicitly)
+    val html: HtmlFormat.Appendable = whatYouOweView(charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock, codingOutEnabled)(FakeRequest(),individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
