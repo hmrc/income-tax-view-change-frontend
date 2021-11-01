@@ -16,19 +16,17 @@
 
 package controllers
 
-import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import javax.inject.Inject
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.CalculationService
 import views.html.TaxYears
+
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearsController @Inject() (taxYears: TaxYears)
+class TaxYearsController @Inject() (taxYearsView: TaxYears)
                                    (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val executionContext: ExecutionContext,
@@ -36,26 +34,17 @@ class TaxYearsController @Inject() (taxYears: TaxYears)
                                    val authenticate: AuthenticationPredicate,
                                    val retrieveNino: NinoPredicate,
                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                   val calculationService: CalculationService,
                                    val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                   val itvcErrorHandler: ItvcErrorHandler,
-                                   val auditingService: AuditingService
+                                   val itvcErrorHandler: ItvcErrorHandler
                                   ) extends BaseController with I18nSupport with FeatureSwitching {
 
   val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYearsByAccountingPeriods).flatMap {
-        case taxYearCalResponse if taxYearCalResponse.exists(_.isError) =>
-          Future.successful(itvcErrorHandler.showInternalServerError)
-        case taxYearCalResponse =>
-          Future.successful(Ok(taxYears(taxYears = taxYearCalResponse.filter(_.isCalculation), backUrl = backUrl, utr = user.saUtr, isEnabled(ITSASubmissionIntegration)))
-            .addingToSession("singleEstimate" -> "false"))
-      }.recover {
-          case ex => {
-            Logger("application").error(s"[TaxYearsController][viewTaxYears] Downstream error, ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
-          }
-        }
+      user.incomeSources.orderedTaxYearsByAccountingPeriods match {
+        case taxYears if taxYears.nonEmpty =>
+          Future.successful(Ok(taxYearsView(taxYears = taxYears, backUrl = backUrl, utr = user.saUtr, isEnabled(ITSASubmissionIntegration))))
+        case _ => Future.successful(itvcErrorHandler.showInternalServerError)
+      }
   }
 
   lazy val backUrl: String = controllers.routes.HomeController.home().url

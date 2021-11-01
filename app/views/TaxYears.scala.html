@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.MainTemplate
-@import models.calculation.CalculationResponseModelWithYear
 @import views.html.components._
 @import views.html.layouts.layout
 
@@ -27,7 +25,7 @@ link: link,
 appConfig: config.FrontendAppConfig
 )
 
-@(taxYears: List[CalculationResponseModelWithYear], backUrl: String, utr: Option[String], itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages)
+@(taxYears: List[Int], backUrl: String, utr: Option[String], itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
 @viewReturnLink(year: Int) = {
         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewReturn-link-@year"
@@ -84,7 +82,7 @@ appConfig: config.FrontendAppConfig
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
-                @taxYears.sortBy(_.year).reverse.map(_.year).map(taxYearRow)
+                @taxYears.map(taxYearRow)
             </tbody>
         </table>
         </div>
