@@ -97,6 +97,11 @@ case class DocumentDetail(taxYear: String,
 		case _ => false
 	}
 
+	val isCodingOut: Boolean = amountCodedOut match {
+		case Some(amountCodedOut) if amountCodedOut > 0 => true
+		case _ => false
+	}
+
 	def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
 		case Some("ITSA- POA 1") => "paymentOnAccount1.text" //todo: fix the actual document descriptions
 		case Some("ITSA - POA 2") => "paymentOnAccount2.text"

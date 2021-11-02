@@ -338,6 +338,91 @@ object IncomeSourceIntegrationTestConstants {
 		)
 	)
 
+	def testValidFinancialDetailsModelJsonCodingOut(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
+																												 taxYear: String = "2018", dueDate: String = "2018-04-14",
+																												 latePaymentInterestAmount: BigDecimal = 0): JsValue = Json.obj(
+		"balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+		"documentDetails" -> Json.arr(
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000123",
+				"documentDescription" -> "TRM New Charge",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29",
+				"interestOutstandingAmount" -> "0",
+				"interestRate" -> "3",
+				"interestFromDate" -> "2018-04-14",
+				"interestEndDate" -> "2019-01-01",
+				"latePaymentInterestAmount" -> 0,
+				"amountCodedOut" -> 0
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000124",
+				"documentDescription" -> "TRM New Charge",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29",
+				"interestOutstandingAmount" -> "42.50",
+				"interestRate" -> "3",
+				"interestFromDate" -> "2018-04-14",
+				"interestEndDate" -> "2019-01-01",
+				"latePaymentInterestAmount" -> 0,
+				"amountCodedOut" -> originalAmount
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"transactionId" -> "1040000125",
+				"documentDescription" -> "ITSA - POA 2",
+				"outstandingAmount" -> outstandingAmount,
+				"originalAmount" -> originalAmount,
+				"documentDate" -> "2018-03-29",
+				"interestOutstandingAmount" -> "42.50",
+				"interestRate" -> "3",
+				"interestFromDate" -> "2018-02-14",
+				"interestEndDate" -> "2019-01-01",
+				"latePaymentInterestAmount" -> latePaymentInterestAmount
+			)
+		),
+		"financialDetails" -> Json.arr(
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Balancing Charge",
+				"transactionId" -> "1040000123",
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Balancing Charge",
+				"transactionId" -> "1040000124",
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001",
+						"dunningLock" -> "Coded Out"))
+			),
+			Json.obj(
+				"taxYear" -> taxYear,
+				"mainType" -> "SA Payment on Account 2",
+				"transactionId" -> "1040000125",
+				"items" -> Json.arr(
+					Json.obj("amount" -> 8000,
+						"clearingDate" -> "2019-08-13",
+						"dueDate" -> dueDate,
+						"paymentLot" -> "081203010024",
+						"paymentLotItem" -> "000001"))
+			)
+		)
+	)
+
 	def documentDetailJson(originalAmount: BigDecimal,
 												 outstandingAmount: BigDecimal,
 												 taxYear: String = "2018",
