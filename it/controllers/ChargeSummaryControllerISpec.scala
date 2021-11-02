@@ -41,9 +41,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       mainType = Some(mainType) , chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Balancing Charge", "ITSA NI", "2019-08-13", 10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2019-08-13", 9000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", 8000.0, lotItem = "000001")
+    paymentsWithCharge("SA Balancing Charge", "ITSA NI", "2019-08-13", -10000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2019-08-13", -9000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", -8000.0, lotItem = "000001")
   )
 
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request"))
@@ -127,7 +127,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
-        docDateDetailWithInterest("2018-02-14", "TRM New Charge"),
+        docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -171,7 +171,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
-        docDateDetailWithInterest("2018-02-14", "TRM New Charge"),
+        docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
@@ -232,7 +232,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
       And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(123.45, 1.2))
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
+        123.45, 1.2, latePaymentInterestAmount = 54.32))
 
       Given("the TxmEvents feature switch is on")
       enable(TxmEventsApproved)

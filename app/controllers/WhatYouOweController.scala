@@ -22,15 +22,15 @@ import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
+import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.WhatYouOweService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
-
 import javax.inject.Inject
+
 import scala.concurrent.ExecutionContext
 
 class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -60,7 +60,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
               auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
             }
 
-            Ok(whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr, dunningLock = whatYouOweChargesList.hasDunningLock)
+            Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock , currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr, dunningLock = whatYouOweChargesList.hasDunningLock)
             ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
         } recover {
           case ex: Exception =>

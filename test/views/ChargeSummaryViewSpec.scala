@@ -39,10 +39,11 @@ class ChargeSummaryViewSpec extends ViewSpec {
               payments: FinancialDetailsModel = payments,
               chargeHistoryEnabled: Boolean = true,
               paymentAllocationEnabled: Boolean = false,
-              latePaymentInterestCharge: Boolean = false) {
+              latePaymentInterestCharge: Boolean = false,
+              codingOutEnabled: Boolean = false) {
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
     val view: Html = chargeSummary(documentDetail, dueDate, "testBackURL",
-      paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge)
+      paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge, codingOutEnabled)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -76,6 +77,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def balancingChargeInterestHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
 
+    def class2NicHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Class 2 National Insurance"
+
     val dueDate = "Due date"
     val interestPeriod = "Interest period"
     val fullPaymentAmount = "Full payment amount"
@@ -96,6 +99,9 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val balancingChargeAmended = "Remaining balance reduced due to amended return"
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
+
+    def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
+    val class2NicChargeCreated = "Class 2 National Insurance created"
 
     val balancingChargeRequest = "Remaining balance reduced by taxpayer request"
     val dunningLockBannerHeader = "Important"
@@ -156,7 +162,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None,None, Some("lotItem"), Some("lot"))),
+    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None,None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
   )
 
@@ -185,6 +191,18 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     "have the correct heading for a POA 2 late interest charge" in new Setup(documentDetailModel(documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
       document.select("h1").text() shouldBe Messages.poaInterestHeading(2018, 2)
+    }
+
+    "have the correct heading for a Class 2 National Insurance charge when coding out FS is enabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true) {
+      document.select("h1").text() shouldBe Messages.class2NicHeading(2018)
+    }
+
+    "have the correct heading for a Class 2 National Insurance charge when coding out FS is disabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = false) {
+      document.select("h1").text() shouldBe Messages.balancingChargeHeading(2018)
+    }
+
+    "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))) {
+      document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
     }
 
     "have the correct heading for a new balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
@@ -328,14 +346,18 @@ class ChargeSummaryViewSpec extends ViewSpec {
       document.select("div#payment-link-2018").text() shouldBe "Pay now"
     }
 
+    "have a paragraph explaining how many days a payment can take to process" in new Setup(documentDetailModel()) {
+      document.select("#main-content p:nth-child(5)").text() shouldBe "Payments can take up to 7 days to process."
+    }
+
     "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
       document.select("#main-content p a").text() shouldBe "What you owe page"
-      document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+      document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
     "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
       document.select("#main-content p a").text() shouldBe "What you owe page"
-      document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+      document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
     "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
@@ -379,6 +401,11 @@ class ChargeSummaryViewSpec extends ViewSpec {
     "display only the charge creation item when no history found for a new balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM New Charge"))) {
       document.select("tbody tr").size() shouldBe 1
       document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.balancingChargeCreated
+    }
+
+    "display only the charge creation item for a Class 2 National Insurance charge" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true) {
+      document.select("tbody tr").size() shouldBe 1
+      document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.class2NicChargeCreated
     }
 
     "display only the charge creation item for a payment on account 1 of 2 late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(0)), latePaymentInterestCharge = true) {
@@ -467,16 +494,16 @@ class ChargeSummaryViewSpec extends ViewSpec {
         )
 
         val expectedPaymentAllocationRows = List(
-          "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 £1,500.00",
-          "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 £1,600.00",
-          "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 £2,400.00",
-          "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 £2,500.00",
-          "10 Dec 2019 Payment allocated to Income Tax for remaining balance £3,400.00",
-          "11 Dec 2019 Payment allocated to Class 4 National Insurance for remaining balance £3,500.00",
-          "12 Dec 2019 Payment allocated to Class 2 National Insurance for remaining balance £3,600.00",
-          "13 Dec 2019 Payment allocated to Capital Gains Tax for remaining balance £3,700.00",
-          "14 Dec 2019 Payment allocated to Student Loans for remaining balance £3,800.00",
-          "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance £3,900.00"
+          "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 2018 £1,500.00",
+          "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 2018 £1,600.00",
+          "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 2018 £2,400.00",
+          "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 2018 £2,500.00",
+          "10 Dec 2019 Payment allocated to Income Tax for remaining balance 2018 £3,400.00",
+          "11 Dec 2019 Payment allocated to Class 4 National Insurance for remaining balance 2018 £3,500.00",
+          "12 Dec 2019 Payment allocated to Class 2 National Insurance for remaining balance 2018 £3,600.00",
+          "13 Dec 2019 Payment allocated to Capital Gains Tax for remaining balance 2018 £3,700.00",
+          "14 Dec 2019 Payment allocated to Student Loans for remaining balance 2018 £3,800.00",
+          "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance 2018 £3,900.00"
         )
 
         "chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),

@@ -16,22 +16,20 @@
 
 package controllers.agent
 
-import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CalculationService, IncomeSourceDetailsService}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.agent.TaxYears
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class TaxYearsController @Inject()(taxYears: TaxYears,
+class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                    val authorisedFunctions: AuthorisedFunctions,
-                                   calculationService: CalculationService,
                                    incomeSourceDetailsService: IncomeSourceDetailsService)
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
@@ -41,25 +39,18 @@ class TaxYearsController @Inject()(taxYears: TaxYears,
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdUser =>
-				withCalculationYears { years =>
-					Ok(taxYears(
-						taxYears = years,
-						backUrl = backUrl,
-						itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration)
-					))
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
+				mtdItUser.incomeSources.orderedTaxYearsByAccountingPeriods match {
+					case taxYears if taxYears.nonEmpty =>
+						Ok(taxYearsView(
+							taxYears = taxYears.reverse,
+							backUrl = backUrl,
+							itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration)
+						))
+					case _ => itvcErrorHandler.showInternalServerError()
 				}
 			}
   }
 
   def backUrl: String = controllers.agent.routes.HomeController.show().url
-
-  private def withCalculationYears(f: List[Int] => Result)(implicit user: MtdItUser[_]): Future[Result] = {
-    calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYearsByAccountingPeriods) map {
-      case taxYearsResponse if taxYearsResponse.exists(_.isError) =>
-        itvcErrorHandler.showInternalServerError()
-      case taxYearsResponse => f(taxYearsResponse.map(_.year).reverse)
-    }
-  }
-
 }

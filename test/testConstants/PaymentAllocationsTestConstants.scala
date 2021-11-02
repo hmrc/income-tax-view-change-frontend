@@ -29,6 +29,7 @@ object PaymentAllocationsTestConstants {
 		taxYear = "2018",
 		transactionId = "id",
 		documentDescription = Some("documentDescription"),
+		documentText = Some("documentText"),
 		originalAmount = Some(-300.00),
 		outstandingAmount = Some(-200.00),
 		documentDate = LocalDate.of(2018, 3, 29),
@@ -40,6 +41,7 @@ object PaymentAllocationsTestConstants {
 		taxYear = "2019",
 		transactionId = "id2",
 		documentDescription = Some("documentDescription2"),
+		documentText = Some("documentText2"),
 		originalAmount = Some(-100.00),
 		outstandingAmount = Some(-50.00),
 		documentDate = LocalDate.of(2018, 3, 29),
@@ -195,6 +197,7 @@ object PaymentAllocationsTestConstants {
 		taxYear = "2020",
 		transactionId = "transactionId",
 		documentDescription = Some("TRM New Charge"),
+		documentText = Some("documentText"),
 		outstandingAmount = Some(100.00),
 		originalAmount = Some(100.00),
 		documentDate = LocalDate.of(2018, 3, 29),
@@ -210,6 +213,7 @@ object PaymentAllocationsTestConstants {
 		taxYear = "2020",
 		transactionId = "transactionId",
 		documentDescription = Some("TRM New Charge"),
+		documentText = Some("documentText"),
 		outstandingAmount = Some(100.00),
 		originalAmount = Some(-300.00),
 		documentDate = LocalDate.of(2018, 3, 29),
@@ -243,6 +247,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -298,6 +303,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -354,6 +360,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -437,6 +444,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription",
+			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
 			|            "taxYear": "2018",
@@ -447,6 +455,7 @@ object PaymentAllocationsTestConstants {
 			|        {
 			|            "documentDate": "2018-03-29",
 			|            "documentDescription": "documentDescription2",
+			|            "documentText": "documentText2",
 			|            "originalAmount": -100.0,
 			|            "outstandingAmount": -50.0,
 			|            "taxYear": "2019",

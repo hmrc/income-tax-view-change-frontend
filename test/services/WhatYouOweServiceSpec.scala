@@ -21,13 +21,14 @@ import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsErrorModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import testUtils.TestSupport
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhatYouOweServiceSpec extends TestSupport {
@@ -153,6 +154,45 @@ class WhatYouOweServiceSpec extends TestSupport {
 					)
 				}
 			}
+
+      "when both financial details return success and with balancing charges returned with mixed outstanding charges" should {
+        "return a success empty response back with both outstanding amount zero and no late payment interest" in {
+          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0))))))
+
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00)
+          )
+        }
+        "return a success empty response with outstanding amount zero and late payment interest amount zero" in {
+          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0)),
+              latePaymentInterestAmount = List(Some(0), Some(0)), interestOutstandingAmount = List(Some(0), Some(0))))))
+
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00)
+          )
+        }
+        "return a success POA2 only response with outstanding amount zero and late payment interest amount non-zero" in {
+          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0)),
+              latePaymentInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
+
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            overduePaymentList = List(DocumentDetailWithDueDate(
+              DocumentDetail("2021","1040000124",Some("ITSA - POA 2"),Some("documentText"), Some(0),Some(12.34),LocalDate.of(2018, 3, 29), Some(10), Some(100),
+                Some("latePaymentInterestId"),Some(LocalDate.of(2018, 3, 29)),
+                Some(LocalDate.of(2018, 3, 29)),Some(10),Some(100),Some("paymentLotItem"),Some("paymentLot")),
+              Some(LocalDate.now().minusDays(1)))))
+        }
+      }
     }
   }
 }

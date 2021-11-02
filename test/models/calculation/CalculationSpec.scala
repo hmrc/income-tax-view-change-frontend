@@ -76,6 +76,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(1.0),
+      reducedPersonalAllowance = Some(6.0),
+      personalAllowanceBeforeTransferOut = Some(7.0),
       marriageAllowanceTransfer = Some(5.0),
       giftOfInvestmentsAndPropertyToCharity = Some(2.0),
       totalAllowancesAndDeductions = Some(3.0),
@@ -366,9 +368,11 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "detail" -> Json.obj(
         "allowancesAndDeductions" -> Json.obj(
           "personalAllowance" -> 1.0,
+          "reducedPersonalAllowance" -> 6.0,
           "giftOfInvestmentsAndPropertyToCharity" -> 2.0,
           "marriageAllowanceTransferOut" -> Json.obj(
-            "transferredOutAmount" -> 5.0
+            "transferredOutAmount" -> 5.0,
+            "personalAllowanceBeforeTransferOut" -> 7.0,
           )
         ),
         "reliefs" -> Json.obj(
@@ -558,6 +562,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     "allowancesAndDeductions" -> Json.obj(
       "personalAllowance" -> 1.0,
+      "reducedPersonalAllowance" -> 6.0,
+      "personalAllowanceBeforeTransferOut" -> 7.0,
       "marriageAllowanceTransfer" -> 5.0,
       "giftOfInvestmentsAndPropertyToCharity" -> 2.0,
       "totalAllowancesAndDeductions" -> 3.0,

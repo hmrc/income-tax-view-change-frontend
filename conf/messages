@@ -307,8 +307,8 @@ taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Total pens
 taxCal_breakdown.table.statePensionLumpSumCharges                   = State pension lump sum
 taxCal_breakdown.table.other_charges                                = Other charges
 taxCal_breakdown.table.totalStudentLoansRepaymentAmount             = Student Loan repayments
-taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Underpaid tax for earlier years in your tax code for {0} to {1}
-taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Underpaid tax for earlier years in your self assessment for {0} to {1}
+taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Underpaid for earlier years in your tax code for {0} to {1}
+taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Underpaid for earlier years in your self assessment for {0} to {1}
 taxCal_breakdown.table.tax_reductions                               = Tax reductions
 taxCal_breakdown.table.marriage_allowance_transfer                  = Marriage Allowance Transfer
 taxCal_breakdown.table.top_slicing_relief                           = Top Slicing Relief
@@ -353,7 +353,7 @@ taxCal_breakdown.message.C22214                                 = Your Class 4 h
 taxCal_breakdown.message.C22215                                 = Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
-taxCal_breakdown.message.C22218                                 = The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration calculation.
+taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
 
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
@@ -537,6 +537,7 @@ whatYouOwe.totalBalance                                            = Total payme
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
 chargeSummary.paymentOnAccount2.text							   = Payment on account 2 of 2
 chargeSummary.balancingCharge.text  							   = Remaining balance
+chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Full payment amount
 chargeSummary.paidToDate    									   = Paid to date
@@ -546,6 +547,8 @@ chargeSummary.overdue                                              = OVERDUE
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab)
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
+
+chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
@@ -564,6 +567,7 @@ chargeSummary.interestLocks.linkText                               = What you ow
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
+chargeSummary.payment-days-note                                    = Payments can take up to 7 days to process.
 
 chargeSummary.chargeHistory.heading								   = Payment history
 chargeSummary.chargeHistory.date								   = Date
@@ -572,6 +576,7 @@ chargeSummary.chargeHistory.amount								   = Amount
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		   = Payment on account 1 of 2 created
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		   = Payment on account 2 of 2 created
 chargeSummary.chargeHistory.created.balancingCharge.text		   = Remaining balance created
+chargeSummary.chargeHistory.created.class2Nic.text                 = Class 2 National Insurance created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	   = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	   = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	   = Remaining balance reduced by taxpayer request
@@ -708,12 +713,12 @@ final-declaration.caption                                       = 6 April {0} to
 final-declaration.inset.1                                       = If you think this information is incorrect, you can
 final-declaration.individual.inset.2                            = check your Income Tax Return.
 final-declaration.declaration                                   = Declaration
-final-declaration.individual.chargeInfo.p                       = The amount you need to pay might be different if there are other charges or payments on your account.
+final-declaration.individual.chargeInfo.p                       = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
 final-declaration.submit                                        = I agree - Submit Income Tax Return
 
 ## Final Declaration (Agent Content overrides)
 final-declaration.agent.heading                                 = Your client’s final tax overview
-final-declaration.agent.chargeInfo.p                            = The amount your client needs to pay might be different if there are other charges or payments on their account.
+final-declaration.agent.chargeInfo.p                            = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
 final-declaration.agent.inset.2                                 = check your client’s Income Tax Return.
 
 #Language Selector

@@ -66,6 +66,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true),
     fullDocumentDetailWithDueDateModel)
 
+
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
@@ -264,6 +265,11 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       layoutContent.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
       layoutContent.h2.selectFirst("h2").text().contains(taxYearOverviewMessages.payments)
       layoutContent.selectHead("#payments").doesNotHave("table")
+    }
+
+    "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
+      val paymentType: Element = content.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
+      paymentType.text shouldBe taxYearOverviewMessages.paymentUnderReview
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {

@@ -19,6 +19,7 @@
 @import models.financialDetails.WhatYouOweChargesList
 @import java.time.LocalDate
 @import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails._
 @import auth.MtdItUser
 @import views.html.layouts.layout
 @import views.html.components._
@@ -33,7 +34,7 @@
     link: link
 )
 
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String], dunningLock: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(chargesList: WhatYouOweChargesList, hasLpiWithDunningBlock: Boolean, currentTaxYear: Int, backUrl: String, utr: Option[String], dunningLock: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -82,7 +83,7 @@
 }
 
 @dunningLockParagraph = {
-    @if(dunningLock) {
+    @if(dunningLock || hasLpiWithDunningBlock) {
         <div id="payment-under-review-info">
         @p(){
             @messages("whatYouOwe.dunningLock.text", "")
@@ -112,8 +113,11 @@
                 <a id="@rowId-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt,
                     documentDetailWithDueDate.documentDetail.transactionId)">
                 }
-            @messages(s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
-            @if(isChargeTypeHyperlinked){</a>}
+            @messages(s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
+                    @if(isChargeTypeHyperlinked){
+                    <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
+                </a>
+            }
             <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
             @if(documentDetailWithDueDate.dunningLock) {<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
         </td>
@@ -137,14 +141,18 @@
                 }
             @messages(
                 if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)
-                    s"whatYouOwe.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}"
+                    s"whatYouOwe.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
                 else
-                    s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}"
+                    s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
             )
-            @if(isChargeTypeHyperlinked){</a>}
+            @if(isChargeTypeHyperlinked){
+                <span class="govuk-visually-hidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
+            </a>
+            }
 
             <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
             @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
+                    @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s" id="LpiDunningBlock"> @messages("whatYouOwe.paymentUnderReview") </div>}
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
             if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
