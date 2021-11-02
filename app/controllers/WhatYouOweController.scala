@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
@@ -60,7 +60,11 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
               auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
             }
 
-            Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock , currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr, dunningLock = whatYouOweChargesList.hasDunningLock)
+            val codingOutEnabled = isEnabled(CodingOut)
+
+            Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock ,
+              currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr,
+              dunningLock = whatYouOweChargesList.hasDunningLock, codingOutEnabled = codingOutEnabled)
             ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
         } recover {
           case ex: Exception =>

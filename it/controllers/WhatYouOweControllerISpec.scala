@@ -22,7 +22,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.TxmEventsApproved
+import config.featureswitch.{CodingOut, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
@@ -1201,6 +1201,129 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             )
           }
         }
+
+        "CodingOut FS is enabled" when {
+          "render the payments owed with a Coding out banner" in {
+            val testTaxYear = LocalDate.now().getYear
+
+            Given("Coding Out feature is enabled")
+            enable(CodingOut)
+
+            And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+              propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+
+            And("I wiremock stub a financial details response with coded out documents")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears( 1).toString))
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+            Then("the result should have a HTTP status of OK (200) and the payments due page")
+            res should have(
+              httpStatus(OK),
+              pageTitle("What you owe - Business Tax account - GOV.UK"),
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+              isElementVisibleById("payment-details-content-0")(expectedValue = true),
+              isElementVisibleById("payment-details-content-1")(expectedValue = true),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = true),
+              isElementVisibleById("future-payments-type-0")(expectedValue = true),
+              isElementVisibleById("future-payments-type-1")(expectedValue = true),
+              isElementVisibleById("future-payments-type-2")(expectedValue = false),
+              isElementVisibleById(s"payment-days-note")(expectedValue = true),
+              isElementVisibleById(s"credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = true),
+              isElementVisibleById(s"no-payments-due")(expectedValue = false),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true),
+              isElementVisibleById("coding-out-header")(expectedValue = true),
+              isElementVisibleById("coding-out-notice")(expectedValue = true)
+            )
+          }
+        }
+
+        "CodingOut FS is disabled" when {
+          "render the payments owed without a Coding out banner" in {
+            val testTaxYear = LocalDate.now().getYear
+
+            Given("Coding Out feature is disabled")
+            disable(CodingOut)
+
+            And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+              propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+
+            And("I wiremock stub a financial details response with coded out documents")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
+              testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+            Then("the result should have a HTTP status of OK (200) and the payments due page")
+            res should have(
+              httpStatus(OK),
+              pageTitle("What you owe - Business Tax account - GOV.UK"),
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+              isElementVisibleById("payment-details-content-0")(expectedValue = true),
+              isElementVisibleById("payment-details-content-1")(expectedValue = true),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = true),
+              isElementVisibleById("future-payments-type-0")(expectedValue = true),
+              isElementVisibleById("future-payments-type-1")(expectedValue = true),
+              isElementVisibleById("future-payments-type-2")(expectedValue = false),
+              isElementVisibleById(s"payment-days-note")(expectedValue = true),
+              isElementVisibleById(s"credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = true),
+              isElementVisibleById(s"no-payments-due")(expectedValue = false),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+              isElementVisibleById("overdueAmount")(expectedValue = true),
+              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+              isElementVisibleById("totalBalance")(expectedValue = true),
+              isElementVisibleById("coding-out-header")(expectedValue = false),
+              isElementVisibleById("coding-out-notice")(expectedValue = false)
+            )
+          }
+        }
+
       }
     }
 
