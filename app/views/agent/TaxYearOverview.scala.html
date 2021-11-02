@@ -46,7 +46,7 @@
 }
 
 @taxCalculationNotPresent = {
-    @h2(msg = messages("tax-year-overview.tax-calculation.no-calc"), classes = "govuk-heading-l")
+    @h2(msg = messages("tax-year-overview.tax-calculation.no-calc"), optId = Some("no-calc-data-header"), classes = "govuk-heading-l")
     @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-overview.tax-calculation.no-calc.note")))
 }
 
@@ -181,7 +181,7 @@
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dd class="govuk-summary-list__key">
+                <dt class="govuk-summary-list__key">
                     @if(overview.crystallised){
                         @messages("tax-year-overview.total-due")
                     } else {
@@ -189,7 +189,7 @@
                             @{messages("tax-year-overview.tax-calculation.in-year", s"${taxYear - 1}", s"$taxYear")}
                         }
                     }
-                </dd>
+                </dt>
                 <dd class="govuk-summary-list__value">
                     @{overview.taxDue.toCurrencyString}
                 </dd>
