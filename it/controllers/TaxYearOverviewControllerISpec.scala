@@ -16,6 +16,7 @@
 
 package controllers
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
 
 import testConstants.BaseIntegrationTestConstants._
@@ -231,22 +232,25 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("6 July 2017"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("£199,505.00"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric no-wrap]")("−£500.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
@@ -317,26 +321,33 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("6 July 2017"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("£199,505.00"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric no-wrap]")("−£500.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2 Payment under review"),
+
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
+
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 2 of 2"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Overdue Payment on account 2 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£2,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£2,000.00"),
+
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£100.00"),
+
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
@@ -504,10 +515,13 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
 
         And("The expected result with right headers are returned")
+        val fromDate = LocalDate.of(2017, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2018, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextByID("no-calc-data-header")(TaxYearOverviewMessages.headingNoCalcData),
           elementTextByID("no-calc-data-note")(TaxYearOverviewMessages.noCalcDataNote)
         )
@@ -706,18 +720,23 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("6 July 2017"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("£199,505.00"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric no-wrap]")("−£500.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
+
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
