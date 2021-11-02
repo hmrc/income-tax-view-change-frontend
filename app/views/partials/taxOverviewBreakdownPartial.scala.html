@@ -100,7 +100,7 @@
             </tr>
         </thead>
         <tbody class="govuk-table__body">
-            <tr>
+            <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
                     @if(isAgent){
                         <a href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
@@ -137,7 +137,7 @@
                 </td>
             </tr>
         </tbody>
-    </>
+    </table>
     <table class="govuk-table" id="taxdue-payments-table">
         <tr class="govuk-table__row">
             <td class="govuk-table__cell total-section">

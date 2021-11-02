@@ -268,7 +268,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
-      val paymentType: Element = content.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
+      val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
       paymentType.text shouldBe taxYearOverviewMessages.paymentUnderReview
     }
 
@@ -331,8 +331,8 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
     "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Remaining Balance" in new Setup(multipleDunningLockView()) {
       layoutContent.selectHead("#payments-table tbody tr:nth-child(1) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
-      layoutContent.doesNotHave("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)")
       layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+      layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)")
     }
 
     "display updates by due-date" in new Setup(estimateView()) {
