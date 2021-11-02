@@ -146,10 +146,10 @@
                 </thead>
                 <tbody>
                     @dueObligations.map{nextUpdateWithIncomeType =>
-                        <tr>
-                            <td>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
-                            <td>@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
-                            <td>@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDate)</td>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
+                            <td class="govuk-table__cell">@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
+                            <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDate)</td>
                         </tr>
                     }
                 </tbody>
