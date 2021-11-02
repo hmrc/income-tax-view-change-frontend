@@ -94,10 +94,9 @@
 
 } else {
 
-<table id="income-deductions-table">
 
+<table class="govuk-table" id="income-deductions-table">
     <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-overview.tax-calculation")</caption>
-
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
@@ -109,12 +108,14 @@
             <td class="govuk-table__cell">
             @if(isAgent){
                 <a href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+
             } else {
                 <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
             }
             </td>
+            </td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                overview.income.toCurrencyString
+                overview.income.toCurrency
             }
             </td>
         </tr>
@@ -122,6 +123,7 @@
             <td class="govuk-table__cell">
             @if(isAgent){
                 <a href=@controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
+
             } else {
                 <a href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
             }
@@ -140,7 +142,6 @@
         </tr>
     </tbody>
 </table>
-
 <table class="govuk-table" id="taxdue-payments-table">
     <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
