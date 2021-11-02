@@ -63,7 +63,10 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
             res should have(
               httpStatus(OK),
               pageTitle(messages.taxYearsTitle),
-              nElementsWithClass("govuk-table__row")(7)
+              nElementsWithClass("govuk-table__row")(7),
+              elementTextBySelectorList("table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)", "li:nth-of-type(1)")(
+                expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+              )
             )
           }
         }
