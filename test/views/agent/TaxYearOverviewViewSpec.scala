@@ -235,7 +235,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   "TaxYearOverview" should {
 
     "have a title" in new Setup(view()) {
-      document.title shouldBe TaxYearOverviewMessages.title
+      document.title.toString.contains(TaxYearOverviewMessages.heading)
     }
 
     "have a back link" in new Setup(view()) {
@@ -248,8 +248,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     "have a summary list with information about the calculation" which {
       "has a calculation date" in new Setup(view()) {
         val listRow: Element = layoutContent.selectHead("dl").selectNth("div", 1)
-        listRow.selectNth("dd", 1).text shouldBe TaxYearOverviewMessages.calculationDate
-        listRow.selectNth("dd", 2).text shouldBe "6 April 2020"
+        listRow.selectNth("dt", 1).text shouldBe TaxYearOverviewMessages.calculationDate
+        listRow.selectNth("dd", 1).text shouldBe "6 April 2020"
       }
       "has a tax due row" when {
         "the calculation is an estimate" in new Setup(view()) {
@@ -267,7 +267,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
     "have information about the estimate calculation" when {
       "the calculation is an estimate" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
-        layoutContent.selectHead("div.panel").text shouldBe TaxYearOverviewMessages.estimateMessage
+        layoutContent.selectHead("p.govuk-body").text shouldBe TaxYearOverviewMessages.estimateMessage
       }
     }
 
@@ -293,7 +293,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         "has the tab contents" which {
           "has different headings" when {
             "it is an estimate" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
-              layoutContent.selectHead("dl > div:nth-child(1) > dd:nth-child(1)").text shouldBe TaxYearOverviewMessages.calculationDate
+              layoutContent.selectHead("dl > div:nth-child(1) > dt:nth-child(1)").text shouldBe TaxYearOverviewMessages.calculationDate
 
             }
             "it is crystallised" in new Setup(view()) {
@@ -381,7 +381,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("th", 4).text shouldBe TaxYearOverviewMessages.paymentsTabAmountHeading
             }
             "has a row for a part paid (overdue) payment on account 2" in new Setup(view()) {
-              val row: Element = layoutContent.selectHead("#payments").selectHead("table").selectNth("tr", 2)
+              val row: Element = layoutContent.selectHead("#payments").selectHead("tbody").selectNth("tr", 1)
               val firstColumn: Element = row.selectNth("td", 1)
               firstColumn.selectNth("div", 1).text shouldBe TaxYearOverviewMessages.paymentsTabOverdue
               firstColumn.selectNth("div", 1).attr("class") shouldBe "govuk-tag govuk-tag--red"
@@ -394,7 +394,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 4).text shouldBe "£200.00"
             }
             "has a row for a unpaid (overdue) balancing charge" in new Setup(view()) {
-              val row: Element = layoutContent.selectHead("#payments").selectHead("table").selectNth("tr", 3)
+              val row: Element = layoutContent.selectHead("#payments").selectHead("tbody").selectNth("tr", 2)
               val firstColumn: Element = row.selectNth("td", 1)
               firstColumn.selectNth("div", 1).text shouldBe TaxYearOverviewMessages.paymentsTabOverdue
               firstColumn.selectNth("div", 1).attr("class") shouldBe "govuk-tag govuk-tag--red"
@@ -407,7 +407,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 4).text shouldBe "£100.00"
             }
             "has a row for a paid payment on account 1" in new Setup(view()) {
-              val row: Element = layoutContent.selectHead("#payments").selectHead("table").selectNth("tr", 4)
+              val row: Element = layoutContent.selectHead("#payments").selectHead("tbody").selectNth("tr", 3)
               row.selectNth("td", 1).selectHead("div").selectHead("a").text shouldBe TaxYearOverviewMessages.paymentsTabPaymentOnAccount1
               row.selectNth("td", 1).selectHead("div").selectHead("a").attr("href") shouldBe
                 controllers.agent.routes.ChargeSummaryController.showChargeSummary(testYear, "testId").url
@@ -416,65 +416,65 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 4).text shouldBe "£100.00"
             }
             "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(view()) {
-              val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(1) a")
+              val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(1) a")
               paymentTypeLink.text shouldBe TaxYearOverviewMessages.lpiPaymentOnAccount1
               paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
                 testYear, "testId", true).url
             }
 
             "display the Due date in the Payments tab for late payment interest POA1" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(1).toLongDateShort
+              layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(1).toLongDateShort
             }
 
             "display the Status in the payments tab for late payment interest POA1" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabPartPaid
+              layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabPartPaid
             }
 
             "display the Amount in the payments tab for late payment interest POA1" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(4)").text shouldBe "£200.00"
+              layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(4)").text shouldBe "£200.00"
             }
 
             "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(view()) {
-              val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(1) a")
+              val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(1) a")
               paymentTypeLink.text shouldBe TaxYearOverviewMessages.lpiPaymentOnAccount2
               paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
                 testYear, "testId2", true).url
             }
 
             "display the Due date in the Payments tab for late payment interest POA2" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(2).toLongDateShort
+              layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(2).toLongDateShort
             }
 
             "display the Status in the payments tab for late payment interest POA2" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabPartPaid
+              layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabPartPaid
             }
 
             "display the Amount in the payments tab for late payment interest POA2" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(4)").text shouldBe "£80.00"
+              layoutContent.selectHead("#payments-table tr:nth-child(5) td:nth-child(4)").text shouldBe "£80.00"
             }
 
             "display the payment type as a link to Charge Summary in the Payments tab for late payment interest remaining balance" in new Setup(view()) {
-              val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(7) td:nth-child(1) a")
+              val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(1) a")
               paymentTypeLink.text shouldBe TaxYearOverviewMessages.lpiRemainingBalance
               paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
                 testYear, "testId3", true).url
             }
 
             "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(7) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(3).toLongDateShort
+              layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(2)").text shouldBe LocalDate.now().plusMonths(3).toLongDateShort
             }
 
             "display the Status in the payments tab for late payment interest remaining balance" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(7) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabUnpaid
+              layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentsTabUnpaid
             }
 
             "display the Amount in the payments tab for late payment interest remaining balance" in new Setup(view()) {
-              layoutContent.selectHead("#payments-table tr:nth-child(7) td:nth-child(4)").text shouldBe "£100.00"
+              layoutContent.selectHead("#payments-table tr:nth-child(6) td:nth-child(4)").text shouldBe "£100.00"
             }
             "display the Dunning lock subheading in the payments tab for multiple lines POA and Remaining Balance" in new Setup(multipleDunningLockView()) {
-              layoutContent.doesNotHave("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)")
-              layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentUnderReview
-              layoutContent.selectHead("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(2)").text shouldBe TaxYearOverviewMessages.paymentUnderReview
+              layoutContent.doesNotHave("#payments-table tbody tr:nth-child(1) td:nth-child(1) div:nth-child(3)")
+              layoutContent.selectHead("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)").text shouldBe TaxYearOverviewMessages.paymentUnderReview
+              layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(2)").text shouldBe TaxYearOverviewMessages.paymentUnderReview
             }
           }
         }
