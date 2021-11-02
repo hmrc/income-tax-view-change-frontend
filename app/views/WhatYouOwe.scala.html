@@ -105,15 +105,15 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
     </thead>
 }
 
-@paymentTypeEntry(documentDetailWithDueDate: DocumentDetailWithDueDate, rowId: String, isLatePaymentInterest: Boolean = false,
+@paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean = false,
     showTaxYear: Boolean = true, linkSuffix: String) = @{
 
-    val chargeTypeKey = documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)
+    val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
     val linkText = messages(s"whatYouOwe.${lpi}${chargeTypeKey}")
-    val taxYear = documentDetailWithDueDate.documentDetail.taxYear
+    val taxYear = documentDetail.taxYear
     val linkHref = controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
-        documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentInterest)
+        documentDetail.transactionId, isLatePaymentInterest)
     paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
         linkSuffix: String)
 }
@@ -130,6 +130,26 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
     }
 }
 
+@getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean) = @{
+    val isLatePaymentInterest = isOverduePayment && documentDetail.latePaymentInterestAmount.isDefined
+    val linkSuffix = "link"
+    def getLinkSuffix() : String = {
+        if(!isOverduePayment) {
+            "link"
+        } else {
+            if(documentDetail.isClass2Nic || documentDetail.latePaymentInterestAmount.isDefined) {
+                "late-link"
+            } else {
+                "late-link2"
+            }
+        }
+    }
+
+    paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
+    linkSuffix = getLinkSuffix())
+
+}
+
 @tableRow(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
@@ -143,27 +163,8 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
                 <br>
             }
 
-            @if(!isOverduePayment) {
-                @if(documentDetailWithDueDate.documentDetail.isClass2Nic) {
-                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = false,
-                        linkSuffix = "link")
-                } else {
-                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = true,
-                        linkSuffix = "link")
-                }
-            } else {
-                @if(documentDetailWithDueDate.documentDetail.isClass2Nic) {
-                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = false,
-                        linkSuffix = "late-link")
-                } else if (documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = true, showTaxYear = true,
-                        linkSuffix = "late-link")
-                } else {
-                    @paymentTypeEntry(documentDetailWithDueDate, rowId2, isLatePaymentInterest = false, showTaxYear = true,
-                        linkSuffix = "late-link2")
-                }
-            }
-
+            @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,
+                rowId = rowId2)
 
             @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
             @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){
