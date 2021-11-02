@@ -20,8 +20,10 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUser
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
+import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsErrorModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,7 +33,7 @@ import testUtils.TestSupport
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class WhatYouOweServiceSpec extends TestSupport {
+class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
   implicit val mtdItUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -193,6 +195,79 @@ class WhatYouOweServiceSpec extends TestSupport {
               Some(LocalDate.now().minusDays(1)))))
         }
       }
+
+      "when coding out is enabled" should {
+        "return the codedout documentDetail and the class2 nics charge" in {
+          enable(CodingOut)
+          val dd1 = DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
+            documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(43.21),
+            originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+            interestOutstandingAmount = None, interestRate = None,
+            latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            amountCodedOut = Some(0))
+          val dd2 = dd1.copy(transactionId = id1040000125, amountCodedOut = Some(999.99))
+          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(List(FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              documentDetails = List(dd1, dd2),
+              financialDetails = List(
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"),Some("type"),Some(100),Some(100),
+                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"),Some("type"),Some(100),Some(100),
+                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+              )
+            ))))
+
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")))),
+            dueInThirtyDaysList = List(),
+            futurePayments = List(),
+            outstandingChargesModel = None,
+            codedOutDocumentDetail = Some(dd2)
+          )
+        }
+      }
+
+      "when coding out is disabled" should {
+        "not return any coding out details" in {
+          disable(CodingOut)
+          val dd1 = DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
+            documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(43.21),
+            originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+            interestOutstandingAmount = None, interestRate = None,
+            latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            amountCodedOut = Some(0))
+          val dd2 = dd1.copy(transactionId = id1040000125, amountCodedOut = Some(999.99))
+          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(List(FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              documentDetails = List(dd1, dd2),
+              financialDetails = List(
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"),Some("type"),Some(100),Some(100),
+                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"),Some("type"),Some(100),Some(100),
+                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+              )
+            ))))
+
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")))),
+            dueInThirtyDaysList = List(),
+            futurePayments = List(),
+            outstandingChargesModel = None,
+            codedOutDocumentDetail = None
+          )
+        }
+      }
+
     }
   }
 }
