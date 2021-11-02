@@ -222,9 +222,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     incomeSourceDetailsSuccess, Some("1234567890"), None, Some("Agent"), arn = Some("1")
   )(FakeRequest())
 
-  s"GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
-      "the user is not authenticated" in {
+  s"[IT-AGENT-TEST-1] GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
+    s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+      " [IT-AGENT-TEST-1.1.1] the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
@@ -236,8 +236,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"return $OK with technical difficulties" when {
-      "the user is authenticated but doesn't have the agent enrolment" in {
+    s" [IT-AGENT-TEST-1.2] return $OK with technical difficulties" when {
+      " [IT-AGENT-TEST-1.2.1] the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
@@ -249,8 +249,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"return $SEE_OTHER" when {
-      "the agent does not have client details in session" in {
+    s" [IT-AGENT-TEST-1.3] return $SEE_OTHER" when {
+      " [IT-AGENT-TEST-1.3.1] the agent does not have client details in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
@@ -260,7 +260,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           redirectURI(routes.EnterClientsUTRController.show().url)
         )
       }
-      "the agent has client details in session but no confirmation flag" in {
+      " [IT-AGENT-TEST-1.3.2] the agent has client details in session but no confirmation flag" in {
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
@@ -273,9 +273,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     }
   }
 
-  s"GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
-    "return the tax year overview page with TxmEventsApproved FS enabled" when {
-      "all calls were successful and returned data" in {
+  s"[IT-AGENT-TEST-2] GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
+    " [IT-AGENT-TEST-2.1] return the tax year overview page with TxmEventsApproved FS enabled" when {
+      " [IT-AGENT-TEST-2.1.1] all calls were successful and returned data" in {
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -325,20 +325,20 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")("6 July 2017"),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=numeric]")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=numeric no-wrap]")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(4)", "td[class=numeric total-section]")("£198,500.00"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -361,7 +361,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
       }
 
-      "should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
+      " [IT-AGENT-TEST-2.1.2] should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -411,20 +411,20 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")("6 July 2017"),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=numeric]")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=numeric no-wrap]")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(4)", "td[class=numeric total-section]")("£198,500.00"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -446,7 +446,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
       }
-      "Calculation List was not found" in {
+      " [IT-AGENT-TEST-2.1.3] Calculation List was not found" in {
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -493,7 +493,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
-      "Calculation data was not found" in {
+      " [IT-AGENT-TEST-2.1.4] Calculation data was not found" in {
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -548,7 +548,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
       }
-      "financial details data was not found" in {
+      " [IT-AGENT-TEST-2.1.5] financial details data was not found" in {
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -598,11 +598,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")("6 July 2017"),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=numeric]")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=numeric no-wrap]")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(4)", "td[class=numeric total-section]")("£198,500.00"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
           elementTextBySelectorList("#payments", "p")("No payments currently due."),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
@@ -624,7 +624,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
-      "previous obligations data was not found" in {
+      " [IT-AGENT-TEST-2.1.6] previous obligations data was not found" in {
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -673,20 +673,20 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")("6 July 2017"),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=numeric]")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=numeric no-wrap]")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(4)", "td[class=numeric total-section]")("£198,500.00"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -702,8 +702,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
-    "return the tax year overview page with TxmEventsApproved FS disabled" when {
-      "all calls were successful and returned data" in {
+    " [IT-AGENT-TEST-2.2] return the tax year overview page with TxmEventsApproved FS disabled" when {
+      " [IT-AGENT-TEST-2.2.1] all calls were successful and returned data" in {
         disable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -753,20 +753,20 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")("6 July 2017"),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=numeric]")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=numeric no-wrap]")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(4)", "td[class=numeric total-section]")("£198,500.00"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -788,7 +788,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
       }
-      "previous obligations data was not found" in {
+      " [IT-AGENT-TEST-2.2.2] previous obligations data was not found" in {
         disable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -837,20 +837,20 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         result should have(
           httpStatus(OK),
           pageTitle(agentTitle),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(2)")("6 July 2017"),
-          elementTextBySelectorList("#content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=numeric]")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=numeric no-wrap]")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(4)", "td[class=numeric total-section]")("£198,500.00"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
+          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td[class=govuk-table__cell govuk-table__cell--numeric]")("£198,500.00"),
           elementTextBySelectorList("#taxCalculation", "table:nth-of-type(2)", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
@@ -866,8 +866,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
-    "return a technical difficulties page to the user" when {
-      "there was a problem retrieving the client's income sources" in {
+    " [IT-AGENT-TEST-2.3] return a technical difficulties page to the user" when {
+      " [IT-AGENT-TEST-2.3.1] there was a problem retrieving the client's income sources" in {
         enable(TxmEventsApproved)
 
         stubAuthorisedAgentUser(authorised = true)
@@ -885,7 +885,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
       }
-      "there was a problem retrieving the calculation list for the tax year" in {
+      " [IT-AGENT-TEST-2.3.2] there was a problem retrieving the calculation list for the tax year" in {
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -908,7 +908,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
         )
       }
-      "there was a problem retrieving the calculation for the tax year" in {
+      " [IT-AGENT-TEST-2.3.3] there was a problem retrieving the calculation for the tax year" in {
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -939,7 +939,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
       }
-      "there was a problem retrieving financial details for the tax year" in {
+      " [IT-AGENT-TEST-2.3.4] there was a problem retrieving financial details for the tax year" in {
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -979,7 +979,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
       }
-      "there was a problem retrieving current obligations" in {
+      " [IT-AGENT-TEST-2.3.5] there was a problem retrieving current obligations" in {
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
@@ -1023,7 +1023,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
       }
-      "there was a problem retrieving previous obligations" in {
+      " [IT-AGENT-TEST-2.3.6] there was a problem retrieving previous obligations" in {
         enable(TxmEventsApproved)
         stubAuthorisedAgentUser(authorised = true)
 
