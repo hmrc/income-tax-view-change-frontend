@@ -42,7 +42,7 @@ class TaxYearsController @Inject() (taxYearsView: TaxYears)
     implicit user =>
       user.incomeSources.orderedTaxYearsByAccountingPeriods match {
         case taxYears if taxYears.nonEmpty =>
-          Future.successful(Ok(taxYearsView(taxYears = taxYears, backUrl = backUrl, utr = user.saUtr, isEnabled(ITSASubmissionIntegration))))
+          Future.successful(Ok(taxYearsView(taxYears = taxYears.reverse, backUrl = backUrl, utr = user.saUtr, isEnabled(ITSASubmissionIntegration))))
         case _ => Future.successful(itvcErrorHandler.showInternalServerError)
       }
   }
