@@ -531,6 +531,11 @@ whatYouOwe.dunningLock.link                                        = tax decisio
 whatYouOwe.overdueAmount                                           = Overdue payments
 whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
 whatYouOwe.totalBalance                                            = Total payments
+whatYouOwe.codingOutHeading                                        = Collected through PAYE tax code
+whatYouOwe.codingOut-1                                             = You have {0} of tax for the
+whatYouOwe.codingOut-2                                             = {0} to {1} tax year
+whatYouOwe.codingOut-3                                             = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
+whatYouOwe.class2Nic.text                                          = Class 2 National Insurance
 
 
 ## Charge Summary ##

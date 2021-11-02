@@ -23,7 +23,8 @@ import java.time.LocalDate
 case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentList: List[DocumentDetailWithDueDate] = List(),
                                  dueInThirtyDaysList: List[DocumentDetailWithDueDate] = List(),
                                  futurePayments: List[DocumentDetailWithDueDate] = List(),
-                                 outstandingChargesModel: Option[OutstandingChargesModel] = None) {
+                                 outstandingChargesModel: Option[OutstandingChargesModel] = None,
+                                 codedOutDocumentDetail: Option[DocumentDetail] = None) {
 
   lazy val allCharges: List[DocumentDetailWithDueDate] = overduePaymentList ++ dueInThirtyDaysList ++ futurePayments
 
