@@ -105,12 +105,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a Credit on account row within payment details" in new Setup() {
         val allTableData =  document.getElementById("credit-on-account").getElementsByTag("td")
-        "getting payment allocation information" in {
-          allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
-        }
-        "getting payment allocation Amount" in {
-          allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
-        }
+//        "getting payment allocation information"
+        allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
+
+//        "getting payment allocation Amount"
+        allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
+
       }
 
       "should not have Credit on account row within payment details" in new Setup(paymentAllocationViewModel.copy(
