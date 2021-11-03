@@ -273,7 +273,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
     "not display the information about an estimate calculation" when {
       "the calculation is crystallised" in new Setup(view()) {
-        content.select("div.panel").headOption shouldBe None
+        content.select("div.panel").toList.headOption shouldBe None
       }
     }
 

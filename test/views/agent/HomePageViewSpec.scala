@@ -56,8 +56,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   val nextPaymentDue: LocalDate = LocalDate.of(2019, 1, 31)
 
-  class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left(nextPaymentDue, false)),
-              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false),
+  class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left((nextPaymentDue, false))),
+              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left((nextUpdateDue, false)),
               paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               overduePaymentExists: Boolean = false) {
 

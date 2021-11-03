@@ -86,7 +86,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         }
         "given a tax year which can be found in ETMP with TxmApproved FS disabled" should {
           lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
 
           "return Status OK (200) with TxmApproved FS false" in {
             disable(TxmEventsApproved)
@@ -104,7 +103,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         "given a tax year which can not be found in ETMP" should {
 
           lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
 
           "return Status Internal Server Error (500)" in {
             mockCalculationNotFound()
@@ -117,7 +115,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         "there is a downstream error" should {
 
           lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
 
           "return Status Internal Server Error (500)" in {
             mockCalculationError()

@@ -89,7 +89,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           chargeType = Some(chargeType), mainType = Some(mainType), amount = Some(amount), Some(1.23), Some("chargeReference1"))
 
       def viewModel(allocationDetailWithClearingDate: (AllocationDetail, String)*): PaymentAllocationViewModel = {
-        val paymentAllocations = testValidPaymentAllocationsModel.copy(allocations = allocationDetailWithClearingDate.map(_._1))
 
         PaymentAllocationViewModel(paymentAllocationChargesModel,
           originalPaymentAllocationWithClearingDate = allocationDetailWithClearingDate.map {
@@ -219,10 +218,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
       val allTableData: Elements =  document.getElementById("credit-on-account").getElementsByTag("td")
-      "getting payment allocation information"
-      allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
-      "getting payment allocation Amount"
-      allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
+      "getting payment allocation information" in {
+        allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
+      }
+      "getting payment allocation Amount" in {
+        allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
+      }
     }
 
     "not have Credit on account row within payment details" in new PaymentAllocationSetup(paymentAllocationViewModel.copy(
