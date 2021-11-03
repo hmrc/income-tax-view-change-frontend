@@ -24,7 +24,7 @@ import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
 
 import scala.annotation.tailrec
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait CustomMatchers extends UnitSpec with GivenWhenThen {
 
@@ -145,7 +145,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       val body: Element = Jsoup.parse(response.body).body()
       Then(s"the text of the element should be '$expectedValue'")
       def selectHead(element: Element, selector: String): Element = {
-        element.select(selector).headOption match {
+        element.select(selector).asScala.headOption match {
           case Some(element) => element
           case None => fail(s"Could not find element with selector: $selector")
         }
