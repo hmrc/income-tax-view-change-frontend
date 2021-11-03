@@ -45,6 +45,9 @@
 
 @hasAccruedInterest = @{ paymentBreakdown.exists(_.hasAccruedInterest) }
 
+@taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
+@taxYearTo = @{documentDetail.taxYear}
+
 @mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl)) {
 
     @if(hasDunningLocks) {
@@ -65,10 +68,10 @@
 
     <h1 class="govuk-heading-xl">
         @{
-            val taxYearStartDate = toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate
-            val taxYearEndDate = toTaxYearEndDate(documentDetail.taxYear).toLongDate
+            val taxYearStartDate = toTaxYearStartDate(taxYearFrom).toLongDate
+            val taxYearEndDate = toTaxYearEndDate(taxYearTo).toLongDate
             <span class="govuk-caption-xl">{messages("paymentDue.tax-year", taxYearStartDate, taxYearEndDate)}</span>
-            }
+        }
         @{
             val key = if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
                 else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
@@ -89,13 +92,13 @@
             </p>
         </div>
         @p(){
-            @messages("chargeSummary.codingOutMessage", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)
+            @messages("chargeSummary.codingOutMessage", taxYearFrom, taxYearTo)
         }
     }
 
     @if(documentDetail.isClass2Nic && !documentDetail.isCodingOut){
         @p(){
-            @messages("chargeSummary.nic2TaxYear", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)
+            @messages("chargeSummary.nic2TaxYear", taxYearFrom, taxYearTo)
         }
     }
 
@@ -132,7 +135,7 @@
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
             <dd class="govuk-summary-list__value">@{
                 if (codingOutEnabled && documentDetail.isCodingOut) {
-                    messages("chargeSummary.codingOutRemainingToPay", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)
+                    messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
                 } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
                 else documentDetail.remainingToPay.toCurrency
             }
@@ -178,8 +181,8 @@
     }
 
     @if(documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isCodingOut)){
-        <div id="payment-link-@{documentDetail.taxYear}">
-            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
+        <div id="payment-link-@{taxYearTo}">
+            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", taxYearFrom, taxYearTo)'>@messages("paymentDue.payNow")</a>
         </div>
         @p(){
             @messages("chargeSummary.payment-days-note")
@@ -239,7 +242,7 @@
 
                                 <a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
                                     @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
-                                    <span class="govuk-visually-hidden"> @documentDetail.taxYear</span>
+                                    <span class="govuk-visually-hidden"> @taxYearTo</span>
                                 </a>
                             }
 
