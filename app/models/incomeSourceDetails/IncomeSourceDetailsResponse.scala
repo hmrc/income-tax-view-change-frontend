@@ -39,7 +39,7 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
   val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
 
   def orderedTaxYearsByAccountingPeriods: List[Int] = {
-    startingTaxYear.fold(List.empty[Int])(year => (year to getCurrentTaxEndYear).toList)
+    startingTaxYear.fold((2018 to getCurrentTaxEndYear).toList)(year => (year to getCurrentTaxEndYear).toList)
   }
 
   def orderedTaxYearsByYearOfMigration: List[Int] = {
