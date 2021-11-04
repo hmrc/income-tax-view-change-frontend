@@ -92,23 +92,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new Setup() {
         val allTableData =  document.selectHead("tbody").selectHead("tr")
-//        "getting payment allocation information"
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocation
-
-//        "getting payment allocation Date Allocated"
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocated
-
-//        "getting payment allocation Amount"
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmount
 
       }
 
       "has a Credit on account row within payment details" in new Setup() {
         val allTableData =  document.getElementById("credit-on-account").getElementsByTag("td")
-//        "getting payment allocation information"
         allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
-
-//        "getting payment allocation Amount"
         allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
 
       }
@@ -155,13 +147,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new Setup(paymentAllocationViewModelLpi) {
         val allTableData =  document.selectHead("tbody").selectHead("tr")
-//        "getting payment allocation information"
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocationLpi
-
-//        "getting payment allocation Date Allocated"
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocatedLpi
-
-//        "getting payment allocation Amount"
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmountLpi
 
       }

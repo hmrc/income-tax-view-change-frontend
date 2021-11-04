@@ -218,10 +218,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
       val allTableData: Elements =  document.getElementById("credit-on-account").getElementsByTag("td")
-//      "getting payment allocation information"
       allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
-
-//      "getting payment allocation Amount"
       allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
 
     }
