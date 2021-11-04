@@ -86,6 +86,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val paymentBreakdownHeading = "Payment breakdown"
     val chargeHistoryHeading = "Payment history"
     val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
+    val codingOutHeader = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
+    val codingOutInsetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
@@ -539,5 +541,23 @@ class ChargeSummaryViewSpec extends ViewSpec {
 			}
 		}
 
+    "display the coded out details" when {
+      val documentDetailCodingOut = documentDetailModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
+        documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(2500.00),
+        originalAmount = Some(2500.00))
+      "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
+        document.select("h1").text() shouldBe Messages.codingOutHeader
+        document.select("#coding-out-notice").text() shouldBe Messages.codingOutInsetPara
+        document.select("#coding-out-message").text() shouldBe "This is the remaining tax you owe for the 2017 to 2018 tax year."
+        document.select("#coding-out-notice-link").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+        document.select(".govuk-summary-list__row").size() shouldBe 2
+        document.select(".govuk-summary-list__row .govuk-summary-list__value").get(0).text() shouldBe "£2,500.00"
+        document.select(".govuk-summary-list__row .govuk-summary-list__value").get(1).text() shouldBe "Collected through your PAYE tax code for 2017 to 2018 tax year"
+        document.select("a.govuk-button").size() shouldBe 0
+        document.select(".govuk-table tbody tr").size() shouldBe 2
+        document.select(".govuk-table tbody tr").get(0).text() shouldBe "29 Mar 2018 PAYE self assessment created £2,500.00"
+        document.select(".govuk-table tbody tr").get(1).text() shouldBe "29 Mar 2018 Amount collected through your PAYE tax code for 2017 to 2018 tax year £2,500.00"
+      }
+    }
   }
 }

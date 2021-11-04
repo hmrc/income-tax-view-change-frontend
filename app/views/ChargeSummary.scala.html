@@ -125,7 +125,12 @@
             </div>
         }
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("chargeSummary.paymentAmount")</dt>
+            <dt class="govuk-summary-list__key">@{
+                if (codingOutEnabled && documentDetail.isCodingOut) {
+                    messages("chargeSummary.paymentAmountCodingOut")
+                } else messages("chargeSummary.paymentAmount")
+            }
+            </dt>
             <dd class="govuk-summary-list__value">@{
                 if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.get.toCurrency
                 else documentDetail.originalAmount.get.toCurrency

@@ -546,6 +546,7 @@ chargeSummary.balancingCharge.text  							   = Remaining balance
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Full payment amount
+chargeSummary.paymentAmountCodingOut							   = Payment amount
 chargeSummary.paidToDate    									   = Paid to date
 chargeSummary.remainingDue   									   = Remaining to pay
 chargeSummary.overdue                                              = OVERDUE
