@@ -254,13 +254,13 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "has a tax due row" when {
         "the calculation is an estimate" in new Setup(view()) {
           val listRow: Element = layoutContent.selectHead("dl").selectNth("div", 2)
-          listRow.selectNth("dd", 1).text shouldBe TaxYearOverviewMessages.totalDue
-          listRow.selectNth("dd", 2).text shouldBe "£100.00"
+          listRow.selectNth("dt", 1).text shouldBe TaxYearOverviewMessages.totalDue
+          listRow.selectNth("dd", 1).text shouldBe "£100.00"
         }
         "the calculation is a crystallised calculation" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
           val listRow: Element = layoutContent.selectHead("dl").selectNth("div", 2)
-          listRow.selectNth("dd", 1).text shouldBe TaxYearOverviewMessages.fromToEstimate("6 April 2019", "5 January 2020")
-          listRow.selectNth("dd", 2).text shouldBe "£100.00"
+          listRow.selectNth("dt", 1).text shouldBe TaxYearOverviewMessages.fromToEstimate("6 April 2019", "5 January 2020")
+          listRow.selectNth("dd", 1).text shouldBe "£100.00"
         }
       }
     }
@@ -298,7 +298,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             }
             "it is crystallised" in new Setup(view()) {
 
-              layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe TaxYearOverviewMessages.totalDue
+              layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe TaxYearOverviewMessages.totalDue
 
             }
             "there is no calculation data" in new Setup(view(overview = None)) {

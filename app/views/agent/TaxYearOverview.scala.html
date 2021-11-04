@@ -30,6 +30,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl,
     breakdownPartial: taxOverviewBreakdownPartial,
     h2: h2,
+    h3: h3,
     p: p,
 )
 
@@ -73,10 +74,10 @@
         <table class="govuk-table" id="payments-table">
             <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
             @paymentsTableHead("payments-table-head")
-
+            <tbody>
             @for((documentDetailWithDueDate, index) <- documentDetailsWithDueDates.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
-                <tr>
-                    <td>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
                         @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                         }
@@ -90,16 +91,17 @@
                         @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     </td>
                     @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
-                        <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
-                        <td>@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
+                        <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
                     } else {
-                        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
-                        <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
-                        <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
+                        <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
                     }
                 </tr>
             }
+            </tbody>
         </table>
     }
 }
@@ -130,18 +132,22 @@
     @h2(msg = messages("tax-year-overview.updates"), classes = "govuk-heading-l")
     @groupedObligations.map {case (due, dueObligations) =>
         <div class="govuk-tax-years-updates-table" >
-            <h3 class="heading-medium">
-                <span class="govuk-tax-years-updates-table__section-title" id="table-default-content-@due">
-                    @messages("updateTab.due", due.toLongDate)
-                </span>
-            </h3>
-            <table class="govuk-table-updatesTab">
-                <caption>@messages("updateTab.dateToDate", dueObligations.head.obligation.start.toLongDate, dueObligations.head.obligation.end.toLongDate)</caption>
+@*
+            @h3(msg = messages("updateTab.due", due.toLongDate), classes="govuk-heading-m", optId=Some("no-calc-data-header"))
+        *@
+        <h3 class="heading-medium">
+            <span class="govuk-tax-years-updates-table__section-title" id="table-default-content-@due">
+            @messages("updateTab.due", due.toLongDate)
+            </span>
+        </h3>
+
+            <table class="govuk-table">
+                <caption class="govuk-table__caption" style="margin-bottom: 0px;">@messages("updateTab.dateToDate", dueObligations.head.obligation.start.toLongDate, dueObligations.head.obligation.end.toLongDate)</caption>
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header">@messages("updateTab.updateType")</th>
-                        <th class="govuk-table__header">@messages("updateTab.incomeSource")</th>
-                        <th class="govuk-table__header">@messages("updateTab.dateSubmitted")</th>
+                        <th scope="col" class="govuk-table__header">@messages("updateTab.updateType")</th>
+                        <th scope="col" class="govuk-table__header">@messages("updateTab.incomeSource")</th>
+                        <th scope="col" class="govuk-table__header">@messages("updateTab.dateSubmitted")</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -160,7 +166,7 @@
 
 @mainTemplate(pageTitle = heading, backUrl = Some(backUrl)){
 
-    <h1 class="govuk-heading-xl">
+    <h1 class="govuk-heading-xl" id="heading">
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")
     </h1>
