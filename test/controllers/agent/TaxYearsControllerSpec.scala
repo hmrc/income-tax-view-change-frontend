@@ -95,14 +95,15 @@ class TaxYearsControllerSpec extends TestSupport
 			}
 		}
 		"there is no firstAccountingPeriodEndDate from income source details" should {
-			"return technical difficulties" in new Setup {
+			"show the tax years page" in new Setup {
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockNoIncomeSources()
-				mockShowInternalServerError()
+
+				mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
 
 				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-				status(result) shouldBe INTERNAL_SERVER_ERROR
+				status(result) shouldBe OK
 				contentType(result) shouldBe Some(HTML)
 			}
 		}

@@ -53,13 +53,13 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
   ".viewTaxYears" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {
       "and firstAccountingPeriodEndDate is missing from income sources" should {
-        "return an ISE (500)" in {
+				"return an OK (200)" in {
 
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.OK
         }
       }
 
