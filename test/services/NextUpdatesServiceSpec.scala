@@ -21,7 +21,7 @@ import java.time.LocalDate
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIncomeDetails, propertyIncomeOnly}
 import testConstants.NextUpdatesTestConstants._
-import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import testUtils.TestSupport

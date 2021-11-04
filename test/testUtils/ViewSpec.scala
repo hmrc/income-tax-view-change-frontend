@@ -64,14 +64,14 @@ trait ViewSpec extends TestSupport {
 
   implicit class CustomSelectors(element: Element) {
 
-    def selectHead(selector: String): Element = element.select(selector).headOption match {
+    def selectHead(selector: String): Element = element.select(selector).toList.headOption match {
       case Some(element) => element
       case None => fail(s"$selector not found")
     }
 
     def selectNth(selector: String, nth: Int): Element = element.selectHead(s"$selector:nth-of-type($nth)")
 
-    def getOptionalSelector(selector: String): Option[Element] = element.select(selector).headOption
+    def getOptionalSelector(selector: String): Option[Element] = element.select(selector).toList.headOption
 
     //scalastyle:off
     def h1: Element = {

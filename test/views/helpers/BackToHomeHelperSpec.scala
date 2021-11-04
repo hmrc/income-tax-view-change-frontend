@@ -18,7 +18,6 @@ package views.helpers
 
 import testConstants.MessagesLookUp
 import org.jsoup.Jsoup
-import play.api.i18n.Messages.Implicits._
 import testUtils.TestSupport
 import views.html.helpers.injected.BackToHomeHelper
 
