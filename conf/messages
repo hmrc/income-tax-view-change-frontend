@@ -583,6 +583,7 @@ chargeSummary.chargeHistory.created.paymentOnAccount1.text		   = Payment on acco
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		   = Payment on account 2 of 2 created
 chargeSummary.chargeHistory.created.balancingCharge.text		   = Remaining balance created
 chargeSummary.chargeHistory.created.class2Nic.text                 = Class 2 National Insurance created
+chargeSummary.chargeHistory.created.codingOut.text                 = PAYE self assessment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	   = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	   = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	   = Remaining balance reduced by taxpayer request
@@ -615,7 +616,7 @@ chargeSummary.codingOutRemainingToPay                              = Collected t
 chargeSummary.codingOutInset-1                                     = If this tax cannot be collected
 chargeSummary.codingOutInset-2                                     = through your PAYE tax code (opens in new tab)
 chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.
-
+chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
 
 ## Regimes
 regimes.UK = UK

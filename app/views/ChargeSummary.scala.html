@@ -91,7 +91,7 @@
                 @messages("chargeSummary.codingOutInset-3")
             </p>
         </div>
-        @p(){
+        @p(id=Some("coding-out-message")){
             @messages("chargeSummary.codingOutMessage", taxYearFrom, taxYearTo)
         }
     }
@@ -221,6 +221,14 @@
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
                         <td class="govuk-table__cell numeric">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                    </tr>
+                }
+
+                @if(codingOutEnabled && documentDetail.isCodingOut) {
+                    <tr>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFrom, taxYearTo)</td>
+                        <td class="govuk-table__cell numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
                     </tr>
                 }
 
