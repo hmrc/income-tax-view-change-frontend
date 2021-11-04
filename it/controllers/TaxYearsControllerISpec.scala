@@ -31,7 +31,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         "no firstAccountingPeriodEndDate does not exists for both business and property" should {
 
-          "return 500 INTERNAL_SERVER_ERROR " in {
+          "return 200 OK" in {
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -42,7 +42,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
             verifyIncomeSourceDetailsCall(testMtditid)
 
             res should have(
-              httpStatus(INTERNAL_SERVER_ERROR)
+              httpStatus(OK)
             )
           }
         }

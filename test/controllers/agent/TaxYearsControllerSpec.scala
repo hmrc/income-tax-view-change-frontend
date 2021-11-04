@@ -20,7 +20,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgent
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import config.FrontendAppConfig
 import config.featureswitch._
-import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
@@ -95,14 +95,15 @@ class TaxYearsControllerSpec extends TestSupport
 			}
 		}
 		"there is no firstAccountingPeriodEndDate from income source details" should {
-			"return technical difficulties" in new Setup {
+			"show the tax years page" in new Setup {
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockNoIncomeSources()
-				mockShowInternalServerError()
+
+				mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
 
 				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-				status(result) shouldBe INTERNAL_SERVER_ERROR
+				status(result) shouldBe OK
 				contentType(result) shouldBe Some(HTML)
 			}
 		}

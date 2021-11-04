@@ -16,13 +16,12 @@
 package controllers.agent
 
 import config.featureswitch._
-import controllers.Assets.INTERNAL_SERVER_ERROR
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER, INTERNAL_SERVER_ERROR}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
@@ -207,8 +206,8 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
 
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          httpStatus(OK),
+          pageTitle("Tax years - Your client’s Income Tax details - GOV.UK")
         )
       }
     }

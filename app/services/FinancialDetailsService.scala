@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.Assets.NOT_FOUND
+import play.api.http.Status.NOT_FOUND
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
@@ -84,7 +84,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
       taxYear =>
         incomeTaxViewChangeConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
-          case error: FinancialDetailsErrorModel if error.code != 404 => Some((taxYear, error))
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
           case _ => None
         }
     }

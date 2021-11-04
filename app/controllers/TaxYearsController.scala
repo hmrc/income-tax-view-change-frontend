@@ -40,11 +40,7 @@ class TaxYearsController @Inject() (taxYearsView: TaxYears)
 
   val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      user.incomeSources.orderedTaxYearsByAccountingPeriods match {
-        case taxYears if taxYears.nonEmpty =>
-          Future.successful(Ok(taxYearsView(taxYears = taxYears.reverse, backUrl = backUrl, utr = user.saUtr, isEnabled(ITSASubmissionIntegration))))
-        case _ => Future.successful(itvcErrorHandler.showInternalServerError)
-      }
+			Future.successful(Ok(taxYearsView(taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse, backUrl = backUrl, utr = user.saUtr, isEnabled(ITSASubmissionIntegration))))
   }
 
   lazy val backUrl: String = controllers.routes.HomeController.home().url
