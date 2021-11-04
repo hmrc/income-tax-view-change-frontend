@@ -19,7 +19,6 @@ package views.timeout
 import testConstants.MessagesLookUp.{Timeout => timeoutMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport

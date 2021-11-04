@@ -29,7 +29,7 @@ import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
 import config.featureswitch.TxmEventsApproved
-import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import mocks.MockHttp
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
 import models.core.{NinoResponse, NinoResponseError}

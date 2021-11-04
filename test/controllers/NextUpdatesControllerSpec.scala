@@ -215,7 +215,6 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "receives an Error from the NextUpdates Service" should {
 
           lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-          lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status ISE (500)" in {
             mockSingleBusinessIncomeSource()
