@@ -166,7 +166,7 @@
 }
 
 @mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl)) {
-    <h1 class="govuk-heading-xl">
+    <h1 class="govuk-heading-xl" id="heading">
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")
     </h1>
