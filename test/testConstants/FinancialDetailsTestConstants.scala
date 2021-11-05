@@ -325,7 +325,8 @@ object FinancialDetailsTestConstants {
                           latePaymentInterestAmount: Option[BigDecimal] = Some(100),
                           interestOutstandingAmount: Option[BigDecimal] = Some(80),
                           amountCodedOut: Option[BigDecimal] = None,
-                          transactionId: String = id1040000123): DocumentDetail =
+                          transactionId: String = id1040000123,
+                          lpiWithDunningBlock: Option[BigDecimal] = Some(100)): DocumentDetail =
     DocumentDetail(
       taxYear = taxYear.toString,
       transactionId = transactionId,
@@ -339,7 +340,7 @@ object FinancialDetailsTestConstants {
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
       interestEndDate = Some(LocalDate.of(2018, 6, 15)),
       latePaymentInterestAmount = latePaymentInterestAmount,
-      lpiWithDunningBlock = Some(100),
+      lpiWithDunningBlock = lpiWithDunningBlock,
       paymentLotItem = paymentLotItem,
       paymentLot = paymentLot,
       amountCodedOut = amountCodedOut
@@ -396,10 +397,10 @@ object FinancialDetailsTestConstants {
 
   val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
 
-  def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), dunningLock: Option[String] = None): FinancialDetailsModel =
+  def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), dunningLock: Option[String] = None, lpiWithDunningBlock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None)),
+      documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock))
     )
 
