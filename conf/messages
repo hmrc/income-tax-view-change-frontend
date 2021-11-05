@@ -569,6 +569,7 @@ chargeSummary.paymentBreakdown.dunningLocks.underReview            = Under revie
 chargeSummary.paymentBreakdown.interestLocks.notCharging           = We are not currently charging interest on this payment
 chargeSummary.paymentBreakdown.interestLocks.charging              = We are charging you interest on this payment
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
+chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Late payment interest
 
 chargeSummary.interestLocks.text                                   = Any interest on this payment is shown as a total on the
 chargeSummary.interestLocks.linkText                               = What you owe page
