@@ -59,8 +59,10 @@
             </div>
             <div class="govuk-notification-banner__content">
                 @p(){
-                    <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
-                    @if(!latePaymentInterestCharge){
+                    @if(latePaymentInterestCharge){
+                        <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
+                    } else {
+                        <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
                         @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
                     }
                 }
