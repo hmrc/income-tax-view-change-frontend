@@ -21,6 +21,8 @@
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 @import views.html.layouts.common.Scripts
+@import config.FrontendAppConfig
+
 
 @this(
         appConfig: config.FrontendAppConfig,
@@ -53,7 +55,7 @@
     @hmrcHeader(HmrcHeaderArgs(
         homepageUrl = controllers.routes.HomeController.home.url,
         serviceName = Some(messages("base.service_name")),
-        serviceUrl = controllers.routes.HomeController.home.url,
+        serviceUrl = appConfig.businessTaxAccount,
         containerClasses = "govuk-width-container",
         language = CurrentLanguage(),
         signOutHref = Some(controllers.routes.SignOutController.signOut.url),
