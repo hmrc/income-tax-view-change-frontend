@@ -41,10 +41,6 @@
 
 @import implicitDateFormatter._
 
-@heading = @{
-    messages("tax-year-overview.heading")
-}
-
 @taxCalculationContent = @{
     overviewOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
 }
