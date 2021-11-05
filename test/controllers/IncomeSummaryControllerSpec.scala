@@ -73,7 +73,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "given a tax year which can not be found in ETMP" should {
 
         lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
 
         "return Status Internal Server Error (500)" in {
           mockCalculationNotFound()
@@ -86,7 +85,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "there is a downstream error" should {
 
         lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
 
         "return Status Internal Server Error (500)" in {
           mockCalculationError()

@@ -40,15 +40,11 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
 			getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
-				mtdItUser.incomeSources.orderedTaxYearsByAccountingPeriods match {
-					case taxYears if taxYears.nonEmpty =>
-						Ok(taxYearsView(
-							taxYears = taxYears.reverse,
-							backUrl = backUrl,
-							itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration)
-						))
-					case _ => itvcErrorHandler.showInternalServerError()
-				}
+				Ok(taxYearsView(
+					taxYears = mtdItUser.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+					backUrl = backUrl,
+					itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration)
+				))
 			}
   }
 

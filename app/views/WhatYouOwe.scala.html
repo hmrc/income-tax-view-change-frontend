@@ -105,7 +105,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
     </thead>
 }
 
-@paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean = false,
+@paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
     showTaxYear: Boolean = true, linkSuffix: String) = @{
 
     val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
@@ -118,7 +118,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
         linkSuffix: String)
 }
 
-@paymentTypeEntryHTML(showTaxYear: Boolean = true, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String) = {
+@paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String) = {
     <a id="@rowId-@linkSuffix" href="@linkHref">
         @linkText
         <span class="govuk-visually-hidden">@taxYear</span>
@@ -132,7 +132,6 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
 
 @getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean) = @{
     val isLatePaymentInterest = isOverduePayment && documentDetail.latePaymentInterestAmount.isDefined
-    val linkSuffix = "link"
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
             "link"
@@ -150,7 +149,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
 
 }
 
-@tableRow(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false) = {
+@tableRow(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
             @if(isOverduePayment && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(
