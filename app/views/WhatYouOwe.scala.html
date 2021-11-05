@@ -364,7 +364,10 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
                         optId=Some("coding-out-header"))
                     <div id="coding-out-wrapper" class="govuk-inset-text">
                         <p id="coding-out-notice" class="govuk-body coding-out-notice">
-                            @messages("whatYouOwe.codingOut-1", codedOutDocumentDetail.amountCodedOut.get.toCurrencyString)
+                            @messages("whatYouOwe.codingOut-1a")
+                            <a id="coding-out-summary-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(codedOutDocumentDetail.taxYear.toInt,
+                codedOutDocumentDetail.transactionId, false)">@codedOutDocumentDetail.amountCodedOut.get.toCurrencyString</a>
+                            @messages("whatYouOwe.codingOut-1b")
                             <b>@messages("whatYouOwe.codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
                                 codedOutDocumentDetail.taxYear)</b>
                             @messages("whatYouOwe.codingOut-3")
