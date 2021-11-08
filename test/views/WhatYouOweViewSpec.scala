@@ -182,7 +182,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     dueInThirtyDaysList = List(),
     futurePayments = List(),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
       documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
       originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
       interestOutstandingAmount = None, interestRate = None,
@@ -197,7 +197,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     dueInThirtyDaysList = List(),
     futurePayments = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
       documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
       originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
       interestOutstandingAmount = None, interestRate = None,
@@ -857,6 +857,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
         pageDocument.getElementById("coding-out-header") should not be null
+        pageDocument.getElementById("coding-out-summary-link") should not be null
+        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
+            "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
       "have a class 2 Nics overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {

@@ -21,7 +21,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch.{ChargeHistory, CodingOut, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -30,6 +30,7 @@ import models.financialDetails.{FinancialDetail, Payment, PaymentsWithChargeType
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+
 import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
@@ -223,7 +224,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitle("Remaining balance - Business Tax account - GOV.UK"),
-        elementTextBySelector("main h2")("Payment breakdown")
+        elementTextBySelector("main h2")("")
       )
     }
 
@@ -354,6 +355,57 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitle("Late payment interest on payment on account 2 of 2 - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("")
+      )
+    }
+
+    "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
+      val header = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
+      val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
+      val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
+      val remainingText = "Collected through your PAYE tax code for 2017 to 2018 tax year"
+      val payHistoryLine1 = "29 Mar 2018 PAYE self assessment created £2,500.00"
+      val payHistoryLine2 = "29 Mar 2018 Amount collected through your PAYE tax code for 2017 to 2018 tax year £2,500.00"
+
+      Given("the CodingOut feature switch is enabled")
+      enable(CodingOut)
+      enable(ChargeHistory)
+      enable(PaymentAllocation)
+
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response with a coded out documentDetail")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
+        "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+        "documentDetails" -> Json.arr(
+          Json.obj("taxYear" -> "2018",
+            "transactionId" -> "CODINGOUT01",
+            "documentDescription" -> "TRM New Charge",
+            "documentText" -> "Class 2 National Insurance",
+            "outstandingAmount" -> 2500.00,
+            "originalAmount" -> 2500.00,
+            "documentDate" -> "2018-03-29",
+            "amountCodedOut" -> 2500.00
+          )),
+        "financialDetails" -> Json.arr()))
+
+
+
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "CODINGOUT01")
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      res should have(
+        httpStatus(OK),
+        pageTitle("PAYE self assessment - Business Tax account - GOV.UK"),
+        elementTextBySelector("h1")(header),
+        elementTextBySelector("#coding-out-notice")(insetPara),
+        elementTextBySelector("#coding-out-message")(summaryMessage),
+        elementTextBySelector(".govuk-summary-list__row:nth-child(1) .govuk-summary-list__value")("£2,500.00"),
+        elementTextBySelector(".govuk-summary-list__row:nth-child(2) .govuk-summary-list__value")(remainingText),
+        elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1),
+        elementTextBySelector(".govuk-table tbody tr:nth-child(2)")(payHistoryLine2)
       )
     }
   }

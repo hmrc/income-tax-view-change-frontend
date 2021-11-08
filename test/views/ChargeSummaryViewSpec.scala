@@ -86,6 +86,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val paymentBreakdownHeading = "Payment breakdown"
     val chargeHistoryHeading = "Payment history"
     val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
+    val codingOutHeader = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
+    val codingOutInsetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
@@ -201,7 +203,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       document.select("h1").text() shouldBe Messages.balancingChargeHeading(2018)
     }
 
-    "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))) {
+    "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), lpiWithDunningBlock = None)) {
       document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
     }
 
@@ -214,7 +216,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     }
 
     "not display a notification banner when there are no dunning locks in payment breakdown" in new Setup(
-      documentDetailModel(), paymentBreakdown = paymentBreakdown) {
+      documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown) {
 
       document.doesNotHave(Selectors.id("dunningLocksBanner"))
     }
@@ -294,7 +296,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       verifySummaryListRow(3, Messages.remainingToPay, "£1,700.00")
     }
 
-    "not display the Payment breakdown list when payments breakdown is empty" in new Setup(documentDetailModel(), paymentBreakdown = Nil) {
+    "not display the Payment breakdown list when payments breakdown is empty" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
       document.doesNotHave(Selectors.id("heading-payment-breakdown"))
     }
 
@@ -319,6 +321,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
         verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 Under review")
         verifyPaymentBreakdownRow(4, "Student Loans", "£543.21")
       }
+
+      "has a payment row with Under review note when there is a dunning lock on a lpi charge" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true)  {
+        verifyPaymentBreakdownRow(1, "Late payment interest", "£100.00 Under review")
+        verifyPaymentBreakdownRow(2, "", "")
+      }
+
       "has at least one record with an interest lock" which {
 
         "has payment rows with Under review note when there are dunning locks on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithMixedLocks) {
@@ -346,25 +354,25 @@ class ChargeSummaryViewSpec extends ViewSpec {
       document.select("div#payment-link-2018").text() shouldBe "Pay now"
     }
 
-    "have a paragraph explaining how many days a payment can take to process" in new Setup(documentDetailModel()) {
+    "have a paragraph explaining how many days a payment can take to process" in new Setup(documentDetailModel(lpiWithDunningBlock = None)) {
       document.select("#main-content p:nth-child(5)").text() shouldBe "Payments can take up to 7 days to process."
     }
 
-    "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
+    "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
       document.select("#main-content p a").text() shouldBe "What you owe page"
       document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
-    "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
+    "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
       document.select("#main-content p a").text() shouldBe "What you owe page"
       document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
     }
 
-    "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
+    "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
       document.select("#main-content p a").text() shouldBe "what you owe"
     }
 
-    "have no interest lock payment link when there is an intererst lock but no accrued interest" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
+    "have no interest lock payment link when there is an intererst lock but no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
       document.select("#main-content p a").text() shouldBe "what you owe"
     }
 
@@ -376,15 +384,19 @@ class ChargeSummaryViewSpec extends ViewSpec {
       document.select("div#payment-link-2018").text() shouldBe ""
     }
 
-    "display a charge history" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
+    "display a charge history" in new Setup(documentDetailModel(lpiWithDunningBlock = None, outstandingAmount = Some(0))) {
       document.select("main h2").text shouldBe Messages.chargeHistoryHeading
     }
 
-    "display a paymentbreakdown heading in h2 and charge history in h3" in new Setup(
-			documentDetailModel(outstandingAmount = Some(0)), paymentBreakdown = paymentBreakdown) {
-			document.select("main h2").text shouldBe Messages.paymentBreakdownHeading
-			document.select("main h3").text shouldBe Messages.chargeHistoryHeading
+    "not display a paymentbreakdown heading in h2" in new Setup(
+			documentDetailModel(outstandingAmount = Some(0), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown) {
+			document.select("main h2").text shouldBe ""
 		}
+
+    "display charge history in h3" in new Setup(
+      documentDetailModel(outstandingAmount = Some(0), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown) {
+      document.select("main h3").text shouldBe Messages.chargeHistoryHeading
+    }
 
 		"display only the charge creation item when no history found for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
       document.select("tbody tr").size() shouldBe 1
@@ -539,5 +551,32 @@ class ChargeSummaryViewSpec extends ViewSpec {
 			}
 		}
 
+    "display the coded out details" when {
+      val documentDetailCodingOut = documentDetailModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
+        documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(2500.00),
+        originalAmount = Some(2500.00))
+      object CodingOutMessages {
+        val header = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
+        val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
+        val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
+        val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+        val remainingText = "Collected through your PAYE tax code for 2017 to 2018 tax year"
+        val payHistoryLine1 = "29 Mar 2018 PAYE self assessment created £2,500.00"
+        val payHistoryLine2 = "29 Mar 2018 Amount collected through your PAYE tax code for 2017 to 2018 tax year £2,500.00"
+      }
+      "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
+        document.select("h1").text() shouldBe CodingOutMessages.header
+        document.select("#coding-out-notice").text() shouldBe CodingOutMessages.insetPara
+        document.select("#coding-out-message").text() shouldBe CodingOutMessages.summaryMessage
+        document.select("#coding-out-notice-link").attr("href") shouldBe CodingOutMessages.noticeLink
+        document.select(".govuk-summary-list__row").size() shouldBe 2
+        document.select(".govuk-summary-list__row .govuk-summary-list__value").get(0).text() shouldBe "£2,500.00"
+        document.select(".govuk-summary-list__row .govuk-summary-list__value").get(1).text() shouldBe CodingOutMessages.remainingText
+        document.select("a.govuk-button").size() shouldBe 0
+        document.select(".govuk-table tbody tr").size() shouldBe 2
+        document.select(".govuk-table tbody tr").get(0).text() shouldBe CodingOutMessages.payHistoryLine1
+        document.select(".govuk-table tbody tr").get(1).text() shouldBe CodingOutMessages.payHistoryLine2
+      }
+    }
   }
 }

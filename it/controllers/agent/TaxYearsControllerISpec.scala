@@ -206,8 +206,8 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
 
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          httpStatus(OK),
+          pageTitle("Tax years - Your client’s Income Tax details - GOV.UK")
         )
       }
     }
