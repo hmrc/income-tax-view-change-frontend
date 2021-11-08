@@ -23,6 +23,9 @@
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.partials.taxOverviewBreakdownPartial
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 694e75744d4f8175b9bf98ca879c10d239d123c5
 @import views.html.layouts.layout
 @import views.html.components._
 @import models.financialDetails.DocumentDetail
@@ -44,11 +47,14 @@
 
 @this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
 
+<<<<<<< HEAD
 @(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 >>>>>>> master
 
 @import implicitDateFormatter._
 
+=======
+>>>>>>> 694e75744d4f8175b9bf98ca879c10d239d123c5
 @taxCalculationContent = @{
     overviewOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
 }
@@ -82,33 +88,34 @@
             <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
             @paymentsTableHead("payments-table-head")
             <tbody>
-            @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                        @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
-                            <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
-                        }
-                        <div>
-                            @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                                <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
-                            } else {
-                                <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
+                                <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                             }
-                        </div>
-                        @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
-                        @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
-                    </td>
-                    @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
-                        <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
-                    } else {
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
-                        <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
-                    }
-                </tr>
-            }
+                            <div>
+                                @if(documentDetailWithDueDate.isLatePaymentInterest) {
+                                    <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                                } else {
+                                    <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                                }
+                            </div>
+
+                            @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
+                            @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
+                        </td>
+                        @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
+                            <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
+                            <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
+                            <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
+                        } else {
+                            <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
+                            <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
+                            <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
+                        }
+                    </tr>
+                }
             </tbody>
         </table>
     }

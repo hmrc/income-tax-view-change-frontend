@@ -272,11 +272,6 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       paymentType.text shouldBe taxYearOverviewMessages.paymentUnderReview
     }
 
-    "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
-      val paymentType: Element = content.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
-      paymentType.text shouldBe taxYearOverviewMessages.paymentUnderReview
-    }
-
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
       val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiPaymentOnAccount1
