@@ -51,22 +51,22 @@
 @paymentTypesDropdown(classes: String = "govuk-details") = {
     <details class="@classes" data-module="govuk-details" role="group">
         <summary class="govuk-details__summary" id="payment-type-dropdown-title" role="button" aria-controls="payment-details-content" aria-expanded="false">
-            <span class="govuk-details__summary-text"> @messages("whatYouOwe.dropdown.info") </span>
+            <span class="govuk-details__summary-text"> @messages("agent.paymentDue.dropdown.info") </span>
         </summary>
 
         <div class="govuk-details__text" id="payment-details-content-0" data-module="govuk-details" aria-hidden="false">
-            @h2(msg = messages("whatYouOwe.remaining-balance.heading"), optId=Some("remaining-balance-heading"))
-            <span id="remaining-balance-line1"> @messages("whatYouOwe.remaining-balance.line1")</span>
+            @h2(msg = messages("agent.paymentDue.remaining-balance.heading"), optId=Some("remaining-balance-heading"))
+            <span id="remaining-balance-line1"> @messages("agent.paymentDue.remaining-balance.line1")</span>
         </div>
 
         <div class="govuk-details__text" id="payment-details-content-1" data-module="govuk-details" aria-hidden="false">
-            @h2(msg = messages("whatYouOwe.payment-on-account.heading"), optId = Some("payment-on-account-heading"))
-            <span id="payment-on-account-line1"> @messages("whatYouOwe.payment-on-account.line1")</span>
+            @h2(msg = messages("agent.paymentDue.payment-on-account.heading"), optId = Some("payment-on-account-heading"))
+            <span id="payment-on-account-line1"> @messages("agent.paymentDue.payment-on-account.line1")</span>
         </div>
 
         <div class="govuk-details__text" id="payment-details-content-2" data-module="govuk-details" aria-hidden="false">
-            @h2(msg = messages("whatYouOwe.late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
-            <span id="late-payment-interest-line1"> @messages("whatYouOwe.late-payment-interest.line1")</span>
+            @h2(msg = messages("agent.paymentDue.late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
+            <span id="late-payment-interest-line1"> @messages("agent.paymentDue.late-payment-interest.line1")</span>
         </div>
     </details>
 }
@@ -163,7 +163,7 @@
                     @if(chargesList.balanceDetails.overDueAmount > 0) {
                     <div id="overdueAmount" class="govuk-grid-column-one-third">
                         @p(){
-                        @messages("whatYouOwe.overdueAmount")
+                        @messages("agent.payment.DueoverdueAmount")
                         }
                         @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
                     </div>
@@ -171,7 +171,7 @@
                     @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
                     <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
                         @p(){
-                        @messages("whatYouOwe.balanceDueWithin30Days")
+                        @messages("agent.paymentDue.balanceDueWithin30Days")
                         }
                         @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()))
                     </div>
@@ -179,7 +179,7 @@
                     @if(chargesList.balanceDetails.totalBalance > 0) {
                     <div id="totalBalance" class="govuk-grid-column-one-third">
                         @p(){
-                        @messages("whatYouOwe.totalBalance")
+                        @messages("agent.paymentDue.totalBalance")
                         }
                         @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()))
                     </div>
@@ -196,7 +196,7 @@
                 @h2(msg = messages("agent.paymentDue.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString), classes = "govuk-heading-l", optId=Some("pre-mtd-payments-heading"))
                 <div id="balancing-charge-type-table">
                     <table class="govuk-table">
-                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.pre-mtd-payments")</caption>
+                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("agent.paymentDue.pre-mtd-payments")</caption>
                         @tableHead("balancing-charge-type-table-head")
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row" id="balancing-charge-type-0">
@@ -265,7 +265,7 @@
                 @if(chargesList.interestOnOverdueCharges) {
                     @p(id=Some("interest-rate-para"))(Html(messages("agent.paymentDue.over-due.interest-rate-1") +
                     link(outerMessage = ".", link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
-                    messageKey = "whatYouOwe.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank")).toString() + messages("agent.paymentDue.over-due.interest-rate-2")),
+                    messageKey = "agent.paymentDue.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank")).toString() + messages("agent.paymentDue.over-due.interest-rate-2")),
                     )
                 }
             }
