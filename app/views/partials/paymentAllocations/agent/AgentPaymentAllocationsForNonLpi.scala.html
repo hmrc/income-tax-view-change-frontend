@@ -28,32 +28,32 @@
 @import viewModel.originalPaymentAllocationWithClearingDate
 
 @originalPaymentAllocationWithClearingDate.map { allocation =>
-@defining(allocation.allocationDetail.get.getTaxYear(implicitDateFormatter)) { allocationTaxYear =>
-<tbody>
-<tr>
-    <td>
-        <a href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocation.allocationDetail.get.transactionId.get)">
-            @messages(allocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
-            <span class="govuk-visually-hidden visuallyhidden"> @allocationTaxYear</span>
-        </a>
-        <br>
-        <span class="govuk-body-s">@messages("paymentAllocation.taxYear", s"${allocationTaxYear - 1}", s"$allocationTaxYear")</span>
-    </td>
-    <td>@allocation.clearingDate.get.toLocalDate.toLongDateShort</td>
-    <td class="numeric">@allocation.allocationDetail.get.amount.get.toCurrencyString</td>
-</tr>
-</tbody>
-}
+    @defining(allocation.allocationDetail.get.getTaxYear(implicitDateFormatter)) { allocationTaxYear =>
+        <tbody class="govuk-table__body">
+            <tr>
+                <td class="govuk-table__cell">
+                    <a href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocation.allocationDetail.get.transactionId.get)">
+                        @messages(allocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+                        <span class="govuk-visually-hidden visuallyhidden"> @allocationTaxYear</span>
+                    </a>
+                    <br>
+                    <span class="govuk-body-s">@messages("paymentAllocation.taxYear", s"${allocationTaxYear - 1}", s"$allocationTaxYear")</span>
+                </td>
+                <td class="govuk-table__cell">@allocation.clearingDate.get.toLocalDate.toLongDateShort</td>
+                <td class="govuk-table__cell numeric">@allocation.allocationDetail.get.amount.get.toCurrencyString</td>
+            </tr>
+        </tbody>
+    }
 }
 @paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.map { outstandingAmount =>
-@if(outstandingAmount != 0) {
-<tbody>
-<tr id="credit-on-account">
-    <td>@messages("paymentAllocation.creditOnAccount")</td>
-    <td></td>
-    <td>@{outstandingAmount.abs.toCurrencyString}</td>
-</tr>
-</tbody>
+    @if(outstandingAmount != 0) {
+        <tbody class="govuk-table__body">
+            <tr id="credit-on-account">
+                <td class="govuk-table__cell">@messages("paymentAllocation.creditOnAccount")</td>
+                <td class="govuk-table__cell"></td>
+                <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
+            </tr>
+        </tbody>
     }
 }
 
