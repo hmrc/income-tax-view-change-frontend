@@ -81,7 +81,7 @@ agent.paymentDue.dunningLock.link                              = tax decision is
 agent.paymentDue.over-due.interest.line1                       = Interest for late payment
 agent.paymentDue.over-due.interest.line2                       = {0} to {1} at {2}%
 agent.paymentDue.over-due.interest-rate-1                      = Any overdue payment interest is at the
-agent.paymentDue.over-due.interest-rate.link                   = current interest rate for late and early payments (opens in new tab).
+agent.paymentDue.over-due.interest-rate.link                   = current interest rate for late and early payments (opens in new tab)
 agent.paymentDue.over-due.interest-rate-2                      = The rate may have changed since the interest was first charged.
 
 agent.paymentDue.lpi.paymentOnAccount1.text                    = Late payment interest for payment on account 1 of 2

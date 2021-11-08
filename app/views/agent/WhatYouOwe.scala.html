@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.layout
+@import views.html.layouts.agent.layout
 @import views.html.components._
 @import implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
@@ -65,8 +65,8 @@
         </div>
 
         <div class="govuk-details__text" id="payment-details-content-2" data-module="govuk-details" aria-hidden="false">
-            @h2(msg = messages("agent.paymentDue.late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
-            <span id="late-payment-interest-line1"> @messages("agent.paymentDue.late-payment-interest.line1")</span>
+            @h2(msg = messages("whatYouOwe.late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
+            <span id="late-payment-interest-line1"> @messages("whatYouOwe.late-payment-interest.line1")</span>
         </div>
     </details>
 }
@@ -163,7 +163,7 @@
                     @if(chargesList.balanceDetails.overDueAmount > 0) {
                     <div id="overdueAmount" class="govuk-grid-column-one-third">
                         @p(){
-                        @messages("agent.payment.DueoverdueAmount")
+                        @messages("agent.paymentDue.overdueAmount")
                         }
                         @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
                     </div>
@@ -263,10 +263,12 @@
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
-                    @p(id=Some("interest-rate-para"))(Html(messages("agent.paymentDue.over-due.interest-rate-1") +
-                    link(outerMessage = ".", link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
-                    messageKey = "agent.paymentDue.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank")).toString() + messages("agent.paymentDue.over-due.interest-rate-2")),
-                    )
+                    @p(id=Some("interest-rate-para"), classes="govuk-body interest-rate"){
+                        @messages("agent.paymentDue.over-due.interest-rate-1")
+                        @link(outerMessage = ".", link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
+                            messageKey = "agent.paymentDue.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank"))
+                        @messages("agent.paymentDue.over-due.interest-rate-2")
+                    }
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty){
