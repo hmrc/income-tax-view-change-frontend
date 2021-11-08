@@ -139,7 +139,7 @@ showTaxYear: Boolean = true, linkSuffix: String) = @{
     </a>
     @if(showTaxYear) {
     <div>
-        @messages("whatYouOwe.payment-type.taxYear", (taxYear.toInt - 1).toString, taxYear)
+        @messages("agent.paymentDue.payment-type.taxYear", (taxYear.toInt - 1).toString, taxYear)
     </div>
     }
 }
