@@ -57,7 +57,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     val document: Document = Jsoup.parse(chargeSummaryView.toString())
 
 
-    lazy val content: Element = document.selectHead("#content")
+    lazy val content: Element = document.selectHead("#main-content")
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
 
@@ -285,24 +285,24 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
 
         "have a interest lock payment link when the interest is accruing" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-          document.select("#content article p a").text() shouldBe "What you owe page"
-          document.select("#content article p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+          document.select("#main-content p a").text() shouldBe "What you owe page"
+          document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
         }
 
         "have a interest lock payment link when the interest has previously" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
-          document.select("#content article p a").text() shouldBe "What you owe page"
-          document.select("#content article p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+          document.select("#main-content p a").text() shouldBe "What you owe page"
+          document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
         }
 
         "have no interest lock payment link when there is no accrued interest" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
-          document.select("#content article p a").text() shouldBe "what you owe"
+          document.select("#main-content p a").text() shouldBe "what you owe"
         }
 
         "have no interest lock payment link when there is an intererst lock but no accrued interest" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
-          document.select("#content article p a").text() shouldBe "what you owe"
+          document.select("#main-content p a").text() shouldBe "what you owe"
         }
       }
     }
