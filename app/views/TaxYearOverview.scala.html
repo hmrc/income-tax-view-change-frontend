@@ -22,10 +22,6 @@
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.partials.taxOverviewBreakdownPartial
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 694e75744d4f8175b9bf98ca879c10d239d123c5
 @import views.html.layouts.layout
 @import views.html.components._
 @import models.financialDetails.DocumentDetail
@@ -42,19 +38,9 @@
 @(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate],
         obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_],
         messages: Messages, user: auth.MtdItUser[_])
-=======
-@import models.financialDetails.DocumentDetail
-
-@this(mainTemplate: MainTemplate, implicitDateFormatter: ImplicitDateFormatterImpl, breakdownPartial: taxOverviewBreakdownPartial)
-
-<<<<<<< HEAD
-@(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate], obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
->>>>>>> master
 
 @import implicitDateFormatter._
 
-=======
->>>>>>> 694e75744d4f8175b9bf98ca879c10d239d123c5
 @taxCalculationContent = @{
     overviewOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
 }
@@ -181,7 +167,7 @@
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")
     </h1>
-    @overviewOpt.map{overview =>
+    @overviewOpt.map { overview =>
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
