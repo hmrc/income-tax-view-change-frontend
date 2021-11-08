@@ -332,15 +332,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Remaining Balance" in new Setup(multipleDunningLockView()) {
       layoutContent.selectHead("#payments-table tbody tr:nth-child(1) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
       layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
-<<<<<<< HEAD
-/*
-      content.selectHead("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
-      content.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
-      content.selectHead("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
-*/
-=======
       layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)")
->>>>>>> 60758f3f... Further modifications to taxOverviewBreakdownPartial.scala.html.
     }
 
     "display updates by due-date" in new Setup(estimateView()) {
