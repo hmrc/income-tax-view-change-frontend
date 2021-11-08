@@ -21,18 +21,17 @@ import audit.models.PaymentHistoryResponseAuditModel
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{IncomeSourceDetailsService, PaymentHistoryService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.agent.AgentsPaymentHistory
+import views.html.agent.PaymentHistory
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext}
+import scala.concurrent.ExecutionContext
 
-class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHistory,
+class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
                                          auditingService: AuditingService,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -40,10 +39,9 @@ class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHist
                                         (implicit val appConfig: FrontendAppConfig,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
-                                         dateFormatter: ImplicitDateFormatterImpl,
                                          implicit val ec: ExecutionContext,
                                          val itvcErrorHandler: ItvcErrorHandler)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def viewPaymentHistory(): Action[AnyContent] =
     Authenticated.async { implicit request =>
@@ -57,7 +55,7 @@ class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHist
 							if (isEnabled(TxmEventsApproved)) {
 								auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
 							}
-							Ok(agentsPaymentHistory(payments, dateFormatter, backUrl, mtdItUser.saUtr))
+							Ok(paymentHistory(payments, backUrl, mtdItUser.saUtr))
 						case Left(_) => itvcErrorHandler.showInternalServerError()
 					}
 				}

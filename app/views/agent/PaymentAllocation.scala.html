@@ -14,15 +14,17 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.agent.MainTemplate
+
+@import views.html.components._
+@import views.html.layouts.agent.layout
 @import models.paymentAllocationCharges.PaymentAllocationViewModel
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
 @import models.paymentAllocationCharges.AllocationDetailWithClearingDate
 @import views.html.partials.paymentAllocations.agent._
 
-@this(mainTemplate: MainTemplate, paymentAllocationsForNonLpi: AgentPaymentAllocationsForNonLpi,
-paymentAllocationsForLpi: AgentPaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(mainTemplate: layout, paymentAllocationsForNonLpi: AgentPaymentAllocationsForNonLpi,
+paymentAllocationsForLpi: AgentPaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p)
 
 @(viewModel: PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages)
 
@@ -31,46 +33,45 @@ paymentAllocationsForLpi: AgentPaymentAllocationsForLpi, implicitDateFormatter: 
 @import viewModel.originalPaymentAllocationWithClearingDate
 
 @mainTemplate(
-    title = messages("paymentAllocation.heading"),
+    pageTitle = messages("paymentAllocation.heading"),
     backUrl = Some(backUrl)
 ) {
 
-    <h1 id="page-heading" class="heading-xlarge"> @messages("paymentAllocation.heading")</h1>
+    @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
 
-    <div>
-        <table id="payment-allocation-charge-table" class="govuk-table">
-            <tbody>
-            <tr>
-                <td class="govuk-summary-list__key">@messages("paymentAllocation.date")</td>
-                <td>@{paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</td>
-            </tr>
-            <tr>
-                <td class="govuk-summary-list__key">@messages("paymentAllocation.amount")</td>
-                <td>@{paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div id="payments-allocation-info" class="panel panel-indent panel-border-wide panel-margin-top">
-        <p>@messages("paymentAllocation.info")</p>
+    <dl class="govuk-summary-list" id="payment-allocation-charge-table">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
+            <dd class="govuk-summary-list__value">@{paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>
+            <dd class="govuk-summary-list__value">@{paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</dd>
+
+        </div>
+    </dl>
+
+    <div id="payments-allocation-info" class="govuk-inset-text">
+        @p(){@messages("paymentAllocation.info")}
     </div>
 
-    <h2>@messages("paymentAllocation.tableSection.heading")</h2>
-    <div>
-        <table id="payment-allocation-table" class="govuk-table-paymentAllocations">
-            <thead id="payment-allocation-table-head">
-                <tr>
-                    <th>@messages("paymentAllocation.tableHead.allocation")</th>
-                    <th>@messages("paymentAllocation.tableHead.allocated-date")</th>
-                    <th>@messages("paymentAllocation.tableHead.amount")</th>
-                </tr>
-            </thead>
+    <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 
-            @if(viewModel.isLpiPayment) {
+    <table class="govuk-table" id="payment-allocation-table">
+        <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
+                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
+                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
+            </tr>
+        </thead>
+
+        @if(viewModel.isLpiPayment) {
             @paymentAllocationsForLpi(viewModel)
-            } else {
+        } else {
             @paymentAllocationsForNonLpi(viewModel)
-            }
-        </table>
-    </div>
+        }
+    </table>
+
 }

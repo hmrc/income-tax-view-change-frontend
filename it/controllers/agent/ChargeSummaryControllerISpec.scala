@@ -96,8 +96,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         httpStatus(OK),
         pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
         elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
-        elementTextBySelector("article dl:nth-of-type(2) dd span")("Under review"),
-        elementTextBySelector("article dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
+        elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
+        elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
       )
     }
 
