@@ -91,6 +91,11 @@ agent.paymentDue.overdueAmount                                 = Overdue payment
 agent.paymentDue.balanceDueWithin30Days                        = Due within 30 days
 agent.paymentDue.totalBalance                                  = Total payments
 
+agent.paymentDue.codingOutHeading                                        = Collected through PAYE tax code
+agent.paymentDue.codingOut-1                                             = You have {0} of tax for the
+agent.paymentDue.codingOut-2                                             = {0} to {1} tax year
+agent.paymentDue.codingOut-3                                             = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
+
 
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet

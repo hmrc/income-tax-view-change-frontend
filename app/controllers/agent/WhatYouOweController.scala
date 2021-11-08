@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -30,8 +30,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
 import views.html.agent.WhatYouOwe
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -46,12 +46,13 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                       itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def view(charge: WhatYouOweChargesList, taxYear: Int)(implicit user: MtdItUser[_]): Html = {
+  private def view(charge: WhatYouOweChargesList, taxYear: Int, codingOutEnabled: Boolean)(implicit user: MtdItUser[_]): Html = {
     whatYouOweView.apply(
       chargesList = charge,
       currentTaxYear = taxYear,
       backUrl = backUrl,
-      user.saUtr
+      user.saUtr,
+      codingOutEnabled = codingOutEnabled
     )
   }
 
@@ -66,7 +67,9 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
 									auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
 								}
 
-								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)
+                val codingOutEnabled = isEnabled(CodingOut)
+
+								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear, codingOutEnabled = codingOutEnabled)
 								).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
 							}
 						} recover {

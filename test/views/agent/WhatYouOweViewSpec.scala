@@ -22,7 +22,7 @@ import testConstants.MessagesLookUp.{AgentPaymentDue, WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.outstandingCharges.OutstandingChargesModel
 import org.jsoup.Jsoup
@@ -31,8 +31,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import views.html.agent.WhatYouOwe
-
 import java.time.LocalDate
+
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -41,7 +41,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
-              migrationYear: Int = LocalDate.now().getYear - 1) {
+              migrationYear: Int = LocalDate.now().getYear - 1,
+              codingOutEnabled: Boolean = true) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       mtditid = "XAIT00000000015",
@@ -57,7 +58,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear,
-      "testBackURL", Some("1234567890"))(FakeRequest(), agentUser, implicitly)
+      "testBackURL", Some("1234567890"),codingOutEnabled)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -137,6 +138,37 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     dueInThirtyDaysList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates(1)),
     futurePayments = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
+  )
+
+  val codingOutAmount = 444.23
+  val whatYouOweDataWithCodingOut: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    overduePaymentList = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates.head),
+    dueInThirtyDaysList = List(),
+    futurePayments = List(),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+      documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+      originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+      interestOutstandingAmount = None, interestRate = None,
+      latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+      interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+      amountCodedOut = Some(codingOutAmount)))
+  )
+
+  val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    overduePaymentList = List(),
+    dueInThirtyDaysList = List(),
+    futurePayments = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates.head),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+      documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+      originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+      interestOutstandingAmount = None, interestRate = None,
+      latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+      interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+      amountCodedOut = Some(codingOutAmount)))
   )
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00))
@@ -480,7 +512,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.poa1Text + s" $currentYear " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-        pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -501,7 +533,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.poa1Text + s" $currentYear " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-        pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -512,7 +544,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
-        pageDocument.getElementById("over-due-type-1-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-1-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-1-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -602,7 +634,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
-        pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -693,7 +725,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
-        pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -790,4 +822,42 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
     }
   }
+
+  "codingOut is enabled" should {
+    "have coding out message displayed at the bottom of the page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+      pageDocument.getElementById("coding-out-header") should not be null
+      pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
+    }
+    "have a class 2 Nics overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+      pageDocument.getElementById("over-due-type-0") should not be null
+      pageDocument.getElementById("over-due-type-0").text().contains("Class 2 National Insurance") shouldBe true
+      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
+      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+    }
+    "have a class 2 Nics future entry" in new Setup(whatYouOweDataWithCodingOutFuture, codingOutEnabled = true) {
+      pageDocument.getElementById("coding-out-header") should not be null
+      pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString) shouldBe true
+      pageDocument.getElementById("future-payments-type-0") should not be null
+      pageDocument.getElementById("future-payments-type-0").text().contains("Class 2 National Insurance") shouldBe true
+      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 1
+      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+    }
+  }
+
+  "codingOut is disabled" should {
+    "have no coding out message displayed" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+      pageDocument.getElementById("coding-out-header") shouldBe null
+      pageDocument.getElementById("coding-out-notice") shouldBe null
+    }
+    "have a balancing charge overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+      pageDocument.getElementById("over-due-type-0") should not be null
+      pageDocument.select("#over-due-type-0 a").text() shouldBe "Remaining balance 2021"
+      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
+      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+    }
+  }
+
 }
