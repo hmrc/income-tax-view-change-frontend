@@ -577,7 +577,7 @@ updateTab.updateType.crystallised                               = Datganiad terf
 agent.paymentDue.heading                                        = Yr hyn sydd arnoch
 agent.paymentDue.no-payments-due                                = Nid oes gennych taliadau sy’n ddyledus.
 agent.paymentDue.sa-note                                        = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
-agent.paymentDue.sa-link                                        = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
+agent.paymentDue.sa-link                                        = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd).
 agent.paymentDue.outstanding-charges-note                       = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 agent.paymentDue.dropdown.info                                  = Beth yw’r mathau o daliadau?
 agent.paymentDue.payment-days-note                              = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
@@ -610,11 +610,11 @@ agent.paymentDue.over-due.interest.line1                        = Llog am dalu�
 agent.paymentDue.lpi.paymentOnAccount1.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 agent.paymentDue.lpi.paymentOnAccount2.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 agent.paymentDue.lpi.balancingCharge.text                       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
-agent.paymentDue.dunningLock.text                               = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd ac {0}
+agent.paymentDue.dunningLock.text                               = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd ac
 agent.paymentDue.dunningLock.link                               = mae ymchwiliad i’ch penderfyniad treth ar y gweill (yn agor tab newydd).
-agent.paymentDue.over-due.interest-rate                         = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
-agent.paymentDue.over-due.interest-rate.link                    = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd)
-
+agent.paymentDue.over-due.interest-rate-1                       = Mae unrhyw log am dalu’n hwyr ar y
+agent.paymentDue.over-due.interest-rate.link                    = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd).
+agent.paymentDue.over-due.interest-rate-2                       = Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
 #Agent next updates
 agent.nextUpdates.heading                                       = Diweddariadau nesaf
 agent.nextUpdates.sub-heading                                   = Diweddariadau’n ddyledus erbyn
