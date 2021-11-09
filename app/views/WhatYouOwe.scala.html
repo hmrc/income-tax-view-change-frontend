@@ -119,7 +119,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
 }
 
 @paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String) = {
-    <a id="@rowId-@linkSuffix" href="@linkHref">
+    <a class="govuk-link" id="@rowId-@linkSuffix" href="@linkHref">
         @linkText
         <span class="govuk-visually-hidden">@taxYear</span>
     </a>
@@ -365,7 +365,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
                     <div id="coding-out-wrapper" class="govuk-inset-text">
                         <p id="coding-out-notice" class="govuk-body coding-out-notice">
                             @messages("whatYouOwe.codingOut-1a")
-                            <a id="coding-out-summary-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(codedOutDocumentDetail.taxYear.toInt,
+                            <a class="govuk-link" id="coding-out-summary-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(codedOutDocumentDetail.taxYear.toInt,
                 codedOutDocumentDetail.transactionId, false)">@codedOutDocumentDetail.amountCodedOut.get.toCurrencyString</a>
                             @messages("whatYouOwe.codingOut-1b")
                             <b>@messages("whatYouOwe.codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),

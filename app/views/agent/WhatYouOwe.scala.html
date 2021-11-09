@@ -28,16 +28,17 @@
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
-
-    <div id="payments-due-note" class="panel panel-indent panel-border-wide">
-        @p(id=Some("sa-note-migrated")){
-            @messages("agent.paymentDue.sa-note")
-            <a href="@{appConfig.saViewLandPService(utr.get)}" target="_blank">@messages("agent.paymentDue.sa-link")</a>.
-        }
-        @p(id=Some("outstanding-charges-note-migrated")){
-            @messages("agent.paymentDue.outstanding-charges-note")
-        }
-    </div>
+    @if(utr.isDefined) {
+        <div id="payments-due-note" class="govuk-inset-text">
+            @p(id=Some("sa-note-migrated")){
+                @messages("agent.paymentDue.sa-note")
+                @link(link = appConfig.saViewLandPService(utr.get), messageKey = "agent.paymentDue.sa-link", id=Some("sa-note-migrated-link"), target=Some("_blank"))
+            }
+            @p(id=Some("outstanding-charges-note-migrated")){
+                @messages("agent.paymentDue.outstanding-charges-note")
+            }
+        </div>
+    }
 }
 
 @paymentDaysNoteParagraph = {
@@ -45,7 +46,7 @@
 }
 
 @creditOnAccountNotePanel = {
-    <div id="credit-on-account" class="panel panel-indent panel-border-wide">@messages("agent.paymentDue.credit-on-account")</div>
+    <div id="credit-on-account" class="govuk-inset-text">@messages("agent.paymentDue.credit-on-account")</div>
 }
 
 @paymentTypesDropdown(classes: String = "govuk-details") = {
@@ -98,8 +99,9 @@
         <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
         <td>
             @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
-            @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">}
-            @messages(s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
+            @if(isChargeTypeHyperlinked){
+            <a class="govuk-link" id="@rowId-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">}
+                @messages(s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
             @if(isChargeTypeHyperlinked){
                 <span class="govuk-visually-hidden visuallyhidden"> @documentDetailWithDueDate.documentDetail.taxYear</span>
                 </a>
@@ -120,9 +122,9 @@
             @if(isOverduePayment){<span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
             <br>
             @if(isChargeTypeHyperlinked && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                <a id="@rowId2-late-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId, latePaymentCharge: Boolean)">
+                <a class="govuk-link" id="@rowId2-late-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId, latePaymentCharge: Boolean)">
             } else {
-                <a id="@rowId2-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">
+                <a class="govuk-link" id="@rowId2-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">
             }
             @messages(if(documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) s"agent.paymentDue.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
             else s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")
