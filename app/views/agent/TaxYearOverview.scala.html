@@ -129,6 +129,7 @@
 }
 
 @updatesContent = {
+
     @h2(msg = messages("tax-year-overview.updates"), classes = "govuk-heading-l")
     @groupedObligations.map {case (due, dueObligations) =>
 
@@ -160,6 +161,8 @@
         </table>
       </div>
       }
+
+}
 }
 
 @mainTemplate(pageTitle = heading, backUrl = Some(backUrl)){
@@ -168,7 +171,6 @@
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")
     </h1>
-
 
     @overviewOpt.map{overview =>
         <dl class="govuk-summary-list">
