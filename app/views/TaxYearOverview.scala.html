@@ -130,37 +130,38 @@
 }
 
 @updatesContent = {
-@h2(msg = messages("tax-year-overview.updates"), classes = "govuk-heading-l")
-@groupedObligations.map{case (due, dueObligations) =>
+    @h2(msg = messages("tax-year-overview.updates"), classes = "govuk-heading-l")
+    @groupedObligations.map { case (due, dueObligations) =>
 
-<div class="govuk-tax-years-updates-table">
-    <h3 class="heading-medium">
-        <span class="govuk-tax-years-updates-table__section-title" id="table-default-content-@due">
-        @messages("updateTab.due", due.toLongDate)
-        </span>
-    </h3>
-    <table class="govuk-table">
-        <caption>@messages("updateTab.dateToDate", dueObligations.head.obligation.start.toLongDate, dueObligations.head.obligation.end.toLongDate)</caption>
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header">@messages("updateTab.updateType")</th>
-                <th class="govuk-table__header">@messages("updateTab.incomeSource")</th>
-                <th class="govuk-table__header">@messages("updateTab.dateSubmitted")</th>
-            </tr>
-        </thead>
-        <tbody>
-        @dueObligations.map{nextUpdateWithIncomeType =>
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
-                <td class="govuk-table__cell">@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
-                <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
-            </tr>
-        }
-</tbody>
-</table>
-</div>
+    <div class="govuk-tax-years-updates-table">
+        <h3 class="govuk-heading-m">
+            <span class="govuk-tax-years-updates-table__section-title" id="table-default-content-@due">
+            @messages("updateTab.due", due.toLongDate)
+            </span>
+        </h3>
+        <table class="govuk-table">
+            <caption class="govuk-table__caption" style="margin-bottom: 0px;">@messages("updateTab.dateToDate", dueObligations.head.obligation.start.toLongDate, dueObligations.head.obligation.end.toLongDate)</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header">@messages("updateTab.updateType")</th>
+                    <th class="govuk-table__header">@messages("updateTab.incomeSource")</th>
+                    <th class="govuk-table__header">@messages("updateTab.dateSubmitted")</th>
+                </tr>
+            </thead>
+            <tbody>
+            @dueObligations.map { nextUpdateWithIncomeType =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
+                    <td class="govuk-table__cell">@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
+                    <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
+                </tr>
+            }
+    </tbody>
+    </table>
+    </div>
+    }
 }
-}
+
 
 @mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl)) {
     <h1 class="govuk-heading-xl" id="heading">
