@@ -179,9 +179,7 @@ tax-year-overview.updates                                           = Updates
 tax-year-overview.income                                            = Income
 tax-year-overview.deductions                                        = Allowances and deductions
 tax-year-overview.taxable-income                                    = Total income on which tax is due
-tax-year-overview.taxable-income.finalCalc                          = Total taxable income
 tax-year-overview.tax-due                                           = Income Tax and National Insurance contributions due
-tax-year-overview.tax-due.finalCalc                                 = Income Tax and National Insurance contributions
 tax-year-overview.payments.payment-type                             = Payment type
 tax-year-overview.payments.due-date                                 = Due date
 tax-year-overview.payments.status                                   = Status
@@ -725,19 +723,20 @@ agent.obligations.quarterlyUpdates                              = Quarterly upda
 agent.obligations.annualUpdates                                 = Annual updates
 agent.obligations.finalDeclarationUpdate                        = Final declaration
 
-## Final Declaration (Individual/Common Content)
-final-declaration.individual.heading                            = Your final tax overview
-final-declaration.caption                                       = 6 April {0} to 5 April {1}
-final-declaration.inset.1                                       = If you think this information is incorrect, you can
-final-declaration.individual.inset.2                            = check your Income Tax Return.
-final-declaration.declaration                                   = Declaration
-final-declaration.individual.chargeInfo.p                       = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
-final-declaration.submit                                        = I agree - Submit Income Tax Return
+## Final Tax Overview (Individual/Common Content)
+final-tax-overview.individual.heading                           = Your final tax overview
+final-tax-overview.caption                                      = 6 April {0} to 5 April {1}
+final-tax-overview.inset.1                                      = If you think this information is incorrect, you can
+final-tax-overview.individual.inset.2                           = check your Income Tax Return.
+final-tax-overview.individual.chargeInfo.p                      = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
 
-## Final Declaration (Agent Content overrides)
-final-declaration.agent.heading                                 = Your client’s final tax overview
-final-declaration.agent.chargeInfo.p                            = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
-final-declaration.agent.inset.2                                 = check your client’s Income Tax Return.
+## Final Tax Overview (Agent Content overrides)
+final-tax-overview.agent.heading                                = Your client’s final tax overview
+final-tax-overview.agent.chargeInfo.p                           = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
+final-tax-overview.agent.inset.2                                = check your client’s Income Tax Return.
+
+tax-year-overview.taxable-income.finalCalc                      = Total taxable income
+tax-year-overview.tax-due.finalCalc                             = Income Tax and National Insurance contributions
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English

@@ -37,18 +37,18 @@
 @(overview: CalcOverview, taxYear: Int, isAgent: Boolean = false, backUrl: String)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
 
 @headingText = @{
-    val key = s"final-declaration.${if(isAgent) "agent" else "individual"}.heading"
+    val key = s"final-tax-overview.${if(isAgent) "agent" else "individual"}.heading"
 
     messages(key)
 }
 
 @subHeadingText = @{
-    val key = s"final-declaration.caption"
+    val key = s"final-tax-overview.caption"
     messages(key, (taxYear - 1).toString, taxYear.toString)
 }
 
 @insetContent = {
-    @messages("final-declaration.inset.1") <a href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear)}>@messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.inset.2")</a>
+    @messages("final-tax-overview.inset.1") <a href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear)}>@messages(s"final-tax-overview.${if(isAgent) "agent" else "individual"}.inset.2")</a>
 }
 
 @formCall = @{
@@ -72,7 +72,7 @@
     @breakdownPartial(overview, taxYear, isFinalCalc = true, isAgent)
 
     @p(classes = "govuk-body govuk-!-margin-top-7 govuk-!-margin-bottom-7") {
-        @messages(s"final-declaration.${if(isAgent) "agent" else "individual"}.chargeInfo.p")
+        @messages(s"final-tax-overview.${if(isAgent) "agent" else "individual"}.chargeInfo.p")
     }
 
     @form(formCall) {
