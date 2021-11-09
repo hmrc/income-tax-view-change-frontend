@@ -782,7 +782,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       "have note credit-on-account as a panel" in new Setup(noChargesModel) {
-        pageDocument.getElementById("credit-on-account").classNames should contain allOf("panel", "panel-indent", "panel-border-wide")
+        pageDocument.getElementById("credit-on-account").classNames.toArray should contain("govuk-inset-text")
       }
 
       "not have button Pay now" in new Setup(noChargesModel) {
