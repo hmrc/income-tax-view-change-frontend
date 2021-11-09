@@ -1,38 +1,38 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import views.html.components._
 @import views.html.layouts.layout
 
 @this(
-mainTemplate: layout,
-h1: h1,
-p: p,
-link: link,
-appConfig: config.FrontendAppConfig
+        mainTemplate: layout,
+        h1: h1,
+        p: p,
+        link: link,
+        appConfig: config.FrontendAppConfig
 )
 
 @(taxYears: List[Int], backUrl: String, utr: Option[String], itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
 @viewReturnLink(year: Int) = {
-        <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewReturn-link-@year"
-        href="@{controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url}">
-            @messages("taxYears.viewReturn")
-            <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
-        </a>
+    <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewReturn-link-@year"
+    href="@{controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url}">
+        @messages("taxYears.viewReturn")
+        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+    </a>
 }
 
 @updateReturnLink(year: Int) = {
@@ -66,25 +66,25 @@ appConfig: config.FrontendAppConfig
     backUrl = Some(backUrl)
 ) {
 
-    @h1(msg = "taxYears.heading")
+    @h1(msg = "taxYears.heading", id=Some("heading"))
 
 
     @if(taxYears.isEmpty){
         <p id="no-taxYears">@messages("taxYears.noEstimates")</p>
     } else {
         <div class="column-two-thirds">
-        <table class="govuk-table">
-            <caption class="govuk-table__caption govuk-table__caption--xl heading-xlarge govuk-visually-hidden">@messages("taxYears.heading")</caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">@messages("taxYears.table.taxYear.heading")</th>
-                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("taxYears.table.options.heading")</th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
+            <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-table__caption--xl heading-xlarge govuk-visually-hidden">@messages("taxYears.heading")</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">@messages("taxYears.table.taxYear.heading")</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("taxYears.table.options.heading")</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
                 @taxYears.map(taxYearRow)
-            </tbody>
-        </table>
+                </tbody>
+            </table>
         </div>
     }
 

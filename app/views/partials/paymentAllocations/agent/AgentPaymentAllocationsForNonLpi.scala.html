@@ -28,6 +28,7 @@
 @import viewModel.originalPaymentAllocationWithClearingDate
 
 @originalPaymentAllocationWithClearingDate.map { allocation =>
+
     @defining(allocation.allocationDetail.get.getTaxYear(implicitDateFormatter)) { allocationTaxYear =>
         <tbody class="govuk-table__body">
             <tr>

@@ -52,7 +52,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")),
-    dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
+      dueDate = Some(LocalDate.of(2019, 6, 15)), dunningLock = true),
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")),
       dueDate = Some(LocalDate.of(2019, 7, 15)), dunningLock = false),
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")),
@@ -151,187 +151,188 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "have the correct heading" in new Setup(estimateView()) {
-      content.selectHead("  h1").text shouldBe taxYearOverviewMessages.heading
+      layoutContent.selectHead("h1").text.contains(taxYearOverviewMessages.heading)
     }
 
     "have the correct secondary heading" in new Setup(estimateView()) {
-      content.selectHead("header > p").text shouldBe taxYearOverviewMessages.secondaryHeading
+      layoutContent.selectHead("h1").text.contains(taxYearOverviewMessages.secondaryHeading)
+      layoutContent.selectHead("span").text.contains(taxYearOverviewMessages.secondaryHeading)
     }
 
     "display the calculation date" in new Setup(estimateView()) {
-      content.selectHead("dl > div:nth-child(1) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.calculationDate
-      content.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe taxYearOverviewMessages.calcDate
+      layoutContent.selectHead("dl > div:nth-child(1) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.calculationDate
+      layoutContent.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe taxYearOverviewMessages.calcDate
     }
 
     "display the estimate due for an ongoing tax year" in new Setup(estimateView()) {
-      content.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
-      content.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
+      layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
+      layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
     }
 
     "display the total due for a crystallised year" in new Setup(crystallisedView) {
-      content.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.totalDue
-      content.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(true).taxDue.toCurrencyString
+      layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.totalDue
+      layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(true).taxDue.toCurrencyString
     }
 
     "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
-      content.selectHead(".panel").text shouldBe taxYearOverviewMessages.calcDateInfo
+      layoutContent.selectHead("p.govuk-body").text shouldBe taxYearOverviewMessages.calcDateInfo
     }
 
     "not have a paragraph explaining the calc date for a crystallised year" in new Setup(crystallisedView) {
-      content.getOptionalSelector(".panel") shouldBe None
+      layoutContent.getOptionalSelector("p.govuk-body") shouldBe None
     }
 
     "show three tabs with the correct tab headings" in new Setup(estimateView()) {
-      content.selectHead("#tab_taxCalculation").text shouldBe taxYearOverviewMessages.inYearTaxCalculation
-      content.selectHead("#tab_payments").text shouldBe taxYearOverviewMessages.payments
-      content.selectHead("#tab_updates").text shouldBe taxYearOverviewMessages.updates
+      layoutContent.selectHead("#tab_taxCalculation").text shouldBe taxYearOverviewMessages.inYearTaxCalculation
+      layoutContent.selectHead("#tab_payments").text shouldBe taxYearOverviewMessages.payments
+      layoutContent.selectHead("#tab_updates").text shouldBe taxYearOverviewMessages.updates
     }
 
     "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
-      content.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
+      layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
     }
 
     "display the section header in the Tax Calculation tab" in new Setup(estimateView()) {
-      val sectionHeader: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(1)")
+      val sectionHeader: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(1)")
       sectionHeader.text shouldBe taxYearOverviewMessages.section
     }
 
     "display the amount header in the Tax Calculation tab" in new Setup(estimateView()) {
-      val amountHeader: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(2)")
+      val amountHeader: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(2)")
       amountHeader.text shouldBe taxYearOverviewMessages.amount
     }
 
     "display the income row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val incomeLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
+      val incomeLink: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
       incomeLink.text shouldBe taxYearOverviewMessages.income
       incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
-      content.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe completeOverview(false).income.toCurrencyString
+      layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(false).income.toCurrencyString
     }
 
     "when there is no calc data should display the correct heading in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
-      content.selectHead("#taxCalculation > h2").text shouldBe taxYearOverviewMessages.taxCalculationNoData
+      layoutContent.selectHead("#taxCalculation > h2").text shouldBe taxYearOverviewMessages.taxCalculationNoData
     }
 
     "when there is no calc data should display the correct notes in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
-      content.selectHead("#taxCalculation > p").text shouldBe taxYearOverviewMessages.taxCalculationNoDataNote
+      layoutContent.selectHead("#taxCalculation > p").text shouldBe taxYearOverviewMessages.taxCalculationNoDataNote
     }
 
     "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val allowancesLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(3) td:nth-child(1) a")
+      val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
       allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
       allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
-      content.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(2)").text shouldBe "−£2.02"
+      layoutContent.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
     }
 
     "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
-      content.selectHead("#income-deductions-table tr:nth-child(4) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
-      content.selectHead("#income-deductions-table tr:nth-child(4) td:nth-child(2)").text shouldBe completeOverview(false).totalTaxableIncome.toCurrencyString
+      layoutContent.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
+      layoutContent.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(2)").text shouldBe completeOverview(false).totalTaxableIncome.toCurrencyString
     }
 
     "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val totalTaxDueLink: Element = content.selectHead("#taxdue-payments-table td:nth-child(1) a")
+      val totalTaxDueLink: Element = layoutContent.selectHead("#taxdue-payments-table td:nth-child(1) a")
       totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
       totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
-      content.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
+      layoutContent.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
     }
 
     "display the table headings in the Payments tab" in new Setup(estimateView()) {
-      content.selectHead("#paymentTypeHeading").text shouldBe taxYearOverviewMessages.paymentType
-      content.selectHead("#paymentDueDateHeading").text shouldBe taxYearOverviewMessages.dueDate
-      content.selectHead("#paymentStatusHeading").text shouldBe taxYearOverviewMessages.status
-      content.selectHead("#paymentAmountHeading").text shouldBe taxYearOverviewMessages.amount
+      layoutContent.selectHead("#paymentTypeHeading").text shouldBe taxYearOverviewMessages.paymentType
+      layoutContent.selectHead("#paymentDueDateHeading").text shouldBe taxYearOverviewMessages.dueDate
+      layoutContent.selectHead("#paymentStatusHeading").text shouldBe taxYearOverviewMessages.status
+      layoutContent.selectHead("#paymentAmountHeading").text shouldBe taxYearOverviewMessages.amount
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView()) {
-      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
+      val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.paymentOnAccount1
       paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(testYear, fullDocumentDetailModel.transactionId).url
     }
 
     "display the Due date in the Payments tab" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 May 2019"
+      layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 May 2019"
     }
 
     "display the Status in the payments tab" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
+      layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
     }
 
     "display the Amount in the payments tab" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(4)").text shouldBe "£1,400.00"
+      layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(4)").text shouldBe "£1,400.00"
     }
 
     "display no payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
-      content.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
-      content.h2.selectFirst("h2").text().contains(taxYearOverviewMessages.payments)
-      content.selectHead("#payments").doesNotHave("table")
+      layoutContent.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
+      layoutContent.h2.selectFirst("h2").text().contains(taxYearOverviewMessages.payments)
+      layoutContent.selectHead("#payments").doesNotHave("table")
     }
 
     "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
-      val paymentType: Element = content.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
+      val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
       paymentType.text shouldBe taxYearOverviewMessages.paymentUnderReview
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) a")
+      val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiPaymentOnAccount1
       paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
         testYear, fullDocumentDetailModel.transactionId, true).url
     }
 
     "display the Due date in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Jun 2019"
+      layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 Jun 2019"
     }
 
     "display the Status in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe taxYearOverviewMessages.partPaid
+      layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearOverviewMessages.partPaid
     }
 
     "display the Amount in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(3) td:nth-child(4)").text shouldBe "£100.00"
+      layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(4)").text shouldBe "£100.00"
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(4) td:nth-child(1) a")
+      val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiPaymentOnAccount2
       paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
         testYear, fullDocumentDetailModel.transactionId, true).url
     }
 
     "display the Due date in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 Jul 2019"
+      layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Jul 2019"
     }
 
     "display the Status in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
+      layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
     }
 
     "display the Amount in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(4) td:nth-child(4)").text shouldBe "£80.00"
+      layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(4)").text shouldBe "£80.00"
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
-      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(5) td:nth-child(1) a")
+      val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiRemainingBalance
       paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
         testYear, fullDocumentDetailModel.transactionId, true).url
     }
 
     "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(2)").text shouldBe "15 Aug 2019"
+      layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 Aug 2019"
     }
 
     "display the Status in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(3)").text shouldBe taxYearOverviewMessages.paid
+      layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe taxYearOverviewMessages.paid
     }
 
     "display the Amount in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(5) td:nth-child(4)").text shouldBe "£100.00"
+      layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(4)").text shouldBe "£100.00"
     }
 
     "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Remaining Balance" in new Setup(multipleDunningLockView()) {
-      content.selectHead("#payments-table tbody tr:nth-child(2) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
-      content.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
-      content.selectHead("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+      layoutContent.selectHead("#payments-table tbody tr:nth-child(1) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+      layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
+      layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)")
     }
 
     "display updates by due-date" in new Setup(estimateView()) {
@@ -339,8 +340,8 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
         nextUpdateWithIncomeType.obligation.due
       }.toList.sortBy(_._1)(localDateOrdering).reverse.map { case (due: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-        content.selectHead(s"#table-default-content-$due").text shouldBe taxYearOverviewMessages.dueMessage(due.toLongDate)
-        val sectionContent = content.selectHead(s"#updates")
+        layoutContent.selectHead(s"#table-default-content-$due").text shouldBe taxYearOverviewMessages.dueMessage(due.toLongDate)
+        val sectionContent = layoutContent.selectHead(s"#updates")
         obligations.zip(1 to obligations.length).foreach {
           case (testObligation, index) =>
             val divAccordion = sectionContent.selectHead(s"div:nth-of-type($index)")
