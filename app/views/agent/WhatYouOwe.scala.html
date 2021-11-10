@@ -141,7 +141,7 @@ paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = 
 @paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String) = {
 <a id="@rowId-@linkSuffix" href="@linkHref">
     @linkText
-    <span class="visually-hidden">@taxYear</span>
+    <span class="govuk-visually-hidden">@taxYear</span>
 </a>
 @if(showTaxYear) {
 <div>
@@ -335,8 +335,9 @@ linkSuffix = getLinkSuffix())
             }
             @if(codingOutEnabled) {
                 @chargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
-                <h2 id="coding-out-header" class="heading-large">@messages("agent.paymentDue.codingOutHeading")</h2>
-                <div id="coding-out-wrapper" class="govuk-inset-text">
+                    @h2(msg = messages("agent.paymentDue.codingOutHeading"), classes = "govuk-heading-l",
+                        optId=Some("coding-out-header"))
+                    <div id="coding-out-wrapper" class="govuk-inset-text">
                     <div id="coding-out-notice" class="panel panel-indent panel-border-wide">
                         @messages("agent.paymentDue.codingOut-1", codedOutDocumentDetail.amountCodedOut.get.toCurrencyString)
                         <b class = "bold">@messages("agent.paymentDue.codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
