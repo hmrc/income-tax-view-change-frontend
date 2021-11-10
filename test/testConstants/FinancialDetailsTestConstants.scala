@@ -381,10 +381,11 @@ object FinancialDetailsTestConstants {
 
   def documentDetailWithDueDateModel(taxYear: Int = 2018,
                                      documentDescription: Option[String] = Some("ITSA- POA 1"),
+                                     documentText: Option[String] = Some("documentText"),
                                      outstandingAmount: Option[BigDecimal] = Some(1400.00),
                                      originalAmount: Option[BigDecimal] = Some(1400.00),
                                      dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetailWithDueDate =
-    DocumentDetailWithDueDate(documentDetailModel(taxYear =  taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount, originalAmount = originalAmount), dueDate)
+    DocumentDetailWithDueDate(documentDetailModel(taxYear =  taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount, originalAmount = originalAmount, documentText = documentText), dueDate)
 
 
   val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))

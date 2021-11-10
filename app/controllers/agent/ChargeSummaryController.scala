@@ -19,13 +19,13 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.IncomeTaxAgentUser
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel}
+import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -36,8 +36,8 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.ChargeSummary
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -56,7 +56,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 
   private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], latePaymentInterestCharge: Boolean,
                    backLocation: Option[String], taxYear: Int, paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
-                   paymentBreakdown: List[FinancialDetail], paymentAllocationEnabled: Boolean)(implicit request: Request[_]): Html = {
+                   paymentBreakdown: List[FinancialDetail], paymentAllocationEnabled: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_]): Html = {
 
     chargeSummaryView(
       documentDetailWithDueDate = documentDetailWithDueDate,
@@ -66,7 +66,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 			paymentAllocations = paymentAllocations,
 			payments = payments,
 			paymentBreakdown = paymentBreakdown,
-			paymentAllocationEnabled = paymentAllocationEnabled
+			paymentAllocationEnabled = paymentAllocationEnabled,
+      codingOutEnabled = codingOutEnabled
     )
   }
 
@@ -117,6 +118,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         financialDetailsModel.flatMap(_.allocation)
       } else Nil
 
+    val codingOutEnabled = isEnabled(CodingOut)
 
     getChargeHistory(id, isLatePaymentCharge).map { chargeHistoryOpt =>
       auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistoryOpt.getOrElse(List.empty), paymentAllocations, isLatePaymentCharge)
@@ -124,7 +126,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         paymentAllocations = paymentAllocations,
         paymentBreakdown = paymentBreakdown,
         paymentAllocationEnabled = paymentAllocationEnabled,
-				payments = payments))
+				payments = payments,
+        codingOutEnabled = codingOutEnabled))
     }
   }
 
