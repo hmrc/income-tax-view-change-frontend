@@ -577,7 +577,6 @@ chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.payment-days-note                                    = Payments can take up to 7 days to process.
-chargeSummary.agent.payment-days-note                              = Payments can take up to 3 days to process.
 
 chargeSummary.chargeHistory.heading								   = Payment history
 chargeSummary.chargeHistory.date								   = Date
