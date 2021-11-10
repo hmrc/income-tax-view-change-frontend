@@ -24,7 +24,9 @@ import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, IndividualCalcul
 import models.calculation.{CalculationItem, ListCalculationItems}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.libs.ws.WSResponse
 
 import java.time.LocalDateTime
 
@@ -104,9 +106,29 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
     val continueButtonText = "Continue"
   }
 
+  object ExpectedValuesWelsh {
+    val title = "Eich trosolwg treth terfynol - Cyfrif Treth Busnes - GOV.UK"
+    val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
+
+    val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch gwirio eich Ffurflen Dreth Incwm."
+    val insetTextLink = "gwirio eich Ffurflen Dreth Incwm."
+
+    val incomeText = "Incwm"
+
+    val allowanceText = "Lwfansau a didyniadau"
+
+    val taxIsDueText = "Cyfanswm eich incwm trethadwy"
+
+    val contributionText = "Treth Incwm a chyfraniadau Yswiriant Gwladol"
+
+    val chargeInformationParagraph: String = "Gall y swm sydd angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr."
+
+    val continueButtonText = "Yn eich blaen"
+  }
+
   s"calling GET ${controllers.routes.FinalTaxCalculationController.show(taxYear)}" should {
 
-    "display the page" which {
+    "display the page in english" which {
 
       lazy val result = {
         isAuthorisedUser(authorised = true)
@@ -234,6 +256,140 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
 
         "has the correct text" in {
           submitButton.text() shouldBe ExpectedValues.continueButtonText
+        }
+      }
+    }
+
+    "display the page in welsh" which {
+
+      lazy val result: WSResponse = {
+        isAuthorisedUser(authorised = true)
+        calculationStub()
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+        ws.url(url)
+          .withHttpHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy")
+          .get()
+      }.futureValue
+
+
+
+      lazy val document: Document = Jsoup.parse(result.body)
+
+      "have a status of OK (200)" in {
+        result.status shouldBe OK
+      }
+
+      "have the correct title" in {
+        document.title() shouldBe ExpectedValuesWelsh.title
+      }
+
+      "have the correct caption" in {
+        document.select(Selectors.caption).text() shouldBe ExpectedValuesWelsh.caption
+      }
+
+      "the inset text" should {
+
+        "have the correct full text" in {
+          document.select(Selectors.insetText).text() shouldBe ExpectedValuesWelsh.insetTextFull
+        }
+
+        "have the correct link text" which {
+          lazy val insetElement = document.select(Selectors.insetLinkText)
+
+          "has the correct text" in {
+            insetElement.text() shouldBe ExpectedValuesWelsh.insetTextLink
+          }
+
+          "has the correct href" in {
+            insetElement.attr("href") shouldBe ExpectedValues.insetLinkHref
+          }
+
+        }
+
+      }
+
+      "have a table that" should {
+
+        "have the correct income row content" which {
+
+          lazy val key = document.select(Selectors.incomeRowText)
+
+          "has the correct key text" in {
+            key.text() shouldBe ExpectedValuesWelsh.incomeText
+          }
+
+          "has the correct amount" in {
+            document.select(Selectors.incomeRowAmount).text() shouldBe ExpectedValues.incomeAmount
+          }
+
+          "has the correct URL" in {
+            key.attr("href") shouldBe ExpectedValues.incomeLink
+          }
+
+        }
+
+        "have the correct allowance row content" which {
+
+          lazy val key = document.select(Selectors.allowanceRowText)
+
+          "has the correct key text" in {
+            key.text() shouldBe ExpectedValuesWelsh.allowanceText
+          }
+
+          "has the correct amount" in {
+            document.select(Selectors.allowanceRowAmount).text() shouldBe ExpectedValues.allowanceAmount
+          }
+
+          "has the correct URL" in {
+            key.attr("href") shouldBe ExpectedValues.allowanceLink
+          }
+
+        }
+
+        "have the correct income on which tax is due row content" which {
+
+          "has the correct key text" in {
+            document.select(Selectors.taxIsDueRowText).text() shouldBe ExpectedValuesWelsh.taxIsDueText
+          }
+
+          "has the correct amount" in {
+            document.select(Selectors.taxIsDueRowAmount).text() shouldBe ExpectedValues.taxIsDueAmount
+          }
+        }
+
+        "have the correct total contributions row content" which {
+
+          lazy val key = document.select(Selectors.contributionDueRowText)
+
+          "has the correct key text" in {
+            key.text() shouldBe ExpectedValuesWelsh.contributionText
+          }
+
+          "has the correct amount" in {
+            document.select(Selectors.contributionDueRowAmount).text() shouldBe ExpectedValues.contributionAmount
+          }
+
+          "has the correct URL" in {
+            key.attr("href") shouldBe ExpectedValues.contributionLink
+          }
+
+        }
+
+      }
+
+      "have a charge or payment information section" that {
+
+        "has the correct paragraph text" in {
+          document.select(Selectors.chargeInformationParagraph).text() shouldBe ExpectedValuesWelsh.chargeInformationParagraph
+        }
+
+      }
+
+      "have a submit button" that {
+        lazy val submitButton = document.select(Selectors.continueButton)
+
+        "has the correct text" in {
+          submitButton.text() shouldBe ExpectedValuesWelsh.continueButtonText
         }
       }
     }

@@ -106,9 +106,7 @@ tax-year-overview.updates                                       = Diweddariadau
 tax-year-overview.income                                        = Incwm
 tax-year-overview.deductions                                    = Lwfansau a didyniadau
 tax-year-overview.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
-tax-year-overview.taxable-income.finalCalc                      = Total taxable income
 tax-year-overview.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
-tax-year-overview.tax-due.finalCalc                             = Income Tax and National Insurance contributions
 tax-year-overview.payments.payment-type                         = Math o daliad
 tax-year-overview.payments.due-date                             = Dyddiad dyledus
 tax-year-overview.payments.status                               = Statws
@@ -672,3 +670,19 @@ paymentAllocation.paymentAllocations.bcd.cgt                    = Taliad wedi’
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+
+## Final Tax Overview (Individual/Common Content)
+final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
+final-tax-overview.caption                                       = 6 Ebrill {0} i 5 Ebrill {1}
+final-tax-overview.inset.1                                       = Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch
+final-tax-overview.individual.inset.2                            = gwirio eich Ffurflen Dreth Incwm.
+final-tax-overview.individual.chargeInfo.p                       = Gall y swm sydd angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr.
+
+## Final Tax Overview (Agent Content overrides)
+final-tax-overview.agent.heading                                 = Trosolwg treth terfynol eich cleient
+final-tax-overview.agent.chargeInfo.p                            = Gall y swm sydd angen i’ch cleient ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar ei gyfrif, er enghraifft, llog taliad hwyr.
+final-tax-overview.agent.inset.2                                 = gwirio Ffurflen Dreth Incwm eich cleient.
+
+tax-year-overview.tax-due.finalCalc                             = Treth Incwm a chyfraniadau Yswiriant Gwladol
+tax-year-overview.taxable-income.finalCalc                      = Cyfanswm eich incwm trethadwy
+
