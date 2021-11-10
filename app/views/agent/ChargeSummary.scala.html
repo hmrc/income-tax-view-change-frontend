@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.agent.MainTemplate
+
+@import views.html.layouts.agent.layout
+@import views.html.components._
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import implicits.ImplicitDateFormatter
 @import models.chargeHistory.ChargeHistoryModel
@@ -23,7 +25,7 @@
 @import models.financialDetails.FinancialDetail
 @import models.financialDetails.FinancialDetailsModel
 
-@this(mainTemplate: MainTemplate)
+@this(mainTemplate: layout, p: p)
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
 		backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentBreakdown: List[FinancialDetail], payments: FinancialDetailsModel,
 		latePaymentInterestCharge: Boolean, paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig,
@@ -42,13 +44,13 @@
 
 @chargeHistoryRow(dateStr: LocalDate, reasonCode: String, amount: Option[BigDecimal]) = {
 	<tr>
-		<td style="white-space: nowrap;">@{dateStr.toLongDateShort}</td>
-		<td>@messages(s"chargeSummary.chargeHistory.$reasonCode.${documentDetail.getChargeTypeKey()}")</td>
-		<td class="numeric">@{amount.map(_.toCurrency)}</td>
+		<td class="govuk-table__cell govuk-!-width-one-quarter">@{dateStr.toLongDateShort}</td>
+		<td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.$reasonCode.${documentDetail.getChargeTypeKey()}")</td>
+		<td class="govuk-table__cell numeric">@{amount.map(_.toCurrency)}</td>
 	</tr>
 }
 
-@mainTemplate(title = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey()}"), backUrl = Some(backUrl)){
+@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey()}"), backUrl = Some(backUrl)){
 
 	@if(hasDunningLocks) {
 		<br>
@@ -58,16 +60,18 @@
 				<h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">@messages("chargeSummary.dunning.locks.banner.title")</h2>
 			</div>
 			<div class="govuk-notification-banner__content">
-				<p class="govuk-notification-banner__heading">
-					<a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
-					@messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
-				</p>
+				@p(){
+					<b>
+						<a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
+						@messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
+					</b>
+				}
 			</div>
 		</div>
 	}
 
-	<h1 class="heading-xlarge">
-		<span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetail.taxYear).toLongDate)</span>
+	<h1 class="govuk-heading-xl">
+		<span class="govuk-caption-xl">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetail.taxYear).toLongDate)</span>
 		@messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey()}")
 	</h1>
 
@@ -108,7 +112,7 @@
 	</dl>
 
 	@if(paymentBreakdown.nonEmpty) {
-		<h2 class="heading-medium" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
+		<h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
 		<dl class="govuk-summary-list">
 		@for(financialDetail <- paymentBreakdown) {
 			<div class="govuk-summary-list__row">
@@ -132,53 +136,58 @@
 	}
 
 
-@if(hasInterestLocks && hasAccruedInterest) {
-<p>@messages("chargeSummary.interestLocks.text")
-	<a id= "what-you-owe-link" href=@controllers.agent.routes.WhatYouOweController.show().url>@messages("chargeSummary.interestLocks.linkText")</a></p>
-}else{
-<p> @messages("chargeSummary.whatYouOwe.textOne")
-	<a id= "what-you-owe-link1" href="@controllers.agent.routes.WhatYouOweController.show().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
-	@messages("chargeSummary.whatYouOwe.textTwo")</p>
-}
+	@if(hasInterestLocks && hasAccruedInterest) {
+		@p(){
+			@messages("chargeSummary.interestLocks.text")
+			<a id= "what-you-owe-link" href=@controllers.agent.routes.WhatYouOweController.show().url>@messages("chargeSummary.interestLocks.linkText")</a>
+		}
+	} else {
+		@p(){
+			@messages("chargeSummary.whatYouOwe.textOne")
+			<a id= "what-you-owe-link1" href="@controllers.agent.routes.WhatYouOweController.show().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
+			@messages("chargeSummary.whatYouOwe.textTwo")
+		}
+	}
 
 
 	@chargeHistoryOpt.map { chargeHistory =>
-			@if(paymentBreakdown.nonEmpty) {
-				<h3 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h3>
-			} else {
-				<h2 class="heading-large">@messages("chargeSummary.chargeHistory.heading")</h2>
-			}
+		@if(paymentBreakdown.nonEmpty) {
+			<h3 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h3>
+		} else {
+			<h2 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h2>
+		}
 
-		<table>
- 			<thead>
- 				<tr>
- 					<th>@messages("chargeSummary.chargeHistory.date")</th>
- 					<th>@messages("chargeSummary.chargeHistory.description")</th>
- 					<th>@messages("chargeSummary.chargeHistory.amount")</th>
- 				</tr>
- 			</thead>
+		<table class="govuk-table">
 
- 			<tbody>
-			@if(!latePaymentInterestCharge) {
-				@chargeHistoryRow(
-					dateStr = documentDetail.documentDate,
-					reasonCode = "created",
-					amount = documentDetail.originalAmount
-				)
-			}
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.date")</th>
+					<th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.description")</th>
+					<th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.amount")</th>
+				</tr>
+			</thead>
+
+ 			<tbody class = "govuk-table__body">
+				@if(!latePaymentInterestCharge) {
+					@chargeHistoryRow(
+						dateStr = documentDetail.documentDate,
+						reasonCode = "created",
+						amount = documentDetail.originalAmount
+					)
+				}
 
 				@if(latePaymentInterestCharge) {
-				<tr>
-					<td style="white-space: nowrap;">@{
-						documentDetail.interestEndDate.get.toLongDateShort
-						}</td>
-					<td>@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")
-					</td>
-					<td class="numeric">@{
-						documentDetail.latePaymentInterestAmount.get.toCurrency
-						}
-					</td>
-				</tr>
+					<tr>
+						<td class="govuk-table__cell govuk-!-width-one-quarter">@{
+							documentDetail.interestEndDate.get.toLongDateShort
+							}</td>
+						<td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")
+						</td>
+						<td class="govuk-table__cell numeric">@{
+							documentDetail.latePaymentInterestAmount.get.toCurrency
+							}
+						</td>
+					</tr>
 				}
 				@if(!latePaymentInterestCharge) {
  					@for(charge <- chargeHistory) {
@@ -192,8 +201,8 @@
 				@if(paymentAllocationEnabled && paymentAllocations.nonEmpty && !latePaymentInterestCharge) {
 					@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
 						<tr>
-							<td style="white-space: nowrap;">@LocalDate.parse(payment.date.get).toLongDateShort</td>
-							<td>
+							<td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.date.get).toLongDateShort</td>
+							<td class="govuk-table__cell">
 								@if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
 									<a href="@{controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
 										@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
@@ -205,7 +214,7 @@
 									@allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
 								}
 							</td>
-							<td class="numeric">@payment.amount.get.abs.toCurrency</td>
+							<td class="govuk-table__cell numeric">@payment.amount.get.abs.toCurrency</td>
 						</tr>
 					}
 				}

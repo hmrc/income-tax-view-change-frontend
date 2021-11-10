@@ -50,7 +50,7 @@
 
 @mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl)) {
 
-    @if(hasDunningLocks) {
+    @if(hasDunningLocks || documentDetail.hasLpiWithDunningBlock) {
         <br>
         <br>
         <div id="dunningLocksBanner" class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
@@ -59,8 +59,14 @@
             </div>
             <div class="govuk-notification-banner__content">
                 @p(){
-                    <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
-                    @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
+                    <b>
+                        @if(latePaymentInterestCharge){
+                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
+                        } else {
+                            <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
+                            @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
+                        }
+                    </b>
                 }
             </div>
         </div>
@@ -148,7 +154,7 @@
         </div>
     </dl>
 
-    @if(paymentBreakdown.nonEmpty) {
+    @if(documentDetail.hasLpiWithDunningBlock || paymentBreakdown.nonEmpty && hasDunningLocks || paymentBreakdown.nonEmpty && hasInterestLocks) {
         <h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
         <dl class="govuk-summary-list">
             @for(financialDetail <- paymentBreakdown) {
@@ -160,10 +166,28 @@
                             <br>
                             <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
                         }
+                        @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningBlock) {
+                            @p(){
+                                @messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")
+                                <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
+                            }
+                        }
                         @if(hasInterestLocks){
                             @if(!financialDetail.interestLockExists){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.charging") </div>}
                             @if(financialDetail.interestLockExists && !financialDetail.hasAccruedInterest){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.notCharging") </div>}
                             @if(financialDetail.interestLockExists && financialDetail.hasAccruedInterest){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged") </div>}
+                        }
+                    </dd>
+                </div>
+            }
+            @if(latePaymentInterestCharge) {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</dt>
+                    <dd class="govuk-summary-list__value">
+                        @p(){
+                            @documentDetail.latePaymentInterestAmount.get.toCurrency
+                            <br>
+                            <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
                         }
                     </dd>
                 </div>

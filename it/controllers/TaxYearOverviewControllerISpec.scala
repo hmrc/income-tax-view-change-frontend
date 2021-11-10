@@ -16,6 +16,7 @@
 
 package controllers
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
 
 import testConstants.BaseIntegrationTestConstants._
@@ -43,18 +44,18 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
     List(
-    DocumentDetail(
-      taxYear = getCurrentTaxYearEnd.getYear.toString,
-      transactionId = "testTransactionId",
-      documentDescription = Some("ITSA- POA 1"),
-      documentText = Some("documentText"),
-      documentDate = LocalDate.of(2018, 3, 29),
-      originalAmount = Some(1000.00),
-      outstandingAmount = Some(500.00),
-      interestOutstandingAmount = Some(0.00),
-      interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-      latePaymentInterestAmount = Some(100.00)
-    )),
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testTransactionId",
+        documentDescription = Some("ITSA- POA 1"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = Some(1000.00),
+        outstandingAmount = Some(500.00),
+        interestOutstandingAmount = Some(0.00),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24)),
+        latePaymentInterestAmount = Some(100.00)
+      )),
     List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -79,17 +80,17 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       interestEndDate = Some(LocalDate.of(2021, 6, 24)),
       latePaymentInterestAmount = Some(100.00)
     ),
-    DocumentDetail(
-      taxYear = getCurrentTaxYearEnd.getYear.toString,
-      transactionId = "testDunningTransactionId2",
-      documentDescription = Some("ITSA - POA 2"),
-      documentText = Some("documentText"),
-      documentDate = LocalDate.of(2018, 3, 29),
-      originalAmount = Some(2000.00),
-      outstandingAmount = Some(500.00),
-      interestOutstandingAmount = Some(0.00),
-      interestEndDate = Some(LocalDate.of(2021, 6, 24))
-    )),
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testDunningTransactionId2",
+        documentDescription = Some("ITSA - POA 2"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = Some(2000.00),
+        outstandingAmount = Some(500.00),
+        interestOutstandingAmount = Some(0.00),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24))
+      )),
     List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -231,22 +232,25 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("6 July 2017"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("£199,505.00"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric no-wrap]")("−£500.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
@@ -317,26 +321,33 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("6 July 2017"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("£199,505.00"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric no-wrap]")("−£500.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2 Payment under review"),
+
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
+
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 2 of 2"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Overdue Payment on account 2 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£2,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(4)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£2,000.00"),
+
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Paid"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£100.00"),
+
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
@@ -504,10 +515,13 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
 
         And("The expected result with right headers are returned")
+        val fromDate = LocalDate.of(2017, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2018, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextByID("no-calc-data-header")(TaxYearOverviewMessages.headingNoCalcData),
           elementTextByID("no-calc-data-note")(TaxYearOverviewMessages.noCalcDataNote)
         )
@@ -706,18 +720,23 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
           pageTitle(TaxYearOverviewMessages.title),
-          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("6 July 2017"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("£199,505.00"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric no-wrap]")("−£500.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
+
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
@@ -800,57 +819,57 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
 
-        "retrieving a calculation failed" in {
-          Given("Business details returns a successful response back")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+    "retrieving a calculation failed" in {
+      Given("Business details returns a successful response back")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
-          And("A calculation call for 2017-18 fails")
-          IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
+      And("A calculation call for 2017-18 fails")
+      IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
 
-          When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
-          val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+      When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+      val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-          Then("I check all calls expected were made")
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+      Then("I check all calls expected were made")
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
 
-          And("Internal server error is returned")
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
-        }
+      And("Internal server error is returned")
+      res should have(
+        httpStatus(INTERNAL_SERVER_ERROR)
+      )
+    }
 
-        "retrieving a financial transaction failed" in {
-          Given("Business details returns a successful response back")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+    "retrieving a financial transaction failed" in {
+      Given("Business details returns a successful response back")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
-          And("A non crystallised calculation for 2017-18 is returned")
-          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-            status = OK,
-            body = crystallisedCalculationFullJson
-          )
+      And("A non crystallised calculation for 2017-18 is returned")
+      IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+        status = OK,
+        body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+      )
+      IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+        status = OK,
+        body = crystallisedCalculationFullJson
+      )
 
-          And("A financial transaction call fails")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
+      And("A financial transaction call fails")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
-          When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
-          val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+      When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+      val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-          Then("I check all calls expected were made")
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
+      Then("I check all calls expected were made")
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+      IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
 
-          And("Internal server error is returned")
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
-        }
-      }
+      And("Internal server error is returned")
+      res should have(
+        httpStatus(INTERNAL_SERVER_ERROR)
+      )
+    }
+  }
 }

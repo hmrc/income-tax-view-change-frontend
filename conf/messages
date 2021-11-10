@@ -49,7 +49,7 @@ agent.utr_error.go_back                                         = Go back and en
 agent.paymentDue.heading                                       = What you owe
 agent.paymentDue.no-payments-due                               = You have no payments due.
 agent.paymentDue.sa-note                                       = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
-agent.paymentDue.sa-link                                       = Self Assessment online account (opens in new tab)
+agent.paymentDue.sa-link                                       = Self Assessment online account (opens in new tab).
 agent.paymentDue.outstanding-charges-note                      = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
 agent.paymentDue.dropdown.info                                 = What are the payment types?
 agent.paymentDue.payment-days-note                             = Payments can take up to 7 days to process.
@@ -75,13 +75,14 @@ agent.paymentDue.future-payments                               = Future payments
 agent.paymentDue.due-in-thirty-days-payments                   = Due within 30 days
 agent.paymentDue.payment-type.taxYear                          = Tax year {0} to {1}
 agent.paymentDue.paymentUnderReview                            = Payment under review
-agent.paymentDue.dunningLock.text                              = One or more of your payments are currently under review and your {0}
+agent.paymentDue.dunningLock.text                              = One or more of your payments are currently under review and your
 agent.paymentDue.dunningLock.link                              = tax decision is being investigated (opens in new tab).
 
 agent.paymentDue.over-due.interest.line1                       = Interest for late payment
 agent.paymentDue.over-due.interest.line2                       = {0} to {1} at {2}%
-agent.paymentDue.over-due.interest-rate                        = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
+agent.paymentDue.over-due.interest-rate-1                      = Any overdue payment interest is at the
 agent.paymentDue.over-due.interest-rate.link                   = current interest rate for late and early payments (opens in new tab)
+agent.paymentDue.over-due.interest-rate-2                      = The rate may have changed since the interest was first charged.
 
 agent.paymentDue.lpi.paymentOnAccount1.text                    = Late payment interest for payment on account 1 of 2
 agent.paymentDue.lpi.paymentOnAccount2.text                    = Late payment interest for payment on account 2 of 2
@@ -183,9 +184,7 @@ tax-year-overview.updates                                           = Updates
 tax-year-overview.income                                            = Income
 tax-year-overview.deductions                                        = Allowances and deductions
 tax-year-overview.taxable-income                                    = Total income on which tax is due
-tax-year-overview.taxable-income.finalCalc                          = Total taxable income
 tax-year-overview.tax-due                                           = Income Tax and National Insurance contributions due
-tax-year-overview.tax-due.finalCalc                                 = Income Tax and National Insurance contributions
 tax-year-overview.payments.payment-type                             = Payment type
 tax-year-overview.payments.due-date                                 = Due date
 tax-year-overview.payments.status                                   = Status
@@ -574,6 +573,7 @@ chargeSummary.paymentBreakdown.dunningLocks.underReview            = Under revie
 chargeSummary.paymentBreakdown.interestLocks.notCharging           = We are not currently charging interest on this payment
 chargeSummary.paymentBreakdown.interestLocks.charging              = We are charging you interest on this payment
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
+chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Late payment interest
 
 chargeSummary.interestLocks.text                                   = Any interest on this payment is shown as a total on the
 chargeSummary.interestLocks.linkText                               = What you owe page
@@ -728,19 +728,20 @@ agent.obligations.quarterlyUpdates                              = Quarterly upda
 agent.obligations.annualUpdates                                 = Annual updates
 agent.obligations.finalDeclarationUpdate                        = Final declaration
 
-## Final Declaration (Individual/Common Content)
-final-declaration.individual.heading                            = Your final tax overview
-final-declaration.caption                                       = 6 April {0} to 5 April {1}
-final-declaration.inset.1                                       = If you think this information is incorrect, you can
-final-declaration.individual.inset.2                            = check your Income Tax Return.
-final-declaration.declaration                                   = Declaration
-final-declaration.individual.chargeInfo.p                       = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
-final-declaration.submit                                        = I agree - Submit Income Tax Return
+## Final Tax Overview (Individual/Common Content)
+final-tax-overview.individual.heading                           = Your final tax overview
+final-tax-overview.caption                                      = 6 April {0} to 5 April {1}
+final-tax-overview.inset.1                                      = If you think this information is incorrect, you can
+final-tax-overview.individual.inset.2                           = check your Income Tax Return.
+final-tax-overview.individual.chargeInfo.p                      = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
 
-## Final Declaration (Agent Content overrides)
-final-declaration.agent.heading                                 = Your client’s final tax overview
-final-declaration.agent.chargeInfo.p                            = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
-final-declaration.agent.inset.2                                 = check your client’s Income Tax Return.
+## Final Tax Overview (Agent Content overrides)
+final-tax-overview.agent.heading                                = Your client’s final tax overview
+final-tax-overview.agent.chargeInfo.p                           = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
+final-tax-overview.agent.inset.2                                = check your client’s Income Tax Return.
+
+tax-year-overview.taxable-income.finalCalc                      = Total taxable income
+tax-year-overview.tax-due.finalCalc                             = Income Tax and National Insurance contributions
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English

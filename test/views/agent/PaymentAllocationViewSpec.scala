@@ -45,7 +45,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
     val allocationsTableHeading = "Payment allocations"
     val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
-    val allocationsTableHeadersText: String = allocationsTableHeaders.mkString(" ")
+    val allocationsTableCaption = "Payment allocations"
+    val allocationsTableHeadersText: String = allocationsTableCaption + " " + allocationsTableHeaders.mkString(" ")
     val creditOnAccount = "Credit on account"
     val creditOnAccountAmount = "£200.00"
   }
@@ -69,12 +70,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
     s"have the correct date of ${paymentAllocationMessages.date}" in new PaymentAllocationSetup {
       document.selectById("payment-allocation-charge-table")
-        .getElementsByTag("td").eq(1).text shouldBe paymentAllocationMessages.date
+        .getElementsByTag("dd").eq(0).text shouldBe paymentAllocationMessages.date
     }
 
     s"have the correct Amount of ${paymentAllocationMessages.amount}" in new PaymentAllocationSetup {
       document.selectById("payment-allocation-charge-table")
-        .getElementsByTag("td").last.text shouldBe paymentAllocationMessages.amount
+        .getElementsByTag("dd").last.text shouldBe paymentAllocationMessages.amount
     }
 
     "have info text" in new PaymentAllocationSetup {
@@ -122,8 +123,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.agent.routes.ChargeSummaryController.showChargeSummary(2020, "poa1_8").url
         )
 
-        content.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
-        content.selectById("payment-allocation-table").text() shouldBe
+        layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
+        layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
              |Income Tax for payment on account 1 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
@@ -137,7 +138,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        content.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
+        layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
 
@@ -162,8 +163,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.agent.routes.ChargeSummaryController.showChargeSummary(2020, "poa2_8").url
         )
 
-        content.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
-        content.selectById("payment-allocation-table").text() shouldBe
+        layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
+        layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
              |Income Tax for payment on account 2 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
@@ -177,7 +178,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        content.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
+        layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
 
@@ -198,8 +199,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.agent.routes.ChargeSummaryController.showChargeSummary(2020, "bcd_6").url
         )
 
-        content.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
-        content.selectById("payment-allocation-table").text() shouldBe
+        layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
+        layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
              |Income Tax for remaining balance 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
@@ -211,7 +212,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        content.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
+        layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
     }

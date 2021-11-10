@@ -111,12 +111,12 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 1
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
 
-			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
+			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018, lpiWithDunningBlock = None)) {
 				enable(ChargeHistory)
         disable(PaymentAllocation)
 				val result = controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
@@ -128,7 +128,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 			}
 
       "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
-        financialDetailsModel(2018).copy(financialDetails = financialDetailsWithLocks(2018))) {
+        financialDetailsModel(2018, lpiWithDunningBlock = None).copy(financialDetails = financialDetailsWithLocks(2018))) {
 
         val result = controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
 
@@ -154,7 +154,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
 
@@ -165,7 +165,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
 
@@ -176,7 +176,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentBreakdownHeading
+        JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
       }
 
     }

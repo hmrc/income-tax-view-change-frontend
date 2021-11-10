@@ -106,9 +106,7 @@ tax-year-overview.updates                                       = Diweddariadau
 tax-year-overview.income                                        = Incwm
 tax-year-overview.deductions                                    = Lwfansau a didyniadau
 tax-year-overview.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
-tax-year-overview.taxable-income.finalCalc                      = Total taxable income
 tax-year-overview.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
-tax-year-overview.tax-due.finalCalc                             = Income Tax and National Insurance contributions
 tax-year-overview.payments.payment-type                         = Math o daliad
 tax-year-overview.payments.due-date                             = Dyddiad dyledus
 tax-year-overview.payments.status                               = Statws
@@ -577,7 +575,7 @@ updateTab.updateType.crystallised                               = Datganiad terf
 agent.paymentDue.heading                                        = Yr hyn sydd arnoch
 agent.paymentDue.no-payments-due                                = Nid oes gennych taliadau sy’n ddyledus.
 agent.paymentDue.sa-note                                        = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
-agent.paymentDue.sa-link                                        = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
+agent.paymentDue.sa-link                                        = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd).
 agent.paymentDue.outstanding-charges-note                       = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 agent.paymentDue.dropdown.info                                  = Beth yw’r mathau o daliadau?
 agent.paymentDue.payment-days-note                              = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
@@ -610,11 +608,11 @@ agent.paymentDue.over-due.interest.line1                        = Llog am dalu�
 agent.paymentDue.lpi.paymentOnAccount1.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 agent.paymentDue.lpi.paymentOnAccount2.text                     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 agent.paymentDue.lpi.balancingCharge.text                       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
-agent.paymentDue.dunningLock.text                               = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd ac {0}
+agent.paymentDue.dunningLock.text                               = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd ac
 agent.paymentDue.dunningLock.link                               = mae ymchwiliad i’ch penderfyniad treth ar y gweill (yn agor tab newydd).
-agent.paymentDue.over-due.interest-rate                         = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
-agent.paymentDue.over-due.interest-rate.link                    = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd)
-
+agent.paymentDue.over-due.interest-rate-1                       = Mae unrhyw log am dalu’n hwyr ar y
+agent.paymentDue.over-due.interest-rate.link                    = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd).
+agent.paymentDue.over-due.interest-rate-2                       = Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
 #Agent next updates
 agent.nextUpdates.heading                                       = Diweddariadau nesaf
 agent.nextUpdates.sub-heading                                   = Diweddariadau’n ddyledus erbyn
@@ -672,3 +670,19 @@ paymentAllocation.paymentAllocations.bcd.cgt                    = Taliad wedi’
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+
+## Final Tax Overview (Individual/Common Content)
+final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
+final-tax-overview.caption                                       = 6 Ebrill {0} i 5 Ebrill {1}
+final-tax-overview.inset.1                                       = Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch
+final-tax-overview.individual.inset.2                            = gwirio eich Ffurflen Dreth Incwm.
+final-tax-overview.individual.chargeInfo.p                       = Gall y swm sydd angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr.
+
+## Final Tax Overview (Agent Content overrides)
+final-tax-overview.agent.heading                                 = Trosolwg treth terfynol eich cleient
+final-tax-overview.agent.chargeInfo.p                            = Gall y swm sydd angen i’ch cleient ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar ei gyfrif, er enghraifft, llog taliad hwyr.
+final-tax-overview.agent.inset.2                                 = gwirio Ffurflen Dreth Incwm eich cleient.
+
+tax-year-overview.tax-due.finalCalc                             = Treth Incwm a chyfraniadau Yswiriant Gwladol
+tax-year-overview.taxable-income.finalCalc                      = Cyfanswm eich incwm trethadwy
+
