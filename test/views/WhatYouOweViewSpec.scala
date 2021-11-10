@@ -45,7 +45,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               hasLpiWithDunningBlock: Boolean = false,
               dunningLock: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
-              codingOutEnabled: Boolean = true
+              codingOutEnabled: Boolean = true,
+              displayTotals: Boolean = true
               ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -58,7 +59,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       arn = None
     )(FakeRequest())
 
-    val html: HtmlFormat.Appendable = whatYouOweView(charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL", Some("1234567890"), dunningLock, codingOutEnabled)(FakeRequest(),individualUser, implicitly)
+    val html: HtmlFormat.Appendable = whatYouOweView(charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
+      Some("1234567890"), dunningLock, codingOutEnabled, displayTotals)(FakeRequest(),individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -891,6 +893,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+      }
+    }
+
+    "displayTotals feature switch is enabled" should {
+      "have totals displayed" in new Setup(whatYouOweDataWithCodingOut, displayTotals = true) {
+        pageDocument.getElementById("totals-row") should not be null
+      }
+    }
+
+    "displayTotals feature switch is disabled" should {
+      "have NO totals displayed" in new Setup(whatYouOweDataWithCodingOut, displayTotals = false) {
+        pageDocument.getElementById("totals-row") shouldBe null
       }
     }
   }
