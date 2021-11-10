@@ -41,7 +41,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
-              migrationYear: Int = LocalDate.now().getYear - 1) {
+              migrationYear: Int = LocalDate.now().getYear - 1,
+              displayTotals: Boolean = true) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       mtditid = "XAIT00000000015",
@@ -57,7 +58,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear,
-      "testBackURL", Some("1234567890"))(FakeRequest(), agentUser, implicitly)
+      "testBackURL", Some("1234567890"), displayTotals = displayTotals)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -787,6 +788,18 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
       "not have button Pay now" in new Setup(noChargesModel) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
+      }
+    }
+
+    "displayTotals feature switch is enabled" should {
+      "have totals displayed" in new Setup(whatYouOweDataWithDataDueIn30Days(), displayTotals = true) {
+        pageDocument.getElementById("totals-row") should not be null
+      }
+    }
+
+    "displayTotals feature switch is disabled" should {
+      "have NO totals displayed" in new Setup(whatYouOweDataWithDataDueIn30Days(), displayTotals = false) {
+        pageDocument.getElementById("totals-row") shouldBe null
       }
     }
   }
