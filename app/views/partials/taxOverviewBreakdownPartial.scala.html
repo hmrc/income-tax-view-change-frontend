@@ -36,7 +36,7 @@
                 @if(isAgent){
                     <a class="govuk-link" href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</>
                 } else {
-                    <a a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
                 }
                 </th>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@{
