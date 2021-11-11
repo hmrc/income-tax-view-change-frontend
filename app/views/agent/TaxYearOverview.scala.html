@@ -83,9 +83,9 @@
                     }
                 <div>
                 @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                    <a id="paymentTypeLink-@{index}" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                    <a class="govuk-link" id="paymentTypeLink-@{index}" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
                 } else {
-                    <a id="paymentTypeLink-@{index}" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                    <a class="govuk-link" id="paymentTypeLink-@{index}" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
                 }
                 </div>
                     @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
