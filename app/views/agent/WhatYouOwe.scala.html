@@ -25,7 +25,7 @@
 @import models.financialDetails._
 
 @this(mainTemplate: layout, appConfig: config.FrontendAppConfig, implicitDateFormatter: ImplicitDateFormatterImpl, p: p, h1: h1, h2:h2, link: link)
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String], codingOutEnabled: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, backUrl: String, utr: Option[String],codingOutEnabled: Boolean, displayTotals: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -184,34 +184,36 @@ linkSuffix = getLinkSuffix())
         @creditOnAccountNotePanel
     } else {
         @user.incomeSources.yearOfMigration.map { yearOfMigration =>
-            @if(currentTaxYear > yearOfMigration.toInt &&
-                    (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
-                <div class="govuk-grid-row">
-                    @if(chargesList.balanceDetails.overDueAmount > 0) {
-                    <div id="overdueAmount" class="govuk-grid-column-one-third">
-                        @p(){
-                        @messages("agent.paymentDue.overdueAmount")
+            @if(displayTotals) {
+                @if(currentTaxYear > yearOfMigration.toInt &&
+                        (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
+                    <div id="totals-row" class="govuk-grid-row">
+                        @if(chargesList.balanceDetails.overDueAmount > 0) {
+                        <div id="overdueAmount" class="govuk-grid-column-one-third">
+                            @p(){
+                            @messages("agent.paymentDue.overdueAmount")
+                            }
+                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
+                        </div>
                         }
-                        @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
-                    </div>
-                    }
-                    @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
-                    <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
-                        @p(){
-                        @messages("agent.paymentDue.balanceDueWithin30Days")
+                        @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
+                        <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
+                            @p(){
+                            @messages("agent.paymentDue.balanceDueWithin30Days")
+                            }
+                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()))
+                        </div>
                         }
-                        @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()))
-                    </div>
-                    }
-                    @if(chargesList.balanceDetails.totalBalance > 0) {
-                    <div id="totalBalance" class="govuk-grid-column-one-third">
-                        @p(){
-                        @messages("agent.paymentDue.totalBalance")
+                        @if(chargesList.balanceDetails.totalBalance > 0) {
+                        <div id="totalBalance" class="govuk-grid-column-one-third">
+                            @p(){
+                            @messages("agent.paymentDue.totalBalance")
+                            }
+                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()))
+                        </div>
                         }
-                        @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()))
                     </div>
-                    }
-                </div>
+                }
             }
         }
         @saNoteParagraph
