@@ -35,7 +35,7 @@
 )
 
 @(chargesList: WhatYouOweChargesList, hasLpiWithDunningBlock: Boolean, currentTaxYear: Int, backUrl: String, utr: Option[String],
-dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -190,34 +190,36 @@ dunningLock: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], u
         @creditOnAccountNotePanel
     } else {
         @user.incomeSources.yearOfMigration.map { yearOfMigration =>
-            @if(currentTaxYear > yearOfMigration.toInt &&
-                    (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
-                <div class="govuk-grid-row">
-                    @if(chargesList.balanceDetails.overDueAmount > 0) {
-                        <div id="overdueAmount" class="govuk-grid-column-one-third">
-                            @p(){
-                                @messages("whatYouOwe.overdueAmount")
-                            }
-                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
-                        </div>
-                    }
-                    @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
-                        <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
-                            @p(){
-                                @messages("whatYouOwe.balanceDueWithin30Days")
-                            }
-                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()))
-                        </div>
-                    }
-                    @if(chargesList.balanceDetails.totalBalance > 0) {
-                        <div id="totalBalance" class="govuk-grid-column-one-third">
-                            @p(){
-                                @messages("whatYouOwe.totalBalance")
-                            }
-                            @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()))
-                        </div>
-                    }
-                </div>
+            @if(displayTotals) {
+                @if(currentTaxYear > yearOfMigration.toInt &&
+                        (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
+                    <div id="totals-row" class="govuk-grid-row">
+                        @if(chargesList.balanceDetails.overDueAmount > 0) {
+                            <div id="overdueAmount" class="govuk-grid-column-one-third">
+                                @p(){
+                                    @messages("whatYouOwe.overdueAmount")
+                                }
+                                @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
+                            </div>
+                        }
+                        @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
+                            <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
+                                @p(){
+                                    @messages("whatYouOwe.balanceDueWithin30Days")
+                                }
+                                @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()))
+                            </div>
+                        }
+                        @if(chargesList.balanceDetails.totalBalance > 0) {
+                            <div id="totalBalance" class="govuk-grid-column-one-third">
+                                @p(){
+                                    @messages("whatYouOwe.totalBalance")
+                                }
+                                @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()))
+                            </div>
+                        }
+                    </div>
+                }
             }
         }
 

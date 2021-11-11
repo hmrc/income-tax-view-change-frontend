@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -46,12 +46,13 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                       itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def view(charge: WhatYouOweChargesList, taxYear: Int)(implicit user: MtdItUser[_]): Html = {
+  private def view(charge: WhatYouOweChargesList, taxYear: Int, displayTotals: Boolean)(implicit user: MtdItUser[_]): Html = {
     whatYouOweView.apply(
       chargesList = charge,
       currentTaxYear = taxYear,
       backUrl = backUrl,
-      user.saUtr
+      user.saUtr,
+      displayTotals = displayTotals
     )
   }
 
@@ -66,7 +67,8 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
 									auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
 								}
 
-								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)
+                val displayTotals = isEnabled(WhatYouOweTotals)
+								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear, displayTotals = displayTotals)
 								).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
 							}
 						} recover {
