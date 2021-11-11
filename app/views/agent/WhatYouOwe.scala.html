@@ -127,45 +127,45 @@
 }
 
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
-showTaxYear: Boolean = true, linkSuffix: String) = @{
+    showTaxYear: Boolean = true, linkSuffix: String) = @{
 
-val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
-val lpi = if (isLatePaymentInterest) "lpi." else ""
-val linkText = messages(s"whatYouOwe.${lpi}${chargeTypeKey}")
-val taxYear = documentDetail.taxYear
-val linkHref = controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
-documentDetail.transactionId, isLatePaymentInterest)
-paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,linkSuffix: String)
+    val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
+    val lpi = if (isLatePaymentInterest) "lpi." else ""
+    val linkText = messages(s"whatYouOwe.${lpi}${chargeTypeKey}")
+    val taxYear = documentDetail.taxYear
+    val linkHref = controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
+        documentDetail.transactionId, isLatePaymentInterest)
+    paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,linkSuffix: String)
 }
 
 @paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String) = {
-<a id="@rowId-@linkSuffix" href="@linkHref">
-    @linkText
-    <span class="govuk-visually-hidden">@taxYear</span>
-</a>
-@if(showTaxYear) {
-<div>
-    @messages("agent.paymentDue.payment-type.taxYear", (taxYear.toInt - 1).toString, taxYear)
-</div>
-}
+    <a id="@rowId-@linkSuffix" href="@linkHref">
+        @linkText
+        <span class="govuk-visually-hidden">@taxYear</span>
+    </a>
+    @if(showTaxYear) {
+        <div>
+            @messages("agent.paymentDue.payment-type.taxYear", (taxYear.toInt - 1).toString, taxYear)
+        </div>
+    }
 }
 
 @getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean) = @{
-val isLatePaymentInterest = isOverduePayment && documentDetail.latePaymentInterestAmount.isDefined
-def getLinkSuffix() : String = {
-if(!isOverduePayment) {
-"link"
-} else {
-if(documentDetail.isClass2Nic || documentDetail.latePaymentInterestAmount.isDefined) {
-"late-link"
-} else {
-"late"
-}
-}
-}
+    val isLatePaymentInterest = isOverduePayment && documentDetail.latePaymentInterestAmount.isDefined
+    def getLinkSuffix() : String = {
+        if(!isOverduePayment) {
+            "link"
+        } else {
+            if(documentDetail.isClass2Nic || documentDetail.latePaymentInterestAmount.isDefined) {
+                "late-link"
+            } else {
+                "late"
+            }
+        }
+    }
 
-paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
-linkSuffix = getLinkSuffix())
+    paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
+    linkSuffix = getLinkSuffix())
 
 }
 
