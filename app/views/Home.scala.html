@@ -36,16 +36,16 @@
 )
 
 @(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate,
-  overDuePayments: Option[Int], overDueUpdates: Option[Int],
+  overDuePaymentsCount: Option[Int], overDueUpdatesCount: Option[Int],
   utr: Option[String], paymentHistoryEnabled: Boolean,
-  ITSASubmissionIntegrationEnabled: Boolean)(
+  ITSASubmissionIntegrationEnabled: Boolean, dunningLockExists: Boolean = false)(
   implicit request: Request[_], messages: Messages,
   user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
 	@home_tile("payments-tile", messages("home.payments.heading")) {
-		@{overDuePayments.getOrElse(0) match {
+		@{overDuePaymentsCount.getOrElse(0) match {
 			case 0 => p()(paymentsTileContentPaymentsDue0)
 			case 1 => p()(paymentsTileContentPaymentsDue1)
 			case _ => p()(paymentsTileContentPaymentsDueMany)
@@ -67,13 +67,13 @@
 }
 
 @paymentsTileContentPaymentsDueMany = {
-    <span class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePayments.get)}</span>
+    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePaymentsCount.get)}</span>
 }
 
 
 @updatesTile = {
 	@home_tile("updates-tile", messages("home.updates.heading")) {
-		@{overDueUpdates.getOrElse(0) match {
+		@{overDueUpdatesCount.getOrElse(0) match {
 			case 0 => p()(updatesTileContentUpdatesDue0)
 			case 1 => p()(updatesTileContentUpdatesDue1)
 			case _ => p()(updatesTileContentUpdatesDueMany)
@@ -95,7 +95,7 @@
 }
 
 @updatesTileContentUpdatesDueMany = {
-    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdates.get)}</span>
+    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount.get)}</span>
 }
 
 
@@ -170,12 +170,12 @@
     }
 
     <div class="warning-wrapper">
-        @if(overDuePayments.getOrElse(0) > 0) {
+        @if(overDuePaymentsCount.getOrElse(0) > 0) {
             <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
                 <div class="column-full">
                     @govukWarningText(WarningText(
                     iconFallbackText = "Warning",
-                    content = Text(messages("home.overdue.message"))
+                    content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
                     ))
                 </div>
             </div>

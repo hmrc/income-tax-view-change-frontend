@@ -64,7 +64,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig]
 			)
-		when(currentDateProvider.getCurrentDate()) thenReturn LocalDate.of(2018, 1, 20)
+		when(currentDateProvider.getCurrentDate()) thenReturn LocalDate.now()
 	}
 
 	"navigating to the home page" should {
@@ -72,14 +72,14 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 				"there is a next payment due date to display" in new Setup {
 					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
-					when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialDetailsModel(
+					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+						.thenReturn(Future.successful(List(FinancialDetailsModel(
 							balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 							documentDetails = List(DocumentDetail(nextPaymentYear, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
 							financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
 								transactionId = Some("testId"),
 								items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-						)))
+						))))
 
 
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
@@ -87,37 +87,31 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					status(result) shouldBe Status.OK
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2019"
+					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
 				}
 
-				"display the oldest next payment due day when there multiple payment due" in new Setup {
+				"display number of payments due when there are multiple payment due" in new Setup {
 					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 
-					when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialDetailsModel(
-							balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-							documentDetails = List(DocumentDetail(nextPaymentYear2, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
-							financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId"),
-								items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))
-						)))
-
-					when(financialDetailsService.getFinancialDetails(matches(2018), any())(any()))
-						.thenReturn(Future.successful(FinancialDetailsModel(
-							balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-							documentDetails = List(DocumentDetail(nextPaymentYear2, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
-							financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"),
-								transactionId = Some("testId"),
-								items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))
-						)))
-
-					when(financialDetailsService.getFinancialDetails(matches(2019), any())(any()))
-						.thenReturn(Future.successful(FinancialDetailsModel(
-							balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-							documentDetails = List(DocumentDetail(nextPaymentYear, "id", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
-							financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
-								transactionId = Some("testId"),
-								items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+						.thenReturn(Future.successful(List(
+							FinancialDetailsModel(
+								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+								documentDetails = List(DocumentDetail(nextPaymentYear2, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+								financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
+									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+							FinancialDetailsModel(
+								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+								documentDetails = List(DocumentDetail(nextPaymentYear2, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+								financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
+									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+								FinancialDetailsModel(
+									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+									documentDetails = List(DocumentDetail(nextPaymentYear, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+									financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
+										transactionId = Some("testId3"),
+										items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
 						)))
 
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
@@ -125,15 +119,54 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					status(result) shouldBe Status.OK
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2018"
+					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+				}
+
+				"display number of payments due when there are multiple payment due and filter out payments" in new Setup {
+					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+					mockSingleBusinessIncomeSource()
+
+					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+						.thenReturn(Future.successful(List(
+							FinancialDetailsModel(
+								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+								documentDetails = List(DocumentDetail(nextPaymentYear2, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+								financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
+									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+							FinancialDetailsModel(
+								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+								documentDetails = List(DocumentDetail(nextPaymentYear2, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
+									paymentLotItem = Some("123"), paymentLot = Some("456")
+								)),
+								financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
+									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+							FinancialDetailsModel(
+								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+								documentDetails = List(DocumentDetail(nextPaymentYear2, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+								financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
+									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+							FinancialDetailsModel(
+								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+								documentDetails = List(DocumentDetail(nextPaymentYear, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+								financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
+									transactionId = Some("testId3"),
+									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
+						)))
+
+					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+
+					status(result) shouldBe Status.OK
+					val document: Document = Jsoup.parse(contentAsString(result))
+					document.title shouldBe MessagesLookUp.HomePage.title
+					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
 				}
 
 				"Not display the next payment due date" when {
 					"there is a problem getting financial detalis" in new Setup {
 						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
-						when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-							.thenReturn(Future.successful(FinancialDetailsErrorModel(1, "testString")))
+						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
 
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -147,8 +180,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					"There are no financial detail" in new Setup {
 						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
-						when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-							.thenReturn(Future.successful(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),List(), List())))
+						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),List(), List()))))
 
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -161,13 +194,13 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					"All financial detail bill are paid" in new Setup {
 						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
-						when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-							.thenReturn(Future.successful(FinancialDetailsModel(
+						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(FinancialDetailsModel(
 								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 								documentDetails = List(DocumentDetail(nextPaymentYear, "testId", None, None, Some(0), None, LocalDate.of(2018, 3, 29))),
 								financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
 									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-							)))
+							))))
 
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -182,13 +215,13 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 				"there is a update date to display" in new Setup {
 					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
-					when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialDetailsModel(
+					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+						.thenReturn(Future.successful(List(FinancialDetailsModel(
 							balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 							documentDetails = List(DocumentDetail(nextPaymentYear, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
 							financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
 								items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-						)))
+						))))
 
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
