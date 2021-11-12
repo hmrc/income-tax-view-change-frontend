@@ -23,15 +23,18 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitDateFormatterImpl
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
 import services._
+import uk.gov.hmrc.http.InternalServerException
 import views.html.agent.Home
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext}
+import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 @Singleton
 class HomeController @Inject()(home: Home,
@@ -49,7 +52,8 @@ class HomeController @Inject()(home: Home,
 
   private def view(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
                    nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
-                   overduePaymentExists: Boolean)
+                   overduePaymentExists: Boolean,
+                   dunningLockExists: Boolean)
                   (implicit request: Request[_], user: MtdItUser[_]): Html = {
     home(
       nextPaymentOrOverdue = nextPaymentOrOverdue,
@@ -57,24 +61,36 @@ class HomeController @Inject()(home: Home,
       overduePaymentExists = overduePaymentExists,
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      implicitDateFormatter = dateFormatter
+      implicitDateFormatter = dateFormatter,
+      dunningLockExists = dunningLockExists
     )
   }
 
   def show(): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			for {
-				mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
-				dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
-				dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
-			} yield {
-				if (isEnabled(TxmEventsApproved)) {
-					auditingService.extendedAudit(HomeAudit(
-						mtdItUser, dueChargesDetails, dueObligationDetails
-					))
-				}
-				Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails))(implicitly, mtdItUser))
-			}
+      for {
+        mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
+        dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
+        unpaidFinancialDetails <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
+        _ = if(unpaidFinancialDetails.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]
+          && fds.asInstanceOf[FinancialDetailsErrorModel].code != NOT_FOUND))
+          throw new InternalServerException("[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
+        dueChargesDetails = financialDetailsService.getChargeDueDates(unpaidFinancialDetails)
+        dunningLockExistsValue = dunningLockExists(unpaidFinancialDetails)
+      } yield {
+        if (isEnabled(TxmEventsApproved)) {
+          auditingService.extendedAudit(HomeAudit(
+            mtdItUser, dueChargesDetails, dueObligationDetails
+          ))
+        }
+        Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails), dunningLockExistsValue)(implicitly, mtdItUser))
+      }
+  }
+
+  private def dunningLockExists(financialDetailsResponseModel: List[FinancialDetailsResponseModel]): Boolean = {
+    financialDetailsResponseModel.collectFirst {
+      case fdm: FinancialDetailsModel if fdm.dunningLockExists => true
+    }.isDefined
   }
 
   private def overduePaymentExists(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]]): Boolean = {

@@ -90,7 +90,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
 				}
 
-				"display number of payments due when there are multiple payment due" in new Setup {
+				"display number of payments due when there are multiple payment due and dunning locks" in new Setup {
 					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 
@@ -105,7 +105,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 								balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 								documentDetails = List(DocumentDetail(nextPaymentYear2, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
 								financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
-									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
 								FinancialDetailsModel(
 									balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
 									documentDetails = List(DocumentDetail(nextPaymentYear, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
@@ -120,9 +120,10 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
 					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+					document.select("#overdue-warning").text shouldBe "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
 				}
 
-				"display number of payments due when there are multiple payment due and filter out payments" in new Setup {
+				"display number of payments due when there are multiple payment due without dunning lock and filter out payments" in new Setup {
 					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 
@@ -159,6 +160,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
 					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+					document.select("#overdue-warning").text shouldBe "! Warning You have overdue payments. You may be charged interest on these until they are paid in full."
 				}
 
 				"Not display the next payment due date" when {
@@ -189,6 +191,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
+						document.select("#overdue-warning").text shouldBe ""
 					}
 
 					"All financial detail bill are paid" in new Setup {
@@ -208,6 +211,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
+						document.select("#overdue-warning").text shouldBe ""
 					}
 				}
 			}

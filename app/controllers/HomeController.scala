@@ -76,7 +76,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           _.flatMap {
             case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
             case _ => List.empty[LocalDate]
-          }
+          }.sortWith(_ isBefore _)
         }
 
         val dunningLockExists: Future[Boolean] = unpaidCharges.map {
