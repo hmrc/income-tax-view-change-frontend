@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved, WhatYouOweTotals,CodingOut}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -30,8 +30,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
 import views.html.agent.WhatYouOwe
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -46,12 +46,13 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                       itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def view(charge: WhatYouOweChargesList, taxYear: Int, displayTotals: Boolean)(implicit user: MtdItUser[_]): Html = {
+  private def view(charge: WhatYouOweChargesList, taxYear: Int,codingOutEnabled: Boolean, displayTotals: Boolean)(implicit user: MtdItUser[_]): Html = {
     whatYouOweView.apply(
       chargesList = charge,
       currentTaxYear = taxYear,
       backUrl = backUrl,
       user.saUtr,
+      codingOutEnabled = codingOutEnabled,
       displayTotals = displayTotals
     )
   }
@@ -66,9 +67,9 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
 								if (isEnabled(TxmEventsApproved)) {
 									auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
 								}
-
+                val codingOutEnabled = isEnabled(CodingOut)
                 val displayTotals = isEnabled(WhatYouOweTotals)
-								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear, displayTotals = displayTotals)
+								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear,codingOutEnabled = codingOutEnabled, displayTotals = displayTotals)
 								).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
 							}
 						} recover {
