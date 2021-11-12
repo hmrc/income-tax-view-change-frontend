@@ -28,7 +28,7 @@
 @this(mainTemplate: layout, p: p)
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]],
 		backUrl: String, paymentAllocations: List[PaymentsWithChargeType], paymentBreakdown: List[FinancialDetail], payments: FinancialDetailsModel,
-		latePaymentInterestCharge: Boolean, paymentAllocationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig,
+		latePaymentInterestCharge: Boolean, paymentAllocationEnabled: Boolean, codingOutEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig,
 		implicitDateFormatter: ImplicitDateFormatter)
 
 @import java.time.LocalDate
@@ -45,12 +45,12 @@
 @chargeHistoryRow(dateStr: LocalDate, reasonCode: String, amount: Option[BigDecimal]) = {
 	<tr>
 		<td class="govuk-table__cell govuk-!-width-one-quarter">@{dateStr.toLongDateShort}</td>
-		<td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.$reasonCode.${documentDetail.getChargeTypeKey()}")</td>
+		<td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.$reasonCode.${documentDetail.getChargeTypeKey(codingOutEnabled)}")</td>
 		<td class="govuk-table__cell numeric">@{amount.map(_.toCurrency)}</td>
 	</tr>
 }
 
-@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey()}"), backUrl = Some(backUrl)){
+@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl)){
 
 	@if(hasDunningLocks) {
 		<br>
@@ -72,8 +72,14 @@
 
 	<h1 class="govuk-heading-xl">
 		<span class="govuk-caption-xl">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetail.taxYear).toLongDate)</span>
-		@messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey()}")
+		@messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
 	</h1>
+
+	@if(documentDetail.isClass2Nic){
+		@p(){
+			@messages("chargeSummary.nic2TaxYear", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)
+		}
+	}
 
 	<dl class="govuk-summary-list">
 		<div class="govuk-summary-list__row">
@@ -147,6 +153,10 @@
 			<a id= "what-you-owe-link1" href="@controllers.agent.routes.WhatYouOweController.show().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
 			@messages("chargeSummary.whatYouOwe.textTwo")
 		}
+	}
+
+	@p(){
+		@messages("chargeSummary.payment-days-note")
 	}
 
 
