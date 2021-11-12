@@ -23,12 +23,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.agent.TaxYears
+import views.html.TaxYearsUnified
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class TaxYearsController @Inject()(taxYearsView: TaxYears,
+class TaxYearsController @Inject()(taxYearsView: TaxYearsUnified,
                                    val authorisedFunctions: AuthorisedFunctions,
                                    incomeSourceDetailsService: IncomeSourceDetailsService)
                                   (implicit val appConfig: FrontendAppConfig,
@@ -43,7 +43,8 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
 				Ok(taxYearsView(
 					taxYears = mtdItUser.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
 					backUrl = backUrl,
-					itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration)
+					itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+					isAgent = true
 				))
 			}
   }

@@ -90,7 +90,7 @@ taxYears.oldSa.content.text                                    = Er mwyn bwrw go
 taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
 taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
 taxYears.oldSa.agent.content.2								   = Cyfrif Hunanasesiad ar gyfer Asiantau (yn agor tab newydd)
-taxYears.oldSa.agent.content.3								   =. Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Overview Page New##
 tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth

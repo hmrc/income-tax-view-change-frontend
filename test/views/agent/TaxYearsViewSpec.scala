@@ -43,7 +43,7 @@ class TaxYearsViewSpec extends ViewSpec {
     val back: String = "Back"
     val tableHeadingTaxYear = "Tax year"
     val tableHeadingOptions = "Options"
-		val oldSaServiceMessage = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Account (opens in new tab). This will be a different Government Gateway ID and password to your Agent Services account."
+		val oldSaServiceMessage = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Account (opens in new tab) This will be a different Government Gateway ID and password to your Agent Services account."
 		val oldSaServiceLink = "Self Assessment for Agents Account (opens in new tab)"
   }
 
@@ -130,6 +130,7 @@ class TaxYearsViewSpec extends ViewSpec {
 
 		"have content linking an agent to the old world sa services" which {
 			"has the correct message" in new Setup(view()) {
+        println(content.select("p").text())
 				content.select("p").text() shouldBe TaxYearsMessages.oldSaServiceMessage
 			}
 
