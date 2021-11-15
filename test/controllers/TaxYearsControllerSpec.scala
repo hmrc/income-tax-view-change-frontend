@@ -29,14 +29,14 @@ import testConstants.EstimatesTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants._
 import testConstants.MessagesLookUp
 import testUtils.TestSupport
-import views.html.TaxYearsUnified
+import views.html.TaxYears
 
 class TaxYearsControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with TestSupport with FeatureSwitching {
 
   val calculationService: CalculationService = mock[CalculationService]
 
-  object TestTaxYearsController extends TaxYearsController(app.injector.instanceOf[TaxYearsUnified])(
+  object TestTaxYearsController extends TaxYearsController(app.injector.instanceOf[TaxYears])(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents],
     ec,

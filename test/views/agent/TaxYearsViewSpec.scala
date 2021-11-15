@@ -19,7 +19,7 @@ package views.agent
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.agent.TaxYears
+import views.html.TaxYears
 
 
 class TaxYearsViewSpec extends ViewSpec {
