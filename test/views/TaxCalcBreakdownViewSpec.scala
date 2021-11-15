@@ -19,7 +19,7 @@ package views
 import testConstants.CalcBreakdownTestConstants
 import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
 import testConstants.MessagesLookUp.TaxCalcBreakdown
-import enums.Crystallised
+import enums.{Crystallised, Estimate}
 import models.calculation.TaxDeductedAtSource.{Message, Messages}
 import models.calculation.{AllowancesAndDeductions, CalcDisplayModel}
 import org.jsoup.Jsoup
@@ -203,6 +203,22 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       lazy val viewTopSlicingRelief = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.calculationTopSlicingRelief,
         Crystallised), taxYear, backUrl)
+
+      lazy val viewNoVoluntaryNic2Flag = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.testNoVoluntaryNic2Flag,
+        Estimate), taxYear, backUrl)
+
+      lazy val viewAdChGiftAid = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.testCalcModelWithGiftAid,
+        Estimate), taxYear, backUrl)
+
+      lazy val viewAdChPensionLumpSum = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.testCalcModelWithPensionLumpSum,
+        Estimate), taxYear, backUrl)
+
+      lazy val viewAdChPensionSavings = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.testCalcModelWithPensionSavings,
+        Estimate), taxYear, backUrl)
 
       lazy val zeroIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.testCalcModelZeroIncome,
@@ -446,6 +462,32 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic2
           row.select("td").last().text() shouldBe "£10,000.00"
         }
+
+        "has no Nic2 line when Voluntary contribution flag is missing " in new Setup(viewNoVoluntaryNic2Flag) {
+          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
+        }
+
+        "has only a Gift Aid line with the correct heading and table" in new Setup(viewAdChGiftAid) {
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.GiftAid
+          row.select("td").last().text() shouldBe "£5,000.00"
+        }
+
+        "has only a Pensions Saving line with the correct heading and table" in new Setup(viewAdChPensionSavings) {
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.PensionSavings
+          row.select("td").last().text() shouldBe "£5,000.00"
+        }
+
+        "has only a Pensions Lump Sum line with the correct heading and table" in new Setup(viewAdChPensionLumpSum) {
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.PensionLumpSum
+          row.select("td").last().text() shouldBe "£5,000.00"
+        }
+
       }
 
       "have no Capital Gains Tax table and heading when there is no any CGT value" in new Setup(zeroIncome) {
