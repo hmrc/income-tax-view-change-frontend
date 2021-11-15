@@ -130,7 +130,6 @@ class TaxYearsViewSpec extends ViewSpec {
 
 		"have content linking an agent to the old world sa services" which {
 			"has the correct message" in new Setup(view()) {
-        println(content.select("p").text())
 				content.select("p").text() shouldBe TaxYearsMessages.oldSaServiceMessage
 			}
 
