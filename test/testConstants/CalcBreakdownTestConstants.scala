@@ -1253,6 +1253,29 @@ object CalcBreakdownTestConstants {
       )
     )
 
+  val testNoVoluntaryNic2Flag: Calculation =
+    Calculation(
+      totalIncomeTaxAndNicsDue = Some(543.21),
+      totalIncomeTaxNicsCharged = Some(123.45),
+      totalTaxableIncome = Some(0),
+      incomeTaxNicAmount = Some(987.65),
+      timestamp = Some(testTimeStampString),
+      crystallised = false,
+      nationalRegime = Some("UK"),
+      nic = Nic(
+        class2 = Some(10000.00),
+        class4 = Some(14000.00),
+        class4Bands = Some(Seq(
+          NicBand(
+            name = "ZRT",
+            rate = 1,
+            income = 2000,
+            amount = 100
+          ),
+        )),
+        totalNic = Some(24000.00)
+      ),
+    )
 
   val testCalcModelNic2: Calculation =
     Calculation(
@@ -1261,7 +1284,7 @@ object CalcBreakdownTestConstants {
       totalTaxableIncome = Some(0),
       incomeTaxNicAmount = Some(987.65),
       timestamp = Some(testTimeStampString),
-      crystallised = true,
+      crystallised = false,
       nationalRegime = Some("UK"),
       payPensionsProfit = PayPensionsProfit(
         totalSelfEmploymentProfit = None,
@@ -1528,7 +1551,7 @@ object CalcBreakdownTestConstants {
       totalTaxableIncome = Some(0),
       incomeTaxNicAmount = Some(987.65),
       timestamp = Some(testTimeStampString),
-      crystallised = true,
+      crystallised = false,
       nationalRegime = Some("UK"),
       payPensionsProfit = PayPensionsProfit(
         totalSelfEmploymentProfit = None,
@@ -1736,6 +1759,48 @@ object CalcBreakdownTestConstants {
         Some(800.0),
         Some(900.0),
         Some(1000.0)
+      )
+    )
+
+  val testCalcModelWithGiftAid: Calculation =
+    Calculation(
+      totalIncomeTaxAndNicsDue = Some(543.21),
+      totalIncomeTaxNicsCharged = Some(123.45),
+      totalTaxableIncome = Some(0),
+      incomeTaxNicAmount = Some(987.65),
+      timestamp = Some(testTimeStampString),
+      crystallised = false,
+      nationalRegime = Some("UK"),
+      reductionsAndCharges = ReductionsAndCharges(
+        giftAidTax = Some(5000)
+      )
+    )
+
+  val testCalcModelWithPensionLumpSum: Calculation =
+    Calculation(
+      totalIncomeTaxAndNicsDue = Some(543.21),
+      totalIncomeTaxNicsCharged = Some(123.45),
+      totalTaxableIncome = Some(0),
+      incomeTaxNicAmount = Some(987.65),
+      timestamp = Some(testTimeStampString),
+      crystallised = false,
+      nationalRegime = Some("UK"),
+      reductionsAndCharges = ReductionsAndCharges(
+        statePensionLumpSumCharges = Some(5000)
+      )
+    )
+
+  val testCalcModelWithPensionSavings: Calculation =
+    Calculation(
+      totalIncomeTaxAndNicsDue = Some(543.21),
+      totalIncomeTaxNicsCharged = Some(123.45),
+      totalTaxableIncome = Some(0),
+      incomeTaxNicAmount = Some(987.65),
+      timestamp = Some(testTimeStampString),
+      crystallised = false,
+      nationalRegime = Some("UK"),
+      reductionsAndCharges = ReductionsAndCharges(
+        totalPensionSavingsTaxCharges = Some(5000)
       )
     )
 

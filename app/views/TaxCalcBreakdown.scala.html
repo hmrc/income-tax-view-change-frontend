@@ -271,7 +271,11 @@
         </table>
     }
 
-    @if(calcModel.calcDataModel.nic.class2.nonEmpty) {
+    @if((calcModel.calcDataModel.nic.class2.isDefined && calcModel.calcDataModel.nic.class2VoluntaryContributions.isDefined) ||
+    calcModel.calcDataModel.reductionsAndCharges.giftAidTax.isDefined ||
+    calcModel.calcDataModel.reductionsAndCharges.totalPensionSavingsTaxCharges.isDefined ||
+    calcModel.calcDataModel.reductionsAndCharges.statePensionLumpSumCharges.isDefined
+    ) {
         <table class="govuk-table">
             <caption
                     id = "additional_charges" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.additional_charges")

@@ -298,6 +298,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     //additional charges table
     val Nic2: String = "Class 2 National Insurance"
     val VoluntaryNic2: String = "Voluntary Class 2 National Insurance"
+    val GiftAid: String = "Gift Aid tax charge"
+    val PensionLumpSum: String = "State pension lump sum"
+    val PensionSavings: String = "Total pension saving charges"
     //capital gains tax table
     val taxableCapitalGains: String = "Taxable Capital Gains"
     val assetsDisposalsAndInvestorsRelief: String = "Business Asset Disposal Relief and or Investors' Relief gains (£10,000.00 at 10.0%)"
