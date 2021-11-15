@@ -30,7 +30,7 @@ class TaxYearsViewSpec extends ViewSpec {
   val year2021: Int = 2021
 
   def view(years: List[Int] = List(year2021, year2020), submissionIntegrationEnabled: Boolean = true): Html = {
-    taxYears(years, testBackUrl, itsaSubmissionIntegrationEnabled = submissionIntegrationEnabled)
+    taxYears(years, testBackUrl, itsaSubmissionIntegrationEnabled = submissionIntegrationEnabled, isAgent = true)
   }
 
   object TaxYearsMessages {
@@ -43,7 +43,7 @@ class TaxYearsViewSpec extends ViewSpec {
     val back: String = "Back"
     val tableHeadingTaxYear = "Tax year"
     val tableHeadingOptions = "Options"
-		val oldSaServiceMessage = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Account (opens in new tab) This will be a different Government Gateway ID and password to your Agent Services account."
+		val oldSaServiceMessage = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Account (opens in new tab). This will be a different Government Gateway ID and password to your Agent Services account."
 		val oldSaServiceLink = "Self Assessment for Agents Account (opens in new tab)"
   }
 
@@ -54,88 +54,88 @@ class TaxYearsViewSpec extends ViewSpec {
     }
 
     "have a heading" in new Setup(view()) {
-      content hasPageHeading TaxYearsMessages.heading
+      layoutContent hasPageHeading TaxYearsMessages.heading
     }
 
     "have a back link" in new Setup(view()) {
-      content.doesNotHave(Selectors.backLink)
+      layoutContent.doesNotHave(Selectors.backLink)
       document.backLink.text shouldBe TaxYearsMessages.back
       document.hasBackLinkTo(testBackUrl)
     }
 
     "have a message that there are no calculations" when {
       "there are no tax years available" in new Setup(view(years = Nil)) {
-        content.selectHead("#no-taxYears").text shouldBe TaxYearsMessages.noCalculations
+        layoutContent.selectHead("#no-taxYears").text shouldBe TaxYearsMessages.noCalculations
       }
     }
 
     "have a list containing tax years" which {
       "has a 2021 year row" which {
         "has table headers" in new Setup(view()) {
-          content.selectNth("th", 1).text shouldBe TaxYearsMessages.tableHeadingTaxYear
-          content.selectNth("th", 2).text shouldBe TaxYearsMessages.tableHeadingOptions
+          layoutContent.selectNth("th", 1).text shouldBe TaxYearsMessages.tableHeadingTaxYear
+          layoutContent.selectNth("th", 2).text shouldBe TaxYearsMessages.tableHeadingOptions
         }
         "includes a submission service link" when {
           "the submission integration flag is enabled" in new Setup(view()) {
-            val row: Element = content.selectHead("tbody").selectNth("tr", 1)
+            val row: Element = layoutContent.selectHead("tbody").selectNth("tr", 1)
             row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2021)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2021)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2021).url
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "govuk-visually-hidden"
             row.selectNth("td", 2).selectNth("li", 2).selectHead("a").text shouldBe TaxYearsMessages.updateReturn(year2021)
             row.selectNth("td", 2).selectNth("li", 2).selectHead("a").attr("href") shouldBe appConfig.submissionFrontendUrl
             row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").attr("class") shouldBe "govuk-visually-hidden"
           }
         }
         "does not include a submission service link" when {
           "the submission integration flag is disabled" in new Setup(view(submissionIntegrationEnabled = false)) {
-            val row: Element = content.selectHead("tbody").selectNth("tr", 1)
+            val row: Element = layoutContent.selectHead("tbody").selectNth("tr", 1)
             row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2021)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2021)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2021).url
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2021)
-            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "govuk-visually-hidden"
           }
         }
       }
       "has a 2020 year row" which {
         "includes a submission service link" when {
           "the submission integration flag is enabled" in new Setup(view()) {
-            val row: Element = content.selectHead("tbody").selectNth("tr", 2)
+            val row: Element = layoutContent.selectHead("tbody").selectNth("tr", 2)
             row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2020)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2020)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2020).url
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "govuk-visually-hidden"
             row.selectNth("td", 2).selectNth("li", 2).selectHead("a").text shouldBe TaxYearsMessages.updateReturn(year2020)
             row.selectNth("td", 2).selectNth("li", 2).selectHead("a").attr("href") shouldBe appConfig.submissionFrontendUrl
             row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 2).selectHead("a").selectHead("span").attr("class") shouldBe "govuk-visually-hidden"
           }
         }
         "does not include a submission service link" when {
           "the submission integration flag is disabled" in new Setup(view(submissionIntegrationEnabled = false)) {
-            val row: Element = content.selectHead("tbody").selectNth("tr", 2)
+            val row: Element = layoutContent.selectHead("tbody").selectNth("tr", 2)
             row.selectNth("td", 1).selectNth("li", 1).text shouldBe TaxYearsMessages.taxYearDates(year2020)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").text shouldBe TaxYearsMessages.viewReturn(year2020)
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(year2020).url
             row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").text shouldBe TaxYearsMessages.taxYearDates(year2020)
-            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "visuallyhidden"
+            row.selectNth("td", 2).selectNth("li", 1).selectHead("a").selectHead("span").attr("class") shouldBe "govuk-visually-hidden"
           }
         }
       }
     }
 
-		"have content linking an agent to the old world sa services" which {
+		"have layoutContent linking an agent to the old world sa services" which {
 			"has the correct message" in new Setup(view()) {
-				content.select("p").text() shouldBe TaxYearsMessages.oldSaServiceMessage
+				layoutContent.select("p").text() shouldBe TaxYearsMessages.oldSaServiceMessage
 			}
 
 			"has the correct link" in new Setup(view()) {
-				content.select("p a").text() shouldBe TaxYearsMessages.oldSaServiceLink
-				content.select("p a").attr("href") shouldBe "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+				layoutContent.select("p a").text() shouldBe TaxYearsMessages.oldSaServiceLink
+				layoutContent.select("p a").attr("href") shouldBe "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
 			}
 		}
   }
