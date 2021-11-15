@@ -22,7 +22,7 @@ import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import play.api.http.Status.NOT_FOUND
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -38,29 +38,20 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
   }
 
-  def getChargeDueDates(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-    val orderedTaxYear: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration
+  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
+    val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
+      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+      case FinancialDetailsErrorModel(NOT_FOUND, _) => List.empty[LocalDate]
+    }.sortWith(_ isBefore _)
 
-    Future.sequence(orderedTaxYear.map(item =>
-      getFinancialDetails(item, user.nino)
-    )) map { financialDetails =>
-      val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
-        case fdm: FinancialDetailsModel => fdm.documentDetails.filterNot(_.isPaid) flatMap { documentDetail =>
-          fdm.getDueDateFor(documentDetail)
-        }
-        case FinancialDetailsErrorModel(NOT_FOUND, _) => List.empty[LocalDate]
-        case _ => throw new InternalServerException(s"[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
-      }.sortWith(_ isBefore _)
+    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore LocalDate.now)
+    val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
 
-      val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore LocalDate.now)
-      val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
-
-      (overdueDates, nextDueDates) match {
-        case (Nil, Nil) => None
-        case (Nil, nextDueDate :: _) => Some(Left((nextDueDate, false)))
-        case (overdueDate :: Nil, _) => Some(Left((overdueDate, true)))
-        case _ => Some(Right(overdueDates.size))
-      }
+    (overdueDates, nextDueDates) match {
+      case (Nil, Nil) => None
+      case (Nil, nextDueDate :: _) => Some(Left((nextDueDate, false)))
+      case (overdueDate :: Nil, _) => Some(Left((overdueDate, true)))
+      case _ => Some(Right(overdueDates.size))
     }
   }
 

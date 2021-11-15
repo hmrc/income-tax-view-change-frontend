@@ -55,20 +55,22 @@ class HomePageViewSpec extends TestSupport {
   val paymentDateLongDate = "31 January 2019"
   val multipleOverduePayments = "3 OVERDUE PAYMENTS"
   val overdueMessage = "! Warning You have overdue payments. You may be charged interest on these until they are paid in full."
+  val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
 
-  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
-              overDueUpdates: Option[Int] = Some(0),utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              user: MtdItUser[_] = testMtdItUser()) {
+  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
+              overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
+              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
       nextPaymentDueDate = paymentDueDate,
       nextUpdate = updateDate,
-      overDuePayments = overDuePayments,
-      overDueUpdates = overDueUpdates,
+      overDuePaymentsCount = overDuePaymentsCount,
+      overDueUpdatesCount = overDueUpdatesCount,
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      paymentHistoryEnabled = paymentHistoryEnabled
+      paymentHistoryEnabled = paymentHistoryEnabled,
+      dunningLockExists = dunningLockExists
     )(FakeRequest(),implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
@@ -110,10 +112,10 @@ class HomePageViewSpec extends TestSupport {
       "has the date of the next update due" in new Setup {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
       }
-      "display an overdue tag when a single update is overdue" in new Setup(overDueUpdates = Some(1)) {
+      "display an overdue tag when a single update is overdue" in new Setup(overDueUpdatesCount = Some(1)) {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + updateDateLongDate)
       }
-      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDueUpdates = Some(3)) {
+      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDueUpdatesCount = Some(3)) {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverdueUpdates)
       }
       "has a link to view updates" in new Setup {
@@ -131,19 +133,23 @@ class HomePageViewSpec extends TestSupport {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
 
-      "dont display an overdue warning message when no payment is overdue" in new Setup(overDuePayments = Some(0)) {
+      "dont display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0)) {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an overdue warning message when a payment is overdue" in new Setup(overDuePayments = Some(1)) {
+      "display an overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = Some(1)) {
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
       }
 
-      "display an overdue tag when a single update is overdue" in new Setup(overDuePayments = Some(1)) {
+      "display an dunning lock overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
+        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageForDunningLocks)
+      }
+
+      "display an overdue tag when a single update is overdue" in new Setup(overDuePaymentsCount = Some(1)) {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
       }
 
-      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePayments = Some(3)) {
+      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePaymentsCount = Some(3)) {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverduePayments)
       }
       "has a link to view payments" in new Setup {

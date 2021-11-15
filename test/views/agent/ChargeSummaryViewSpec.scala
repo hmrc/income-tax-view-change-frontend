@@ -38,7 +38,8 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               paymentAllocations: List[PaymentsWithChargeType]= List(),
               paymentAllocationEnabled: Boolean = false,
               paymentBreakdown: List[FinancialDetail] = List(),
-							payments: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00), List(), List())
+							payments: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00), List(), List()),
+              codingOutEnabled: Boolean = false
              ) {
 
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
@@ -51,7 +52,8 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       paymentBreakdown = paymentBreakdown,
 			payments = payments,
 			latePaymentInterestCharge = latePaymentInterestCharge,
-      paymentAllocationEnabled
+      paymentAllocationEnabled,
+      codingOutEnabled
     )
 
     val document: Document = Jsoup.parse(chargeSummaryView.toString())
@@ -95,6 +97,10 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)"
     def dunningLockBannerText(formattedAmount: String, date: String) =
       s"$dunningLockBannerLink. You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
+
+
+    def class2NicHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Class 2 National Insurance"
+    def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
 
   }
 
@@ -271,39 +277,39 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
 
         "has payment rows with appropriate messages for each row" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithInterestLocks) {
-          verifyPaymentBreakdownRow(1, "Income Tax", "£123.45 We are charging you interest on this payment")
-          verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 We are not currently charging interest on this payment")
-          verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 We have previously charged you interest on this payment")
-          verifyPaymentBreakdownRow(4, "Student Loans", "£543.21 We are charging you interest on this payment")
-        }
+            verifyPaymentBreakdownRow(1, "Income Tax", "£123.45 We are charging you interest on this payment")
+            verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 We are not currently charging interest on this payment")
+            verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 We have previously charged you interest on this payment")
+            verifyPaymentBreakdownRow(4, "Student Loans", "£543.21 We are charging you interest on this payment")
+          }
 
-          "has payment rows but no interest lock message when there are no interest locks but there's accrued interest on a payment" in
-            new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
+        "has payment rows but no interest lock message when there are no interest locks but there's accrued interest on a payment" in
+          new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
             verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
             verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67")
           }
 
         "have a interest lock payment link when the interest is accruing" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-          document.select("#main-content p a").text() shouldBe "What you owe page"
-          document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
-        }
+            document.select("#main-content p a").text() shouldBe "What you owe page"
+            document.select("#main-content p").first().text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+          }
 
         "have a interest lock payment link when the interest has previously" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
-          document.select("#main-content p a").text() shouldBe "What you owe page"
-          document.select("#main-content p").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
-        }
+            document.select("#main-content p a").text() shouldBe "What you owe page"
+            document.select("#main-content p").first().text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+          }
 
         "have no interest lock payment link when there is no accrued interest" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
-          document.select("#main-content p a").text() shouldBe "what you owe"
-        }
+            document.select("#main-content p a").text() shouldBe "what you owe"
+          }
 
         "have no interest lock payment link when there is an intererst lock but no accrued interest" in
           new Setup(documentDetailWithDueDateModel(), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
-          document.select("#main-content p a").text() shouldBe "what you owe"
-        }
+            document.select("#main-content p a").text() shouldBe "what you owe"
+          }
       }
     }
 
@@ -311,7 +317,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       "charge history list is given" when {
 
         "the list is empty" should {
-          "display the charge history heading" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(Nil), paymentAllocations = Nil,paymentAllocationEnabled = false) {
+          "display the charge history heading" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(Nil), paymentAllocations = Nil, paymentAllocationEnabled = false) {
             content select Selectors.h2 text() shouldBe Messages.chargeHistoryHeading
           }
 
@@ -335,7 +341,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
             "a payment on account 1 of 2" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
               verifyChargesHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
             }
-            "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil),paymentAllocationEnabled = false) {
+            "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
               verifyChargesHistoryContent("29 Mar 2018 Payment on account 2 of 2 created £1,400.00")
             }
             "New balancing charge" in new Setup(documentDetailBalancingCharge, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = false) {
@@ -352,7 +358,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               paymentAllocations = Nil) {
               verifyChargesHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00")
             }
-            "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil),paymentAllocationEnabled = true,
+            "a payment on account 2 of 2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(Nil), paymentAllocationEnabled = true,
               paymentAllocations = Nil) {
               verifyChargesHistoryContent("29 Mar 2018 Payment on account 2 of 2 created £1,400.00")
             }
@@ -441,7 +447,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
               lot = Some("lot"), lotItem = Some("lotItem"), date = Some(date), transactionId = None)),
             mainType = Some(mainType), chargeType = Some(chargeType))
 
-				def payments() = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),
+        def payments() = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),
           List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(10000.0), Some(1000.0), LocalDate.now(), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))), List())
 
         val paymentAllocationsPOA1 = List(
@@ -463,17 +469,17 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
           paymentsForCharge(typeBalCharge, "Voluntary NIC2-GB", "2019-12-15", 3900.0)
         )
 
-        "chargeHistory enabled, having Payment created in the first row and payment allocations for POA1" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsPOA1) {
-        verifyChargesHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00",
-          "6 Jul 2018 Payment on account 1 of 2 reduced due to amended return £12,345.00",
-          "12 Aug 2019 Payment on account 1 of 2 reduced by taxpayer request £54,321.00",
-          "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 £1,500.00",
-          "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 £1,600.00"
-        )
-      }
+        "chargeHistory enabled, having Payment created in the first row and payment allocations for POA1" in new Setup(documentDetailPOA1, chargeHistoryOpt = Some(fullChargeHistory), paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsPOA1) {
+          verifyChargesHistoryContent("29 Mar 2018 Payment on account 1 of 2 created £1,400.00",
+            "6 Jul 2018 Payment on account 1 of 2 reduced due to amended return £12,345.00",
+            "12 Aug 2019 Payment on account 1 of 2 reduced by taxpayer request £54,321.00",
+            "30 Mar 2018 Payment allocated to Income Tax for payment on account 1 of 2 £1,500.00",
+            "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 £1,600.00"
+          )
+        }
 
 
-        "chargeHistory enabled, having Payment created in the first row and payment allocations for POA2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsPOA2) {
+        "chargeHistory enabled, having Payment created in the first row and payment allocations for POA2" in new Setup(documentDetailPOA2, chargeHistoryOpt = Some(fullChargeHistory), paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsPOA2) {
           verifyChargesHistoryContent(
             "29 Mar 2018 Payment on account 2 of 2 created £1,400.00",
             "6 Jul 2018 Payment on account 2 of 2 reduced due to amended return £12,345.00",
@@ -483,7 +489,7 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
           )
         }
 
-        "chargeHistory enabled, having Payment created in the first row and payment allocations for remaining balance" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsBalCharge) {
+        "chargeHistory enabled, having Payment created in the first row and payment allocations for remaining balance" in new Setup(documentDetailAmendedBalCharge, chargeHistoryOpt = Some(fullChargeHistory), paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsBalCharge) {
           verifyChargesHistoryContent(
             "29 Mar 2018 Remaining balance created £1,400.00",
             "6 Jul 2018 Remaining balance reduced due to amended return £12,345.00",
@@ -497,10 +503,10 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
           )
         }
 
-				"chargeHistory enabled with a matching link to the payment allocations page" in new Setup(documentDetailWithDueDateModel(), chargeHistoryOpt = Some(fullChargeHistory) ,paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsBalCharge, payments = payments()) {
-					document.select(Selectors.table).select("a").size shouldBe 6
-					document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
-				}
+        "chargeHistory enabled with a matching link to the payment allocations page" in new Setup(documentDetailWithDueDateModel(), chargeHistoryOpt = Some(fullChargeHistory), paymentAllocationEnabled = true, paymentAllocations = paymentAllocationsBalCharge, payments = payments()) {
+          document.select(Selectors.table).select("a").size shouldBe 6
+          document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
+        }
       }
 
     }
@@ -529,6 +535,20 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       "display a remaining amount for a late interest charge" in new Setup(documentDetailPOA1, latePaymentInterestCharge = true) {
         document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(4) .govuk-summary-list__value")
           .text() shouldBe "£80.00"
+      }
+    }
+
+    "display coding out class 2 nics" when {
+      "checking the correct heading for a Class 2 National Insurance charge when coding out FS is enabled" in new Setup(documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true) {
+        document.select("h1").text() shouldBe Messages.class2NicHeading(2018)
+      }
+
+      "checking the correct heading for a Class 2 National Insurance charge when coding out FS is disabled" in new Setup(documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = false) {
+        document.select("h1").text() shouldBe Messages.balancingChargeHeading(2018)
+      }
+
+      "checking a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))) {
+        document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
       }
     }
   }

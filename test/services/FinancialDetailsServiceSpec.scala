@@ -116,36 +116,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
   }
 
   "getChargeDueDates" when {
-    "a financial detail returned from the connector returns a non 404 error model" should {
-      "return an InternalServerException" in {
-        val financialDetails: FinancialDetailsModel = FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          documentDetails = List(
-            DocumentDetail("testYear", "testTransactionId", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
-            DocumentDetail("testYear2", "testTransactionId", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29))
-          ),
-          financialDetails = List(
-            FinancialDetail("testYear", None,None,None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.toString))))),
-            FinancialDetail("testYear2", None, None,None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(2).toString))
-            )))
-          )
-        )
-
-        setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear, testNino)(
-          FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
-        )
-        setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear - 1, testNino)(
-          financialDetails
-        )
-
-        val result: Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-          TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
-        }
-
-        result.failed.futureValue shouldBe an[InternalServerException]
-        result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details"
-      }
-    }
     "financial details are returned successfully" should {
       "return a single overdue date" when {
         "there is only one overdue date" in {
@@ -168,23 +138,16 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", None,None,None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-              FinancialDetail("testYear2", None,None,None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+              FinancialDetail("testYear2", None,Some("testTransactionId1"),None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
+              FinancialDetail("testYear2", None,Some("testTransactionId2"),None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
             )
           )
 
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear, testNino)(
-            financialDetailsCurrentYear
-          )
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear - 1, testNino)(
-            financialDetailsLastYear
-          )
-
-          val result: Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-            TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
+          val result: Option[Either[(LocalDate, Boolean), Int]] = {
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
-          result.futureValue shouldBe Some(Left(LocalDate.now.minusDays(1) -> true))
+          result shouldBe Some(Left(LocalDate.now.minusDays(1) -> true))
         }
       }
       "return a single non-overdue date" when {
@@ -196,8 +159,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear1", "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", None,None, None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(7).toString))))),
-              FinancialDetail("testYear1", None,None, None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
+              FinancialDetail("testYear1", None,Some("testTransactionId1"), None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(7).toString))))),
+              FinancialDetail("testYear1", None,Some("testTransactionId2"), None,None,None,None,None,None,None,None,Some(Seq(SubItem(Some(LocalDate.now.plusDays(1).toString)))))
             )
           )
 
@@ -213,18 +176,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             )
           )
 
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear, testNino)(
-            financialDetailsCurrentYear
-          )
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear - 1, testNino)(
-            financialDetailsLastYear
-          )
-
-          val result: Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-            TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
+          val result: Option[Either[(LocalDate, Boolean), Int]] = {
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
-          result.futureValue shouldBe Some(Left(LocalDate.now.plusDays(3) -> false))
+          result shouldBe Some(Left(LocalDate.now.plusDays(5) -> false))
         }
       }
       "return the count of overdue dates" when {
@@ -253,18 +209,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             )
           )
 
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear, testNino)(
-            financialDetailsCurrentYear
-          )
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear - 1, testNino)(
-            financialDetailsLastYear
-          )
-
-          val result: Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-            TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
+          val result: Option[Either[(LocalDate, Boolean), Int]] = {
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
-          result.futureValue shouldBe Some(Right(2))
+          result shouldBe Some(Right(2))
         }
       }
       "return none" when {
@@ -273,17 +222,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),List(), List())
 
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear, testNino)(
-            financialDetailsCurrentYear
-          )
-          setupMockGetFinancialDetails(getCurrentTaxYearEnd.getYear - 1, testNino)(
-            financialDetailsLastYear
-          )
-          val result: Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-            TestFinancialDetailsService.getChargeDueDates(implicitly, testUserWithRecentYears)
+          val result: Option[Either[(LocalDate, Boolean), Int]] = {
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
-          result.futureValue shouldBe None
+          result shouldBe None
         }
       }
     }

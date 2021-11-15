@@ -16,7 +16,6 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import config.featureswitch._
@@ -25,9 +24,17 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockHome
+import models.financialDetails.FinancialDetailsErrorModel
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
+import testConstants.FinancialDetailsTestConstants.financialDetailsModel
+import testConstants.MessagesLookUp
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
@@ -125,27 +132,51 @@ class HomeControllerSpec extends TestSupport
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 						mockSingleBusinessIncomeSource()
 						mockGetObligationDueDates(Future.successful(Right(2)))
-						mockGetChargeDueDates(Future.failed(new InternalServerException("charge test exception")))
+						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(FinancialDetailsErrorModel(500, "error"))))
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
 						result.failed.futureValue shouldBe an[InternalServerException]
-						result.failed.futureValue.getMessage shouldBe "charge test exception"
+						result.failed.futureValue.getMessage shouldBe "[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details"
 					}
 				}
 				"retrieving their charge due date details was successful" should {
-					"display the home page with those details" in new Setup {
+					"display the home page with right details and without dunning lock warning and one overdue payment" in new Setup {
 
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 						mockSingleBusinessIncomeSource()
 						mockGetObligationDueDates(Future.successful(Right(2)))
-						mockGetChargeDueDates(Future.successful(Some(Left(LocalDate.now -> true))))
-						mockHome(Some(Left(LocalDate.now -> true)), Right(2))(HtmlFormat.empty)
+						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear))))
+						mockGetChargeDueDates(Some(Left(LocalDate.of(2021, 5, 15) -> true)))
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
 						status(result) shouldBe OK
 						contentType(result) shouldBe Some(HTML)
+						val document: Document = Jsoup.parse(contentAsString(result))
+						document.title shouldBe MessagesLookUp.HomePage.agentTitle
+						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 15 May 2021"
+						document.select("#overdue-warning").text shouldBe "! You have overdue payments. You may be charged interest on these until they are paid in full."
+					}
+					"display the home page with right details and with dunning lock warning and two overdue payments" in new Setup {
+
+						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						mockSingleBusinessIncomeSource()
+						mockGetObligationDueDates(Future.successful(Right(2)))
+						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
+						mockGetChargeDueDates(Some(Right(2)))
+
+						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+
+						status(result) shouldBe OK
+						contentType(result) shouldBe Some(HTML)
+						val document: Document = Jsoup.parse(contentAsString(result))
+						document.title shouldBe MessagesLookUp.HomePage.agentTitle
+						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+						document.select("#overdue-warning").text shouldBe "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
 					}
 				}
 			}

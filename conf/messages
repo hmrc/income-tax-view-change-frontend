@@ -92,6 +92,11 @@ agent.paymentDue.overdueAmount                                 = Overdue payment
 agent.paymentDue.balanceDueWithin30Days                        = Due within 30 days
 agent.paymentDue.totalBalance                                  = Total payments
 
+agent.paymentDue.codingOutHeading                              = Collected through PAYE tax code
+agent.paymentDue.codingOut-1                                   = You have {0} of tax for the
+agent.paymentDue.codingOut-2                                   = {0} to {1} tax year
+agent.paymentDue.codingOut-3                                   = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
+
 
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet
@@ -134,7 +139,8 @@ home.self-assessment.updatesLink                                = View your Self
 home.view-self-assessment.Link                                  = View your Self Assessment tax years
 home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
 
-home.overdue.message                                            = You have overdue payments. You may be charged interest on these until they are paid in full.
+home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
+home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
 home.agent.overdue.message                                      = You have overdue payments. You may be charged interest on these until they are paid in full.
 
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS

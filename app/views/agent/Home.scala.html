@@ -38,7 +38,8 @@
         overduePaymentExists: Boolean,
          paymentHistoryEnabled: Boolean,
         ITSASubmissionIntegrationEnabled: Boolean,
-        implicitDateFormatter: ImplicitDateFormatter
+        implicitDateFormatter: ImplicitDateFormatter,
+		dunningLockExists: Boolean = false
 )(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
@@ -139,7 +140,7 @@
     @if(overduePaymentExists) {
         <div id="overdue-warning" class="grid-row">
             <div class="column-full">
-				@govukWarningText(WarningText(content = Text(messages("home.overdue.message"))))
+				@govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
             </div>
         </div>
     }
