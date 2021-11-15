@@ -36,119 +36,133 @@ class TaxYearsViewSpec extends ViewSpec {
 
   class Setup(calcs: List[Int],
                         itsaSubmissionFeatureSwitch: Boolean = false,
-                        utr: Option[String] = None)  {
+                        utr: Option[String] = None, isAgent: Boolean = false)  {
     lazy val page: HtmlFormat.Appendable =
-      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch)(FakeRequest(),implicitly)
+      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, isAgent = isAgent)(FakeRequest(),implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
+  "individual" when {
+    "The TaxYears view with itsaSubmissionFeatureSwitch FS disabled" when {
+      "the view is displayed" should {
+        s"have the title '${taxYears.title}'" in new Setup(List(testYearPlusOne, testYear)) {
+          document.title() shouldBe taxYears.title
+        }
 
-  "The TaxYears view with itsaSubmissionFeatureSwitch FS disabled" when {
-    "the view is displayed" should {
-      s"have the title '${taxYears.title}'" in new Setup(List(testYearPlusOne, testYear)) {
-        document.title() shouldBe taxYears.title
+        "have a header" in new Setup(List(testYearPlusOne, testYear)) {
+          layoutContent.selectHead("h1").text shouldBe taxYears.heading
+        }
+
+        "have a table header" in new Setup(List(testYearPlusOne, testYear)) {
+          document.selectNth("th", 1).text shouldBe taxYears.tableHeadingTaxYear
+          document.selectNth("th", 2).text shouldBe taxYears.tableHeadingOptions
+        }
       }
 
-      "have a header" in new Setup(List(testYearPlusOne, testYear)) {
-        layoutContent.selectHead("h1").text shouldBe taxYears.heading
+      "the user has two tax years" should {
+        "display two tax years" in new Setup(List(testYearPlusOne, testYear)) {
+          document.selectHead("tbody").selectNth("tr", 1)
+            .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYear.toString, testYearPlusOne.toString)
+          document.selectHead("tbody").selectNth("tr", 2)
+            .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear((testYear - 1).toString, testYear.toString)
+        }
+
+        "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear)) {
+          document.getElementById("viewReturn-link-2018").text() shouldBe
+            s"${taxYears.viewReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
+          document.getElementById("viewReturn-link-2019").text() shouldBe
+            s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
+        }
+
+        "not display any update return link" in new Setup(List(testYearPlusOne, testYear)) {
+          Option(document.getElementById("updateReturn-link-2018")) shouldBe None
+          Option(document.getElementById("updateReturn-link-2019")) shouldBe None
+        }
       }
 
-      "have a table header" in new Setup(List(testYearPlusOne, testYear)) {
-        document.selectNth("th", 1).text shouldBe taxYears.tableHeadingTaxYear
-        document.selectNth("th", 2).text shouldBe taxYears.tableHeadingOptions
+      "the user has three tax years records" should {
+        "display three tax years" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)) {
+          document.selectHead("tbody").selectNth("tr", 1)
+            .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
+          document.selectHead("tbody").selectNth("tr", 2)
+            .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYear.toString, testYearPlusOne.toString)
+          document.selectHead("tbody").selectNth("tr", 3)
+            .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear((testYear - 1).toString, testYear.toString)
+        }
+
+        "display three view return links for the correct tax year" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)) {
+          document.getElementById("viewReturn-link-2018").text() shouldBe
+            s"${taxYears.viewReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
+          document.getElementById("viewReturn-link-2019").text() shouldBe
+            s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
+          document.getElementById("viewReturn-link-2020").text() shouldBe
+            s"${taxYears.viewReturn} ${taxYears.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)}"
+        }
+
+        "not display any update return link" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)) {
+          Option(document.getElementById("updateReturn-link-2018")) shouldBe None
+          Option(document.getElementById("updateReturn-link-2019")) shouldBe None
+          Option(document.getElementById("updateReturn-link-2020")) shouldBe None
+        }
+      }
+
+      "the user has no taxYears" should {
+        s"have the paragraph '${taxYears.noEstimates}'" in new Setup(List()) {
+          document.getElementById("no-taxYears").text shouldBe taxYears.noEstimates
+        }
+      }
+
+      "the paragraph explaining about previous Self Assessments" should {
+        "appear if the user has a UTR" in new Setup(List(testYearPlusOne, testYear), utr = Some("1234567890")) {
+          layoutContent.select("#oldSa-para").text shouldBe taxYears.saNote
+          layoutContent.selectFirst("#oldSa-para").hasCorrectLinkWithNewTab(taxYears.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
+        }
+
+        "not appear if the user does not have a UTR" in new Setup(List(testYearPlusOne, testYear)) {
+          Option(document.selectFirst("#content p")) shouldBe None
+        }
       }
     }
 
-    "the user has two tax years" should {
-      "display two tax years" in new Setup(List(testYearPlusOne, testYear)){
-        document.selectHead("tbody").selectNth("tr", 1)
-          .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYear.toString, testYearPlusOne.toString)
-        document.selectHead("tbody").selectNth("tr", 2)
-          .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear((testYear-1).toString, testYear.toString)
-      }
+    "The TaxYears view with itsaSubmissionFeatureSwitch FS enabled" when {
+      "the user has two tax years" should {
+        "display two tax years" in new Setup(List(testYearPlusOne, testYear), true) {
+          document.selectHead("tbody").selectNth("tr", 1)
+            .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYear.toString, testYearPlusOne.toString)
+          document.selectHead("tbody").selectNth("tr", 2)
+            .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear((testYear - 1).toString, testYear.toString)
+        }
 
-      "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear)){
-        document.getElementById("viewReturn-link-2018").text() shouldBe
-          s"${taxYears.viewReturn} ${taxYears.taxYear((testYear-1).toString, testYear.toString)}"
-        document.getElementById("viewReturn-link-2019").text() shouldBe
-          s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
-      }
+        "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear), true) {
 
-      "not display any update return link" in new Setup(List(testYearPlusOne, testYear)){
-        Option(document.getElementById("updateReturn-link-2018")) shouldBe None
-        Option(document.getElementById("updateReturn-link-2019")) shouldBe None
-      }
-    }
+          document.getElementById("viewReturn-link-2018").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/calculation/2018"
+          document.getElementById("viewReturn-link-2018").text() shouldBe
+            s"${taxYears.viewReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
+          document.getElementById("viewReturn-link-2019").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/calculation/2019"
+          document.getElementById("viewReturn-link-2019").text() shouldBe
+            s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
+        }
 
-    "the user has three tax years records" should {
-      "display three tax years" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)){
-        document.selectHead("tbody").selectNth("tr", 1)
-          .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
-        document.selectHead("tbody").selectNth("tr", 2)
-          .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYear.toString, testYearPlusOne.toString)
-        document.selectHead("tbody").selectNth("tr", 3)
-          .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear((testYear-1).toString, testYear.toString)
-      }
+        "display two update return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear), true) {
+          document.getElementById("updateReturn-link-2018").text() shouldBe
+            s"${taxYears.updateReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
+          document.getElementById("updateReturn-link-2019").text() shouldBe
+            s"${taxYears.updateReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
+        }
 
-       "display three view return links for the correct tax year" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)){
-        document.getElementById("viewReturn-link-2018").text() shouldBe
-          s"${taxYears.viewReturn} ${taxYears.taxYear((testYear-1).toString, testYear.toString)}"
-        document.getElementById("viewReturn-link-2019").text() shouldBe
-          s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
-        document.getElementById("viewReturn-link-2020").text() shouldBe
-          s"${taxYears.viewReturn} ${taxYears.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)}"
-      }
-
-      "not display any update return link" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)){
-        Option(document.getElementById("updateReturn-link-2018")) shouldBe None
-        Option(document.getElementById("updateReturn-link-2019")) shouldBe None
-        Option(document.getElementById("updateReturn-link-2020")) shouldBe None
-      }
-    }
-
-    "the user has no taxYears" should {
-      s"have the paragraph '${taxYears.noEstimates}'" in new Setup(List()){
-        document.getElementById("no-taxYears").text shouldBe taxYears.noEstimates
-      }
-    }
-
-    "the paragraph explaining about previous Self Assessments" should {
-      "appear if the user has a UTR" in new Setup(List(testYearPlusOne, testYear), utr = Some("1234567890")){
-        layoutContent.select(Selectors.p).text shouldBe taxYears.saNote
-        layoutContent.selectFirst(Selectors.p).hasCorrectLinkWithNewTab(taxYears.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
-      }
-
-      "not appear if the user does not have a UTR" in new Setup(List(testYearPlusOne, testYear)){
-        Option(document.selectFirst("#content p")) shouldBe None
       }
     }
   }
 
-   "The TaxYears view with itsaSubmissionFeatureSwitch FS enabled" when {
-     "the user has two tax years" should {
-       "display two tax years" in new Setup(List(testYearPlusOne, testYear), true){
-         document.selectHead("tbody").selectNth("tr", 1)
-           .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear(testYear.toString, testYearPlusOne.toString)
-         document.selectHead("tbody").selectNth("tr", 2)
-           .selectNth("td", 1).selectNth("li", 1).text() shouldBe taxYears.taxYear((testYear - 1).toString, testYear.toString)
-       }
-
-       "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear), true){
-         document.getElementById("viewReturn-link-2018").text() shouldBe
-           s"${taxYears.viewReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
-         document.getElementById("viewReturn-link-2019").text() shouldBe
-           s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
-       }
-
-       "display two update return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear), true){
-         document.getElementById("updateReturn-link-2018") .text() shouldBe
-           s"${taxYears.updateReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
-         document.getElementById("updateReturn-link-2019") .text() shouldBe
-           s"${taxYears.updateReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
-       }
-
-     }
-   }
-
+  "agent" when {
+    "display the agent view return link" in new Setup(List(testYearPlusOne), true, isAgent = true) {
+      document.getElementById("viewReturn-link-2019").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/calculation/2019"
+    }
+    "the paragraph explaining about previous Self Assessments" in new Setup(List(testYearPlusOne), isAgent = true) {
+      layoutContent.select("#oldSa-para-agent").text shouldBe taxYears.saNoteAgent
+      layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(taxYears.saLinkAgent,
+        "https://www.gov.uk/guidance/self-assessment-for-agents-online-service")
+    }
+  }
 }
