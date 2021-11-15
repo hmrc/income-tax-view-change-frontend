@@ -72,11 +72,18 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       dueDate = Some(LocalDate.of(2021, 7, 31))),
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")),codingOutEnabled = true))
 
+  val noClass2NicsChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    dueDate = Some(LocalDate.of(2021, 7, 31))),
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")),codingOutEnabled = false))
+
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
+    testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, "testBackURL", codingOutEnabled = false)
+
+  def disableClass2NicsView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = noClass2NicsChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
     testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, "testBackURL", codingOutEnabled = false)
 
   def class2NicsView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = class2NicsChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverviewView(
@@ -343,8 +350,12 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)")
     }
 
-    "display the Class 2 National Insurance payment link on the payments table" in new Setup(class2NicsView()) {
+    "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(class2NicsView()) {
       layoutContent.getElementById("paymentTypeLink-0").text() shouldBe "Class 2 National Insurance"
+    }
+
+    "display the Remaining balance payment link on the payments table when coding out is disabled" in new Setup(disableClass2NicsView()) {
+      layoutContent.getElementById("paymentTypeLink-0").text() shouldBe "Remaining balance"
     }
 
     "display updates by due-date" in new Setup(estimateView()) {
