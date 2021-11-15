@@ -15,21 +15,29 @@
 *@
 
 @import views.html.components._
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 
 @this(
-        mainTemplate: layout,
+        mainTemplate: unifiedLayout,
         h1: h1,
         p: p,
         link: link,
         appConfig: config.FrontendAppConfig
 )
 
-@(taxYears: List[Int], backUrl: String, utr: Option[String], itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages)
+@(taxYears: List[Int], backUrl: String, utr: Option[String] = None, itsaSubmissionIntegrationEnabled: Boolean, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+
+@getReturnHref(year: Int) = @{
+    if (isAgent) {
+        controllers.agent.routes.TaxYearOverviewController.show(year).url
+    } else {
+        controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url
+    }
+}
 
 @viewReturnLink(year: Int) = {
     <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewReturn-link-@year"
-    href="@{controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url}">
+    href="@getReturnHref(year)">
         @messages("taxYears.viewReturn")
         <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
     </a>
@@ -63,11 +71,11 @@
 
 @mainTemplate(
     pageTitle = messages("taxYears.heading"),
-    backUrl = Some(backUrl)
+    backUrl = Some(backUrl),
+    isAgent = isAgent
 ) {
 
     @h1(msg = "taxYears.heading", id=Some("heading"))
-
 
     @if(taxYears.isEmpty){
         <p id="no-taxYears">@messages("taxYears.noEstimates")</p>
@@ -88,13 +96,21 @@
         </div>
     }
 
-    @if(utr.isDefined) {
-        @p(){
+
+    @if(!isAgent && utr.isDefined) {
+        @p(id=Some("oldSa-para")){
             @messages("taxYears.oldSa.content.text")
             @link(link = appConfig.saViewLandPService(utr.get), messageKey = "taxYears.oldSa.content.link", id=Some("self-assessment-online-account-link"), outerMessage = ".", target = Some("_blank"))
         }
     }
-
-
+    @if(isAgent) {
+        @p(id=Some("oldSa-para-agent")){
+            @messages("taxYears.oldSa.agent.content.1")
+            @link(link = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service",
+                messageKey = "taxYears.oldSa.agent.content.2", id=Some("self-assessment-for-agents-link"),
+                outerMessage = ".", target = Some("_blank"))
+            @messages("taxYears.oldSa.agent.content.3")
+        }
+    }
 }
 

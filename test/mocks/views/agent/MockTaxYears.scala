@@ -21,7 +21,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.TaxYears
+import views.html.TaxYears
 
 trait MockTaxYears extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
@@ -34,7 +34,7 @@ trait MockTaxYears extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockTaxYears(years: List[Int], backUrl: String)(response: Html): Unit = {
-    when(taxYears(matches(years), matches(backUrl), any())(any(), any(), any()))
+    when(taxYears(matches(years), matches(backUrl), any(), any(), any())(any(), any()))
       .thenReturn(response)
   }
 
