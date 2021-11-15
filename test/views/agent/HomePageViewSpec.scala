@@ -59,7 +59,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left((nextPaymentDue, false))),
               nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left((nextUpdateDue, false)),
               paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              overduePaymentExists: Boolean = false) {
+              overduePaymentExists: Boolean = false, dunningLockExists: Boolean = false) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
@@ -69,7 +69,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       overduePaymentExists = overduePaymentExists,
       paymentHistoryEnabled = paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      implicitDateFormatter = mockImplicitDateFormatter
+      implicitDateFormatter = mockImplicitDateFormatter,
+      dunningLockExists = dunningLockExists
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -137,9 +138,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an overdue warning message when a payment is overdue" in new Setup(overduePaymentExists = true) {
-        val overdueMessage = "! You have overdue payments. You may be charged interest on these until they are paid in full."
-        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
+      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new Setup(overduePaymentExists = true) {
+        val overdueMessageWithoutDunningLock = "! You have overdue payments. You may be charged interest on these until they are paid in full."
+        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
+      }
+
+      "display an overdue warning message when a payment is overdue and dunning lock exists" in new Setup(overduePaymentExists = true, dunningLockExists = true) {
+        val overdueMessageWithDunningLock = "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
+        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
       }
 
       "have an next updates due tile" which {

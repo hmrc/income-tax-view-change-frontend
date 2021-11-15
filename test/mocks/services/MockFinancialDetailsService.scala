@@ -64,8 +64,8 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
       .thenReturn(Future.successful(response))
   }
 
-  def mockGetChargeDueDates(response: Future[Option[Either[(LocalDate, Boolean), Int]]]): Unit = {
-    when(mockFinancialDetailsService.getChargeDueDates(any(), any()))
+  def mockGetChargeDueDates(response: Option[Either[(LocalDate, Boolean), Int]]): Unit = {
+    when(mockFinancialDetailsService.getChargeDueDates(any()))
       .thenReturn(response)
   }
 
