@@ -102,6 +102,15 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
     def class2NicHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Class 2 National Insurance"
     def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
 
+
+    val codingOutSASummaryheader = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
+    val codingOutSASummaryParagraph = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
+    val codingOutSASummarySummaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
+    val codingOutSASummaryNoticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+    val codingOutSASummaryRemainingText = "Collected through your PAYE tax code for 2017 to 2018 tax year"
+    val codingOutSASummaryPayHistoryLine1 = "29 Mar 2018 PAYE self assessment created £2,500.00"
+    val codingOutSASummaryPayHistoryLine2 = "29 Mar 2018 Amount collected through your PAYE tax code for 2017 to 2018 tax year £2,500.00"
+
   }
 
   val paymentBreakdown: List[FinancialDetail] = List(
@@ -550,6 +559,24 @@ class ChargeSummaryViewSpec extends TestSupport with FeatureSwitching with ViewS
       "checking a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))) {
         document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
       }
+    }
+  }
+
+  "display sa coding out page" when {
+    "a user visits a self assessment charge" in new Setup(documentDetailWithDueDateModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
+      documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(2500.00),
+      originalAmount = Some(2500.00)), codingOutEnabled = true){
+      document.select("h1").text() shouldBe Messages.codingOutSASummaryheader
+      document.select("#coding-out-notice").text() shouldBe Messages.codingOutSASummaryParagraph
+      document.select("#coding-out-message").text() shouldBe Messages.codingOutSASummarySummaryMessage
+      document.select("#coding-out-notice-link").attr("href") shouldBe Messages.codingOutSASummaryNoticeLink
+      document.select(".govuk-summary-list__row").size() shouldBe 2
+      document.select(".govuk-summary-list__row .govuk-summary-list__value").get(0).text() shouldBe "£2,500.00"
+      document.select(".govuk-summary-list__row .govuk-summary-list__value").get(1).text() shouldBe Messages.codingOutSASummaryRemainingText
+      document.select("a.govuk-button").size() shouldBe 0
+      document.select(".govuk-table tbody tr").size() shouldBe 2
+      document.select(".govuk-table tbody tr").get(0).text() shouldBe Messages.codingOutSASummaryPayHistoryLine1
+      document.select(".govuk-table tbody tr").get(1).text() shouldBe Messages.codingOutSASummaryPayHistoryLine2
     }
   }
 }

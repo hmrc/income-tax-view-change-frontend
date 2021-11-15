@@ -341,7 +341,10 @@
                         optId=Some("coding-out-header"))
                     <div id="coding-out-wrapper" class="govuk-inset-text">
                     <div id="coding-out-notice" class="panel panel-indent panel-border-wide">
-                        @messages("agent.paymentDue.codingOut-1", codedOutDocumentDetail.amountCodedOut.get.toCurrencyString)
+                        @messages("agent.paymentDue.codingOut-1a")
+                        <a id="coding-out-summary-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(codedOutDocumentDetail.taxYear.toInt,
+                codedOutDocumentDetail.transactionId, false)"> @codedOutDocumentDetail.amountCodedOut.get.toCurrencyString </a>
+                        @messages("agent.paymentDue.codingOut-1b")
                         <b class = "bold">@messages("agent.paymentDue.codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
                             codedOutDocumentDetail.taxYear)</b>
                         @messages("agent.paymentDue.codingOut-3")

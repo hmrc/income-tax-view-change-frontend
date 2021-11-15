@@ -857,6 +857,11 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 1
       pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
     }
+
+    "have a link to the SA summary coding out page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true){
+      pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
+        "/report-quarterly/income-and-expenses/view/agents/tax-years/2021/charge?id=1040000125"
+    }
   }
 
   "codingOut is disabled" should {
