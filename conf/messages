@@ -204,6 +204,9 @@ tax-year-overview.payments.no-payments                              = No payment
 tax-year-overview.payments.paymentUnderReview                       = Payment under review
 tax-year-overview.section                                           = Section
 tax-year-overview.amount                                            = Amount
+tax-year-overview.payments.class2Nic.text                           = Class 2 National Insurance
+tax-year-overview.payments.codingOut.text                           = PAYE self assessment
+
 
 
 ## Income Breakdown Page ##
@@ -542,7 +545,6 @@ whatYouOwe.codingOut-1b                                            = of tax for 
 whatYouOwe.codingOut-2                                             = {0} to {1} tax year
 whatYouOwe.codingOut-3                                             = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
 whatYouOwe.class2Nic.text                                          = Class 2 National Insurance
-
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2

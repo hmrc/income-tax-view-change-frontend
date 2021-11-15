@@ -36,7 +36,7 @@
 )
 
 @(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate],
-        obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_],
+        obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean)(implicit request: Request[_],
         messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
@@ -81,13 +81,14 @@
                         <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                     }
                 <div>
-                @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                    <a class="govuk-link" id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
-                } else {
-                    <a class="govuk-link" id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
-                }
+                    @if(documentDetailWithDueDate.isLatePaymentInterest) {
+                    <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                    } else if (documentDetailWithDueDate.documentDetail.isClass2Nic) {
+                    <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
+                    } else {
+                    <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                    }
                 </div>
-
                     @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                 </td>
