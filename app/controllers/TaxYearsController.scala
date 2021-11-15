@@ -21,12 +21,12 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import views.html.TaxYearsUnified
+import views.html.TaxYears
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearsController @Inject() (taxYearsView: TaxYearsUnified)
+class TaxYearsController @Inject() (taxYearsView: TaxYears)
                                    (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val executionContext: ExecutionContext,
