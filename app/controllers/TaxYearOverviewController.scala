@@ -21,6 +21,7 @@ import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved}
 import controllers.predicates._
 import forms.utils.SessionKeys
 import models.calculation._
@@ -60,14 +61,16 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   private def view(taxYear: Int,
                    calculationOverview: Option[CalcOverview] = None,
                    charge: List[DocumentDetailWithDueDate],
-                   obligations: ObligationsModel
+                   obligations: ObligationsModel,
+                   codingOutEnabled: Boolean
                   )(implicit user: MtdItUser[_]): Html = {
     taxYearOverviewView(
       taxYear = taxYear,
       overviewOpt = calculationOverview,
       charges = charge,
       obligations,
-      backUrl = backUrl
+      backUrl = backUrl,
+        codingOutEnabled = codingOutEnabled
     )
   }
 
@@ -109,16 +112,18 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                 if (isEnabled(TxmEventsApproved)) {
                   auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, calculation, charges, obligationsModel))
                 }
+                val codingOutEnabled = isEnabled(CodingOut)
                 Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation)),
-                charge = charges, obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+                charge = charges, obligations = obligationsModel, codingOutEnabled = codingOutEnabled)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
           }
         case CalcDisplayNoDataFound =>
+          val codingOutEnabled = isEnabled(CodingOut)
           withTaxYearFinancials(taxYear) { charges =>
             withObligationsModel(taxYear) map {
               case obligationsModel: ObligationsModel => Ok(view(taxYear, charge = charges,
-                obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+                obligations = obligationsModel, codingOutEnabled = codingOutEnabled)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
           }

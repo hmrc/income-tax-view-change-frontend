@@ -45,6 +45,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
   with MockAuditingService with MockNextUpdatesService {
 
   val taxYearOverviewView = app.injector.instanceOf[TaxYearOverview]
+  val codingOutEnabled = Boolean
 
   object TestTaxYearOverviewController extends TaxYearOverviewController(
     taxYearOverviewView,
@@ -72,6 +73,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
 
 
+
+
   "The TaxYearOverview.renderTaxYearOverviewPage(year) action" when {
 
     "TaxYearOverviewUpdate FS is enabled" should {
@@ -90,7 +93,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           Some(calcOverview),
           testChargesList,
           testObligtionsModel,
-          taxYearsBackLink).toString
+          taxYearsBackLink,
+        codingOutEnabled = true
+        ).toString
 
 
         val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
@@ -118,7 +123,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
-            taxYearsBackLink).toString
+            taxYearsBackLink,
+            codingOutEnabled = true
+          ).toString
 
           val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -195,7 +202,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
               None,
               testChargesList,
               testObligtionsModel,
-              taxYearsBackLink).toString
+              taxYearsBackLink,
+              codingOutEnabled = true
+            ).toString
 
             val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
