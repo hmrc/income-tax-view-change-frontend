@@ -183,7 +183,7 @@ class HomePageViewSpec extends TestSupport {
     }
     "has a link to the send updates page" in new Setup {
       val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
-      link.map(_.attr("href")) shouldBe Some("http://localhost:9302/income-through-software/return/2022/start")
+      link.map(_.attr("href")) shouldBe Some("http://localhost:9302/update-and-submit-income-tax-return/2022/start")
       document.getElementById("submit-your-returns").text() shouldBe homeMessages.submitYourReturnsLink
     }
 

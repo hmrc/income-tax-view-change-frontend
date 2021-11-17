@@ -193,7 +193,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to the send updates page" in new Setup {
           val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("http://localhost:9302/income-through-software/return/2022/start")
+          link.map(_.attr("href")) shouldBe Some("http://localhost:9302/update-and-submit-income-tax-return/2022/start")
           link.map(_.text) shouldBe Some(homeMessages.submitYourReturnsLink)
         }
       }
