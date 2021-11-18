@@ -43,7 +43,7 @@ class WhatYouOweControllerSpec extends TestSupport
     val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
 
     val controller = new WhatYouOweController(
-      app.injector.instanceOf[views.html.agent.WhatYouOwe],
+      app.injector.instanceOf[views.html.WhatYouOweUnified],
       whatYouOweService,
       mockIncomeSourceDetailsService,
       mockAuditingService,

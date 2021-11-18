@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.WhatYouOweService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.WhatYouOwe
+import views.html.WhatYouOweUnified
 import javax.inject.Inject
 
 import scala.concurrent.ExecutionContext
@@ -44,13 +44,12 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      implicit val appConfig: FrontendAppConfig,
                                      mcc: MessagesControllerComponents,
                                      implicit val ec: ExecutionContext,
-                                     whatYouOwe: WhatYouOwe
+                                     whatYouOwe: WhatYouOweUnified
                                     ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def hasFinancialDetailsError(financialDetails: List[FinancialDetailsResponseModel]): Boolean = {
     financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel])
   }
-
 
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>

@@ -30,7 +30,7 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.WhatYouOweService
-import views.html.WhatYouOwe
+import views.html.WhatYouOweUnified
 
 import scala.concurrent.Future
 
@@ -53,7 +53,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
-      app.injector.instanceOf[WhatYouOwe]
+      app.injector.instanceOf[WhatYouOweUnified]
     )
   }
 
