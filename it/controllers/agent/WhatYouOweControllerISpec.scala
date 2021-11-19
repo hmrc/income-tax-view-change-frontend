@@ -16,7 +16,7 @@ import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -1231,6 +1231,89 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
             isElementVisibleById("totalBalance")(expectedValue = true)
           )
+        }
+      }
+
+      "there is an LPI Charge owed" when {
+
+        def getFDResponse(lpiDunningBlock: Boolean): JsObject = {
+          val lpiDunningBlockValue = if (lpiDunningBlock) 100.00 else 0
+          Json.obj(
+            "balanceDetails" -> Json.obj(
+              "balanceDueWithin30Days" -> 1.00,
+              "overDueAmount" -> 2.00,
+              "totalBalance" -> 3.00
+            ),
+            "documentDetails" -> Json.arr(
+              Json.obj(
+                "taxYear" -> "2020",
+                "transactionId" -> "transIdLPI",
+                "documentDescription" -> "ITSA- POA 1",
+                "outstandingAmount" -> 100.0,
+                "originalAmount" -> 100.0,
+                "documentDate" -> "2018-03-29",
+                "interestFromDate" -> "2018-03-29",
+                "interestEndDate" -> "2018-03-29",
+                "latePaymentInterestAmount" -> 100.0,
+                "interestOutstandingAmount" -> 80.0,
+                "lpiWithDunningBlock" -> lpiDunningBlockValue
+
+              )
+            ),
+            "financialDetails" -> Json.arr(
+              Json.obj(
+                "taxYear" -> "2020",
+                "mainType" -> "SA Balancing Charge",
+                "transactionId" -> "transIdLPI",
+                "chargeType" -> "ITSA NI",
+                "originalAmount" -> 100.00,
+                "items" -> Json.arr(
+                  Json.obj("amount" -> 100,
+                    "clearingDate" -> "2019-08-13",
+                    "dueDate" -> LocalDate.now().minusDays(30).toString,
+                    "paymentLot" -> "081203010024",
+                    "paymentLotItem" -> "000001"))
+              )
+            )
+          )
+        }
+
+
+        def testLPIReviewMessage(fdResponse: JsObject, underReview: Boolean): Any = {
+          disable(TxmEventsApproved)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val testTaxYear = LocalDate.now().getYear
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
+          )(OK, fdResponse)
+
+          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+          val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+          AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+          Then("the result should have a HTTP status of OK (200) and the payments due page")
+          result should have(
+            httpStatus(OK),
+            isElementVisibleById("payment-under-review-info")(expectedValue = underReview)
+          )
+        }
+
+        "the LPI charge does not have a dunning block" in {
+          testLPIReviewMessage(getFDResponse(false), false)
+        }
+        "the LPI charge has a dunning block" in {
+          testLPIReviewMessage(getFDResponse(true), true)
         }
       }
 
