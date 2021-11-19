@@ -687,3 +687,15 @@ final-tax-overview.agent.inset.2                                 = gwirio Ffurfl
 tax-year-overview.tax-due.finalCalc                             = Treth Incwm a chyfraniadau Yswiriant Gwladol
 tax-year-overview.taxable-income.finalCalc                      = Cyfanswm eich incwm trethadwy
 
+shortMonth.1 = Ion
+shortMonth.2 = Chwe
+shortMonth.3 = Maw
+shortMonth.4 = Ebr
+shortMonth.5 = Mai
+shortMonth.6 = Meh
+shortMonth.7 = Gor
+shortMonth.8 = Aws
+shortMonth.9 = Med
+shortMonth.10 = Hyd
+shortMonth.11 = Tach
+shortMonth.12 = Rhag
