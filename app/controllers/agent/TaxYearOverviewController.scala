@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -34,7 +34,7 @@ import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.agent.TaxYearOverview
+import views.html.TaxYearOverview
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -67,12 +67,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                     documentDetailsWithDueDates, obligations))
                 }
               )
-
+              val codingOutEnabled = isEnabled(CodingOut)
               Future.successful(Ok(view(
                 taxYear,
                 calculationOpt.map(calc => CalcOverview(calc)),
                 documentDetailsWithDueDates = documentDetailsWithDueDates,
-                obligations = obligations
+                obligations = obligations,
+                codingOutEnabled = codingOutEnabled
               )(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
             }
           }
@@ -87,15 +88,17 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   private def view(taxYear: Int,
                    calculationOverview: Option[CalcOverview],
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
-                   obligations: ObligationsModel
+                   obligations: ObligationsModel,
+                   codingOutEnabled: Boolean
                   )(implicit request: Request[_], user: MtdItUser[_]): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overviewOpt = calculationOverview,
-      documentDetailsWithDueDates = documentDetailsWithDueDates,
+      charges = documentDetailsWithDueDates,
       obligations = obligations,
       backUrl = backUrl(),
-      isAgent = true
+      isAgent = true,
+      codingOutEnabled = codingOutEnabled
     )
   }
 

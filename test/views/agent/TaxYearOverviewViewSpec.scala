@@ -24,7 +24,7 @@ import models.nextUpdates.{NextUpdateModel, NextUpdateModelWithIncomeType, NextU
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.agent.TaxYearOverview
+import views.html.TaxYearOverview
 
 import java.time.LocalDate
 import scala.collection.JavaConversions._
@@ -119,26 +119,32 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   def view(taxYear: Int = testYear,
            overview: Option[CalcOverview] = Some(testCalcOverview),
            documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testCharges,
-           obligations: ObligationsModel = testObligations): Html = {
+           obligations: ObligationsModel = testObligations,
+           codingOutEnabled: Boolean = true): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overviewOpt = overview,
-      documentDetailsWithDueDates = documentDetailsWithDueDates,
+      charges = documentDetailsWithDueDates,
       obligations = obligations,
-      backUrl = "/testBack"
+      backUrl = "/testBack",
+      isAgent = true,
+      codingOutEnabled = codingOutEnabled
     )
   }
 
   def multipleDunningLockView(taxYear: Int = testYear,
                               overview: Option[CalcOverview] = Some(testCalcOverview),
                               documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testDunningLockChargesList,
-                              obligations: ObligationsModel = testObligations): Html = {
+                              obligations: ObligationsModel = testObligations,
+                              codingOutEnabled: Boolean = true): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overviewOpt = overview,
-      documentDetailsWithDueDates = documentDetailsWithDueDates,
+      charges = documentDetailsWithDueDates,
       obligations = obligations,
-      backUrl = "/testBack"
+      backUrl = "/testBack",
+      isAgent = true,
+      codingOutEnabled = codingOutEnabled
     )
   }
   import mockImplicitDateFormatter.longDate
