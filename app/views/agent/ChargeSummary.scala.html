@@ -116,7 +116,7 @@
 				<dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
 				<dd class="govuk-summary-list__value">
 					@if(documentDetailWithDueDate.isOverdue && !documentDetail.isPaid) {
-					<span class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>
+					<span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
 					}
 					@{
 					if(latePaymentInterestCharge) documentDetail.interestEndDate.get.toLongDate
