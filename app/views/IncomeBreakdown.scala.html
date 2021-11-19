@@ -16,15 +16,14 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import models.calculation.CalcDisplayModel
-@import views.html.templates.MainTemplate
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
 
-@this(mainTemplate: layout,
+@this(mainTemplate: unifiedLayout,
       p: p
 )
 
-@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages)
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
 @if(dataItem.isDefined) {
@@ -38,7 +37,7 @@
 }
 }
 
-@mainTemplate(pageTitle = messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl), isAgent = isAgent) {
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>

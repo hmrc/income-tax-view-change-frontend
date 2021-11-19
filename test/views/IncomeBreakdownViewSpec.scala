@@ -26,7 +26,7 @@ import views.html.IncomeBreakdown
 
 class IncomeBreakdownViewSpec extends ViewSpec {
 
-  val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
+  val backUrl = "testUrl"
 
   val incomeBreakdown = app.injector.instanceOf[IncomeBreakdown]
 
