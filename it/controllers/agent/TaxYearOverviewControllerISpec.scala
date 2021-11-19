@@ -345,12 +345,12 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
 
@@ -431,12 +431,12 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
 
@@ -611,12 +611,12 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
 
@@ -693,7 +693,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Test Trading Name"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
 
@@ -773,12 +773,12 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
 
@@ -857,7 +857,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Test Trading Name"),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
+            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
 
