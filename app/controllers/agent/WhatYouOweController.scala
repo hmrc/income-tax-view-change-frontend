@@ -29,13 +29,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
-import views.html.WhatYouOweUnified
+import views.html.WhatYouOwe
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class WhatYouOweController @Inject()(whatYouOweView: WhatYouOweUnified,
+class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                      whatYouOweService: WhatYouOweService,
                                      incomeSourceDetailsService: IncomeSourceDetailsService,
                                      auditingService: AuditingService,

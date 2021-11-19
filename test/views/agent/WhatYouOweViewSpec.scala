@@ -30,7 +30,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
-import views.html.agent.WhatYouOwe
+import views.html.WhatYouOwe
 import java.time.LocalDate
 
 import play.api.test.FakeRequest
@@ -43,7 +43,9 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
               currentTaxYear: Int = LocalDate.now().getYear,
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true,
-              displayTotals: Boolean = true) {
+              displayTotals: Boolean = true,
+              dunningLock: Boolean = false,
+              hasLpiWithDunningBlock: Boolean = false) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       mtditid = "XAIT00000000015",
@@ -58,8 +60,16 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
-    val html: HtmlFormat.Appendable = whatYouOweView(charges, currentTaxYear,
-      "testBackURL", Some("1234567890"),codingOutEnabled, displayTotals = displayTotals)(FakeRequest(), agentUser, implicitly)
+    val html: HtmlFormat.Appendable = whatYouOweView(
+      chargesList = charges,
+      hasLpiWithDunningBlock = hasLpiWithDunningBlock,
+      currentTaxYear = currentTaxYear,
+      backUrl = "testBackURL",
+      utr = Some("1234567890"),
+      dunningLock = dunningLock,
+      codingOutEnabled = codingOutEnabled,
+      displayTotals = displayTotals,
+      isAgent = true)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -257,7 +267,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       "when showing the Dunning Lock content" should {
-        "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock)) {
+        "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
           pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
           pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
           pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
@@ -265,13 +275,13 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
         }
         "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock),
-          migrationYear = LocalDate.now().getYear) {
+          dunningLock = true, migrationYear = LocalDate.now().getYear) {
           pageDocument.getElementById("overdueAmount") shouldBe null
           pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
           pageDocument.getElementById("totalBalance") shouldBe null
         }
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
-          whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock)) {
+          whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
           pageDocument.getElementById("payment-under-review-info").text shouldBe AgentPaymentDue.paymentUnderReviewPara
@@ -280,12 +290,12 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         }
 
         "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
-          whatYouOweDataWithDataDueInMoreThan30Days(noDunningLocks)) {
+          whatYouOweDataWithDataDueInMoreThan30Days(noDunningLocks), dunningLock = false) {
           pageDocument.doesNotHave(Selectors.id("payment-under-review-info"))
         }
 
         s"display ${AgentPaymentDue.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
-          whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock)) {
+          whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
           val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
           val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
 
@@ -294,7 +304,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         }
 
         s"display ${AgentPaymentDue.paymentUnderReview} when there is a dunningLock against multiple charges" in new Setup(
-          whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks)) {
+          whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
           val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
           val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
 
@@ -397,7 +407,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           pageDocument.getElementById("totalBalance") shouldBe null
         }
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
-          whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
+          whatYouOweDataWithDataDueIn30Days(oneDunningLock), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
           pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
@@ -406,7 +416,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         }
 
         "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
-          whatYouOweDataWithDataDueIn30Days(noDunningLocks)) {
+          whatYouOweDataWithDataDueIn30Days(noDunningLocks), dunningLock = false) {
           pageDocument.doesNotHave(id("payment-under-review-info"))
         }
 
@@ -513,7 +523,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.poa1Text + s" $currentYear " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-        pageDocument.getElementById("over-due-type-0-late").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -534,7 +544,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.poa1Text + s" $currentYear " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-        pageDocument.getElementById("over-due-type-0-late").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -545,7 +555,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
-        pageDocument.getElementById("over-due-type-1-late").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-1-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-1-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -563,13 +573,13 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
         }
         "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithOverdueData(oneDunningLock),
-          migrationYear = LocalDate.now().getYear) {
+          migrationYear = LocalDate.now().getYear, dunningLock = true) {
           pageDocument.getElementById("overdueAmount") shouldBe null
           pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
           pageDocument.getElementById("totalBalance") shouldBe null
         }
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
-          whatYouOweDataWithOverdueData(oneDunningLock)) {
+          whatYouOweDataWithOverdueData(oneDunningLock), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
           pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
@@ -578,12 +588,12 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         }
 
         "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
-          whatYouOweDataWithOverdueData(noDunningLocks)) {
+          whatYouOweDataWithOverdueData(noDunningLocks), dunningLock = false) {
           pageDocument.doesNotHave(id("payment-under-review-info"))
         }
 
         s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
-          whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock)) {
+          whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock), dunningLock = true) {
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
 
@@ -592,7 +602,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         }
 
         s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against multiple charges" in new Setup(
-          whatYouOweDataWithOverdueLPI(List(None, None), twoDunningLocks)) {
+          whatYouOweDataWithOverdueLPI(List(None, None), twoDunningLocks), dunningLock = true) {
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
 
@@ -635,7 +645,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
-        pageDocument.getElementById("over-due-type-0-late").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
@@ -715,18 +725,18 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
       s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataTestActiveWithMixedData2(List(None,None,None,None))) {
-        val overdueTableHeader: Element = pageDocument.select("tr").get(2)
+        val overdueTableHeader: Element = pageDocument.select("#over-due-payments-table thead tr").get(0)
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
         overdueTableHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
-        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
+        val overduePaymentsTableRow1: Element = pageDocument.select("#over-due-payments-table tbody tr").get(0)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
-        pageDocument.getElementById("over-due-type-0-late").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
