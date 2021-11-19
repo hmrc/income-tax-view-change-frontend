@@ -44,7 +44,12 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
     }
 
     def toLongDateShort: String = {
-      languageUtils.Dates.formatDateAbbrMonth(d)(messages)
+      val shortFormattedDate = d.format(DateTimeFormatter.ofPattern("d MMM yyyy"))
+      val shortDay = shortFormattedDate.split(" ").head
+      val shortMonth = shortFormattedDate.split(" ")(1)
+      val shortYear = shortFormattedDate.split(" ").last
+      val translatedShortMonth = messages.translate(s"shortMonth.${d.getMonthValue}", Seq.empty).getOrElse(shortMonth)
+      s"$shortDay $translatedShortMonth $shortYear"
     }
 
     def toLongDate: String = {
