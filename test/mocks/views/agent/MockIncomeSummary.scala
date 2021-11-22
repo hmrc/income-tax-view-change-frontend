@@ -22,7 +22,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.IncomeBreakdown
+import views.html.IncomeBreakdown
 
 trait MockIncomeSummary extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
@@ -34,13 +34,14 @@ trait MockIncomeSummary extends BeforeAndAfterEach with MockitoSugar {
     reset(incomeBreakdown)
   }
 
-  def mockIncomeBreakdown(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String)
+  def mockIncomeBreakdown(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String, isAgent:Boolean)
                          (response: Html): Unit = {
     when(incomeBreakdown.apply(
       matches(calcModel),
       matches(taxYear),
-      matches(backUrl)
-    )(any(), any(), any(), any()))
+      matches(backUrl),
+      matches(isAgent)
+    )(any(), any()))
       .thenReturn(response)
   }
 
