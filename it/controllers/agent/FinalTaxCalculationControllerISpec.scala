@@ -85,7 +85,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
     val insetTextFull = "If you think this information is incorrect, you can check your client’s Income Tax Return."
     val insetTextLink = "check your client’s Income Tax Return."
-    val insetLinkHref = "http://localhost:9302/income-through-software/return/2018/view"
+    val insetLinkHref = "http://localhost:9302/update-and-submit-income-tax-return/2018/view"
 
     val incomeText = "Income"
     val incomeAmount = "£199,505.00"
@@ -485,7 +485,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       }
 
       "has the correct redirect url" in {
-        result.headers("Location").head shouldBe "http://localhost:9302/income-through-software/return/2018/declaration"
+        result.headers("Location").head shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2018/declaration"
       }
 
     }
