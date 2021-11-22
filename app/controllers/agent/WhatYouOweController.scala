@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
-import views.html.agent.WhatYouOwe
+import views.html.WhatYouOwe
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.ExecutionContext
@@ -46,14 +46,18 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                       itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def view(charge: WhatYouOweChargesList, taxYear: Int,codingOutEnabled: Boolean, displayTotals: Boolean)(implicit user: MtdItUser[_]): Html = {
+  private def view(charge: WhatYouOweChargesList, taxYear: Int,codingOutEnabled: Boolean, displayTotals: Boolean,
+                   hasLpiWithDunningBlock: Boolean, dunningLock: Boolean)(implicit user: MtdItUser[_]): Html = {
     whatYouOweView.apply(
       chargesList = charge,
       currentTaxYear = taxYear,
+      hasLpiWithDunningBlock = hasLpiWithDunningBlock,
       backUrl = backUrl,
-      user.saUtr,
+      utr = user.saUtr,
+      dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
-      displayTotals = displayTotals
+      displayTotals = displayTotals,
+      isAgent = true
     )
   }
 
@@ -69,7 +73,9 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
 								}
                 val codingOutEnabled = isEnabled(CodingOut)
                 val displayTotals = isEnabled(WhatYouOweTotals)
-								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear,codingOutEnabled = codingOutEnabled, displayTotals = displayTotals)
+								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear,codingOutEnabled = codingOutEnabled,
+                  displayTotals = displayTotals, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
+                  dunningLock = whatYouOweChargesList.hasDunningLock)
 								).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
 							}
 						} recover {
