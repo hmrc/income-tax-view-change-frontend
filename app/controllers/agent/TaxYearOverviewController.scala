@@ -68,7 +68,6 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                 }
               )
               val codingOutEnabled = isEnabled(CodingOut)
-              println(documentDetailsWithDueDates)
               Future.successful(Ok(view(
                 taxYear,
                 calculationOpt.map(calc => CalcOverview(calc)),
