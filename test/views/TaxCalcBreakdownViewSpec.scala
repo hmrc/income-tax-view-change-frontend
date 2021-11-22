@@ -32,7 +32,7 @@ import views.html.TaxCalcBreakdown
 
 class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
-  override val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
+  override val backUrl = "testUrl"
 
   override def taxCalcBreakdown(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String): Html =
     app.injector.instanceOf[TaxCalcBreakdown].apply(calcModel, taxYear, backUrl)

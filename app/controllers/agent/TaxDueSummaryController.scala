@@ -27,12 +27,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import views.html.TaxCalcBreakdown
+
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCalcBreakdown,
+class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
                                         val appConfig: FrontendAppConfig,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
@@ -51,7 +53,7 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: views.html.agent.TaxCa
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(mtdItUser, calcDisplayModel, taxYear))
             }
-            Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+            Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true)))
 
           case CalcDisplayNoDataFound =>
             Logger("application").warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
