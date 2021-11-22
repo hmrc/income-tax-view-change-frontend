@@ -82,10 +82,10 @@
         <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
         @paymentsTableHead("payments-table-head")
         <tbody>
-        @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
+        @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.get).sortBy(_.documentDetail.isCodingOut).zipWithIndex) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
-                    @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
+                    @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isCodingOut && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                         <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                     }
                 <div>
@@ -102,6 +102,10 @@
                     <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                     <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
                     <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
+                } else if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isCodingOut) {
+                    <td class="govuk-table__cell">@messages("tax-year-overview.na")</td>
+                    <td class="govuk-table__cell">@messages("tax-year-overview.paye-tax-code")</td>
+                    <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.amountCodedOut.get.toCurrencyString</td>
                 } else {
                     <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                     <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>

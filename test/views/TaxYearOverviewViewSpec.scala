@@ -141,6 +141,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val class2Nic: String = "Class 2 National Insurance"
     val remainingBalance: String = "Remaining balance"
     val payeSA: String = "PAYE Self Assessment"
+    val na: String = "N/A"
+    val payeTaxCode: String = "PAYE tax code"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -375,6 +377,18 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         paymentTypeLink.text shouldBe taxYearOverviewMessages.payeSA
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
           testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      s"display the Due date in the Payments tab for PAYE Self Assessment as ${taxYearOverviewMessages.na}" in new Setup(payeView(codingOutEnabled = true)) {
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe taxYearOverviewMessages.na
+      }
+
+      s"display the Status in the payments tab for PAYE Self Assessment as ${taxYearOverviewMessages.payeTaxCode}" in new Setup(payeView(codingOutEnabled = true)) {
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe taxYearOverviewMessages.payeTaxCode
+      }
+
+      "display the Amount in the payments tab for PAYE Self Assessment" in new Setup(payeView(codingOutEnabled = true)) {
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(4)").text shouldBe "£2,500.00"
       }
 
 
