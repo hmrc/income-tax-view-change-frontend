@@ -39,6 +39,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   class Setup {
     val testYear: Int = 2020
+		val isAgent: Boolean = true
 
     val controller: TaxDueSummaryController = new TaxDueSummaryController(
       taxCalcBreakdown = taxCalcBreakdown,
@@ -67,7 +68,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 				mockBothIncomeSources()
 				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
 				mockTaxCalcBreakdown(testYear, calculationDisplaySuccessModel(calculationDataSuccessModel),
-					controllers.agent.routes.TaxYearOverviewController.show(testYear).url)(HtmlFormat.empty)
+					controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
 				lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
 

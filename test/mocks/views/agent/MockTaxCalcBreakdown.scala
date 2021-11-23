@@ -22,7 +22,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.TaxCalcBreakdown
+import views.html.TaxCalcBreakdown
 
 trait MockTaxCalcBreakdown extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
@@ -34,12 +34,13 @@ trait MockTaxCalcBreakdown extends BeforeAndAfterEach with MockitoSugar {
     reset(taxCalcBreakdown)
   }
 
-  def mockTaxCalcBreakdown(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String)
+  def mockTaxCalcBreakdown(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String, isAgent:Boolean)
                           (response: Html): Unit = {
     when(taxCalcBreakdown.apply(
       matches(calcModel),
       matches(taxYear),
-      matches(backUrl)
+      matches(backUrl),
+      matches(isAgent)
     )(any(), any()))
       .thenReturn(response)
   }

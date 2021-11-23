@@ -15,17 +15,17 @@
  *@
 
 @import models.calculation.{CalcDisplayModel, TaxBand}
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTable
 @import views.html.partials.taxcalcbreakdown.TableRow
 
 @this(
-    mainTemplate: layout,
+    mainTemplate: unifiedLayout,
     tableRow: TableRow,
     capitalGainsTaxTable: CapitalGainsTaxTable
 )
-@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages)
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @taxBandTableRow(band: TaxBand, scottishRegime: Boolean = false) = {
     <tr class="govuk-table__row">
@@ -53,7 +53,7 @@
     }
 }
 
-@mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent) {
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
