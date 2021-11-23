@@ -22,12 +22,12 @@
 @import views.html.templates.MainTemplate
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.partials.taxOverviewBreakdownPartial
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import models.financialDetails.DocumentDetail
 
 @this(
-        mainTemplate: layout,
+        mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         breakdownPartial: taxOverviewBreakdownPartial,
         h2: h2,
@@ -65,6 +65,14 @@
     </thead>
 }
 
+@getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate, isLatePaymentCharge: Boolean = false) = @{
+    if(isAgent){
+        controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
+    } else {
+        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
+    }
+}
+
 @paymentsContent = {
 @h2(msg = messages("tax-year-overview.payments"), classes = "govuk-heading-l")
 @if(charges.isEmpty){
@@ -74,19 +82,17 @@
         <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
         @paymentsTableHead("payments-table-head")
         <tbody>
-        @for((documentDetailWithDueDate, index) <- charges.sortBy[LocalDate](_.dueDate.get).zipWithIndex) {
+        @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.get).sortBy(_.documentDetail.isCodingOut).zipWithIndex) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
-                    @if(documentDetailWithDueDate.isOverdue && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
+                    @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isCodingOut && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                         <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                     }
                 <div>
                     @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                    <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, true).url">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
-                    } else if (documentDetailWithDueDate.documentDetail.isClass2Nic) {
-                    <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
+                        <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-overview.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
                     } else {
-                    <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                        <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
                     }
                 </div>
                     @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
@@ -96,6 +102,10 @@
                     <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                     <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
                     <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
+                } else if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isCodingOut) {
+                    <td class="govuk-table__cell">@messages("tax-year-overview.na")</td>
+                    <td class="govuk-table__cell">@messages("tax-year-overview.paye-tax-code")</td>
+                    <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.amountCodedOut.get.toCurrencyString</td>
                 } else {
                     <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                     <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
@@ -164,7 +174,7 @@
 }
 
 
-@mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl), isAgent = isAgent) {
     <h1 class="govuk-heading-xl" id="heading">
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")

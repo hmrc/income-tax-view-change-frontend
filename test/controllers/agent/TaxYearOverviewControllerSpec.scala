@@ -16,40 +16,40 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import testConstants.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
-import mocks.views.agent.MockTaxYearOverview
-import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, CalcOverview}
-import models.financialDetails.DocumentDetailWithDueDate
-import models.nextUpdates.{ObligationsModel, NextUpdatesErrorModel}
+import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound}
+import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
+import views.html.TaxYearOverview
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
-  with FeatureSwitching with MockTaxYearOverview with MockCalculationService with MockIncomeSourceDetailsService
+  with FeatureSwitching with MockCalculationService with MockIncomeSourceDetailsService
   with MockNextUpdatesService with MockItvcErrorHandler with MockAuditingService {
 
   class Setup {
 
     val testYear: Int = 2020
 
+    val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
+
     val controller: TaxYearOverviewController = new TaxYearOverviewController(
-      taxYearOverview = taxYearOverview,
+      taxYearOverview = taxYearOverviewView,
       authorisedFunctions = mockAuthService,
       calculationService = mockCalculationService,
       financialDetailsService = mockFinancialDetailsService,
@@ -165,16 +165,6 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
 					ObligationsModel(Nil)
 				)
-				mockTaxYearOverview(
-					taxYear = testYear,
-					calcOverview = None,
-					documentDetailsWithDueDates = financialDetailsModel(testYear)
-						.getAllDocumentDetailsWithDueDates ++ List(DocumentDetailWithDueDate(financialDetailsModel(testYear).documentDetails.head,
-						financialDetailsModel(testYear).documentDetails.head.interestEndDate, true)),
-					obligations = ObligationsModel(Nil),
-					backUrl = controllers.agent.routes.TaxYearsController.show().url
-				)(HtmlFormat.empty)
-
 				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
 				status(result) shouldBe OK
@@ -191,15 +181,6 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
 					ObligationsModel(Nil)
 				)
-				mockTaxYearOverview(
-					taxYear = testYear,
-					calcOverview = Some(CalcOverview(calculationDataSuccessModel)),
-					documentDetailsWithDueDates = financialDetailsModel(testYear)
-						.getAllDocumentDetailsWithDueDates ++ List(DocumentDetailWithDueDate(financialDetailsModel(testYear).documentDetails.head,
-						financialDetailsModel(testYear).documentDetails.head.interestEndDate, true)),
-					obligations = ObligationsModel(Nil),
-					backUrl = controllers.agent.routes.TaxYearsController.show().url
-				)(HtmlFormat.empty)
 
 				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
