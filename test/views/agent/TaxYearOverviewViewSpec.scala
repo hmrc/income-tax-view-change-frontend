@@ -152,7 +152,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
     def fromToEstimate(from: String, to: String): String = s"$from to $to in year calculation"
 
-    val estimateMessage: String = "This calculation is only based on your completed updates for this tax year up to 5 Jan 2019. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
+    val estimateMessage: String = "This calculation is only based on your completed updates for this tax year up to 5 January 2019. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
 
     val contents: String = "Contents"
     val calculationTabLabel: String = "Tax calculation"
