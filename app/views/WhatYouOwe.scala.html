@@ -202,7 +202,7 @@
     backUrl = Some(backUrl),
     isAgent = isAgent
 ) {
-    @h1(msg = getPrefix("heading"))
+    @h1(msg = getPrefix("heading"), id = Some("page-heading"))
     @if(chargesList.isChargesListEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph
