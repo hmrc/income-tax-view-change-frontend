@@ -40,6 +40,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 
   class Setup {
     val testYear: Int = 2020
+    val isAgent: Boolean = true
 
     val controller: IncomeSummaryController = new IncomeSummaryController(
       incomeBreakdown = incomeBreakdown,
@@ -66,7 +67,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           mockBothIncomeSources()
           setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
           mockIncomeBreakdown(testYear, calculationDisplaySuccessModel(calculationDataSuccessModel),
-            controllers.agent.routes.TaxYearOverviewController.show(testYear).url)(HtmlFormat.empty)
+            controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
           lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 

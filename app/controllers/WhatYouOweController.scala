@@ -51,7 +51,6 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel])
   }
 
-
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
         whatYouOweService.getWhatYouOweChargesList().map {

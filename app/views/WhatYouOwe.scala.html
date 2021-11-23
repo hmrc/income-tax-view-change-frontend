@@ -21,11 +21,11 @@
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails._
 @import auth.MtdItUser
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
 
 @this(
-    mainTemplate: layout,
+    mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     appConfig: config.FrontendAppConfig,
     h1: h1,
@@ -34,51 +34,67 @@
     link: link
 )
 
-@(chargesList: WhatYouOweChargesList, hasLpiWithDunningBlock: Boolean, currentTaxYear: Int, backUrl: String, utr: Option[String],
-dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(chargesList: WhatYouOweChargesList,
+    hasLpiWithDunningBlock: Boolean,
+    currentTaxYear: Int,
+    backUrl: String,
+    utr: Option[String],
+    dunningLock: Boolean,
+    codingOutEnabled: Boolean,
+    displayTotals: Boolean,
+    isAgent: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
+
+@getPrefix(key: String) = @{
+    if(isAgent) s"whatYouOwe.$key" else s"whatYouOwe.$key"
+}
+
+@getMessage(key: String, args: String*) = @{
+    if(isAgent) messages(s"whatYouOwe.$key", args: _*) else messages(s"whatYouOwe.$key", args: _*)
+}
 
 @saNoteParagraph = {
     @if(utr.isDefined) {
         <div id="payments-due-note" class="govuk-inset-text">
-            @p(id=Some("sa-note-migrated"))(Html(messages("whatYouOwe.sa-note") +
-                    link(link = appConfig.saViewLandPService(utr.get), messageKey = "whatYouOwe.sa-link", id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
+            @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
+                link(link = appConfig.saViewLandPService(utr.get), outerMessage = ".",
+                    messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
                 )
-            @p(id=Some("outstanding-charges-note-migrated"))(content = Html(messages("whatYouOwe.outstanding-charges-note")))
+            @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
         </div>
     }
 }
 
 @paymentDaysNoteParagraph = {
-    @p(id = Some("payment-days-note"))(Html(messages("whatYouOwe.payment-days-note")) )
+    @p(id = Some("payment-days-note"))(Html(getMessage("payment-days-note")) )
 }
 
 @creditOnAccountNotePanel = {
     <div id="credit-on-account" class="govuk-inset-text">
     @p(){
-        @messages("whatYouOwe.credit-on-account")
+        @getMessage("credit-on-account")
     }
     </div>
 }
 @paymentTypesDropdown(classes: String = "govuk-details") = {
     <details class="@classes" data-module="govuk-details" role="group">
         <summary class="govuk-details__summary" id="payment-type-dropdown-title" role="button" aria-controls="payment-details-content" aria-expanded="false">
-            <span class="govuk-details__summary-text"> @messages("whatYouOwe.dropdown.info") </span>
+            <span class="govuk-details__summary-text"> @getMessage("dropdown.info") </span>
         </summary>
 
         <div class="govuk-details__text" id="payment-details-content-0" data-module="govuk-details" aria-hidden="false">
-            @h2(msg = messages("whatYouOwe.remaining-balance.heading"), optId=Some("remaining-balance-heading"))
-            <span id="remaining-balance-line1"> @messages("whatYouOwe.remaining-balance.line1")</span>
+            @h2(msg = getMessage("remaining-balance.heading"), optId=Some("remaining-balance-heading"))
+            <span id="remaining-balance-line1"> @getMessage("remaining-balance.line1")</span>
         </div>
 
         <div class="govuk-details__text" id="payment-details-content-1" data-module="govuk-details" aria-hidden="false">
-            @h2(msg = messages("whatYouOwe.payment-on-account.heading"), optId = Some("payment-on-account-heading"))
-            <span id="payment-on-account-line1"> @messages("whatYouOwe.payment-on-account.line1")</span>
+            @h2(msg = getMessage("payment-on-account.heading"), optId = Some("payment-on-account-heading"))
+            <span id="payment-on-account-line1"> @getMessage("payment-on-account.line1")</span>
         </div>
 
         <div class="govuk-details__text" id="payment-details-content-2" data-module="govuk-details" aria-hidden="false">
-            @h2(msg = messages("whatYouOwe.late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
-            <span id="late-payment-interest-line1"> @messages("whatYouOwe.late-payment-interest.line1")</span>
+            @h2(msg = getMessage("late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
+            <span id="late-payment-interest-line1"> @getMessage("late-payment-interest.line1")</span>
         </div>
     </details>
 }
@@ -87,8 +103,8 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
     @if(dunningLock || hasLpiWithDunningBlock) {
         <div id="payment-under-review-info">
         @p(){
-            @messages("whatYouOwe.dunningLock.text", "")
-            @link(link = "https://www.gov.uk/tax-appeals", messageKey = "whatYouOwe.dunningLock.link",
+            @getMessage("dunningLock.text", "")
+            @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
                 id = Some("disagree-with-tax-appeal-link"), target = Some("_blank"))
         }
         </div>
@@ -98,9 +114,9 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
 @tableHead(headId: String) = {
     <thead class="govuk-table__head" id="@headId">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">@messages("whatYouOwe.tableHead.due-date")</th>
-            <th scope="col" class="govuk-table__header">@messages("whatYouOwe.tableHead.payment-type")</th>
-            <th scope="col" class="govuk-table__header">@messages("whatYouOwe.tableHead.amount-due")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.payment-type")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount-due")</th>
         </tr>
     </thead>
 }
@@ -110,9 +126,12 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
 
     val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
-    val linkText = messages(s"whatYouOwe.${lpi}${chargeTypeKey}")
+    val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = documentDetail.taxYear
-    val linkHref = controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
+    val linkHref = if(isAgent) {
+        controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
+            documentDetail.transactionId, isLatePaymentInterest)
+    } else controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
         documentDetail.transactionId, isLatePaymentInterest)
     paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
         linkSuffix: String)
@@ -125,7 +144,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
     </a>
     @if(showTaxYear) {
         <div>
-            @messages("whatYouOwe.payment-type.taxYear", (taxYear.toInt - 1).toString, taxYear)
+            @getMessage("payment-type.taxYear", (taxYear.toInt - 1).toString, taxYear)
         </div>
     }
 }
@@ -158,16 +177,16 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
         </td>
         <td class="govuk-table__cell">
             @if(isOverduePayment){
-                <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>
+                <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
                 <br>
             }
 
             @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,
                 rowId = rowId2)
 
-            @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("whatYouOwe.paymentUnderReview") </div>}
+            @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>}
             @if(isOverduePayment && documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){
-                <div class="form-hint govuk-body-s" id="LpiDunningBlock"> @messages("whatYouOwe.paymentUnderReview") </div>
+                <div class="form-hint govuk-body-s" id="LpiDunningBlock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
@@ -179,12 +198,13 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
 }
 
 @mainTemplate(
-    pageTitle = messages("whatYouOwe.heading"),
-    backUrl = Some(backUrl)
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent
 ) {
-    @h1(msg = "whatYouOwe.heading")
+    @h1(msg = getPrefix("heading"), id = Some("page-heading"))
     @if(chargesList.isChargesListEmpty) {
-        @p(id=Some("no-payments-due"))(Html(messages("whatYouOwe.no-payments-due")))
+        @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph
         @paymentDaysNoteParagraph
         @creditOnAccountNotePanel
@@ -197,7 +217,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                         @if(chargesList.balanceDetails.overDueAmount > 0) {
                             <div id="overdueAmount" class="govuk-grid-column-one-third">
                                 @p(){
-                                    @messages("whatYouOwe.overdueAmount")
+                                    @getMessage("overdueAmount")
                                 }
                                 @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.overDueAmount.toCurrency.toString()))
                             </div>
@@ -205,7 +225,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                         @if(chargesList.balanceDetails.balanceDueWithin30Days > 0) {
                             <div id="balanceDueWithin30Days" class="govuk-grid-column-one-third">
                                 @p(){
-                                    @messages("whatYouOwe.balanceDueWithin30Days")
+                                    @getMessage("balanceDueWithin30Days")
                                 }
                                 @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.balanceDueWithin30Days.toCurrency.toString()))
                             </div>
@@ -213,7 +233,7 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                         @if(chargesList.balanceDetails.totalBalance > 0) {
                             <div id="totalBalance" class="govuk-grid-column-one-third">
                                 @p(){
-                                    @messages("whatYouOwe.totalBalance")
+                                    @getMessage("totalBalance")
                                 }
                                 @p(classes="govuk-body govuk-!-font-size-36 govuk-!-font-weight-bold")(Html(chargesList.balanceDetails.totalBalance.toCurrency.toString()))
                             </div>
@@ -223,14 +243,14 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
             }
         }
 
-        @if(utr.isDefined) {
+        @if(utr.isDefined && !isAgent) {
         <div>
             @creditOnAccountNotePanel
             <div id="payment-button">
                 @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
-                messageKey = "whatYouOwe.payNow", classes = "govuk-button",
+                messageKey = getPrefix("payNow"), classes = "govuk-button",
                 id = Some("payment-button-link"),
-                ariaLabel = Some(messages("whatYouOwe.pay-now-aria",
+                ariaLabel = Some(getMessage("pay-now-aria",
                 (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
                 chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
             </div>
@@ -242,19 +262,19 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
         @dunningLockParagraph
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
-                @h2(msg = messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString), classes = "govuk-heading-l", optId=Some("pre-mtd-payments-heading"))
+                @h2(msg = getMessage("pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString), classes = "govuk-heading-l", optId=Some("pre-mtd-payments-heading"))
                 <div id="balancing-charge-type-table">
                     <table class="govuk-table">
-                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.pre-mtd-payments")</caption>
+                        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("pre-mtd-payments")</caption>
                         @tableHead("balancing-charge-type-table-head")
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row" id="balancing-charge-type-0">
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).toLongDateShort</td>
                                 <td class="govuk-table__cell">
                                     @if(LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).isBefore(LocalDate.now())) {
-                                        <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>
+                                        <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
                                     }
-                                    @messages(s"whatYouOwe.balancingCharge.text")
+                                    @getMessage("balancingCharge.text")
                                 </td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
                                     chargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency
@@ -265,9 +285,9 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                                 <tr class="govuk-table__row" id="balancing-charge-type-1">
                                     <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
                                     <td class="govuk-table__cell">
-                                        @messages("whatYouOwe.balancingCharge.interest.line1.text")
+                                        @getMessage("balancingCharge.interest.line1.text")
                                         <div>
-                                        @messages(s"whatYouOwe.balancingCharge.interest.line2.text",
+                                        @getMessage("balancingCharge.interest.line2.text",
                                             LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).toLongDateShort,
                                             LocalDate.now().toLongDateShort
                                         )
@@ -283,11 +303,11 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                 </div>
             }
             @if(chargesList.overduePaymentList.nonEmpty) {
-                @h2(msg = messages("whatYouOwe.over-due-payments"), classes = "govuk-heading-l",
+                @h2(msg = getMessage("over-due-payments"), classes = "govuk-heading-l",
                     optId=Some("over-due-payments-heading"))
                 <div id="over-due-payments-table">
                     <table class="govuk-table">
-                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.over-due-payments")</caption>
+                        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("over-due-payments")</caption>
                         @tableHead("over-due-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
@@ -296,12 +316,12 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                                 <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
                                     <td class="govuk-table__cell"></td>
                                     <td class="govuk-table__cell">
-                                        @messages("whatYouOwe.over-due.interest.line1")
+                                        @getMessage("over-due.interest.line1")
                                         <div>
-                                        @messages(s"whatYouOwe.over-due.interest.line2",
+                                        @getMessage("over-due.interest.line2",
                                             charge.documentDetail.interestFromDate.get.toLongDateShort,
                                             charge.documentDetail.interestEndDate.get.toLongDateShort,
-                                            charge.documentDetail.interestRate.get
+                                            charge.documentDetail.interestRate.get.toString
                                         )
                                         </div>
                                     </td>
@@ -315,18 +335,18 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                     </table>
                 </div>
                 @if(chargesList.interestOnOverdueCharges) {
-                    @p(id=Some("interest-rate-para"))(Html(messages("whatYouOwe.over-due.interest-rate-1", "") +
+                    @p(id=Some("interest-rate-para"), classes="govuk-body interest-rate")(Html(getMessage("over-due.interest-rate-1", "") +
                         link(outerMessage = ".", link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
-                            messageKey = "whatYouOwe.over-due.interest-rate.link", id = Some("interest-rate-link"), target = Some("_blank")).toString() + messages("whatYouOwe.over-due.interest-rate-2")),
+                            messageKey = getPrefix("over-due.interest-rate.link"), id = Some("interest-rate-link"), target = Some("_blank")).toString() + getMessage("over-due.interest-rate-2")),
                         )
                 }
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty) {
-                @h2(msg = messages("whatYouOwe.due-in-thirty-days-payments"), classes = "govuk-heading-l",
+                @h2(msg = getMessage("due-in-thirty-days-payments"), classes = "govuk-heading-l",
                     optId=Some("due-in-thirty-days-payments-heading"))
                 <div id="due-in-thirty-days-payments-table">
                     <table class="govuk-table">
-                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.due-in-thirty-days-payments")</caption>
+                        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("due-in-thirty-days-payments")</caption>
                         @tableHead("due-in-thirty-days-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
@@ -343,11 +363,11 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
                 </div>
             }
             @if(chargesList.futurePayments.nonEmpty) {
-                @h2(msg = messages("whatYouOwe.future-payments"), classes = "govuk-heading-l",
+                @h2(msg = getMessage("future-payments"), classes = "govuk-heading-l",
                     optId=Some("future-payments-heading"))
                 <div id="future-payments-table">
                     <table class="govuk-table">
-                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("whatYouOwe.future-payments")</caption>
+                        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("future-payments")</caption>
                         @tableHead("future-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.futurePayments.zipWithIndex) {
@@ -362,22 +382,29 @@ dunningLock: Boolean, codingOutEnabled: Boolean, displayTotals: Boolean)(implici
             }
             @if(codingOutEnabled) {
                 @chargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
-                    @h2(msg = messages("whatYouOwe.codingOutHeading"), classes = "govuk-heading-l",
+                    @h2(msg = getMessage("codingOutHeading"), classes = "govuk-heading-l",
                         optId=Some("coding-out-header"))
                     <div id="coding-out-wrapper" class="govuk-inset-text">
-                        <p id="coding-out-notice" class="govuk-body coding-out-notice">
-                            @messages("whatYouOwe.codingOut-1a")
-                            <a class="govuk-link" id="coding-out-summary-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(codedOutDocumentDetail.taxYear.toInt,
-                codedOutDocumentDetail.transactionId, false)">@codedOutDocumentDetail.amountCodedOut.get.toCurrencyString</a>
-                            @messages("whatYouOwe.codingOut-1b")
-                            <b>@messages("whatYouOwe.codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
+                        @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
+                            @getMessage("codingOut-1a")
+                            <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">@codedOutDocumentDetail.amountCodedOut.get.toCurrencyString</a>
+                            @getMessage("codingOut-1b")
+                            <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
                                 codedOutDocumentDetail.taxYear)</b>
-                            @messages("whatYouOwe.codingOut-3")
-                        </p>
+                            @getMessage("codingOut-3")
+                        }
                     </div>
                 }
             }
 
         </div>
+    }
+}
+
+@getCodingOutHref(taxYear: Int, transactionId: String) = @{
+    if (isAgent) {
+        controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false)
+    } else {
+        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false)
     }
 }

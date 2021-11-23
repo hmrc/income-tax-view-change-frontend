@@ -27,11 +27,11 @@ import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-
+import views.html.IncomeBreakdown
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.IncomeBreakdown,
+class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
                                         incomeSourceDetailsService: IncomeSourceDetailsService
@@ -46,7 +46,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: views.html.agent.In
     implicit user =>
 			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
 				calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
-					case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+					case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true)))
 
 					case CalcDisplayNoDataFound =>
 						Logger("application").warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
