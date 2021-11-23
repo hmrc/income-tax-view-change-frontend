@@ -35,7 +35,7 @@ import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.agent.ChargeSummary
+import views.html.ChargeSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,14 +60,16 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 
     chargeSummaryView(
       documentDetailWithDueDate = documentDetailWithDueDate,
-      chargeHistoryOpt = chargeHistoryOpt,
+      chargeHistory = chargeHistoryOpt.getOrElse(Nil),
       latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = backUrl(backLocation, taxYear),
 			paymentAllocations = paymentAllocations,
 			payments = payments,
 			paymentBreakdown = paymentBreakdown,
 			paymentAllocationEnabled = paymentAllocationEnabled,
-      codingOutEnabled = codingOutEnabled
+      codingOutEnabled = codingOutEnabled,
+      chargeHistoryEnabled = isEnabled(ChargeHistory),
+      isAgent = true
     )
   }
 

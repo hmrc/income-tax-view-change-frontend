@@ -24,7 +24,7 @@ import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
 import implicits.ImplicitDateFormatterImpl
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
-import mocks.views.agent.MockChargeSummary
+import mocks.views.MockChargeSummary
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{FinancialDetail, FinancialDetailsModel}
 import org.mockito.ArgumentMatchers.{any, eq => ameq}
@@ -34,7 +34,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.agent.ChargeSummary
+import views.html.ChargeSummary
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,7 +52,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 		financialDetail(taxYear = taxYear, chargeType = "NIC4 Wales", dunningLock = Some("Stand over order"))
 	)
 
-	val injectChargeSummaryView = app.injector.instanceOf[views.html.agent.ChargeSummary]
+	val injectChargeSummaryView = app.injector.instanceOf[views.html.ChargeSummary]
 
   class Setup(chargeSummaryView: ChargeSummary = chargeSummary) {
 
@@ -78,6 +78,7 @@ class ChargeSummaryControllerSpec extends TestSupport
     val currentYear: Int = LocalDate.now().getYear
     val errorHeading = "Sorry, there is a problem with the service"
     val currentFinancialDetails: FinancialDetailsModel = chargesWithAllocatedPaymentModel(currentYear)
+    val currentFinancialDetailsWithoutDunningLock: FinancialDetailsModel = chargesWithAllocatedPaymentModel(currentYear, lpiWithDunningBlock = None)
 		val successHeading = s"Tax year 6 April ${currentYear - 1} to 5 April $currentYear Payment on account 1 of 2"
 		val lateInterestSuccessHeading = s"Tax year 6 April ${currentYear - 1} to 5 April $currentYear Late payment interest on payment on account 1 of 2"
 		val dunningLocksBannerHeading = "Important"
@@ -101,8 +102,9 @@ class ChargeSummaryControllerSpec extends TestSupport
 
 					status(result) shouldBe OK
 					JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-					JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
-					JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe paymentBreakdownHeading
+					JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 1
+					JsoupParse(result).toHtmlDocument.select("main h2").get(0).text() shouldBe dunningLocksBannerHeading
+					JsoupParse(result).toHtmlDocument.select("main h2").get(1).text() shouldBe paymentBreakdownHeading
 				}
 			}
 
@@ -111,7 +113,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
+					mockGetAllFinancialDetails(List((currentYear, currentFinancialDetailsWithoutDunningLock)))
 
 					mockSingleBusinessIncomeSource()
 
@@ -198,7 +200,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(chargeHistoryListInAscendingOrder)), any(), any(),any(),any(), any(), any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), any(), any(),ameq(chargeHistoryListInAscendingOrder), any(),any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
 				verify(mockFinancialDetailsService).getChargeHistoryDetails(ameq("XAIT00000000015"), ameq(id1040000123))(any())
 			}
 
@@ -216,7 +218,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any(), any(), any())(any(), any(), any(), any())
+					verify(chargeSummary).apply(any(), any(),any(), ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
 				}
 
 				"viewing a Late Payment Interest summary" in new Setup() {
@@ -230,7 +232,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(Some(Nil)), any(),any(),any(), any(), any(), any(), any())(any(), any(), any(), any())
+					verify(chargeSummary).apply(any(), any(),any(), ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
 					verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 				}
 			}
@@ -266,7 +268,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any(), any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(), any(),any(),ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 
@@ -281,7 +283,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), chargeHistoryOpt = ameq(None), any(),any(),any(), any(), any(), any(), any())(any(), any(), any(), any())
+				verify(chargeSummary).apply(any(),any(),any(),ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 		}

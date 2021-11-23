@@ -81,7 +81,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 	private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel)
 																 (implicit user: MtdItUser[_]): Future[Result] = {
 		val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
-		val documentDetail = chargeDetails.documentDetails.find(_.transactionId == id).get
+		val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
 		val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
 
 		val paymentBreakdown: List[FinancialDetail] =
@@ -95,37 +95,36 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 				financialDetails.flatMap(_.allocation)
 			} else Nil
 
-		val chargeHistoryEnabled = isEnabled(ChargeHistory)
-		val codingOutEnabled = isEnabled(CodingOut)
-		val chargeHistoryFuture: Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] =
-			if (!isLatePaymentCharge && chargeHistoryEnabled) {
-				incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, id).map {
-					case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
-					case errorResponse => Left(errorResponse)
-				}
-			} else {
-				Future.successful(Right(Nil))
-			}
-
-		chargeHistoryFuture.map {
+		chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isCodingOut, id).map {
 			case Right(chargeHistory) =>
 				auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
 				Ok(chargeSummaryView(
-					documentDetail = documentDetail,
-					dueDate = chargeDetails.getDueDateFor(documentDetail),
+					documentDetailWithDueDate = documentDetailWithDueDate,
 					backUrl = backUrl(backLocation, taxYear),
 					paymentBreakdown = paymentBreakdown,
 					chargeHistory = chargeHistory,
 					paymentAllocations = paymentAllocations,
 					payments = payments,
-					chargeHistoryEnabled = chargeHistoryEnabled,
+					chargeHistoryEnabled = isEnabled(ChargeHistory),
 					paymentAllocationEnabled = paymentAllocationEnabled,
 					latePaymentInterestCharge = isLatePaymentCharge,
-					codingOutEnabled = codingOutEnabled
+					codingOutEnabled = isEnabled(CodingOut)
 				))
 			case _ =>
 				Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
 				itvcErrorHandler.showInternalServerError()
+		}
+	}
+
+	private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isCodingOut: Boolean, documentNumber: String)
+																	 (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
+		if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isCodingOut)) {
+			incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, documentNumber).map {
+				case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
+				case errorResponse => Left(errorResponse)
+			}
+		} else {
+			Future.successful(Right(Nil))
 		}
 	}
 
