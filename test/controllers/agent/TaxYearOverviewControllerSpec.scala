@@ -46,9 +46,9 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 
     val testYear: Int = 2020
 
-		val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
+    val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
 
-		val controller: TaxYearOverviewController = new TaxYearOverviewController(
+    val controller: TaxYearOverviewController = new TaxYearOverviewController(
       taxYearOverview = taxYearOverviewView,
       authorisedFunctions = mockAuthService,
       calculationService = mockCalculationService,

@@ -463,33 +463,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
-      "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(estimateView(isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) a")
-        paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiPaymentOnAccount2
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          testYear, fullDocumentDetailModel.transactionId, true).url
-      }
-
-      "display the payment type as a link to Charge Summary in the Payments tab for late payment interest remaining balance" in new Setup(
-        estimateView(isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(1) a")
-        paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiRemainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          testYear, fullDocumentDetailModel.transactionId, true).url
-      }
-
       "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(
         class2NicsView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          testYear, fullDocumentDetailModel.transactionId).url
-      }
-
-      "display the Remaining balance payment link on the payments table when coding out is disabled" in new Setup(
-        class2NicsView(codingOutEnabled = false, isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
-        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           testYear, fullDocumentDetailModel.transactionId).url
       }
@@ -501,12 +478,6 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display the Remaining balance on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = false, isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
-        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          testYear, fullDocumentDetailModel.transactionId).url
-      }
     }
   }
 }
