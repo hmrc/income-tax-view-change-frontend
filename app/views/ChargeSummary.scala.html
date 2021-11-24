@@ -72,7 +72,7 @@
                             <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
                         } else {
                             <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
-                            @messages("chargeSummary.dunning.locks.banner.note", documentDetailWithDueDate.documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
+                            @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
                         }
                     </b>
                 }
@@ -87,13 +87,13 @@
             <span class="govuk-caption-xl">{messages("paymentDue.tax-year", taxYearStartDate, taxYearEndDate)}</span>
         }
         @{
-            val key = if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}"
-                else s"chargeSummary.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+            val key = if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
+                else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
             messages(key)
         }
     </h1>
 
-    @if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isCodingOut){
+    @if(codingOutEnabled && documentDetail.isCodingOut){
         <div id="coding-out-wrapper" class="govuk-inset-text">
             <p id="coding-out-notice" class="govuk-body coding-out-notice">
                 @messages("chargeSummary.codingOutInset-1")
