@@ -47,7 +47,7 @@
 
     @form(action = postAction) {
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <div class="form-field-group">
                 @inputHelper(
                     field = stubDataForm(schemaName),
@@ -59,9 +59,9 @@
             </div>
         </div>
 
-        <div class="grid-layout grid-layout--no-gutter">
+        <div class="govuk-form-group govuk-grid-row">
 
-            <div class="grid-layout__column grid-layout__column--1-4">
+            <div class="govuk-grid-column-one-quarter">
                 @dropdownHelper(
                     field = stubDataForm(method),
                     label = Some("Request Status"),
@@ -70,7 +70,7 @@
                     values = Seq("GET")
                 )
             </div>
-            <div class="form-group">
+            <div class="govuk-grid-column-three-quarters">
                 @inputHelper(
                     field = stubDataForm(url),
                     label = Some("Request URL"),
@@ -80,7 +80,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <div class="form-field-group">
                 @inputHelper(
                     field = stubDataForm(status),
@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <div class="form-field-group">
                 @textAreaHelper(
                     field = stubDataForm(response),
