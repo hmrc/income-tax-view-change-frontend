@@ -25,6 +25,8 @@ object EstimatesTestConstants {
 	val testYear = 2018
 	val testYearPlusOne = 2019
 	val testYearPlusTwo = 2020
+	val testYearPlusThree = 2021
+	val testYearPlusFour = 2022
 
 	//Last Tax Calculations
 

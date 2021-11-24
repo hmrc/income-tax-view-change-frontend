@@ -59,7 +59,7 @@ class HomePageViewSpec extends TestSupport {
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false) {
+              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, currentTaxYear: Int = LocalDate.now().getYear + 1) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
@@ -70,7 +70,8 @@ class HomePageViewSpec extends TestSupport {
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled,
-      dunningLockExists = dunningLockExists
+      dunningLockExists = dunningLockExists,
+      currentTaxYear = currentTaxYear
     )(FakeRequest(),implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
@@ -182,8 +183,9 @@ class HomePageViewSpec extends TestSupport {
       getElementById("manage-income-tax-tile").map(_.select("h2").text) shouldBe Some(homeMessages.ManageYourIncomeTaxReturnHeading)
     }
     "has a link to the send updates page" in new Setup {
+      val currentTaxYear: Int = LocalDate.now().getYear + 1
       val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
-      link.map(_.attr("href")) shouldBe Some("http://localhost:9302/update-and-submit-income-tax-return/2022/start")
+      link.map(_.attr("href")) shouldBe Some(s"http://localhost:9302/update-and-submit-income-tax-return/$currentTaxYear/start")
       document.getElementById("submit-your-returns").text() shouldBe homeMessages.submitYourReturnsLink
     }
 

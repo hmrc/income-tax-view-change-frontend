@@ -59,7 +59,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left((nextPaymentDue, false))),
               nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left((nextUpdateDue, false)),
               paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              overduePaymentExists: Boolean = false, dunningLockExists: Boolean = false) {
+              overduePaymentExists: Boolean = false, dunningLockExists: Boolean = false, currentTaxYear: Int = LocalDate.now().getYear + 1) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
@@ -70,7 +70,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       paymentHistoryEnabled = paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       implicitDateFormatter = mockImplicitDateFormatter,
-      dunningLockExists = dunningLockExists
+      dunningLockExists = dunningLockExists,
+      currentTaxYear = currentTaxYear
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -192,8 +193,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("manage-income-tax-tile").map(_.select("h2").text) shouldBe Some(homeMessages.ManageYourIncomeTaxReturnHeading)
         }
         "has a link to the send updates page" in new Setup {
+          val currentTaxYear: Int = LocalDate.now().getYear + 1
           val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("http://localhost:9302/update-and-submit-income-tax-return/2022/start")
+          link.map(_.attr("href")) shouldBe Some(s"http://localhost:9302/update-and-submit-income-tax-return/$currentTaxYear/start")
           link.map(_.text) shouldBe Some(homeMessages.submitYourReturnsLink)
         }
       }
