@@ -18,8 +18,9 @@
 @import play.api.data._
 @import testOnly.forms.validation.ErrorMessageHelper._
 @import testOnly.forms.validation.models._
+@import views.html.components._
 
-@this()
+@this(h2:h2)
 
 @(form: Form[_])(implicit messages: Messages)
 
@@ -33,13 +34,13 @@
 
 @if(form.hasErrors) {
 
-    <div class="flash error-summary error-summary--show"
+    <div class="govuk-error-summary flash error-summary error-summary--show"
          id="error-summary-display"
          role="alert"
          aria-labelledby="error-summary-heading"
          tabindex="-1">
-        <h2 id="error-summary-heading" class="h3-heading">Errors</h2>
-        <ul>
+        @h2(msg="Errors", optId=Some("error-summary-heading"))
+        <ul class="govuk-list">
             @errors.map(errMsg)
         </ul>
     </div>

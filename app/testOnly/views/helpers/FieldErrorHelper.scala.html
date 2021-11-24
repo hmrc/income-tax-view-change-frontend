@@ -28,7 +28,7 @@
 
     @error match {
         case Some(err) => {
-            <span class="error-notification" role="tooltip" id="error-message-@field.name">@err.toText</span>
+            <span class="govuk-error-message error-notification" role="tooltip" id="error-message-@field.name">@err.toText</span>
         }
         case _ => {}
     }
