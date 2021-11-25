@@ -35,19 +35,20 @@
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">Test Headers</h1>
                 </legend>
-                <div class="govuk-grid-column-one-quarter">
-                    @dropdownHelper(
-                    field = form("headerName"),
-                    label = Some("Test Headers"),
-                    labelClass = Some("form-label"),
-                    values = (headers)
-                    )
+
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="headerName">
+                        headerName
+                    </label>
+                    <select class="govuk-select" id="headerName" name="headerName">
+                        @headers.map { option =>
+                            <option value="@option._1">@option._2</option>
+                        }
+                    </select>
                 </div>
 
             </fieldset>
         </div>
-
         <button class="govuk-button" type="submit">Submit</button>
-
     }
 }
