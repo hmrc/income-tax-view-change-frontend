@@ -16,29 +16,31 @@
 
 @import helper.CSRF
 @import testOnly.models.TestHeadersModel
-@import views.html.templates.MainTemplate
+@import views.html.layouts.unifiedLayout
 @import testOnly.views.html.templates.inputs.SingleDropdown
 
-@this(mainTemplate: MainTemplate, singleDropdown: SingleDropdown)
+@this(unifiedLayout: unifiedLayout, singleDropdown: SingleDropdown)
 
 @(form: Form[TestHeadersModel], headers: Map[String, String])(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(title = "Test Headers") {
+@unifiedLayout(pageTitle = "Test Headers") {
 
     @helper.form(action = testOnly.controllers.routes.TestHeadersController.submitTestHeaders) {
+
         @CSRF.formField
 
-        <div class="form-group">
-            <fieldset>
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset govuk-!-padding-bottom-8" aria-describedby="waste-hint">
 
-                <legend>
-                    <h1 class="heading-medium">Test Headers</h1>
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">Test Headers</h1>
                 </legend>
 
              @singleDropdown(form("headerName"), headers)
             </fieldset>
         </div>
 
-        <button class="button" type="submit" id="continue-button">Submit</button>
+        <button class="govuk-button" type="submit">Submit</button>
+
     }
 }
