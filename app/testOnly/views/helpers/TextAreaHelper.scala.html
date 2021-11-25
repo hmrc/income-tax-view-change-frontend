@@ -31,7 +31,7 @@
 @import testOnly.forms.validation.ErrorMessageHelper._
 
 @hintText(hint: String) = {
-<span class="form-hint" xmlns="http://www.w3.org/1999/html" id="text-area-helper">
+<span class="govuk-hint form-hint" xmlns="http://www.w3.org/1999/html" id="text-area-helper">
     @hint
     </span>
 }
@@ -45,15 +45,15 @@
 }
 
 <div class="form-group form-field@if(hasError) { form-field--error}">
-    <label class='form-label @labelClass.fold("")(x => x)' for=@field.name>
+    <label class='govuk-label form-label @labelClass.fold("")(x => x)' for=@field.name>
         @label.fold(Html(""))(label => Html(label))
         @formHint.fold(Nil: Seq[Html])(_.map(hintText))
     </label>
     @fieldErrorHelper(field, parentForm)
     @if(formHint.isDefined) {
-        <textarea name=@field.name class="textarea--fullwidth" id=@field.name rows="15" aria-describedby="text-area-helper"
+        <textarea name=@field.name class="govuk-textarea textarea--fullwidth" id=@field.name rows="15" aria-describedby="text-area-helper"
     } else {
-        <textarea name=@field.name class="textarea--fullwidth" id=@field.name rows="15"
+        <textarea name=@field.name class="govuk-textarea textarea--fullwidth" id=@field.name rows="15"
     }
         @maxLength.fold(Html(""))(max => Html(s"maxlength=$max"))
         value="@field.value.fold("")(v => v)"

@@ -46,12 +46,12 @@
 }
 
 <div class="form-group form-field@if(hasError) { form-field--error}">
-    <label class='form-label @labelClass.fold("")(x => x)' for=@field.name>
+    <label class='govuk-label form-label @labelClass.fold("")(x => x)' for=@field.name>
         @label.fold(Html(""))(label => Html(label))
         @formHint.fold(Nil: Seq[Html])(_.map(hintText))
     </label>
     @fieldErrorHelper(field, parentForm)
-    <select style="margin:0" name=@field.name id=@field.name>
+    <select class="govuk-select" style="margin:0" name=@field.name id=@field.name>
         @for(value <- values) {
             <option value="@value">@value</option>
         }
