@@ -14,21 +14,23 @@
  * limitations under the License.
  *@
 
-@import testOnly.views.html.templates.StubTemplate
-@import testOnly.views.html.helpers._
+@import testOnly.views.html.helpers.{SummaryErrorHelper, DropdownHelper, InputHelper, TextAreaHelper}
+@import views.html.components._
 @import testOnly.models.DataModel
 @import testOnly.forms.StubDataForm._
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.layouts.unifiedLayout
 
-@this(stubTemplate: StubTemplate, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
+@this(unifiedLayout: unifiedLayout, h1: h1, form: FormWithCSRF, errorSummary: ErrorSummary, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
 
 @(stubDataForm: Form[DataModel], postAction: Call, showSuccess: Boolean, errorResponse: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@stubTemplate(title = "Stub ITVC Test Data", bodyClasses = None) {
+@unifiedLayout(pageTitle = "Stub ITVC Test Data") {
 
     @summaryErrorHelper(stubDataForm)
 
-    <h1 class="heading-large">Add Test Data Responses to Dynamic Stub</h1>
+    @h1(msg = "Add Test Data Responses to Dynamic Stub")
 
     @if(showSuccess){
         <div class="alert alert--success" role="alert">
@@ -37,7 +39,7 @@
     }
 
     @if(errorResponse.nonEmpty){
-        <div class="alert alert--important" role="alert">
+        <div class="govuk-error-message alert alert--important" role="alert">
             <p class="alert__message">Error! Your Test Data has not been added to the Dynamic Stub.</p>
             <p>@errorResponse.get</p>
         </div>
@@ -45,7 +47,7 @@
 
     @form(action = postAction) {
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <div class="form-field-group">
                 @inputHelper(
                     field = stubDataForm(schemaName),
@@ -57,9 +59,9 @@
             </div>
         </div>
 
-        <div class="grid-layout grid-layout--no-gutter">
+        <div class="govuk-form-group govuk-grid-row">
 
-            <div class="grid-layout__column grid-layout__column--1-4">
+            <div class="govuk-grid-column-one-quarter">
                 @dropdownHelper(
                     field = stubDataForm(method),
                     label = Some("Request Status"),
@@ -68,7 +70,7 @@
                     values = Seq("GET")
                 )
             </div>
-            <div class="form-group">
+            <div class="govuk-grid-column-three-quarters">
                 @inputHelper(
                     field = stubDataForm(url),
                     label = Some("Request URL"),
@@ -78,7 +80,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <div class="form-field-group">
                 @inputHelper(
                     field = stubDataForm(status),
@@ -90,7 +92,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <div class="form-field-group">
                 @textAreaHelper(
                     field = stubDataForm(response),
