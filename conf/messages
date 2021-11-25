@@ -509,7 +509,7 @@ chargeSummary.remainingDue   									   = Remaining to pay
 chargeSummary.overdue                                              = OVERDUE
 
 chargeSummary.dunning.locks.banner.title						   = Important
-chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab)
+chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab).
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.

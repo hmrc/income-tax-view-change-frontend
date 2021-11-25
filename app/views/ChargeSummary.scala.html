@@ -16,10 +16,10 @@
 
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import implicits.ImplicitDateFormatterImpl
-@import models.financialDetails.DocumentDetail
+@import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.FinancialDetail
 @import models.financialDetails.PaymentsWithChargeType
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
 
 @import java.time.LocalDate
@@ -27,18 +27,26 @@
 @import models.financialDetails.FinancialDetailsModel
 
 @this(
-    mainTemplate: layout,
+    mainTemplate: unifiedLayout,
     appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     p: p,
     link: link
 )
-@(documentDetail: DocumentDetail, dueDate: Option[LocalDate], backUrl: String,
+@(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
-    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
+@documentDetail = @{documentDetailWithDueDate.documentDetail}
+
+@dueDate = @{documentDetailWithDueDate.dueDate}
+
+@whatYouOweUrl = @{
+    if(isAgent) controllers.agent.routes.WhatYouOweController.show().url
+    else controllers.routes.WhatYouOweController.viewPaymentsDue().url
+}
 @hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }
 
 @hasInterestLocks = @{ paymentBreakdown.exists(_.interestLockExists) }
@@ -48,7 +56,7 @@
 @taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
 @taxYearTo = @{documentDetail.taxYear}
 
-@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl), isAgent = isAgent) {
 
     @if(hasDunningLocks || documentDetail.hasLpiWithDunningBlock) {
         <br>
@@ -61,9 +69,9 @@
                 @p(){
                     <b>
                         @if(latePaymentInterestCharge){
-                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
+                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
                         } else {
-                            <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>.
+                            <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
                             @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
                         }
                     </b>
@@ -81,9 +89,7 @@
         @{
             val key = if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
                 else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
-            if (codingOutEnabled && documentDetail.isCodingOut) {
-                messages("chargeSummary.codingOutHeader")
-            } else messages(key)
+            messages(key)
         }
     </h1>
 
@@ -102,7 +108,7 @@
         }
     }
 
-    @if(documentDetail.isClass2Nic && !documentDetail.isCodingOut){
+    @if(codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isCodingOut){
         @p(){
             @messages("chargeSummary.nic2TaxYear", taxYearFrom, taxYearTo)
         }
@@ -114,7 +120,7 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
                 <dd class="govuk-summary-list__value">
-                    @if(dueDate.exists(_.isBefore(LocalDate.now)) && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
+                    @if(documentDetailWithDueDate.isOverdue && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
                         <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
                     }
                     @{
@@ -154,7 +160,7 @@
         </div>
     </dl>
 
-    @if(documentDetail.hasLpiWithDunningBlock || paymentBreakdown.nonEmpty && hasDunningLocks || paymentBreakdown.nonEmpty && hasInterestLocks) {
+    @if(documentDetail.hasLpiWithDunningBlock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)) {
         <h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
         <dl class="govuk-summary-list">
             @for(financialDetail <- paymentBreakdown) {
@@ -199,17 +205,17 @@
     @if(hasInterestLocks && hasAccruedInterest) {
         @p(){
             @messages("chargeSummary.interestLocks.text")
-            @link(link = controllers.routes.WhatYouOweController.viewPaymentsDue().url, messageKey = "chargeSummary.interestLocks.linkText")
+            @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText")
         }
-    }else{
+    } else {
         @p(){
             @messages("chargeSummary.whatYouOwe.textOne")
-            <a href="@controllers.routes.WhatYouOweController.viewPaymentsDue().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
+            <a href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
             @messages("chargeSummary.whatYouOwe.textTwo")
         }
     }
 
-    @if(documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isCodingOut)){
+    @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isCodingOut)){
         <div id="payment-link-@{taxYearTo}">
             <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", taxYearFrom, taxYearTo)'>@messages("paymentDue.payNow")</a>
         </div>
@@ -237,11 +243,15 @@
 
             <tbody class = "govuk-table__body">
             @if(chargeHistoryEnabled){
-                @if(!latePaymentInterestCharge) {
+                @if(!latePaymentInterestCharge && !(codingOutEnabled && documentDetail.isCodingOut)) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{
+                            documentDetail.documentDate.toLongDateShort
+                        }</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")</td>
-                        <td class="govuk-table__cell numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell numeric">@{
+                            documentDetail.originalAmount.get.toCurrency
+                        }</td>
                     </tr>
                 }
 
@@ -276,8 +286,11 @@
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.date.get).toLongDateShort</td>
                         <td class="govuk-table__cell">
                             @if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
-
-                                <a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                                @if(isAgent) {
+                                    <a href="@{controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                                } else {
+                                    <a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                                }
                                     @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
                                     <span class="govuk-visually-hidden"> @taxYearTo</span>
                                 </a>

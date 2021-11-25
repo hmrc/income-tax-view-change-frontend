@@ -21,7 +21,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
@@ -31,6 +31,7 @@ import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+
 import java.time.LocalDate
 
 
@@ -278,6 +279,39 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
+    "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
+      val header = s"Tax year 6 April ${currentTaxYearEnd.getYear - 1} to 5 April ${currentTaxYearEnd.getYear} PAYE self assessment"
+      val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
+      val summaryMessage = s"This is the remaining tax you owe for the ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year."
+      val remainingText = s"Collected through your PAYE tax code for ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year"
+      val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year £2,500.00"
+
+      Given("the CodingOut feature switch is enabled")
+      enable(CodingOut)
+      stubAuthorisedAgentUser(authorised = true)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      stubChargeHistorySuccess()
+      stubGetFinancialDetailsSuccessForCodingOut
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        currentTaxYearEnd.getYear.toString, "CODINGOUT01", clientDetails
+      )
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      result should have(
+        httpStatus(OK),
+        pageTitle("PAYE self assessment - Your client’s Income Tax details - GOV.UK"),
+        elementTextBySelector("h1")(header),
+        elementTextBySelector("#coding-out-notice")(insetPara),
+        elementTextBySelector("#coding-out-message")(summaryMessage),
+        elementTextBySelector(".govuk-summary-list__row:nth-child(1) .govuk-summary-list__value")("£2,500.00"),
+        elementTextBySelector(".govuk-summary-list__row:nth-child(2) .govuk-summary-list__value")(remainingText),
+        elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1)
+      )
+    }
+
     s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
       enable(ChargeHistory)
       enable(PaymentAllocation)
@@ -400,6 +434,42 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(Some(LocalDate.now.toString), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
               amount = Some(9000), clearingDate = Some("2019-08-13"), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
+          )
+        )
+      ))
+    )
+  }
+
+  private def stubGetFinancialDetailsSuccessForCodingOut: Unit = {
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+      nino = testNino,
+      from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
+      to = currentTaxYearEnd.toString)(
+      status = OK,
+      response = Json.toJson(FinancialDetailsModel(
+        balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+        documentDetails = List(
+          DocumentDetail(
+            taxYear = currentTaxYearEnd.getYear.toString,
+            transactionId = "CODINGOUT01",
+            documentDescription = Some("TRM New Charge"),
+            documentText = Some("Class 2 National Insurance"),
+            outstandingAmount = Some(2500.00),
+            originalAmount = Some(2500.00),
+            documentDate = LocalDate.of(2018, 3, 29),
+            interestFromDate = Some(LocalDate.of(2018, 4, 14)),
+            amountCodedOut = Some(2500.00)
+          )
+        ),
+        financialDetails = List(
+          FinancialDetail(
+            taxYear = currentTaxYearEnd.getYear.toString,
+            transactionId = Some("CODINGOUT01"),
+            mainType = Some("SA Payment on Account 1"),
+            chargeType = Some("ITSA NI"),
+            originalAmount = Some(123.45),
+            items = Some(Seq(SubItem(Some(LocalDate.now.toString),
+              amount = Some(10000), clearingDate = Some("2019-08-13"))))
           )
         )
       ))

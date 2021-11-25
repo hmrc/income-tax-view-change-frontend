@@ -407,11 +407,11 @@ object FinancialDetailsTestConstants {
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock))
     )
 
-	def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
+	def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), lpiWithDunningBlock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
 		FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-			documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None),
-				documentDetailModel(9999, outstandingAmount = outstandingAmount.map (amount => -amount), paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem"))),
+			documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock),
+				documentDetailModel(9999, outstandingAmount = outstandingAmount.map (amount => -amount), paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem"), lpiWithDunningBlock = lpiWithDunningBlock)),
 			financialDetails = List(financialDetail(taxYear, additionalSubItems = Seq(SubItem(clearingDate = Some("2018-09-08"), amount = Some(500.0), paymentAmount = Some(500.0),
 				paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem")))))
 		)
