@@ -18,4 +18,4 @@
 
 @(alternativeText: Option[String] = None)(implicit messages: Messages)
 
-<button formnovalidate class="button" type="submit" id="continue-button">@alternativeText.fold(messages("base.continue"))(x => x)</button>
+<button class="govuk-button" type="submit" id="continue-button">@alternativeText.fold(messages("base.continue"))(x => x)</button>

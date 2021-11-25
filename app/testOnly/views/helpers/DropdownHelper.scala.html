@@ -32,9 +32,11 @@
 @import testOnly.forms.validation.ErrorMessageHelper._
 
 @hintText(hint: String) = {
-    <span class="form-hint">
-    @hint
-    </span>
+<div class="govuk-form-group govuk-label" id="@hint">
+    <label class = "govuk-hint">
+        @hint
+    </label>
+</div>
 }
 
 @hasError = @{
@@ -45,13 +47,13 @@
     }
 }
 
-<div class="form-group form-field@if(hasError) { form-field--error}">
-    <label class='form-label @labelClass.fold("")(x => x)' for=@field.name>
+<div class="govuk-form-group form-group form-field@if(hasError) { form-field--error}">
+    <label class='govuk-label form-label @labelClass.fold("")(x => x)' for=@field.name>
         @label.fold(Html(""))(label => Html(label))
         @formHint.fold(Nil: Seq[Html])(_.map(hintText))
     </label>
     @fieldErrorHelper(field, parentForm)
-    <select style="margin:0" name=@field.name id=@field.name>
+    <select class="govuk-select" style="margin:0" name=@field.name id=@field.name>
         @for(value <- values) {
             <option value="@value">@value</option>
         }
