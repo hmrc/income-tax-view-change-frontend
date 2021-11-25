@@ -118,10 +118,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     val balancingChargeRequest = "Remaining balance reduced by taxpayer request"
     val dunningLockBannerHeader = "Important"
-    val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)"
+    val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)."
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
-      s"$dunningLockBannerLink. You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
+      s"$dunningLockBannerLink You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
   }
 
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "amended return")
