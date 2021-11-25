@@ -31,7 +31,7 @@
 
 
 @hintText(hint: String) = {
-    <span class="form-hint" id="input-helper-hint">
+    <span class="govuk-hint form-hint" id="input-helper-hint">
     @hint
     </span>
 }
@@ -51,9 +51,9 @@
     </label>
     @fieldErrorHelper(field, parentForm)
     @if(formHint.isDefined) {
-        <input name=@field.name class="input--fullwidth govuk-input" id=@field.name type="text" aria-describedby="input-helper-hint"
+        <input name=@field.name class="govuk-input input--fullwidth" id=@field.name type="text" aria-describedby="input-helper-hint"
     } else {
-        <input name=@field.name class="input--fullwidth govuk-input" id=@field.name type="text"
+        <input name=@field.name class="govuk-input input--fullwidth" id=@field.name type="text"
     }
         @maxLength.fold(Html(""))(max => Html(s"maxlength=$max"))
         value="@field.value.fold("")(v => v)"

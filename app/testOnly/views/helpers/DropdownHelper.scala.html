@@ -47,7 +47,7 @@
     }
 }
 
-<div class="govuk-form-group form-group form-field@if(hasError) { form-field--error}">
+<div class="form-group form-field@if(hasError) { form-field--error}">
     <label class='govuk-label form-label @labelClass.fold("")(x => x)' for=@field.name>
         @label.fold(Html(""))(label => Html(label))
         @formHint.fold(Nil: Seq[Html])(_.map(hintText))
