@@ -33,8 +33,17 @@
     @h1(msg = "Add Test Data Responses to Dynamic Stub")
 
     @if(showSuccess){
-        <div class="alert alert--success" role="alert">
-            <p class="alert__message">Successfully added new Test Data Response to Dynamic Stub. You can add another below.</p>
+        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Success
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <p class="govuk-notification-banner__heading">
+                    Successfully added new Test Data Response to Dynamic Stub. You can add another below.
+                </p>
+            </div>
         </div>
     }
 

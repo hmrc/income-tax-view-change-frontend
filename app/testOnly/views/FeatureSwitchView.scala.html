@@ -16,31 +16,32 @@
 
 @import helper._
 @import config.featureswitch.FeatureSwitch
-@import views.html.templates.MainTemplate
+@import views.html.layouts.unifiedLayout
 
-@this(mainTemplate: MainTemplate)
+@this( unifiedLayout: unifiedLayout)
 
 @(switchNames: Map[FeatureSwitch, Boolean],action: Call)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(title = Messages("Feature switch")) {
-<form method="@action.method" action="@action.url">
-    @CSRF.formField
-    <fieldset>
-        <legend>
-            <h2 class="heading-medium">Which features would you like to have enabled?</h2>
-        </legend>
-        <h3 class="heading-small">Frontend features</h3>
-        <div class="form-group">
-            @for(switch <- switchNames) {
-            <div class="multiple-choice">
-                <input type="checkbox" id="@switch._1.name" name="@switch._1.name" value="true" @{if(switch._2){"Checked"}}>
-                <label for="@switch._1.name">@switch._1.displayText</label>
+@unifiedLayout(pageTitle = Messages("Feature switch")) {
+    <form class="govuk-form-group" method="@action.method" action="@action.url">
+        @CSRF.formField
+        <fieldset class="govuk-fieldset govuk-!-padding-bottom-8" aria-describedby="waste-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    Which features would you like to have enabled?
+                </h1>
+            </legend>
+            <h3 class="govuk-heading-m">Frontend features</h3>
+            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                @for(switch <- switchNames) {
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" type="checkbox" id="@switch._1.name" name="@switch._1.name"
+                               value="true" @{if(switch._2){"Checked"}}>
+                        <label class="govuk-label govuk-checkboxes__label" for="@switch._1.name">@switch._1.displayText</label>
+                    </div>
+                }
             </div>
-            }
-        </div>
-    </fieldset>
-    <button type="submit">Update global settings</button>
-</form>
+        </fieldset>
+        <button class="govuk-button" type="submit">Update global settings</button>
+    </form>
 }
-
-
