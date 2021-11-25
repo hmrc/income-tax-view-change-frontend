@@ -17,9 +17,9 @@
 @import helper.CSRF
 @import testOnly.models.TestHeadersModel
 @import views.html.layouts.unifiedLayout
-@import testOnly.views.html.templates.inputs.SingleDropdown
+@import testOnly.views.html.helpers.DropdownHelper
 
-@this(unifiedLayout: unifiedLayout, singleDropdown: SingleDropdown)
+@this(unifiedLayout: unifiedLayout, dropdownHelper: DropdownHelper)
 
 @(form: Form[TestHeadersModel], headers: Map[String, String])(implicit request: Request[_], messages: Messages)
 
@@ -35,8 +35,15 @@
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">Test Headers</h1>
                 </legend>
+                <div class="govuk-grid-column-one-quarter">
+                    @dropdownHelper(
+                    field = form("headerName"),
+                    label = Some("Test Headers"),
+                    labelClass = Some("form-label"),
+                    values = (headers)
+                    )
+                </div>
 
-             @singleDropdown(form("headerName"), headers)
             </fieldset>
         </div>
 
