@@ -22,11 +22,11 @@
 @import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 
-@this(mainTemplate: unifiedLayout, h1: h1, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
+@this(unifiedLayout: unifiedLayout, h1: h1, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
 
 @(stubSchemaForm: Form[SchemaModel], postAction: Call, showSuccess: Boolean, errorMessage: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@mainTemplate(pageTitle = "ITVC Stub Schemas") {
+@unifiedLayout(pageTitle = "ITVC Stub Schemas") {
 
     @summaryErrorHelper(stubSchemaForm)
 
