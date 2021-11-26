@@ -14,30 +14,41 @@
  * limitations under the License.
  *@
 
-@import testOnly.views.html.templates.StubTemplate
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
 @import testOnly.models.SchemaModel
 @import testOnly.forms.StubSchemaForm._
 @import testOnly.views.html.helpers._
+@import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 
-@this(stubTemplate: StubTemplate, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
+@this(unifiedLayout: unifiedLayout, h1: h1, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
 
 @(stubSchemaForm: Form[SchemaModel], postAction: Call, showSuccess: Boolean, errorMessage: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@stubTemplate(title = "ITVC Stub Schemas", bodyClasses = None) {
+@unifiedLayout(pageTitle = "ITVC Stub Schemas") {
 
     @summaryErrorHelper(stubSchemaForm)
 
-    <h1 class="heading-large">Add Schema Definition to Dynamic Stub</h1>
+    @h1(msg = "Add Schema Definition to Dynamic Stub")
 
     @if(showSuccess){
-        <div class="alert alert--success" role="alert">
-            <p class="alert__message">Successfully added new Schema Definition to Dynamic Stub. You can add another below.</p>
+        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Success
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <p class="govuk-notification-banner__heading">
+                    Successfully added new Schema Definition to Dynamic Stub. You can add another below.
+                </p>
+            </div>
         </div>
     }
 
     @if(errorMessage.nonEmpty){
-        <div class="alert alert--important" role="alert">
+        <div class="govuk-error-message alert alert--important" role="alert">
             <p class="alert__message">Error! Your Schema Definition has not been added to the Dynamic Stub.</p>
             <p>@errorMessage.get</p>
         </div>
@@ -45,7 +56,7 @@
 
     @form(action = postAction) {
 
-        <div class="form-group">
+        <div class="govuk-form-group">
            <div class="form-field-group">
                 @inputHelper(
                     field = stubSchemaForm(id),
@@ -57,9 +68,9 @@
            </div>
         </div>
 
-        <div class="grid-layout grid-layout--no-gutter">
+        <div class="govuk-form-group govuk-grid-row">
 
-            <div class="grid-layout__column grid-layout__column--1-4">
+            <div class="govuk-grid-column-one-quarter">
                 @dropdownHelper(
                     field = stubSchemaForm(method),
                     label = Some("Http Method of Request"),
@@ -68,7 +79,7 @@
                     values = Seq("GET")
                 )
             </div>
-            <div class="form-group">
+            <div class="govuk-grid-column-three-quarters">
                 @inputHelper(
                     field = stubSchemaForm(url),
                     label = Some("Regex for URL of request to match against"),
@@ -79,7 +90,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <div class="form-field-group">
                 @textAreaHelper(
                 field = stubSchemaForm(responseSchema),
