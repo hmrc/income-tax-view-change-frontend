@@ -18,35 +18,49 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import views.html.helpers.injected.ContinueButton
-@import views.html.templates.agent.MainTemplate
+@import views.html.layouts.unifiedLayout
+@import views.html.components.h1
 @import views.html.helpers.injected.ErrorSummary
 @import testOnly.models.StubClientDetailsModel
 @import testOnly.forms.StubClientDetailsForm.{ninoKey, utrKey, statusKey}
 
 @this(
         inputHelper: InputHelper,
-        mainTemplate: MainTemplate,
+        unifiedLayout: unifiedLayout,
         continueButton: ContinueButton,
         form: FormWithCSRF,
+        h1: h1,
         errorSummary: ErrorSummary
 )
 
 @(clientDetailsForm: Form[StubClientDetailsModel], postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@mainTemplate(title = "Stub Client Details") {
+    @unifiedLayout(pageTitle = "Stub Client Details") {
 
     @errorSummary(clientDetailsForm)
 
-    <h1>Stub Client Details</h1>
+    @h1(msg = "Stub Client Details")
 
-    <div class="form-group">
+
         @form(postAction) {
-            @inputHelper(clientDetailsForm(ninoKey), "Enter the client's nino", isPageHeading = false)
-            @inputHelper(clientDetailsForm(utrKey), "Enter the client's utr", isPageHeading = false)
-            @inputHelper(clientDetailsForm(statusKey), "Enter the status that should be returned", isPageHeading = false)
+            <div class="govuk-form-group">
+                <div class="form-field-group">
+                    @inputHelper(clientDetailsForm(ninoKey), "Enter the client's nino", isPageHeading = false)
+                </div>
+            </div>
+            <div class="govuk-form-group">
+                <div class="form-field-group">
+                    @inputHelper(clientDetailsForm(utrKey), "Enter the client's utr", isPageHeading = false)
+                </div>
+            </div>
+            <div class="govuk-form-group">
+                <div class="form-field-group">
+                    @inputHelper(clientDetailsForm(statusKey), "Enter the status that should be returned", isPageHeading = false)
+                </div>
+            </div>
             @continueButton()
         }
-    </div>
+
 
 }
 
