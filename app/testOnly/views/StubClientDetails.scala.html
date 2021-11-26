@@ -43,21 +43,9 @@
 
 
         @form(postAction) {
-            <div class="govuk-form-group">
-                <div class="form-field-group">
-                    @inputHelper(clientDetailsForm(ninoKey), "Enter the client's nino", isPageHeading = false)
-                </div>
-            </div>
-            <div class="govuk-form-group">
-                <div class="form-field-group">
-                    @inputHelper(clientDetailsForm(utrKey), "Enter the client's utr", isPageHeading = false)
-                </div>
-            </div>
-            <div class="govuk-form-group">
-                <div class="form-field-group">
-                    @inputHelper(clientDetailsForm(statusKey), "Enter the status that should be returned", isPageHeading = false)
-                </div>
-            </div>
+            @inputHelper(clientDetailsForm(ninoKey), "Enter the client's nino", isPageHeading = false)
+            @inputHelper(clientDetailsForm(utrKey), "Enter the client's utr", isPageHeading = false)
+            @inputHelper(clientDetailsForm(statusKey), "Enter the status that should be returned", isPageHeading = false)
             @continueButton()
         }
 
