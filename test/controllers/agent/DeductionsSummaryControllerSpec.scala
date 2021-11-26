@@ -38,7 +38,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   class Setup {
 
     val testYear: Int = 2020
-//    val isAgent: Boolean = true
+    val isAgent: Boolean = true // currently unused - might be required if differentiating between indiv. & agent
 
     val controller: DeductionsSummaryController = new DeductionsSummaryController(
       app.injector.instanceOf[views.html.DeductionBreakdown],

@@ -32,19 +32,9 @@ class DeductionBreakdownViewSpec extends ViewSpec {
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
   val deductions = "Allowances and deductions"
 
-
   def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
 
-  val deductionBreakdown: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
-  val taxYear2017 = 2017
-
-  class AgentDeductionBreakdownSetup() extends Setup(
-    deductionBreakdown( CalcDisplayModel("", 1,
-      CalcBreakdownTestConstants.calculationNoBillModel,
-      Estimate),taxYear2017,"testBackURL")
-  )
-
-  "The individual deduction breakdown view" when {
+  "The deduction breakdown view" when {
 
     "provided with a calculation without tax deductions for the 2017 tax year" should {
       val taxYear = 2017
@@ -151,7 +141,6 @@ class DeductionBreakdownViewSpec extends ViewSpec {
           }
 
         }
-
       }
     }
 
@@ -162,152 +151,6 @@ class DeductionBreakdownViewSpec extends ViewSpec {
                                                     reducedPersonalAllowance: Option[BigDecimal] = None,
                                                     personalAllowance: Option[BigDecimal] = Some(11500.00)) extends Setup(
         deductionBreakdownView(
-          CalcDisplayModel("", 1,
-            CalcBreakdownTestConstants.calculationAllDeductionSources.copy(
-              allowancesAndDeductions = allowancesAndDeductions.copy(
-                personalAllowance = personalAllowance,
-                reducedPersonalAllowance = reducedPersonalAllowance,
-                personalAllowanceBeforeTransferOut = personalAllowanceBeforeTransferOut
-              )
-            ),
-            Estimate
-          ),
-          taxYear2018, "testBackURL")
-      )
-
-      "only show one of the following: personalAllowanceBeforeTransferOut reducedPersonalAllowance personalAllowance" when {
-
-        "all fields are present" in new DeductionBreakdownSetupVariedAllowances(Some(1200.00), Some(600.00)) {
-          val row: Element = layoutContent.select("tr").get(1)
-          row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
-          row.select("td").last().text() shouldBe "£1,200.00"
-        }
-
-        "all fields except personalAllowanceBeforeTransferOut" in
-          new DeductionBreakdownSetupVariedAllowances(reducedPersonalAllowance = Some(600.00)){
-            val row: Element = layoutContent.select("tr").get(1)
-            row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
-            row.select("td").last().text() shouldBe "£600.00"
-
-          }
-
-        "only personal Allowance is present" in new DeductionBreakdownSetupVariedAllowances(){
-          val row: Element = layoutContent.select("tr").get(1)
-          row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
-          row.select("td").last().text() shouldBe "£11,500.00"
-        }
-      }
-    }
-  }
-
-  "The agent deduction breakdown view" when {
-
-    "provided with a calculation without tax deductions for the 2017 tax year" should {
-      val taxYear2017 = 2017
-
-      "have the correct heading" in new AgentDeductionBreakdownSetup {
-        layoutContent hasPageHeading DeductionBreakdown.heading(taxYear2017)
-        layoutContent.selectHead("h1").text.contains(DeductionBreakdown.subHeading(taxYear2017))
-      }
-
-      "have the correct caption" in new AgentDeductionBreakdownSetup {
-        layoutContent.selectHead(" caption").text.contains(deductions)
-      }
-
-      "have the correct guidance" in new AgentDeductionBreakdownSetup {
-        val guidance: Element = layoutContent.select("p").get(0)
-        guidance.text() shouldBe DeductionBreakdown.guidance
-      }
-
-      "have an deduction table" which {
-
-        "has only two table row" in new AgentDeductionBreakdownSetup {
-          layoutContent hasTableWithCorrectSize (1, 2)
-        }
-
-        "has a table header and amount section" in new AgentDeductionBreakdownSetup {
-          val row: Element = layoutContent.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe DeductionBreakdown.deductionBreakdownHeader
-          row.select("th").last().text() shouldBe DeductionBreakdown.deductionBreakdownHeaderAmount
-        }
-
-        "has a total line with a zero value" in new AgentDeductionBreakdownSetup {
-          val row: Element = layoutContent.table().select("tr").get(1)
-          row.select("td").first().text() shouldBe DeductionBreakdown.total
-          row.select("td").last().text() shouldBe "£0.00"
-        }
-      }
-    }
-
-    "provided with a calculation with all tax deductions for the 2018 tax year" should {
-      val taxYear2018 = 2018
-
-      class DeductionBreakdownSetup2018() extends Setup(
-        deductionBreakdown(CalcDisplayModel("", 1,
-          CalcBreakdownTestConstants.calculationAllDeductionSources,
-          Estimate),taxYear2018,"testBackURL")
-      )
-
-      "have the correct agent heading" in new DeductionBreakdownSetup2018 {
-        layoutContent hasPageHeading DeductionBreakdown.heading(taxYear2018)
-        layoutContent.selectHead("h1").text.contains(DeductionBreakdown.subHeading(taxYear2018))
-      }
-
-      "have the correct caption" in new DeductionBreakdownSetup2018 {
-        layoutContent.selectHead(" caption").text.contains(deductions)
-      }
-
-      "have the correct guidance" in new DeductionBreakdownSetup2018 {
-        val guidance: Element = layoutContent.select("p").get(0)
-        guidance.text() shouldBe DeductionBreakdown.guidance
-      }
-
-      "have an deduction table" which {
-
-        val expectedBreakdownTableDataRows = Table(
-          ("row index", "deduction type", "formatted amount"),
-          (1, DeductionBreakdown.personalAllowance, "£11,500.00"),
-          (2, DeductionBreakdown.marriageAllowanceTransfer, "−£7,500.00"),
-          (3, DeductionBreakdown.totalPensionContributions, "£12,500.00"),
-          (4, DeductionBreakdown.lossesAppliedToGeneralIncome, "£13,500.00"),
-          (5, DeductionBreakdown.giftOfInvestmentsAndPropertyToCharity, "£10,000.00"),
-          (6, DeductionBreakdown.annualPayments, "£1,000.00"),
-          (7, DeductionBreakdown.loanInterest, "£1,001.00"),
-          (8, DeductionBreakdown.postCessasationTradeReceipts, "£1,002.00"),
-          (9, DeductionBreakdown.tradeUnionPayments, "£1,003.00"),
-          (10, DeductionBreakdown.total, "£47,500.00")
-        )
-
-        "has all eleven table rows" in new DeductionBreakdownSetup2018 {
-          layoutContent hasTableWithCorrectSize(1, 11)
-        }
-
-        "has a table header and amount section" in new DeductionBreakdownSetup2018 {
-          val row: Element = layoutContent.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe DeductionBreakdown.deductionBreakdownHeader
-          row.select("th").last().text() shouldBe DeductionBreakdown.deductionBreakdownHeaderAmount
-        }
-
-        forAll(expectedBreakdownTableDataRows) { (rowIndex: Int, deductionType: String, formattedAmount: String) =>
-
-          s"has the row $rowIndex for $deductionType line with the correct amount value" in new DeductionBreakdownSetup2018 {
-            val row: Element = layoutContent.table().select("tr").get(rowIndex)
-            row.select("td").first().text() shouldBe deductionType
-            row.select("td").last().text() shouldBe formattedAmount
-          }
-
-        }
-
-      }
-    }
-
-    "presenting personal allowances" should {
-      val taxYear2018 = 2018
-
-      class DeductionBreakdownSetupVariedAllowances(personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
-                                                    reducedPersonalAllowance: Option[BigDecimal] = None,
-                                                    personalAllowance: Option[BigDecimal] = Some(11500.00)) extends Setup(
-        deductionBreakdown(
           CalcDisplayModel("", 1,
             CalcBreakdownTestConstants.calculationAllDeductionSources.copy(
               allowancesAndDeductions = allowancesAndDeductions.copy(
