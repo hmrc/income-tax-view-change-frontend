@@ -23,6 +23,7 @@ import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import testConstants.CalcBreakdownTestConstants.allowancesAndDeductions
+import testConstants.EstimatesTestConstants.testYearPlusOne
 import testUtils.ViewSpec
 import views.html.DeductionBreakdown
 
@@ -31,9 +32,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
   val deductions = "Allowances and deductions"
 
-
   def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
-
 
   "The deduction breakdown view" when {
 
@@ -142,7 +141,6 @@ class DeductionBreakdownViewSpec extends ViewSpec {
           }
 
         }
-
       }
     }
 

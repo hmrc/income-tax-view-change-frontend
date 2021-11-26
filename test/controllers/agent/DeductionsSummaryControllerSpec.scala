@@ -29,7 +29,6 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
@@ -39,13 +38,14 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   class Setup {
 
     val testYear: Int = 2020
+    val isAgent: Boolean = true // currently unused - might be required if differentiating between indiv. & agent
 
     val controller: DeductionsSummaryController = new DeductionsSummaryController(
-      app.injector.instanceOf[views.html.agent.DeductionBreakdown],
+      app.injector.instanceOf[views.html.DeductionBreakdown],
       mockAuthService,
       mockIncomeSourceDetailsService,
       mockAuditingService,
-      mockCalculationService
+      mockCalculationService,
     )(
       appConfig,
       app.injector.instanceOf[MessagesControllerComponents],
