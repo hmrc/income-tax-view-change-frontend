@@ -15,27 +15,29 @@
  *@
 
 @import testOnly.models.UserModel
-@import testOnly.views.html.templates.StubTemplate
-@import testOnly.views.html.helpers._
+@import views.html.layouts.unifiedLayout
+@import testOnly.views.html.helpers.{SummaryErrorHelper, InputHelper}
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import views.html.components._
 
-@this(stubTemplate: StubTemplate, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, inputHelper: InputHelper, continueButton: ContinueButton)
+@this(unifiedLayout: unifiedLayout, form: FormWithCSRF, summaryErrorHelper: SummaryErrorHelper, inputHelper: InputHelper,
+    continueButton: ContinueButton, h1: h1, h2: h2)
 
 @(userForm: Form[UserModel], postAction: Call, result: Option[String])(implicit request: Request[_], messages: Messages)
 
-@stubTemplate(title = "ITVC Stub Users", bodyClasses = None) {
+@unifiedLayout(pageTitle = "ITVC Stub Users") {
 
     @summaryErrorHelper(userForm)
 
-    <h1 class="heading-large">Add User to Des Simulator</h1>
+    @h1(msg = "Add User to Des Simulator")
 
     @result.map { data =>
-        <h2>@data</h2>
+        @h2(msg = data)
     }
 
     @form(action = postAction) {
 
-        <div class="form-group">
+        <div class="form-group govuk-!-margin-bottom-4">
             <div class="form-field-group">
                 @inputHelper(field = userForm("mtdItId"),
                     label = Some("MTD ID"))

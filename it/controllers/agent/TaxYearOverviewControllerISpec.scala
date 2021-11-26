@@ -336,7 +336,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
@@ -422,7 +422,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2 Payment under review"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
@@ -684,7 +684,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
@@ -764,7 +764,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
@@ -848,7 +848,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part Paid"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
