@@ -16,29 +16,39 @@
 
 @import helper.CSRF
 @import testOnly.models.TestHeadersModel
-@import views.html.templates.MainTemplate
-@import testOnly.views.html.templates.inputs.SingleDropdown
+@import views.html.layouts.unifiedLayout
+@import testOnly.views.html.helpers.DropdownHelper
 
-@this(mainTemplate: MainTemplate, singleDropdown: SingleDropdown)
+@this(unifiedLayout: unifiedLayout, dropdownHelper: DropdownHelper)
 
 @(form: Form[TestHeadersModel], headers: Map[String, String])(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(title = "Test Headers") {
+@unifiedLayout(pageTitle = "Test Headers") {
 
     @helper.form(action = testOnly.controllers.routes.TestHeadersController.submitTestHeaders) {
+
         @CSRF.formField
 
-        <div class="form-group">
-            <fieldset>
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset govuk-!-padding-bottom-8" aria-describedby="waste-hint">
 
-                <legend>
-                    <h1 class="heading-medium">Test Headers</h1>
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">Test Headers</h1>
                 </legend>
 
-             @singleDropdown(form("headerName"), headers)
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="headerName">
+                        headerName
+                    </label>
+                    <select class="govuk-select" id="headerName" name="headerName">
+                        @headers.map { option =>
+                            <option value="@option._1">@option._2</option>
+                        }
+                    </select>
+                </div>
+
             </fieldset>
         </div>
-
-        <button class="button" type="submit" id="continue-button">Submit</button>
+        <button class="govuk-button" type="submit">Submit</button>
     }
 }

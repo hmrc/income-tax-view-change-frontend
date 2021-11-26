@@ -15,15 +15,16 @@
  *@
 
 @import views.html.BtaPartial
-@import views.html.templates.MainTemplate
+@import views.html.layouts.unifiedLayout
+@import views.html.components.h1
 
-@this(mainTemplate: MainTemplate, appConfig: config.FrontendAppConfig, btaPartial: BtaPartial)
+@this(mainTemplate: unifiedLayout, appConfig: config.FrontendAppConfig, btaPartial: BtaPartial, h1: h1)
 
 @()(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(title = "Test the BTA Partial") {
+@mainTemplate(pageTitle = "Test the BTA Partial") {
 
-    <h1>BTA Partial</h1>
+    @h1(msg = "BTA Partial")
 
     @btaPartial()
 

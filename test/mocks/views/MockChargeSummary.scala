@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package mocks.views.agent
+package mocks.views
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.ChargeSummary
+import views.html.ChargeSummary
 
 trait MockChargeSummary extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
@@ -34,7 +34,7 @@ trait MockChargeSummary extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockChargeSummary()(response: Html): Unit = {
-    when(chargeSummary.apply(any(), any(), any(), any(), any(), any(), any(), any(), any())(any(), any(), any(), any()))
+    when(chargeSummary.apply(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(response)
   }
 

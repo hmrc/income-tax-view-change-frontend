@@ -129,7 +129,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val paymentOnAccount1: String = "Payment on account 1 of 2"
     val unpaid: String = "Unpaid"
     val paid: String = "Paid"
-    val partPaid: String = "Part Paid"
+    val partPaid: String = "Part paid"
     val noPaymentsDue: String = "No payments currently due."
     val updateType: String = "Update type"
     val updateIncomeSource: String = "Income source"

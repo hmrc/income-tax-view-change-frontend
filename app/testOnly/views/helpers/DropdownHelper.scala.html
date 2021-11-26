@@ -32,9 +32,11 @@
 @import testOnly.forms.validation.ErrorMessageHelper._
 
 @hintText(hint: String) = {
-    <span class="form-hint">
-    @hint
-    </span>
+<div class="govuk-form-group govuk-label" id="@hint">
+    <label class = "govuk-hint">
+        @hint
+    </label>
+</div>
 }
 
 @hasError = @{

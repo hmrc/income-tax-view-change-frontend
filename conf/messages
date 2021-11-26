@@ -145,7 +145,7 @@ tax-year-overview.payments.lpi.paymentOnAccount2.text               = Late payme
 tax-year-overview.payments.lpi.balancingCharge.text                 = Late payment interest for remaining balance
 tax-year-overview.payments.paid                                     = Paid
 tax-year-overview.payments.unpaid                                   = Unpaid
-tax-year-overview.payments.part-paid                                = Part Paid
+tax-year-overview.payments.part-paid                                = Part paid
 tax-year-overview.payments.overdue                                  = Overdue
 tax-year-overview.payments.no-payments                              = No payments currently due.
 tax-year-overview.payments.paymentUnderReview                       = Payment under review
@@ -509,7 +509,7 @@ chargeSummary.remainingDue   									   = Remaining to pay
 chargeSummary.overdue                                              = OVERDUE
 
 chargeSummary.dunning.locks.banner.title						   = Important
-chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab)
+chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab).
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
