@@ -51,7 +51,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean)
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -61,7 +61,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       user.saUtr,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       paymentHistoryEnabled = isEnabled(PaymentHistory),
-      dunningLockExists = dunningLockExists
+      dunningLockExists = dunningLockExists,
+      currentTaxYear = currentTaxYear
     )
   }
 
@@ -100,7 +101,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
               ))
             }
 
-            Ok(view(paymentsDue.headOption, latestDeadlineDate._1, Some(overDuePaymentsCount), Some(overDueUpdatesCount), dunningLockExistsValue))
+            Ok(view(paymentsDue.headOption, latestDeadlineDate._1, Some(overDuePaymentsCount), Some(overDueUpdatesCount), dunningLockExistsValue,
+              currentTaxYear = user.incomeSources.getCurrentTaxEndYear))
           }
         }
 

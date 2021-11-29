@@ -39,7 +39,8 @@
          paymentHistoryEnabled: Boolean,
         ITSASubmissionIntegrationEnabled: Boolean,
         implicitDateFormatter: ImplicitDateFormatter,
-		dunningLockExists: Boolean = false
+		dunningLockExists: Boolean = false,
+		currentTaxYear: Int
 )(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
@@ -115,7 +116,7 @@
     </div>
 	<div id="submit-your-returns-tile" class="govuk-grid-row">
 		<div class="govuk-grid-column-one-third">
-			@h3link(link = appConfig.submissionFrontendUrl, messageKey = "home.update-and-submit-your-returns.Link")
+			@h3link(link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear), messageKey = "home.update-and-submit-your-returns.Link")
             @p()(Html(messages("home.your-returns.agent.description")))
         </div>
     </div>

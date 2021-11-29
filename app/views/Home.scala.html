@@ -38,7 +38,8 @@
 @(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate,
   overDuePaymentsCount: Option[Int], overDueUpdatesCount: Option[Int],
   utr: Option[String], paymentHistoryEnabled: Boolean,
-  ITSASubmissionIntegrationEnabled: Boolean, dunningLockExists: Boolean = false)(
+  ITSASubmissionIntegrationEnabled: Boolean, dunningLockExists: Boolean = false,
+  currentTaxYear: Int)(
   implicit request: Request[_], messages: Messages,
   user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
@@ -131,7 +132,7 @@
             <div class="govuk-grid-column-one-third">
                 @h3link(
                     id =Some("submit-your-returns"),
-                    link = appConfig.submissionFrontendUrl,
+                    link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
                     messageKey = "home.your-returns.updatesLink")
 
                 @p(){@messages("home.your-returns.description")}

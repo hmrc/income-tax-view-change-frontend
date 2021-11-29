@@ -53,7 +53,8 @@ class HomeController @Inject()(home: Home,
   private def view(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
                    nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
                    overduePaymentExists: Boolean,
-                   dunningLockExists: Boolean)
+                   dunningLockExists: Boolean,
+                   currentTaxYear: Int)
                   (implicit request: Request[_], user: MtdItUser[_]): Html = {
     home(
       nextPaymentOrOverdue = nextPaymentOrOverdue,
@@ -62,7 +63,8 @@ class HomeController @Inject()(home: Home,
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       implicitDateFormatter = dateFormatter,
-      dunningLockExists = dunningLockExists
+      dunningLockExists = dunningLockExists,
+      currentTaxYear = currentTaxYear
     )
   }
 
@@ -83,7 +85,8 @@ class HomeController @Inject()(home: Home,
             mtdItUser, dueChargesDetails, dueObligationDetails
           ))
         }
-        Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails), dunningLockExistsValue)(implicitly, mtdItUser))
+        Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails), dunningLockExistsValue,
+          currentTaxYear = mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser))
       }
   }
 

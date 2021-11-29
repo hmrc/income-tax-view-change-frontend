@@ -16,6 +16,8 @@
 
 package views
 
+import java.time.LocalDate
+
 import testConstants.EstimatesTestConstants._
 import testConstants.MessagesLookUp.{TaxYears => taxYears}
 import config.FrontendAppConfig
@@ -151,6 +153,17 @@ class TaxYearsViewSpec extends ViewSpec {
             s"${taxYears.updateReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
         }
 
+        "display the update return link for the 2021 tax year and go to correct link" in new Setup(List(testYearPlusFour, testYearPlusThree), true) {
+          document.getElementById("updateReturn-link-2021").attr("href") shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2021/start"
+        }
+
+        "display the update return link for the 2020 tax year and go to correct link" in new Setup(List(testYearPlusThree, testYearPlusTwo), true) {
+          document.getElementById("updateReturn-link-2020").attr("href") shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2020/start"
+        }
+
+        "display the update return link for the 2019 tax year and go to correct link" in new Setup(List(testYearPlusOne, testYear), true) {
+          document.getElementById("updateReturn-link-2019").attr("href") shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2019/start"
+        }
       }
     }
   }
