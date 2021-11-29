@@ -44,11 +44,9 @@
     }
 
     @formHint.map { hint =>
-    <div class="govuk-form-group govuk-label" id="@field.name-hint">
-        <label class="govuk-hint">
+        <label class="govuk-hint govuk-label" id="@field.name-hint">
             @hint
         </label>
-    </div>
     }
 
     @fieldError.map { error =>
