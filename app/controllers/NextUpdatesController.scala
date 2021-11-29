@@ -19,7 +19,6 @@ package controllers
 import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
@@ -28,13 +27,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.NextUpdatesService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.{NextUpdates, NoNextUpdates, Obligations}
+import views.html.{NextUpdates, NoNextUpdates}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
-                                      obligationsView: Obligations,
                                       nextUpdatesView: NextUpdates,
                                       checkSessionTimeout: SessionTimeoutPredicate,
                                       authenticate: AuthenticationPredicate,
@@ -46,31 +44,14 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       val appConfig: FrontendAppConfig)
                                      (implicit mcc: MessagesControllerComponents,
                                           val executionContext: ExecutionContext)
-  extends BaseController with FeatureSwitching with I18nSupport {
+  extends BaseController with I18nSupport {
 
   val getNextUpdates: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
-        NextUpdates.fold(
-          ifEnabled = renderViewNextUpdates,
-          ifDisabled = renderViewBothObligations)
+        renderViewNextUpdates
       } else {
         Future.successful(Ok(NoNextUpdatesView(backUrl = backUrl)))
-      }
-  }
-
-  private def renderViewBothObligations[A](implicit user: MtdItUser[A]): Future[Result] = {
-      auditNextUpdates(user)
-      for {
-        currentObligations <- getObligations()
-        previousObligations <- getObligations(previous = true)
-      } yield {
-        (currentObligations, previousObligations) match {
-          case (currentObligations, previousObligations) if currentObligations.obligations.nonEmpty =>
-            Ok(obligationsView(currentObligations, previousObligations, backUrl = backUrl))
-          case _ =>
-            itvcErrorHandler.showInternalServerError
-        }
       }
   }
 
