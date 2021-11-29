@@ -41,6 +41,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
+  val currentTaxYear: Int = {
+    val currentDate = LocalDate.now
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+  }
+
   val testMtdItUser: MtdItUser[_] = MtdItUser(
     testMtditid,
     testNino,
@@ -59,7 +65,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left((nextPaymentDue, false))),
               nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left((nextUpdateDue, false)),
               paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              overduePaymentExists: Boolean = false, dunningLockExists: Boolean = false, currentTaxYear: Int = LocalDate.now().getYear + 1) {
+              overduePaymentExists: Boolean = false, dunningLockExists: Boolean = false) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
@@ -193,7 +199,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("manage-income-tax-tile").map(_.select("h2").text) shouldBe Some(homeMessages.ManageYourIncomeTaxReturnHeading)
         }
         "has a link to the send updates page" in new Setup {
-          val currentTaxYear: Int = LocalDate.now().getYear + 1
           val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some(s"http://localhost:9302/update-and-submit-income-tax-return/$currentTaxYear/start")
           link.map(_.text) shouldBe Some(homeMessages.submitYourReturnsLink)
