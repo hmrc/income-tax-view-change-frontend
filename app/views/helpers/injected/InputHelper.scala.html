@@ -23,13 +23,17 @@
     field.error
 }
 
+@getLabelClass(isPageHeading: Boolean) = @{
+    if(isPageHeading) "govuk-label govuk-label--l" else "govuk-label"
+}
+
 @inputLabel(isPageHeading: Boolean) = {
-    <label @if(isPageHeading) {class="govuk-label govuk-label--l"} for="@field.name">
+    <label class="@getLabelClass(isPageHeading)" for="@field.name">
         @label
     </label>
 }
 
-<div class="form-group form-field  @if(fieldError.isDefined) {govuk-form-group--error}">
+<div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
 
     @if(isPageHeading) {
         <h1 class="govuk-label-wrapper">
@@ -40,11 +44,9 @@
     }
 
     @formHint.map { hint =>
-    <div class="govuk-form-group govuk-label" id="@field.name-hint">
-        <label class = "govuk-hint">
+        <label class="govuk-hint govuk-label" id="@field.name-hint">
             @hint
         </label>
-    </div>
     }
 
     @fieldError.map { error =>

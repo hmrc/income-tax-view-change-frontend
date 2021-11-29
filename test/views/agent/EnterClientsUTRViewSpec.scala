@@ -56,9 +56,12 @@ class EnterClientsUTRViewSpec extends ViewSpec {
       "have an input with associated hint and label" in new Setup(pageWithoutError) {
         val form: Element = layoutContent.selectHead("form")
         val label: Element = form.selectHead("label")
-        val hint: Element = layoutContent.selectHead(".govuk-form-group")
+        val hint: Element = layoutContent.selectHead(".govuk-hint")
 
         val input: Element = form.selectHead("input")
+
+        println("hrtyu" + label.text)
+        println(hint.text)
 
         label.text shouldBe EnterClientsUTRMessages.heading
         hint.text shouldBe EnterClientsUTRMessages.info
