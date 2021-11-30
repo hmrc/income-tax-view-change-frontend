@@ -21,7 +21,6 @@ import java.time.LocalDate
 import testConstants.BaseTestConstants
 import testConstants.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -35,16 +34,15 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.NextUpdatesService
-import views.html.{NextUpdates, NoNextUpdates, Obligations}
+import views.html.{NextUpdates, NoNextUpdates}
 
 import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-                                            with MockNextUpdatesService with FeatureSwitching{
+                                            with MockNextUpdatesService {
 
   object TestNextUpdatesController extends NextUpdatesController(
     app.injector.instanceOf[NoNextUpdates],
-    app.injector.instanceOf[Obligations],
     app.injector.instanceOf[NextUpdates],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
@@ -101,7 +99,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NextUpdates page" in {
-            document.title shouldBe obligationsMessages.title
+            document.title shouldBe obligationsMessages.nextTitle
           }
         }
 
@@ -123,7 +121,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NextUpdates page" in {
-            document.title shouldBe obligationsMessages.title
+            document.title shouldBe obligationsMessages.nextTitle
           }
         }
 
@@ -145,7 +143,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NextUpdates page" in {
-            document.title shouldBe obligationsMessages.title
+            document.title shouldBe obligationsMessages.nextTitle
           }
         }
 
@@ -164,7 +162,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NextUpdates page" in {
-            document.title shouldBe obligationsMessages.title
+            document.title shouldBe obligationsMessages.nextTitle
           }
         }
 
@@ -186,7 +184,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NextUpdates page" in {
-            document.title shouldBe obligationsMessages.title
+            document.title shouldBe obligationsMessages.nextTitle
           }
         }
 
@@ -208,7 +206,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NextUpdates page" in {
-            document.title shouldBe obligationsMessages.title
+            document.title shouldBe obligationsMessages.nextTitle
           }
         }
 
@@ -268,29 +266,5 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       }
     }
 
-		"the Next Updates feature switch is enabled" should {
-			lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
-			lazy val document = Jsoup.parse(contentAsString(result))
-
-			"set Next Updates enabled" in {
-				enable(NextUpdates)
-			}
-
-			"return Status OK (200)" in {
-				mockSingleBusinessIncomeSource()
-				mockSingleBusinessIncomeSourceWithDeadlines()
-				mockPreviousObligations
-				status(result) shouldBe Status.OK
-			}
-
-			"return HTML" in {
-				contentType(result) shouldBe Some("text/html")
-				charset(result) shouldBe Some("utf-8")
-			}
-
-			"render the next updates page" in {
-				document.title shouldBe obligationsMessages.nextTitle
-			}
-		}
   }
 }

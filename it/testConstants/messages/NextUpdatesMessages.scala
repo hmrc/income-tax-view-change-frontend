@@ -31,7 +31,7 @@ object NextUpdatesMessages extends ComponentSpecBase {
   val errorp2 = "Try refreshing the page in a few minutes."
 
   //Obligations view messages
-  val obligationsTitle = "Updates - Business Tax account - GOV.UK"
+  val nextUpdatesTitle = "Next updates - Business Tax account - GOV.UK"
 
   //Previous Obligations
   val noPreviousObligations = "No previously submitted updates"

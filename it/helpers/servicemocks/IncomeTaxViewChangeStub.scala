@@ -78,6 +78,10 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     s"/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
   }
 
+  def obligationsUrl(nino: String): String = {
+    s"/income-tax-view-change/$nino/report-deadlines"
+  }
+
   def stubGetPreviousObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
 
@@ -94,6 +98,8 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def verifyGetPreviousObligations(nino: String): Unit =
     WiremockHelper.verifyGet(previousObligationsUrl(nino))
 
+  def verifyGetObligations(nino: String): Unit =
+    WiremockHelper.verifyGet(obligationsUrl(nino))
 
   //NextUpdates Stubs
   //=====================
