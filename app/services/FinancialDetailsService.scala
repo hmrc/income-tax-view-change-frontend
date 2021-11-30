@@ -87,13 +87,17 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
       chargesWithYears.flatMap {
         case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
         case (_, financialDetails: FinancialDetailsModel) =>
-          val unpaidDocumentDetails: List[DocumentDetail] = financialDetails.documentDetails.collect {
-            case documentDetail: DocumentDetail if isEnabled(CodingOut) && documentDetail.isCodingOut => documentDetail
-            case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-            case documentDetail: DocumentDetail if !documentDetail.isPaid => documentDetail
-          }
-          if (unpaidDocumentDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocumentDetails)) else None
+          val unpaidDocDetails: List[DocumentDetail] = unpaidDocumentDetails(financialDetails)
+          if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
       }
+    }
+  }
+
+  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel): List[DocumentDetail] = {
+    financialDetailsModel.documentDetails.collect {
+      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isEnabled(CodingOut)) => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+      case documentDetail: DocumentDetail if !documentDetail.isClass2Nic && !documentDetail.isCodingOut && !documentDetail.isPaid => documentDetail
     }
   }
 }
