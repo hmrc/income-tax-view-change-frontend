@@ -36,10 +36,10 @@ class RoutesSpec extends TestSupport {
     }
   }
 
-  //Obligation route
+  //Next Updates route
   "The URL for the NextUpdatesController.getNextObligation action" should {
-    s"be equal tp $contextRoute/obligations" in {
-      controllers.routes.NextUpdatesController.getNextUpdates().url shouldBe s"$contextRoute/obligations"
+    s"be equal to $contextRoute/next-updates" in {
+      controllers.routes.NextUpdatesController.getNextUpdates().url shouldBe s"$contextRoute/next-updates"
     }
   }
 
