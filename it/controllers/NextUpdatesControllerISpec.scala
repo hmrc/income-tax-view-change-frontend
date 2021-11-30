@@ -29,7 +29,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
   "Calling the NextUpdatesController" when {
 
-    unauthorisedTest("/obligations")
+    unauthorisedTest("/next-updates")
 
     "renderViewNextUpdates" when {
 
