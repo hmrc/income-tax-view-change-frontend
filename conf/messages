@@ -528,7 +528,7 @@ chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have pre
 chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Late payment interest
 
 chargeSummary.interestLocks.text                                   = Any interest on this payment is shown as a total on the
-chargeSummary.interestLocks.linkText                               = What you owe page
+chargeSummary.interestLocks.linkText                               = What you owe
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
