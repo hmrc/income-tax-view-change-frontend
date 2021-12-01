@@ -526,13 +526,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         }
       }
       "return unpaid transactions and coding out document details" when {
-        "coding out is enabled" in {
+        "coding out is enabled and coding out data exists" in {
           enable(CodingOut)
           val financialDetailCodingOut = getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
             documentDetails = List(
-              documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00), amountCodedOut = Some(0)).copy(interestOutstandingAmount = Some(0)),
-              documentDetailModel(transactionId = "transid2", outstandingAmount = Some(0), amountCodedOut = Some(2500)).copy(interestOutstandingAmount = Some(0)),
+              documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00), amountCodedOut = Some(0)).copy(interestOutstandingAmount = Some(0), documentText = Some("Class 2 National Insurance")),
+              documentDetailModel(transactionId = "transid2", outstandingAmount = Some(0), amountCodedOut = Some(2500)).copy(interestOutstandingAmount = Some(0), documentText = Some("Class 2 National Insurance")),
             ),
             financialDetails = List(
               fullFinancialDetailModel,
@@ -564,10 +564,10 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       }
 
     "return unpaid transactions without coding out document details" when {
-      "coding out is disabled" in {
+      "coding out is disabled and coding out details exists" in {
         disable(CodingOut)
-        val ddNics = documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00), amountCodedOut = Some(0)).copy(interestOutstandingAmount = Some(0))
-        val ddCodedOut = documentDetailModel(transactionId = "transid2", outstandingAmount = Some(0), amountCodedOut = Some(2500)).copy(interestOutstandingAmount = Some(0))
+        val ddNics = documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00), amountCodedOut = Some(0)).copy(interestOutstandingAmount = Some(0), documentText = Some("Class 2 National Insurance"))
+        val ddCodedOut = documentDetailModel(transactionId = "transid2", outstandingAmount = Some(2500.00), amountCodedOut = Some(2500)).copy(interestOutstandingAmount = Some(0), documentText = Some("Class 2 National Insurance"))
         val financialDetailCodingOut = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
           documentDetails = List(ddNics, ddCodedOut),
@@ -588,20 +588,15 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
         )
 
-        val financialDetailCodingOutExpected = financialDetailCodingOut.copy(documentDetails = List(ddNics))
-
         setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailCodingOut)
         setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetail)
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List(
-          financialDetailCodingOutExpected,
           financialDetail
         )
       }
     }
-
   }
-
 }

@@ -92,6 +92,13 @@ case class DocumentDetail(taxYear: String,
 		else "unpaid"
 	}
 
+	def isCodingOutDocumentDetail(codingOutEnabled: Boolean = false): Boolean = (codingOutEnabled, isCodingOut, isClass2Nic) match {
+		case (false, _, _) => false
+		case (true, true, _) => true
+		case (true, _, true) => true
+		case _ => false
+	}
+
 	val isClass2Nic: Boolean = documentText match {
 		case Some(documentText) if documentText == "Class 2 National Insurance" => true
 		case _ => false
@@ -101,6 +108,7 @@ case class DocumentDetail(taxYear: String,
 		case Some(amountCodedOut) if amountCodedOut > 0 => true
 		case _ => false
 	}
+
 
 	def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
 		case Some("ITSA- POA 1") => "paymentOnAccount1.text" //todo: fix the actual document descriptions
