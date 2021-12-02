@@ -47,7 +47,8 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-28" % scope
+  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-28" % scope,
+  caffeine
 )
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()

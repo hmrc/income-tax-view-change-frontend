@@ -19,18 +19,23 @@ package controllers.predicates
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
+import forms.utils.SessionKeys
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import play.api.cache._
+import play.api.libs.json.{JsError, JsPath, JsResult, JsSuccess, JsValue, Json}
+import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val itvcErrorHandler: ItvcErrorHandler)
+                                             val itvcErrorHandler: ItvcErrorHandler, cache: AsyncCacheApi)
                                             (implicit val executionContext: ExecutionContext,
                                              mcc: MessagesControllerComponents) extends BaseController with
   ActionRefiner[MtdItUserWithNino, MtdItUser] {
@@ -40,10 +45,33 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserWithNino[A] = request
 
-    incomeSourceDetailsService.getIncomeSourceDetails() map {
-      case sources: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
-      case _ => Left(itvcErrorHandler.showInternalServerError)
+    // check session for source data
+    val cacheExpiry: Duration = Duration(100, "seconds")
+    val cacheKey = request.nino + "-incomeSources"
+    def getCachedIncomeSources(): Future[Option[IncomeSourceDetailsModel]] = {
+      cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
+        incomeSources match {
+          case Some(jsonSources) =>
+            Json.fromJson[IncomeSourceDetailsModel](jsonSources) match {
+              case JsSuccess(sources: IncomeSourceDetailsModel, path: JsPath) =>
+                Some(sources)
+              case _ => None
+            }
+          case None => None
+        }
+      })
+    }
+
+    getCachedIncomeSources().flatMap {
+      case Some(sources: IncomeSourceDetailsModel) =>
+        Future.successful(Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn)))
+      case None => incomeSourceDetailsService.getIncomeSourceDetails() map {
+        case sources: IncomeSourceDetailsModel =>
+          // store sources in session
+          cache.set(cacheKey, sources.toJson, cacheExpiry)
+          Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
+        case _ => Left(itvcErrorHandler.showInternalServerError)
+      }
     }
   }
 }
