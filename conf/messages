@@ -590,10 +590,6 @@ timeoutDialog.minute                                            = minute
 timeoutDialog.message                                           = For your security, we will sign you out in
 button.continue                                                 = Stay signed in
 
-## Not found
-notFound.heading = This page cannot be found
-notFound.message = Please check that you have entered the correct web address.
-
 ## Uplift Failure
 upliftFailure.title = There’s a problem
 upliftFailure.content = You cannot access this service. This may be because:

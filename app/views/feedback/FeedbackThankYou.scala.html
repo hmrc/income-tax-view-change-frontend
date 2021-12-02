@@ -14,17 +14,22 @@
 * limitations under the License.
 *@
 
-@import views.html.templates.MainTemplate
-
+@import views.html.templates.GovUkWrapper
 @import config.FormPartialProvider
+@import views.html.components._
 
-@this(
-    mainTemplate: MainTemplate
-)
+@this(link: link, govukWrapper: GovUkWrapper)
 
 @(partialUrl: String, redirectUrl: String)(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
 
-@mainTemplate(title = messages("feedback.title")) {
+@mainContent = {
     @formPartialProvider.getPartialContent(partialUrl)
-    <a id="back" href='@redirectUrl' role="button" tabindex="0" class="button">@messages("base.back")</a>
+    <div id="payment-button">
+        @link(link = redirectUrl,
+        messageKey = "base.back", classes = "button",
+        id = Some("back"),
+        ariaLabel = Some("Go back to the previous service"))
+    </div>
 }
+
+@govukWrapper(title = messages("feedback.title"), mainContent = mainContent)
