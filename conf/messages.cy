@@ -100,6 +100,7 @@ tax-year-overview.calculation-date                              = Dyddiad y cyfr
 tax-year-overview.estimate                                      = Amcangyfrif ar gyfer 6 Ebrill {0} i 28 Ion {1}
 tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
 tax-year-overview.tax-calculation                               = Cyfrifiad yn ystod y flwyddyn
+tax-year-overview.payments.paymentUnderReview                   = Taliad dan adolygiad
 tax-year-overview.section                                       = Adran
 tax-year-overview.amount                                        = Swm
 tax-year-overview.payments                                      = Taliadau
@@ -280,6 +281,8 @@ obligations.heading                                             = Dyddiadau cau 
 obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
+obligations.quarterly                                           = Bob chwarter
+
 
 ## Previous Obligations ##
 
@@ -536,6 +539,9 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau ar gyfer {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
+paymentHistory.table.header.date                                = Dyddiad
+paymentHistory.table.header.description                         = Disgrifiad
+paymentHistory.table.header.amount                              = Swm
 
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
@@ -656,3 +662,4 @@ shortMonth.9 = Med
 shortMonth.10 = Hyd
 shortMonth.11 = Tach
 shortMonth.12 = Rhag
+
