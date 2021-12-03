@@ -20,8 +20,23 @@
 
 <script src='@controllers.routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
 <script src='@controllers.routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
-<script>window.GOVUKFrontend.initAll();
-window.HMRCFrontend.initAll()</script>
+<script>
+window.GOVUKFrontend.initAll();
+window.HMRCFrontend.initAll();
+
+// ensure space bar triggers a click on pay now button link
+const handleKeyDown = function (event) {
+  const KEY_SPACE = 32
+  if (event.target.getAttribute('role') === 'button' && event.keyCode === KEY_SPACE) {
+    event.preventDefault()
+    event.target.click()
+  }
+}
+const payButton = document.querySelector("#payment-button-link")
+if(payButton) {
+    payButton.addEventListener('keydown', handleKeyDown)
+}
+</script>
 <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
 <script>
     const openAllButton = document.getElementsByClassName('govuk-accordion__open-all')[0]
