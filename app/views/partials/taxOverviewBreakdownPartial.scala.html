@@ -34,7 +34,7 @@
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</>
+                    <a class="govuk-link" href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
                 } else {
                     <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
                 }
@@ -72,6 +72,13 @@
     </table>
 
     <table id="taxdue-payments-table" class="govuk-table">
+        <caption class="govuk-table__caption govuk-table__caption--l govuk-visually-hidden">@messages("tax-year-overview.tax-calculation")</caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-overview.amount")</th>
+            </tr>
+        </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-bold">
@@ -139,6 +146,13 @@
         </tbody>
     </table>
     <table class="govuk-table" id="taxdue-payments-table">
+        <caption class="govuk-table__caption govuk-table__caption--l govuk-visually-hidden">@messages("tax-year-overview.tax-calculation")</caption>
+        <thead class="govuk-table__head govuk-visually-hidden">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-overview.amount")</th>
+            </tr>
+        </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell govuk-!-font-weight-bold">

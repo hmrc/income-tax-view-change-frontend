@@ -248,7 +248,7 @@
             @creditOnAccountNotePanel
             <div id="payment-button">
                 @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
-                messageKey = getPrefix("payNow"), classes = "govuk-button",
+                messageKey = getPrefix("payNow"), classes = "govuk-button", role=Some("button"),
                 id = Some("payment-button-link"),
                 ariaLabel = Some(getMessage("pay-now-aria",
                 (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,

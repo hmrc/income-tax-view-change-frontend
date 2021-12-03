@@ -24,7 +24,10 @@
 
 	@deadlineRow(deadline: NextUpdateModelWithIncomeType) = {
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">@{deadline.obligation.obligationType}</td>
+			<td class="govuk-table__cell">
+				@{if(deadline.obligation.obligationType == "Quarterly")  messages.translate("obligations.quarterly", Seq.empty).getOrElse(deadline.obligation.obligationType)}
+				@{if(deadline.obligation.obligationType != "Quarterly") deadline.obligation.obligationType}
+			</td>
 			<td class="govuk-table__cell">@{deadline.incomeType}</td>
 		</tr>
 	}
