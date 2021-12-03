@@ -18,8 +18,10 @@ package connectors
 
 import audit.AuditingService
 import config.FrontendAppConfig
+import models.core.RepaymentJourneyResponseModel
+import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import play.api.Logger
-import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}
+import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -29,12 +31,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentConnector @Inject()(val http: HttpClient,
                                    val auditingService: AuditingService,
-                                   val config: FrontendAppConfig)(implicit ec: ExecutionContext) {
+                                   val config: FrontendAppConfig
+                                   )(implicit ec: ExecutionContext) {
 
-  val url: String = s"${config.repaymentUrl}/self-assessment-repayment-backend/start"
+  val url: String = s"${config.repaymentsUrl}/self-assessment-repayment-backend/start"
 
-  // TODO is it right that here we returning Future[String] instead of Future[RepaymentResponse] ?
-  def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[String] = {
+  def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
 
     val body = Json.parse(
       s"""
@@ -47,17 +49,21 @@ class RepaymentConnector @Inject()(val http: HttpClient,
 
     http.POST(url, body).map {
       case response if response.status == ACCEPTED =>
-        // TODO should we return it as a case class instead of just a String ?
-        (Json.parse(response.body) \ "nextUrl").get.toString()
+        response.json.validate[RepaymentJourneyModel].fold(
+          invalidJson => {
+            Logger("application").error(s"Invalid Json with $invalidJson")
+            RepaymentJourneyErrorResponse(response.status, "Invalid Json")
+          },
+          valid => valid
+        )
 
       case response =>
-        if (response.status == UNAUTHORIZED) {
+        if (response.status >= INTERNAL_SERVER_ERROR) {
           Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
         } else {
           Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
         }
-        // TODO What do we return here if we are not returning business error response ?
-        ???
+        RepaymentJourneyErrorResponse(response.status, response.body)
     }
   }
 }
