@@ -59,7 +59,7 @@
     val serviceUrl = if (isAgent) controllers.agent.routes.HomeController.show().url else appConfig.businessTaxAccount
 
     hmrcHeader(HmrcHeaderArgs(
-        homepageUrl = homepageUrl,
+        homepageUrl = "https://www.gov.uk",
         serviceName = serviceName,
         serviceUrl = serviceUrl,
         containerClasses = "govuk-width-container",
