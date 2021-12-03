@@ -32,30 +32,12 @@ object PropertyDetailsTestConstants {
   val propertyDetails = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = testPropertyAccountingPeriod,
-    propertiesRented = Some(PropertiesRentedModel(
-      uk = Some(2),
-      eea = None,
-      nonEea = None,
-      total = Some(2)
-    )),
-    cessation = None,
-    contactDetails = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = testPropertyAccountingPeriod,
-    propertiesRented = Some(PropertiesRentedModel(
-      uk = Some(2),
-      eea = None,
-      nonEea = None,
-      total = Some(2)
-    )),
-    cessation = Some(testCessation),
-    contactDetails = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 

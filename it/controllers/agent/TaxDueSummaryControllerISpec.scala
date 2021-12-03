@@ -78,7 +78,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     businesses = List(BusinessDetailsModel(
       "testId",
       AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      Some("Test Trading Name"), None, None, None, None, None, None, None,
+      Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd)
     )),
     property = Some(

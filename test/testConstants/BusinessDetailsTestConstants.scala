@@ -52,14 +52,7 @@ object BusinessDetailsTestConstants {
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = testBusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(LocalDate.of(2018, 4, 5))
   )
 
@@ -67,84 +60,42 @@ object BusinessDetailsTestConstants {
   val business2 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId2,
     accountingPeriod = testBusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
     tradingName = Some(testTradeName2),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val business2018 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = test2018BusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val business2019 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = test2019BusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val alignedBusiness = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val ceasedBusiness = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = testBusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = Some(testCessation),
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 

@@ -28,14 +28,14 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import play.api.cache._
 import play.api.libs.json.{JsError, JsPath, JsResult, JsSuccess, JsValue, Json}
 import play.api.mvc._
-
+import uk.gov.hmrc.http.HeaderNames
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val itvcErrorHandler: ItvcErrorHandler, cache: AsyncCacheApi)
+                                             val itvcErrorHandler: ItvcErrorHandler, val cache: AsyncCacheApi)
                                             (implicit val executionContext: ExecutionContext,
                                              mcc: MessagesControllerComponents) extends BaseController with
   ActionRefiner[MtdItUserWithNino, MtdItUser] {
@@ -47,13 +47,15 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
 
     // check session for source data
     val cacheExpiry: Duration = Duration(100, "seconds")
-    val cacheKey = request.nino + "-incomeSources"
+    val cacheKey = request.headers.get(HeaderNames.xSessionId) + request.nino + "-incomeSources"
+
     def getCachedIncomeSources(): Future[Option[IncomeSourceDetailsModel]] = {
       cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
         incomeSources match {
           case Some(jsonSources) =>
             Json.fromJson[IncomeSourceDetailsModel](jsonSources) match {
               case JsSuccess(sources: IncomeSourceDetailsModel, path: JsPath) =>
+                println("cached incomesources found..")
                 Some(sources)
               case _ => None
             }
@@ -69,6 +71,7 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
         case sources: IncomeSourceDetailsModel =>
           // store sources in session
           cache.set(cacheKey, sources.toJson, cacheExpiry)
+//          request.session.data.updated()
           Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
         case _ => Left(itvcErrorHandler.showInternalServerError)
       }

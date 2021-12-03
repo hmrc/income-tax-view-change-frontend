@@ -58,24 +58,7 @@ object BusinessDetailsIntegrationTestConstants {
       start = b1AccountingStart,
       end = b1AccountingEnd
     ),
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some(b1TradingStart),
-    cessation = Some(CessationModel(
-      date = Some(b1CessationDate),
-      reason = Some(b1CessationReason)
-    )),
     tradingName = Some(b1TradingName),
-    address = Some(AddressModel(
-      addressLine1 = b1AddressLine1,
-      addressLine2 = Some(b1AddressLine2),
-      addressLine3 = Some(b1AddressLine3),
-      addressLine4 = Some(b1AddressLine4),
-      postCode = Some(b1AddressLine5),
-      countryCode = b1CountryCode
-    )),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(b1AccountingEnd)
   )
 
@@ -85,24 +68,7 @@ object BusinessDetailsIntegrationTestConstants {
       start = b2AccountingStart,
       end = b2AccountingEnd
     ),
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some(b2TradingStart),
-    cessation = Some(CessationModel(
-      date = Some(b2CessationDate),
-      reason = Some(b2CessationReason)
-    )),
     tradingName = Some(b2TradingName),
-    address = Some(AddressModel(
-      addressLine1 = b2AddressLine1,
-      addressLine2 = Some(b2AddressLine2),
-      addressLine3 = Some(b2AddressLine3),
-      addressLine4 = Some(b2AddressLine4),
-      postCode = Some(b2AddressLine5),
-      countryCode = b2CountryCode
-    )),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(b2AccountingEnd)
   )
 

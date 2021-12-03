@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package mocks.controllers.predicates
+package mocks.services
 
-import config.ItvcErrorHandler
-import controllers.predicates.IncomeSourceDetailsPredicate
-import mocks.services._
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.cache.AsyncCacheApi
-import play.api.i18n.MessagesApi
-import play.api.mvc.MessagesControllerComponents
-import testUtils.TestSupport
+import testUtils.UnitSpec
 
-trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSourceDetailsService with MockAsyncCacheApi {
+import scala.concurrent.Future
 
-  object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(
-    mockIncomeSourceDetailsService, app.injector.instanceOf[ItvcErrorHandler], mockAsyncCacheApi)(
-    ec, app.injector.instanceOf[MessagesControllerComponents])
+trait MockAsyncCacheApi extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+
+  val mockAsyncCacheApi: AsyncCacheApi = mock[AsyncCacheApi]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockAsyncCacheApi)
+    when(mockAsyncCacheApi.get(ArgumentMatchers.any())(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(None))
+  }
+
 }
