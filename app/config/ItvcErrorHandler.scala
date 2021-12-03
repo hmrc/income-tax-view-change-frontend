@@ -21,7 +21,7 @@ import play.api.mvc.{Request, Result}
 import play.api.mvc.Results.{Ok, InternalServerError}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import views.html.templates.ErrorTemplate
+import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
 

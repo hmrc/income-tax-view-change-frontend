@@ -35,7 +35,6 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.TaxYearOverview
-import views.html.errorPages.StandardError
 
 import java.time.LocalDate
 
@@ -49,7 +48,6 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
 
   object TestTaxYearOverviewController extends TaxYearOverviewController(
     taxYearOverviewView,
-    app.injector.instanceOf[StandardError],
     MockAuthenticationPredicate,
     mockCalculationService,
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -178,12 +176,12 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
 
       "Called with an Authenticated HMRC-MTD-IT User" when {
         "provided with a negative tax year" should {
-          "return Status Bad Request Error (400)" in {
+          "return Internal Service Error (500)" in {
             mockPropertyIncomeSource()
 
             val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(-testYear)(fakeRequestWithActiveSession)
 
-            status(result) shouldBe Status.BAD_REQUEST
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
 

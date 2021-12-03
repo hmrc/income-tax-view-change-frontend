@@ -15,14 +15,15 @@
 *@
 
 @import config.FormPartialProvider
-@import views.html.templates.MainTemplate
+@import views.html.templates.GovUkWrapper
 
-@this(
-    mainTemplate: MainTemplate
-)
+@this(govukWrapper: GovUkWrapper)
 
 @(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
 
-@mainTemplate(title = messages("feedback.title"), showBtaHeader = false) {
-    @formBody.getOrElse(formPartialProvider.getPartialContent(partialUrl))
+@mainContent = {
+@formBody.getOrElse(formPartialProvider.getPartialContent(partialUrl))
 }
+
+@govukWrapper(title = messages("feedback.title"), mainContent = mainContent)
+

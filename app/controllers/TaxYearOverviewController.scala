@@ -19,7 +19,6 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved}
 import controllers.predicates._
@@ -33,7 +32,6 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
 import views.html.TaxYearOverview
-import views.html.errorPages.StandardError
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -41,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
-                                          standardErrorView: StandardError,
                                           authenticate: AuthenticationPredicate,
                                           calculationService: CalculationService,
                                           checkSessionTimeout: SessionTimeoutPredicate,
@@ -138,10 +135,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         showTaxYearOverview(taxYear)
     } else {
       action.async { implicit request =>
-        Future.successful(BadRequest(standardErrorView(
-          messagesApi.preferred(request)("standardError.heading"),
-          messagesApi.preferred(request)("standardError.message")
-        )))
+        Future.successful(itvcErrorHandler.showInternalServerError())
       }
     }
   }
