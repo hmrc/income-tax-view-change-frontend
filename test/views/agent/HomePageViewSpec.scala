@@ -96,6 +96,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     "all features are enabled" should {
 
+      s"have the correct link to the government homepage" in new Setup {
+        document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+      }
+
       s"have the title '${homeMessages.agentTitle}'" in new Setup() {
         document.title() shouldBe homeMessages.agentTitle
       }

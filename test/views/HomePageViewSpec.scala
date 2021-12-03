@@ -89,6 +89,10 @@ class HomePageViewSpec extends TestSupport {
 
   "home" should {
 
+    s"have the correct link to the government homepage" in new Setup {
+      document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+    }
+
     s"have the title '${homeMessages.title}'" in new Setup {
       document.title() shouldBe homeMessages.title
     }
