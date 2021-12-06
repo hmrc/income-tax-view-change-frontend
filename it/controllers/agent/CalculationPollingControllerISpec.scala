@@ -83,7 +83,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       PropertyDetailsModel(
         "testId2",
         AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-        None, None, None, None,
         Some(LocalDate.of(2018, 1, 1))
       )
     )

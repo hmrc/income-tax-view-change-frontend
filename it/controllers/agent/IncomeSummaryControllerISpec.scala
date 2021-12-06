@@ -74,7 +74,6 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       PropertyDetailsModel(
         "testId2",
         AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-        None, None, None, None,
         Some(getCurrentTaxYearEnd)
       )
     )

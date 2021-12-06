@@ -67,6 +67,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     businesses = List(BusinessDetailsModel(
       "testId",
       AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None

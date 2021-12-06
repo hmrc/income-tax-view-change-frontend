@@ -42,10 +42,6 @@ object PropertyDetailsIntegrationTestConstants {
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
     ),
-    contactDetails = None,
-    propertiesRented = None,
-    cessation = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate)
   )
 
@@ -55,10 +51,6 @@ object PropertyDetailsIntegrationTestConstants {
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
     ),
-    contactDetails = None,
-    propertiesRented = None,
-    cessation = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
@@ -68,10 +60,6 @@ object PropertyDetailsIntegrationTestConstants {
       start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
       end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
     ),
-    contactDetails = None,
-    propertiesRented = None,
-    cessation = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear))
   )
 

@@ -58,6 +58,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
     businesses = List(BusinessDetailsModel(
       "testId",
       AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None
