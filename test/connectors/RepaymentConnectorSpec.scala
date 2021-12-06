@@ -16,7 +16,6 @@
 
 package connectors
 
-import audit.mocks.MockAuditingService
 import mocks.MockHttp
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}
@@ -25,7 +24,7 @@ import play.mvc.Http.Status
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
-class RepaymentConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
+class RepaymentConnectorSpec extends TestSupport with MockHttp {
 
   val nino = "AA010101Q"
   val fullAmount = BigDecimal("303.00")
@@ -48,7 +47,7 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp with MockAuditing
     body = "Unauthorized Error Message"
   )
 
-  object TestPayApiConnector extends RepaymentConnector(mockHttpGet, mockAuditingService, appConfig)
+  object TestPayApiConnector extends RepaymentConnector(mockHttpGet, appConfig)
 
   "Calling .startRepayment" should {
     val testUrl = s"$host:$port/self-assessment-repayment-backend/start"

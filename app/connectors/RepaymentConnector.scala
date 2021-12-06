@@ -16,7 +16,6 @@
 
 package connectors
 
-import audit.AuditingService
 import config.FrontendAppConfig
 import models.core.RepaymentJourneyResponseModel
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
@@ -30,9 +29,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentConnector @Inject()(val http: HttpClient,
-                                   val auditingService: AuditingService,
                                    val config: FrontendAppConfig
-                                   )(implicit ec: ExecutionContext) {
+                                  )(implicit ec: ExecutionContext) {
 
   val url: String = s"${config.repaymentsUrl}/self-assessment-repayment-backend/start"
 
