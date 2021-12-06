@@ -40,18 +40,18 @@ case class DocumentDetail(taxYear: String,
 													amountCodedOut: Option[BigDecimal] = None
 												 ) {
 
-	lazy val hasLpiWithDunningBlock: Boolean =
+	def hasLpiWithDunningBlock: Boolean =
 		lpiWithDunningBlock.isDefined && lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0
 
-  lazy val hasAccruingInterest: Boolean =
+  def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
-	val isPaid: Boolean = outstandingAmount match {
+	def isPaid: Boolean = outstandingAmount match {
 		case Some(amount) if amount == 0 => true
 		case _ => false
 	}
 
-	val interestIsPaid: Boolean = interestOutstandingAmount match {
+	def interestIsPaid: Boolean = interestOutstandingAmount match {
 		case Some(amount) if amount == 0 => true
 		case _ => false
 	}
@@ -92,30 +92,42 @@ case class DocumentDetail(taxYear: String,
 		else "unpaid"
 	}
 
-	def isCodingOutDocumentDetail(codingOutEnabled: Boolean = false): Boolean = (codingOutEnabled, isCodingOut, isClass2Nic) match {
-		case (false, _, _) => false
-		case (true, true, _) => true
-		case (true, _, true) => true
-		case _ => false
-	}
+	def isCodingOutDocumentDetail(codingOutEnabled: Boolean = false): Boolean =
+		(codingOutEnabled, isPayeSelfAssessment, isCancelledPayeSelfAssessment, isClass2Nic) match {
+			case (false, _, _, _) => false
+			case (true, true, _, _) => true
+			case (true, _, true, _) => true
+			case (true, _, _, true) => true
+			case _ => false
+		}
 
-	val isClass2Nic: Boolean = documentText match {
+	def isNotCodingOutDocumentDetail: Boolean = !isClass2Nic && !isPayeSelfAssessment && !isCancelledPayeSelfAssessment
+
+	def isClass2Nic: Boolean = documentText match {
 		case Some(documentText) if documentText == "Class 2 National Insurance" => true
 		case _ => false
 	}
 
-	val isCodingOut: Boolean = amountCodedOut match {
-		case Some(amountCodedOut) if amountCodedOut > 0 => true
+	def isPayeSelfAssessment: Boolean = (documentDescription, documentText, amountCodedOut) match {
+		case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some("PAYE Self Assessment"), Some(amountCodedOut)) if amountCodedOut > 0 => true
+		case _ => false
+	}
+
+	def isCancelledPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
+		case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some("Cancelled PAYE Self Assessment")) => true
 		case _ => false
 	}
 
 
 	def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
-		case Some("ITSA- POA 1") => "paymentOnAccount1.text" //todo: fix the actual document descriptions
+		case Some("ITSA- POA 1") => "paymentOnAccount1.text"
 		case Some("ITSA - POA 2") => "paymentOnAccount2.text"
-		case Some("TRM New Charge") | Some("TRM Amend Charge") => if (isClass2Nic && codedOutEnabled) {
-			if (isCodingOut) "codingOut.text" else "class2Nic.text"
-		} else "balancingCharge.text"
+		case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
+			case (true, true, false, false) => "class2Nic.text"
+			case (true, false, true, false) => "codingOut.text"
+			case (true, false, false, true) => "cancelledPayeSelfAssessment.text"
+			case _ => "balancingCharge.text"
+		}
 		case error =>
 			Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
 			"unknownCharge"

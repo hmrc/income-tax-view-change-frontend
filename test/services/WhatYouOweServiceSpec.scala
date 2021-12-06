@@ -200,7 +200,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         "return the codedout documentDetail and the class2 nics charge" in {
           enable(CodingOut)
           val dd1 = DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
-            documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(43.21),
+            documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -236,7 +236,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         "not return any coding out details" in {
           disable(CodingOut)
           val dd1 = DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
-            documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(43.21),
+            documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),

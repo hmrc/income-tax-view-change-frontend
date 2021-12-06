@@ -74,7 +74,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   val payeChargeList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance"), amountCodedOut = Some(2500)), codingOutEnabled = true))
+      documentDescription = Some("TRM New Charge"),documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500)), codingOutEnabled = true))
 
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 

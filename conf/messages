@@ -494,13 +494,15 @@ whatYouOwe.codingOut-1b                                            = of tax for 
 whatYouOwe.codingOut-2                                             = {0} to {1} tax year
 whatYouOwe.codingOut-3                                             = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
 whatYouOwe.class2Nic.text                                          = Class 2 National Insurance
+whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled PAYE Self Assessment
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
 chargeSummary.paymentOnAccount2.text							   = Payment on account 2 of 2
 chargeSummary.balancingCharge.text  							   = Remaining balance
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
-chargeSummary.codingOut.text                                       = PAYE self assessment
+chargeSummary.codingOut.text                                       = PAYE Self Assessment
+chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Full payment amount
 chargeSummary.paymentAmountCodingOut							   = Payment amount

@@ -211,7 +211,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.select("h1").text() shouldBe Messages.class2NicHeading(2018)
       }
 
-      "have the correct heading for a Class 2 National Insurance charge when coding out FS is disabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = false) {
+      "have the correct heading for a Class 2 National Insurance charge when coding out FS is disabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
         document.select("h1").text() shouldBe Messages.balancingChargeHeading(2018)
       }
 
@@ -560,10 +560,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "display the coded out details" when {
         val documentDetailCodingOut = documentDetailModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
-          documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(2500.00),
+          documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
         object CodingOutMessages {
-          val header = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
+          val header = "Tax year 6 April 2017 to 5 April 2018 PAYE Self Assessment"
           val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
           val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
           val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
