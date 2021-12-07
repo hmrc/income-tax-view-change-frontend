@@ -26,14 +26,14 @@
 @cgtBandRow(taxTypeKey: String, band: CgtTaxBand) = @{ cgtBandTableRow(taxTypeKey, band.name, band.income, band.rate, band.taxAmount) }
 
 @cgtBandTableRow(taxTypeKey: String, bandName: String, income: BigDecimal, rate: BigDecimal, taxAmount: BigDecimal) = {
-    <tr>
+    <tr class="govuk-table__row">
         <td class="govuk-table__cell">
         @messages(
             s"taxCal_breakdown.table.cgt.$taxTypeKey.band.$bandName",
             income.toCurrencyString,
             s"${rate}")
         </td>
-        <td class="govuk-table__cell govuk-!-width-one-quarter govuk-table__cell--numeric">@{ taxAmount.toCurrency }</td>
+        <td class="govuk-table__cell govuk-table__cell--numeric">@{ taxAmount.toCurrency }</td>
     </tr>
 }
 
