@@ -32,7 +32,7 @@
         <tbody class="govuk-table__body">
             <tr>
                 <td class="govuk-table__cell">
-                    <a href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocation.allocationDetail.get.transactionId.get)">
+                    <a class="govuk-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(allocationTaxYear, allocation.allocationDetail.get.transactionId.get)">
                         @messages(allocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
                         <span class="govuk-visually-hidden visuallyhidden"> @allocationTaxYear</span>
                     </a>
