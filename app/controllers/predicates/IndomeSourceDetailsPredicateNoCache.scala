@@ -20,17 +20,18 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import play.api.cache._
-import uk.gov.hmrc.http.HeaderNames
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
 
 @Singleton
-class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
+class IncomeSourceDetailsPredicateNoCache @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val itvcErrorHandler: ItvcErrorHandler)
                                             (implicit val executionContext: ExecutionContext,
                                              mcc: MessagesControllerComponents) extends BaseController with
@@ -41,13 +42,14 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserWithNino[A] = request
 
-    val cacheKey = request.headers.get(HeaderNames.xSessionId).getOrElse("") + request.nino + "-incomeSources"
+//    val cacheExpiry: Duration = Duration(100, "seconds")
+//    val cacheKey = request.headers.get(HeaderNames.xSessionId) + request.nino + "-incomeSources"
 
-      incomeSourceDetailsService.getIncomeSourceDetails(Some(cacheKey)) map {
-        case sources: IncomeSourceDetailsModel =>
-          Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
-        case _ => Left(itvcErrorHandler.showInternalServerError)
-      }
-
+    incomeSourceDetailsService.getIncomeSourceDetails(None) map {
+      case sources: IncomeSourceDetailsModel =>
+//        cache.set(cacheKey, sources.toJson, cacheExpiry)
+        Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
+      case _ => Left(itvcErrorHandler.showInternalServerError)
+    }
   }
 }

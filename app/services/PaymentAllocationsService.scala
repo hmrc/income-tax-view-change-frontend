@@ -16,7 +16,7 @@
 
 package services
 
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserBase}
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
 import implicits.ImplicitDateFormatterImpl

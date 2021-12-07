@@ -16,17 +16,58 @@
 
 package services
 
-import auth.MtdItUserWithNino
+import auth.{MtdItUser, MtdItUserWithNino}
 import connectors.IncomeTaxViewChangeConnector
-import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import uk.gov.hmrc.http.HeaderCarrier
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import play.api.cache.AsyncCacheApi
+import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
+class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                           val cache: AsyncCacheApi, implicit val executionContext: ExecutionContext) {
 
-  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] =
-    incomeTaxViewChangeConnector.getIncomeSources()
+  val cacheExpiry: Duration = Duration(100, "seconds")
+//  val cacheKey = request.headers.get(HeaderNames.xSessionId) + request.nino + "-incomeSources"
+  def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
+    cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
+      incomeSources match {
+        case Some(jsonSources) =>
+          Json.fromJson[IncomeSourceDetailsModel](jsonSources) match {
+            case JsSuccess(sources: IncomeSourceDetailsModel, path: JsPath) =>
+              Some(sources)
+            case _ => None
+          }
+        case None => None
+      }
+    })
+  }
+
+  def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
+                                                    mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
+    cache.set("test", "teststring")
+    if (cacheKey.isDefined) {
+      getCachedIncomeSources(cacheKey.get).flatMap {
+        case Some(sources: IncomeSourceDetailsModel) =>
+          println("getIncomeSourceDetails cache HIT")
+          Future.successful(sources)
+        case None =>
+          println("getIncomeSourceDetails cache MISS")
+          incomeTaxViewChangeConnector.getIncomeSources().map(incomeSourcesResponse => {
+            cache.set(cacheKey.get, incomeSourcesResponse.toJson, cacheExpiry)
+            println("getIncomeSourceDetails set cache key:" + cacheKey.get)
+            incomeSourcesResponse
+          })
+      }
+    } else {
+      println("getIncomeSourceDetails caching NOT ENABLED")
+      incomeTaxViewChangeConnector.getIncomeSources()
+//      cache.set(cacheKey.get, incomeSourcesResponse.toJson, cacheExpiry)
+    }
+  }
 }

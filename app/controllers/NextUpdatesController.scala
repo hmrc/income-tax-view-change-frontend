@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicateNoCache, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates.ObligationsModel
 import play.api.i18n.I18nSupport
@@ -37,7 +37,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       checkSessionTimeout: SessionTimeoutPredicate,
                                       authenticate: AuthenticationPredicate,
                                       retrieveNino: NinoPredicate,
-                                      retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                      retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
@@ -46,7 +46,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                           val executionContext: ExecutionContext)
   extends BaseController with I18nSupport {
 
-  val getNextUpdates: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+  val getNextUpdates: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSourcesNoCache).async {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
         renderViewNextUpdates

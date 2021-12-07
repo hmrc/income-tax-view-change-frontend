@@ -17,12 +17,12 @@
 package audit.models
 
 import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserBase, MtdItUserWithNino}
 import models.calculation.AllowancesAndDeductions
 import play.api.libs.json.JsValue
 import utils.Utilities._
 
-case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUser[_],
+case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
                                                     aad: AllowancesAndDeductions,
                                                     txmEventApproved: Boolean) extends ExtendedAuditModel {
 

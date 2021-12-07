@@ -21,6 +21,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
+import com.typesafe.play.cachecontrol.Seconds.ZERO.seconds
 import config.featureswitch.{ChargeHistory, CodingOut, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
@@ -32,6 +33,9 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 
 import java.time.LocalDate
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
@@ -473,6 +477,34 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(INTERNAL_SERVER_ERROR),
         pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
       )
+    }
+  }
+
+  "IncomeSourceDetails Caching" when {
+    def testChargeSummaryCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+      And("I wiremock stub a charge history response")
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+      IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
+      println("asdf" + cache.get("test").futureValue)
+      if(resetCacheAfterFirstCall) cache.removeAll()
+      IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
+      verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
+    }
+
+    "2nd incomesourcedetails call SHOULD be cached" in {
+      testChargeSummaryCaching(false, 1)
+    }
+
+    "clearing the cache after the first call should allow the 2nd call to run through" in {
+      testChargeSummaryCaching(true, 2)
     }
   }
 }

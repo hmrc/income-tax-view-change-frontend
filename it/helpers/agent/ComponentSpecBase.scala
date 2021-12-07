@@ -26,12 +26,14 @@ import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
+import testConstants.BaseIntegrationTestConstants.testMtditid
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
@@ -45,6 +47,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
 
   def config: Map[String, String] = Map(
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -87,6 +90,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     super.beforeEach()
     WireMock.reset()
     AuditStub.stubAuditing()
+//    cache.remove(testMtditid + "-incomeSources")
   }
 
   override def afterAll(): Unit = {
@@ -195,7 +199,5 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       }
     }
   }
-
-
 }
 

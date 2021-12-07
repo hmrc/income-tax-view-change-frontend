@@ -80,8 +80,8 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     verify(0, postRequest)
   }
 
-  def verifyGet(uri: String): Unit = {
-    verify(getRequestedFor(urlEqualTo(uri)))
+  def verifyGet(uri: String, noOfCalls: Int = 1): Unit = {
+    verify(exactly(noOfCalls), getRequestedFor(urlEqualTo(uri)))
   }
 
   def verifyGetWithHeader(uri: String, headerKey: String, headerValue: String): Unit = {

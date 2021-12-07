@@ -25,6 +25,7 @@ import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -46,6 +47,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockUrl: String = s"http://$mockHost:$mockPort"
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
 
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
@@ -100,6 +102,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     isAuthorisedUser(true)
     stubUserDetails()
     AuditStub.stubAuditing()
+    cache.removeAll()
   }
 
   override def afterAll(): Unit = {

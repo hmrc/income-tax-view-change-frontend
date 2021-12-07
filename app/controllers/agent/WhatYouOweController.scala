@@ -64,7 +64,7 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
   def show: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
 						whatYouOweService.getWhatYouOweChargesList().map {
 							whatYouOweChargesList => {

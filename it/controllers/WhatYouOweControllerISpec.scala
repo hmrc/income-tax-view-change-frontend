@@ -1405,4 +1405,31 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
     }
   }
+
+  "IncomeSourceDetails Caching" when {
+    def testCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+      And("I wiremock stub a charge history response")
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+      IncomeTaxViewChangeFrontend.getPaymentsDue
+      if(resetCacheAfterFirstCall) cache.removeAll()
+      IncomeTaxViewChangeFrontend.getPaymentsDue
+      verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
+    }
+
+    "2nd incomesourcedetails call SHOULD be cached" in {
+      testCaching(false, 1)
+    }
+
+    "clearing the cache after the first call should allow the 2nd call to run through" in {
+      testCaching(true, 2)
+    }
+  }
 }
