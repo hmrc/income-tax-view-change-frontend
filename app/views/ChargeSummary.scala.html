@@ -43,6 +43,13 @@
 
 @dueDate = @{documentDetailWithDueDate.dueDate}
 
+@currentDate = @{LocalDate.now}
+
+@currentTaxYearEnd = @{
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+}
+
 @whatYouOweUrl = @{
     if(isAgent) controllers.agent.routes.WhatYouOweController.show().url
     else controllers.routes.WhatYouOweController.viewPaymentsDue().url
@@ -59,7 +66,7 @@
 @checkPayeCodePara = {
     @p(){
         @messages("chargeSummary.check-paye-tax-code-1")
-        <a id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/2019">
+        <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@currentTaxYearEnd">
             @messages("chargeSummary.check-paye-tax-code-2")</a>
         @messages("chargeSummary.check-paye-tax-code-3", taxYearFrom, taxYearTo)
     }
@@ -127,7 +134,7 @@
         <div id="coding-out-wrapper" class="govuk-inset-text">
             <p id="coding-out-notice" class="govuk-body coding-out-notice">
                 @messages("chargeSummary.cancelledPayeInset-1", taxYearFrom, taxYearTo)
-                <a id="coding-out-notice-link" href="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code" target="_blank">
+                <a class="govuk-link" id="coding-out-notice-link" href="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code" target="_blank">
                     @messages("chargeSummary.cancelledPayeInset-2")</a>
                 @messages("chargeSummary.cancelledPayeInset-3")
             </p>
