@@ -26,7 +26,7 @@
     <tbody class="govuk-table__body">
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-0">
-                <a href="@{controllers.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
+                <a class="govuk-link" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
                 @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
                     <span class="govuk-visually-hidden"> @lpiAllocationDetails.documentDetail.taxYear</span>
                 </a>
