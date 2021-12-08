@@ -20,8 +20,8 @@ import java.time.LocalDate
 import models.core.{AccountingPeriodModel, CessationModel, ContactDetailsModel}
 import play.api.libs.json.{Json, OFormat}
 
-case class PropertyDetailsModel(incomeSourceId: String,
-                                accountingPeriod: AccountingPeriodModel,
+case class PropertyDetailsModel(incomeSourceId: Option[String],
+                                accountingPeriod: Option[AccountingPeriodModel],
 //                                contactDetails: Option[ContactDetailsModel],
 //                                propertiesRented: Option[PropertiesRentedModel],
 //                                cessation: Option[CessationModel],

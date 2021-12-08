@@ -16,7 +16,7 @@
 
 package controllers.agent.predicates
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserBase, MtdItUserWithNino}
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
@@ -60,7 +60,15 @@ trait ClientConfirmedController extends BaseAgentController {
     }
   }
 
-  def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService, useCache: Boolean = false)(
+  def getUserWithNino()(
+    implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): MtdItUserWithNino[AnyContent] = {
+    val userWithNino = MtdItUserWithNino(
+      mtditid = getClientMtditid, nino = getClientNino, userName = getClientName,
+      saUtr = getClientUtr, credId = user.credId, userType = Some("Agent"), arn = user.agentReferenceNumber
+    )
+    userWithNino
+  }
+    def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService, useCache: Boolean = false)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
     val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
       getClientMtditid, getClientNino, getClientName, getClientUtr, user.credId, Some("Agent"), user.agentReferenceNumber

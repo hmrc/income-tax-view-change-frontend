@@ -129,4 +129,31 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull ++ paymentsFull).detail)
     }
   }
+
+  "API#1171 GetBusinessDetails Caching" when {
+    def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+      And("I wiremock stub a charge history response")
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+      IncomeTaxViewChangeFrontend.getPaymentHistory
+      if(resetCacheAfterFirstCall) cache.removeAll()
+      IncomeTaxViewChangeFrontend.getPaymentHistory
+      verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
+    }
+
+    "2nd incomeSourceDetails call SHOULD be cached" in {
+      testIncomeSourceDetailsCaching(false, 1)
+    }
+
+    "clearing the cache after the first call should allow the 2nd call to run through" in {
+      testIncomeSourceDetailsCaching(true, 2)
+    }
+  }
 }

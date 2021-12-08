@@ -27,6 +27,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
+import javax.inject._
+import play.api.inject.ApplicationLifecycle
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
@@ -51,6 +53,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
   def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
                                                     mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
     cache.set("test", "teststring")
+    println("incomesourcedetailsservice cache hashcode: " + cache.hashCode())
     if (cacheKey.isDefined) {
       getCachedIncomeSources(cacheKey.get).flatMap {
         case Some(sources: IncomeSourceDetailsModel) =>
@@ -58,11 +61,14 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           Future.successful(sources)
         case None =>
           println("getIncomeSourceDetails cache MISS")
-          incomeTaxViewChangeConnector.getIncomeSources().map(incomeSourcesResponse => {
-            cache.set(cacheKey.get, incomeSourcesResponse.toJson, cacheExpiry)
-            println("getIncomeSourceDetails set cache key:" + cacheKey.get)
-            incomeSourcesResponse
-          })
+          incomeTaxViewChangeConnector.getIncomeSources().map {
+            case incomeSourceDetailsModel: IncomeSourceDetailsModel => {
+              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry)
+              println("getIncomeSourceDetails set cache key:" + cacheKey.get)
+              incomeSourceDetailsModel
+            }
+            case incomeSourceDetailsResponse: IncomeSourceDetailsResponse => incomeSourceDetailsResponse
+          }
       }
     } else {
       println("getIncomeSourceDetails caching NOT ENABLED")

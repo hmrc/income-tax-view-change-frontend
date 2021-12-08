@@ -70,8 +70,8 @@ class PaymentControllerISpec extends ComponentSpecBase {
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+              Some("testId"),
+              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
               Some(getCurrentTaxYearEnd)
             )),
@@ -100,8 +100,8 @@ class PaymentControllerISpec extends ComponentSpecBase {
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+              Some("testId"),
+              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
               Some(getCurrentTaxYearEnd)
             )),

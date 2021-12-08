@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved, WhatYouOweTotals,CodingOut}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -30,9 +30,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
 import views.html.WhatYouOwe
-import javax.inject.{Inject, Singleton}
 
-import scala.concurrent.ExecutionContext
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
@@ -42,7 +42,7 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                      implicit val appConfig: FrontendAppConfig,
                                      val authorisedFunctions: FrontendAuthorisedFunctions
                                     )(implicit mcc: MessagesControllerComponents,
-                                      val ec: ExecutionContext,
+                                      implicit val ec: ExecutionContext,
                                       itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
@@ -64,6 +64,10 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
   def show: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
+//        implicit val mtdUser = getUserWithNino()
+//        incomeSourceDetailsService.getIncomeSourceDetails(cacheKey = Some("key")).flatMap(
+//          res => Future.successful(itvcErrorHandler.showInternalServerError())
+//        )
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
 						whatYouOweService.getWhatYouOweChargesList().map {

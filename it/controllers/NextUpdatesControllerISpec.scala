@@ -225,9 +225,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
-      val res = IncomeTaxViewChangeFrontend.getNextUpdates
-      if(resetCacheAfterFirstCall) cache.removeAll()
-      val res2 = IncomeTaxViewChangeFrontend.getNextUpdates
+      IncomeTaxViewChangeFrontend.getNextUpdates
+      IncomeTaxViewChangeFrontend.getNextUpdates
       verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
     }
 

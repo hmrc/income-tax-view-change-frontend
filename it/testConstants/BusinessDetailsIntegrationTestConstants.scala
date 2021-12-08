@@ -53,21 +53,21 @@ object BusinessDetailsIntegrationTestConstants {
   val testMtdItId = "XIAT0000000000A"
 
   val business1 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
-    ),
+    )),
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd)
   )
 
   val business2 = BusinessDetailsModel(
-    incomeSourceId = otherTestSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(
+    incomeSourceId = Some(otherTestSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(
       start = b2AccountingStart,
       end = b2AccountingEnd
-    ),
+    )),
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd)
   )

@@ -65,15 +65,15 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd)
     )),
     property = Some(
       PropertyDetailsModel(
-        "testId2",
-        AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+        Some("testId2"),
+        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(getCurrentTaxYearEnd)
       )
     )

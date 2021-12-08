@@ -56,7 +56,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         enable(TxmEventsApproved)
         val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
 
-        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyIncomeSourceDetailsCall(testMtditid, 0)
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 

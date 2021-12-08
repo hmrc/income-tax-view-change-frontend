@@ -20,34 +20,11 @@ import java.time.LocalDate
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel, ContactDetailsModel}
 import play.api.libs.json.{Format, Json}
 
-case class BusinessDetailsModel(incomeSourceId: String,
-                                accountingPeriod: AccountingPeriodModel,
+case class BusinessDetailsModel(incomeSourceId: Option[String],
+                                accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
-//                                address: Option[AddressModel],
-//                                contactDetails: Option[ContactDetailsModel],
-//                                tradingStartDate: Option[String],
-//                                cashOrAccruals: Option[String],
-//                                seasonal: Option[Boolean],
-//                                cessation: Option[CessationModel],
-//                                paperless: Option[Boolean],
                                 firstAccountingPeriodEndDate: Option[LocalDate])
 
 object BusinessDetailsModel {
   implicit val format: Format[BusinessDetailsModel] = Json.format[BusinessDetailsModel]
 }
-
-//case class BusinessDetailsModelMinimal(incomeSourceId: String,
-//                                accountingPeriod: AccountingPeriodModel,
-//                                //                                tradingName: Option[String],
-//                                //                                address: Option[AddressModel],
-//                                //                                contactDetails: Option[ContactDetailsModel],
-//                                //                                tradingStartDate: Option[String],
-//                                //                                cashOrAccruals: Option[String],
-//                                //                                seasonal: Option[Boolean],
-//                                //                                cessation: Option[CessationModel],
-//                                //                                paperless: Option[Boolean],
-//                                firstAccountingPeriodEndDate: Option[LocalDate])
-//
-//object BusinessDetailsModel {
-//  implicit val format: Format[BusinessDetailsModel] = Json.format[BusinessDetailsModel]
-//}

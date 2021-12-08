@@ -493,7 +493,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
       IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
-      println("asdf" + cache.get("test").futureValue)
+      println("asdf" + cache.get("test").futureValue + " " + cache.hashCode())
       if(resetCacheAfterFirstCall) cache.removeAll()
       IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
       verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)

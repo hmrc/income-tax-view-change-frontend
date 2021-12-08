@@ -24,6 +24,7 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, TxmEventsApproved, WhatYouOweTotals}
 import helpers.ComponentSpecBase
+import helpers.TestIncomeSourceDetailsCaching.testIncomeSourceDetailsCaching
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import play.api.http.Status._
@@ -1406,8 +1407,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     }
   }
 
-  "IncomeSourceDetails Caching" when {
-    def testCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
+  "API#1171 GetBusinessDetails Caching" when {
+    def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -1424,12 +1425,12 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
       verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
     }
 
-    "2nd incomesourcedetails call SHOULD be cached" in {
-      testCaching(false, 1)
+    "2nd incomeSourceDetails call SHOULD be cached" in {
+      testIncomeSourceDetailsCaching(false, 1)
     }
 
     "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testCaching(true, 2)
+      testIncomeSourceDetailsCaching(true, 2)
     }
   }
 }

@@ -65,8 +65,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
       Some(getCurrentTaxYearEnd)
     )),

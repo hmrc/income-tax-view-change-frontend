@@ -33,10 +33,16 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
 
   override def toJson: JsValue = Json.toJson(this)
 
+  def sanitise: IncomeSourceDetailsModel = {
+    val property2 = property.map(p => p.copy(incomeSourceId = None, accountingPeriod = None))
+    val businesses2 = businesses.map(b => b.copy(incomeSourceId = None, accountingPeriod = None, tradingName = None))
+    this.copy(property = property2, businesses = businesses2)
+  }
+
   val startingTaxYear: Option[Int] = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption
 
-  val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
+//  val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
 
   def orderedTaxYearsByAccountingPeriods: List[Int] = {
     startingTaxYear.fold((2018 to getCurrentTaxEndYear).toList)(year => (year to getCurrentTaxEndYear).toList)

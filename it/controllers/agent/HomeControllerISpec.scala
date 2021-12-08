@@ -72,8 +72,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
     mtdbsa = testMtditid,
 		yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
 			None,
       Some(getCurrentTaxYearEnd)
     )),
@@ -787,8 +787,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					mtdbsa = testMtditid,
 					yearOfMigration = None,
 					businesses = List(BusinessDetailsModel(
-						"testId",
-						AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+						Some("testId"),
+						Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
 						None,
 						Some(getCurrentTaxYearEnd)
 					)),

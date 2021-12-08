@@ -47,8 +47,8 @@ object IndividualCalculationStub {
     WiremockHelper.stubGet(getCalculationUrl(nino, calculationId), status, body.toString())
   }
 
-  def verifyGetCalculation(nino: String, calculationId: String): Unit = {
-    WiremockHelper.verifyGet(getCalculationUrl(nino, calculationId))
+  def verifyGetCalculation(nino: String, calculationId: String, noOfCalls: Int = 1): Unit = {
+    WiremockHelper.verifyGet(getCalculationUrl(nino, calculationId), noOfCalls)
   }
 
   def stubGetCalculationNotFound(nino: String, calculationId: String): Unit = {

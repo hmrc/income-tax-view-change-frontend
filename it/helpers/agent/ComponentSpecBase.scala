@@ -34,6 +34,9 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import testConstants.BaseIntegrationTestConstants.testMtditid
+import play.api.inject.bind
+
+import scala.concurrent.Future
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
@@ -46,8 +49,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
-  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
 
   def config: Map[String, String] = Map(
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -77,9 +78,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
+//    .overrides(bind(classOf[AsyncCacheApi]) to classOf[DisabledAsyncCacheApi])
     .in(Environment.simple(mode = Mode.Dev))
     .configure(config)
     .build
+
+
+  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val cache: AsyncCacheApi = app.injector.instanceOf(classOf[AsyncCacheApi])
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -90,7 +96,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     super.beforeEach()
     WireMock.reset()
     AuditStub.stubAuditing()
-//    cache.remove(testMtditid + "-incomeSources")
+    cache.removeAll()
   }
 
   override def afterAll(): Unit = {
@@ -102,6 +108,24 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     buildClient(uri)
       .withHttpHeaders(headers: _*)
       .get().futureValue
+  }
+
+  def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get().futureValue
+  }
+
+  def getWithCalcIdInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get().futureValue
+  }
+
+  def getWithCalcIdInSessionAndWithoutAwait(uri: String, additionalCookies: Map[String, String] = Map.empty): Future[WSResponse] = {
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get()
   }
 
   object IncomeTaxViewChangeFrontend {
