@@ -22,7 +22,6 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
@@ -34,7 +33,6 @@ import views.html.agent.Home
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
-import scala.util.Try
 
 @Singleton
 class HomeController @Inject()(home: Home,
@@ -46,8 +44,7 @@ class HomeController @Inject()(home: Home,
                               (implicit mcc: MessagesControllerComponents,
                                implicit val appConfig: FrontendAppConfig,
                                val itvcErrorHandler: ItvcErrorHandler,
-                               implicit val ec: ExecutionContext,
-                               dateFormatter: ImplicitDateFormatterImpl) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                               implicit val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
 
   private def view(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
@@ -62,7 +59,6 @@ class HomeController @Inject()(home: Home,
       overduePaymentExists = overduePaymentExists,
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      implicitDateFormatter = dateFormatter,
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear
     )
