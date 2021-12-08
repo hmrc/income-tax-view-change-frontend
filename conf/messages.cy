@@ -6,6 +6,7 @@ base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
 base.error_summary.heading                                      = Mae problem wedi codi
+base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 
@@ -546,7 +547,7 @@ paymentHistory.table.header.amount                              = Swm
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
 agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Error: {0} - Treth Incwm fanylion eich cleient - GOV.UK
+agent.error.title_pattern.service_name.govuk                    = Gwall: {0} - Treth Incwm fanylion eich cleient - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw Cyfeirnod Unigryw y Trethdalwr (UTR) eich cleient?
