@@ -525,7 +525,17 @@ chargeSummary.cancelledPayeInset-1                              = You have previ
 chargeSummary.cancelledPayeInset-2                              = through your PAYE tax code (opens in new tab).timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
 chargeSummary.cancelledPayeInset-3                              = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.timeoutDialog.seconds                                           = eiliad
 
+## Regimes
+regimes.UK = Y DU
+regimes.Scotland = Yr Alban
+regimes.Wales = Cymru
 
+## Timeout
+timeoutDialog.minute                                            = munud
+timeoutDialog.minutes                                           = munud
+timeoutDialog.minutes.two                                       = funud
+timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
+timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
 button.continue                                                 = Arhoswch wedi arwyddo i mewn
 
