@@ -21,7 +21,6 @@ import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
-import implicits.ImplicitDateFormatterImpl
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
 import mocks.views.MockChargeSummary
@@ -70,7 +69,6 @@ class ChargeSummaryControllerSpec extends TestSupport
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
       app.injector.instanceOf[ExecutionContext],
       app.injector.instanceOf[ItvcErrorHandler]
     )
