@@ -430,7 +430,6 @@ nextUpdates.crystallised            							   = Final Declaration
 nextUpdates.crystallisedAll            							   = All income sources
 nextUpdates.propertyIncome            							   = Property income
 nextUpdates.business            							       = Business income
-
 sections.open.all												   = Open all
 sections.close.all												   = Close all
 
