@@ -54,6 +54,7 @@
     if(isAgent) controllers.agent.routes.WhatYouOweController.show().url
     else controllers.routes.WhatYouOweController.viewPaymentsDue().url
 }
+
 @hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }
 
 @hasInterestLocks = @{ paymentBreakdown.exists(_.interestLockExists) }
@@ -64,7 +65,7 @@
 @taxYearTo = @{documentDetail.taxYear}
 
 @checkPayeCodePara = {
-    @p(){
+    @p(id = Some("check-paye-para")){
         @messages("chargeSummary.check-paye-tax-code-1")
         <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@currentTaxYearEnd">
             @messages("chargeSummary.check-paye-tax-code-2")</a>
@@ -131,10 +132,10 @@
 
     @if(codingOutEnabled && documentDetail.isCancelledPayeSelfAssessment){
         @checkPayeCodePara
-        <div id="coding-out-wrapper" class="govuk-inset-text">
-            <p id="coding-out-notice" class="govuk-body coding-out-notice">
-                @messages("chargeSummary.cancelledPayeInset-1", taxYearFrom, taxYearTo)
-                <a class="govuk-link" id="coding-out-notice-link" href="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code" target="_blank">
+        <div id="cancelled-coding-out-wrapper" class="govuk-inset-text">
+            <p id="cancelled-coding-out-notice" class="govuk-body coding-out-notice">
+                @messages("chargeSummary.cancelledPayeInset-1")
+                <a class="govuk-link" id="cancelled-coding-out-notice-link" href="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code" target="_blank">
                     @messages("chargeSummary.cancelledPayeInset-2")</a>
                 @messages("chargeSummary.cancelledPayeInset-3")
             </p>
@@ -255,7 +256,7 @@
         <div id="payment-link-@{taxYearTo}">
             <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", taxYearFrom, taxYearTo)'>@messages("paymentDue.payNow")</a>
         </div>
-        @p(){
+        @p(id = Some("payment-days-note")){
             @messages("chargeSummary.payment-days-note")
         }
     }

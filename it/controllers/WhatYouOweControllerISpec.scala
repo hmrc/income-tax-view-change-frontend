@@ -1348,7 +1348,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
               isElementVisibleById("future-payments-heading")(expectedValue = true),
               isElementVisibleById("future-payments-type-0")(expectedValue = true),
-              isElementVisibleById("future-payments-type-1")(expectedValue = true),
+              isElementVisibleById("future-payments-type-1")(expectedValue = false),
               isElementVisibleById("future-payments-type-2")(expectedValue = false),
               isElementVisibleById(s"payment-days-note")(expectedValue = true),
               isElementVisibleById(s"credit-on-account")(expectedValue = true),

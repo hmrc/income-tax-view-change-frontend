@@ -208,6 +208,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       amountCodedOut = Some(codingOutAmount)))
   )
 
+  val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    overduePaymentList = List(testFinancialDetailsModelWithCancelledPayeSa().getAllDocumentDetailsWithDueDates.head),
+    dueInThirtyDaysList = List(),
+    futurePayments = List(),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
+  )
+
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
@@ -879,6 +888,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 0
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 1
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+      }
+      "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+        pageDocument.getElementById("coding-out-header") shouldBe null
+        pageDocument.getElementById("coding-out-notice") shouldBe null
+        pageDocument.getElementById("over-due-type-0") should not be null
+        pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
+        pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
+        pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
+        pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+        pageDocument.getElementById("coding-out-summary-link") shouldBe null
       }
     }
 
