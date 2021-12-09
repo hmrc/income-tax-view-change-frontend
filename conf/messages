@@ -425,6 +425,11 @@ nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the
 nextUpdates.previousYears.textTwo								   = page.
 nextUpdates.previousYears.link									   = tax years
+nextUpdates.eops            									   = Annual Update
+nextUpdates.crystallised            							   = Final Declaration
+nextUpdates.crystallisedAll            							   = All income sources
+nextUpdates.propertyIncome            							   = Property income
+nextUpdates.business            							       = Business income
 
 sections.open.all												   = Open all
 sections.close.all												   = Close all
