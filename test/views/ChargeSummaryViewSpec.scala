@@ -120,8 +120,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val dunningLockBannerHeader = "Important"
     val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)."
 
-    val interestLinkText = "What you owe"
-    val interestLinkFullText = "Any interest on this payment is shown as a total on the What you owe"
+    val interestLinkText = "View what you owe"
+    val interestLinkFullText = "to check if you have any interest on this payment"
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
       s"$dunningLockBannerLink You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
@@ -376,13 +376,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe Messages.interestLinkFullText
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe Messages.interestLinkFullText
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
@@ -602,13 +602,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe Messages.interestLinkFullText
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe Messages.interestLinkFullText
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {

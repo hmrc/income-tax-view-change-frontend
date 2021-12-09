@@ -527,8 +527,8 @@ chargeSummary.paymentBreakdown.interestLocks.charging              = We are char
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
 chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Late payment interest
 
-chargeSummary.interestLocks.text                                   = Any interest on this payment is shown as a total on the
-chargeSummary.interestLocks.linkText                               = What you owe
+chargeSummary.interestLocks.text                                   = to check if you have any interest on this payment
+chargeSummary.interestLocks.linkText                               = View what you owe
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
