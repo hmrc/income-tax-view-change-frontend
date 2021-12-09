@@ -77,7 +77,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-          documentDetails.filter(_.paymentLot.isEmpty).map(
+          //selects everything expect for coding out & class 2 nics
+          documentDetails.filter(_.paymentLot.isEmpty).filter(!_.isClass2Nic).filter(!_.isCodingOut).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
@@ -86,7 +87,13 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
+        val documentDetailsWithDueDatesCodingOut: List[DocumentDetailWithDueDate] = {
+          //selects only coding out & class 2 nics if FS is enabled
+          documentDetails.filter(_.paymentLot.isEmpty).filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut))).map(
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
+        }
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ => Future.successful(itvcErrorHandler.showInternalServerError())
     }

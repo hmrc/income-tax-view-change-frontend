@@ -20,7 +20,7 @@ import java.time.LocalDate
 import testConstants.BaseTestConstants.{testNino, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.FinancialDetailsResponseModel
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -50,8 +50,8 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
     (ArgumentMatchers.any())).thenReturn(Future.successful(response))
   }
 
-  def mockFinancialDetailsSuccess(taxYear: LocalDate = LocalDate.of(2018, 4, 5)): Unit =
-    setupMockGetFinancialDetails(testTaxYear)(financialDetailsModel(taxYear.getYear))
+  def mockFinancialDetailsSuccess(financialDetailsModelResponse: FinancialDetailsModel = financialDetailsModel()): Unit =
+    setupMockGetFinancialDetails(testTaxYear)(financialDetailsModelResponse)
 
   def mockFinancialDetailsFailed(): Unit =
     setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsErrorModel)
