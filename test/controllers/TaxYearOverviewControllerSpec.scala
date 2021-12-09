@@ -72,8 +72,6 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
 
 
-
-
   "The TaxYearOverview.renderTaxYearOverviewPage(year) action" when {
     "all calls are returned correctly" should {
       "show the Tax Year Overview Page" in {
