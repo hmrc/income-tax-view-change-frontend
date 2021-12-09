@@ -46,7 +46,7 @@ class FinalTaxCalculationController @Inject()(
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit agent =>
-    getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
+    getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
       calcService.getCalculationDetail(user.nino, taxYear).map {
         case CalcDisplayModel(_, _, calcDataModel, _) =>
           val calcOverview = CalcOverview(calcDataModel)
@@ -64,7 +64,7 @@ class FinalTaxCalculationController @Inject()(
   
   def submit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit agent =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
         val fullName = user.session.get(SessionKeys.clientFirstName).getOrElse("") + " " + user.session.get(SessionKeys.clientLastName).getOrElse("")
 
         calcService.getCalculationDetail(user.nino, taxYear).map {

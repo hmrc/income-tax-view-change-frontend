@@ -1427,12 +1427,18 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     }
 
-    "2nd incomesourcedetails call SHOULD be cached" in {
+    "caching should be ENABLED" in {
       testCaching(false, 1)
     }
 
     "clearing the cache after the first call should allow the 2nd call to run through" in {
       testCaching(true, 2)
+    }
+  }
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails))
     }
   }
 }

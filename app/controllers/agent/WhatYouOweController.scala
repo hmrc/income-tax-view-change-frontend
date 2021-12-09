@@ -64,10 +64,6 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
   def show: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-//        implicit val mtdUser = getUserWithNino()
-//        incomeSourceDetailsService.getIncomeSourceDetails(cacheKey = Some("key")).flatMap(
-//          res => Future.successful(itvcErrorHandler.showInternalServerError())
-//        )
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
 						whatYouOweService.getWhatYouOweChargesList().map {

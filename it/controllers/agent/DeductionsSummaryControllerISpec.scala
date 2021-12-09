@@ -65,9 +65,15 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
   )
 
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {
-    "return the correct deductions summary page" in {
+    def test(txmApproved: Boolean): Unit = {
       And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
       stubAuthorisedAgentUser(authorised = true)
+
+      if (txmApproved) {
+        enable(TxmEventsApproved)
+      } else {
+        disable(TxmEventsApproved)
+      }
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
@@ -87,7 +93,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/$testYear/income")
       val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear, clientDetails)
 
-      verifyIncomeSourceDetailsCall(testMtditid)
+      verifyIncomeSourceDetailsCall(testMtditid, 0)
       IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
       IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
@@ -97,14 +103,15 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
         pageTitle(messages.agentsDeductionsSummaryTitle),
       )
       val expectedAllowancesAndDeductions = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
+      verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, txmApproved).detail)
+    }
 
-      And("Audit Agent TXM events have been fired with TxmApproved FS true")
-      enable(TxmEventsApproved)
-      verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, true).detail)
+    "return the correct deductions summary page with TXMEvents approved" in {
+      test(true)
+    }
 
-      And("Audit Agent TXM events have been fired with TxmApproved FS false")
-      disable(TxmEventsApproved)
-      verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, false).detail)
+    "return the correct deductions summary page with TXMEvents disabled" in {
+      test(false)
     }
   }
 }

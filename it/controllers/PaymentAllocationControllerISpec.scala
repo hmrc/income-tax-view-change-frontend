@@ -134,8 +134,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     }
   }
 
-  "API#1171 GetBusinessDetails Caching" when {
-    "2nd incomeSourceDetails call SHOULD be cached" in {
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber))
     }

@@ -56,7 +56,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
         withCalculation(getClientNino(request), taxYear) { calculationOpt =>
           withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
             withObligationsModel(taxYear) { obligations =>

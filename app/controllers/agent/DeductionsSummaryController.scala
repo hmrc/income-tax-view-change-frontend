@@ -19,6 +19,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -28,6 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.DeductionBreakdown
 
 import javax.inject.Inject
@@ -48,21 +50,20 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-				getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-					calculationService.getCalculationDetail(getClientNino, taxYear).map {
-						case calcDisplayModel: CalcDisplayModel =>
-							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(mtdItUser,
-								calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
-							Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true))
+				val mtdItUserWithNino = getMtdItUserWithNino()
+				calculationService.getCalculationDetail(getClientNino, taxYear).map {
+					case calcDisplayModel: CalcDisplayModel =>
+						auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(mtdItUserWithNino,
+							calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
+						Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true))
 
-						case CalcDisplayNoDataFound =>
-							Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
-							itvcErrorHandler.showInternalServerError()
+					case CalcDisplayNoDataFound =>
+						Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
+						itvcErrorHandler.showInternalServerError()
 
-						case CalcDisplayError =>
-							Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
-							itvcErrorHandler.showInternalServerError()
-					}
+					case CalcDisplayError =>
+						Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+						itvcErrorHandler.showInternalServerError()
 				}
     }
 

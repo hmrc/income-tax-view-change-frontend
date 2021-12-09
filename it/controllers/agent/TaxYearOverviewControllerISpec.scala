@@ -1075,4 +1075,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
   }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be DISABLED" in {
+      testIncomeSourceDetailsCaching(false, 2,
+        () => IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
+    }
+  }
 }

@@ -47,7 +47,7 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
         calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
           case calcDisplayModel: CalcDisplayModel =>
             if (isEnabled(TxmEventsApproved)) {

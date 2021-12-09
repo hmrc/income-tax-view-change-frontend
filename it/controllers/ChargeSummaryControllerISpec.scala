@@ -480,8 +480,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     }
   }
 
-  "API#1171 GetBusinessDetails Caching" when {
-    "2nd incomeSourceDetails call SHOULD be cached" in {
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123"))
     }

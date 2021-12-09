@@ -207,5 +207,13 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     }
   }
 
-
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => {
+          enable(PaymentAllocation)
+          IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
+        })
+    }
+  }
 }

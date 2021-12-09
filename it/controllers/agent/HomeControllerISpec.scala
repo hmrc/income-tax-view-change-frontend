@@ -804,4 +804,11 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 			)
 		}
 	}
+
+	"API#1171 GetBusinessDetails Caching" when {
+		"2nd incomeSourceDetails call SHOULD be cached" in {
+			testIncomeSourceDetailsCaching(false, 1,
+				() => IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation))
+		}
+	}
 }

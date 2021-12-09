@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import forms.agent.ClientsUTRForm
-import helpers.servicemocks.AuditStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
@@ -28,13 +28,14 @@ import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import play.api.inject.bind
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
 
 import scala.concurrent.Future
 
@@ -78,7 +79,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
-//    .overrides(bind(classOf[AsyncCacheApi]) to classOf[DisabledAsyncCacheApi])
     .in(Environment.simple(mode = Mode.Dev))
     .configure(config)
     .build
@@ -222,6 +222,24 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       }
     }
+  }
+
+  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int, callback: () => Unit): Unit = {
+    stubAuthorisedAgentUser(authorised = true)
+    Given("I wiremock stub a successful Income Source Details response with property only")
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+    And("I wiremock stub a single financial transaction response")
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+      dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+    And("I wiremock stub a charge history response")
+    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+    callback()
+    if(resetCacheAfterFirstCall) cache.removeAll()
+    callback()
+    verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
   }
 }
 

@@ -49,7 +49,7 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       if (isEnabled(PaymentAllocation)) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           paymentAllocationsService.getPaymentAllocation(Nino(getClientNino(request)), documentNumber) map {
             case Right(viewModel: PaymentAllocationViewModel) =>
               if (isEnabled(TxmEventsApproved)) {
