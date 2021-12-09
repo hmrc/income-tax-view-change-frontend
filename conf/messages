@@ -9,7 +9,7 @@ base.backToHome                                                 = Back to Income
 base.continue                                                   = Continue
 base.error_summary.heading                                      = There is a problem
 base.error-prefix                                               = Error:
-base.govUk                                                    = GOV.UK
+base.govUk                                                      = GOV.UK
 
 # Agent Base
 agent.base.service_name                                         = Your client’s Income Tax details
