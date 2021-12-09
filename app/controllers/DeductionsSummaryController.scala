@@ -38,7 +38,6 @@ import scala.concurrent.ExecutionContext
 class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
                                             val retrieveNino: NinoPredicate,
-                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                             val calculationService: CalculationService,
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,

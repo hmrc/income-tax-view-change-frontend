@@ -480,31 +480,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     }
   }
 
-  "IncomeSourceDetails Caching" when {
-    def testChargeSummaryCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
-      Given("I wiremock stub a successful Income Source Details response with property only")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-      And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
-        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
-
-      And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
-
-      IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
-      println("asdf" + cache.get("test").futureValue + " " + cache.hashCode())
-      if(resetCacheAfterFirstCall) cache.removeAll()
-      IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
-      verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
+  "API#1171 GetBusinessDetails Caching" when {
+    "2nd incomeSourceDetails call SHOULD be cached" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123"))
     }
-
-    "2nd incomesourcedetails call SHOULD be cached" in {
-      testChargeSummaryCaching(false, 1)
-    }
-
     "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testChargeSummaryCaching(true, 2)
+      testIncomeSourceDetailsCaching(true, 2,
+        () => IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123"))
     }
   }
 }

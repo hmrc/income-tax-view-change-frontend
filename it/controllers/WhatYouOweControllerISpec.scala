@@ -16,7 +16,7 @@
 
 package controllers
 
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr, testYear}
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
@@ -24,7 +24,6 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, TxmEventsApproved, WhatYouOweTotals}
 import helpers.ComponentSpecBase
-import helpers.TestIncomeSourceDetailsCaching.testIncomeSourceDetailsCaching
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import play.api.http.Status._
@@ -1408,29 +1407,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
   }
 
   "API#1171 GetBusinessDetails Caching" when {
-    def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
-      Given("I wiremock stub a successful Income Source Details response with property only")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-      And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
-        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
-
-      And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
-
-      IncomeTaxViewChangeFrontend.getPaymentsDue
-      if(resetCacheAfterFirstCall) cache.removeAll()
-      IncomeTaxViewChangeFrontend.getPaymentsDue
-      verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
-    }
-
     "2nd incomeSourceDetails call SHOULD be cached" in {
-      testIncomeSourceDetailsCaching(false, 1)
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue)
     }
-
     "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2)
+      testIncomeSourceDetailsCaching(true, 2,
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue)
     }
   }
 }

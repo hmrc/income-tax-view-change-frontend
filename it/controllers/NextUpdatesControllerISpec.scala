@@ -213,25 +213,10 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
     }
   }
 
-  "IncomeSourceDetails Caching" when {
-    def testCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int): Unit = {
-      Given("I wiremock stub a successful Income Source Details response with property only")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-      And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
-        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
-
-      And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
-
-      IncomeTaxViewChangeFrontend.getNextUpdates
-      IncomeTaxViewChangeFrontend.getNextUpdates
-      verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
-    }
-
-    "2nd incomesourcedetails call should NOT be cached" in {
-      testCaching(false, 2)
+  "API#1171 GetBusinessDetails Caching" when {
+    "2nd incomeSourceDetails call SHOULD be cached" in {
+      testIncomeSourceDetailsCaching(false, 2,
+        () => IncomeTaxViewChangeFrontend.getNextUpdates)
     }
   }
 }

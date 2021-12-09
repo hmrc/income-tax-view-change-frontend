@@ -22,10 +22,6 @@ import play.api.libs.json.{Json, OFormat}
 
 case class PropertyDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
-//                                contactDetails: Option[ContactDetailsModel],
-//                                propertiesRented: Option[PropertiesRentedModel],
-//                                cessation: Option[CessationModel],
-//                                paperless: Option[Boolean],
                                 firstAccountingPeriodEndDate: Option[LocalDate])
 
 object PropertyDetailsModel {

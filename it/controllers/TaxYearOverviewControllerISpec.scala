@@ -872,4 +872,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       )
     }
   }
+
+  "API#1171 GetBusinessDetails Caching" when {
+    "2nd incomeSourceDetails call SHOULD NOT be cached" in {
+      testIncomeSourceDetailsCaching(false, 2,
+        () => IncomeTaxViewChangeFrontend.getCalculation(testYear))
+    }
+  }
 }
