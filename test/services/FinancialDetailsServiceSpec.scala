@@ -67,11 +67,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       Some(getTaxEndYear(LocalDate.now.minusYears(numYears - 1)).toString),
       businesses = (1 to numYears).toList.map { count =>
         BusinessDetailsModel(
-          incomeSourceId = s"income-id-$count",
-          accountingPeriod = AccountingPeriodModel(
+          incomeSourceId = Some(s"income-id-$count"),
+          accountingPeriod = Some(AccountingPeriodModel(
             start = LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count)), april, sixth),
             end = LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)
-          ),
+          )),
           None,
           firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth))
         )

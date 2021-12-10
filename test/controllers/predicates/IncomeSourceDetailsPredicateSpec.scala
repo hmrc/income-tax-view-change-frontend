@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService with MockAsyncCacheApi {
 
   object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(mockIncomeSourceDetailsService,
-    app.injector.instanceOf[ItvcErrorHandler], mockAsyncCacheApi)(
+    app.injector.instanceOf[ItvcErrorHandler])(
     ec, app.injector.instanceOf[MessagesControllerComponents]
   )
 

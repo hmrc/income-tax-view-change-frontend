@@ -17,16 +17,16 @@
 package mocks.controllers.predicates
 
 import config.ItvcErrorHandler
-import controllers.predicates.IncomeSourceDetailsPredicate
+import controllers.predicates.{IncomeSourceDetailsPredicate, IncomeSourceDetailsPredicateNoCache}
 import mocks.services._
 import play.api.cache.AsyncCacheApi
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
-trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSourceDetailsService with MockAsyncCacheApi {
+trait MockIncomeSourceDetailsPredicateNoCache extends TestSupport with MockIncomeSourceDetailsService{
 
-  object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(
+  object MockIncomeSourceDetailsPredicateNoCache extends IncomeSourceDetailsPredicateNoCache(
     mockIncomeSourceDetailsService, app.injector.instanceOf[ItvcErrorHandler])(
     ec, app.injector.instanceOf[MessagesControllerComponents])
 }

@@ -29,11 +29,12 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 import javax.inject._
 import play.api.inject.ApplicationLifecycle
+import scala.concurrent.ExecutionContext.global
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                           val cache: AsyncCacheApi, implicit val executionContext: ExecutionContext) {
-
+                                           val cache: AsyncCacheApi) {
+  implicit val ec = ExecutionContext.global
   val cacheExpiry: Duration = Duration(100, "seconds")
 //  val cacheKey = request.headers.get(HeaderNames.xSessionId) + request.nino + "-incomeSources"
   def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {

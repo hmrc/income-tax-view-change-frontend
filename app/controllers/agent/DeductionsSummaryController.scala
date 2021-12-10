@@ -19,7 +19,6 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
-import auth.{MtdItUser, MtdItUserWithNino}
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -27,9 +26,8 @@ import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{CalculationService, IncomeSourceDetailsService}
+import services.CalculationService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.DeductionBreakdown
 
 import javax.inject.Inject
@@ -37,7 +35,6 @@ import scala.concurrent.ExecutionContext
 
 class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdown,
                                             val authorisedFunctions: AuthorisedFunctions,
-                                            incomeSourceDetailsService: IncomeSourceDetailsService,
                                             auditingService: AuditingService,
                                             calculationService: CalculationService)
                                            (implicit val appConfig: FrontendAppConfig,
@@ -50,10 +47,13 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-				val mtdItUserWithNino = getMtdItUserWithNino()
-				calculationService.getCalculationDetail(getClientNino, taxYear).map {
+				val nino = getClientNino
+				println("calcservice" + nino + taxYear)
+//				println("getcalcdetail" + calculationService.getCalculationDetail.toString())
+				println("resulst" + calculationService.getCalculationDetail(nino, taxYear))
+				calculationService.getCalculationDetail(nino, taxYear).map {
 					case calcDisplayModel: CalcDisplayModel =>
-						auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(mtdItUserWithNino,
+						auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(getMtdItUserWithNino(),
 							calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
 						Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true))
 

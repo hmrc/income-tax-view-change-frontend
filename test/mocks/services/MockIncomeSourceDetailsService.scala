@@ -40,7 +40,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
 
   def setupMockGetIncomeSourceDetails()(sources: IncomeSourceDetailsResponse): Unit = {
     when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      mockIncomeSourceDetailsService.getIncomeSourceDetails(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(sources))
   }
 

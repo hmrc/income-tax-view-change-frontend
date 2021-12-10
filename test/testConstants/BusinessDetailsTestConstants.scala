@@ -50,51 +50,51 @@ object BusinessDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
   val business1 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = testBusinessAccountingPeriod,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(2018, 4, 5))
   )
 
 
   val business2 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId2,
-    accountingPeriod = testBusinessAccountingPeriod,
+    incomeSourceId = Some(testSelfEmploymentId2),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName2),
     firstAccountingPeriodEndDate = None
   )
 
   val business2018 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = test2018BusinessAccountingPeriod,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(test2018BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None
   )
 
   val business2019 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = test2019BusinessAccountingPeriod,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(test2019BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None
   )
 
   val alignedBusiness = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5))),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val ceasedBusiness = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = testBusinessAccountingPeriod,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5))),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )

@@ -31,6 +31,7 @@ trait MockAsyncCacheApi extends UnitSpec with MockitoSugar with BeforeAndAfterEa
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+
     reset(mockAsyncCacheApi)
     when(mockAsyncCacheApi.get(ArgumentMatchers.any())(ArgumentMatchers.any()))
       .thenReturn(Future.successful(None))

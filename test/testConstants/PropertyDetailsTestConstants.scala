@@ -30,14 +30,14 @@ object PropertyDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
 
   val propertyDetails = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = testPropertyAccountingPeriod,
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = testPropertyAccountingPeriod,
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None
   )
 

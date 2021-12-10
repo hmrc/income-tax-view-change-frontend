@@ -51,7 +51,7 @@ class NextUpdatesViewSpec extends TestSupport {
 	}
 
 	lazy val obligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-		business1.incomeSourceId,
+		business1.incomeSourceId.get,
 		twoObligationsSuccessModel.obligations
 	)))
 

@@ -54,8 +54,8 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
       ArgumentMatchers.eq(model),
       AdditionalMatchers.or(ArgumentMatchers.eq(path), ArgumentMatchers.isNull)
     )(
-      ArgumentMatchers.any[HeaderCarrier],
-      ArgumentMatchers.any[Request[_]],
-      ArgumentMatchers.any[ExecutionContext]
+      ArgumentMatchers.any(),
+      ArgumentMatchers.any(),
+      ArgumentMatchers.any()
     )
 }

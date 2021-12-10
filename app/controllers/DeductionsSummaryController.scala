@@ -58,6 +58,8 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
       implicit user =>
           calculationService.getCalculationDetail(user.nino, taxYear).map {
             case calcDisplayModel: CalcDisplayModel =>
+              println("controller model:" + AllowanceAndDeductionsResponseAuditModel(user,
+                calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
                 calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
               Ok(deductionBreakdownView(calcDisplayModel, taxYear, backUrl(taxYear)))

@@ -31,35 +31,35 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
       //Test Business details
       s"have a business ID of $testSelfEmploymentId" in {
-        businessesAndPropertyIncome.businesses.head.incomeSourceId shouldBe testSelfEmploymentId
+        businessesAndPropertyIncome.businesses.head.incomeSourceId.get shouldBe testSelfEmploymentId
       }
       s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        businessesAndPropertyIncome.businesses.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        businessesAndPropertyIncome.businesses.head.accountingPeriod.get.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the businesses accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        businessesAndPropertyIncome.businesses.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        businessesAndPropertyIncome.businesses.head.accountingPeriod.get.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
         businessesAndPropertyIncome.businesses.head.tradingName.get shouldBe testTradeName
       }
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        businessesAndPropertyIncome.property.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        businessesAndPropertyIncome.property.get.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        businessesAndPropertyIncome.property.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        businessesAndPropertyIncome.property.get.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
       }
     }
 
     "the user has just a business income source" should {
       s"have a business ID of $testSelfEmploymentId" in {
-        singleBusinessIncome.businesses.head.incomeSourceId shouldBe testSelfEmploymentId
+        singleBusinessIncome.businesses.head.incomeSourceId.get shouldBe testSelfEmploymentId
       }
       s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        singleBusinessIncome.businesses.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        singleBusinessIncome.businesses.head.accountingPeriod.get.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the businesses accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        singleBusinessIncome.businesses.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        singleBusinessIncome.businesses.head.accountingPeriod.get.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
         singleBusinessIncome.businesses.head.tradingName.get shouldBe testTradeName
@@ -72,10 +72,10 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
     "the user has just a property income source" should {
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        propertyIncomeOnly.property.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        propertyIncomeOnly.property.get.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        propertyIncomeOnly.property.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        propertyIncomeOnly.property.get.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
       }
       //Test Business Details
       "should not have business details" in {
