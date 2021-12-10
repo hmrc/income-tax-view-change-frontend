@@ -472,8 +472,8 @@ chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn
 chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn codi llog arnoch ar y taliad hwn
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
 
-chargeSummary.interestLocks.text                                   = Mae unrhyw log ar y taliad hwn yn ymddangos fel cyfanswm ar y dudalen
-chargeSummary.interestLocks.linkText                               = Yr hyn sydd arnoch
+chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn
+chargeSummary.interestLocks.linkText                               = Bwrw golwg dros yr hyn sydd arnoch
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
