@@ -19,7 +19,6 @@ package controllers.agent
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import config.featureswitch._
-import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
@@ -63,8 +62,7 @@ class HomeControllerSpec extends TestSupport
     )(app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig],
       mockItvcErrorHandler,
-      app.injector.instanceOf[ExecutionContext],
-      app.injector.instanceOf[ImplicitDateFormatterImpl])
+      app.injector.instanceOf[ExecutionContext])
   }
 
   "show" when {
