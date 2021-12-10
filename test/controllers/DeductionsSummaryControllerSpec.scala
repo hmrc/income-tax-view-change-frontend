@@ -22,11 +22,11 @@ import testConstants.EstimatesTestConstants.testYear
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.mocks.MockAuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.controllers.predicates.{MockAuthenticationPredicate}
+import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
@@ -65,8 +65,8 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
             mockCalculationSuccess()
             status(result) shouldBe Status.OK
 
-            val expectedMtdItUser = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-              businessIncome2018and2019, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
+            val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
+              saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
             verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
               calculationDataSuccessModel.allowancesAndDeductions, true))
@@ -89,12 +89,12 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
             mockCalculationSuccess()
             status(result) shouldBe Status.OK
 
-            val expectedMtdItUser = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-              businessIncome2018and2019, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
+            val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
+              saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
 //            println("test model: " + AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
 //              calculationDataSuccessModel.allowancesAndDeductions, false))
-//            verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
-//              calculationDataSuccessModel.allowancesAndDeductions, false))
+            verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
+              calculationDataSuccessModel.allowancesAndDeductions, false))
           }
         }
         "given a tax year which can not be found in ETMP" should {
