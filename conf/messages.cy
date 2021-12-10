@@ -283,7 +283,11 @@ obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
 obligations.quarterly                                           = Bob chwarter
-
+nextUpdates.eops            									= Diweddariad blynyddol
+nextUpdates.crystallised            							= Datganiad terfynol
+nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
+nextUpdates.propertyIncome            							= Incwm o eiddo
+nextUpdates.business            							    = Business income
 
 ## Previous Obligations ##
 
