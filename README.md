@@ -18,7 +18,7 @@ This service is written in [Scala](http://www.scala-lang.org/) and [Play](http:/
 ## Run the application
 
 
-To update from Nexus and start all services from the RELEASE version instead of snapshot
+To start all Service Manager services from the latest RELEASE version instead of snapshot
 
 ```
 sm --start ITVC_ALL --appendArgs '{"CITIZEN_DETAILS":["-Dmongodb.cid-sautr-cache.enabled=false"]}' -r

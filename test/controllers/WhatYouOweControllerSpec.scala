@@ -19,8 +19,9 @@ package controllers
 import testConstants.BaseTestConstants
 import testConstants.FinancialDetailsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -30,11 +31,13 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.WhatYouOweService
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.WhatYouOwe
 
 import scala.concurrent.Future
 
-class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockIncomeTaxViewChangeConnector {
 
 
   trait Setup {
@@ -122,7 +125,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
-
   }
 
 }

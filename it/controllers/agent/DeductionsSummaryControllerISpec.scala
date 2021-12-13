@@ -94,8 +94,8 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear, clientDetails)
 
       verifyIncomeSourceDetailsCall(testMtditid, 0)
-      IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-      IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+      IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18", 2)
+      IndividualCalculationStub.verifyGetCalculation(testNino, "idOne", 2)
 
       Then("I see Allowances and deductions page")
       res should have(
