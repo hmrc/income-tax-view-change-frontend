@@ -88,6 +88,13 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         noIncomeDetails.businesses shouldBe List.empty
       }
     }
+    "the sanitise method" should {
+      "remove all unnecessary fields" in {
+        val expected = "IncomeSourceDetailsModel(XIAT0000000000A,Some(2021),List(BusinessDetailsModel(None,None,None,None)," +
+          " BusinessDetailsModel(None,None,None,Some(2021-04-05))),Some(PropertyDetailsModel(None,None,None)))"
+        preSanitised.sanitise.toString shouldBe expected
+      }
+    }
   }
 
 }
