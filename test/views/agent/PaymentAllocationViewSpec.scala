@@ -203,12 +203,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
-             |Income Tax for remaining balance 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
-             |Class 4 National Insurance for remaining balance 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
-             |Class 2 National Insurance for remaining balance 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
-             |Capital Gains Tax for remaining balance 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
-             |Student Loans for remaining balance 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
-             |Voluntary Class 2 National Insurance for remaining balance 2020 Tax year 2019 to 2020 29 Aug 2019 £7,654.32
+             |Income Tax for Balancing payment 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
+             |Class 4 National Insurance for Balancing payment 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
+             |Class 2 National Insurance for Balancing payment 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
+             |Capital Gains Tax for Balancing payment 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
+             |Student Loans for Balancing payment 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
+             |Voluntary Class 2 National Insurance for Balancing payment 2020 Tax year 2019 to 2020 29 Aug 2019 £7,654.32
              |Credit on account £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 

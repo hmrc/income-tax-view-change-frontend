@@ -140,7 +140,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Remaining balance - Business Tax account - GOV.UK"),
+        pageTitle("Balancing payment - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
@@ -184,7 +184,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Remaining balance - Business Tax account - GOV.UK"),
+        pageTitle("Balancing payment - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
@@ -223,7 +223,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Remaining balance - Business Tax account - GOV.UK"),
+        pageTitle("Balancing payment - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("")
       )
     }
@@ -264,9 +264,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK"),
+        pageTitle("Late payment interest on Balancing payment - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("Payment history"),
-        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Late payment interest for remaining balance created")
+        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Late payment interest for Balancing payment created")
       )
     }
 
@@ -289,7 +289,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK"),
+        pageTitle("Late payment interest on Balancing payment - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("Payment history"),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
 
@@ -315,7 +315,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on remaining balance - Business Tax account - GOV.UK"),
+        pageTitle("Late payment interest on Balancing payment - Business Tax account - GOV.UK"),
         elementTextBySelector("main h2")("")
       )
     }
@@ -426,7 +426,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     result should have(
       httpStatus(OK),
-      pageTitle("Remaining balance - Business Tax account - GOV.UK")
+      pageTitle("Balancing payment - Business Tax account - GOV.UK")
     )
   }
 
@@ -448,7 +448,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     result should have(
       httpStatus(OK),
-      pageTitle("Remaining balance - Business Tax account - GOV.UK")
+      pageTitle("Balancing payment - Business Tax account - GOV.UK")
     )
   }
 
