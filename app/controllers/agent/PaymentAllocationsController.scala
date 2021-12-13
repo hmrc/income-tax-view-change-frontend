@@ -27,8 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
-import views.html.agent.PaymentAllocation
-
+import views.html.PaymentAllocation
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,7 +54,7 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
               if (isEnabled(TxmEventsApproved)) {
                 auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(mtdItUser, viewModel))
               }
-              Ok(paymentAllocationView(viewModel, backUrl = backUrl))
+              Ok(paymentAllocationView(viewModel, backUrl = backUrl, isAgent = true))
             case _ => itvcErrorHandler.showInternalServerError()
           }
         }
