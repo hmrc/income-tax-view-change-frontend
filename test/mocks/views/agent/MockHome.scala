@@ -35,9 +35,21 @@ trait MockHome extends BeforeAndAfterEach with MockitoSugar {
     reset(home)
   }
 
-  def mockHome(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-               nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int], dunningLockExists: Boolean = false)(response: Html): Unit = {
-    when(home.apply(matches(nextPaymentOrOverdue), matches(nextUpdateOrOverdue), any(), any(), any(), any(), matches(dunningLockExists),any())(any(), any(), any(), any()))
+  def mockHome(
+    nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
+    nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
+    dunningLockExists: Boolean = false)(response: Html): Unit = {
+    when(
+      home.apply(
+        matches(nextPaymentOrOverdue),
+        matches(nextUpdateOrOverdue),
+        any(),
+        any(),
+        any(),
+        matches(dunningLockExists),
+        any()
+      )(any(), any(), any(), any())
+    )
       .thenReturn(response)
   }
 

@@ -16,7 +16,6 @@
 
 package controllers
 
-import testConstants.MessagesLookUp
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -24,25 +23,27 @@ import models.calculation.Calculation
 import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.test.Helpers._
 import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers._
 import services.{FinancialDetailsService, NextUpdatesService}
+import testConstants.MessagesLookUp
 import utils.CurrentDateProvider
 
-import java.time.LocalDate
+import java.time.{LocalDate, Month}
 import scala.concurrent.Future
 
 class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
-	val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2018, 1, 1), Seq.empty[LocalDate])
-	val nextPaymentDate: LocalDate = LocalDate.of(2019, 1, 31)
-	val nextPaymentDate2: LocalDate = LocalDate.of(2018, 1, 31)
 	val updateYear: String = "2018"
 	val nextPaymentYear: String = "2019"
 	val nextPaymentYear2: String = "2018"
+	val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), Seq.empty[LocalDate])
+	val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
+	val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
+
 	val emptyEstimateCalculation: Calculation = Calculation(crystallised = false)
 	val emptyCrystallisedCalculation: Calculation = Calculation(crystallised = true)
 

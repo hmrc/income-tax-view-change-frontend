@@ -248,8 +248,8 @@
 
     @if(hasInterestLocks && hasAccruedInterest) {
         @p(){
-            @messages("chargeSummary.interestLocks.text")
             @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText")
+            @messages("chargeSummary.interestLocks.text")
         }
     } else {
         @p(){

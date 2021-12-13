@@ -162,7 +162,7 @@
             @dueObligations.map { nextUpdateWithIncomeType =>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
-                    <td class="govuk-table__cell">@obligationsTypeHelper(nextUpdateWithIncomeType.incomeType)</td>
+                    <td class="govuk-table__cell">@obligationsTypeHelper@{messages(nextUpdateWithIncomeType.incomeType)}</td>
                     <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
                 </tr>
             }

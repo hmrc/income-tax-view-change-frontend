@@ -85,9 +85,9 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def poaInterestHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
 
-    def balancingChargeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Remaining balance"
+    def balancingChargeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Balancing payment"
 
-    def balancingChargeInterestHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
+    def balancingChargeInterestHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on Balancing payment"
 
     def class2NicHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Class 2 National Insurance"
 
@@ -108,12 +108,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
-    val balancingChargeCreated = "Remaining balance created"
-    val balancingChargeInterestCreated = "Late payment interest for remaining balance created"
+    val balancingChargeCreated = "Balancing payment created"
+    val balancingChargeInterestCreated = "Late payment interest for Balancing payment created"
 
     def paymentOnAccountAmended(number: Int) = s"Payment on account $number of 2 reduced due to amended return"
 
-    val balancingChargeAmended = "Remaining balance reduced due to amended return"
+    val balancingChargeAmended = "Balancing payment reduced due to amended return"
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
@@ -127,9 +127,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
     def remainingTaxYouOwe(year: Int) = s"This is the remaining tax you owe for the ${year - 1} to $year tax year."
 
-    val balancingChargeRequest = "Remaining balance reduced by taxpayer request"
+    val balancingChargeRequest = "Balancing payment reduced by taxpayer request"
     val dunningLockBannerHeader = "Important"
     val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)."
+
+    val interestLinkText = "View what you owe"
+    val interestLinkFullText = "to check if you have any interest on this payment"
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
       s"$dunningLockBannerLink You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
@@ -254,9 +257,9 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe "What you owe page"
+        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "not display the Payment breakdown list for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
@@ -431,15 +434,15 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe "What you owe page"
+        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
-        document.select("#main-content p a").text() shouldBe "What you owe page"
+        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
@@ -577,12 +580,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
             "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 2018 £1,600.00",
             "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 2018 £2,400.00",
             "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 2018 £2,500.00",
-            "10 Dec 2019 Payment allocated to Income Tax for remaining balance 2018 £3,400.00",
-            "11 Dec 2019 Payment allocated to Class 4 National Insurance for remaining balance 2018 £3,500.00",
-            "12 Dec 2019 Payment allocated to Class 2 National Insurance for remaining balance 2018 £3,600.00",
-            "13 Dec 2019 Payment allocated to Capital Gains Tax for remaining balance 2018 £3,700.00",
-            "14 Dec 2019 Payment allocated to Student Loans for remaining balance 2018 £3,800.00",
-            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance 2018 £3,900.00"
+            "10 Dec 2019 Payment allocated to Income Tax for Balancing payment 2018 £3,400.00",
+            "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment 2018 £3,500.00",
+            "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment 2018 £3,600.00",
+            "13 Dec 2019 Payment allocated to Capital Gains Tax for Balancing payment 2018 £3,700.00",
+            "14 Dec 2019 Payment allocated to Student Loans for Balancing payment 2018 £3,800.00",
+            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for Balancing payment 2018 £3,900.00"
           )
 
           "chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
@@ -659,15 +662,15 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe "What you owe page"
+        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe "What you owe page"
+        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe "Any interest on this payment is shown as a total on the What you owe page"
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {

@@ -136,10 +136,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val updateDateSubmitted: String = "Date submitted"
     val lpiPaymentOnAccount1: String = "Late payment interest for payment on account 1 of 2"
     val lpiPaymentOnAccount2: String = "Late payment interest for payment on account 2 of 2"
-    val lpiRemainingBalance: String = "Late payment interest for remaining balance"
+    val lpiRemainingBalance: String = "Late payment interest for Balancing payment"
     val paymentUnderReview: String = "Payment under review"
     val class2Nic: String = "Class 2 National Insurance"
-    val remainingBalance: String = "Remaining balance"
+    val remainingBalance: String = "Balancing payment"
     val payeSA: String = "PAYE Self Assessment"
     val na: String = "N/A"
     val payeTaxCode: String = "PAYE tax code"
@@ -333,26 +333,26 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(4)").text shouldBe "£80.00"
       }
 
-      "display the payment type as a link to Charge Summary in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      "display the payment type as a link to Charge Summary in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(1) a")
         paymentTypeLink.text shouldBe taxYearOverviewMessages.lpiRemainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
-      "display the Due date in the Payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      "display the Due date in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
         layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 Aug 2019"
       }
 
-      "display the Status in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      "display the Status in the payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
         layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe taxYearOverviewMessages.paid
       }
 
-      "display the Amount in the payments tab for late payment interest remaining balance" in new Setup(estimateView()) {
+      "display the Amount in the payments tab for late payment interest p" in new Setup(estimateView()) {
         layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(4)").text shouldBe "£100.00"
       }
 
-      "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Remaining Balance" in new Setup(multipleDunningLockView()) {
+      "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Balancing payment" in new Setup(multipleDunningLockView()) {
         layoutContent.selectHead("#payments-table tbody tr:nth-child(1) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
         layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearOverviewMessages.paymentUnderReview
         layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)")
@@ -365,7 +365,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display the Remaining balance payment link on the payments table when coding out is disabled" in new Setup(class2NicsView(codingOutEnabled = false)) {
+      "display the Balancing payment payment link on the payments table when coding out is disabled" in new Setup(class2NicsView(codingOutEnabled = false)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
@@ -392,7 +392,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
 
-      "display the Remaining balance on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = false)) {
+      "display the Balancing payment on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = false)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
