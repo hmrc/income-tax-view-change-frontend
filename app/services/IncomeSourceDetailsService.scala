@@ -53,12 +53,12 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         case Some(sources: IncomeSourceDetailsModel) =>
           Future.successful(sources)
         case None =>
-          incomeTaxViewChangeConnector.getIncomeSources().map {
-            case incomeSourceDetailsModel: IncomeSourceDetailsModel => {
-              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry)
-              incomeSourceDetailsModel
-            }
-            case incomeSourceDetailsResponse: IncomeSourceDetailsResponse => incomeSourceDetailsResponse
+          incomeTaxViewChangeConnector.getIncomeSources().flatMap {
+            case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
+              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
+                _ => incomeSourceDetailsModel
+              )
+            case error: IncomeSourceDetailsResponse => Future.successful(error)
           }
       }
     } else {
