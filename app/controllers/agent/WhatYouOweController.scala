@@ -42,7 +42,7 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                      implicit val appConfig: FrontendAppConfig,
                                      val authorisedFunctions: FrontendAuthorisedFunctions
                                     )(implicit mcc: MessagesControllerComponents,
-                                      implicit val ec: ExecutionContext,
+                                      val ec: ExecutionContext,
                                       itvcErrorHandler: ItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 

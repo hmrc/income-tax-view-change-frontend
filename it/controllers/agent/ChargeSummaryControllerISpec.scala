@@ -500,11 +500,5 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             currentTaxYearEnd.getYear.toString, "testId", clientDetails
           ))
     }
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2,
-        () => IncomeTaxViewChangeFrontend.getChargeSummary(
-          currentTaxYearEnd.getYear.toString, "testId", clientDetails
-        ))
-    }
   }
 }

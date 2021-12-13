@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._

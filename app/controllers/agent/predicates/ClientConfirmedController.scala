@@ -16,7 +16,7 @@
 
 package controllers.agent.predicates
 
-import auth.{MtdItUser, MtdItUserBase, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserWithNino}
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser

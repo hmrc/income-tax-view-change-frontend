@@ -17,7 +17,7 @@
 package audit
 
 import _root_.models.financialDetails.DocumentDetail
-import auth.{MtdItUser, MtdItUserBase}
+import auth.MtdItUserBase
 import play.api.libs.json.{JsObject, Json}
 import utils.Utilities.JsonUtil
 

@@ -135,9 +135,5 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getPaymentHistory)
     }
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2,
-        () => IncomeTaxViewChangeFrontend.getPaymentHistory)
-    }
   }
 }

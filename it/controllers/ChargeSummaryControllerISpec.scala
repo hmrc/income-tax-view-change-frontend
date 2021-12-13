@@ -21,7 +21,6 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import com.typesafe.play.cachecontrol.Seconds.ZERO.seconds
 import config.featureswitch.{ChargeHistory, CodingOut, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
@@ -33,9 +32,6 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 
 import java.time.LocalDate
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
@@ -483,10 +479,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123"))
-    }
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2,
         () => IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123"))
     }
   }

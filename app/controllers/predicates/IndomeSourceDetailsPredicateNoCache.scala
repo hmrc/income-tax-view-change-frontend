@@ -42,12 +42,8 @@ class IncomeSourceDetailsPredicateNoCache @Inject()(val incomeSourceDetailsServi
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserWithNino[A] = request
 
-//    val cacheExpiry: Duration = Duration(100, "seconds")
-//    val cacheKey = request.headers.get(HeaderNames.xSessionId) + request.nino + "-incomeSources"
-
     incomeSourceDetailsService.getIncomeSourceDetails(None) map {
       case sources: IncomeSourceDetailsModel =>
-//        cache.set(cacheKey, sources.toJson, cacheExpiry)
         Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
       case _ => Left(itvcErrorHandler.showInternalServerError)
     }

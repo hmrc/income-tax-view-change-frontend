@@ -80,9 +80,5 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getTaxYears)
     }
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2,
-        () => IncomeTaxViewChangeFrontend.getTaxYears)
-    }
   }
 }

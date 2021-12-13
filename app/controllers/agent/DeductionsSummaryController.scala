@@ -47,11 +47,7 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-				val nino = getClientNino
-				println("calcservice" + nino + taxYear)
-//				println("getcalcdetail" + calculationService.getCalculationDetail.toString())
-				println("resulst" + calculationService.getCalculationDetail(nino, taxYear))
-				calculationService.getCalculationDetail(nino, taxYear).map {
+				calculationService.getCalculationDetail(getClientNino, taxYear).map {
 					case calcDisplayModel: CalcDisplayModel =>
 						auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(getMtdItUserWithNino(),
 							calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))

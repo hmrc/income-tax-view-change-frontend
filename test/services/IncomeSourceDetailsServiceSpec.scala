@@ -19,14 +19,10 @@ package services
 import testConstants.BaseTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
-
-import javax.inject.Inject
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
 import testUtils.TestSupport
-import uk.gov.hmrc.play.language.LanguageUtils
 import play.api.cache.AsyncCacheApi
-//import play.cache.AsyncCacheApi
 
 //scalastyle:off
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
@@ -35,7 +31,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector, cache)
 
   override def beforeEach() {
-    super.beforeEach() // To be stackable, must call super.beforeEach
+    super.beforeEach()
     cache.removeAll()
   }
 

@@ -21,7 +21,6 @@ import testConstants.IncomeSourceDetailsTestConstants._
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.{MockAsyncCacheApi, MockIncomeSourceDetailsService}
-import play.api.cache.AsyncCacheApi
 import play.api.http.Status
 import play.api.test.Helpers._
 import play.api.mvc.MessagesControllerComponents

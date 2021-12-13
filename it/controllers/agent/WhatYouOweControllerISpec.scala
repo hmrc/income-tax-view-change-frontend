@@ -19,14 +19,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.Name
-import org.scalatest.Matchers._
-import play.api.cache.AsyncCacheApi
-import play.test.WithApplication
-
-import scala.concurrent.duration._
 import java.time.LocalDate
-import scala.concurrent.{Await, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -1400,41 +1393,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
   }
 
-  "IncomeSourceDetails Caching" when {
-    def testCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int) = {
-      stubAuthorisedAgentUser(authorised = true)
-      Given("I wiremock stub a successful Income Source Details response with property only")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-      And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
-        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
-
-      And("I wiremock stub a charge history response")
-      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
-
-      IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-//      println("removing cache on " + testNino + "-incomeSources")
-      println("asdf" + cache.get("test").futureValue + " " + cache.hashCode())
-      if(resetCacheAfterFirstCall) {
-        cache.removeAll()
-      }
-      IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
-      verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
-
-      cache.hashCode()
-
-
-    }
-
-    "caching should be ENABLED" in {
-      testCaching(false, 1)
-    }
-
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testCaching(true, 2)
-    }
-  }
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,

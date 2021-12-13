@@ -139,9 +139,5 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber))
     }
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2,
-        () => IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber))
-    }
   }
 }

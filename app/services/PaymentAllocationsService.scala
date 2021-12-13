@@ -16,7 +16,7 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserBase}
+import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
 import models.core.Nino

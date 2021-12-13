@@ -17,7 +17,7 @@
 package audit.models
 
 import audit.Utilities.userAuditDetails
-import auth.{MtdItUser, MtdItUserBase}
+import auth.MtdItUserBase
 import models.core.AccountingPeriodModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail

@@ -18,7 +18,6 @@ package models.incomeSourceDetails
 
 import java.time.LocalDate
 
-import models.core.AccountingPeriodModel
 import play.api.libs.json.{Format, JsValue, Json}
 
 sealed trait IncomeSourceDetailsResponse {
@@ -41,8 +40,6 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
 
   val startingTaxYear: Option[Int] = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption
-
-//  val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
 
   def orderedTaxYearsByAccountingPeriods: List[Int] = {
     startingTaxYear.fold((2018 to getCurrentTaxEndYear).toList)(year => (year to getCurrentTaxEndYear).toList)

@@ -19,10 +19,9 @@ package controllers
 import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
 import testConstants.EstimatesTestConstants.testYear
-import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.mocks.MockAuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -91,8 +90,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
             val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
               saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
-//            println("test model: " + AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
-//              calculationDataSuccessModel.allowancesAndDeductions, false))
             verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
               calculationDataSuccessModel.allowancesAndDeductions, false))
           }

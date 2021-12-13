@@ -213,9 +213,5 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear))
     }
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2,
-        () => IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear))
-    }
   }
 }

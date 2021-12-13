@@ -1411,9 +1411,5 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getPaymentsDue)
     }
-    "clearing the cache after the first call should allow the 2nd call to run through" in {
-      testIncomeSourceDetailsCaching(true, 2,
-        () => IncomeTaxViewChangeFrontend.getPaymentsDue)
-    }
   }
 }
