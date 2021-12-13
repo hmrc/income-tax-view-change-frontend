@@ -119,13 +119,16 @@
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
         <div id="coding-out-wrapper" class="govuk-inset-text">
-            <p id="coding-out-notice" class="govuk-body coding-out-notice">
+            @p(id = Some("coding-out-notice")) {
                 @messages("chargeSummary.codingOutInset-1")
-                <a id="coding-out-notice-link" href="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code" target="_blank">
-                    @messages("chargeSummary.codingOutInset-2")
-                </a>
+                @link(
+                    id = Some("coding-out-notice-link"),
+                    link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.codingOutInset-2"
+                )
                 @messages("chargeSummary.codingOutInset-3")
-            </p>
+            }
         </div>
         @codingOutMessage
     }
@@ -133,12 +136,16 @@
     @if(codingOutEnabled && documentDetail.isCancelledPayeSelfAssessment){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper" class="govuk-inset-text">
-            <p id="cancelled-coding-out-notice" class="govuk-body coding-out-notice">
+            @p(id = Some("cancelled-coding-out-notice")) {
                 @messages("chargeSummary.cancelledPayeInset-1")
-                <a class="govuk-link" id="cancelled-coding-out-notice-link" href="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code" target="_blank">
-                    @messages("chargeSummary.cancelledPayeInset-2")</a>
+                @link(
+                    id = Some("cancelled-coding-out-notice-link"),
+                    link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.cancelledPayeInset-2"
+                )
                 @messages("chargeSummary.cancelledPayeInset-3")
-            </p>
+            }
         </div>
         @codingOutMessage
     }
