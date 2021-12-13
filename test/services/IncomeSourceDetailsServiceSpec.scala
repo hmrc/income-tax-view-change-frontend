@@ -76,7 +76,6 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       "should cache" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(noIncomeDetails)
         TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key")).futureValue shouldBe noIncomeDetails
-        Thread.sleep(500)
         TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key")).futureValue shouldBe noIncomeDetails
         verifyMockIncomeSourceDetailsResponse(1)
       }
