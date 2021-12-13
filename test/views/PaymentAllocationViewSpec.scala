@@ -290,7 +290,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |${paymentAllocationMessages.allocationsTableHeadersText}
-             |Income Tax for remaining balance 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
+             |Income Tax for Balancing payment 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
              |Class 4 National Insurance for remaining balance 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
              |Class 2 National Insurance for remaining balance 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
              |Capital Gains Tax for remaining balance 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
