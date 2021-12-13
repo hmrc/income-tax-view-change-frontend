@@ -204,13 +204,13 @@
 
     @if(hasInterestLocks && hasAccruedInterest) {
         @p(){
-            @messages("chargeSummary.interestLocks.text")
             @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText")
+            @messages("chargeSummary.interestLocks.text")
         }
     } else {
         @p(){
             @messages("chargeSummary.whatYouOwe.textOne")
-            <a href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
+            <a class="govuk-link" href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
             @messages("chargeSummary.whatYouOwe.textTwo")
         }
     }
@@ -287,9 +287,9 @@
                         <td class="govuk-table__cell">
                             @if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
                                 @if(isAgent) {
-                                    <a href="@{controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                                    <a class="govuk-link" href="@{controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
                                 } else {
-                                    <a href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                                    <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
                                 }
                                     @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
                                     <span class="govuk-visually-hidden"> @taxYearTo</span>

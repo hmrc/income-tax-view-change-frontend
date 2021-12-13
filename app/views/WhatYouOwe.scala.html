@@ -77,22 +77,22 @@
     </div>
 }
 @paymentTypesDropdown(classes: String = "govuk-details") = {
-    <details class="@classes" data-module="govuk-details" role="group">
-        <summary class="govuk-details__summary" id="payment-type-dropdown-title" role="button" aria-controls="payment-details-content" aria-expanded="false">
+    <details class="@classes" data-module="govuk-details">
+        <summary class="govuk-details__summary" id="payment-type-dropdown-title">
             <span class="govuk-details__summary-text"> @getMessage("dropdown.info") </span>
         </summary>
 
-        <div class="govuk-details__text" id="payment-details-content-0" data-module="govuk-details" aria-hidden="false">
+        <div class="govuk-details__text" id="payment-details-content-0">
             @h2(msg = getMessage("remaining-balance.heading"), optId=Some("remaining-balance-heading"))
             <span id="remaining-balance-line1"> @getMessage("remaining-balance.line1")</span>
         </div>
 
-        <div class="govuk-details__text" id="payment-details-content-1" data-module="govuk-details" aria-hidden="false">
+        <div class="govuk-details__text" id="payment-details-content-1">
             @h2(msg = getMessage("payment-on-account.heading"), optId = Some("payment-on-account-heading"))
             <span id="payment-on-account-line1"> @getMessage("payment-on-account.line1")</span>
         </div>
 
-        <div class="govuk-details__text" id="payment-details-content-2" data-module="govuk-details" aria-hidden="false">
+        <div class="govuk-details__text" id="payment-details-content-2" >
             @h2(msg = getMessage("late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
             <span id="late-payment-interest-line1"> @getMessage("late-payment-interest.line1")</span>
         </div>
@@ -248,7 +248,7 @@
             @creditOnAccountNotePanel
             <div id="payment-button">
                 @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
-                messageKey = getPrefix("payNow"), classes = "govuk-button",
+                messageKey = getPrefix("payNow"), classes = "govuk-button", role=Some("button"),
                 id = Some("payment-button-link"),
                 ariaLabel = Some(getMessage("pay-now-aria",
                 (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,

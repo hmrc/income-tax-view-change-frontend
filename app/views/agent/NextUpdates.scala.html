@@ -35,24 +35,24 @@
 
 @p(){@messages("agent.nextUpdates.info")}
 
-	<details class="govuk-details" data-module="govuk-details" role="group">
+	<details class="govuk-details" data-module="govuk-details">
 
-		<summary class="govuk-details__summary" id="Update-dropdown-title" role="button" aria-controls="details-content" aria-expanded="false">
+		<summary class="govuk-details__summary" id="Update-dropdown-title" >
 			<span class="govuk-details__summary-text"> @messages("agent.nextUpdates.dropdown.info") </span>
 		</summary>
 
-		<div class="govuk-details__text" id="details-content-0" data-module="govuk-details" aria-hidden="false">
+		<div class="govuk-details__text" id="details-content-0">
 			@h2(msg = "agent.obligations.quarterlyUpdates")
 			@p(id = Some("quarterly-dropdown-line1"))(Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text")))
 			@p(id = Some("quarterly-dropdown-line2"))(Html(messages("agent.nextUpdates.dropdown.quarterlyReturn.text.lin2")))
 		</div>
-		<div class="govuk-details__text" id="details-content-1" data-module="govuk-details" aria-hidden="false">
+		<div class="govuk-details__text" id="details-content-1">
 			@h2(msg = "agent.obligations.annualUpdates")
 			@p(id = Some("annual-dropdown-line1"))(Html(messages("agent.nextUpdates.dropdown.annualReturn.text")))
 			@p(id = Some("annual-dropdown-line2"))(Html(messages("agent.nextUpdates.dropdown.annualReturn.text.lin2")))
 
 		</div>
-		<div class="govuk-details__text" id="details-content-2" data-module="govuk-details" aria-hidden="false">
+		<div class="govuk-details__text" id="details-content-2">
 			@h2(msg = "agent.obligations.finalDeclarationUpdate")
 			@p(id = Some("final-declaration-line1"))(Html(messages("agent.nextUpdates.dropdown.finalDeclaration.text")))
 		</div>

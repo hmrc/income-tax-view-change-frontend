@@ -75,7 +75,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       overduePaymentExists = overduePaymentExists,
       paymentHistoryEnabled = paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      implicitDateFormatter = mockImplicitDateFormatter,
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
@@ -95,6 +94,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   "home" when {
 
     "all features are enabled" should {
+
+      s"have the correct link to the government homepage" in new Setup {
+        document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+      }
 
       s"have the title '${homeMessages.agentTitle}'" in new Setup() {
         document.title() shouldBe homeMessages.agentTitle

@@ -38,7 +38,7 @@ sbt "run 9081 -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"
 
 ## Test the application
 
-To test the application execute
+To test the application execute:
 
 ```
 sbt clean scalastyle coverage test it:test coverageOff coverageReport

@@ -9,7 +9,7 @@ base.backToHome                                                 = Back to Income
 base.continue                                                   = Continue
 base.error_summary.heading                                      = There is a problem
 base.error-prefix                                               = Error:
-base.govUk                                                    = GOV.UK
+base.govUk                                                      = GOV.UK
 
 # Agent Base
 agent.base.service_name                                         = Your client’s Income Tax details
@@ -425,7 +425,11 @@ nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the
 nextUpdates.previousYears.textTwo								   = page.
 nextUpdates.previousYears.link									   = tax years
-
+nextUpdates.eops            									   = Annual Update
+nextUpdates.crystallised            							   = Final Declaration
+nextUpdates.crystallisedAll            							   = All income sources
+nextUpdates.propertyIncome            							   = Property income
+nextUpdates.business            							       = Business income
 sections.open.all												   = Open all
 sections.close.all												   = Close all
 
@@ -527,8 +531,8 @@ chargeSummary.paymentBreakdown.interestLocks.charging              = We are char
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = We have previously charged you interest on this payment
 chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Late payment interest
 
-chargeSummary.interestLocks.text                                   = Any interest on this payment is shown as a total on the
-chargeSummary.interestLocks.linkText                               = What you owe page
+chargeSummary.interestLocks.text                                   = to check if you have any interest on this payment
+chargeSummary.interestLocks.linkText                               = View what you owe
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
@@ -589,10 +593,6 @@ timeoutDialog.minutes.two                                       = minutes
 timeoutDialog.minute                                            = minute
 timeoutDialog.message                                           = For your security, we will sign you out in
 button.continue                                                 = Stay signed in
-
-## Not found
-notFound.heading = This page cannot be found
-notFound.message = Please check that you have entered the correct web address.
 
 ## Uplift Failure
 upliftFailure.title = There’s a problem

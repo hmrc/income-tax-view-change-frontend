@@ -6,6 +6,7 @@ base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
 base.error_summary.heading                                      = Mae problem wedi codi
+base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 
@@ -100,6 +101,7 @@ tax-year-overview.calculation-date                              = Dyddiad y cyfr
 tax-year-overview.estimate                                      = Amcangyfrif ar gyfer 6 Ebrill {0} i 28 Ion {1}
 tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
 tax-year-overview.tax-calculation                               = Cyfrifiad yn ystod y flwyddyn
+tax-year-overview.payments.paymentUnderReview                   = Taliad dan adolygiad
 tax-year-overview.section                                       = Adran
 tax-year-overview.amount                                        = Swm
 tax-year-overview.payments                                      = Taliadau
@@ -280,6 +282,12 @@ obligations.heading                                             = Dyddiadau cau 
 obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
+obligations.quarterly                                           = Bob chwarter
+nextUpdates.eops            									= Diweddariad blynyddol
+nextUpdates.crystallised            							= Datganiad terfynol
+nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
+nextUpdates.propertyIncome            							= Incwm o eiddo
+nextUpdates.business            							    = Business income
 
 ## Previous Obligations ##
 
@@ -464,8 +472,8 @@ chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn
 chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn codi llog arnoch ar y taliad hwn
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
 
-chargeSummary.interestLocks.text                                   = Mae unrhyw log ar y taliad hwn yn ymddangos fel cyfanswm ar y dudalen
-chargeSummary.interestLocks.linkText                               = Yr hyn sydd arnoch
+chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn
+chargeSummary.interestLocks.linkText                               = Bwrw golwg dros yr hyn sydd arnoch
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
@@ -536,11 +544,14 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau ar gyfer {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
+paymentHistory.table.header.date                                = Dyddiad
+paymentHistory.table.header.description                         = Disgrifiad
+paymentHistory.table.header.amount                              = Swm
 
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
 agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Error: {0} - Treth Incwm fanylion eich cleient - GOV.UK
+agent.error.title_pattern.service_name.govuk                    = Gwall: {0} - Treth Incwm fanylion eich cleient - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw Cyfeirnod Unigryw y Trethdalwr (UTR) eich cleient?
@@ -656,3 +667,4 @@ shortMonth.9 = Med
 shortMonth.10 = Hyd
 shortMonth.11 = Tach
 shortMonth.12 = Rhag
+
