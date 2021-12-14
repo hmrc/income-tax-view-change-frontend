@@ -19,6 +19,7 @@ package services
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -51,8 +52,10 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     if (cacheKey.isDefined) {
       getCachedIncomeSources(cacheKey.get).flatMap {
         case Some(sources: IncomeSourceDetailsModel) =>
+          Logger("application").info(s"incomeSourceDetails cache HIT with ${cacheKey.get}")
           Future.successful(sources)
         case None =>
+          Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
           incomeTaxViewChangeConnector.getIncomeSources().flatMap {
             case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
               cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
