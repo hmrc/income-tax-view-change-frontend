@@ -269,7 +269,7 @@
     }
 
     @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
-        @if(paymentBreakdown.nonEmpty) {
+        @if(paymentBreakdown.nonEmpty && documentDetail.isNotCodingOutDocumentDetail) {
             <h3 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h3>
         } else {
             <h2 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h2>
