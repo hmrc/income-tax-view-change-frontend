@@ -144,7 +144,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
-        println(res.body)
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyNextUpdatesCall(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)

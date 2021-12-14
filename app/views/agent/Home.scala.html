@@ -16,7 +16,7 @@
 
 @import java.time.LocalDate
 
-@import _root_.implicits.ImplicitDateFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.components._
@@ -30,7 +30,8 @@
 	h2: h2,
 	h3link: h3link,
 	p: p,
-	link: link
+	link: link,
+    implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
 @(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
@@ -38,7 +39,6 @@
         overduePaymentExists: Boolean,
          paymentHistoryEnabled: Boolean,
         ITSASubmissionIntegrationEnabled: Boolean,
-        implicitDateFormatter: ImplicitDateFormatter,
 		dunningLockExists: Boolean = false,
 		currentTaxYear: Int
 )(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
@@ -146,8 +146,6 @@
         </div>
     }
 
-
-
     <div class="grid-row">
 		<div class="flex-container">
 			@paymentsTile
@@ -159,5 +157,4 @@
     @if(ITSASubmissionIntegrationEnabled) {
         @YourIncomeTaxReturnTile
     }
-
 }

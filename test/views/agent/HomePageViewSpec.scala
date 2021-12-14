@@ -75,7 +75,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       overduePaymentExists = overduePaymentExists,
       paymentHistoryEnabled = paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      implicitDateFormatter = mockImplicitDateFormatter,
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
