@@ -19,8 +19,6 @@ package mocks.controllers.predicates
 import config.ItvcErrorHandler
 import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services._
-import play.api.cache.AsyncCacheApi
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 

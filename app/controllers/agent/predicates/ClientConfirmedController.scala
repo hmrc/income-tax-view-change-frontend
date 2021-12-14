@@ -75,7 +75,8 @@ trait ClientConfirmedController extends BaseAgentController {
     )
 
     val cacheKey = if (useCache) {
-      Some(request.headers.get(HeaderNames.xSessionId).getOrElse("") + getClientNino + "-incomeSources")
+      val sessionId = request.headers.get(HeaderNames.xSessionId).getOrElse("")
+      Some(s"${sessionId + getClientNino}-incomeSources")
     } else None
     incomeSourceDetailsService.getIncomeSourceDetails(cacheKey)(hc = hc, mtdUser = userWithNino) map {
       case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(

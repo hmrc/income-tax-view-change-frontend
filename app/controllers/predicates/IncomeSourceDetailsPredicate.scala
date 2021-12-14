@@ -40,8 +40,8 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserWithNino[A] = request
 
-    val cacheKey = request.headers.get(HeaderNames.xSessionId).getOrElse("") + request.nino + "-incomeSources"
-
+    val sessionId = request.headers.get(HeaderNames.xSessionId).getOrElse("")
+    val cacheKey = s"${sessionId + request.nino}-incomeSources"
       incomeSourceDetailsService.getIncomeSourceDetails(Some(cacheKey)) map {
         case sources: IncomeSourceDetailsModel =>
           Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))

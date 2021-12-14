@@ -37,7 +37,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
       incomeSources match {
         case Some(jsonSources) =>
           Json.fromJson[IncomeSourceDetailsModel](jsonSources) match {
-            case JsSuccess(sources: IncomeSourceDetailsModel, path: JsPath) =>
+            case JsSuccess(sources: IncomeSourceDetailsModel, _: JsPath) =>
               Some(sources)
             case _ => None
           }

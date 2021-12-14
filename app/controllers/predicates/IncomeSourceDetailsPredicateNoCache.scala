@@ -20,15 +20,13 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
+import uk.gov.hmrc.http.{HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.duration.Duration
 
 @Singleton
 class IncomeSourceDetailsPredicateNoCache @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
