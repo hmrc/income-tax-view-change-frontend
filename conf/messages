@@ -498,13 +498,15 @@ whatYouOwe.codingOut-1b                                            = of tax for 
 whatYouOwe.codingOut-2                                             = {0} to {1} tax year
 whatYouOwe.codingOut-3                                             = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
 whatYouOwe.class2Nic.text                                          = Class 2 National Insurance
+whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled Self Assessment payment (through your PAYE tax code)
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
 chargeSummary.paymentOnAccount2.text							   = Payment on account 2 of 2
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
-chargeSummary.codingOut.text                                       = PAYE self assessment
+chargeSummary.codingOut.text                                       = PAYE Self Assessment
+chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled Self Assessment payment (through your PAYE tax code)
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Full payment amount
 chargeSummary.paymentAmountCodingOut							   = Payment amount
@@ -538,21 +540,22 @@ chargeSummary.whatYouOwe.textTwo								   = to check if you have any other paym
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.payment-days-note                                    = Payments can take up to 7 days to process.
 
-chargeSummary.chargeHistory.heading								   = Payment history
-chargeSummary.chargeHistory.date								   = Date
-chargeSummary.chargeHistory.description							   = Description
-chargeSummary.chargeHistory.amount								   = Amount
-chargeSummary.chargeHistory.created.paymentOnAccount1.text		   = Payment on account 1 of 2 created
-chargeSummary.chargeHistory.created.paymentOnAccount2.text		   = Payment on account 2 of 2 created
-chargeSummary.chargeHistory.created.balancingCharge.text		   = Balancing payment created
-chargeSummary.chargeHistory.created.class2Nic.text                 = Class 2 National Insurance created
-chargeSummary.chargeHistory.created.codingOut.text                 = PAYE self assessment created
-chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	   = Payment on account 1 of 2 reduced by taxpayer request
-chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	   = Payment on account 2 of 2 reduced by taxpayer request
-chargeSummary.chargeHistory.request.balancingCharge.text	   	   = Balancing payment reduced by taxpayer request
-chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	   = Payment on account 1 of 2 reduced due to amended return
-chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	   = Payment on account 2 of 2 reduced due to amended return
-chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	   = Balancing payment reduced due to amended return
+chargeSummary.chargeHistory.heading								        = Payment history
+chargeSummary.chargeHistory.date								        = Date
+chargeSummary.chargeHistory.description							        = Description
+chargeSummary.chargeHistory.amount								        = Amount
+chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Payment on account 1 of 2 created
+chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Payment on account 2 of 2 created
+chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing payment created
+chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
+chargeSummary.chargeHistory.created.codingOut.text                      = PAYE self assessment created
+chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled Self Assessment payment (through your PAYE tax code) created
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Payment on account 1 of 2 reduced by taxpayer request
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Payment on account 2 of 2 reduced by taxpayer request
+chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Payment on account 1 of 2 reduced due to amended return
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Payment on account 2 of 2 reduced due to amended return
+chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balancing payment reduced due to amended return
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on payment on account 1 of 2
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on payment on account 2 of 2
@@ -580,6 +583,12 @@ chargeSummary.codingOutInset-1                                     = If this tax
 chargeSummary.codingOutInset-2                                     = through your PAYE tax code (opens in new tab)
 chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.
 chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
+chargeSummary.check-paye-tax-code-1                                = Check if your
+chargeSummary.check-paye-tax-code-2                                = PAYE tax code
+chargeSummary.check-paye-tax-code-3                                = has changed for the {0} to {1} tax year.
+chargeSummary.cancelledPayeInset-1                                 = You have previously agreed to pay some of your Self Assessment bill
+chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code (opens in new tab).
+chargeSummary.cancelledPayeInset-3                                 = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.
 
 ## Regimes
 regimes.UK = UK

@@ -58,6 +58,92 @@ class DocumentDetailSpec extends UnitSpec {
 
     }
 
-  }
+    "getChargeTypeKey" should {
+      "return POA1" when {
+        "when document description is ITSA- POA 1" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getChargeTypeKey(false) shouldBe "paymentOnAccount1.text"
 
+        }
+      }
+      "return POA2" when {
+        "when document description is ITSA - POA 2" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")).getChargeTypeKey(false) shouldBe "paymentOnAccount2.text"
+
+        }
+      }
+      "return unknown charge" when {
+        "when document description is ITSA- XYZ" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- XYZ")).getChargeTypeKey(false) shouldBe "unknownCharge"
+        }
+      }
+      "return BCD" when {
+        "when document description is TRM New Charge, coding out is disabled and is not coding out" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+        "when document description is TRM Amend Charge, coding out is disabled and is not coding out" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge")).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+        "when document description is TRM New Charge, coding out is enabled and is not coding out" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).getChargeTypeKey(true) shouldBe "balancingCharge.text"
+        }
+        "when document description is TRM Amend Charge, coding out is enabled and is not coding out" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge")).getChargeTypeKey(true) shouldBe "balancingCharge.text"
+        }
+      }
+      "return class 2 nics or BCD charge" when {
+        "when document description is TRM New Charge, coding out is enabled and is class 2 nics" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
+            documentText = Some("Class 2 National Insurance"), amountCodedOut = Some(0.0)).getChargeTypeKey(true) shouldBe "class2Nic.text"
+        }
+        "when document description is TRM Amend Charge, coding out is enabled and is class 2 nics" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
+            documentText = Some("Class 2 National Insurance"), amountCodedOut = Some(0.0)).getChargeTypeKey(true) shouldBe "class2Nic.text"
+        }
+        "when document description is TRM New Charge, coding out is disabled and is class 2 nics" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
+            documentText = Some("Class 2 National Insurance"), amountCodedOut = Some(0.0)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+        "when document description is TRM Amend Charge, coding out is disabled and is class 2 nics" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
+            documentText = Some("Class 2 National Insurance"), amountCodedOut = Some(0.0)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+      }
+      "return coding out text or BCD charge" when {
+        "when document description is TRM New Charge, coding out is enabled and is paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
+            documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(50.0)).getChargeTypeKey(true) shouldBe "codingOut.text"
+        }
+        "when document description is TRM Amend Charge, coding out is enabled and is paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
+            documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(50.0)).getChargeTypeKey(true) shouldBe "codingOut.text"
+        }
+        "when document description is TRM New Charge, coding out is disabled and is paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
+            documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(50.0)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+        "when document description is TRM Amend Charge, coding out is disabled and is paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
+            documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(50.0)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+      }
+      "return cancelled paye self assessment text or BCD charge" when {
+        "when document description is TRM New Charge, coding out is enabled and is cancelled paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
+            documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0.0)).getChargeTypeKey(true) shouldBe "cancelledPayeSelfAssessment.text"
+        }
+        "when document description is TRM Amend Charge, coding out is enabled and is cancelled paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
+            documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0.0)).getChargeTypeKey(true) shouldBe "cancelledPayeSelfAssessment.text"
+        }
+        "when document description is TRM New Charge, coding out is disabled and is cancelled paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
+            documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0.0)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+        "when document description is TRM Amend Charge, coding out is disabled and is cancelled paye self assessment" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
+            documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0.0)).getChargeTypeKey(false) shouldBe "balancingCharge.text"
+        }
+      }
+    }
+  }
 }

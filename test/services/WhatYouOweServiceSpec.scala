@@ -197,7 +197,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
 
       "when coding out is enabled" should {
-        "return the codedout documentDetail and the class2 nics charge" in {
+        "return the codedout documentDetail, cancelled coding out and the class2 nics charge" in {
           enable(CodingOut)
           val dd1 = DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
             documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(43.21),
@@ -206,28 +206,38 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
             amountCodedOut = Some(0))
-          val dd2 = dd1.copy(transactionId = id1040000125, amountCodedOut = Some(999.99))
+          val dd2 = DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+            documentText = Some("Cancelled PAYE Self Assessment"), outstandingAmount = Some(43.21),
+            originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+            interestOutstandingAmount = None, interestRate = None,
+            latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            amountCodedOut = Some(0))
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(999.99))
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              documentDetails = List(dd1, dd2),
+              documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"),Some("type"),Some(100),Some(100),
                   Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"),Some("type"),Some(100),Some(100),
                   Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"),Some("type"),Some(100),Some(100),
+                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out")))))
               )
             ))))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")))),
+            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
+              DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")))),
             dueInThirtyDaysList = List(),
             futurePayments = List(),
             outstandingChargesModel = None,
-            codedOutDocumentDetail = Some(dd2)
+            codedOutDocumentDetail = Some(dd3)
           )
         }
       }
@@ -242,24 +252,34 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
             amountCodedOut = Some(0))
-          val dd2 = dd1.copy(transactionId = id1040000125, amountCodedOut = Some(999.99))
+          val dd2 = DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+            documentText = Some("Cancelled PAYE Self Assessment"), outstandingAmount = Some(43.21),
+            originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+            interestOutstandingAmount = None, interestRate = None,
+            latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            amountCodedOut = Some(0))
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(999.99))
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              documentDetails = List(dd1, dd2),
+              documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"),Some("type"),Some(100),Some(100),
                   Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"),Some("type"),Some(100),Some(100),
+                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"),Some("type"),Some(100),Some(100),
                   Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
               )
             ))))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")))),
+            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
+              DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")))),
             dueInThirtyDaysList = List(),
             futurePayments = List(),
             outstandingChargesModel = None,

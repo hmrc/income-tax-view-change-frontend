@@ -159,7 +159,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     futurePayments = List(),
     outstandingChargesModel = None,
     codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
-      documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+      documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(12.34),
       originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
       interestOutstandingAmount = None, interestRate = None,
       latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -174,12 +174,21 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     futurePayments = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = None,
     codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
-      documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+      documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(12.34),
       originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
       interestOutstandingAmount = None, interestRate = None,
       latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
       interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
       amountCodedOut = Some(codingOutAmount)))
+  )
+
+  val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    overduePaymentList = List(testFinancialDetailsModelWithCancelledPayeSa().getAllDocumentDetailsWithDueDates.head),
+    dueInThirtyDaysList = List(),
+    futurePayments = List(),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
   )
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00))
@@ -871,6 +880,17 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     "have a link to the SA summary coding out page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true){
       pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
         "/report-quarterly/income-and-expenses/view/agents/tax-years/2021/charge?id=1040000125"
+    }
+
+    "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+      pageDocument.getElementById("coding-out-header") shouldBe null
+      pageDocument.getElementById("coding-out-notice") shouldBe null
+      pageDocument.getElementById("over-due-type-0") should not be null
+      pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
+      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
+      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.getElementById("coding-out-summary-link") shouldBe null
     }
   }
 

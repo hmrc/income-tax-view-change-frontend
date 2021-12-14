@@ -60,9 +60,6 @@ class EnterClientsUTRViewSpec extends ViewSpec {
 
         val input: Element = form.selectHead("input")
 
-        println("hrtyu" + label.text)
-        println(hint.text)
-
         label.text shouldBe EnterClientsUTRMessages.heading
         hint.text shouldBe EnterClientsUTRMessages.info
 
