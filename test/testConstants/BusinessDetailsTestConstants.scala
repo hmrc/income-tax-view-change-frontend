@@ -50,101 +50,52 @@ object BusinessDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
   val business1 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = testBusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(LocalDate.of(2018, 4, 5))
   )
 
 
   val business2 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId2,
-    accountingPeriod = testBusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
+    incomeSourceId = Some(testSelfEmploymentId2),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName2),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val business2018 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = test2018BusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(test2018BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val business2019 = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = test2019BusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(test2019BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val alignedBusiness = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5))),
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val ceasedBusiness = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = testBusinessAccountingPeriod,
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = Some(testCessation),
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = None
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
-    cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-1-1"),
-    cessation = None,
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5))),
     tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = None,
-    seasonal = None,
-    paperless = None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 

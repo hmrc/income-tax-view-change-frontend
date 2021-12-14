@@ -44,7 +44,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
 
   def showIncomeSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
 				calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
 					case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true)))
 

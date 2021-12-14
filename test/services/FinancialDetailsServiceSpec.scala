@@ -67,12 +67,12 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       Some(getTaxEndYear(LocalDate.now.minusYears(numYears - 1)).toString),
       businesses = (1 to numYears).toList.map { count =>
         BusinessDetailsModel(
-          incomeSourceId = s"income-id-$count",
-          accountingPeriod = AccountingPeriodModel(
+          incomeSourceId = Some(s"income-id-$count"),
+          accountingPeriod = Some(AccountingPeriodModel(
             start = LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count)), april, sixth),
             end = LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)
-          ),
-          None, None, None, None, None, None, None, None,
+          )),
+          None,
           firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth))
         )
       },
@@ -91,9 +91,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     yearOfMigration = Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     businesses = List(
       BusinessDetailsModel(
-        "testId",
-        AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-        None, None, None, None, None, None, None, None,
+        Some("testId"),
+        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
         Some(getCurrentTaxYearEnd.minusYears(1))
       )
     ),

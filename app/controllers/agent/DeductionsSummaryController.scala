@@ -26,7 +26,7 @@ import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{CalculationService, IncomeSourceDetailsService}
+import services.CalculationService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.DeductionBreakdown
 
@@ -35,7 +35,6 @@ import scala.concurrent.ExecutionContext
 
 class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdown,
                                             val authorisedFunctions: AuthorisedFunctions,
-                                            incomeSourceDetailsService: IncomeSourceDetailsService,
                                             auditingService: AuditingService,
                                             calculationService: CalculationService)
                                            (implicit val appConfig: FrontendAppConfig,
@@ -48,21 +47,19 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-				getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-					calculationService.getCalculationDetail(getClientNino, taxYear).map {
-						case calcDisplayModel: CalcDisplayModel =>
-							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(mtdItUser,
-								calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
-							Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true))
+				calculationService.getCalculationDetail(getClientNino, taxYear).map {
+					case calcDisplayModel: CalcDisplayModel =>
+						auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(getMtdItUserWithNino(),
+							calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
+						Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true))
 
-						case CalcDisplayNoDataFound =>
-							Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
-							itvcErrorHandler.showInternalServerError()
+					case CalcDisplayNoDataFound =>
+						Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
+						itvcErrorHandler.showInternalServerError()
 
-						case CalcDisplayError =>
-							Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
-							itvcErrorHandler.showInternalServerError()
-					}
+					case CalcDisplayError =>
+						Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+						itvcErrorHandler.showInternalServerError()
 				}
     }
 

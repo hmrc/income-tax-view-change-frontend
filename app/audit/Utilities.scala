@@ -17,14 +17,14 @@
 package audit
 
 import _root_.models.financialDetails.DocumentDetail
-import auth.MtdItUser
+import auth.MtdItUserBase
 import play.api.libs.json.{JsObject, Json}
 import utils.Utilities.JsonUtil
 
 
 object Utilities {
 
-  def userAuditDetails(user: MtdItUser[_]): JsObject = Json.obj(
+  def userAuditDetails(user: MtdItUserBase[_]): JsObject = Json.obj(
     "nationalInsuranceNumber" -> user.nino,
     "mtditid" -> user.mtditid
   ) ++

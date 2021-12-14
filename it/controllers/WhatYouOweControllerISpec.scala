@@ -16,7 +16,7 @@
 
 package controllers
 
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr, testYear}
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
@@ -1404,6 +1404,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         }
       }
 
+    }
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue)
     }
   }
 }

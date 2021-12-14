@@ -20,6 +20,16 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
+abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
+  def mtditid: String
+  def nino: String
+  def userName: Option[Name]
+  def saUtr: Option[String]
+  def credId: Option[String]
+  def userType: Option[String]
+  def arn: Option[String]
+}
+
 case class MtdItUserOptionNino[A](mtditid: String,
                                   nino: Option[String],
                                   userName: Option[Name],
@@ -33,7 +43,7 @@ case class MtdItUserWithNino[A](mtditid: String,
                                 saUtr: Option[String],
                                 credId: Option[String],
                                 userType: Option[String],
-                                arn: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]
 
 case class MtdItUser[A](mtditid: String,
                         nino: String,
@@ -42,4 +52,4 @@ case class MtdItUser[A](mtditid: String,
                         saUtr: Option[String],
                         credId: Option[String],
                         userType: Option[String],
-                        arn: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                        arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]

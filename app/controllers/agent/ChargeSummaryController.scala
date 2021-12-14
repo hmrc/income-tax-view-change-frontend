@@ -74,7 +74,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   def showChargeSummary(taxYear: Int, chargeId: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { mtdItUser =>
           financialDetailsService.getAllFinancialDetails(mtdItUser, implicitly, implicitly).flatMap { financialResponses =>
 						val payments = financialResponses.collect {
 							case (_, model: FinancialDetailsModel) => model.filterPayments()

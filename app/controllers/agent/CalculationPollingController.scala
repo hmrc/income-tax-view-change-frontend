@@ -47,7 +47,7 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
         controllers.agent.routes.TaxYearOverviewController.show(taxYear)
       }
 
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
         (request.session.get(SessionKeys.calculationId), user.nino) match {
           case (Some(calculationId), nino) => {
             Logger("application").info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")

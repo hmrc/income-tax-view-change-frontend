@@ -17,13 +17,12 @@
 package controllers
 
 import java.time.LocalDate
-
 import testConstants.BaseTestConstants
 import testConstants.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.MockNextUpdatesService
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.jsoup.Jsoup
@@ -38,7 +37,7 @@ import views.html.{NextUpdates, NoNextUpdates}
 
 import scala.concurrent.Future
 
-class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
                                             with MockNextUpdatesService {
 
   object TestNextUpdatesController extends NextUpdatesController(
@@ -47,7 +46,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
-    MockIncomeSourceDetailsPredicate,
+    MockIncomeSourceDetailsPredicateNoCache,
     app.injector.instanceOf[AuditingService],
     mockNextUpdatesService,
     app.injector.instanceOf[ItvcErrorHandler],

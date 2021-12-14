@@ -16,7 +16,7 @@
 package controllers
 
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
 import testConstants.NextUpdatesIntegrationTestConstants._
 import testConstants.messages.HomeMessages._
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
@@ -145,5 +145,12 @@ class HomeControllerISpec extends ComponentSpecBase {
       }
     }
     unauthorisedTest("")
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getHome)
+    }
   }
 }

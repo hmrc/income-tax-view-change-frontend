@@ -45,7 +45,7 @@ class PaymentController @Inject()(val incomeSourceDetailsService: IncomeSourceDe
   val paymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           mtdItUser =>
             auditingService.extendedAudit(
               InitiatePayNowAuditModel(mtdItUser.mtditid, Some(mtdItUser.nino), mtdItUser.saUtr, mtdItUser.credId, mtdItUser.userType)
