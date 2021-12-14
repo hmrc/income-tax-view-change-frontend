@@ -97,7 +97,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     financialDetailsModel.documentDetails.collect {
       case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isEnabled(CodingOut)) => documentDetail
       case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-      case documentDetail: DocumentDetail if !documentDetail.isClass2Nic && !documentDetail.isCodingOut && !documentDetail.isPaid => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
     }
   }
 }

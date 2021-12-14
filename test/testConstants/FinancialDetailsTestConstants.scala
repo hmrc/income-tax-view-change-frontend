@@ -28,6 +28,7 @@ object FinancialDetailsTestConstants {
   val id1040000123 = "1040000123"
   val id1040000124 = "1040000124"
   val id1040000125 = "1040000125"
+  val id1040000126 = "1040000126"
 
   val testValidFinancialDetailsModelJson: JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
@@ -514,6 +515,24 @@ object FinancialDetailsTestConstants {
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
           interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+          amountCodedOut = Some(0))
+      ),
+      financialDetails = List(
+        FinancialDetail("2021", Some("SA Balancing Charge"), Some("CODINGOUT01") , Some("transactionDate"),Some("type"),Some(100),Some(100),
+          Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"))))),
+      )
+    )
+
+  def testFinancialDetailsModelWithCancelledPayeSa(): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      documentDetails = List(
+        DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
+          documentText = Some("Cancelled PAYE Self Assessment"), outstandingAmount = Some(12.34),
+          originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+          interestOutstandingAmount = None, interestRate = None,
+          latePaymentInterestId = None, interestFromDate = None,
+          interestEndDate = None, latePaymentInterestAmount = None,
           amountCodedOut = Some(0))
       ),
       financialDetails = List(

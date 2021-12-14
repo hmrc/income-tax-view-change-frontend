@@ -52,13 +52,13 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00))
         val codedOutDocumentDetail: Option[DocumentDetail] = if (isEnabled(CodingOut))
             financialDetailsModelList.flatMap(fdm =>
-            fdm.documentDetails.filter(_.isCodingOut)
+            fdm.documentDetails.filter(_.isPayeSelfAssessment)
           ).headOption else None
 
         val whatYouOweChargesList = WhatYouOweChargesList(balanceDetails = balanceDetails,
-          overduePaymentList = getOverduePaymentsList(financialDetailsModelList).filter(!_.documentDetail.isCodingOut),
-          dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList).filter(!_.documentDetail.isCodingOut),
-          futurePayments = getFuturePaymentsList(financialDetailsModelList).filter(!_.documentDetail.isCodingOut),
+          overduePaymentList = getOverduePaymentsList(financialDetailsModelList).filter(!_.documentDetail.isPayeSelfAssessment),
+          dueInThirtyDaysList = getDueWithinThirtyDaysList(financialDetailsModelList).filter(!_.documentDetail.isPayeSelfAssessment),
+          futurePayments = getFuturePaymentsList(financialDetailsModelList).filter(!_.documentDetail.isPayeSelfAssessment),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {

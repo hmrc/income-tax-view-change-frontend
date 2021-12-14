@@ -126,7 +126,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           pageTitle("Payment made to HMRC - Business Tax account - GOV.UK"),
           elementAttributeBySelector("#payment-allocation-0 a", "href")(
             "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&latePaymentCharge=true"),
-          elementTextBySelector("#payment-allocation-0 a")("Late payment interest for remaining balance 9999")
+          elementTextBySelector("#payment-allocation-0 a")("Late payment interest for Balancing payment 9999")
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)

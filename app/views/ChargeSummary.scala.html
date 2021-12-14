@@ -43,10 +43,18 @@
 
 @dueDate = @{documentDetailWithDueDate.dueDate}
 
+@currentDate = @{LocalDate.now}
+
+@currentTaxYearEnd = @{
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+}
+
 @whatYouOweUrl = @{
     if(isAgent) controllers.agent.routes.WhatYouOweController.show().url
     else controllers.routes.WhatYouOweController.viewPaymentsDue().url
 }
+
 @hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }
 
 @hasInterestLocks = @{ paymentBreakdown.exists(_.interestLockExists) }
@@ -55,6 +63,21 @@
 
 @taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
 @taxYearTo = @{documentDetail.taxYear}
+
+@checkPayeCodePara = {
+    @p(id = Some("check-paye-para")){
+        @messages("chargeSummary.check-paye-tax-code-1")
+        <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@currentTaxYearEnd">
+            @messages("chargeSummary.check-paye-tax-code-2")</a>
+        @messages("chargeSummary.check-paye-tax-code-3", taxYearFrom, taxYearTo)
+    }
+}
+
+@codingOutMessage = {
+    @p(id=Some("coding-out-message")){
+        @messages("chargeSummary.codingOutMessage", taxYearFrom, taxYearTo)
+    }
+}
 
 @mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl), isAgent = isAgent) {
 
@@ -93,22 +116,41 @@
         }
     </h1>
 
-    @if(codingOutEnabled && documentDetail.isCodingOut){
+    @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
+        @checkPayeCodePara
         <div id="coding-out-wrapper" class="govuk-inset-text">
-            <p id="coding-out-notice" class="govuk-body coding-out-notice">
+            @p(id = Some("coding-out-notice")) {
                 @messages("chargeSummary.codingOutInset-1")
-                <a id="coding-out-notice-link" href="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code" target="_blank">
-                    @messages("chargeSummary.codingOutInset-2")
-                </a>
+                @link(
+                    id = Some("coding-out-notice-link"),
+                    link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.codingOutInset-2"
+                )
                 @messages("chargeSummary.codingOutInset-3")
-            </p>
+            }
         </div>
-        @p(id=Some("coding-out-message")){
-            @messages("chargeSummary.codingOutMessage", taxYearFrom, taxYearTo)
-        }
+        @codingOutMessage
     }
 
-    @if(codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isCodingOut){
+    @if(codingOutEnabled && documentDetail.isCancelledPayeSelfAssessment){
+        @checkPayeCodePara
+        <div id="cancelled-coding-out-wrapper" class="govuk-inset-text">
+            @p(id = Some("cancelled-coding-out-notice")) {
+                @messages("chargeSummary.cancelledPayeInset-1")
+                @link(
+                    id = Some("cancelled-coding-out-notice-link"),
+                    link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+                    target = Some("_blank"),
+                    messageKey = "chargeSummary.cancelledPayeInset-2"
+                )
+                @messages("chargeSummary.cancelledPayeInset-3")
+            }
+        </div>
+        @codingOutMessage
+    }
+
+    @if(codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment){
         @p(){
             @messages("chargeSummary.nic2TaxYear", taxYearFrom, taxYearTo)
         }
@@ -116,7 +158,7 @@
 
 
     <dl class="govuk-summary-list">
-        @if(!(codingOutEnabled && documentDetail.isCodingOut)) {
+        @if(!(codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
                 <dd class="govuk-summary-list__value">
@@ -138,20 +180,22 @@
         }
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@{
-                if (codingOutEnabled && documentDetail.isCodingOut) {
+                if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
                     messages("chargeSummary.paymentAmountCodingOut")
                 } else messages("chargeSummary.paymentAmount")
             }
             </dt>
-            <dd class="govuk-summary-list__value">@{
+            <dd class="govuk-summary-list__value">
+            @{
                 if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.get.toCurrency
                 else documentDetail.originalAmount.get.toCurrency
-                }</dd>
+            }
+            </dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
             <dd class="govuk-summary-list__value">@{
-                if (codingOutEnabled && documentDetail.isCodingOut) {
+                if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
                     messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
                 } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
                 else documentDetail.remainingToPay.toCurrency
@@ -215,11 +259,11 @@
         }
     }
 
-    @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isCodingOut)){
+    @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
         <div id="payment-link-@{taxYearTo}">
             <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", taxYearFrom, taxYearTo)'>@messages("paymentDue.payNow")</a>
         </div>
-        @p(){
+        @p(id = Some("payment-days-note")){
             @messages("chargeSummary.payment-days-note")
         }
     }
@@ -243,7 +287,7 @@
 
             <tbody class = "govuk-table__body">
             @if(chargeHistoryEnabled){
-                @if(!latePaymentInterestCharge && !(codingOutEnabled && documentDetail.isCodingOut)) {
+                @if(!latePaymentInterestCharge && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
                             documentDetail.documentDate.toLongDateShort
@@ -263,7 +307,7 @@
                     </tr>
                 }
 
-                @if(codingOutEnabled && documentDetail.isCodingOut) {
+                @if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFrom, taxYearTo)</td>
