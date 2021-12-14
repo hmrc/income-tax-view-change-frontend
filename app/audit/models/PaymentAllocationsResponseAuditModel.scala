@@ -17,7 +17,7 @@
 package audit.models
 
 import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import auth.MtdItUserBase
 import models.core.AccountingPeriodModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
@@ -26,7 +26,7 @@ import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
-case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
+case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
                                                 paymentAllocations: PaymentAllocationViewModel)
   extends ExtendedAuditModel {
 

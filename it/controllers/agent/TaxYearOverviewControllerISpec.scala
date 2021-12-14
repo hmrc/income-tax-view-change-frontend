@@ -68,16 +68,15 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      Some("Test Trading Name"), None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd)
     )),
     property = Some(
       PropertyDetailsModel(
-        "testId2",
-        AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-        None, None, None, None,
+        Some("testId2"),
+          Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(getCurrentTaxYearEnd)
       )
     )
@@ -1074,6 +1073,13 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
+    }
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be DISABLED" in {
+      testIncomeSourceDetailsCaching(false, 2,
+        () => IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
     }
   }
 }

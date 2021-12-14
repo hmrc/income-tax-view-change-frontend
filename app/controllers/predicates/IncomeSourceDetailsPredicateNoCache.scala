@@ -22,14 +22,14 @@ import controllers.BaseController
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.http.HeaderNames
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
+class IncomeSourceDetailsPredicateNoCache @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val itvcErrorHandler: ItvcErrorHandler)
                                             (implicit val executionContext: ExecutionContext,
                                              mcc: MessagesControllerComponents) extends BaseController with
@@ -40,13 +40,10 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserWithNino[A] = request
 
-    val sessionId = request.headers.get(HeaderNames.xSessionId).getOrElse("")
-    val cacheKey = s"${sessionId + request.nino}-incomeSources"
-      incomeSourceDetailsService.getIncomeSourceDetails(Some(cacheKey)) map {
-        case sources: IncomeSourceDetailsModel =>
-          Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
-        case _ => Left(itvcErrorHandler.showInternalServerError)
-      }
-
+    incomeSourceDetailsService.getIncomeSourceDetails(None) map {
+      case sources: IncomeSourceDetailsModel =>
+        Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, request.saUtr, request.credId, request.userType, request.arn))
+      case _ => Left(itvcErrorHandler.showInternalServerError)
+    }
   }
 }

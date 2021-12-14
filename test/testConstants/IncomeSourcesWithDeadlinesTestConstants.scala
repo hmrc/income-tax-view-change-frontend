@@ -22,7 +22,7 @@ import models.nextUpdates.ObligationsModel
 
 object IncomeSourcesWithDeadlinesTestConstants {
   val businessAndPropertyIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel,
-    obligationsDataSuccessModel.copy(identification = business2.incomeSourceId), nextUpdatesDataPropertySuccessModel))
+    obligationsDataSuccessModel.copy(identification = business2.incomeSourceId.get), nextUpdatesDataPropertySuccessModel))
   val singleBusinessIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel))
   val propertyIncomeOnlyWithDeadlines = ObligationsModel(Seq(nextUpdatesDataPropertySuccessModel))
   val businessAndPropertyAlignedWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel, nextUpdatesDataPropertySuccessModel))

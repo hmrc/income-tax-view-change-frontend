@@ -82,9 +82,9 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
   ))
 
   val business = List(BusinessDetailsModel(
-    "testId",
-    AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-    Some("Test Trading Name"), None, None, None, None, None, None, None,
+    Some("testId"),
+    Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+    Some("Test Trading Name"),
     Some(getCurrentTaxYearEnd)
   ))
 

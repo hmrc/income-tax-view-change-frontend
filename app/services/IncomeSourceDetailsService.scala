@@ -18,15 +18,54 @@ package services
 
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
-import models.incomeSourceDetails.IncomeSourceDetailsResponse
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import play.api.Logger
+import play.api.cache.AsyncCacheApi
+import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
+class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                           val cache: AsyncCacheApi) {
+  implicit val ec = ExecutionContext.global
+  val cacheExpiry: Duration = Duration(1, "day")
+  def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
+    cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
+      incomeSources match {
+        case Some(jsonSources) =>
+          Json.fromJson[IncomeSourceDetailsModel](jsonSources) match {
+            case JsSuccess(sources: IncomeSourceDetailsModel, _: JsPath) =>
+              Some(sources)
+            case _ => None
+          }
+        case None => None
+      }
+    })
+  }
 
-  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] =
-    incomeTaxViewChangeConnector.getIncomeSources()
+  def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
+                                                    mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
+    if (cacheKey.isDefined) {
+      getCachedIncomeSources(cacheKey.get).flatMap {
+        case Some(sources: IncomeSourceDetailsModel) =>
+          Logger("application").info(s"incomeSourceDetails cache HIT with ${cacheKey.get}")
+          Future.successful(sources)
+        case None =>
+          Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
+          incomeTaxViewChangeConnector.getIncomeSources().flatMap {
+            case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
+              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
+                _ => incomeSourceDetailsModel
+              )
+            case error: IncomeSourceDetailsResponse => Future.successful(error)
+          }
+      }
+    } else {
+      incomeTaxViewChangeConnector.getIncomeSources()
+    }
+  }
 }

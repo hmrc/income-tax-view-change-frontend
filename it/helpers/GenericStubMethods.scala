@@ -54,9 +54,9 @@ trait GenericStubMethods extends CustomMatchers {
     UserDetailsStub.stubGetUserDetailsError()
   }
 
-  def verifyIncomeSourceDetailsCall(mtditid: String): Unit = {
+  def verifyIncomeSourceDetailsCall(mtditid: String, noOfCalls: Int = 1): Unit = {
     Then(s"Verify that Income Source Details has been called for MTDITID = $mtditid")
-    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid)
+    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid, noOfCalls)
   }
 
   def verifyNextUpdatesCall(nino: String): Unit = {

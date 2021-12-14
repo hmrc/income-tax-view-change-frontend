@@ -63,9 +63,9 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      None, None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+			None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None
@@ -169,4 +169,11 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 			)
 		}
   }
+
+	"API#1171 GetBusinessDetails Caching" when {
+		"caching should be DISABLED" in {
+			testIncomeSourceDetailsCaching(false, 2,
+				() => IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation))
+		}
+	}
 }

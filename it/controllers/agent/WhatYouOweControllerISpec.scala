@@ -17,9 +17,8 @@ import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOw
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.FakeRequest
+import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.LocalDate
 
 class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -39,9 +38,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      None, None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None
@@ -67,9 +66,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
+              Some("testId"),
+              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+              None,
               Some(getCurrentTaxYearEnd)
             )),
             property = None
@@ -1393,6 +1392,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       )
     }
   }
+
   "YearOfMigration exists with valid coding out charges" when {
     "coding out is enabled" in {
       disable(TxmEventsApproved)
@@ -1493,6 +1493,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
         isElementVisibleById("totalBalance")(expectedValue = true)
       )
+    }
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails))
     }
   }
 }

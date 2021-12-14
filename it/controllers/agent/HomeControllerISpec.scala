@@ -72,9 +72,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
     mtdbsa = testMtditid,
 		yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      None, None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+			None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None
@@ -787,9 +787,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 					mtdbsa = testMtditid,
 					yearOfMigration = None,
 					businesses = List(BusinessDetailsModel(
-						"testId",
-						AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-						None, None, None, None, None, None, None, None,
+						Some("testId"),
+						Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+						None,
 						Some(getCurrentTaxYearEnd)
 					)),
 					property = None
@@ -802,6 +802,13 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 				httpStatus(INTERNAL_SERVER_ERROR),
 				pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
 			)
+		}
+	}
+
+	"API#1171 GetBusinessDetails Caching" when {
+		"2nd incomeSourceDetails call SHOULD be cached" in {
+			testIncomeSourceDetailsCaching(false, 1,
+				() => IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation))
 		}
 	}
 }
