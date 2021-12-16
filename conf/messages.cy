@@ -288,7 +288,7 @@ nextUpdates.eops            									= Diweddariad blynyddol
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
-nextUpdates.business            							    = Business income
+nextUpdates.business            							    = Incwm busnes
 
 ## Previous Obligations ##
 
