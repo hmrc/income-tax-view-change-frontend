@@ -56,7 +56,7 @@ class PaymentHistoryControllerSpec extends TestSupport
     val paymentHistoryService: PaymentHistoryService = mock[PaymentHistoryService]
 
     val controller = new PaymentHistoryController(
-      app.injector.instanceOf[views.html.agent.PaymentHistory],
+      app.injector.instanceOf[views.html.PaymentHistory],
       mockAuditingService,
       mockAuthService,
       mockIncomeSourceDetailsService,
