@@ -565,10 +565,10 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val poa2Text = "Payment on account 2 of 2"
     val latePoa2Text = "Late payment interest for payment on account 2 of 2"
-    val remainingBalance = "Remaining balance"
-    val lateRemainingBalance = "Late payment interest for remaining balance"
-    val remainingBalanceLine1 = "The remaining balance is the tax you still need to pay for a tax year."
-    val interestOnRemainingBalance = "Interest on remaining balance"
+    val remainingBalance = "Balancing payment"
+    val lateRemainingBalance = "Late payment interest for Balancing payment"
+    val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
+    val interestOnRemainingBalance = "Interest on Balancing payment"
     val paymentUnderReview = "Payment under review"
 
     def interestOnRemainingBalanceYear(from: String, to: String) = s"From $from to $to"
@@ -627,9 +627,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2Text = "Payment on account 2 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val latePoa2Text = "Late payment interest for payment on account 2 of 2"
-    val remainingBalance = "Remaining balance"
-    val remainingBalanceLine1 = "The remaining balance is the tax you still need to pay for a tax year."
-    val interestOnRemainingBalance = "Interest on remaining balance"
+    val remainingBalance = "Balancing payment"
+    val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
+    val interestOnRemainingBalance = "Interest on Balancing payment"
     val paymentUnderReview = "Payment under review"
 
     def interestOnRemainingBalanceYear(from: String, to: String) = s"From $from to $to"
@@ -683,20 +683,27 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   }
 
   object PaymentAllocation {
+    val title = "Payment made to HMRC - Business Tax account - GOV.UK"
     val heading = "Payment made to HMRC"
+    val backLink = "Back"
     val date = "31 January 2021"
     val amount = "£300.00"
     val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
     val paymentAllocationHeading = "Payment allocations"
     val tableHeadings = Seq("Payment allocation", "Date allocated", "Amount")
     val tableDataPaymentAllocation = "Class 4 National Insurance for payment on account 1 of 2 2020 Tax year 2019 to 2020"
-    val tableDataPaymentAllocationLpi = "Late payment interest for remaining balance 2020 Tax year 2019 to 2020"
+    val tableDataPaymentAllocationLpi = "Late payment interest for Balancing payment 2020 Tax year 2019 to 2020"
     val tableDataDateAllocated = "31 Jan 2021"
     val tableDataDateAllocatedLpi = "N/A"
     val tableDataAmount = "£10.10"
     val tableDataAmountLpi = "£300.00"
     val creditOnAccount = "Credit on account"
     val creditOnAccountAmount = "£200.00"
+    val allocationsTableHeading = "Payment allocations"
+    val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
+    val allocationsTableCaption = "Payment allocations"
+    val allocationsTableHeadersText: String = allocationsTableCaption + " " + allocationsTableHeaders.mkString(" ")
+
   }
 
 }

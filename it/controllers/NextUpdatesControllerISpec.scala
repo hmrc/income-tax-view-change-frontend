@@ -144,7 +144,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
-        println(res.body)
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyNextUpdatesCall(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
@@ -210,6 +209,13 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
       }
 
+    }
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be DISABLED" in {
+      testIncomeSourceDetailsCaching(false, 2,
+        () => IncomeTaxViewChangeFrontend.getNextUpdates)
     }
   }
 }

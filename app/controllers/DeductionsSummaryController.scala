@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
-import auth.MtdItUser
+import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
@@ -38,7 +38,6 @@ import scala.concurrent.ExecutionContext
 class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
                                             val retrieveNino: NinoPredicate,
-                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                             val calculationService: CalculationService,
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
@@ -50,7 +49,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val languageUtils: LanguageUtils)
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
 
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] = {

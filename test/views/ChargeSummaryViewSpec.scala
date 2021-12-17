@@ -26,6 +26,7 @@ import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
 import views.html.ChargeSummary
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 
 import java.time.LocalDate
 
@@ -84,15 +85,18 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def poaInterestHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
 
-    def balancingChargeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Remaining balance"
+    def balancingChargeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Balancing payment"
 
-    def balancingChargeInterestHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on remaining balance"
+    def balancingChargeInterestHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on Balancing payment"
 
     def class2NicHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Class 2 National Insurance"
+
+    def cancelledSaPayeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Cancelled Self Assessment payment (through your PAYE tax code)"
 
     val dueDate = "Due date"
     val interestPeriod = "Interest period"
     val fullPaymentAmount = "Full payment amount"
+    val paymentAmount = "Payment amount"
     val remainingToPay = "Remaining to pay"
     val paymentBreakdownHeading = "Payment breakdown"
     val chargeHistoryHeading = "Payment history"
@@ -104,19 +108,26 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
-    val balancingChargeCreated = "Remaining balance created"
-    val balancingChargeInterestCreated = "Late payment interest for remaining balance created"
+    val balancingChargeCreated = "Balancing payment created"
+    val balancingChargeInterestCreated = "Late payment interest for Balancing payment created"
 
     def paymentOnAccountAmended(number: Int) = s"Payment on account $number of 2 reduced due to amended return"
 
-    val balancingChargeAmended = "Remaining balance reduced due to amended return"
+    val balancingChargeAmended = "Balancing payment reduced due to amended return"
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
     def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
     val class2NicChargeCreated = "Class 2 National Insurance created"
+    val cancelledSaPayeCreated = "Cancelled Self Assessment payment (through your PAYE tax code) created"
 
-    val balancingChargeRequest = "Remaining balance reduced by taxpayer request"
+    def payeTaxCodeText(year: Int) = s"Check if your PAYE tax code has changed for the ${year - 1} to $year tax year."
+    val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
+    val cancelledPayeTaxCodeInsetText = "You have previously agreed to pay some of your Self Assessment bill through your PAYE tax code (opens in new tab). HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay."
+    val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+    def remainingTaxYouOwe(year: Int) = s"This is the remaining tax you owe for the ${year - 1} to $year tax year."
+
+    val balancingChargeRequest = "Balancing payment reduced by taxpayer request"
     val dunningLockBannerHeader = "Important"
     val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)."
 
@@ -214,12 +225,61 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.select("h1").text() shouldBe Messages.class2NicHeading(2018)
       }
 
-      "have the correct heading for a Class 2 National Insurance charge when coding out FS is disabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = false) {
+      "have the correct heading for a Class 2 National Insurance charge when coding out FS is disabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
         document.select("h1").text() shouldBe Messages.balancingChargeHeading(2018)
       }
 
       "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), lpiWithDunningBlock = None), codingOutEnabled = true) {
         document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
+      }
+
+      "have the correct heading for a Cancelled PAYE Self Assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+        document.select("h1").text() shouldBe Messages.cancelledSaPayeHeading(2018)
+      }
+
+      "have a paragraphs explaining Cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
+        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        document.select("#check-paye-para").text() shouldBe Messages.payeTaxCodeText(2018)
+        document.select("#paye-tax-code-link").attr("href") shouldBe Messages.payeTaxCodeLink
+        document.select("#cancelled-coding-out-notice").text() shouldBe Messages.cancelledPayeTaxCodeInsetText
+        document.select("#cancelled-coding-out-notice a").attr("href") shouldBe Messages.cancellledPayeTaxCodeInsetLink
+
+      }
+
+      "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+        verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 May 2019")
+        verifySummaryListRow(2, Messages.paymentAmount, "£1,400.00")
+        verifySummaryListRow(3, Messages.remainingToPay, "£1,400.00")
+      }
+
+      "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+        document.select("#payment-days-note").text() shouldBe "Payments can take up to 7 days to process."
+      }
+
+      "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
+        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+      }
+
+      "not display the Payment breakdown list for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
+        document.doesNotHave(Selectors.id("heading-payment-breakdown"))
+      }
+
+      "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+        document.select("div#payment-link-2018").text() shouldBe "Pay now"
+      }
+
+      "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
+        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
+        document.select("main h2").text shouldBe Messages.chargeHistoryHeading
+      }
+
+      "display only the charge creation item when no history found for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+        document.select("tbody tr").size() shouldBe 1
+        document.select("tbody tr td:nth-child(1)").text() shouldBe "29 Mar 2018"
+        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.cancelledSaPayeCreated
+        document.select("tbody tr td:nth-child(3)").text() shouldBe "£1,400.00"
       }
 
       "have the correct heading for a new balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
@@ -520,12 +580,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
             "31 Mar 2018 Payment allocated to Class 4 National Insurance for payment on account 1 of 2 2018 £1,600.00",
             "1 Apr 2018 Payment allocated to Income Tax for payment on account 2 of 2 2018 £2,400.00",
             "15 Apr 2018 Payment allocated to Class 4 National Insurance for payment on account 2 of 2 2018 £2,500.00",
-            "10 Dec 2019 Payment allocated to Income Tax for remaining balance 2018 £3,400.00",
-            "11 Dec 2019 Payment allocated to Class 4 National Insurance for remaining balance 2018 £3,500.00",
-            "12 Dec 2019 Payment allocated to Class 2 National Insurance for remaining balance 2018 £3,600.00",
-            "13 Dec 2019 Payment allocated to Capital Gains Tax for remaining balance 2018 £3,700.00",
-            "14 Dec 2019 Payment allocated to Student Loans for remaining balance 2018 £3,800.00",
-            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for remaining balance 2018 £3,900.00"
+            "10 Dec 2019 Payment allocated to Income Tax for Balancing payment 2018 £3,400.00",
+            "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment 2018 £3,500.00",
+            "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment 2018 £3,600.00",
+            "13 Dec 2019 Payment allocated to Capital Gains Tax for Balancing payment 2018 £3,700.00",
+            "14 Dec 2019 Payment allocated to Student Loans for Balancing payment 2018 £3,800.00",
+            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for Balancing payment 2018 £3,900.00"
           )
 
           "chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
@@ -563,10 +623,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "display the coded out details" when {
         val documentDetailCodingOut = documentDetailModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
-          documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(2500.00),
+          documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
         object CodingOutMessages {
-          val header = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
+          val header = "Tax year 6 April 2017 to 5 April 2018 PAYE Self Assessment"
           val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
           val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
           val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
@@ -575,6 +635,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
         }
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe CodingOutMessages.header
+          document.select("#check-paye-para").text() shouldBe Messages.payeTaxCodeText(2018)
+          document.select("#paye-tax-code-link").attr("href") shouldBe Messages.payeTaxCodeLink
           document.select("#coding-out-notice").text() shouldBe CodingOutMessages.insetPara
           document.select("#coding-out-message").text() shouldBe CodingOutMessages.summaryMessage
           document.select("#coding-out-notice-link").attr("href") shouldBe CodingOutMessages.noticeLink

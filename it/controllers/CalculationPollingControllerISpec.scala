@@ -84,7 +84,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear,Map(SessionKeys.calculationId -> "idThree"))
 
           Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idThree")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idThree", 8)
 
           And("The expected result is returned")
           res should have(
@@ -118,7 +118,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           )
 
           Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idFour")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idFour", 6)
 
           mongoDbConnection.repo.findById("idFour").futureValue shouldBe None
         }
@@ -144,7 +144,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           )
 
           Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idFive")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idFive", 6)
 
           mongoDbConnection.repo.findById("idFive").futureValue shouldBe None
         }

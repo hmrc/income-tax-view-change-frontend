@@ -47,6 +47,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
     val docNumber = "docNumber1"
 
     val paymentAllocation: PaymentAllocationsService = mock[PaymentAllocationsService]
+    val isAgent: Boolean = true
 
 
     val controller: PaymentAllocationsController = new PaymentAllocationsController(
@@ -141,7 +142,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
-          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
+          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, isAgent
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient())
@@ -157,7 +158,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
 
         mockPaymentAllocationView(
           paymentAllocationViewModelLpi,
-          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
+          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, isAgent
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient())

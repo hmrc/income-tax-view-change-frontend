@@ -30,32 +30,14 @@ object PropertyDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
 
   val propertyDetails = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = testPropertyAccountingPeriod,
-    propertiesRented = Some(PropertiesRentedModel(
-      uk = Some(2),
-      eea = None,
-      nonEea = None,
-      total = Some(2)
-    )),
-    cessation = None,
-    contactDetails = None,
-    paperless = None,
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = testPropertyAccountingPeriod,
-    propertiesRented = Some(PropertiesRentedModel(
-      uk = Some(2),
-      eea = None,
-      nonEea = None,
-      total = Some(2)
-    )),
-    cessation = Some(testCessation),
-    contactDetails = None,
-    paperless = None,
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None
   )
 

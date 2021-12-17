@@ -150,16 +150,15 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      Some("Test Trading Name"), None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some("Test Trading Name"),
       Some(LocalDate.of(2018, 1, 1))
     )),
     property = Some(
       PropertyDetailsModel(
-        "testId2",
-        AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-        None, None, None, None,
+        Some("testId2"),
+        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(LocalDate.of(2018, 1, 1))
       )
     )

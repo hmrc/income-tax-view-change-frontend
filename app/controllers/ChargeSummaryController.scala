@@ -95,7 +95,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
         financialDetails.flatMap(_.allocation)
       } else Nil
 
-    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isCodingOut, id).map {
+    chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
       case Right(chargeHistory) =>
         auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
         Ok(chargeSummaryView(
@@ -116,9 +116,9 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
     }
   }
 
-  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isCodingOut: Boolean, documentNumber: String)
+  private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, documentNumber: String)
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
-    if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isCodingOut)) {
+    if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
       incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, documentNumber).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
         case errorResponse => Left(errorResponse)

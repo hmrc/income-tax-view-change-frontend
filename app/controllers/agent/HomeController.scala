@@ -22,7 +22,6 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
@@ -33,6 +32,7 @@ import views.html.Home
 import java.time.LocalDate
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 import play.api.data.Forms.localDate
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -84,7 +84,7 @@ class HomeController @Inject()(home: views.html.Home,
   def show(): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       for {
-        mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
+        mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
         dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
         unpaidFinancialDetails <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
         _ = if(unpaidFinancialDetails.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]

@@ -116,10 +116,11 @@ tax-year-overview.payments.status                               = Statws
 tax-year-overview.payments.amount                               = Swm
 tax-year-overview.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
 tax-year-overview.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
-tax-year-overview.payments.balancingCharge.text                 = Balans sy’n weddill
+tax-year-overview.payments.balancingCharge.text                 = Taliad mantoli
 tax-year-overview.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-overview.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
-tax-year-overview.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+tax-year-overview.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
+tax-year-overview.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
 tax-year-overview.payments.paid                                 = Talwyd
 tax-year-overview.payments.unpaid                               = Na thalwyd
 tax-year-overview.payments.part-paid                            = Talwyd yn rhannol
@@ -287,7 +288,7 @@ nextUpdates.eops            									= Diweddariad blynyddol
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
-nextUpdates.business            							    = Business income
+nextUpdates.business            							    = Incwm busnes
 
 ## Previous Obligations ##
 
@@ -412,8 +413,8 @@ whatYouOwe.tableHead.payment-type                               = Math o daliad
 whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddyledus
 whatYouOwe.paymentOnAccount1.text							    = Taliad ar gyfrif 1 o 2
 whatYouOwe.paymentOnAccount2.text							    = Taliad ar gyfrif 2 o 2
-whatYouOwe.balancingCharge.text  							    = Balans sy’n weddill
-whatYouOwe.remaining-balance.heading                            = Balans sy’n weddill
+whatYouOwe.balancingCharge.text  							    = Taliad mantoli
+whatYouOwe.remaining-balance.heading                            = Taliad mantoli
 whatYouOwe.remaining-balance.line1                              = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
 whatYouOwe.payment-on-account.heading                           = Taliad ar gyfrif
 whatYouOwe.payment-on-account.line1                             = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
@@ -431,7 +432,7 @@ whatYouOwe.paymentUnderReview                                   = Taliad dan ado
 whatYouOwe.over-due.interest.line1                              = Llog am dalu’n hwyr
 whatYouOwe.lpi.paymentOnAccount1.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 whatYouOwe.lpi.paymentOnAccount2.text                           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
-whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+whatYouOwe.lpi.balancingCharge.text                             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 whatYouOwe.balancingCharge.interest.line1.text                  = Llog ar y balans sy’n weddill
 whatYouOwe.over-due.interest-rate                               = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
 whatYouOwe.over-due.interest-rate-1                             = Mae unrhyw log am dalu’n hwyr ar y {0}
@@ -444,8 +445,11 @@ whatYouOwe.dunningLock.link                                     = mae ymchwiliad
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
 chargeSummary.paymentOnAccount2.text                            = Taliad ar gyfrif 2 o 2
-chargeSummary.balancingCharge.text                              = Balans sy’n weddill
+chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
+chargeSummary.class2Nic.text                                    = Class 2 National Insurance
+chargeSummary.codingOut.text                                    = PAYE Self Assessment
+chargeSummary.cancelledPayeSelfAssessment.text                  = Cancelled Self Assessment payment (through your PAYE tax code)
 chargeSummary.paymentAmount                                     = Swm y taliad
 chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
 chargeSummary.remainingDue                                      = Yn weddill i dalu
@@ -477,36 +481,56 @@ chargeSummary.interestLocks.linkText                               = Bwrw golwg 
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text  = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
-chargeSummary.lpi.chargeHistory.created.balancingCharge.text    = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill wedi’i greu
 
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
+                                                                        
+chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-chargeSummary.chargeHistory.heading								= Hanes taliadau
-chargeSummary.chargeHistory.date								= Dyddiad
-chargeSummary.chargeHistory.description							= Disgrifiad
-chargeSummary.chargeHistory.amount								= Swm
-chargeSummary.chargeHistory.created.paymentOnAccount1.text		= Taliad ar gyfrif 1 o 2 wedi’i greu
-chargeSummary.chargeHistory.created.paymentOnAccount2.text		= Taliad ar gyfrif 2 o 2 wedi’i greu
-chargeSummary.chargeHistory.created.balancingCharge.text		= Balans sy’n weddill wedi’i greu
-chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	= Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
-chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	= Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
-chargeSummary.chargeHistory.request.balancingCharge.text	   	= Balans sy’n weddill wedi’i ostwng oherwydd cais gan y trethdalwr
-chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	= Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
-chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	= Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
-chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	= Balans sy’n weddill wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.heading								        = Hanes taliadau
+chargeSummary.chargeHistory.date								        = Dyddiad
+chargeSummary.chargeHistory.description							        = Disgrifiad
+chargeSummary.chargeHistory.amount								        = Swm
+chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Taliad ar gyfrif 1 o 2 wedi’i greu
+chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Taliad ar gyfrif 2 o 2 wedi’i greu
+chargeSummary.chargeHistory.created.balancingCharge.text		        = Taliad Mantoli wedi’i greu
+chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
+chargeSummary.chargeHistory.created.codingOut.text                      = PAYE self assessment created
+chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled Self Assessment payment (through your PAYE tax code) created
 
-chargeSummary.paymentAllocations.bcd.incomeTax                  = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y balans sy’n weddill
-chargeSummary.paymentAllocations.bcd.nic2                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y balans sy’n weddill
-chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y balans sy’n weddill
-chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
-chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
-chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+
+chargeSummary.paymentAllocations.bcd.incomeTax                  = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y Taliad Mantoli
+chargeSummary.paymentAllocations.bcd.nic2                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y Taliad Mantoli
+chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y Taliad Mantoli
+chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y Taliad Mantoli
+chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y Taliad Mantoli
+chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y Taliad Mantoli
+
 chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 1 o 2
 chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 2 o 2
 chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
 
+chargeSummary.codingOutHeader                                   = PAYE self assessment
+chargeSummary.codingOutMessage                                  = This is the remaining tax you owe for the {0} to {1} tax year.
+chargeSummary.codingOutRemainingToPay                           = Collected through your PAYE tax code for {0} to {1} tax year## Regimes
+chargeSummary.codingOutInset-1                                  = If this tax cannot be collectedregimes.UK = Y DU
+chargeSummary.codingOutInset-2                                  = through your PAYE tax code (opens in new tab)regimes.Scotland = Yr Alban
+chargeSummary.codingOutInset-3                                  = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.regimes.Wales = Cymru
+chargeSummary.codingOutPayHistoryAmount                         = Amount collected through your PAYE tax code for {0} to {1} tax year
+chargeSummary.check-paye-tax-code-1                             = Check if your## Timeout
+chargeSummary.check-paye-tax-code-2                             = PAYE tax codetimeoutDialog.minute                                            = munud
+chargeSummary.check-paye-tax-code-3                             = has changed for the {0} to {1} tax year.timeoutDialog.minutes                                           = munud
+chargeSummary.cancelledPayeInset-1                              = You have previously agreed to pay some of your Self Assessment billtimeoutDialog.minutes.two                                       = funud
+chargeSummary.cancelledPayeInset-2                              = through your PAYE tax code (opens in new tab).timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
+chargeSummary.cancelledPayeInset-3                              = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.timeoutDialog.seconds                                           = eiliad
 
 ## Regimes
 regimes.UK = Y DU
@@ -630,15 +654,15 @@ paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar
 paymentAllocation.paymentAllocations.poa1.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 paymentAllocation.paymentAllocations.poa2.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 2 o 2
 paymentAllocation.paymentAllocations.poa2.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
-paymentAllocation.paymentAllocations.bcd.incomeTax              = Treth Incwm ar gyfer y balans sy’n weddill
-paymentAllocation.paymentAllocations.bcd.nic2                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y balans sy’n weddill
-paymentAllocation.paymentAllocations.bcd.vcnic2                 = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y balans sy’n weddill
-paymentAllocation.paymentAllocations.bcd.nic4                   = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y balans sy’n weddill
-paymentAllocation.paymentAllocations.bcd.sl                     = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y balans sy’n weddill
-paymentAllocation.paymentAllocations.bcd.cgt                    = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.bcd.incomeTax              = Treth Incwm ar gyfer y Taliad Mantoli
+paymentAllocation.paymentAllocations.bcd.nic2                   = Yswiriant Gwladol Dosbarth 2 ar gyfer y Taliad Mantoli
+paymentAllocation.paymentAllocations.bcd.vcnic2                 = Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y Taliad Mantoli
+paymentAllocation.paymentAllocations.bcd.nic4                   = Yswiriant Gwladol Dosbarth 4 ar gyfer y Taliad Mantoli
+paymentAllocation.paymentAllocations.bcd.sl                     = Benthyciadau Myfyrwyr ar gyfer y Taliad Mantoli
+paymentAllocation.paymentAllocations.bcd.cgt                    = Treth Enillion Cyfalaf ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
-paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol

@@ -20,7 +20,7 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUser
 import testConstants.IncomeSourceDetailsTestConstants._
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.services.{MockAsyncCacheApi, MockIncomeSourceDetailsService}
 import play.api.http.Status
 import play.api.test.Helpers._
 import play.api.mvc.MessagesControllerComponents
@@ -29,7 +29,7 @@ import testUtils.TestSupport
 import scala.concurrent.Future
 
 
-class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService {
+class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService with MockAsyncCacheApi {
 
   object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(mockIncomeSourceDetailsService,
     app.injector.instanceOf[ItvcErrorHandler])(

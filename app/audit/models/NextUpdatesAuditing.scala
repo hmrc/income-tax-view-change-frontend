@@ -31,10 +31,10 @@ object NextUpdatesAuditing {
       "nino" -> user.nino,
       "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
       "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
-      "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}")
+      "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
+      "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}"),
+      "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
+      "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}")
     )
     override val auditType: String = nextUpdateAuditType
   }

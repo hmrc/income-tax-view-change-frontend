@@ -8,7 +8,7 @@ import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.PaymentDueTestConstraints.getCurrentTaxYearEnd
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -17,9 +17,8 @@ import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOw
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.FakeRequest
+import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.LocalDate
 
 class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -39,9 +38,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      None, None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None
@@ -67,9 +66,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
+              Some("testId"),
+              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+              None,
               Some(getCurrentTaxYearEnd)
             )),
             property = None
@@ -1391,6 +1390,116 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
         isElementVisibleById("totals-row")(expectedValue = false)
       )
+    }
+  }
+
+  "YearOfMigration exists with valid coding out charges" when {
+    "coding out is enabled" in {
+      disable(TxmEventsApproved)
+      enable(WhatYouOweTotals)
+      enable(CodingOut)
+      stubAuthorisedAgentUser(authorised = true)
+
+      val testTaxYear = LocalDate.now().getYear
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+        propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
+      )(OK, testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+
+      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+        "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+      AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+      Then("the result should have a HTTP status of OK (200) and the payments due page with coding out in future payments")
+      result should have(
+        httpStatus(OK),
+        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+        isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+        isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+        isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+        isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+        isElementVisibleById("payment-details-content-0")(expectedValue = true),
+        isElementVisibleById("payment-details-content-1")(expectedValue = true),
+        isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+        isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+        isElementVisibleById("future-payments-heading")(expectedValue = true),
+        isElementVisibleById("future-payments-type-0")(expectedValue = true),
+        isElementVisibleById("future-payments-type-1")(expectedValue = true),
+        isElementVisibleById("future-payments-type-2")(expectedValue = true),
+        isElementVisibleById(s"no-payments-due")(expectedValue = false),
+        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = true),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+        isElementVisibleById("totalBalance")(expectedValue = true)
+      )
+    }
+    "coding out is disabled" in {
+      disable(TxmEventsApproved)
+      enable(WhatYouOweTotals)
+      disable(CodingOut)
+      stubAuthorisedAgentUser(authorised = true)
+
+      val testTaxYear = LocalDate.now().getYear
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+        propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
+      )(OK, testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+
+      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+        "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+      AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+      IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+      Then("the result should have a HTTP status of OK (200) and the payments due page with no coding out in future payments")
+      result should have(
+        httpStatus(OK),
+        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+        isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+        isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+        isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+        isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+        isElementVisibleById("payment-details-content-0")(expectedValue = true),
+        isElementVisibleById("payment-details-content-1")(expectedValue = true),
+        isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+        isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+        isElementVisibleById("future-payments-heading")(expectedValue = true),
+        isElementVisibleById("future-payments-type-0")(expectedValue = true),
+        isElementVisibleById("future-payments-type-1")(expectedValue = false),
+        isElementVisibleById("future-payments-type-2")(expectedValue = false),
+        isElementVisibleById(s"no-payments-due")(expectedValue = false),
+        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+        isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+        isElementVisibleById("overdueAmount")(expectedValue = true),
+        isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
+        isElementVisibleById("totalBalance")(expectedValue = true)
+      )
+    }
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails))
     }
   }
 }

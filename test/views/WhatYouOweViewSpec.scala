@@ -208,6 +208,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       amountCodedOut = Some(codingOutAmount)))
   )
 
+  val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    overduePaymentList = List(testFinancialDetailsModelWithCancelledPayeSa().getAllDocumentDetailsWithDueDates.head),
+    dueInThirtyDaysList = List(),
+    futurePayments = List(),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
+  )
+
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
@@ -230,7 +239,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("totalBalance") shouldBe null
       }
-      "have the remaining balance title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
+      "have the Balancing Payment title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
@@ -239,7 +248,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         remainingBalanceHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
         remainingBalanceHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
       }
-      "remaining balance row data exists and should not contain hyperlink and overdue tag " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
+      "Balancing Payment row data exists and should not contain hyperlink and overdue tag " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
         val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
         remainingBalanceTable.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
@@ -332,7 +341,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("totalBalance") shouldBe null
       }
-      s"have the remaining balance header and table data" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
+      s"have the Balancing Payment header and table data" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
         val remainingBalanceHeader: Element = pageDocument.select("tr").first()
@@ -442,7 +451,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("totalBalance") shouldBe null
       }
-      "have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
+      "have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
@@ -750,7 +759,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("totalBalance") shouldBe null
       }
-      s"have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
+      s"have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
@@ -880,6 +889,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 1
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
       }
+      "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+        pageDocument.getElementById("coding-out-header") shouldBe null
+        pageDocument.getElementById("coding-out-notice") shouldBe null
+        pageDocument.getElementById("over-due-type-0") should not be null
+        pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
+        pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
+        pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
+        pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+        pageDocument.getElementById("coding-out-summary-link") shouldBe null
+      }
     }
 
     "codingOut is disabled" should {
@@ -889,7 +908,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       "have a balancing charge overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
         pageDocument.getElementById("over-due-type-0") should not be null
-        pageDocument.select("#over-due-type-0 a").text() shouldBe "Remaining balance 2021"
+        pageDocument.select("#over-due-type-0 a").text() shouldBe "Balancing payment 2021"
         pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0

@@ -24,7 +24,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.IncomeTaxAgentUser
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatter
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
 import play.api.Logger
@@ -40,7 +40,6 @@ import views.html.ChargeSummary
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         financialDetailsService: FinancialDetailsService,
@@ -49,7 +48,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                        )(implicit val appConfig: FrontendAppConfig,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
-                                         dateFormatter: ImplicitDateFormatterImpl,
                                          implicit val ec: ExecutionContext,
                                          val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
@@ -76,7 +74,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   def showChargeSummary(taxYear: Int, chargeId: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { mtdItUser =>
           financialDetailsService.getAllFinancialDetails(mtdItUser, implicitly, implicitly).flatMap { financialResponses =>
 						val payments = financialResponses.collect {
 							case (_, model: FinancialDetailsModel) => model.filterPayments()

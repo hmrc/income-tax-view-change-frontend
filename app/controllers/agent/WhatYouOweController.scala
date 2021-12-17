@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved, WhatYouOweTotals,CodingOut}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -30,9 +30,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
 import views.html.WhatYouOwe
-import javax.inject.{Inject, Singleton}
 
-import scala.concurrent.ExecutionContext
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
@@ -64,7 +64,7 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
   def show: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
 						whatYouOweService.getWhatYouOweChargesList().map {
 							whatYouOweChargesList => {

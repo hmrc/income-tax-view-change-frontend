@@ -19,7 +19,6 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import implicits.ImplicitDateFormatterImpl
 import models.core.Nino
 import models.financialDetails.FinancialDetailsModel
 import models.paymentAllocationCharges._
@@ -35,8 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                           financialDetailsService: FinancialDetailsService,
                                           val appConfig: FrontendAppConfig)
-                                         (implicit ec: ExecutionContext,
-                                          dateFormatter: ImplicitDateFormatterImpl) {
+                                         (implicit ec: ExecutionContext) {
 
   def getPaymentAllocation(nino: Nino, documentNumber: String)
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError.type, PaymentAllocationViewModel]] = {
@@ -56,7 +54,7 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
             } else {
               createPaymentAllocationWithClearingDate(nino, paymentAllocations, documentDetailsWithFinancialDetailsModel) map {
                 case paymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate]
-                  if paymentAllocationWithClearingDate.find(_.allocationDetail == None).isEmpty =>
+                  if !paymentAllocationWithClearingDate.exists(_.allocationDetail.isEmpty) =>
                   Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, paymentAllocationWithClearingDate))
                 case _ =>
                   Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment allocations")

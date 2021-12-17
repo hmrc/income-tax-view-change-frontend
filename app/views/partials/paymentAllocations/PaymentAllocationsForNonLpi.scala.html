@@ -19,7 +19,7 @@
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel)(implicit messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, isAgent: Boolean)(implicit messages: Messages)
 @import implicitDateFormatter._
 
 @for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
@@ -27,8 +27,13 @@
 
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-@index">
+                @if(isAgent){
+                <a class="govuk-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)">
+                    @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+                    } else {
                 <a class="govuk-link" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)}" class="govuk-link">
                 @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+                    }
                     <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter)</span>
                 </a>
                 <br>

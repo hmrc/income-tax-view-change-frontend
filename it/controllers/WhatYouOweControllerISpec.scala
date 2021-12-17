@@ -16,7 +16,7 @@
 
 package controllers
 
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr, testYear}
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
@@ -1287,7 +1287,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("future-payments-heading")(expectedValue = true),
               isElementVisibleById("future-payments-type-0")(expectedValue = true),
               isElementVisibleById("future-payments-type-1")(expectedValue = true),
-              isElementVisibleById("future-payments-type-2")(expectedValue = false),
+              isElementVisibleById("future-payments-type-2")(expectedValue = true),
+              isElementVisibleById("future-payments-type-3")(expectedValue = false),
               isElementVisibleById(s"payment-days-note")(expectedValue = true),
               isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
@@ -1347,7 +1348,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
               isElementVisibleById("future-payments-heading")(expectedValue = true),
               isElementVisibleById("future-payments-type-0")(expectedValue = true),
-              isElementVisibleById("future-payments-type-1")(expectedValue = true),
+              isElementVisibleById("future-payments-type-1")(expectedValue = false),
               isElementVisibleById("future-payments-type-2")(expectedValue = false),
               isElementVisibleById(s"payment-days-note")(expectedValue = true),
               isElementVisibleById(s"credit-on-account")(expectedValue = true),
@@ -1403,6 +1404,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         }
       }
 
+    }
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue)
     }
   }
 }

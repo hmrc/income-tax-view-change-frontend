@@ -25,7 +25,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.retrieve.Name
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException}
 
 import scala.concurrent.Future
 
@@ -60,13 +60,25 @@ trait ClientConfirmedController extends BaseAgentController {
     }
   }
 
-  def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService)(
+  def getMtdItUserWithNino()(
+    implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): MtdItUserWithNino[AnyContent] = {
+    MtdItUserWithNino(
+      mtditid = getClientMtditid, nino = getClientNino, userName = getClientName,
+      saUtr = getClientUtr, credId = user.credId, userType = Some("Agent"), arn = user.agentReferenceNumber
+    )
+  }
+
+  def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService, useCache: Boolean)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
     val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
       getClientMtditid, getClientNino, getClientName, getClientUtr, user.credId, Some("Agent"), user.agentReferenceNumber
     )
 
-    incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userWithNino) map {
+    val cacheKey = if (useCache) {
+      val sessionId = request.headers.get(HeaderNames.xSessionId).getOrElse("")
+      Some(s"${sessionId + getClientNino}-incomeSources")
+    } else None
+    incomeSourceDetailsService.getIncomeSourceDetails(cacheKey)(hc = hc, mtdUser = userWithNino) map {
       case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
         userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, userWithNino.saUtr, userWithNino.credId, userWithNino.userType, userWithNino.arn)
       case _ => throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
