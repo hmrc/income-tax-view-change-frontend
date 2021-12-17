@@ -46,6 +46,21 @@ case class DocumentDetail(taxYear: String,
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
+  def originalAmountIsNotZero: Boolean = originalAmount match {
+    case Some(amount) if amount == 0 => false
+    case _ => true
+  }
+
+  def latePaymentInterestAmountIsNotZero: Boolean = latePaymentInterestAmount match {
+    case Some(amount) if amount == 0 => false
+    case _ => true
+  }
+
+  def amountCodedOutIsNotZero: Boolean = amountCodedOut match {
+    case Some(amount) if amount == 0 => false
+    case _ => true
+  }
+
   def isPaid: Boolean = outstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false

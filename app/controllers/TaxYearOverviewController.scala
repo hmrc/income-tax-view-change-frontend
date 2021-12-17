@@ -19,8 +19,8 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
-import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
 import models.calculation._
@@ -76,26 +76,33 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
+        val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
+        val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-          //selects everything expect for coding out & class 2 nics
-          documentDetails.filter(_.paymentLot.isEmpty).filter(!_.isClass2Nic).filter(!_.isCodingOut).map(
+          docDetailsNoPayments.filter(_.isNotCodingOutDocumentDetail).filter(_.originalAmountIsNotZero).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
-          documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
+          docDetailsNoPayments.filter(_.latePaymentInterestAmount.isDefined).filter(_.latePaymentInterestAmountIsNotZero).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
-        val documentDetailsWithDueDatesCodingOut: List[DocumentDetailWithDueDate] = {
-          //selects only coding out & class 2 nics if FS is enabled
-          documentDetails.filter(_.paymentLot.isEmpty).filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut))).map(
+        val documentDetailsWithDueDatesCodingOutPaye: List[DocumentDetailWithDueDate] = {
+          docDetailsCodingOut.filter(dd => dd.isPayeSelfAssessment && dd.amountCodedOutIsNotZero).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOut)
+        val documentDetailsWithDueDatesCodingOut: List[DocumentDetailWithDueDate] = {
+          docDetailsCodingOut.filter(dd => !dd.isPayeSelfAssessment && dd.originalAmountIsNotZero).map(
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
+        }
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
-      case _ => Future.successful(itvcErrorHandler.showInternalServerError())
+      case _ =>
+        Logger("application").error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
 
@@ -118,7 +125,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                 }
                 val codingOutEnabled = isEnabled(CodingOut)
                 Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation)),
-                charge = charges, obligations = obligationsModel, codingOutEnabled = codingOutEnabled)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+                  charge = charges, obligations = obligationsModel, codingOutEnabled = codingOutEnabled)
+                ).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
           }

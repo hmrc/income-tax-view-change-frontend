@@ -16,9 +16,6 @@
 
 package mocks.services
 
-import java.time.LocalDate
-import testConstants.BaseTestConstants.{testNino, testTaxYear}
-import testConstants.FinancialDetailsTestConstants._
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers
@@ -27,8 +24,11 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.FinancialDetailsService
+import testConstants.BaseTestConstants.{testNino, testTaxYear}
+import testConstants.FinancialDetailsTestConstants._
 import testUtils.UnitSpec
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {

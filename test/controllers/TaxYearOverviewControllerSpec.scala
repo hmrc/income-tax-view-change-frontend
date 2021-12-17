@@ -16,10 +16,6 @@
 
 package controllers
 
-import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
-import testConstants.EstimatesTestConstants._
-import testConstants.FinancialDetailsTestConstants.{documentDetailClass2Nic, documentDetailPaye, financialDetails, fullDocumentDetailWithDueDateModel}
-import testConstants.MessagesLookUp
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{CodingOut, FeatureSwitching}
@@ -33,6 +29,10 @@ import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
+import testConstants.EstimatesTestConstants._
+import testConstants.FinancialDetailsTestConstants.{documentDetailClass2Nic, documentDetailPaye, financialDetails, fullDocumentDetailWithDueDateModel}
+import testConstants.MessagesLookUp
 import testUtils.TestSupport
 import views.html.TaxYearOverview
 
