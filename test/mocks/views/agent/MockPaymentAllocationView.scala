@@ -22,22 +22,24 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.PaymentAllocation
+import views.html.PaymentAllocation
 
 trait MockPaymentAllocationView extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
   val paymentAllocationView: PaymentAllocation = mock[PaymentAllocation]
 
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(paymentAllocationView)
   }
 
-  def mockPaymentAllocationView(viewModel: PaymentAllocationViewModel, backUrl: String)(response: Html): Unit = {
+  def mockPaymentAllocationView(viewModel: PaymentAllocationViewModel, backUrl: String, isAgent:Boolean)(response: Html): Unit = {
     when(paymentAllocationView.apply(
       matches(viewModel),
-      matches(backUrl)
+      matches(backUrl),
+      matches(isAgent)
     )(any(),any()))
       .thenReturn(response)
   }
