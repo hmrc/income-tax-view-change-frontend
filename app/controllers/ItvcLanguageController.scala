@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Headers, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
 @Singleton
@@ -36,7 +36,20 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
 
   override def languageMap: Map[String, Lang] = Map("en" -> english, "cy" -> welsh)
 
-  def switchToEnglish: Action[AnyContent] = switchToLanguage("en")
+  private def switchLang(fragment: Option[String], lang: String)(implicit request: Request[AnyContent]) = {
+    val frag = if(fragment.isDefined) s"#${fragment.get}" else ""
+    val currentReferer = request.headers("Referer")
+    val referer = s"$currentReferer$frag"
+    switchToLanguage(lang)(request.withHeaders(Headers("Referer" -> referer)))
+  }
 
-  def switchToWelsh: Action[AnyContent] = switchToLanguage("cy")
+  def switchToEnglish(fragment: Option[String]): Action[AnyContent] = Action.async {
+    request: Request[AnyContent] =>
+      switchLang(fragment, "en")(request)
+  }
+
+  def switchToWelsh(fragment: Option[String]): Action[AnyContent] = Action.async {
+    request: Request[AnyContent] =>
+      switchLang(fragment, "cy")(request)
+  }
 }
