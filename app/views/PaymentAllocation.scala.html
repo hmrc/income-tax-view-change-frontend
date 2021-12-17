@@ -18,24 +18,25 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
 @import views.html.components._
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
 
-@this(mainTemplate: layout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+@this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
         paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String)(implicit request: Request[_], messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @mainTemplate(
     pageTitle = messages("paymentAllocation.heading"),
-    backUrl = Some(backUrl)
+    backUrl = Some(backUrl),
+    isAgent = isAgent
 ) {
 
 @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
 
 
-    <dl class="govuk-summary-list">
+    <dl class="govuk-summary-list" id="payment-allocation-charge-table">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
                 <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</dd>
@@ -53,7 +54,7 @@
 
 <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 
-   <table class="govuk-table">
+   <table class="govuk-table" id="payment-allocation-table">
        <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
 
         <thead class="govuk-table__head">
@@ -64,9 +65,9 @@
             </tr>
         </thead>
        @if(paymentAllocations.isLpiPayment) {
-           @paymentAllocationsForLpi(paymentAllocations)
+           @paymentAllocationsForLpi(paymentAllocations, isAgent)
        } else {
-           @paymentAllocationsForNonLpi(paymentAllocations)
+           @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
        }
    </table>
 }

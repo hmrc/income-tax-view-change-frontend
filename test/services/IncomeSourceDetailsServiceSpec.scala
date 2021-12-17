@@ -19,16 +19,21 @@ package services
 import testConstants.BaseTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import javax.inject.Inject
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import mocks.services.MockNextUpdatesService
+import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
 import testUtils.TestSupport
-import uk.gov.hmrc.play.language.LanguageUtils
+import play.api.cache.AsyncCacheApi
 
 //scalastyle:off
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService with MockAuditingService {
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
+  with MockAuditingService with MockAsyncCacheApi {
+  val cache = app.injector.instanceOf[AsyncCacheApi]
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector, cache)
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector)
+  override def beforeEach() {
+    super.beforeEach()
+    cache.removeAll()
+  }
 
   "The IncomeSourceDetailsService.getIncomeSourceDetails method" when {
 
@@ -65,6 +70,21 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       "return an IncomeSourceError" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(errorResponse)
         TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe errorResponse
+      }
+    }
+    "caching" when {
+      "should cache" in {
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(noIncomeDetails)
+        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key")).futureValue shouldBe noIncomeDetails
+        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key")).futureValue shouldBe noIncomeDetails
+        verifyMockIncomeSourceDetailsResponse(1)
+      }
+
+      "should NOT cache" in {
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(noIncomeDetails)
+        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key2")).futureValue shouldBe noIncomeDetails
+        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("someotherkey")).futureValue shouldBe noIncomeDetails
+        verifyMockIncomeSourceDetailsResponse(2)
       }
     }
   }

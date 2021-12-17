@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-package mocks.views.agent
+package mocks.services
 
-import models.paymentAllocationCharges.PaymentAllocationViewModel
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.twirl.api.Html
-import views.html.PaymentAllocation
+import play.api.cache.AsyncCacheApi
+import testUtils.UnitSpec
 
-trait MockPaymentAllocationView extends BeforeAndAfterEach with MockitoSugar {
-  self: Suite =>
+import scala.concurrent.Future
 
-  val paymentAllocationView: PaymentAllocation = mock[PaymentAllocation]
+trait MockAsyncCacheApi extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
+  val mockAsyncCacheApi: AsyncCacheApi = mock[AsyncCacheApi]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(paymentAllocationView)
+
+    reset(mockAsyncCacheApi)
+    when(mockAsyncCacheApi.get(ArgumentMatchers.any())(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(None))
   }
 
-  def mockPaymentAllocationView(viewModel: PaymentAllocationViewModel, backUrl: String, isAgent:Boolean)(response: Html): Unit = {
-    when(paymentAllocationView.apply(
-      matches(viewModel),
-      matches(backUrl),
-      matches(isAgent)
-    )(any(),any()))
-      .thenReturn(response)
-  }
 }

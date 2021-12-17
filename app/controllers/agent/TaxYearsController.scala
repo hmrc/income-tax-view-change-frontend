@@ -39,7 +39,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) map { mtdItUser =>
 				Ok(taxYearsView(
 					taxYears = mtdItUser.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
 					backUrl = backUrl,

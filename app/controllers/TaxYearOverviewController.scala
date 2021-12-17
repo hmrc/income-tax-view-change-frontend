@@ -44,7 +44,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           checkSessionTimeout: SessionTimeoutPredicate,
                                           financialDetailsService: FinancialDetailsService,
                                           itvcErrorHandler: ItvcErrorHandler,
-                                          retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                           retrieveNino: NinoPredicate,
                                           nextUpdatesService: NextUpdatesService,
                                           val auditingService: AuditingService)
@@ -53,7 +53,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                       val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSourcesNoCache
 
   private def view(taxYear: Int,
                    calculationOverview: Option[CalcOverview] = None,

@@ -67,7 +67,7 @@ class HomeController @Inject()(home: Home,
   def show(): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       for {
-        mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
+        mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
         dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
         unpaidFinancialDetails <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
         _ = if(unpaidFinancialDetails.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]

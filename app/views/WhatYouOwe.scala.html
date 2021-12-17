@@ -355,12 +355,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div>
-                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
-                            && chargesList.overduePaymentList.isEmpty) {
-                        @paymentTypesDropdown()
-                    }
-                </div>
             }
             @if(chargesList.futurePayments.nonEmpty) {
                 @h2(msg = getMessage("future-payments"), classes = "govuk-heading-l",
@@ -376,9 +370,6 @@
                         </tbody>
                     </table>
                 </div>
-                @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero && chargesList.overduePaymentList.isEmpty && chargesList.dueInThirtyDaysList.isEmpty) {
-                    @paymentTypesDropdown()
-                }
             }
             @if(codingOutEnabled) {
                 @chargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>

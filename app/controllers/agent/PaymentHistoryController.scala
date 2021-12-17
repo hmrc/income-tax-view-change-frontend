@@ -47,7 +47,7 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
     Authenticated.async { implicit request =>
       implicit user =>
 				for {
-					mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
+					mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
 					paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
 				} yield {
 					paymentHistoryResponse match {

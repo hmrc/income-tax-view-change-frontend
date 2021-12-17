@@ -37,41 +37,29 @@ object PropertyDetailsIntegrationTestConstants {
 
 
   val property: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = AccountingPeriodModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
-    ),
-    contactDetails = None,
-    propertiesRented = None,
-    cessation = None,
-    paperless = None,
+    )),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate)
   )
 
   val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = AccountingPeriodModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
-    ),
-    contactDetails = None,
-    propertiesRented = None,
-    cessation = None,
-    paperless = None,
+    )),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = AccountingPeriodModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
       end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
-    ),
-    contactDetails = None,
-    propertiesRented = None,
-    cessation = None,
-    paperless = None,
+    )),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear))
   )
 

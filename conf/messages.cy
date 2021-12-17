@@ -120,6 +120,7 @@ tax-year-overview.payments.balancingCharge.text                 = Taliad mantoli
 tax-year-overview.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-overview.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-overview.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
+tax-year-overview.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
 tax-year-overview.payments.paid                                 = Talwyd
 tax-year-overview.payments.unpaid                               = Na thalwyd
 tax-year-overview.payments.part-paid                            = Talwyd yn rhannol
@@ -287,7 +288,7 @@ nextUpdates.eops            									= Diweddariad blynyddol
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
-nextUpdates.business            							    = Business income
+nextUpdates.business            							    = Incwm busnes
 
 ## Previous Obligations ##
 

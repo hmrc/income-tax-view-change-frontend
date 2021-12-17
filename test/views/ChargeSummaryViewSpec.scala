@@ -271,7 +271,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
         document.select("main h2").text shouldBe Messages.chargeHistoryHeading
       }
 

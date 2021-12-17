@@ -65,9 +65,9 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      None, None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None
@@ -142,6 +142,12 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       )
 
       verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
+    }
+  }
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails))
     }
   }
 }

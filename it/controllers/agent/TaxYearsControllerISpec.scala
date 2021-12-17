@@ -66,16 +66,15 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      Some("Test Trading Name"), None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd)
     )),
     property = Some(
       PropertyDetailsModel(
-        "testId2",
-        AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-        None, None, None, None,
+        Some("testId2"),
+        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(getCurrentTaxYearEnd)
       )
     )
@@ -85,16 +84,16 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
-      "testId",
-      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-      Some("Test Trading Name"), None, None, None, None, None, None, None,
+      Some("testId"),
+      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some("Test Trading Name"),
       None
     )),
     property = Some(
       PropertyDetailsModel(
-        "testId2",
-        AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-        None, None, None, None, None
+        Some("testId2"),
+        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None
       )
     )
   )
@@ -210,6 +209,13 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           pageTitle("Tax years - Your client’s Income Tax details - GOV.UK")
         )
       }
+    }
+  }
+
+  "API#1171 IncomeSourceDetails Caching" when {
+    "caching should be ENABLED" in {
+      testIncomeSourceDetailsCaching(false, 1,
+        () => IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation))
     }
   }
 }

@@ -16,10 +16,10 @@
 
 package views.agent
 
-import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.nextUpdates.{ObligationsModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -45,7 +45,7 @@ class NextUpdatesViewSpec extends TestSupport {
 	}
 
 	lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-		business1.incomeSourceId,
+		business1.incomeSourceId.get,
 		twoObligationsSuccessModel.obligations
 	)))
 
@@ -82,5 +82,14 @@ class NextUpdatesViewSpec extends TestSupport {
 		"has a link to view what you owe" in new Setup(obligationsModel) {
 			pageDocument.getElementById("back").attr("href") shouldBe "testBackURL"
 		}
+
+		s"have the correct TradeName" in new Setup(obligationsModel) {
+			val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
+
+			section.select("tbody tr").size() shouldBe 1
+			section.select("tbody tr td:nth-of-type(1)").text() shouldBe "Annual Update"
+			section.select("tbody tr td:nth-of-type(2)").text() shouldBe testTradeName
+		}
+
 	}
 }

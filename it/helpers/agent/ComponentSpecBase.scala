@@ -20,18 +20,24 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import forms.agent.ClientsUTRForm
-import helpers.servicemocks.AuditStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import play.api.inject.bind
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+
+import scala.concurrent.Future
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
@@ -44,7 +50,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
-  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def config: Map[String, String] = Map(
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -78,6 +83,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     .configure(config)
     .build
 
+
+  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val cache: AsyncCacheApi = app.injector.instanceOf(classOf[AsyncCacheApi])
+
   override def beforeAll(): Unit = {
     super.beforeAll()
     startWiremock()
@@ -87,6 +96,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     super.beforeEach()
     WireMock.reset()
     AuditStub.stubAuditing()
+    cache.removeAll()
   }
 
   override def afterAll(): Unit = {
@@ -98,6 +108,24 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     buildClient(uri)
       .withHttpHeaders(headers: _*)
       .get().futureValue
+  }
+
+  def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get().futureValue
+  }
+
+  def getWithCalcIdInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get().futureValue
+  }
+
+  def getWithCalcIdInSessionAndWithoutAwait(uri: String, additionalCookies: Map[String, String] = Map.empty): Future[WSResponse] = {
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get()
   }
 
   object IncomeTaxViewChangeFrontend {
@@ -196,6 +224,22 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
   }
 
+  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int, callback: () => Unit): Unit = {
+    stubAuthorisedAgentUser(authorised = true)
+    Given("I wiremock stub a successful Income Source Details response with property only")
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
+    And("I wiremock stub a single financial transaction response")
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+      dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+    And("I wiremock stub a charge history response")
+    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+    callback()
+    if(resetCacheAfterFirstCall) cache.removeAll()
+    callback()
+    verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
+  }
 }
 

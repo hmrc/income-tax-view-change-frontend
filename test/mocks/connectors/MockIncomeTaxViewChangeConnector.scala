@@ -51,6 +51,9 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
     when(mockIncomeTaxViewChangeConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
+  def verifyMockIncomeSourceDetailsResponse(noOfCalls: Int) =
+    verify(mockIncomeTaxViewChangeConnector, times(noOfCalls)).getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
+
   def setupNinoLookupResponse(mtdRef: String)(response: NinoResponse): Unit =
     when(mockIncomeTaxViewChangeConnector
       .getNino(
