@@ -1,6 +1,7 @@
 ## Base ##
 base.back                                                       = Yn ôl
 base.service_name                                               = Cyfrif Treth Busnes
+base.service_name.itsa                                          = Diweddaru a chyflwyno Ffurflen Dreth Incwm
 base.phase                                                      = BETA
 base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
@@ -559,7 +560,7 @@ upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd 
 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
-
+titlePattern.serviceName.itsa.govUk = {0} - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK
 
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau

@@ -48,14 +48,15 @@
         mainClass: Option[String] = None,
         showBtaHeader: Boolean = true,
         signOutLink: Boolean = true,
-        timeout: Boolean = true
+        timeout: Boolean = true,
+        itsaTaxYear: Option[Int] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = {
     @hmrcHeader(HmrcHeaderArgs(
         homepageUrl = "https://www.gov.uk",
-        serviceName = Some(messages("base.service_name")),
-        serviceUrl = appConfig.businessTaxAccount,
+        serviceName = Some(messages({if(itsaTaxYear.isDefined) "base.service_name.itsa" else "base.service_name"})),
+        serviceUrl = itsaTaxYear.fold(appConfig.businessTaxAccount)(taxYear => appConfig.submissionFrontendTaxYearsPage(taxYear)),
         containerClasses = "govuk-width-container",
         language = CurrentLanguage(),
         signOutHref = Some(controllers.routes.SignOutController.signOut.url),
@@ -106,7 +107,7 @@
 
 @if(mainClass.isDefined){
     @govukLayout(
-        pageTitle = Some(messages("titlePattern.serviceName.govUk", pageTitle)),
+        pageTitle = Some(messages({if(itsaTaxYear.isDefined) "titlePattern.serviceName.itsa.govUk" else "titlePattern.serviceName.govUk"}, pageTitle)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,
@@ -117,7 +118,7 @@
     )(content)
 } else {
     @govukLayout(
-        pageTitle = Some(messages("titlePattern.serviceName.govUk", pageTitle)),
+        pageTitle = Some(messages({if(itsaTaxYear.isDefined) "titlePattern.serviceName.itsa.govUk" else "titlePattern.serviceName.govUk"}, pageTitle)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,
