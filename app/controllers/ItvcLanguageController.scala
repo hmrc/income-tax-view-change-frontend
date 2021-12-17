@@ -17,10 +17,13 @@
 package controllers
 
 import config.FrontendAppConfig
+
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
-import play.api.mvc.{Action, AnyContent, Headers, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, Headers, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
+
+import scala.concurrent.Future
 
 @Singleton
 class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
@@ -36,11 +39,12 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
 
   override def languageMap: Map[String, Lang] = Map("en" -> english, "cy" -> welsh)
 
-  private def switchLang(fragment: Option[String], lang: String)(implicit request: Request[AnyContent]) = {
+  private def switchLang(fragment: Option[String], lang: String)(implicit request: Request[AnyContent]): Future[Result] = {
     val frag = if(fragment.isDefined) s"#${fragment.get}" else ""
-    val currentReferer = request.headers("Referer")
-    val referer = s"$currentReferer$frag"
-    switchToLanguage(lang)(request.withHeaders(Headers("Referer" -> referer)))
+    if (request.headers.get("Referer").isDefined) {
+      val currentReferer = request.headers.get("Referer").get
+      switchToLanguage(lang)(request.withHeaders(Headers("Referer" -> s"$currentReferer$frag")))
+    } else switchToLanguage(lang)(request)
   }
 
   def switchToEnglish(fragment: Option[String]): Action[AnyContent] = Action.async {
