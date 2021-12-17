@@ -15,17 +15,17 @@
 *@
 
 @import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 
 @this(
-    layout: layout,
+    layout: unifiedLayout,
     appConfig: config.FrontendAppConfig,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
     h2: h2,
     h3link: h3link,
@@ -35,90 +35,165 @@
 	home_tile: home_tile
 )
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate,
-  overDuePaymentsCount: Option[Int], overDueUpdatesCount: Option[Int],
-  utr: Option[String], paymentHistoryEnabled: Boolean,
-  ITSASubmissionIntegrationEnabled: Boolean, dunningLockExists: Boolean = false,
-  currentTaxYear: Int)(
+@(nextPaymentDueDate: Option[LocalDate],
+    nextUpdate: LocalDate,
+    overDuePaymentsCount: Option[Int],
+    overDueUpdatesCount: Option[Int],
+    utr: Option[String],
+    nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
+    nextUpdateOrOverdue: Either[(LocalDate,Boolean),Int],
+    overduePaymentExists: Boolean,
+    paymentHistoryEnabled: Boolean,
+    ITSASubmissionIntegrationEnabled: Boolean,
+    implicitDateFormatter: ImplicitDateFormatter,
+    dunningLockExists: Boolean = false,
+    currentTaxYear: Int,
+    isAgent: Boolean = false
+)(
   implicit request: Request[_], messages: Messages,
   user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
+@getPrefix(key: String) = @{
+    if(isAgent) s"home.$key" else s"home.$key"
+}
+
+@getMessage(key: String, args: String*) = @{
+    if(isAgent) messages(s"home.$key", args: _*) else messages(s"home.$key", args: _*)
+}
+
+
 @paymentsTile = {
-	@home_tile("payments-tile", messages("home.payments.heading")) {
-		@{overDuePaymentsCount.getOrElse(0) match {
-			case 0 => p()(paymentsTileContentPaymentsDue0)
-			case 1 => p()(paymentsTileContentPaymentsDue1)
-			case _ => p()(paymentsTileContentPaymentsDueMany)
-		}}
-		@p(){
-			@link(
-				link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
-				messageKey = "home.payments.view"
-			)
-		}
-	}
+@if(isAgent) {
+    @home_tile("payments-tile", messages("home.payments.heading")) {
+        @{nextPaymentOrOverdue match {
+            case None => p()(Html(messages("home.payments.no-payments-due")))
+            case Some(_@Left((date, false))) => p()(Html(date.toLongDate))
+            case Some(_@Left((date, true))) => p()(paymentsTileContentPaymentsDue1)
+            case Some(_@Right(overdueCount)) => p()(paymentsTileContentPaymentsDueMany)
+    }}
+    @p()(link(
+        link = controllers.agent.routes.WhatYouOweController.show().url,
+        messageKey = messages("home.payments.view")
+    ))
+    }
+} else {
+    @home_tile("payments-tile", messages("home.payments.heading")) {
+        @{overDuePaymentsCount.getOrElse(0) match {
+            case 0 => p()(paymentsTileContentPaymentsDue0)
+            case 1 => p()(paymentsTileContentPaymentsDue1)
+            case _ => p()(paymentsTileContentPaymentsDueMany)
+    }}
+    @p(){@link(
+        link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
+        messageKey = "home.payments.view")}
+}
+}
 }
 
 @paymentsTileContentPaymentsDue0 = { @nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due")) }
 
 @paymentsTileContentPaymentsDue1 = {
-    <span class="govuk-tag govuk-tag--red"> @{messages("taxYears.overdue")} </span>
-    @{nextPaymentDueDate.get.toLongDate}
+    @if(isAgent) {
+        <strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date")</strong>
+        @nextPaymentOrOverdue.get.left.get._1.toLongDate
+    } else {
+        <span class="govuk-tag govuk-tag--red"> @{messages("taxYears.overdue")} </span>
+        @{nextPaymentDueDate.get.toLongDate}
+    }
 }
 
 @paymentsTileContentPaymentsDueMany = {
-    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePaymentsCount.get)}</span>
-}
+    @if(isAgent) {
+        <strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date.payment.count", nextPaymentOrOverdue.get.right.get)</strong>
+    } else {
+        <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePaymentsCount.get)}</span>}
+    }
 
 
 @updatesTile = {
-	@home_tile("updates-tile", messages("home.updates.heading")) {
-		@{overDueUpdatesCount.getOrElse(0) match {
-			case 0 => p()(updatesTileContentUpdatesDue0)
-			case 1 => p()(updatesTileContentUpdatesDue1)
-			case _ => p()(updatesTileContentUpdatesDueMany)
-		}}
-		@p(){
-			@link(
-				link = controllers.routes.NextUpdatesController.getNextUpdates().url,
-				messageKey = "home.updates.view"
-			)
-		}
-	}
+    @if(isAgent) {
+        @home_tile("updates-tile", messages("home.updates.heading")) {
+            @{nextUpdateOrOverdue match {
+                case _@Left((date, false)) => p()(Html(date.toLongDate))
+                case _@Left((date, true)) => p()(updatesTileContentUpdatesDue1)
+                case _@Right(overdueCount) => p()(updatesTileContentUpdatesDueMany)
+        }}
+        @p()(link(
+            link = controllers.agent.routes.NextUpdatesController.getNextUpdates.url,
+            messageKey = messages("home.updates.view")
+        ))
+        }
+    } else {
+        @home_tile("updates-tile", messages("home.updates.heading")) {
+            @{overDueUpdatesCount.getOrElse(0) match {
+                case 0 => p()(updatesTileContentUpdatesDue0)
+                case 1 => p()(updatesTileContentUpdatesDue1)
+                case _ => p()(updatesTileContentUpdatesDueMany)
+        }}
+        @p(){@link(
+            link = controllers.routes.NextUpdatesController.getNextUpdates().url,
+            messageKey = "home.updates.view")}
+}
+}
 }
 
 @updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
 
 @updatesTileContentUpdatesDue1 = {
-    <span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>
-    @{nextUpdate.toLongDate}
+    @if(isAgent) {
+        <strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date")</strong>
+        @nextUpdateOrOverdue.left.get._1.toLongDate
+    } else {
+        <span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>
+        @{nextUpdate.toLongDate}
+    }
 }
 
 @updatesTileContentUpdatesDueMany = {
-    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount.get)}</span>
+    @if(isAgent) {
+        <strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date.update.count", nextUpdateOrOverdue.right.get)</strong>
+    } else {
+        <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount.get)}</span>}
 }
 
 
 @taxYearsTile = {
-	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
-		<ul class="govuk-list">
-			<li>
-			@link(
-				link = controllers.routes.TaxYearsController.viewTaxYears().url,
-				messageKey = "home.tax-years.view"
-			)
-			</li>
-			@if(paymentHistoryEnabled){
-				<li>
-				@link(
-					link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
-					messageKey = "home.tax-years.viewPayments"
-				)
-				</li>
-			}
-		</ul>
-	}
+    @if(isAgent) {
+        @home_tile("tax-years-tile", messages("home.tax-years.heading")) {
+            <ul class="govuk-list">
+            <li>@link(
+                link = controllers.agent.routes.TaxYearsController.show().url,
+                messageKey = messages("home.tax-years.view")
+            )</li>
+    @if(paymentHistoryEnabled){
+        <li>@link(
+            link = controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
+            messageKey = messages("home.tax-years.viewPayments"))
+        </li>
+    }
+            </ul>
+    }
+    }else {
+        @home_tile("tax-years-tile", ("home.tax-years.heading")) {
+            <ul class="govuk-list">
+            <li>
+            @link(
+                link = controllers.routes.TaxYearsController.viewTaxYears().url,
+                messageKey = "home.tax-years.view"
+            )
+            </li>
+        @if(paymentHistoryEnabled){
+        <li>
+            @link(
+                link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+                messageKey = "home.tax-years.viewPayments"
+            )
+        </li>
+        }
+            </ul>
+        }
+    }
 }
 
 @YourIncomeTaxReturnTile= {
@@ -136,14 +211,17 @@
                     messageKey = "home.your-returns.updatesLink")
 
                 @p(){@messages("home.your-returns.description")}
+
             </div>
-            @if(utr.isDefined) {
+            @if(isAgent == true) {
+
+            } else if(utr.isDefined) {
             <div id="saViewLandPTile">
                 <div class="govuk-grid-column-one-third">
                     @h3link(
-                        link = appConfig.saViewLandPService(utr.get),
-                        messageKey = "home.self-assessment.updatesLink",
-                        id = Some("saViewLandPService")
+                    link = appConfig.saViewLandPService(utr.get),
+                    messageKey = "home.self-assessment.updatesLink",
+                    id = Some("saViewLandPService")
                     )
                     @p(){@messages("home.self-assessment.description")}
                 </div>
@@ -156,32 +234,61 @@
 
 
 @layout(
-    pageTitle = messages("home.heading"),
-    mainClass = Some("full-width")
+    pageTitle = if(isAgent == true) { messages("home.agent.heading")} else {messages("home.heading")},
+    mainClass = Some("full-width"),
+    isAgent = isAgent
 ) {
-    <h1 class="govuk-heading-xl @if(user.saUtr.isDefined){ margin-bottom-zero }">
+
+    @if(isAgent == true) {
+    @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
+
+    @p(classes = "govuk-hint margin-bottom-zero") {
+    @messages("home.utr", user.saUtr.getOrElse(""))
+        <br>
+        <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
+    @user.userName.map(_.name) @user.userName.map(_.lastName)
+    }
+
+    @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
+    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+    }
+    } else {
+        <h1 class="govuk-heading-xl @if(user.saUtr.isDefined){ margin-bottom-zero }">
         <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
         <span id="income-tax-heading">@messages("home.heading")</span>
-    </h1>
+        </h1>
+}
 
+@if(isAgent == false) {
     @user.saUtr.map { utr =>
         <div id="utr-reference-heading" class="form-hint heading-xl-addon">
             @messages("home.utr", utr)
         </div>
     }
+} else {}
 
-    <div class="warning-wrapper">
-        @if(overDuePaymentsCount.getOrElse(0) > 0) {
-            <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
+    @if(isAgent) {
+        @if(overduePaymentExists) {
+            <div id="overdue-agent-warning" class="grid-row">
+            <div class="column-full">
+            @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
+        </div>
+        </div>
+    }
+    } else {
+        <div class="warning-wrapper">
+            @if(overDuePaymentsCount.getOrElse(0) > 0) {
+                <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
                 <div class="column-full">
-                    @govukWarningText(WarningText(
-                    iconFallbackText = "Warning",
-                    content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
-                    ))
-                </div>
+                @govukWarningText(WarningText(
+                iconFallbackText = "Warning",
+                content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
+                ))
             </div>
+        </div>
         }
     </div>
+    }
 
 
     <div class="flex-container govuk-grid-row">
@@ -193,6 +300,3 @@
         @YourIncomeTaxReturnTile
     }
 }
-
-
-

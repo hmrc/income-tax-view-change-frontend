@@ -29,8 +29,9 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.Home
-
 import java.time.LocalDate
+
+import scala.util.Try
 
 
 class HomePageViewSpec extends TestSupport {
@@ -63,9 +64,17 @@ class HomePageViewSpec extends TestSupport {
   val overdueMessage = "! Warning You have overdue payments. You may be charged interest on these until they are paid in full."
   val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
 
+  val nextUpdateDue: LocalDate = LocalDate.of(2018, 1, 1)
+  val nextPaymentDue: LocalDate = LocalDate.of(2019, 1, 31)
+
+
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
-              overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false) {
+              overDueUpdatesCount: Option[Int] = Some(0),
+              nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left((nextPaymentDue, false))),
+              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left((nextUpdateDue, false)),
+              overduePaymentExists: Boolean = false,
+              utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
+              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false , isAgent: Boolean = false) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
@@ -75,15 +84,24 @@ class HomePageViewSpec extends TestSupport {
       overDueUpdatesCount = overDueUpdatesCount,
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
+      nextPaymentOrOverdue = nextPaymentOrOverdue,
+      nextUpdateOrOverdue = nextUpdateOrOverdue,
+      overduePaymentExists = overduePaymentExists,
       paymentHistoryEnabled = paymentHistoryEnabled,
+      implicitDateFormatter = mockImplicitDateFormatter,
       dunningLockExists = dunningLockExists,
-      currentTaxYear = currentTaxYear
+      currentTaxYear = currentTaxYear,
+        isAgent = isAgent
     )(FakeRequest(),implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
 
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
+
+    def getHintNth(index: Int = 0): Option[String] = {
+      Try(document.getElementsByClass("govuk-hint").get(index).text).toOption
+    }
 
   }
 
@@ -96,6 +114,7 @@ class HomePageViewSpec extends TestSupport {
     s"have the title '${homeMessages.title}'" in new Setup {
       document.title() shouldBe homeMessages.title
     }
+
     "display the language selection switch" in new Setup {
       getTextOfElementById("switch-welsh") shouldBe Some(coreMessages.welsh)
     }
@@ -185,6 +204,117 @@ class HomePageViewSpec extends TestSupport {
         link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
       }
 
+    }
+  }
+
+  "Agent homepage" should {
+
+    s"have the correct link to the government homepage from agent homepage" in new Setup(isAgent = true) {
+      document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+    }
+
+    s"have the title '${homeMessages.agentTitle}'" in new Setup(isAgent = true) {
+      document.title() shouldBe homeMessages.agentTitle
+    }
+
+    s"have a change client link" in new Setup(isAgent = true) {
+      val link: Option[Elements] = getElementById("changeClientLink").map(_.select("a"))
+      link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/remove-client-sessions")
+      link.map(_.text) shouldBe Some(homeMessages.changeClientLink)
+    }
+
+    "display the language selection switch" in new Setup(isAgent = true) {
+      getTextOfElementById("switch-welsh") shouldBe Some(coreMessages.welsh)
+    }
+
+    s"have the page heading '${homeMessages.agentHeading}'" in new Setup(isAgent = true) {
+      document.select("h1").text() shouldBe homeMessages.agentHeading
+    }
+
+    "have the hint with the users name " in new Setup(isAgent = true) {
+      getHintNth() shouldBe Some(s"UTR: testUtr Client’s name $testUserName")
+    }
+
+    "have an updates tile on agents home page" which {
+      "has a heading" in new Setup(isAgent = true) {
+        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(homeMessages.updatesHeading)
+      }
+
+      "has content of the next update due" which {
+        "is overdue" in new Setup(nextUpdateOrOverdue = Left(nextUpdateDue -> true),isAgent = true) {
+          getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January 2018")
+        }
+        "is not overdue" in new Setup(nextUpdateOrOverdue = Left(nextUpdateDue -> false),isAgent = true) {
+          getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January 2018")
+        }
+        "is a count of overdue updates" in new Setup(nextUpdateOrOverdue = Right(2),isAgent = true) {
+          getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE UPDATES")
+        }
+      }
+
+      "has a link to view updates" in new Setup(isAgent = true) {
+        val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
+        link.map(_.text) shouldBe Some(homeMessages.updatesLink)
+      }
+    }
+
+    "have a payments due tile on the agents homepage" which {
+      "has a heading" in new Setup(isAgent = true) {
+        getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentsHeading)
+      }
+      "has content of the next payment due" which {
+        "is overdue" in new Setup(nextPaymentOrOverdue = Some(Left(nextPaymentDue -> true)),isAgent = true) {
+          getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 31 January 2019")
+        }
+        "is not overdue" in new Setup(nextPaymentOrOverdue = Some(Left(nextPaymentDue -> false)),isAgent = true) {
+          getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January 2019")
+        }
+        "is a count of overdue payments" in new Setup(nextPaymentOrOverdue = Some(Right(2)),isAgent = true) {
+          getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE PAYMENTS")
+        }
+        "has no next payment" in new Setup(nextPaymentOrOverdue = None,isAgent = true) {
+          getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"No payments due")
+        }
+
+        "has the date of the next payment due" in new Setup(isAgent = true) {
+          val paymentDueDateLongDate: String = "31 January 2019"
+          getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDueDateLongDate)
+        }
+
+        "has a link to view payments" in new Setup(isAgent = true) {
+          val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments-owed")
+          link.map(_.text) shouldBe Some(homeMessages.paymentLink)
+        }
+      }
+    }
+
+    "have a tax years tile on the agents homepage" which {
+      "has a heading" in new Setup(isAgent = true) {
+        getElementById("tax-years-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
+      }
+      "has a link to the tax years page" in new Setup(isAgent = true) {
+        val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").first)
+        link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearsController.show().url)
+        link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
+      }
+      "has a link to the view payments page" in new Setup(isAgent = true) {
+        val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").get(1))
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments/history")
+        link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
+      }
+    }
+
+    "have an your income tax returns tile" when {
+      "has a heading" in new Setup(isAgent = true) {
+        getElementById("manage-income-tax-tile").map(_.select("h2").text) shouldBe Some(homeMessages.ManageYourIncomeTaxReturnHeading)
+      }
+      "has a link to the send updates page" in new Setup(isAgent = true) {
+        val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe Some(s"http://localhost:9302/update-and-submit-income-tax-return/$currentTaxYear/start")
+        link.map(_.text) shouldBe Some(homeMessages.submitYourReturnsLink)
+      }
     }
   }
 

@@ -31,8 +31,10 @@ import play.api.test.Helpers._
 import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{FinancialDetailsService, NextUpdatesService}
 import utils.CurrentDateProvider
-
 import java.time.LocalDate
+
+import implicits.ImplicitDateFormatterImpl
+
 import scala.concurrent.Future
 
 class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
@@ -62,7 +64,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			mockAuditingService)(
       ec,
       app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[FrontendAppConfig]
+      app.injector.instanceOf[FrontendAppConfig],
+			app.injector.instanceOf[ImplicitDateFormatterImpl]
 			)
 		when(currentDateProvider.getCurrentDate()) thenReturn LocalDate.now()
 	}

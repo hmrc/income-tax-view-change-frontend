@@ -23,7 +23,6 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
-import mocks.views.agent.MockHome
 import models.financialDetails.FinancialDetailsErrorModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -49,12 +48,11 @@ class HomeControllerSpec extends TestSupport
   with MockNextUpdatesService
   with MockFinancialDetailsService
   with MockAuditingService
-  with MockHome
   with FeatureSwitching {
 
   trait Setup {
     val controller = new HomeController(
-      app.injector.instanceOf[views.html.agent.Home],
+      app.injector.instanceOf[views.html.Home],
       mockNextUpdatesService,
       mockFinancialDetailsService,
       mockIncomeSourceDetailsService,
@@ -158,7 +156,7 @@ class HomeControllerSpec extends TestSupport
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 15 May 2021"
-						document.select("#overdue-warning").text shouldBe "! You have overdue payments. You may be charged interest on these until they are paid in full."
+						document.select("#overdue-agent-warning").text shouldBe "! You have overdue payments. You may be charged interest on these until they are paid in full."
 					}
 					"display the home page with right details and with dunning lock warning and two overdue payments" in new Setup {
 
@@ -176,7 +174,7 @@ class HomeControllerSpec extends TestSupport
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
-						document.select("#overdue-warning").text shouldBe "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
+						document.select("#overdue-agent-warning").text shouldBe "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
 					}
 				}
 			}

@@ -29,15 +29,17 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
 import services._
 import uk.gov.hmrc.http.InternalServerException
-import views.html.agent.Home
-
+import views.html.Home
 import java.time.LocalDate
+
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import play.api.data.Forms.localDate
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
-class HomeController @Inject()(home: Home,
+class HomeController @Inject()(home: views.html.Home,
                                nextUpdatesService: NextUpdatesService,
                                financialDetailsService: FinancialDetailsService,
                                incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -50,23 +52,34 @@ class HomeController @Inject()(home: Home,
                                dateFormatter: ImplicitDateFormatterImpl) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
 
-  private def view(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
+  private def view(nextPaymentDueDate: Option[LocalDate],
+                   nextUpdate: LocalDate,
+                   overDuePaymentsCount: Option[Int],
+                    nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
                    nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
                    overduePaymentExists: Boolean,
+                   overDueUpdatesCount: Option[Int],
                    dunningLockExists: Boolean,
                    currentTaxYear: Int)
                   (implicit request: Request[_], user: MtdItUser[_]): Html = {
     home(
+      nextPaymentDueDate = nextPaymentDueDate,
+      nextUpdate = nextUpdate,
+      overDuePaymentsCount = overDuePaymentsCount,
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
       overduePaymentExists = overduePaymentExists,
-      paymentHistoryEnabled = isEnabled(PaymentHistory),
+      overDueUpdatesCount = overDueUpdatesCount,
+      utr = user.saUtr,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+      paymentHistoryEnabled = isEnabled(PaymentHistory),
       implicitDateFormatter = dateFormatter,
       dunningLockExists = dunningLockExists,
-      currentTaxYear = currentTaxYear
-    )
+      currentTaxYear = currentTaxYear,
+      isAgent = true
+     )
   }
+
 
   def show(): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
@@ -85,7 +98,7 @@ class HomeController @Inject()(home: Home,
             mtdItUser, dueChargesDetails, dueObligationDetails
           ))
         }
-        Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails), dunningLockExistsValue,
+        Ok(view(Some(LocalDate.of(2018, 3, 29)),LocalDate.of(2018, 3, 29),Some(1),dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails), Some(1),dunningLockExistsValue,
           currentTaxYear = mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser))
       }
   }
