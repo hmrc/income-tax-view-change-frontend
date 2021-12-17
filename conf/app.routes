@@ -86,6 +86,5 @@ GET         /:taxYear/final-tax-overview                                  contro
 POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
 
-GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh
-GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish
-
+GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
+GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])

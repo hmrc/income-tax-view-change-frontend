@@ -28,14 +28,14 @@
     <li>
       <span aria-current="true">@messages("language-switcher.english")</span>
       <span aria-hidden="true"> | </span>
-      <a id="switch-language-welsh" href="@controllers.routes.ItvcLanguageController.switchToWelsh" hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:Language selector:Welsh">
+      <a id="switch-language-welsh" href="@controllers.routes.ItvcLanguageController.switchToWelsh(None)" hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:Language selector:Welsh">
         <span class="visuallyhidden">@messages("language-switcher.welsh.hidden")</span>
         <span id="switch-welsh" aria-hidden="true">@messages("language-switcher.welsh")</span>
       </a>
     </li>
   } else {
     <li>
-      <a id="switch-language-english" href="@controllers.routes.ItvcLanguageController.switchToEnglish" hreflang="en" lang="en" rel="alternate" class="govuk-link" data-journey-click="link - click:Language selector:English">
+      <a id="switch-language-english" href="@controllers.routes.ItvcLanguageController.switchToEnglish(None)" hreflang="en" lang="en" rel="alternate" class="govuk-link" data-journey-click="link - click:Language selector:English">
         <span class="visuallyhidden">@messages("language-switcher.english.hidden")</span>
         <span aria-hidden="true">@messages("language-switcher.english")</span>
       </a>
