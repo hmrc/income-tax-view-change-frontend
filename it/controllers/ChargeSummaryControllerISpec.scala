@@ -224,7 +224,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitle("Balancing payment - Business Tax account - GOV.UK"),
-        elementTextBySelector("main h2")("")
+        elementTextBySelector("main h2")("Payment history")
       )
     }
 
