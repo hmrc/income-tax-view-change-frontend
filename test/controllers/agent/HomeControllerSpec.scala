@@ -36,8 +36,10 @@ import testConstants.MessagesLookUp
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
-
 import java.time.LocalDate
+
+import implicits.ImplicitDateFormatterImpl
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class HomeControllerSpec extends TestSupport
@@ -60,7 +62,9 @@ class HomeControllerSpec extends TestSupport
     )(app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig],
       mockItvcErrorHandler,
-      app.injector.instanceOf[ExecutionContext])
+      app.injector.instanceOf[ExecutionContext],
+			app.injector.instanceOf[ImplicitDateFormatterImpl]
+		)
   }
 
   "show" when {

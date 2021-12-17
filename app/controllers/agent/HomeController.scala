@@ -16,27 +16,24 @@
 
 package controllers.agent
 
+import java.time.LocalDate
+
 import audit.AuditingService
 import audit.models.HomeAudit
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import implicits.ImplicitDateFormatterImpl
+import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
 import services._
 import uk.gov.hmrc.http.InternalServerException
-import views.html.Home
-import java.time.LocalDate
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
-import play.api.data.Forms.localDate
-
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 @Singleton
 class HomeController @Inject()(home: views.html.Home,
