@@ -463,17 +463,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
-      "display a charge history" in new Setup(documentDetailModel(lpiWithDunningBlock = None, outstandingAmount = Some(0))) {
+      "display a charge history heading as an h2 when there is no Payment Breakdown" in new Setup(
+        documentDetailModel(lpiWithDunningBlock = None, outstandingAmount = Some(0))) {
         document.select("main h2").text shouldBe Messages.chargeHistoryHeading
       }
 
-      "not display a paymentbreakdown heading in h2" in new Setup(
-        documentDetailModel(outstandingAmount = Some(0), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown) {
-        document.select("main h2").text shouldBe ""
-      }
-
-      "display charge history in h3" in new Setup(
-        documentDetailModel(outstandingAmount = Some(0), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown) {
+      "display a charge history heading as an h3 when there is a Payment Breakdown" in new Setup(
+        documentDetailModel(), paymentBreakdown = paymentBreakdown) {
         document.select("main h3").text shouldBe Messages.chargeHistoryHeading
       }
 

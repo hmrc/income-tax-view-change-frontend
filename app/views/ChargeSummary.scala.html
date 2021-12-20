@@ -61,6 +61,10 @@
 
 @hasAccruedInterest = @{ paymentBreakdown.exists(_.hasAccruedInterest) }
 
+@hasPaymentBreakdown = @{
+    documentDetail.hasLpiWithDunningBlock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
+}
+
 @taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
 @taxYearTo = @{documentDetail.taxYear}
 
@@ -204,7 +208,7 @@
         </div>
     </dl>
 
-    @if(documentDetail.hasLpiWithDunningBlock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)) {
+    @if(hasPaymentBreakdown) {
         <h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
         <dl class="govuk-summary-list">
             @for(financialDetail <- paymentBreakdown) {
@@ -269,7 +273,7 @@
     }
 
     @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
-        @if(paymentBreakdown.nonEmpty && documentDetail.isNotCodingOutDocumentDetail) {
+        @if(hasPaymentBreakdown && documentDetail.isNotCodingOutDocumentDetail) {
             <h3 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h3>
         } else {
             <h2 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h2>
