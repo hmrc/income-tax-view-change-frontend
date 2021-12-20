@@ -18,24 +18,25 @@
 
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.components._
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 
 
 @this(
-	mainTemplate: layout,
+	mainTemplate: unifiedLayout,
 	h1: h1,
 	p: p,
 	link: link,
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: ObligationsModel, backUrl: String)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(currentObligations: ObligationsModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 
 
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
-	backUrl = Some(backUrl)
+	backUrl = Some(backUrl),
+    isAgent = isAgent
 ) {
 
 	@h1(msg = "nextUpdates.heading")
@@ -71,7 +72,12 @@
 
 	@p(){
 		@messages("nextUpdates.previousYears.textOne")
-		@link(link = controllers.routes.TaxYearsController.viewTaxYears().url, messageKey = "nextUpdates.previousYears.link")
+    @if(isAgent) {
+        @link(link = controllers.agent.routes.TaxYearsController.show().url, messageKey = "nextUpdates.previousYears.link")
+    }
+    @if(!isAgent) {
+        @link(link = controllers.routes.TaxYearsController.viewTaxYears().url, messageKey = "nextUpdates.previousYears.link")
+     }
 		@messages("nextUpdates.previousYears.textTwo")
 	}
 }

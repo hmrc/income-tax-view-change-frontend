@@ -53,7 +53,7 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
       app.injector.instanceOf[ExecutionContext],
       mockItvcErrorHandler)
   }
-
+  val isAgent: Boolean = true
   val date: LocalDate = LocalDate.now
 
   val obligationsModel = ObligationsModel(Seq(
@@ -110,7 +110,7 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockObligations
-        mockAgentNextUpdates(obligationsModel, controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
+        mockAgentNextUpdates(obligationsModel, controllers.agent.routes.HomeController.show().url, isAgent)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.getNextUpdates()(fakeRequestConfirmedClient())
 
