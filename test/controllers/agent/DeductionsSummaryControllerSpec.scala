@@ -23,12 +23,12 @@ import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
-import models.calculation.CalcDisplayError
+import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import uk.gov.hmrc.http.InternalServerException
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
@@ -43,7 +43,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     val controller: DeductionsSummaryController = new DeductionsSummaryController(
       app.injector.instanceOf[views.html.DeductionBreakdown],
       mockAuthService,
-      mockIncomeSourceDetailsService,
       mockAuditingService,
       mockCalculationService,
     )(
@@ -59,7 +58,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       "return Status OK when income sources and calculations come back with success" in new Setup {
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockBothIncomeSources()
         setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
 
         val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
@@ -70,7 +68,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       "return calcDisplay error case scenario" in new Setup {
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockBothIncomeSources()
         setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
         mockShowInternalServerError()
 
@@ -79,16 +76,15 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
-      "return internal server error when Error from both Calc and Income sources" in new Setup {
+      "return internal server error when Error from Calc" in new Setup {
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockErrorIncomeSource()
-        mockCalculationNotFound()
+        setupMockGetCalculation("AA111111A", testYear)(CalcDisplayNoDataFound)
+        mockShowInternalServerError()
 
         val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
 
-        result.failed.futureValue shouldBe an[InternalServerException]
-
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
       "backUrl" should {

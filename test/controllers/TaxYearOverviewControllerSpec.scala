@@ -25,7 +25,7 @@ import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
@@ -39,7 +39,7 @@ import views.html.TaxYearOverview
 import java.time.LocalDate
 
 class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching
   with MockAuditingService with MockNextUpdatesService {
 
@@ -53,7 +53,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
     app.injector.instanceOf[SessionTimeoutPredicate],
     mockFinancialDetailsService,
     app.injector.instanceOf[ItvcErrorHandler],
-    MockIncomeSourceDetailsPredicate,
+    MockIncomeSourceDetailsPredicateNoCache,
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
     mockAuditingService

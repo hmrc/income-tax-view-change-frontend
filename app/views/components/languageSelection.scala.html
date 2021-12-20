@@ -21,36 +21,51 @@
 @this()
 @()(implicit messages: Messages)
 
+<script>
+    function getFragmentParam() {
+        if (window.location.hash) {
+            return "?fragment=" + window.location.hash.replace('#', '')
+        } else {
+            return ""
+        }
+    }
+    function switchTo(url) {
+        window.location = url + getFragmentParam()
+    }
+</script>
+
 @if(messages.lang.code === "en") {
-<nav class="hmrc-language-select" aria-label="Language switcher">
-    <ul class="hmrc-language-select__list">
-        <li class="hmrc-language-select__list-item">
-            <span aria-current="true">English</span>
-        </li>
-        <li class="hmrc-language-select__list-item">
-            <a href="@controllers.routes.ItvcLanguageController.switchToWelsh" hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:Cymraeg">
-                <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
-                <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+    <nav class="hmrc-language-select" aria-label="Language switcher">
+        <ul class="hmrc-language-select__list">
+            <li class="hmrc-language-select__list-item">
+                <span aria-current="true">English</span>
+            </li>
+            <li class="hmrc-language-select__list-item">
+                <a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
+                   hreflang="cy" lang="cy" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:Cymraeg">
+                    <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                    <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
 } else {
 
-<nav class="hmrc-language-select" aria-label="Switcher iaith">
-    <ul class="hmrc-language-select__list">
-        <li class="hmrc-language-select__list-item">
-            <a href="@controllers.routes.ItvcLanguageController.switchToEnglish" hreflang="en" lang="en" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:English">
-                <span class="govuk-visually-hidden">Change the language to English</span>
-                <span aria-hidden="true">English</span>
-            </a>
-        </li>
-        <li class="hmrc-language-select__list-item">
-            <span aria-current="true">Cymraeg</span>
-        </li>
-    </ul>
-</nav>
+    <nav class="hmrc-language-select" aria-label="Switcher iaith">
+        <ul class="hmrc-language-select__list">
+            <li class="hmrc-language-select__list-item">
+                <a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToEnglish(None)')"
+                   hreflang="en" lang="en" rel="alternate" class="govuk-link" data-journey-click="link - click:lang-select:English">
+                    <span class="govuk-visually-hidden">Change the language to English</span>
+                    <span aria-hidden="true">English</span>
+                </a>
+            </li>
+            <li class="hmrc-language-select__list-item">
+                <span aria-current="true">Cymraeg</span>
+            </li>
+        </ul>
+    </nav>
 
 }
 

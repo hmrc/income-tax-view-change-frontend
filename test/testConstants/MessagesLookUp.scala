@@ -683,7 +683,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   }
 
   object PaymentAllocation {
+    val title = "Payment made to HMRC - Business Tax account - GOV.UK"
     val heading = "Payment made to HMRC"
+    val backLink = "Back"
     val date = "31 January 2021"
     val amount = "£300.00"
     val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
@@ -697,6 +699,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val tableDataAmountLpi = "£300.00"
     val creditOnAccount = "Credit on account"
     val creditOnAccountAmount = "£200.00"
+    val allocationsTableHeading = "Payment allocations"
+    val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
+    val allocationsTableCaption = "Payment allocations"
+    val allocationsTableHeadersText: String = allocationsTableCaption + " " + allocationsTableHeaders.mkString(" ")
+
   }
 
 }

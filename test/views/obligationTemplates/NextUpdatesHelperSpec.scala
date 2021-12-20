@@ -17,7 +17,7 @@
 package views.obligationTemplates
 
 import testConstants.BaseTestConstants.testMtdItUser
-import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
 import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
 import org.jsoup.Jsoup
@@ -37,12 +37,12 @@ class NextUpdatesHelperSpec extends TestSupport {
 	}
 
 	lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-		business1.incomeSourceId,
+		business1.incomeSourceId.get,
 		twoObligationsSuccessModel.obligations
 	)))
 
 	lazy val crystallisedObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-		business1.incomeSourceId,
+		business1.incomeSourceId.get,
 		List(crystallisedObligation)
 	)))
 
@@ -66,7 +66,7 @@ class NextUpdatesHelperSpec extends TestSupport {
 
 			section.select("tbody tr").size() shouldBe 1
 			section.select("tbody tr td:nth-of-type(1)").text() shouldBe "Quarterly"
-			section.select("tbody tr td:nth-of-type(2)").text() shouldBe "business"
+			section.select("tbody tr td:nth-of-type(2)").text() shouldBe testTradeName
 		}
 
 		"display the later due date" in new Setup(obligationsModel) {
@@ -78,7 +78,7 @@ class NextUpdatesHelperSpec extends TestSupport {
 
 			section.select("tbody tr").size() shouldBe 1
 			section.select("tbody tr td:nth-of-type(1)").text() shouldBe "Annual Update"
-			section.select("tbody tr td:nth-of-type(2)").text() shouldBe "business"
+			section.select("tbody tr td:nth-of-type(2)").text() shouldBe testTradeName
 		}
 
 		"display the correct due date text for a quarterly date" in new Setup(obligationsModel) {

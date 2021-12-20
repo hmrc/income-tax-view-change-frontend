@@ -37,4 +37,5 @@ object IncomeSourceDetailsTestConstants {
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testMtdItId, None, List(business2018, business2019), Some(propertyDetails))
   val oldUserDetails = IncomeSourceDetailsModel(testMtdItId, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(oldUseralignedBusiness), Some(propertyDetails))
+  val preSanitised = IncomeSourceDetailsModel(testMtdItId, Some("2021"), List(business2018, alignedBusiness), Some(propertyDetails))
 }

@@ -53,7 +53,7 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.NextUpdates,
 
   def getNextUpdates: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+			getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
 				mtdItUser =>
 					nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
 						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl, isAgent = true)(mtdItUser))

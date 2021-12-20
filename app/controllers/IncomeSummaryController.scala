@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import auth.MtdItUser
+import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
@@ -49,7 +49,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                                         mcc: MessagesControllerComponents)
                                         extends BaseController with ImplicitDateFormatter with FeatureSwitching  with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
 
   def showIncomeSummary(taxYear: Int): Action[AnyContent] =
