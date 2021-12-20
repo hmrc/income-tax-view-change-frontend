@@ -20,11 +20,11 @@
 @import implicits.ImplicitDateFormatter
 @import implicits.ImplicitDateFormatterImpl
 
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
 
 @this(
-      mainTemplate: layout,
+      mainTemplate: unifiedLayout,
       appConfig: config.FrontendAppConfig,
       implicitDateFormatter: ImplicitDateFormatterImpl,
       h1: h1,
@@ -32,16 +32,25 @@
       link: link
 )
 
-@(payments: List[Payment], backUrl: String, saUtr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(payments: List[Payment], backUrl: String, saUtr: Option[String], isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @groupedPayments = @{
-payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toList.sortBy(_._1).reverse
+    payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toList.sortBy(_._1).reverse
+}
+
+@getControllerHref(payment: Payment, isAgent: Boolean) = @{
+    if(isAgent) {
+        controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)
+    } else {
+        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)
+    }
 }
 
 @mainTemplate(
     pageTitle = messages("paymentHistory.heading"),
-    backUrl = Some(backUrl)
+    backUrl = Some(backUrl),
+    isAgent = isAgent
 ) {
 
 
@@ -55,47 +64,47 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
     }
 
 @if(payments.nonEmpty) {
-<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
 
- @for(((year, yearPayments), index) <- groupedPayments.zipWithIndex) {
- <div class="govuk-accordion__section">
-  <div class="govuk-accordion__section-header">
-   <h2 class="govuk-accordion__section-heading">
-    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@year" aria-labelledby="accordion-with-summary-sections-heading-@year">
-        @messages("paymentHistory.button", year.toString)
-      </span>
-   </h2>
-  </div>
-  <div class="govuk-accordion__section-content" id="accordion-default-content-@{index + 1}">
-    <table class="govuk-table">
-     <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
-     <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-       <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.date")</th>
-       <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.description")</th>
-       <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.amount")</th>
-      </tr>
-     </thead>
-     <tbody>
-     @for(payment <- yearPayments) {
-     <tr class = "govuk-table__row">
-      <td class = "govuk-table__cell">@LocalDate.parse(payment.date.get).toLongDate</td>
-      <td class="govuk-table__cell">
-          <a class="govuk-link" href="@controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.get)">
-              @messages("paymentHistory.paymentToHmrc")
-              <span class="govuk-visually-hidden">@payment.transactionId.get</span>
-          </a>
-      </td>
-      <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
-     </tr>
-     }
-     </tbody>
-
-    </table>
-  </div>
- </div>
- }
-</div>
-
-}
+        @for(((year, yearPayments), index) <- groupedPayments.zipWithIndex) {
+            <div class="govuk-accordion__section">
+                <div class="govuk-accordion__section-header">
+                    <h2 class="govuk-accordion__section-heading">
+                        <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@year" aria-labelledby="accordion-with-summary-sections-heading-@year">
+                        @messages("paymentHistory.button", year.toString)
+                        </span>
+                    </h2>
+                </div>
+                <div class="govuk-accordion__section-content" id="accordion-default-content-@{
+                    index + 1
+                }">
+                    <table class="govuk-table">
+                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.date")</th>
+                                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.description")</th>
+                                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.amount")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for(payment <- yearPayments) {
+                            <tr class = "govuk-table__row">
+                                <td class = "govuk-table__cell">@LocalDate.parse(payment.date.get).toLongDate</td>
+                                <td class="govuk-table__cell">
+                                    <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
+                                        @messages("paymentHistory.paymentToHmrc")
+                                        <span class="govuk-visually-hidden">@payment.transactionId.get</span>
+                                    </a>
+                                </td>
+                                <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+    }
 }

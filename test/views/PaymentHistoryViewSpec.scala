@@ -35,6 +35,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   object PaymentHistoryMessages {
     val title = "Payment history - Business Tax account - GOV.UK"
+    val titleWhenAgentView = "Payment history - Your client’s Income Tax details - GOV.UK"
+
     val heading = "Payment history"
     val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment service."
 
@@ -56,7 +58,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments, "testBackURL", saUtr)(FakeRequest(),implicitly, mockAppConfig)
+    paymentHistoryView(testPayments, "testBackURL", saUtr, isAgent = false)(FakeRequest(),implicitly)
   )
 
   "The payments history view with payment response model" should {
@@ -110,6 +112,18 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }
         }
+      }
+    }
+  }
+
+  class PaymentHistorySetupWhenAgentView(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
+    paymentHistoryView(testPayments, "testBackURL", saUtr, isAgent = true)(FakeRequest(),implicitly)
+  )
+
+  "The payments history view with payment response model" should {
+    "when the user has payment history for a single Year" should {
+      s"have the title '${PaymentHistoryMessages.titleWhenAgentView}'" in new PaymentHistorySetupWhenAgentView(testPayments) {
+        document.title() shouldBe PaymentHistoryMessages.titleWhenAgentView
       }
     }
   }
