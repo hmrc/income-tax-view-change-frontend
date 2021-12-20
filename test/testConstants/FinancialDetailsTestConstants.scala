@@ -387,23 +387,41 @@ object FinancialDetailsTestConstants {
                                      originalAmount: Option[BigDecimal] = Some(1400.00),
                                      amountCodedOut: Option[BigDecimal] = None,
                                      transactionId: String = id1040000123,
+                                     latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                     paymentLot: Option[String] = Some("paymentLot"),
                                      dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetailWithDueDate =
-    DocumentDetailWithDueDate(documentDetailModel(taxYear =  taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount, originalAmount = originalAmount, documentText = documentText, amountCodedOut = amountCodedOut, transactionId = transactionId), dueDate)
+    DocumentDetailWithDueDate(documentDetailModel(taxYear =  taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount, originalAmount = originalAmount, documentText = documentText, amountCodedOut = amountCodedOut, transactionId = transactionId, paymentLot = paymentLot, latePaymentInterestAmount = latePaymentInterestAmount), dueDate)
 
+  val balanceDetails: BalanceDetails = BalanceDetails(
+    balanceDueWithin30Days = 1.00,
+    overDueAmount = 2.00,
+    totalBalance = 3.00
+  )
 
   val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))
   val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA - POA 2"))
   val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"))
   val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
+  val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), paymentLot = None, latePaymentInterestAmount = None)
+  val documentDetailPaye: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2400), paymentLot = None, latePaymentInterestAmount = None)
 
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
 
   val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
 
+  def financialDetails(balanceDetails: BalanceDetails = balanceDetails,
+                       documentDetails: DocumentDetail = documentDetailModel(),
+                       financialDetails: FinancialDetail = financialDetail()): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(documentDetails),
+      financialDetails = List(financialDetails)
+    )
+
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), dunningLock: Option[String] = None, lpiWithDunningBlock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock))
     )

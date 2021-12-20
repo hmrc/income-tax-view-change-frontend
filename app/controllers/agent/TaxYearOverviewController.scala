@@ -28,11 +28,13 @@ import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOvervie
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
+import play.api.http.Status.NOT_FOUND
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxYearOverview
 
@@ -115,18 +117,29 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
+        val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
+        val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-          documentDetails.filter(_.paymentLot.isEmpty).map(
+          docDetailsNoPayments.filter(_.isNotCodingOutDocumentDetail).filter(_.originalAmountIsNotZero).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
-          documentDetails.filter(_.paymentLot.isEmpty).filter(_.latePaymentInterestAmount.isDefined).map(
+          docDetailsNoPayments.filter(_.latePaymentInterestAmount.isDefined).filter(_.latePaymentInterestAmountIsNotZero).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
-          dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
-
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi)
+        val documentDetailsWithDueDatesCodingOutPaye: List[DocumentDetailWithDueDate] = {
+          docDetailsCodingOut.filter(dd => dd.isPayeSelfAssessment && dd.amountCodedOutIsNotZero).map(
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
+        }
+        val documentDetailsWithDueDatesCodingOut: List[DocumentDetailWithDueDate] = {
+          docDetailsCodingOut.filter(dd => !dd.isPayeSelfAssessment && dd.originalAmountIsNotZero).map(
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
+        }
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ =>
         Logger("application").error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
