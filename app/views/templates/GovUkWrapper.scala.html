@@ -53,6 +53,7 @@
   serviceInfoContent: Html = HtmlFormat.empty,
   scriptElem: Option[Html] = None,
   backUrl: Option[String] = None,
+  itsaTaxYear: Option[Int] = None,
   showLogout: Boolean = true)(implicit request: Request[_], messages: Messages)
 
 @linksElem = {
@@ -75,7 +76,7 @@
 
 @insideHeader = {
     @headerNav(
-        navTitle = Some(Messages("base.service_name")),
+        navTitle = Some(Messages({if(itsaTaxYear.isDefined) "base.service_name.itsa" else "base.service_name"})),
         navTitleLink = Some(Call("GET", appConfig.businessTaxAccount)),
         showBetaLink = false,
         navLinks = Some(headerNavLinks))
@@ -125,4 +126,4 @@
       getHelpForm = getHelpForm)
 }
 
-@govUkTemplate(Some(messages("titlePattern.serviceName.govUk", title)), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinksLayout()), nav=true)(content)
+@govUkTemplate(Some(messages({if(itsaTaxYear.isDefined) "titlePattern.serviceName.itsa.govUk" else "titlePattern.serviceName.govUk"}, title)), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinksLayout()), nav=true)(content)

@@ -79,7 +79,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValues {
-    val title = "Your final tax overview - Business Tax account - GOV.UK"
+    val title = "Your final tax overview - Update and submit an Income Tax Return - GOV.UK"
     val caption = "6 April 2017 to 5 April 2018"
 
     val insetTextFull = "If you think this information is incorrect, you can check your Income Tax Return."
@@ -107,7 +107,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValuesWelsh {
-    val title = "Eich trosolwg treth terfynol - Cyfrif Treth Busnes - GOV.UK"
+    val title = "Eich trosolwg treth terfynol - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
     val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch gwirio eich Ffurflen Dreth Incwm."
