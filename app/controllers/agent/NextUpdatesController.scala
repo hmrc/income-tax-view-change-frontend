@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpdates,
+class NextUpdatesController @Inject()(agentNextUpdates: views.html.NextUpdates,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       nextUpdatesService: NextUpdatesService,
                                       implicit val appConfig: FrontendAppConfig,
@@ -42,11 +42,12 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpd
                                       itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def view(obligationsModel: ObligationsModel, backUrl: String)
+  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent:Boolean)
                   (implicit user: MtdItUser[_]): Html = {
     agentNextUpdates(
       currentObligations = obligationsModel,
-      backUrl = backUrl
+      backUrl = backUrl,
+      isAgent = isAgent
     )
   }
 
@@ -55,7 +56,7 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.agent.NextUpd
 			getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
 				mtdItUser =>
 					nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
-						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl)(mtdItUser))
+						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl, isAgent = true)(mtdItUser))
 						case _ => itvcErrorHandler.showInternalServerError()
 					}
 			}

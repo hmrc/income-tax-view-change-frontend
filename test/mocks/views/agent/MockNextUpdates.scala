@@ -21,7 +21,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.NextUpdates
+import views.html.NextUpdates
 
 trait MockNextUpdates extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
@@ -33,12 +33,13 @@ trait MockNextUpdates extends BeforeAndAfterEach with MockitoSugar {
     reset(agentNextUpdates)
   }
 
-  def mockAgentNextUpdates(currentObligations: models.nextUpdates.ObligationsModel, backUrl: String)
+  def mockAgentNextUpdates(currentObligations: models.nextUpdates.ObligationsModel, backUrl: String, isAgent:Boolean)
                           (response: Html): Unit = {
     when(agentNextUpdates.apply(
       matches(currentObligations),
-      matches(backUrl)
-    )(any(), any()))
+      matches(backUrl),
+      matches(isAgent)
+    )(any(), any(), any()))
       .thenReturn(response)
   }
 }
