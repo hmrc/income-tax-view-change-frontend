@@ -606,27 +606,6 @@ updateTab.updateType.quarterly                                  = Diweddariad ch
 updateTab.updateType.eops                                       = Diweddariad blynyddol
 updateTab.updateType.crystallised                               = Datganiad terfynol
 
-#Agent next updates
-agent.nextUpdates.heading                                       = Diweddariadau nesaf
-agent.nextUpdates.sub-heading                                   = Diweddariadau’n ddyledus erbyn
-agent.nextUpdates.dropdown.info                                 = Beth yw’r mathau o ddiweddariadau?
-agent.nextUpdates.info                                          = Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
-agent.nextUpdates.dropdown.quarterlyReturn.text                 = Diweddariad chwarterol yw cofnod o’ch holl incwm busnes mewn cyfnod 3 mis.
-agent.nextUpdates.dropdown.quarterlyReturn.text.lin2            = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
-agent.nextUpdates.dropdown.annualReturn.text                    = Mewn diweddariad blynyddol, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
-agent.nextUpdates.dropdown.annualReturn.text.lin2               = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
-agent.nextUpdates.dropdown.finalDeclaration.text                = Mae’ch datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
-agent.nextUpdates.table.header.type							    = Math o ddiweddariad
-agent.nextUpdates.table.header.source							= Ffynhonnell incwm
-agent.nextUpdates.section.heading.updates						= Diweddariad ar gyfer: {0} i {1}
-agent.nextUpdates.section.heading.taxYear						= Blwyddyn dreth: {0} i {1}
-agent.nextUpdates.previousYears.textOne							= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
-agent.nextUpdates.previousYears.textTwo							= dudalen.
-agent.nextUpdates.previousYears.link							= blynyddoedd treth
-agent.obligations.quarterlyUpdates                              = Diweddariadau chwarterol
-agent.obligations.annualUpdates                                 = Diweddariadau blynyddol
-agent.obligations.finalDeclarationUpdate                        = Datganiad terfynol
-
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English
 language-switcher.english                                       = English
