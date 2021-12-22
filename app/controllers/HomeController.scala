@@ -23,11 +23,12 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{FinancialDetailsService, NextUpdatesService}
+import services.{FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.CurrentDateProvider
 
@@ -45,6 +46,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialDetailsService: FinancialDetailsService,
                                val currentDateProvider: CurrentDateProvider,
+                               val whatYouOweService: WhatYouOweService,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                mcc: MessagesControllerComponents,
@@ -80,30 +82,45 @@ class HomeController @Inject()(val homeView: views.html.Home,
           }.sortWith(_ isBefore _)
         }
 
-        val dunningLockExists: Future[Boolean] = unpaidCharges.map {
-          _.collectFirst {
-            case fdm: FinancialDetailsModel if fdm.dunningLockExists => true
-          }.isDefined
-        }
+        val chargeName = "BCD"
 
-        dueDates.map(_.sortBy(_.toEpochDay())).flatMap { paymentsDue =>
-          dunningLockExists.map { dunningLockExistsValue =>
-            val overDuePaymentsCount = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate()))
-            val overDueUpdatesCount = latestDeadlineDate._2.size
-
-            if (isEnabled(TxmEventsApproved)) {
-              auditingService.extendedAudit(HomeAudit(
-                mtdItUser = user,
-                paymentsDue.headOption,
-                latestDeadlineDate._1,
-                overDuePaymentsCount,
-                overDueUpdatesCount
-              ))
-            }
-
-            Ok(view(paymentsDue.headOption, latestDeadlineDate._1, Some(overDuePaymentsCount), Some(overDueUpdatesCount), dunningLockExistsValue,
-              currentTaxYear = user.incomeSources.getCurrentTaxEndYear))
+        for {
+          paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
+          dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
+          outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList.map(_.outstandingChargesModel match {
+            case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == chargeName)
+            case _ => Nil
+          })
+          outstandingChargesCount = outstandingChargesModel.length
+          // TODO can we do it better
+          outstandingChargesDueDate = outstandingChargesModel.find(_.chargeName == chargeName) match {
+            case Some(OutstandingChargeModel(_, Some(relevantDate), _, _)) => List(LocalDate.parse(relevantDate))
+            case _ => Nil
           }
+          overDuePaymentsCount = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate())) + outstandingChargesCount
+          overDueUpdatesCount = latestDeadlineDate._2.size
+
+        } yield {
+          if (isEnabled(TxmEventsApproved)) {
+            auditingService.extendedAudit(HomeAudit(
+              mtdItUser = user,
+              paymentsDue.headOption,
+              latestDeadlineDate._1,
+              overDuePaymentsCount,
+              overDueUpdatesCount
+            ))
+          }
+
+          Ok(
+            view(
+              (paymentsDue ::: outstandingChargesDueDate).headOption,
+              latestDeadlineDate._1,
+              Some(overDuePaymentsCount),
+              Some(overDueUpdatesCount),
+              dunningLockExistsValue.isDefined,
+              user.incomeSources.getCurrentTaxEndYear
+            )
+          )
         }
 
       }.recover {
