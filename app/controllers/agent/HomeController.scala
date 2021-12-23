@@ -22,7 +22,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
@@ -39,6 +39,7 @@ class HomeController @Inject()(home: Home,
                                nextUpdatesService: NextUpdatesService,
                                financialDetailsService: FinancialDetailsService,
                                incomeSourceDetailsService: IncomeSourceDetailsService,
+                               whatYouOweService: WhatYouOweService,
                                auditingService: AuditingService,
                                val authorisedFunctions: FrontendAuthorisedFunctions)
                               (implicit mcc: MessagesControllerComponents,
@@ -68,6 +69,8 @@ class HomeController @Inject()(home: Home,
     implicit user =>
       for {
         mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
+        outstandingChargesModels <- whatYouOweService.getWhatYouOweChargesList()(implicitly, mtdItUser)
+        outstandingChargesModel = getOutstandingChargesModel(outstandingChargesModels)
         dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
         unpaidFinancialDetails <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
         _ = if(unpaidFinancialDetails.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]
@@ -81,8 +84,14 @@ class HomeController @Inject()(home: Home,
             mtdItUser, dueChargesDetails, dueObligationDetails
           ))
         }
-        Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails), dunningLockExistsValue,
-          currentTaxYear = mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser))
+
+        Ok(
+          view(mergeDueChargesDetails(dueChargesDetails, outstandingChargesModel),
+            dueObligationDetails,
+            overduePaymentExists(dueChargesDetails),
+            dunningLockExistsValue,
+            currentTaxYear = mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
+        )
       }
   }
 
@@ -98,6 +107,33 @@ class HomeController @Inject()(home: Home,
       case Some(_@Right(overdueCount)) if overdueCount > 0 => true
       case _ => false
     }
+  }
+
+  private def getOutstandingChargesModel(whatYouOweChargesList: WhatYouOweChargesList): Option[Either[(LocalDate, Boolean), Int]] = {
+    val outstandingChargesModels = whatYouOweChargesList.outstandingChargesModel.map {
+      _.outstandingCharges.filter(t => t.relevantDueDate.isDefined && t.chargeName == "BCD")
+    }.getOrElse(Nil)
+
+    outstandingChargesModels match {
+      case x :: Nil => Some(Left(LocalDate.parse(x.relevantDueDate.getOrElse("")), true))
+      case _ :: xs => Some(Right(xs.length + 1))
+      case _ => None
+    }
+  }
+
+  private def mergeDueChargesDetails(
+                                      first: Option[Either[(LocalDate, Boolean), Int]],
+                                      second: Option[Either[(LocalDate, Boolean), Int]]
+                                    ): Option[Either[(LocalDate, Boolean), Int]] =
+    (first, second) match {
+    case (first@Some(Left(tup1)), second@Some(Left(tup2))) => if (tup1._1 isBefore tup2._1) first else second
+    case (first@Some(Left(_)), None) => first
+    case (None, second@Some(Left(_))) => second
+    case (first@Some(Right(count)), Some(Left(_))) => first.copy(Right(count + 1))
+    case (Some(Left(_)), Some(Right(count))) => Some(Right(count + 1))
+    case (first@Some(Right(count)), Some(Right(_))) => first.copy(Right(count + 1))
+    case (first@Some(Right(_)), None) => first
+    case _ => None
   }
 
 }
