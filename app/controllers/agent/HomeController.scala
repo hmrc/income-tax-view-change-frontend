@@ -69,8 +69,6 @@ class HomeController @Inject()(home: Home,
     implicit user =>
       for {
         mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
-        outstandingChargesModels <- whatYouOweService.getWhatYouOweChargesList()(implicitly, mtdItUser)
-        outstandingChargesModel = getOutstandingChargesModel(outstandingChargesModels)
         dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
         unpaidFinancialDetails <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
         _ = if(unpaidFinancialDetails.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]
@@ -78,10 +76,12 @@ class HomeController @Inject()(home: Home,
           throw new InternalServerException("[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
         dueChargesDetails = financialDetailsService.getChargeDueDates(unpaidFinancialDetails)
         dunningLockExistsValue = dunningLockExists(unpaidFinancialDetails)
+        outstandingChargesModels <- whatYouOweService.getWhatYouOweChargesList()(implicitly, mtdItUser)
+        outstandingChargesModel = getOutstandingChargesModel(outstandingChargesModels)
       } yield {
         if (isEnabled(TxmEventsApproved)) {
           auditingService.extendedAudit(HomeAudit(
-            mtdItUser, dueChargesDetails, dueObligationDetails
+            mtdItUser, mergeDueChargesDetails(dueChargesDetails, outstandingChargesModel), dueObligationDetails
           ))
         }
 

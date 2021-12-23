@@ -103,7 +103,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           if (isEnabled(TxmEventsApproved)) {
             auditingService.extendedAudit(HomeAudit(
               mtdItUser = user,
-              paymentsDue.headOption,
+              paymentsDueMerged.headOption,
               latestDeadlineDate._1,
               overDuePaymentsCount,
               overDueUpdatesCount
