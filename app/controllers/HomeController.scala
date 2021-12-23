@@ -82,28 +82,25 @@ class HomeController @Inject()(val homeView: views.html.Home,
           }.sortWith(_ isBefore _)
         }
 
-        val chargeName = "BCD"
-
         for {
           paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
           dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
           outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList.map(_.outstandingChargesModel match {
-            case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == chargeName)
+            case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
             case _ => Nil
           })
-          outstandingChargesCount = outstandingChargesModel.length
-          outstandingChargesDueDate = outstandingChargesModel.find(_.chargeName == chargeName) match {
-            case Some(OutstandingChargeModel(_, Some(relevantDate), _, _)) => List(LocalDate.parse(relevantDate))
+          outstandingChargesDueDate = outstandingChargesModel.flatMap {
+            case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(LocalDate.parse(relevantDate))
             case _ => Nil
           }
-          overDuePaymentsCount = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate())) + outstandingChargesCount
+          overDuePaymentsCount = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate())) + outstandingChargesModel.length
           overDueUpdatesCount = latestDeadlineDate._2.size
-          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _)
+          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
         } yield {
           if (isEnabled(TxmEventsApproved)) {
             auditingService.extendedAudit(HomeAudit(
               mtdItUser = user,
-              paymentsDueMerged.headOption,
+              paymentsDueMerged,
               latestDeadlineDate._1,
               overDuePaymentsCount,
               overDueUpdatesCount
@@ -112,7 +109,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
           Ok(
             view(
-              paymentsDueMerged.headOption,
+              paymentsDueMerged,
               latestDeadlineDate._1,
               Some(overDuePaymentsCount),
               Some(overDueUpdatesCount),
