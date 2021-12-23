@@ -92,14 +92,13 @@ class HomeController @Inject()(val homeView: views.html.Home,
             case _ => Nil
           })
           outstandingChargesCount = outstandingChargesModel.length
-          // TODO can we do it better
           outstandingChargesDueDate = outstandingChargesModel.find(_.chargeName == chargeName) match {
             case Some(OutstandingChargeModel(_, Some(relevantDate), _, _)) => List(LocalDate.parse(relevantDate))
             case _ => Nil
           }
           overDuePaymentsCount = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate())) + outstandingChargesCount
           overDueUpdatesCount = latestDeadlineDate._2.size
-
+          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _)
         } yield {
           if (isEnabled(TxmEventsApproved)) {
             auditingService.extendedAudit(HomeAudit(
@@ -113,7 +112,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
           Ok(
             view(
-              (paymentsDue ::: outstandingChargesDueDate).headOption,
+              paymentsDueMerged.headOption,
               latestDeadlineDate._1,
               Some(overDuePaymentsCount),
               Some(overDueUpdatesCount),
