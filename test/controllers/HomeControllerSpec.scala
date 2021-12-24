@@ -21,21 +21,23 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.calculation.Calculation
 import models.financialDetails._
+import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.{FinancialDetailsService, NextUpdatesService}
+import services.{FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import testConstants.MessagesLookUp
 import utils.CurrentDateProvider
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
 
-class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with BeforeAndAfterEach {
 
 	val updateYear: String = "2018"
 	val nextPaymentYear: String = "2019"
@@ -43,6 +45,11 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 	val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), Seq.empty[LocalDate])
 	val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
 	val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
+	val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0,0.0,0.0))
+	val oneOverdueBCDPaymentInWhatYouOweChargesList: WhatYouOweChargesList =
+		emptyWhatYouOweChargesList.copy(
+			outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD",Some("2019-01-31"), 1.67, 2345))))
+		)
 
 	val emptyEstimateCalculation: Calculation = Calculation(crystallised = false)
 	val emptyCrystallisedCalculation: Calculation = Calculation(crystallised = true)
@@ -51,6 +58,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 		val NextUpdatesService: NextUpdatesService = mock[NextUpdatesService]
 		val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 		val currentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
+		val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
+
 		val controller = new HomeController(
 			app.injector.instanceOf[views.html.Home],
 			app.injector.instanceOf[SessionTimeoutPredicate],
@@ -59,7 +68,9 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			MockIncomeSourceDetailsPredicate,
 			NextUpdatesService,
 			app.injector.instanceOf[ItvcErrorHandler],
-			financialDetailsService,currentDateProvider,
+			financialDetailsService,
+			currentDateProvider,
+			whatYouOweService,
 			mockAuditingService)(
       ec,
       app.injector.instanceOf[MessagesControllerComponents],
@@ -81,7 +92,24 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 								transactionId = Some("testId"),
 								items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
 						))))
+					when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+						.thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
+					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+
+					status(result) shouldBe Status.OK
+					val document: Document = Jsoup.parse(contentAsString(result))
+					document.title shouldBe MessagesLookUp.HomePage.title
+					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
+				}
+
+				"there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
+					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+					mockSingleBusinessIncomeSource()
+					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+						.thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+					when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+						.thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
 
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -114,6 +142,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 										transactionId = Some("testId3"),
 										items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
 						)))
+					when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+						.thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -154,6 +184,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 									transactionId = Some("testId3"),
 									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
 						)))
+					when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+						.thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -165,11 +197,13 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 				}
 
 				"Not display the next payment due date" when {
-					"there is a problem getting financial detalis" in new Setup {
+					"there is a problem getting financial details" in new Setup {
 						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 							.thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
+						when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+							.thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -185,6 +219,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 							.thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),List(), List()))))
+						when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+							.thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -205,6 +241,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 								financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
 									items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
 							))))
+						when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+							.thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
 						val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
@@ -227,6 +265,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 							financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
 								items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
 						))))
+					when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+						.thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
 					val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
 
