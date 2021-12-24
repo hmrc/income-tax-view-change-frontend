@@ -42,6 +42,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01"))
   )
 
+  val paymentsFull2: Seq[Payment] = Seq(
+    Payment(reference = Some("reference2"), amount = Some(200.00), method = Some("method2"), lot = Some("lot2"), lotItem = Some("lotItem2"), date = Some("2018-12-12"), Some("DOCID02"))
+  )
+
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
   val previousTaxYearEnd: Int = currentTaxYearEnd - 1
   val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
@@ -97,7 +101,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentsFull)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
 
@@ -107,7 +110,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
         pageTitle("Payment history - Business Tax account - GOV.UK")
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull ++ paymentsFull).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
     }
     "the payment history feature switch is enabled and with TxmEventsApproved FS disabled" in {
       WireMock.reset()
@@ -116,7 +119,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentsFull)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
 
@@ -126,7 +128,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
         pageTitle("Payment history - Business Tax account - GOV.UK")
       )
 
-      verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull ++ paymentsFull).detail)
+      verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
     }
   }
 
