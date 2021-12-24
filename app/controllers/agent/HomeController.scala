@@ -23,6 +23,7 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.outstandingCharges.OutstandingChargeModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
@@ -115,7 +116,7 @@ class HomeController @Inject()(home: Home,
     }.getOrElse(Nil)
 
     outstandingChargesModels match {
-      case x :: Nil => Some(Left(LocalDate.parse(x.relevantDueDate.getOrElse("")), true))
+      case OutstandingChargeModel(_, Some(relevantDueDate), _, _) :: Nil => Some(Left(LocalDate.parse(relevantDueDate), true))
       case _ :: xs => Some(Right(xs.length + 1))
       case _ => None
     }
