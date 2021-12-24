@@ -172,7 +172,7 @@ class HomeControllerSpec extends TestSupport
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 15 May 2021"
-						document.select("#overdue-warning").text shouldBe "! You have overdue payments. You may be charged interest on these until they are paid in full."
+						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
 					}
 					"display the home page with right details and without dunning lock warning and one overdue payment from CESA" in new Setup {
 
