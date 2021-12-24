@@ -79,17 +79,18 @@ class HomeController @Inject()(home: Home,
         dunningLockExistsValue = dunningLockExists(unpaidFinancialDetails)
         outstandingChargesModels <- whatYouOweService.getWhatYouOweChargesList()(implicitly, mtdItUser)
         outstandingChargesModel = getOutstandingChargesModel(outstandingChargesModels)
+        mergedDueChargesDetailsValue = mergeDueChargesDetails(dueChargesDetails, outstandingChargesModel)
       } yield {
         if (isEnabled(TxmEventsApproved)) {
           auditingService.extendedAudit(HomeAudit(
-            mtdItUser, mergeDueChargesDetails(dueChargesDetails, outstandingChargesModel), dueObligationDetails
+            mtdItUser, mergedDueChargesDetailsValue, dueObligationDetails
           ))
         }
 
         Ok(
-          view(mergeDueChargesDetails(dueChargesDetails, outstandingChargesModel),
+          view(mergedDueChargesDetailsValue,
             dueObligationDetails,
-            overduePaymentExists(dueChargesDetails),
+            overduePaymentExists(mergedDueChargesDetailsValue),
             dunningLockExistsValue,
             currentTaxYear = mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
         )
