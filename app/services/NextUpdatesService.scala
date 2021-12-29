@@ -32,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext) {
 
 
-  def getNextDeadlineDueDateAndOverDueObligations(incomeSourceResponse: IncomeSourceDetailsModel)
+  // todo check if parameter is needed
+  def getNextDeadlineDueDateAndOverDueObligations()
                                                  (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[(LocalDate, Seq[LocalDate])] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>

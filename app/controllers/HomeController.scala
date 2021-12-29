@@ -71,7 +71,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
 
-      nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
+      nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
 
         val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails
 
