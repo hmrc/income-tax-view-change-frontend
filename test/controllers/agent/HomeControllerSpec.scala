@@ -28,8 +28,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.i18n.Lang
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import play.api.test.Injecting
+import play.i18n
+import play.i18n.MessagesApi
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testConstants.MessagesLookUp
@@ -49,7 +53,8 @@ class HomeControllerSpec extends TestSupport
   with MockAuditingService
   with MockHome
 	with MockWhatYouOweService
-  with FeatureSwitching {
+  with FeatureSwitching
+	with Injecting {
 
   trait Setup {
     val controller = new HomeController(
@@ -64,6 +69,13 @@ class HomeControllerSpec extends TestSupport
       app.injector.instanceOf[FrontendAppConfig],
       mockItvcErrorHandler,
       app.injector.instanceOf[ExecutionContext])
+
+		implicit val lang: Lang = Lang("en-US")
+
+		val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
+		val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.true")
+		val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.false")
+		val expectedOverDuePaymentsText = "OVERDUE 31 January 2019"
   }
 
   "show" when {
@@ -160,7 +172,7 @@ class HomeControllerSpec extends TestSupport
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 15 May 2021"
-						document.select("#overdue-warning").text shouldBe "! You have overdue payments. You may be charged interest on these until they are paid in full."
+						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
 					}
 					"display the home page with right details and without dunning lock warning and one overdue payment from CESA" in new Setup {
 
@@ -178,7 +190,7 @@ class HomeControllerSpec extends TestSupport
 						contentType(result) shouldBe Some(HTML)
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
+						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
 					}
 					"display the home page with right details and with dunning lock warning and two overdue payments" in new Setup {
 
@@ -197,7 +209,7 @@ class HomeControllerSpec extends TestSupport
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
-						document.select("#overdue-warning").text shouldBe "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
+						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
 					}
 					"display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in new Setup {
 
@@ -216,7 +228,45 @@ class HomeControllerSpec extends TestSupport
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "3 OVERDUE PAYMENTS"
-						document.select("#overdue-warning").text shouldBe "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
+						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
+					}
+					"display the home page with right details and with dunning lock warning and one overdue payments from CESA" in new Setup {
+
+						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						mockSingleBusinessIncomeSource()
+						mockGetObligationDueDates(Future.successful(Right(2)))
+						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
+						mockGetChargeDueDates(None)
+						setupMockGetWhatYouOweChargesListWithOne()
+
+						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+
+						status(result) shouldBe OK
+						contentType(result) shouldBe Some(HTML)
+						val document: Document = Jsoup.parse(contentAsString(result))
+						document.title shouldBe MessagesLookUp.HomePage.agentTitle
+						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
+					}
+					"display the home page with right details and without dunning lock warning and one overdue payments from CESA" in new Setup {
+
+						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						mockSingleBusinessIncomeSource()
+						mockGetObligationDueDates(Future.successful(Right(2)))
+						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None))))
+						mockGetChargeDueDates(None)
+						setupMockGetWhatYouOweChargesListWithOne()
+
+						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+
+						status(result) shouldBe OK
+						contentType(result) shouldBe Some(HTML)
+						val document: Document = Jsoup.parse(contentAsString(result))
+						document.title shouldBe MessagesLookUp.HomePage.agentTitle
+						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
 					}
 				}
 			}
