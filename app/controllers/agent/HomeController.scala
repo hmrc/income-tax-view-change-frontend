@@ -24,7 +24,7 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.financialDetails.FinancialDetailsModel
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -39,23 +39,20 @@ import scala.concurrent.Future
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
+import views.html.agent.Home
 
 @Singleton
-class HomeController @Inject()(val homeView: views.html.Home,
-                               val checkSessionTimeout: SessionTimeoutPredicate,
-                               val authenticate: AuthenticationPredicate,
-                               val retrieveNino: NinoPredicate,
-                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+class HomeController @Inject()(homeView: Home,
                                nextUpdatesService: NextUpdatesService,
                                financialDetailsService: FinancialDetailsService,
                                incomeSourceDetailsService: IncomeSourceDetailsService,
-                               val currentDateProvider: CurrentDateProvider,
+                               currentDateProvider: CurrentDateProvider,
                                whatYouOweService: WhatYouOweService,
                                auditingService: AuditingService,
                                val authorisedFunctions: FrontendAuthorisedFunctions)
                               (implicit mcc: MessagesControllerComponents,
                                implicit val appConfig: FrontendAppConfig,
-                               val itvcErrorHandler: ItvcErrorHandler,
+                               itvcErrorHandler: ItvcErrorHandler,
                                implicit val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
 
@@ -75,16 +72,21 @@ class HomeController @Inject()(val homeView: views.html.Home,
     )
   }
 
-  private def getOutstandingChargesDueDate(outstandingChargesModel: List[OutstandingChargeModel]) = outstandingChargesModel.flatMap {
+  private def getOutstandingChargesDueDate(outstandingChargesModel: List[OutstandingChargeModel]): List[LocalDate] = outstandingChargesModel.flatMap {
     case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(LocalDate.parse(relevantDate))
     case _ => Nil
   }
 
   private def getOutstandingChargesModel(mtdUser: MtdItUser[_])(implicit headerCarrier: HeaderCarrier): Future[List[OutstandingChargeModel]] =
     whatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdUser).map(_.outstandingChargesModel match {
-    case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
-    case _ => Nil
-  })
+      case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
+      case _ => Nil
+    })
+
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] = unpaidCharges.flatMap {
+    case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+    case _ => List.empty[LocalDate]
+  }.sortWith(_ isBefore _).sortBy(_.toEpochDay())
 
   def show(): Action[AnyContent] = Authenticated.async {
     implicit request =>
@@ -94,19 +96,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
           mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
           latestDeadlineDate <- nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(implicitly, implicitly, mtdItUser)
           unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
-          dueDatesNotSorted = unpaidCharges.flatMap {
-            case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-            case _ => List.empty[LocalDate]
-          }
-          // todo refactor it with dueDates
-          dueDates = dueDatesNotSorted.sortWith(_ isBefore _)
-          paymentsDue = dueDates.sortBy(_.toEpochDay())
-          dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
           outstandingChargesModel <- getOutstandingChargesModel(mtdItUser)
-          outstandingChargesDueDate = getOutstandingChargesDueDate(outstandingChargesModel)
+          paymentsDue = getDueDates(unpaidCharges)
+          dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
           overDuePaymentsCount = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate())) + outstandingChargesModel.length
           overDueUpdatesCount = latestDeadlineDate._2.size
-          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+          paymentsDueMerged = (paymentsDue ::: getOutstandingChargesDueDate(outstandingChargesModel)).sortWith(_ isBefore _).headOption
         } yield {
           if (isEnabled(TxmEventsApproved)) {
             auditingService.extendedAudit(HomeAudit(

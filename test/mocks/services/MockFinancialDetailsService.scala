@@ -64,10 +64,11 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
       .thenReturn(Future.successful(response))
   }
 
-  def mockGetChargeDueDates(response: Option[Either[(LocalDate, Boolean), Int]]): Unit = {
+  // todo remove it if not needed
+  /*def mockGetChargeDueDates(response: Option[LocalDate]): Unit = {
     when(mockFinancialDetailsService.getChargeDueDates(any()))
       .thenReturn(response)
-  }
+  }*/
 
   def mockGetChargeHistoryDetails(response: Future[Option[List[ChargeHistoryModel]]]): Unit = {
     when(mockFinancialDetailsService.getChargeHistoryDetails(any(), any())(any()))

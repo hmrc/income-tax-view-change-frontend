@@ -16,19 +16,18 @@
 
 package mocks.services
 
-import java.time.LocalDate
-import testConstants.IncomeSourcesWithDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import services.NextUpdatesService
+import testConstants.IncomeSourcesWithDeadlinesTestConstants._
 import testUtils.UnitSpec
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 
@@ -42,7 +41,7 @@ trait MockNextUpdatesService extends UnitSpec with MockitoSugar with BeforeAndAf
   }
 
   def setupMockNextUpdatesResult()(response: NextUpdatesResponseModel): Unit = {
-    when(mockNextUpdatesService.getNextUpdates(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockNextUpdatesService.getNextUpdates(any())(any(), any()))
       .thenReturn(Future.successful(response))
   }
 
@@ -74,5 +73,9 @@ trait MockNextUpdatesService extends UnitSpec with MockitoSugar with BeforeAndAf
   def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: NextUpdatesResponseModel): Unit = {
     when(mockNextUpdatesService.getNextUpdates(matches(fromDate), matches(toDate))(any(), any()))
       .thenReturn(Future.successful(response))
+  }
+
+  def mockNextDeadlineDueDateAndOverDueObligations()(response: (LocalDate, Seq[LocalDate])): Unit = {
+    when(mockNextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(response)
   }
 }

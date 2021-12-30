@@ -82,7 +82,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 	"navigating to the home page" should {
 			"return ok (200)" which {
 				"there is a next payment due date to display" in new Setup {
-					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 						.thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -104,7 +104,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 				}
 
 				"there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
-					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 						.thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -120,7 +120,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 				}
 
 				"display number of payments due when there are multiple payment due and dunning locks" in new Setup {
-					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 
 					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -155,7 +155,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 				}
 
 				"display number of payments due when there are multiple payment due without dunning lock and filter out payments" in new Setup {
-					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 
 					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -198,7 +198,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
 				"Not display the next payment due date" when {
 					"there is a problem getting financial details" in new Setup {
-						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 							.thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -215,7 +215,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					}
 
 					"There are no financial detail" in new Setup {
-						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 							.thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00),List(), List()))))
@@ -232,7 +232,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					}
 
 					"All financial detail bill are paid" in new Setup {
-						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+						when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 						mockSingleBusinessIncomeSource()
 						when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 							.thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -256,7 +256,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			}
 			"return OK (200)" when {
 				"there is a update date to display" in new Setup {
-					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+					when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
 					mockSingleBusinessIncomeSource()
 					when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 						.thenReturn(Future.successful(List(FinancialDetailsModel(

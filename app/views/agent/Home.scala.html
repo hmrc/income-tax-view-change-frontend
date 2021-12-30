@@ -37,13 +37,19 @@
 	home_tile: home_tile
 )
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate,
-  overDuePaymentsCount: Option[Int], overDueUpdatesCount: Option[Int],
-  utr: Option[String], paymentHistoryEnabled: Boolean,
-  ITSASubmissionIntegrationEnabled: Boolean, dunningLockExists: Boolean = false,
-  currentTaxYear: Int)(
-  implicit request: Request[_], messages: Messages,
-  user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
+@(nextPaymentDueDate: Option[LocalDate],
+	nextUpdate: LocalDate,
+	overDuePaymentsCount: Option[Int],
+	overDueUpdatesCount: Option[Int],
+  	utr: Option[String],
+	paymentHistoryEnabled: Boolean,
+  	ITSASubmissionIntegrationEnabled: Boolean,
+	dunningLockExists: Boolean = false,
+  	currentTaxYear: Int)(
+  	implicit request: Request[_],
+	messages: Messages,
+  	user: auth.MtdItUser[_],
+	appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
@@ -55,7 +61,7 @@
 		}}
 		@p(){
 			@link(
-				link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
+				link = controllers.agent.routes.WhatYouOweController.show().url,
 				messageKey = "home.payments.view"
 			)
 		}
@@ -82,7 +88,7 @@
 		}}
 		@p(){
 			@link(
-				link = controllers.routes.NextUpdatesController.getNextUpdates().url,
+				link = controllers.agent.routes.NextUpdatesController.getNextUpdates.url,
 				messageKey = "home.updates.view"
 			)
 		}
@@ -106,7 +112,7 @@
 		<ul class="govuk-list">
 			<li>
 			@link(
-				link = controllers.routes.TaxYearsController.viewTaxYears().url,
+				link = controllers.agent.routes.TaxYearsController.show().url,
 				messageKey = "home.tax-years.view"
 			)
 			</li>
@@ -153,18 +159,17 @@
 		@user.userName.map(_.name) @user.userName.map(_.lastName)
 	}
 
-	@* todo this should be implemented *@
-	@* @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
+	@p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
 		@link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
-	}*@
+	}
 
-   @* @if(overduePaymentExists) {
+   @if(overDuePaymentsCount.isDefined) {
         <div id="overdue-warning" class="grid-row">
             <div class="column-full">
 				@govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
             </div>
         </div>
-    }*@
+    }
 
     <div class="grid-row">
 		<div class="flex-container">

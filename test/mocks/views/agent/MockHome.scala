@@ -36,8 +36,8 @@ trait MockHome extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockHome(
-    nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-    nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
+    nextPaymentOrOverdue: Option[LocalDate],
+    nextUpdateOrOverdue: LocalDate,
     dunningLockExists: Boolean = false)(response: Html): Unit = {
     when(
       home.apply(
@@ -47,10 +47,11 @@ trait MockHome extends BeforeAndAfterEach with MockitoSugar {
         any(),
         any(),
         matches(dunningLockExists),
+        any(),
+        any(),
         any()
       )(any(), any(), any(), any())
     )
       .thenReturn(response)
   }
-
 }
