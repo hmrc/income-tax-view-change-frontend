@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -354,7 +354,9 @@ object FinancialDetailsTestConstants {
                       dunningLock: Option[String] = None,
                       interestLock: Option[String] = None,
                       accruedInterest: Option[BigDecimal] = None,
-											additionalSubItems: Seq[SubItem] = Seq()): FinancialDetail = FinancialDetail.apply(
+											additionalSubItems: Seq[SubItem] = Seq(),
+                      dueDateValue: Option[String] = None,
+                      ): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
     transactionId = Some(id1040000123),
@@ -368,7 +370,7 @@ object FinancialDetailsTestConstants {
     items =
       Some(Seq(
         SubItem(
-          dueDate = Some(LocalDate.of(2019, 5, 15).toString),
+          dueDate = dueDateValue,
           subItemId = Some("1"),
           amount = Some(100),
           dunningLock = dunningLock,
@@ -419,11 +421,12 @@ object FinancialDetailsTestConstants {
       financialDetails = List(financialDetails)
     )
 
-  def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), dunningLock: Option[String] = None, lpiWithDunningBlock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
+  def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), dunningLock: Option[String] = None, lpiWithDunningBlock: Option[BigDecimal] = Some(100), dueDateValue: Option[String] = Some(LocalDate.of(2019, 5, 15).toString)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock)),
-      financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock))
+      financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock, dueDateValue = dueDateValue)
+      )
     )
 
 	def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), lpiWithDunningBlock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =

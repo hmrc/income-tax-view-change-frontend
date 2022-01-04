@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import play.api.test.Injecting
 import play.i18n
 import play.i18n.MessagesApi
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
-import testConstants.FinancialDetailsTestConstants.financialDetailsModel
+import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, financialDetailsModel}
 import testConstants.MessagesLookUp
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -82,7 +82,7 @@ class HomeControllerSpec extends TestSupport
 		val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.false")
 		val expectedOverDuePaymentsText = "OVERDUE 31 January 2019"
 		// todo fix it
-		val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2018, Month.JANUARY, 1), Seq.empty[LocalDate])
+		val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
   "show" when {
@@ -118,6 +118,7 @@ class HomeControllerSpec extends TestSupport
       }
     }
 		"the call to retrieve income sources for the client returns an error" should {
+			// todo needs to be fixed
 			"return an internal server exception" in new Setup {
 
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -131,6 +132,7 @@ class HomeControllerSpec extends TestSupport
 		}
 		"the call to retrieve income sources for the client is successful" when {
 			"retrieving their obligation due date details had a failure" should {
+				// todo needs to be fixed
 				"return an internal server exception" in new Setup {
 
 					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -146,6 +148,7 @@ class HomeControllerSpec extends TestSupport
 			}
 			"retrieving their obligation due date details was successful" when {
 				"retrieving their charge due date details had a failure" should {
+					// todo needs to be fixed
 					"return an internal server exception" in new Setup {
 
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -167,11 +170,9 @@ class HomeControllerSpec extends TestSupport
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 						mockSingleBusinessIncomeSource()
 						when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
-						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligations)
+						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
 						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear))))
-						// todo fix it
-//						mockGetChargeDueDates(Some(Left(LocalDate.of(2021, 5, 15) -> true)))
+							.thenReturn(Future.successful(List(financialDetailsModel(2018, dueDateValue = Some(LocalDate.of(2021, 5, 15).toString)))))
 						setupMockGetWhatYouOweChargesListEmpty()
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
@@ -188,11 +189,9 @@ class HomeControllerSpec extends TestSupport
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 						mockSingleBusinessIncomeSource()
 						when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
-						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligations)
-//						mockGetObligationDueDates(Future.successful(Right(2)))
+						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
 						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear))))
-//						mockGetChargeDueDates(None)
+							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
 						setupMockGetWhatYouOweChargesListWithOne()
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
@@ -206,12 +205,12 @@ class HomeControllerSpec extends TestSupport
 					"display the home page with right details and with dunning lock warning and two overdue payments" in new Setup {
 
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
 						mockSingleBusinessIncomeSource()
-						mockGetObligationDueDates(Future.successful(Right(2)))
+						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
 						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
-//						mockGetChargeDueDates(Some(Right(2)))
-						setupMockGetWhatYouOweChargesListEmpty()
+						setupMockGetWhatYouOweChargesListWithOne()
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
@@ -222,11 +221,14 @@ class HomeControllerSpec extends TestSupport
 						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
 						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
 					}
+					// todo needs to be fixed
 					"display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in new Setup {
 
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
 						mockSingleBusinessIncomeSource()
-						mockGetObligationDueDates(Future.successful(Right(2)))
+//						mockGetObligationDueDates(Future.successful(Right(2)))
+						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
 						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
 							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
 //						mockGetChargeDueDates(Some(Right(2)))
@@ -244,11 +246,11 @@ class HomeControllerSpec extends TestSupport
 					"display the home page with right details and with dunning lock warning and one overdue payments from CESA" in new Setup {
 
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
 						mockSingleBusinessIncomeSource()
-						mockGetObligationDueDates(Future.successful(Right(2)))
+						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
 						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
-//						mockGetChargeDueDates(None)
+							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order"), dueDateValue = None))))
 						setupMockGetWhatYouOweChargesListWithOne()
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
@@ -263,11 +265,11 @@ class HomeControllerSpec extends TestSupport
 					"display the home page with right details and without dunning lock warning and one overdue payments from CESA" in new Setup {
 
 						setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+						when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
 						mockSingleBusinessIncomeSource()
-						mockGetObligationDueDates(Future.successful(Right(2)))
+						mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
 						when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None))))
-//						mockGetChargeDueDates(None)
+							.thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None, dueDateValue = None))))
 						setupMockGetWhatYouOweChargesListWithOne()
 
 						val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
