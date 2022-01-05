@@ -23,18 +23,15 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.Future
-//import utils.CurrentDateProvider
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -92,10 +89,13 @@ class HomeController @Inject()(homeView: Home,
     implicit request =>
       implicit user =>
 
-        (for {
+        /*(*/for {
           mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
           latestDeadlineDate <- nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(implicitly, implicitly, mtdItUser)
           unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
+          _ = if(unpaidCharges.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]
+            && fds.asInstanceOf[FinancialDetailsErrorModel].code != NOT_FOUND))
+            throw new InternalServerException("[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
           outstandingChargesModel <- getOutstandingChargesModel(mtdItUser)
           paymentsDue = getDueDates(unpaidCharges)
           dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
@@ -123,11 +123,11 @@ class HomeController @Inject()(homeView: Home,
               mtdItUser.incomeSources.getCurrentTaxEndYear
             )(mtdItUser)
           )
-        }).recover {
+        }/*).recover {
           case ex =>
             Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
-        }
+        }*/
   }
 }
 

@@ -355,7 +355,7 @@ object FinancialDetailsTestConstants {
                       interestLock: Option[String] = None,
                       accruedInterest: Option[BigDecimal] = None,
 											additionalSubItems: Seq[SubItem] = Seq(),
-                      dueDateValue: Option[String] = None,
+                      dueDateValue: Option[String] = Some(LocalDate.of(2019, 5, 15).toString)
                       ): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
@@ -421,7 +421,13 @@ object FinancialDetailsTestConstants {
       financialDetails = List(financialDetails)
     )
 
-  def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), dunningLock: Option[String] = None, lpiWithDunningBlock: Option[BigDecimal] = Some(100), dueDateValue: Option[String] = Some(LocalDate.of(2019, 5, 15).toString)): FinancialDetailsModel =
+  def financialDetailsModel(
+                             taxYear: Int = 2018,
+                             outstandingAmount: Option[BigDecimal] = Some(1400.0),
+                             dunningLock: Option[String] = None,
+                             lpiWithDunningBlock: Option[BigDecimal] = Some(100),
+                             dueDateValue: Option[String] = Some(LocalDate.of(2019, 5, 15).toString)
+                             ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock)),
