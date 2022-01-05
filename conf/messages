@@ -154,7 +154,7 @@ tax-year-overview.payments.paymentUnderReview                       = Payment un
 tax-year-overview.section                                           = Section
 tax-year-overview.amount                                            = Amount
 tax-year-overview.payments.class2Nic.text                           = Class 2 National Insurance
-tax-year-overview.payments.codingOut.text                           = PAYE Self Assessment
+tax-year-overview.payments.codingOut.text                           = Self Assessment payment (through your PAYE tax code)
 tax-year-overview.na                                                = N/A
 tax-year-overview.paye-tax-code                                     = PAYE tax code
 
