@@ -953,7 +953,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
             isElementVisibleById("future-payments-heading")(expectedValue = true),
             isElementVisibleById("future-payments-type-0")(expectedValue = true),
-            isElementVisibleById("future-payments-type-1")(expectedValue = true)
+            isElementVisibleById("future-payments-type-1")(expectedValue = true),
+            isElementVisibleById(s"no-payments-due")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
           )
         }
       }
