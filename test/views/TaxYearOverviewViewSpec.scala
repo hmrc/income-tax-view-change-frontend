@@ -570,6 +570,55 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
+      "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.cancelledPaye
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.cancelledPaye
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
     }
   }
 }
