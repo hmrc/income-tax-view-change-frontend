@@ -40,7 +40,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
     else currentDate.getYear + 1
   }
 
-  val paymentFull: Payment = Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("date"), Some("DOCID01"))
+  val paymentFull: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("date"), Some("DOCID01")))
 
   val oldUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -69,10 +69,17 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
     "a successful Payment History response is returned from the connector" should {
       "return a list of payments and ignore any payment data not found (404s)" in {
         setupGetPayments(getCurrentTaxEndYear)(PaymentsError(404, "NOT FOUND"))
-        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List(paymentFull)))
-        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(List(paymentFull))
+        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(paymentFull))
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
       }
+    }
 
+    "duplicate payments are returned in the response from the connector" should {
+      "return a list of payments with no duplicates" in {
+        setupGetPayments(getCurrentTaxEndYear)(Payments(paymentFull))
+        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(paymentFull))
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Right(paymentFull)
+      }
     }
 
   }
