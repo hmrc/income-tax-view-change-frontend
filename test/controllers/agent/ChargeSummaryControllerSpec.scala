@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -304,7 +304,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 
         val result: String = chargeSummaryController.backUrl(backLocation = Some("taxYearOverview"), currentYear)
 
-        result shouldBe "/report-quarterly/income-and-expenses/view/agents/calculation/2021#payments"
+        result shouldBe s"/report-quarterly/income-and-expenses/view/agents/calculation/$currentYear#payments"
 
       }
     }
