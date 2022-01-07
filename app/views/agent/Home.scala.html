@@ -45,7 +45,8 @@
 	paymentHistoryEnabled: Boolean,
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
-  	currentTaxYear: Int)(
+  	currentTaxYear: Int,
+    isAgent: Boolean)(
   	implicit request: Request[_],
 	messages: Messages,
   	user: auth.MtdItUser[_],
@@ -59,12 +60,23 @@
 			case 1 => p()(paymentsTileContentPaymentsDue1)
 			case _ => p()(paymentsTileContentPaymentsDueMany)
 		}}
-		@p(){
-			@link(
-				link = controllers.agent.routes.WhatYouOweController.show().url,
-				messageKey = "home.payments.view"
-			)
-		}
+
+        @if(isAgent){
+            val link =
+            @p(){
+                @link(
+                    link = controllers.agent.routes.WhatYouOweController.show().url,
+                    messageKey = "home.payments.view"
+                )
+            }
+        } else {
+            @p(){
+                @link(
+                    link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
+                    messageKey = "home.payments.view"
+                )
+            }
+        }
 	}
 }
 
@@ -86,12 +98,21 @@
 			case 1 => p()(updatesTileContentUpdatesDue1)
 			case _ => p()(updatesTileContentUpdatesDueMany)
 		}}
-		@p(){
-			@link(
-				link = controllers.agent.routes.NextUpdatesController.getNextUpdates.url,
-				messageKey = "home.updates.view"
-			)
-		}
+        @if(isAgent) {
+            @p(){
+                @link(
+                    link = controllers.agent.routes.NextUpdatesController.getNextUpdates.url,
+                    messageKey = "home.updates.view"
+                )
+            }
+        } else {
+            @p() {
+                @link(
+                    link = controllers.routes.NextUpdatesController.getNextUpdates().url,
+                    messageKey = "home.updates.view"
+                )
+            }
+        }
 	}
 }
 
@@ -109,22 +130,41 @@
 
 @taxYearsTile = {
 	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
-		<ul class="govuk-list">
-			<li>
-			@link(
-				link = controllers.agent.routes.TaxYearsController.show().url,
-				messageKey = "home.tax-years.view"
-			)
-			</li>
-			@if(paymentHistoryEnabled){
-				<li>
-				@link(
-					link = controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
-					messageKey = "home.tax-years.viewPayments"
-				)
-				</li>
-			}
-		</ul>
+        @if(isAgent) {
+            <ul class="govuk-list">
+                <li>
+                @link(
+                    link = controllers.agent.routes.TaxYearsController.show().url,
+                    messageKey = "home.tax-years.view"
+                )
+                </li>
+                @if(paymentHistoryEnabled) {
+                    <li>
+                    @link(
+                        link = controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
+                        messageKey = "home.tax-years.viewPayments"
+                    )
+                    </li>
+                }
+            </ul>
+        } else {
+            <ul class="govuk-list">
+                <li>
+                @link(
+                    link = controllers.routes.TaxYearsController.viewTaxYears().url,
+                    messageKey = "home.tax-years.view"
+                )
+                </li>
+                @if(paymentHistoryEnabled) {
+                    <li>
+                    @link(
+                        link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+                        messageKey = "home.tax-years.viewPayments"
+                    )
+                    </li>
+                }
+            </ul>
+        }
 	}
 }
 

@@ -49,6 +49,7 @@ trait MockHome extends BeforeAndAfterEach with MockitoSugar {
         matches(dunningLockExists),
         any(),
         any(),
+        any(),
         any()
       )(any(), any(), any(), any())
     )

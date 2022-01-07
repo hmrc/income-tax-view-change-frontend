@@ -54,7 +54,7 @@ class HomeController @Inject()(homeView: Home,
 
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int)
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean = true)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -65,7 +65,8 @@ class HomeController @Inject()(homeView: Home,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       dunningLockExists = dunningLockExists,
-      currentTaxYear = currentTaxYear
+      currentTaxYear = currentTaxYear,
+      isAgent = isAgent
     )
   }
 
@@ -89,7 +90,7 @@ class HomeController @Inject()(homeView: Home,
     implicit request =>
       implicit user =>
 
-        /*(*/for {
+        for {
           mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
           latestDeadlineDate <- nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(implicitly, implicitly, mtdItUser)
           unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
@@ -123,86 +124,6 @@ class HomeController @Inject()(homeView: Home,
               mtdItUser.incomeSources.getCurrentTaxEndYear
             )(mtdItUser)
           )
-        }/*).recover {
-          case ex =>
-            Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
-        }*/
+        }
   }
 }
-
-// todo check what is missing
-/*def show(): Action[AnyContent] = Authenticated.async { implicit request =>
-implicit user =>
-  for {
-    mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
-    dueObligationDetails <- nextUpdatesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
-    unpaidFinancialDetails <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
-    _ = if(unpaidFinancialDetails.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]
-      && fds.asInstanceOf[FinancialDetailsErrorModel].code != NOT_FOUND))
-      throw new InternalServerException("[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
-    dueChargesDetails = financialDetailsService.getChargeDueDates(unpaidFinancialDetails)
-    dunningLockExistsValue = dunningLockExists(unpaidFinancialDetails)
-    outstandingChargesModels <- whatYouOweService.getWhatYouOweChargesList()(implicitly, mtdItUser)
-    outstandingChargesModel = getOutstandingChargesModel(outstandingChargesModels)
-    mergedDueChargesDetailsValue = mergeDueChargesDetails(dueChargesDetails, outstandingChargesModel)
-  } yield {
-    if (isEnabled(TxmEventsApproved)) {
-      auditingService.extendedAudit(HomeAudit(
-        mtdItUser, mergedDueChargesDetailsValue, dueObligationDetails
-      ))
-    }
-
-    Ok(
-      view(mergedDueChargesDetailsValue,
-        dueObligationDetails,
-        overduePaymentExists(mergedDueChargesDetailsValue),
-        dunningLockExistsValue,
-        currentTaxYear = mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
-    )
-  }
-}
-
-private def dunningLockExists(financialDetailsResponseModel: List[FinancialDetailsResponseModel]): Boolean = {
-financialDetailsResponseModel.collectFirst {
-  case fdm: FinancialDetailsModel if fdm.dunningLockExists => true
-}.isDefined
-}
-
-private def overduePaymentExists(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]]): Boolean = {
-nextPaymentOrOverdue match {
-  case Some(_@Left((_, true))) => true
-  case Some(_@Right(overdueCount)) if overdueCount > 0 => true
-  case _ => false
-}
-}
-
-private def getOutstandingChargesModel(whatYouOweChargesList: WhatYouOweChargesList): Option[Either[(LocalDate, Boolean), Int]] = {
-val outstandingChargesModels = whatYouOweChargesList.outstandingChargesModel.map {
-  _.outstandingCharges.filter(t => t.relevantDueDate.isDefined && t.chargeName == "BCD")
-}.getOrElse(Nil)
-
-outstandingChargesModels match {
-  case OutstandingChargeModel(_, Some(relevantDueDate), _, _) :: Nil => Some(Left(LocalDate.parse(relevantDueDate), true))
-  case _ :: xs => Some(Right(xs.length + 1))
-  case _ => None
-}
-}
-
-private def mergeDueChargesDetails(
-                                  first: Option[Either[(LocalDate, Boolean), Int]],
-                                  second: Option[Either[(LocalDate, Boolean), Int]]
-                                ): Option[Either[(LocalDate, Boolean), Int]] =
-(first, second) match {
-case (first@Some(Left(tup1)), second@Some(Left(tup2))) => if (tup1._1 isBefore tup2._1) first else second
-case (first@Some(Left(_)), None) => first
-case (None, second@Some(Left(_))) => second
-case (first@Some(Right(count)), Some(Left(_))) => first.copy(Right(count + 1))
-case (Some(Left(_)), Some(Right(count))) => Some(Right(count + 1))
-case (first@Some(Right(count)), Some(Right(_))) => first.copy(Right(count + 1))
-case (first@Some(Right(_)), None) => first
-case _ => None
-}*/
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-

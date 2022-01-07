@@ -74,6 +74,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
               ITSASubmissionIntegrationEnabled: Boolean = true,
               dunningLockExists: Boolean = false,
               currentTaxYear: Int = currentTaxYear,
+              isAgent: Boolean = true
               ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
@@ -87,7 +88,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,
-      currentTaxYear
+      currentTaxYear,
+      isAgent
     )(FakeRequest(), implicitly, testMtdItUser, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))

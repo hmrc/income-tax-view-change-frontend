@@ -547,7 +547,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-									"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+									"utr", testSaUtr.toLong, getCurrentTaxYearEnd.minusYears(1).getYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
 								val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 

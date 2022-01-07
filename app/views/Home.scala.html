@@ -15,6 +15,7 @@
 *@
 
 @import java.time.LocalDate
+
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.layouts.layout
 @import views.html.components._
@@ -35,13 +36,20 @@
 	home_tile: home_tile
 )
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate,
-  overDuePaymentsCount: Option[Int], overDueUpdatesCount: Option[Int],
-  utr: Option[String], paymentHistoryEnabled: Boolean,
-  ITSASubmissionIntegrationEnabled: Boolean, dunningLockExists: Boolean = false,
-  currentTaxYear: Int)(
-  implicit request: Request[_], messages: Messages,
-  user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
+@(nextPaymentDueDate: Option[LocalDate],
+	nextUpdate: LocalDate,
+	overDuePaymentsCount: Option[Int],
+	overDueUpdatesCount: Option[Int],
+  	utr: Option[String],
+	paymentHistoryEnabled: Boolean,
+  	ITSASubmissionIntegrationEnabled: Boolean,
+	dunningLockExists: Boolean = false,
+  	currentTaxYear: Int,
+    isAgent: Boolean)(
+  	implicit request: Request[_],
+	messages: Messages,
+  	user: auth.MtdItUser[_],
+	appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
@@ -51,12 +59,23 @@
 			case 1 => p()(paymentsTileContentPaymentsDue1)
 			case _ => p()(paymentsTileContentPaymentsDueMany)
 		}}
-		@p(){
-			@link(
-				link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
-				messageKey = "home.payments.view"
-			)
-		}
+
+        @if(isAgent){
+            val link =
+            @p(){
+                @link(
+                    link = controllers.agent.routes.WhatYouOweController.show().url,
+                    messageKey = "home.payments.view"
+                )
+            }
+        } else {
+            @p(){
+                @link(
+                    link = controllers.routes.WhatYouOweController.viewPaymentsDue().url,
+                    messageKey = "home.payments.view"
+                )
+            }
+        }
 	}
 }
 
@@ -71,7 +90,6 @@
     <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePaymentsCount.get)}</span>
 }
 
-
 @updatesTile = {
 	@home_tile("updates-tile", messages("home.updates.heading")) {
 		@{overDueUpdatesCount.getOrElse(0) match {
@@ -79,12 +97,21 @@
 			case 1 => p()(updatesTileContentUpdatesDue1)
 			case _ => p()(updatesTileContentUpdatesDueMany)
 		}}
-		@p(){
-			@link(
-				link = controllers.routes.NextUpdatesController.getNextUpdates().url,
-				messageKey = "home.updates.view"
-			)
-		}
+        @if(isAgent) {
+            @p(){
+                @link(
+                    link = controllers.agent.routes.NextUpdatesController.getNextUpdates.url,
+                    messageKey = "home.updates.view"
+                )
+            }
+        } else {
+            @p() {
+                @link(
+                    link = controllers.routes.NextUpdatesController.getNextUpdates().url,
+                    messageKey = "home.updates.view"
+                )
+            }
+        }
 	}
 }
 
@@ -102,22 +129,41 @@
 
 @taxYearsTile = {
 	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
-		<ul class="govuk-list">
-			<li>
-			@link(
-				link = controllers.routes.TaxYearsController.viewTaxYears().url,
-				messageKey = "home.tax-years.view"
-			)
-			</li>
-			@if(paymentHistoryEnabled){
-				<li>
-				@link(
-					link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
-					messageKey = "home.tax-years.viewPayments"
-				)
-				</li>
-			}
-		</ul>
+        @if(isAgent) {
+            <ul class="govuk-list">
+                <li>
+                @link(
+                    link = controllers.agent.routes.TaxYearsController.show().url,
+                    messageKey = "home.tax-years.view"
+                )
+                </li>
+                @if(paymentHistoryEnabled) {
+                    <li>
+                    @link(
+                        link = controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
+                        messageKey = "home.tax-years.viewPayments"
+                    )
+                    </li>
+                }
+            </ul>
+        } else {
+            <ul class="govuk-list">
+                <li>
+                @link(
+                    link = controllers.routes.TaxYearsController.viewTaxYears().url,
+                    messageKey = "home.tax-years.view"
+                )
+                </li>
+                @if(paymentHistoryEnabled) {
+                    <li>
+                    @link(
+                        link = controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+                        messageKey = "home.tax-years.viewPayments"
+                    )
+                    </li>
+                }
+            </ul>
+        }
 	}
 }
 
@@ -183,16 +229,15 @@
         }
     </div>
 
-
-    <div class="flex-container govuk-grid-row">
-        @paymentsTile
-        @updatesTile
-        @taxYearsTile
+    <div class="grid-row">
+		<div class="flex-container">
+			@paymentsTile
+			@updatesTile
+			@taxYearsTile
+		</div>
     </div>
+
     @if(ITSASubmissionIntegrationEnabled) {
         @YourIncomeTaxReturnTile
     }
 }
-
-
-
