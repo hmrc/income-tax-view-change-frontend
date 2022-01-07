@@ -62,7 +62,7 @@ class HomeControllerSpec extends TestSupport
 		val mockCurrentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
 
     val controller = new HomeController(
-      app.injector.instanceOf[views.html.agent.Home],
+      app.injector.instanceOf[views.html.Home],
       mockNextUpdatesService,
       mockFinancialDetailsService,
       mockIncomeSourceDetailsService,

@@ -21,9 +21,9 @@
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.FrontendAppConfig
 @import views.html.components._
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 
-@this(layout: layout,
+@this(layout: unifiedLayout,
       breakdownPartial: taxOverviewBreakdownPartial,
       inset: GovukInsetText,
       form: FormWithCSRF,
@@ -61,7 +61,7 @@
 @layout(
     pageTitle = headingText,
     backUrl = Some(backUrl),
-    itsaTaxYear = Some(taxYear)
+//    itsaTaxYear = Some(taxYear.toString)
 ) {
     @h1Caption(headingText, Some(subHeadingText))
 

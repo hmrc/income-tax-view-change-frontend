@@ -50,6 +50,7 @@
     signOutLink: Boolean = true,
     timeout: Boolean = true,
     isAgent: Boolean = false,
+    itsaTaxYear: Option[Int] = None,
     form: Option[Form[_]] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 

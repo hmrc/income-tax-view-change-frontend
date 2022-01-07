@@ -36,7 +36,7 @@ import scala.concurrent.Future
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
-import views.html.agent.Home
+import views.html.Home
 
 @Singleton
 class HomeController @Inject()(homeView: Home,

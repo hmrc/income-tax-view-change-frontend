@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.{TestSupport, ViewSpec}
-import views.html.agent.Home
+import views.html.Home
 
 import java.time.{LocalDate, Month}
 import scala.util.Try
