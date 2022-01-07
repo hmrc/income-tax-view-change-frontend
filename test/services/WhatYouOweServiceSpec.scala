@@ -189,7 +189,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             overduePaymentList = List(DocumentDetailWithDueDate(
-              DocumentDetail("2022","1040000124",Some("ITSA - POA 2"),Some("documentText"), Some(0),Some(12.34),LocalDate.of(2018, 3, 29), Some(10), Some(100),
+              DocumentDetail(currentYear,"1040000124",Some("ITSA - POA 2"),Some("documentText"), Some(0),Some(12.34),LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"),Some(LocalDate.of(2018, 3, 29)),
                 Some(LocalDate.of(2018, 3, 29)),Some(10),Some(100),Some("paymentLotItem"),Some("paymentLot")),
               Some(LocalDate.now().minusDays(1)))))

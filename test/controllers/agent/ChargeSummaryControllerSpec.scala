@@ -304,7 +304,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 
         val result: String = chargeSummaryController.backUrl(backLocation = Some("taxYearOverview"), currentYear)
 
-        result shouldBe "/report-quarterly/income-and-expenses/view/agents/calculation/2022#payments"
+        result shouldBe s"/report-quarterly/income-and-expenses/view/agents/calculation/$currentYear#payments"
 
       }
     }
