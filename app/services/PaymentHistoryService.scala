@@ -43,7 +43,7 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
       } else {
         Right(paymentResponses.collect {
           case Payments(payments) => payments
-        }.flatten)
+        }.flatten.distinct)
       }
     }
   }
