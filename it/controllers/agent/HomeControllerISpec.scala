@@ -28,12 +28,13 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
-import play.api.http.Status.{OK, SEE_OTHER, INTERNAL_SERVER_ERROR}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.OutstandingChargesIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -194,6 +195,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								))
 							)
 
+							IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+						"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
 							enable(TxmEventsApproved)
 							val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
@@ -259,6 +263,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									)
 								))
 							)
+
+							IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+								"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 							disable(TxmEventsApproved)
 							val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
@@ -329,6 +336,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								))
 							)
 
+							IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+								"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
 							val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
 							result should have(
@@ -395,6 +405,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										)
 									))
 								)
+
+								IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+									"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 								val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
@@ -464,6 +477,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									))
 								)
 
+								IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+									"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
 								val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
 								result should have(
@@ -475,6 +491,75 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								)
 
 								verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
+								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+							}
+							"there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
+								enable(TxmEventsApproved)
+
+								stubAuthorisedAgentUser(authorised = true)
+
+								IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+									status = OK,
+									response = incomeSourceDetailsModel
+								)
+
+								val currentObligations: ObligationsModel = ObligationsModel(Seq(
+									NextUpdatesModel(
+										identification = "testId",
+										obligations = List(
+											NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+										))
+								))
+
+								IncomeTaxViewChangeStub.stubGetNextUpdates(
+									nino = testNino,
+									deadlines = currentObligations
+								)
+
+								IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+									nino = testNino,
+									from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+									to = getCurrentTaxYearEnd.toString
+								)(
+									status = OK,
+									response = Json.toJson(FinancialDetailsModel(
+										balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+										documentDetails = List(
+											DocumentDetail(
+												taxYear = getCurrentTaxYearEnd.getYear.toString,
+												transactionId = "testTransactionId",
+												documentDescription = Some("ITSA- POA 1"),
+												documentText = Some("documentText"),
+												outstandingAmount = Some(500.00),
+												originalAmount = Some(1000.00),
+												documentDate = LocalDate.of(2018, 3, 29)
+											)
+										),
+										financialDetails = List(
+											FinancialDetail(
+												taxYear = getCurrentTaxYearEnd.getYear.toString,
+												mainType = Some("SA Payment on Account 1"),
+												transactionId = Some("testTransactionId"),
+												items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
+											)
+										)
+									))
+								)
+
+								IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+									"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+								val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
+
+								result should have(
+									httpStatus(OK),
+									pageTitle(agentTitle),
+									elementTextBySelector("#updates-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
+									elementTextBySelector("#payments-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusYears(1).minusMonths(1).toLongDate}"),
+									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
+								)
+
+								verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusYears(1).minusMonths(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
 								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
@@ -531,6 +616,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 										)
 									))
 								)
+
+								IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+									"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 								val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
@@ -617,6 +705,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								))
 							)
 
+							IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+								"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
 							val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
 							result should have(
@@ -700,6 +791,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									)
 								))
 							)
+
+							IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+								"utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 							val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
