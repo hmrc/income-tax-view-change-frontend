@@ -35,7 +35,8 @@ object FeatureSwitch {
     PaymentAllocation,
     TxmEventsR6,
     CodingOut,
-    WhatYouOweTotals
+    WhatYouOweTotals,
+    BtaNavBar
   )
 
   def apply(str: String): FeatureSwitch =
@@ -91,4 +92,9 @@ case object CodingOut extends FeatureSwitch {
 case object WhatYouOweTotals extends FeatureSwitch {
   override val name: String = s"$prefix.enable-whatyouowe-totals"
   override val displayText: String = "Display WhatYouOwe Totals"
+}
+
+case object BtaNavBar extends FeatureSwitch {
+  override val name = s"$prefix.enable-bta-nav-bar"
+  override val displayText = "BTA Nav Bar"
 }
