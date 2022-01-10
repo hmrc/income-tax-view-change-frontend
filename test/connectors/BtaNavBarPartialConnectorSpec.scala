@@ -24,7 +24,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.twirl.api.Html
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -33,11 +32,24 @@ import scala.concurrent.Future
 
 class BtaNavBarPartialConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
 
-  "The ServiceInfoPartialConnector.getNavLinks() method" when {
-    lazy val btaNavLinkUrl: String = TestServiceInfoPartialConnector.btaNavLinksUrl
+  val mockHttpGet: HttpClient = mock[HttpClient]
+  val frontendAppConfig = mock[FrontendAppConfig]
+
+  object TestBtaNavBarPartialConnector extends BtaNavBarPartialConnector(mockHttpGet, frontendAppConfig)
+
+  val successResponseNavLinks = NavContent(
+    NavLinks("Home", "Hafan", "http://localhost:9020/business-account"),
+    NavLinks("Manage account", "Rheoli'r cyfrif", "http://localhost:9020/business-account/manage-account"),
+    NavLinks("Messages", "Negeseuon", "http://localhost:9020/business-account/messages", Some(5)),
+    NavLinks("Help and contact", "Cymorth a chysylltu", "http://localhost:9733/business-account/help"),
+    NavLinks("Track your forms{0}", "Gwirio cynnydd eich ffurflenni{0}", "/track/bta", Some(0))
+  )
+
+  "The BtaNavBarPartialConnector.getNavLinks() method" when {
+    lazy val btaNavLinkUrl: String = TestBtaNavBarPartialConnector.btaNavLinksUrl
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    def result: Future[Option[NavContent]] = TestServiceInfoPartialConnector.getNavLinks()
+    def result: Future[Option[NavContent]] = TestBtaNavBarPartialConnector.getNavLinks()
 
     "a valid NavLink Content is received" should {
       "retrieve the correct Model" in {
@@ -62,50 +74,5 @@ class BtaNavBarPartialConnectorSpec extends UnitSpec with MockitoSugar with Befo
       }
     }
   }
-
-  val mockHttpGet: HttpClient = mock[HttpClient]
-  val frontendAppConfig = mock[FrontendAppConfig]
-
-  object TestServiceInfoPartialConnector extends BtaNavBarPartialConnector(mockHttpGet, frontendAppConfig)
-
-  val serviceInfoPartialSuccess =
-    Html(
-      """
-    <a id="service-info-home-link"
-       class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides"
-       data-journey-click="link - click:Service info:Business tax home"
-       href="/business-account">
-      Business tax home
-    </a>
-    <ul id="service-info-list"
-      class="service-info__item service-info__right list--collapse">
-      <li class="list__item">
-        <span id="service-info-user-name" class="bold-xsmall">Test User</span>
-      </li>
-      <li class="list__item soft--left">
-        <a id="service-info-manage-account-link"
-           href="/business-account/manage-account"
-          data-journey-click="link - click:Service info:Manage account">
-          Manage account
-        </a>
-      </li>
-      <li class="list__item soft--left">
-        <a id="service-info-messages-link"
-           href="/business-account/messages"
-          data-journey-click="link - click:Service info:Messages">
-          Messages
-        </a>
-      </li>
-    </ul>
-  """.stripMargin.trim
-    )
-
-  val successResponseNavLinks = NavContent(
-    NavLinks("Home", "Hafan", "http://localhost:9020/business-account"),
-    NavLinks("Manage account", "Rheoli'r cyfrif", "http://localhost:9020/business-account/manage-account"),
-    NavLinks("Messages", "Negeseuon", "http://localhost:9020/business-account/messages", Some(5)),
-    NavLinks("Help and contact", "Cymorth a chysylltu", "http://localhost:9733/business-account/help"),
-    NavLinks("Track your forms{0}", "Gwirio cynnydd eich ffurflenni{0}", "/track/bta", Some(0))
-  )
 
 }

@@ -37,8 +37,6 @@ case class NavContent(home: NavLinks,
                       forms: NavLinks
                      )
 
-//pull only account and messages
-
 object NavContent {
   implicit val format = Json.format[NavContent]
 }
