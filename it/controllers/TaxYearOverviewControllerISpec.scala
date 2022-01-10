@@ -107,6 +107,106 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     )
   )
 
+  val rejectedByNpsPartWay: FinancialDetailsModel = FinancialDetailsModel(
+    BalanceDetails(1.00, 2.00, 3.00),
+    List(
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testTransactionId",
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("Class 2 National Insurance"),
+        documentDate = LocalDate.of(2021, 1, 31),
+        originalAmount = Some(1000.00),
+        outstandingAmount = Some(500.00),
+        interestOutstandingAmount = Some(0.00),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24)),
+        latePaymentInterestAmount = Some(0)
+      ),
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testTransactionId",
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("Cancelled PAYE Self Assessment"),
+        documentDate = LocalDate.of(2021, 8, 31),
+        originalAmount = Some(1000.00),
+        outstandingAmount = Some(1000.00),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24))
+
+      )
+    ),
+    List(
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        mainType = Some("SA Balancing Charge"),
+        transactionId = Some("testTransactionId"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23).toString))))
+      ),
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        mainType = Some("SA Balancing Charge"),
+        transactionId = Some("testTransactionId2"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 23).toString))))
+      )
+    )
+  )
+
+  val codingOutPartiallyCollected: FinancialDetailsModel = FinancialDetailsModel(
+    BalanceDetails(1.00, 2.00, 3.00),
+    List(
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testTransactionId",
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("Class 2 National Insurance"),
+        documentDate = LocalDate.of(2021, 9, 13),
+        originalAmount = Some(1000.00),
+        outstandingAmount = Some(0),
+        interestOutstandingAmount = Some(0.00),
+        latePaymentInterestAmount = Some(0)
+      ),
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testTransactionId",
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2021, 8, 31),
+        originalAmount = Some(250),
+        outstandingAmount = Some(100)
+      ),
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testTransactionId",
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("Cancelled PAYE Self Assessment"),
+        documentDate = LocalDate.of(2022, 1, 31),
+        originalAmount = Some(1000.00),
+        outstandingAmount = Some(0),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24))
+
+      )
+    ),
+    List(
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        mainType = Some("SA Balancing Charge"),
+        transactionId = Some("testTransactionId"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2020, 7, 13).toString))))
+      ),
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        mainType = Some("SA Balancing Charge"),
+        transactionId = Some("testTransactionId2"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 8, 31).toString))))
+      ),
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        mainType = Some("SA Balancing Charge"),
+        transactionId = Some("testTransactionI3"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 31).toString))))
+      )
+    )
+  )
+
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
     List(DocumentDetail(
@@ -400,7 +500,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
 
 
-        "should show user has Coding out that has been accepted and rejected by NPS part way through the year" in {
+        "should show user has Coding out that is requested and immediately rejected by NPS" in {
           enable(CodingOut)
 
           Given("Business details returns a successful response back")
@@ -456,7 +556,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           And("The expected result is returned")
           val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
           val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-          val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
+
           res should have(
             httpStatus(OK),
             pageTitle(TaxYearOverviewMessages.title),
@@ -465,6 +565,141 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           )
         }
+
+      "should show user has Coding out that has been accepted and rejected by NPS part way through the year" in {
+        enable(CodingOut)
+
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+        And(s"A non crystallised calculation for $calculationTaxYear is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.of(2020, 4, 6, 12, 0))))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        And("A financial transaction call returns a success")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(rejectedByNpsPartWay)
+        )
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, calculationTaxYear)
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )
+
+
+        And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+
+        res should have(
+          httpStatus(OK),
+          pageTitle(TaxYearOverviewMessages.title),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
+
+
+        )
+      }
+
+      "should show at crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in {
+        enable(CodingOut)
+
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+        And(s"A non crystallised calculation for $calculationTaxYear is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.of(2020, 4, 6, 12, 0))))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        And("A financial transaction call returns a success")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(codingOutPartiallyCollected)
+        )
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, calculationTaxYear)
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )
+
+
+        And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+
+        res should have(
+          httpStatus(OK),
+          pageTitle(TaxYearOverviewMessages.title),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Balancing payment"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Class 2 National Insurance"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Cancelled Self Assessment payment (through your PAYE tax code)")
+
+
+        )
+      }
 
       "financial details service returns a not found" in {
         enable(TxmEventsApproved)
