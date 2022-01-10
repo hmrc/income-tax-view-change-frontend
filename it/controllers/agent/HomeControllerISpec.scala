@@ -555,11 +555,11 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 									httpStatus(OK),
 									pageTitle(agentTitle),
 									elementTextBySelector("#updates-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-									elementTextBySelector("#payments-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusYears(1).minusMonths(1).toLongDate}"),
+									elementTextBySelector("#payments-tile > div > p:nth-child(2)")(s"2 OVERDUE PAYMENTS"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 								)
 
-								verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusYears(1).minusMonths(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
+								verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(LocalDate.now.minusDays(1) -> true)).detail)
 								verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
 							}
 						}
