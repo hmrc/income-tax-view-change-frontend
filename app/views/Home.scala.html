@@ -276,7 +276,8 @@
 
 @layout(
     pageTitle = pageTitleHeadingMessage,
-    mainClass = Some("full-width")
+    mainClass = Some("full-width"),
+    isAgent = isAgent
 ) {
     @* <h1 class="govuk-heading-xl @if(user.saUtr.isDefined){ margin-bottom-zero }">
         <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>

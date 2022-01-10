@@ -32,7 +32,7 @@
 
 @(clientUTRForm: Form[String], postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@mainTemplate(pageTitle = messages("agent.enter_clients_utr.heading"), form = Some(clientUTRForm)) {
+@mainTemplate(pageTitle = messages("agent.enter_clients_utr.heading"), form = Some(clientUTRForm), isAgent = true) {
 
     @errorSummary(
         form = clientUTRForm
