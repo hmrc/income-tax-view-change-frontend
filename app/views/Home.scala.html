@@ -279,31 +279,6 @@
     mainClass = Some("full-width"),
     isAgent = isAgent
 ) {
-    @* <h1 class="govuk-heading-xl @if(user.saUtr.isDefined){ margin-bottom-zero }">
-        <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
-        <span id="income-tax-heading">@messages("home.heading")</span>
-    </h1>
-
-    @user.saUtr.map { utr =>
-        <div id="utr-reference-heading" class="form-hint heading-xl-addon">
-            @messages("home.utr", utr)
-        </div>
-    }
-
-    <div class="warning-wrapper">
-        @if(overDuePaymentsCount.getOrElse(0) > 0) {
-            <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
-                <div class="column-full">
-                    @govukWarningText(WarningText(
-                    iconFallbackText = "Warning",
-                    content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
-                    ))
-                </div>
-            </div>
-        }
-    </div>
-    *@
-
     @customLayout
 }
 
