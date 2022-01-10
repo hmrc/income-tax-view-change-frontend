@@ -145,7 +145,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
         result.status shouldBe OK
       }
 
-      "have the correct title" in {
+       "have the correct title" in {
         document.title() shouldBe ExpectedValues.title
       }
 
