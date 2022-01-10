@@ -76,6 +76,34 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     documentDetail = fullDocumentDetailModel.copy(
       documentDescription = Some("TRM New Charge"),documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500)), codingOutEnabled = true))
 
+
+  val  immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    documentDetail = fullDocumentDetailModel.copy(
+      documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
+    fullDocumentDetailWithDueDateModel.copy(
+      documentDetail = fullDocumentDetailModel.copy(
+        documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0)))
+  )
+
+  val  rejectedByNpsPartWay: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    documentDetail = fullDocumentDetailModel.copy(
+      documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
+    fullDocumentDetailWithDueDateModel.copy(
+      documentDetail = fullDocumentDetailModel.copy
+    (documentDescription = Some("TRM New Charge"),documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
+  )
+
+  val  codingOutPartiallyCollected: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    documentDetail = fullDocumentDetailModel.copy(
+      documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
+    fullDocumentDetailWithDueDateModel.copy(
+      documentDetail = fullDocumentDetailModel.copy(
+        documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0))),
+    fullDocumentDetailWithDueDateModel.copy(
+      documentDetail = fullDocumentDetailModel.copy
+      (documentDescription = Some("TRM New Charge"),documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
+  )
+
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
@@ -97,6 +125,15 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   def payeView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
     testYear, Some(completeOverview(false)), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+
+  def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
+    testYear, Some(completeOverview(false)), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+
+  def rejectedByNpsPartWayView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
+    testYear, Some(completeOverview(false)), rejectedByNpsPartWay, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+
+  def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
+    testYear, Some(completeOverview(false)), codingOutPartiallyCollected, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -127,6 +164,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val status: String = "Status"
     val amount: String = "Amount"
     val paymentOnAccount1: String = "Payment on account 1 of 2"
+    val paymentOnAccount2: String = "Payment on account 2 of 2"
     val unpaid: String = "Unpaid"
     val paid: String = "Paid"
     val partPaid: String = "Part paid"
@@ -140,7 +178,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val paymentUnderReview: String = "Payment under review"
     val class2Nic: String = "Class 2 National Insurance"
     val remainingBalance: String = "Balancing payment"
-    val payeSA: String = "PAYE Self Assessment"
+    val payeSA: String = "Self Assessment payment (through your PAYE tax code)"
+
+    val cancelledPaye: String = "Cancelled Self Assessment payment (through your PAYE tax code)"
     val na: String = "N/A"
     val payeTaxCode: String = "PAYE tax code"
 
@@ -391,6 +431,58 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(4)").text shouldBe "£2,500.00"
       }
 
+      "display the Due date in the Payments tab for Cancelled" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 May 2019"
+      }
+
+      "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.cancelledPaye
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.cancelledPaye
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
 
       "display the Balancing payment on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = false)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
@@ -474,6 +566,55 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "display the PAYE Self Assessment link on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearOverviewMessages.payeSA
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.cancelledPaye
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.class2Nic
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
+        paymentTypeLink.text shouldBe taxYearOverviewMessages.cancelledPaye
         paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           testYear, fullDocumentDetailModel.transactionId).url
       }
