@@ -360,6 +360,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
         pageDocument.getElementById("payment-details-content-2").text shouldBe whatYouOwe.lpiHeading + " " + whatYouOwe.lpiLine1
+        pageDocument.getElementById("payment-details-content-3").text shouldBe whatYouOwe.nic2Heading + " " + whatYouOwe.nic2Line1
+        pageDocument.getElementById("payment-details-content-4").text shouldBe whatYouOwe.cancelledPAYEHeading + " " + whatYouOwe.cancelledPAYELine1
 
 
         pageDocument.getElementById("balancing-charge-type-overdue") shouldBe null
