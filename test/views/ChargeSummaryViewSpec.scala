@@ -622,7 +622,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
           documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
         object CodingOutMessages {
-          val header = "Tax year 6 April 2017 to 5 April 2018 PAYE Self Assessment"
+          val header = "Tax year 6 April 2017 to 5 April 2018 Self Assessment payment (through your PAYE tax code)"
           val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
           val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
           val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
