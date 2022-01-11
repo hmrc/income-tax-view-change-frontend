@@ -280,7 +280,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
 
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      val header = s"Tax year 6 April ${currentTaxYearEnd.getYear - 1} to 5 April ${currentTaxYearEnd.getYear} PAYE Self Assessment"
+      val header = s"Tax year 6 April ${currentTaxYearEnd.getYear - 1} to 5 April ${currentTaxYearEnd.getYear} Self Assessment payment (through your PAYE tax code)"
       val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
       val summaryMessage = s"This is the remaining tax you owe for the ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year."
       val remainingText = s"Collected through your PAYE tax code for ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year"
@@ -302,7 +302,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       result should have(
         httpStatus(OK),
-        pageTitle("PAYE Self Assessment - Your client’s Income Tax details - GOV.UK"),
+        pageTitle("Self Assessment payment (through your PAYE tax code) - Your client’s Income Tax details - GOV.UK"),
         elementTextBySelector("h1")(header),
         elementTextBySelector("#coding-out-notice")(insetPara),
         elementTextBySelector("#coding-out-message")(summaryMessage),
