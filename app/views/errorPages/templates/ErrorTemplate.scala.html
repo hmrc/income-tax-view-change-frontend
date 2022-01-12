@@ -23,9 +23,9 @@
       p: data_metric_p
 )
 
-@(pageTitle: String, heading: String, message: String)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String, heading: String, message: String, isAgent: Boolean)(implicit request : Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = pageTitle) {
+@mainTemplate(pageTitle = pageTitle, isAgent = isAgent) {
 
      @h1(msg = heading)
      @p(message)

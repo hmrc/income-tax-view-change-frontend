@@ -21,7 +21,7 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -30,13 +30,11 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.{FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-
-import scala.concurrent.Future
+import views.html.Home
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
-import views.html.Home
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(homeView: Home,
@@ -49,7 +47,7 @@ class HomeController @Inject()(homeView: Home,
                                val authorisedFunctions: FrontendAuthorisedFunctions)
                               (implicit mcc: MessagesControllerComponents,
                                implicit val appConfig: FrontendAppConfig,
-                               itvcErrorHandler: ItvcErrorHandler,
+                               itvcErrorHandler: AgentItvcErrorHandler,
                                implicit val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
 

@@ -18,7 +18,7 @@ package controllers.agent
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.nextUpdates.ObligationsModel
 import play.api.i18n.I18nSupport
@@ -39,7 +39,7 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.NextUpdates,
                                      (implicit val languageUtils: LanguageUtils,
                                       mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext,
-                                      itvcErrorHandler: ItvcErrorHandler)
+                                      itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent:Boolean)

@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.PaymentAllocationsResponseAuditModel
 import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.core.Nino
 import models.paymentAllocationCharges.PaymentAllocationViewModel
@@ -28,6 +28,7 @@ import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import views.html.PaymentAllocation
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,7 +41,7 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
                                             )(implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
-                                              itvcErrorHandler: ItvcErrorHandler
+                                              itvcErrorHandler: AgentItvcErrorHandler
                                             ) extends ClientConfirmedController with FeatureSwitching {
 
   lazy val backUrl: String = controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url

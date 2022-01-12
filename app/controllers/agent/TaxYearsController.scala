@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
-                                   val itvcErrorHandler: ItvcErrorHandler)
+                                   val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>

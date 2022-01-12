@@ -16,7 +16,7 @@
 
 package auth
 
-import config.ItvcErrorHandler
+import config.AgentItvcErrorHandler
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate._
 import controllers.predicates.IncomeTaxUser
@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class BaseFrontendController(implicit val mcc: MessagesControllerComponents, itvcErrorHandler: ItvcErrorHandler)
+abstract class BaseFrontendController(implicit val mcc: MessagesControllerComponents, itvcErrorHandler: AgentItvcErrorHandler)
   extends FrontendController(mcc) with I18nSupport {
   type ActionBody[User <: IncomeTaxUser] = Request[AnyContent] => User => Future[Result]
 

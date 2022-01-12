@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import forms.utils.SessionKeys.summaryData
@@ -38,7 +38,7 @@ class FinalTaxCalculationController @Inject()(
                                                val authorisedFunctions: AuthorisedFunctions,
                                                view: FinalTaxCalculationView,
                                                calcService: CalculationService,
-                                               itvcErrorHandler: ItvcErrorHandler,
+                                               itvcErrorHandler: AgentItvcErrorHandler,
                                                appConfig: FrontendAppConfig,
                                                incomeSourceDetailsService: IncomeSourceDetailsService
                                              ) extends ClientConfirmedController with I18nSupport {

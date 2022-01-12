@@ -26,7 +26,8 @@
 @()(implicit request : Request[_], messages: Messages)
 
 @mainTemplate(
-    pageTitle = messages("agent-error.heading")
+    pageTitle = messages("agent-error.heading"),
+    isAgent = true
 ) {
     @h1(msg = "agent-error.heading")
 
