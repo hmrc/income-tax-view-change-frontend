@@ -19,6 +19,7 @@ package controllers.agent.errors
 import com.google.inject.{Inject, Singleton}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
+import controllers.predicates.agent.AgentAuthenticationPredicate.{defaultAgentPredicates, timeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -33,7 +34,8 @@ class AgentErrorController @Inject()(val authorisedFunctions: AuthorisedFunction
                                      val appConfig: FrontendAppConfig,
                                      val itvcErrorHandler: AgentItvcErrorHandler,
                                      val ec: ExecutionContext) extends BaseAgentController with I18nSupport {
-  val show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
+
+  val show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(timeoutPredicate) { implicit request =>
     implicit user =>
       Future.successful(Ok(agentErrorView()))
   }
