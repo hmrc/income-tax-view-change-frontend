@@ -21,28 +21,28 @@ import play.api.libs.json.{Json, OFormat}
 import models.liabilitycalculation.taxcalculation._
 
 case class Calculation(
-                        allowancesAndDeductions: Option[AllowancesAndDeductions],
-                        reliefs: Option[Reliefs],
-                        taxDeductedAtSource: Option[TaxDeductedAtSource],
-                        giftAid: Option[GiftAid],
-                        marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn],
-                        employmentAndPensionsIncome: Option[EmploymentAndPensionsIncome],
-                        employmentExpenses: Option[EmploymentExpenses],
-                        stateBenefitsIncome: Option[StateBenefitsIncome],
-                        shareSchemesIncome: Option[ShareSchemesIncome],
-                        foreignIncome: Option[ForeignIncome],
-                        chargeableEventGainsIncome: Option[ChargeableEventGainsIncome],
-                        savingsAndGainsIncome: Option[SavingsAndGainsIncome],
-                        dividendsIncome: Option[DividendsIncome],
-                        incomeSummaryTotals: Option[IncomeSummaryTotals],
-                        taxCalculation: Option[TaxCalculation]
+                        allowancesAndDeductions: Option[AllowancesAndDeductions] = None,
+                        reliefs: Option[Reliefs] = None,
+                        taxDeductedAtSource: Option[TaxDeductedAtSource] = None,
+                        giftAid: Option[GiftAid] = None,
+                        marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn] = None,
+                        employmentAndPensionsIncome: Option[EmploymentAndPensionsIncome] = None,
+                        employmentExpenses: Option[EmploymentExpenses] = None,
+                        stateBenefitsIncome: Option[StateBenefitsIncome] = None,
+                        shareSchemesIncome: Option[ShareSchemesIncome] = None,
+                        foreignIncome: Option[ForeignIncome] = None,
+                        chargeableEventGainsIncome: Option[ChargeableEventGainsIncome] = None,
+                        savingsAndGainsIncome: Option[SavingsAndGainsIncome] = None,
+                        dividendsIncome: Option[DividendsIncome] = None,
+                        incomeSummaryTotals: Option[IncomeSummaryTotals] = None,
+                        taxCalculation: Option[TaxCalculation] = None
                       )
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
 
-  def getAllowancesModel(c: Calculation): AllowancesModel = {
-    AllowancesModel(
+  def getAllowancesAndDeductionsViewModel(c: Calculation): AllowancesAndDeductionsViewModel = {
+    AllowancesAndDeductionsViewModel(
       personalAllowance = c.allowancesAndDeductions.flatMap(ad => ad.personalAllowance),
       reducedPersonalAllowance = c.allowancesAndDeductions.flatMap(ad => ad.reducedPersonalAllowance),
       personalAllowanceBeforeTransferOut = c.allowancesAndDeductions.flatMap(ad =>

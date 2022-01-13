@@ -50,6 +50,27 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
         val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJson))
         Json.toJson(calcResponse.get) shouldBe Json.parse(expectedJson)
       }
+
+      "should create the Allowances and Deductions view model with a minimal Calculation object" in {
+        val expectedAllowancesAndDeductionsViewModel = AllowancesAndDeductionsViewModel(
+          personalAllowance = None,
+          reducedPersonalAllowance = None,
+          personalAllowanceBeforeTransferOut = None,
+          transferredOutAmount = None,
+          pensionContributions = None,
+          lossesAppliedToGeneralIncome = None,
+          giftOfInvestmentsAndPropertyToCharity = None,
+          grossAnnuityPayments = None,
+          qualifyingLoanInterestFromInvestments = None,
+          postCessationTradeReceipts = None,
+          paymentsToTradeUnionsForDeathBenefits = None,
+          totalAllowancesAndDeductions = None,
+          totalReliefs = None
+        )
+
+        Calculation.getAllowancesAndDeductionsViewModel(Calculation()) shouldBe expectedAllowancesAndDeductionsViewModel
+
+      }
     }
 
     "successful successModelFull" should {
@@ -244,6 +265,27 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
       "should convert from json to model" in {
         val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJsonPruned))
         Json.toJson(calcResponse.get) shouldBe Json.parse(expectedJsonPruned)
+      }
+
+      "should create the Allowances and Deductions view model" in {
+        val expectedAllowancesAndDeductionsViewModel = AllowancesAndDeductionsViewModel(
+          personalAllowance = Some(12500),
+          reducedPersonalAllowance = Some(12500),
+          personalAllowanceBeforeTransferOut = Some(5000.99),
+          transferredOutAmount = Some(5000.99),
+          pensionContributions = Some(5000.99),
+          lossesAppliedToGeneralIncome = Some(12500),
+          giftOfInvestmentsAndPropertyToCharity = Some(12500),
+          grossAnnuityPayments = Some(5000.99),
+          qualifyingLoanInterestFromInvestments = Some(5000.99),
+          postCessationTradeReceipts = Some(5000.99),
+          paymentsToTradeUnionsForDeathBenefits = Some(5000.99),
+          totalAllowancesAndDeductions = Some(12500),
+          totalReliefs = Some(5000.99)
+        )
+
+        Calculation.getAllowancesAndDeductionsViewModel(successModelFull.calculation.get) shouldBe expectedAllowancesAndDeductionsViewModel
+
       }
     }
 

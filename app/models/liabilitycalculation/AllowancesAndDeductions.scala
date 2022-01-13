@@ -19,7 +19,7 @@ package models.liabilitycalculation
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class AllowancesModel(
+case class AllowancesAndDeductionsViewModel(
                             personalAllowance: Option[Int] = None,
                             reducedPersonalAllowance: Option[Int] = None,
                             personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
