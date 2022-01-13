@@ -19,15 +19,15 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.InitiatePayNowAuditModel
 import auth.FrontendAuthorisedFunctions
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import connectors.agent.PayApiConnector
 import controllers.agent.predicates.ClientConfirmedController
-import javax.inject.{Inject, Singleton}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.Logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,7 +38,7 @@ class PaymentController @Inject()(val incomeSourceDetailsService: IncomeSourceDe
                                  )(implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
-                                   val itvcErrorHandler: ItvcErrorHandler
+                                   val itvcErrorHandler: AgentItvcErrorHandler
                                  ) extends ClientConfirmedController {
 
 

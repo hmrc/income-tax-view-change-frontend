@@ -162,6 +162,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/utr-problem", clientUTR)
 
+    def getAgentError: WSResponse = get("/agent-error")
+
     def postUTRError: WSResponse = post("/utr-problem")(Map.empty)
 
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =

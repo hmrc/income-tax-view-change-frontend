@@ -82,7 +82,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
       }
     }
 		"return Ok and display the page to the user without checking client relationship information" in {

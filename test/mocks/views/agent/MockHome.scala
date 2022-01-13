@@ -21,7 +21,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.Home
+import views.html.Home
 
 import java.time.LocalDate
 
@@ -36,8 +36,8 @@ trait MockHome extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockHome(
-    nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-    nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
+    nextPaymentOrOverdue: Option[LocalDate],
+    nextUpdateOrOverdue: LocalDate,
     dunningLockExists: Boolean = false)(response: Html): Unit = {
     when(
       home.apply(
@@ -47,10 +47,12 @@ trait MockHome extends BeforeAndAfterEach with MockitoSugar {
         any(),
         any(),
         matches(dunningLockExists),
+        any(),
+        any(),
+        any(),
         any()
       )(any(), any(), any(), any())
     )
       .thenReturn(response)
   }
-
 }

@@ -50,7 +50,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
   val previousTaxYearEnd: Int = currentTaxYearEnd - 1
   val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
-  
+
   val testTaxYear: Int = currentTaxYearEnd
 
   val testUser: MtdItUser[_] = MtdItUser(
@@ -506,7 +506,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     "render the what you owe page with interest accruing on overdue charges" in {
       disable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
-      
+
       Given("I wiremock stub a successful Income Source Details response with multiple business and property")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
@@ -919,24 +919,24 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "only BCD charge" in {
           enable(TxmEventsApproved)
           stubAuthorisedAgentUser(authorised = true)
-          
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+            propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)))
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
           )(OK, testValidFinancialDetailsModelJson(
-            2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+            2000, 2000, currentTaxYearEnd.toString, LocalDate.now().plusYears(1).toString))
 
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+            "utr", testSaUtr.toLong, previousTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
           val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
           AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
+          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, previousTaxYearEnd.toString)
 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
@@ -1170,7 +1170,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "only BCD charge" in {
           disable(TxmEventsApproved)
           stubAuthorisedAgentUser(authorised = true)
-          
+
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
             propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
@@ -1260,7 +1260,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         def testLPIReviewMessage(fdResponse: JsObject, underReview: Boolean): Any = {
           disable(TxmEventsApproved)
           stubAuthorisedAgentUser(authorised = true)
-          
+
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
             propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
@@ -1374,7 +1374,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       enable(WhatYouOweTotals)
       enable(CodingOut)
       stubAuthorisedAgentUser(authorised = true)
-      
+
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
         propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
@@ -1419,7 +1419,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       enable(WhatYouOweTotals)
       disable(CodingOut)
       stubAuthorisedAgentUser(authorised = true)
-      
+
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
         propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 

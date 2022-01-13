@@ -17,15 +17,14 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.agent.ClientRelationshipFailure
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -33,7 +32,7 @@ class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: C
                                                     val authorisedFunctions: AuthorisedFunctions)
                                                    (implicit mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig,
-                                                    val itvcErrorHandler: ItvcErrorHandler,
+                                                    val itvcErrorHandler: AgentItvcErrorHandler,
                                                     val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 

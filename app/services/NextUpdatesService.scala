@@ -21,7 +21,6 @@ import java.time.LocalDate
 import auth.MtdItUser
 import connectors._
 import javax.inject.{Inject, Singleton}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.nextUpdates._
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -32,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext) {
 
 
-  def getNextDeadlineDueDateAndOverDueObligations(incomeSourceResponse: IncomeSourceDetailsModel)
+  def getNextDeadlineDueDateAndOverDueObligations()
                                                  (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[(LocalDate, Seq[LocalDate])] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>

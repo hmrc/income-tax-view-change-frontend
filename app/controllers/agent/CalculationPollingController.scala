@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import forms.utils.SessionKeys
 import play.api.Logger
@@ -34,7 +34,7 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
                                              val authorisedFunctions: AuthorisedFunctions)
                                             (implicit val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
-                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             val itvcErrorHandler: AgentItvcErrorHandler,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching {
   

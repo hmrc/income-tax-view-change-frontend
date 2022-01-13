@@ -16,11 +16,11 @@
 
 @import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
-@import views.html.layouts.agent.layout
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
 
 @this(
-    mainTemplate: layout,
+    mainTemplate: unifiedLayout,
     continueButton: ContinueButton,
     form: FormWithCSRF,
     h1: h1,
@@ -30,7 +30,8 @@
 @(clientUtr: String, postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @mainTemplate(
-    pageTitle = messages("agent.utr_error.heading")
+    pageTitle = messages("agent.utr_error.heading"),
+    isAgent = true
 ) {
 
 @h1(msg ="agent.utr_error.heading")
