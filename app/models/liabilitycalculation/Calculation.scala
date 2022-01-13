@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation
 
+import models.liabilitycalculation.taxcalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
 import models.liabilitycalculation.taxcalculation._
 
@@ -39,7 +40,29 @@ case class Calculation(
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
+
+  def getAllowancesModel(c: Calculation): AllowancesModel = {
+    AllowancesModel(
+      personalAllowance = c.allowancesAndDeductions.flatMap(ad => ad.personalAllowance),
+      reducedPersonalAllowance = c.allowancesAndDeductions.flatMap(ad => ad.reducedPersonalAllowance),
+      personalAllowanceBeforeTransferOut = c.allowancesAndDeductions.flatMap(ad =>
+        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.personalAllowanceBeforeTransferOut))),
+      transferredOutAmount = c.allowancesAndDeductions.flatMap(ad =>
+        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.transferredOutAmount))),
+      pensionContributions = c.allowancesAndDeductions.flatMap(ad => ad.pensionContributions),
+      lossesAppliedToGeneralIncome = c.allowancesAndDeductions.flatMap(ad => ad.lossesAppliedToGeneralIncome),
+      giftOfInvestmentsAndPropertyToCharity = c.allowancesAndDeductions.flatMap(ad => ad.giftOfInvestmentsAndPropertyToCharity),
+      grossAnnuityPayments = c.allowancesAndDeductions.flatMap(ad => ad.grossAnnuityPayments),
+      qualifyingLoanInterestFromInvestments = c.allowancesAndDeductions.flatMap(ad => ad.qualifyingLoanInterestFromInvestments),
+      postCessationTradeReceipts = c.allowancesAndDeductions.flatMap(ad => ad.postCessationTradeReceipts),
+      paymentsToTradeUnionsForDeathBenefits = c.allowancesAndDeductions.flatMap(ad => ad.paymentsToTradeUnionsForDeathBenefits),
+      totalAllowancesAndDeductions = c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions),
+      totalReliefs = c.taxCalculation.flatMap(tc => tc.incomeTax.totalReliefs)
+    )
+  }
 }
+
+
 
 case class ChargeableEventGainsIncome(totalOfAllGains: Int)
 

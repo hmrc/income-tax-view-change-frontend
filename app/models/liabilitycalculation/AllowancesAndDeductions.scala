@@ -19,6 +19,22 @@ package models.liabilitycalculation
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+case class AllowancesModel(
+                            personalAllowance: Option[Int] = None,
+                            reducedPersonalAllowance: Option[Int] = None,
+                            personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
+                            transferredOutAmount: Option[BigDecimal] = None,
+                            pensionContributions: Option[BigDecimal] = None,
+                            lossesAppliedToGeneralIncome: Option[Int] = None,
+                            giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
+                            grossAnnuityPayments: Option[BigDecimal] = None,
+                            qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
+                            postCessationTradeReceipts: Option[BigDecimal] = None,
+                            paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
+                            totalAllowancesAndDeductions: Option[Int] = None,
+                            totalReliefs: Option[BigDecimal] = None
+                          )
+
 case class AllowancesAndDeductions(
                                     personalAllowance: Option[Int] = None,
                                     marriageAllowanceTransferOut: Option[MarriageAllowanceTransferOut] = None,
