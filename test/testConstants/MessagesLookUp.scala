@@ -406,7 +406,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   // Agent Error Messages
   object AgentErrorMessages {
     val heading: String = "You can't use this service yet"
-    val title: String = s"$heading - Business Tax account - GOV.UK"
+    val title: String = s"$heading - Your client’s Income Tax details - GOV.UK"
     val setupAccountLink = "set up an agent services account"
     val notAnAgentNote: String = s"To use this service, you need to $setupAccountLink."
     val signOutButton: String = "Sign out"

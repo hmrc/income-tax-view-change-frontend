@@ -243,7 +243,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
       }
     }
@@ -903,7 +903,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
       }
       " [IT-AGENT-TEST-2.3.3] there was a problem retrieving the calculation for the tax year" in {
@@ -933,7 +933,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
 
       }
@@ -973,7 +973,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
 
       }
@@ -1017,7 +1017,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
 
       }
@@ -1068,7 +1068,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
 
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)

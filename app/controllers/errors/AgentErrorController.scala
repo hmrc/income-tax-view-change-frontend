@@ -17,21 +17,24 @@
 package controllers.errors
 
 import com.google.inject.{Inject, Singleton}
-import controllers.BaseController
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import controllers.agent.predicates.BaseAgentController
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.errorPages.AgentError
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AgentErrorController @Inject()(checkSessionTimeout: SessionTimeoutPredicate,
-                                     authenticate: AuthenticationPredicate,
+class AgentErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                      agentErrorView: AgentError)
-                                    (implicit override val executionContext: ExecutionContext,
-                                     mcc: MessagesControllerComponents) extends BaseController with I18nSupport {
-  val show: Action[AnyContent] = (checkSessionTimeout andThen authenticate) { implicit request =>
-    Ok(agentErrorView())
+                                    (implicit mcc: MessagesControllerComponents,
+                                     val appConfig: FrontendAppConfig,
+                                     val itvcErrorHandler: AgentItvcErrorHandler,
+                                     val ec: ExecutionContext) extends BaseAgentController with I18nSupport {
+  val show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
+    implicit user =>
+      Future.successful(Ok(agentErrorView()))
   }
 }
