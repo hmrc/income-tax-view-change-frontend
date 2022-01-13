@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.taxcalculation
+package models.liabilitycalculation.taxcalculation
 
 import play.api.libs.json.{Json, OFormat}
 

@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation
 
+import models.liabilitycalculation.taxcalculation._
 import play.api.http.Status
 import play.api.libs.json._
 import testUtils.UnitSpec
