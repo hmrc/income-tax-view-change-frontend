@@ -41,16 +41,16 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"redirect ($SEE_OTHER) to ${controllers.errors.routes.AgentErrorController.show().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show().url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
-        Then(s"The user is redirected to ${controllers.errors.routes.AgentErrorController.show().url}")
+        Then(s"The user is redirected to ${controllers.agent.errors.routes.AgentErrorController.show().url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.errors.routes.AgentErrorController.show().url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }

@@ -57,9 +57,6 @@ GET         /sign-out                                                     contro
 #Sign In Routes
 GET         /sign-in                                                      controllers.SignInController.signIn
 
-#Agent Error
-GET         /agent-error                                                  controllers.errors.AgentErrorController.show
-
 #Not Enrolled
 GET         /not-enrolled                                                 controllers.errors.NotEnrolledController.show
 

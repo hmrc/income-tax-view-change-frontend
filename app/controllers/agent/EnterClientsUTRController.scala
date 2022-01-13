@@ -44,7 +44,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
   lazy val notAnAgentPredicate = {
-    val redirectNotAnAgent = Future.successful(Redirect(controllers.errors.routes.AgentErrorController.show()))
+    val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show()))
     defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
   }
 

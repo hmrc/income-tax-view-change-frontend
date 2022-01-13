@@ -65,3 +65,6 @@ GET         /:taxYear/final-tax-overview/calculate                        contro
 
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false)
+
+#Agent Error
+GET         /agent-error                                                  controllers.agent.errors.AgentErrorController.show

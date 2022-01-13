@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.errors
+package controllers.agent.errors
 
 import com.google.inject.{Inject, Singleton}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}

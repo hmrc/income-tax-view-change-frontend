@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.errors
+package controllers.agent.errors
 
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
