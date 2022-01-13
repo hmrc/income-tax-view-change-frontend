@@ -17,6 +17,7 @@
 package models.liabilitycalculation
 
 import play.api.libs.json.{Json, OFormat}
+import models.liabilitycalculation.taxcalculation._
 
 case class Calculation(
                         allowancesAndDeductions: Option[AllowancesAndDeductions],
