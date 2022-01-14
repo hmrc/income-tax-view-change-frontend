@@ -22,12 +22,12 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.OldIncomeBreakdown
+import views.html.IncomeBreakdownOld
 
 trait MockIncomeSummary extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val incomeBreakdown: OldIncomeBreakdown = mock[OldIncomeBreakdown]
+  val incomeBreakdown: IncomeBreakdownOld = mock[IncomeBreakdownOld]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

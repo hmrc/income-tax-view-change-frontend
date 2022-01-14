@@ -16,21 +16,67 @@
 
 package views
 
-import testConstants.MessagesLookUp.IncomeBreakdown
-import testConstants.CalcBreakdownTestConstants
-import enums.Estimate
-import models.calculation.CalcDisplayModel
+import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
 import org.jsoup.nodes.Element
+import testConstants.MessagesLookUp.IncomeBreakdown
 import testUtils.ViewSpec
-import views.html.IncomeBreakdownOld
+import views.html.IncomeBreakdown
 
-class OldIncomeBreakdownViewSpec extends ViewSpec {
+class IncomeBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "testUrl"
 
-  val incomeBreakdown = app.injector.instanceOf[IncomeBreakdownOld]
+  val incomeBreakdown: IncomeBreakdown = app.injector.instanceOf[IncomeBreakdown]
 
   val income = "Income"
+
+  val emptyIncomeBreakdownViewModel: IncomeBreakdownViewModel = IncomeBreakdownViewModel(
+    totalPayeEmploymentAndLumpSumIncome = None,
+    totalBenefitsInKind = None,
+    totalEmploymentExpenses = None,
+    totalSelfEmploymentProfit = None,
+    totalPropertyProfit = None,
+    totalFHLPropertyProfit = None,
+    totalForeignPropertyProfit = None,
+    totalEeaFhlProfit = None,
+    chargeableForeignDividends = None,
+    chargeableForeignSavingsAndGains = None,
+    chargeableOverseasPensionsStateBenefitsRoyalties = None,
+    chargeableAllOtherIncomeReceivedWhilstAbroad = None,
+    totalOverseasIncomeAndGains = None,
+    totalForeignBenefitsAndGifts = None,
+    savingsAndGainsTaxableIncome = None,
+    totalOfAllGains = None,
+    dividendsTaxableIncome = None,
+    totalOccupationalPensionIncome = None,
+    totalStateBenefitsIncome = None,
+    totalShareSchemesIncome = None,
+    totalIncomeReceived = None
+  )
+
+  val fullIncomeBreakdownViewModel: IncomeBreakdownViewModel = IncomeBreakdownViewModel(
+    totalPayeEmploymentAndLumpSumIncome = Some(5005.05),
+    totalBenefitsInKind = Some(6006.06),
+    totalEmploymentExpenses = Some(7007.07),
+    totalSelfEmploymentProfit = Some(1001.01),
+    totalPropertyProfit = Some(2002.02),
+    totalFHLPropertyProfit = Some(6003.00),
+    totalForeignPropertyProfit = Some(6004.00),
+    totalEeaFhlProfit = Some(6005.00),
+    chargeableForeignDividends = Some(7026.00),
+    chargeableForeignSavingsAndGains = Some(7019.00),
+    chargeableOverseasPensionsStateBenefitsRoyalties = Some(6006.00),
+    chargeableAllOtherIncomeReceivedWhilstAbroad = Some(6007.00),
+    totalOverseasIncomeAndGains = Some(6008.00),
+    totalForeignBenefitsAndGifts = Some(6009.00),
+    savingsAndGainsTaxableIncome = Some(3003.03),
+    totalOfAllGains = Some(7015.00),
+    dividendsTaxableIncome = Some(4004.04),
+    totalOccupationalPensionIncome = Some(8008.08),
+    totalStateBenefitsIncome = Some(9009.09),
+    totalShareSchemesIncome = Some(6010.00),
+    totalIncomeReceived = Some(10010.10)
+  )
 
 
   "The income breakdown view" when {
@@ -38,9 +84,7 @@ class OldIncomeBreakdownViewSpec extends ViewSpec {
     "provided with a calculation without taxable incomes for the 2017 tax year" should {
       val taxYear = 2017
 
-      lazy val view = incomeBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationNoBillModel,
-        Estimate), taxYear, backUrl)
+      lazy val view = incomeBreakdown(emptyIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe IncomeBreakdown.title
@@ -82,9 +126,7 @@ class OldIncomeBreakdownViewSpec extends ViewSpec {
     "provided with a calculation with all taxable incomes for the 2018 tax year" should {
       val taxYear = 2018
 
-      lazy val view = incomeBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationAllIncomeSources,
-        Estimate), taxYear, backUrl)
+      lazy val view = incomeBreakdown(fullIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe IncomeBreakdown.title

@@ -26,15 +26,15 @@
 @(incomeBreakdownViewModel: IncomeBreakdownViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
-@if(dataItem.isDefined) {
-    <tr id="@messageCode" class="govuk-table__row">
-        <td class="govuk-table__cell">@messages(s"income_breakdown.table.$messageCode")</td>
-        <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">@{
-            if(isNegative) dataItem.get.toNegativeCurrency
-            else dataItem.get.toCurrency
-        }</td>
-    </tr>
-}
+    @if(dataItem.isDefined) {
+        <tr id="@messageCode" class="govuk-table__row">
+            <td class="govuk-table__cell">@messages(s"income_breakdown.table.$messageCode")</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">@{
+                if(isNegative) dataItem.get.toNegativeCurrency
+                else dataItem.get.toCurrency
+            }</td>
+        </tr>
+    }
 }
 
 @mainTemplate(pageTitle = messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl), isAgent = isAgent) {

@@ -17,6 +17,7 @@
 package models.liabilitycalculation
 
 import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
 import play.api.http.Status
 import play.api.libs.json._
 import testUtils.UnitSpec
@@ -49,6 +50,34 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
       "should convert from json to model" in {
         val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJson))
         Json.toJson(calcResponse.get) shouldBe Json.parse(expectedJson)
+      }
+
+      "create a minimal IncomeBreakdownViewModel when there is a minimal Calculation" in {
+        val expectedIncomeBreakdownViewModel = IncomeBreakdownViewModel(
+          totalPayeEmploymentAndLumpSumIncome = None,
+          totalBenefitsInKind = None,
+          totalEmploymentExpenses = None,
+          totalSelfEmploymentProfit = None,
+          totalPropertyProfit = None,
+          totalFHLPropertyProfit = None,
+          totalForeignPropertyProfit = None,
+          totalEeaFhlProfit = None,
+          chargeableForeignDividends = None,
+          chargeableForeignSavingsAndGains = None,
+          chargeableOverseasPensionsStateBenefitsRoyalties = None,
+          chargeableAllOtherIncomeReceivedWhilstAbroad = None,
+          totalOverseasIncomeAndGains = None,
+          totalForeignBenefitsAndGifts = None,
+          savingsAndGainsTaxableIncome = None,
+          totalOfAllGains = None,
+          dividendsTaxableIncome = None,
+          totalOccupationalPensionIncome = None,
+          totalStateBenefitsIncome = None,
+          totalShareSchemesIncome = None,
+          totalIncomeReceived = None
+        )
+
+        Calculation.getIncomeBreakdownViewModel(Calculation()) shouldBe expectedIncomeBreakdownViewModel
       }
     }
 
@@ -244,6 +273,34 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
       "should convert from json to model" in {
         val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJsonPruned))
         Json.toJson(calcResponse.get) shouldBe Json.parse(expectedJsonPruned)
+      }
+
+      "create a full IncomeBreakdownViewModel when there is a full Calculation" in {
+        val expectedIncomeBreakdownViewModel = IncomeBreakdownViewModel(
+          totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
+          totalBenefitsInKind = Some(5000.99),
+          totalEmploymentExpenses = Some(5000.99),
+          totalSelfEmploymentProfit = Some(12500),
+          totalPropertyProfit = Some(12500),
+          totalFHLPropertyProfit = Some(12500),
+          totalForeignPropertyProfit = Some(12500),
+          totalEeaFhlProfit = Some(12500),
+          chargeableForeignDividends = Some(12500),
+          chargeableForeignSavingsAndGains = Some(12500),
+          chargeableOverseasPensionsStateBenefitsRoyalties = Some(5000.99),
+          chargeableAllOtherIncomeReceivedWhilstAbroad = Some(5000.99),
+          totalOverseasIncomeAndGains = Some(5000.99),
+          totalForeignBenefitsAndGifts = Some(5000.99),
+          savingsAndGainsTaxableIncome = Some(12500),
+          totalOfAllGains = Some(12500),
+          dividendsTaxableIncome = Some(12500),
+          totalOccupationalPensionIncome = Some(5000.99),
+          totalStateBenefitsIncome = Some(5000.99),
+          totalShareSchemesIncome = Some(5000.99),
+          totalIncomeReceived = Some(12500)
+        )
+
+        Calculation.getIncomeBreakdownViewModel(successModelFull.calculation.get) shouldBe expectedIncomeBreakdownViewModel
       }
     }
 
