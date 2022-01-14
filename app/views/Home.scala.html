@@ -256,7 +256,7 @@
 
                 @p(){@messages("home.your-returns.description")}
             </div>
-            @if(utr.isDefined) {
+            @if(!isAgent && utr.isDefined) {
             <div id="saViewLandPTile">
                 <div class="govuk-grid-column-one-third">
                     @h3link(
