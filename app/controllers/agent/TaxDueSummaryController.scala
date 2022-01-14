@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.TaxCalculationDetailsResponseAuditModel
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation._
 import play.api.Logger
@@ -28,7 +28,6 @@ import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.TaxCalcBreakdown
-
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +41,7 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
                                         val auditingService: AuditingService
                                        )(implicit mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,
-                                         itvcErrorHandler: ItvcErrorHandler)
+                                         itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>

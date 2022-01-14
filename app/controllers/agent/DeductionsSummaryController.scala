@@ -20,7 +20,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
 import play.api.Logger
@@ -40,7 +40,7 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
-                                            val itvcErrorHandler: ItvcErrorHandler)
+                                            val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
 

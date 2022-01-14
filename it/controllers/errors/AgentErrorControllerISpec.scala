@@ -16,7 +16,7 @@
 
 package controllers.errors
 
-import helpers.ComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import play.api.http.Status._
 
 class AgentErrorControllerISpec extends ComponentSpecBase {
@@ -25,20 +25,20 @@ class AgentErrorControllerISpec extends ComponentSpecBase {
 
   "Calling the AgentErrorController.show()" when {
 
-    unauthorisedTest(agentErrorUri)
-
     "user is authorised" should {
       "respond with the correct page" in {
         When(s"I call GET $agentErrorUri")
-        val res = IncomeTaxViewChangeFrontend.get(agentErrorUri)
+
+        stubAuthorisedAgentUser(true)
+
+        val res = IncomeTaxViewChangeFrontend.getAgentError
 
         Then("I can see the correct page")
         res should have(
           httpStatus(OK),
-          pageTitle("You can't use this service yet - Business Tax account - GOV.UK")
+          pageTitle("You can't use this service yet - Your client’s Income Tax details - GOV.UK")
         )
       }
     }
-
   }
 }

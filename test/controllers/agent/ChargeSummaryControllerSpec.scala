@@ -16,10 +16,8 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import config.ItvcErrorHandler
+import config.AgentItvcErrorHandler
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
@@ -31,6 +29,8 @@ import org.mockito.Mockito.{never, verify}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.ChargeSummary
@@ -70,7 +70,7 @@ class ChargeSummaryControllerSpec extends TestSupport
       app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[ExecutionContext],
-      app.injector.instanceOf[ItvcErrorHandler]
+      app.injector.instanceOf[AgentItvcErrorHandler]
     )
 
     val currentYear: Int = LocalDate.now().getYear

@@ -65,7 +65,7 @@ class HomePageViewSpec extends TestSupport {
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false) {
+              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
@@ -77,7 +77,8 @@ class HomePageViewSpec extends TestSupport {
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled,
       dunningLockExists = dunningLockExists,
-      currentTaxYear = currentTaxYear
+      currentTaxYear = currentTaxYear,
+      isAgent = isAgent
     )(FakeRequest(),implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 

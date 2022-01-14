@@ -29,11 +29,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.{TestSupport, ViewSpec}
-import views.html.agent.Home
+import views.html.Home
 
-import java.time.LocalDate
+import java.time.{LocalDate, Month}
 import scala.util.Try
-
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
@@ -43,7 +42,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   val currentTaxYear: Int = {
     val currentDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, Month.APRIL, 6))) currentDate.getYear
     else currentDate.getYear + 1
   }
 
@@ -58,26 +57,40 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     Some(testArn)
   )(FakeRequest())
 
-  val nextUpdateDue: LocalDate = LocalDate.of(2018, 1, 1)
+  val year2018: Int = 2018
+  val year2019: Int = 2019
 
-  val nextPaymentDue: LocalDate = LocalDate.of(2019, 1, 31)
+  val nextUpdateDue: LocalDate = LocalDate.of(year2018, Month.JANUARY, 1)
 
-  class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left((nextPaymentDue, false))),
-              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left((nextUpdateDue, false)),
-              paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              overduePaymentExists: Boolean = false, dunningLockExists: Boolean = false) {
+  val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
+
+  class Setup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
+              nextUpdate: LocalDate = nextUpdateDue,
+              overduePaymentExists: Boolean = true,
+              overDuePaymentsCount: Option[Int] = None,
+              overDueUpdatesCount: Option[Int] = None,
+              utr: Option[String] = None,
+              paymentHistoryEnabled: Boolean = true,
+              ITSASubmissionIntegrationEnabled: Boolean = true,
+              dunningLockExists: Boolean = false,
+              currentTaxYear: Int = currentTaxYear,
+              isAgent: Boolean = true
+              ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
     val view: HtmlFormat.Appendable = agentHome(
-      nextPaymentOrOverdue = nextPaymentOrOverdue,
-      nextUpdateOrOverdue = nextUpdateOrOverdue,
-      overduePaymentExists = overduePaymentExists,
-      paymentHistoryEnabled = paymentHistoryEnabled,
-      ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      dunningLockExists = dunningLockExists,
-      currentTaxYear = currentTaxYear
-    )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+      nextPaymentDueDate,
+      nextUpdate,
+      overDuePaymentsCount,
+      overDueUpdatesCount,
+      utr,
+      paymentHistoryEnabled,
+      ITSASubmissionIntegrationEnabled,
+      dunningLockExists,
+      currentTaxYear,
+      isAgent
+    )(FakeRequest(), implicitly, testMtdItUser, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
@@ -120,21 +133,21 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentsHeading)
         }
         "has content of the next payment due" which {
-          "is overdue" in new Setup(nextPaymentOrOverdue = Some(Left(nextPaymentDue -> true))) {
-            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 31 January 2019")
+          "is overdue" in new Setup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = Some(1)) {
+            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 31 January $year2019")
           }
-          "is not overdue" in new Setup(nextPaymentOrOverdue = Some(Left(nextPaymentDue -> false))) {
-            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January 2019")
+          "is not overdue" in new Setup(nextPaymentDueDate = Some(nextPaymentDue)) {
+            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January $year2019")
           }
-          "is a count of overdue payments" in new Setup(nextPaymentOrOverdue = Some(Right(2))) {
+          "is a count of overdue payments" in new Setup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = Some(2)) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE PAYMENTS")
           }
-          "has no next payment" in new Setup(nextPaymentOrOverdue = None) {
+          "has no next payment" in new Setup(nextPaymentDueDate = None) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"No payments due")
           }
         }
         "has the date of the next payment due" in new Setup {
-          val paymentDueDateLongDate: String = "31 January 2019"
+          val paymentDueDateLongDate: String = s"31 January $year2019"
           getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDueDateLongDate)
         }
         "has a link to view what you owe" in new Setup {
@@ -148,12 +161,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new Setup(overduePaymentExists = true) {
+      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new Setup(overDuePaymentsCount = Some(1)) {
         val overdueMessageWithoutDunningLock = "! You have overdue payments. You may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
       }
 
-      "display an overdue warning message when a payment is overdue and dunning lock exists" in new Setup(overduePaymentExists = true, dunningLockExists = true) {
+      "display an overdue warning message when a payment is overdue and dunning lock exists" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
         val overdueMessageWithDunningLock = "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
       }
@@ -163,13 +176,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(homeMessages.updatesHeading)
         }
         "has content of the next update due" which {
-          "is overdue" in new Setup(nextUpdateOrOverdue = Left(nextUpdateDue -> true)) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January 2018")
+          "is overdue" in new Setup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(1)) {
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January $year2018")
           }
-          "is not overdue" in new Setup(nextUpdateOrOverdue = Left(nextUpdateDue -> false)) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January 2018")
+          "is not overdue" in new Setup(nextPaymentDueDate = Some(nextUpdateDue)) {
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January $year2018")
           }
-          "is a count of overdue updates" in new Setup(nextUpdateOrOverdue = Right(2)) {
+          "is a count of overdue updates" in new Setup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(2)) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE UPDATES")
           }
         }
@@ -224,6 +237,28 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.getOptionalSelector("tax-years-tile").flatMap(_.getOptionalSelector("a:nth-of-type(2)")) shouldBe None
       }
     }
+
+    "the feature switch enabled" should {
+      "not have a link to the saViewLandPTile when isAgent" in new Setup(ITSASubmissionIntegrationEnabled = true) {
+        val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe None
+      }
+
+      "dont display the saViewLandPTile when isAgent is true" in new Setup(ITSASubmissionIntegrationEnabled = true) {
+        getElementById("saViewLandPTile") shouldBe None
+      }
+
+      "not have a link to the saViewLandPTile when isAgent and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true, utr = Some(testSaUtr)) {
+        val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe None
+      }
+
+      "dont display the saViewLandPTile when isAgent is true and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true, utr = Some(testSaUtr)) {
+        getElementById("saViewLandPTile") shouldBe None
+      }
+    }
+
+
   }
 
 }

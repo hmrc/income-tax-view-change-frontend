@@ -41,7 +41,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
       }
     }
@@ -99,7 +99,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then("Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
         )
       }
     }

@@ -17,9 +17,9 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatter
 import models.calculation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -28,6 +28,7 @@ import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.IncomeBreakdownOld
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,7 +40,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdownOld,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
                                          implicit val ec: ExecutionContext,
-                                         val itvcErrorHandler: ItvcErrorHandler)
+                                         val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   def showIncomeSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
