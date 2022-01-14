@@ -28,13 +28,13 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
-import views.html.IncomeBreakdown
+import views.html.IncomeBreakdownOld
 
 class IncomeSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestIncomeSummaryController extends IncomeSummaryController(
-    app.injector.instanceOf[IncomeBreakdown],
+    app.injector.instanceOf[IncomeBreakdownOld],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],

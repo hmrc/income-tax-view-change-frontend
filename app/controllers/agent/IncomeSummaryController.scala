@@ -27,11 +27,11 @@ import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.IncomeBreakdown
+import views.html.IncomeBreakdownOld
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
+class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdownOld,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
                                         incomeSourceDetailsService: IncomeSourceDetailsService

@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import auth.MtdItUserWithNino
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
@@ -28,13 +28,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.IncomeBreakdown
+import views.html.IncomeBreakdownOld
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
+class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownOld,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val authenticate: AuthenticationPredicate,
                                         val retrieveNino: NinoPredicate,
@@ -57,7 +57,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
       implicit user =>
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+              Future.successful(Ok(incomeBreakdownOld(calcDisplayModel, taxYear, backUrl(taxYear))))
 
             case CalcDisplayNoDataFound =>
               Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")

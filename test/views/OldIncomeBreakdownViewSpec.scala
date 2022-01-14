@@ -22,13 +22,13 @@ import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
-import views.html.IncomeBreakdown
+import views.html.IncomeBreakdownOld
 
-class IncomeBreakdownViewSpec extends ViewSpec {
+class OldIncomeBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "testUrl"
 
-  val incomeBreakdown = app.injector.instanceOf[IncomeBreakdown]
+  val incomeBreakdown = app.injector.instanceOf[IncomeBreakdownOld]
 
   val income = "Income"
 

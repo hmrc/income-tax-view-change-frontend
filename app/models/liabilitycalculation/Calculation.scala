@@ -18,6 +18,7 @@ package models.liabilitycalculation
 
 import play.api.libs.json.{Json, OFormat}
 import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
 
 case class Calculation(
                         allowancesAndDeductions: Option[AllowancesAndDeductions],
@@ -39,6 +40,33 @@ case class Calculation(
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
+
+  def getIncomeBreakdownViewModel(c: Calculation): IncomeBreakdownViewModel = {
+    IncomeBreakdownViewModel(
+      totalPayeEmploymentAndLumpSumIncome = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalPayeEmploymentAndLumpSumIncome),
+      totalBenefitsInKind = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalBenefitsInKind),
+      totalEmploymentExpenses = c.employmentExpenses.flatMap(ee => ee.totalEmploymentExpenses),
+      totalSelfEmploymentProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalSelfEmploymentProfit),
+      totalPropertyProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalPropertyProfit),
+      totalFHLPropertyProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalFHLPropertyProfit),
+      totalForeignPropertyProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalForeignPropertyProfit),
+      totalEeaFhlProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalEeaFhlProfit),
+      chargeableForeignDividends = c.dividendsIncome.flatMap(di => di.chargeableForeignDividends),
+      chargeableForeignSavingsAndGains = c.savingsAndGainsIncome.flatMap(sagi => sagi.chargeableForeignSavingsAndGains),
+      chargeableOverseasPensionsStateBenefitsRoyalties = c.foreignIncome.flatMap(fi => fi.chargeableOverseasPensionsStateBenefitsRoyalties),
+      chargeableAllOtherIncomeReceivedWhilstAbroad = c.foreignIncome.flatMap(fi => fi.chargeableAllOtherIncomeReceivedWhilstAbroad),
+      totalOverseasIncomeAndGains = c.foreignIncome.flatMap(fi => fi.overseasIncomeAndGains.flatMap(oiag => Some(oiag.gainAmount))),
+      totalForeignBenefitsAndGifts = c.foreignIncome.flatMap(fi => fi.totalForeignBenefitsAndGifts),
+      savingsAndGainsTaxableIncome = c.taxCalculation.flatMap(tc =>
+        Some(tc.incomeTax).flatMap(it => it.savingsAndGains.flatMap(sag => Some(sag.taxableIncome)))),
+      totalOfAllGains = c.chargeableEventGainsIncome.flatMap(cegi => Some(cegi.totalOfAllGains)),
+      dividendsTaxableIncome = c.taxCalculation.flatMap(tc => Some(tc.incomeTax).flatMap(it => it.dividends.flatMap(d => Some(d.taxableIncome)))),
+      totalOccupationalPensionIncome = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalOccupationalPensionIncome),
+      totalStateBenefitsIncome = c.stateBenefitsIncome.flatMap(sbi => sbi.totalStateBenefitsIncome),
+      totalShareSchemesIncome = c.shareSchemesIncome.flatMap(ssi => Some(ssi.totalIncome)),
+      totalIncomeReceived = c.taxCalculation.flatMap(tc => Some(tc.incomeTax).flatMap(it => Some(it.totalIncomeReceivedFromAllSources)))
+    )
+  }
 }
 
 case class ChargeableEventGainsIncome(totalOfAllGains: Int)
