@@ -237,6 +237,28 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.getOptionalSelector("tax-years-tile").flatMap(_.getOptionalSelector("a:nth-of-type(2)")) shouldBe None
       }
     }
+
+    "the feature switch enabled" should {
+      "not have a link to the saViewLandPTile when isAgent" in new Setup(ITSASubmissionIntegrationEnabled = true) {
+        val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe None
+      }
+
+      "dont display the saViewLandPTile when isAgent is true" in new Setup(ITSASubmissionIntegrationEnabled = true) {
+        getElementById("saViewLandPTile") shouldBe None
+      }
+
+      "not have a link to the saViewLandPTile when isAgent and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true, utr = Some(testSaUtr)) {
+        val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe None
+      }
+
+      "dont display the saViewLandPTile when isAgent is true and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true, utr = Some(testSaUtr)) {
+        getElementById("saViewLandPTile") shouldBe None
+      }
+    }
+
+
   }
 
 }
