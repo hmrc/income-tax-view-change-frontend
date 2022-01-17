@@ -52,21 +52,6 @@ case class AllowancesAndDeductions(
                                     grossAnnuityPayments: Option[BigDecimal] = None,
                                     pensionContributions: Option[BigDecimal] = None
                                   )
-//case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
-//                                   reducedPersonalAllowance: Option[BigDecimal] = None,
-//                                   personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
-//                                   marriageAllowanceTransfer: Option[BigDecimal] = None,
-//                                   totalPensionContributions: Option[BigDecimal] = None,
-//                                   lossesAppliedToGeneralIncome: Option[BigDecimal] = None,
-//                                   giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
-//                                   totalAllowancesAndDeductions: Option[BigDecimal] = None,
-//                                   totalTaxableIncome: Option[BigDecimal] = None,
-//                                   totalReliefs: Option[BigDecimal] = None,
-//                                   grossAnnualPayments: Option[BigDecimal] = None,
-//                                   qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
-//                                   postCessationTradeReceipts: Option[BigDecimal] = None,
-//                                   paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None
-//                                  ) {
 
 object AllowancesAndDeductions {
   implicit val writes: OWrites[AllowancesAndDeductions] = (

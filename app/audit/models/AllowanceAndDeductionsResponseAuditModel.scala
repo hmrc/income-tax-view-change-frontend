@@ -51,21 +51,21 @@ case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
 }
 
 case class AllowanceAndDeductionsResponseAuditModelNew(mtdItUser: MtdItUserBase[_],
-                                                       aad: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
+                                                       viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
 
   override val transactionName: String = "allowances-deductions-details-response"
   override val auditType: String = "AllowancesDeductionsDetailsResponse"
 
   override val detail: JsValue = {
     userAuditDetails(mtdItUser) ++
-      ("personalAllowance", aad.personalAllowance) ++
-      ("pensionContributions", aad.pensionContributions) ++
-      ("lossRelief", aad.lossesAppliedToGeneralIncome) ++
-      ("giftsToCharity", aad.giftOfInvestmentsAndPropertyToCharity) ++
-      ("annualPayments", aad.grossAnnuityPayments) ++
-      ("qualifyingLoanInterest", aad.qualifyingLoanInterestFromInvestments) ++
-      ("postCessationTradeReceipts", aad.postCessationTradeReceipts) ++
-      ("tradeUnionPayments", aad.paymentsToTradeUnionsForDeathBenefits) ++
-      ("marriageAllowanceTransfer", aad.transferredOutAmount)
+      ("personalAllowance", viewModel.personalAllowance) ++
+      ("pensionContributions", viewModel.pensionContributions) ++
+      ("lossRelief", viewModel.lossesAppliedToGeneralIncome) ++
+      ("giftsToCharity", viewModel.giftOfInvestmentsAndPropertyToCharity) ++
+      ("annualPayments", viewModel.grossAnnuityPayments) ++
+      ("qualifyingLoanInterest", viewModel.qualifyingLoanInterestFromInvestments) ++
+      ("postCessationTradeReceipts", viewModel.postCessationTradeReceipts) ++
+      ("tradeUnionPayments", viewModel.paymentsToTradeUnionsForDeathBenefits) ++
+      ("marriageAllowanceTransfer", viewModel.transferredOutAmount)
   }
 }

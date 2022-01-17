@@ -24,8 +24,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.calculation._
-import models.liabilitycalculation
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import models.liabilitycalculation._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -65,7 +64,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
             case liabilityCalc: LiabilityCalculationResponse =>
               liabilityCalc.calculation.flatMap(c => c.allowancesAndDeductions) match {
                 case None =>
-                  Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new deductions data could be retrieved. Downstream error")
+                  Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data could be retrieved.")
                   itvcErrorHandler.showInternalServerError()
                 case Some(_) =>
                   val viewModel = liabilityCalc.calculation.map(c =>
@@ -75,7 +74,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
               }
 
             case _: LiabilityCalculationError =>
-              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }
         } else {

@@ -21,8 +21,10 @@ import connectors.IndividualCalculationsConnector
 import enums.{Crystallised, Estimate}
 
 import javax.inject.{Inject, Singleton}
-import models.calculation._
-import models.liabilitycalculation.{AllowancesAndDeductions, ChargeableEventGainsIncome, LiabilityCalculationResponse, LiabilityCalculationResponseModel, MarriageAllowanceTransferOut, Metadata}
+import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound, CalcDisplayResponseModel,
+  Calculation, CalculationErrorModel, CalculationResponseModel, CalculationResponseModelWithYear}
+import models.liabilitycalculation.{AllowancesAndDeductions, LiabilityCalculationResponse,
+  LiabilityCalculationResponseModel, MarriageAllowanceTransferOut, Metadata}
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
