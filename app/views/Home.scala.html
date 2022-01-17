@@ -42,6 +42,7 @@
 	overDueUpdatesCount: Option[Int],
   	utr: Option[String],
 	paymentHistoryEnabled: Boolean,
+    //TODO should be removed as redundant
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
   	currentTaxYear: Int,
@@ -118,13 +119,10 @@
             <div class="flex-container">
                 @paymentsTile
                 @updatesTile
+                @paymentHistoryAndCreditTile
                 @taxYearsTile
             </div>
         </div>
-
-        @if(ITSASubmissionIntegrationEnabled) {
-            @YourIncomeTaxReturnTile
-        }
 
     } else {
         <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
@@ -154,11 +152,9 @@
         <div class="flex-container govuk-grid-row">
             @paymentsTile
             @updatesTile
+            @paymentHistoryAndCreditTile
             @taxYearsTile
         </div>
-        @if(ITSASubmissionIntegrationEnabled) {
-            @YourIncomeTaxReturnTile
-        }
 
     }
     }
@@ -207,6 +203,24 @@
 	}
 }
 
+@paymentHistoryAndCreditTile = {
+@home_tile("payment-history-and-credit-tile", messages("home.paymentHistoryAndCredit.heading")) {
+    @p(){
+        @if(paymentHistoryEnabled) {
+            @link(
+                link = paymentHistoryControllerURL,
+                messageKey = "home.paymentHistoryAndCredit.view"
+            )
+        }
+        @* TODO check if it's correct *@
+        @link(
+            link = taxYearsControllerURL,
+            messageKey = "home.paymentHistoryAndCredit.link"
+        )
+    }
+}
+}
+
 @updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
 
 @updatesTileContentUpdatesDue1 = {
@@ -228,48 +242,8 @@
                     messageKey = "home.tax-years.view"
                 )
                 </li>
-                @if(paymentHistoryEnabled) {
-                    <li>
-                    @link(
-                        link = paymentHistoryControllerURL,
-                        messageKey = "home.tax-years.viewPayments"
-                    )
-                    </li>
-                }
             </ul>
 	}
-}
-
-@YourIncomeTaxReturnTile= {
-    @if(ITSASubmissionIntegrationEnabled){
-        <div id="manage-income-tax-tile" class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                @h2(classes = "govuk-heading-l", msg = "home.manage-income-tax.heading")
-            </div>
-        </div>
-        <div id="submit-your-returns-tile" class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
-                @h3link(
-                    id =Some("submit-your-returns"),
-                    link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
-                    messageKey = "home.your-returns.updatesLink")
-
-                @p(){@messages("home.your-returns.description")}
-            </div>
-            @if(!isAgent && utr.isDefined) {
-            <div id="saViewLandPTile">
-                <div class="govuk-grid-column-one-third">
-                    @h3link(
-                        link = appConfig.saViewLandPService(utr.get),
-                        messageKey = "home.self-assessment.updatesLink",
-                        id = Some("saViewLandPService")
-                    )
-                    @p(){@messages("home.self-assessment.description")}
-                </div>
-            </div>
-            }
-        </div>
-    }
 }
 
 @layout(
