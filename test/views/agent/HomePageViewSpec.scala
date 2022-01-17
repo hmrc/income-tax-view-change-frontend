@@ -150,7 +150,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val paymentDueDateLongDate: String = s"31 January $year2019"
           getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDueDateLongDate)
         }
-        "has a link to view what you owe" in new Setup {
+        "has a link to check what you owe" in new Setup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments-owed")
           link.map(_.text) shouldBe Some(homeMessages.paymentLink)
