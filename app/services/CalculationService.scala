@@ -22,6 +22,7 @@ import enums.{Crystallised, Estimate}
 
 import javax.inject.{Inject, Singleton}
 import models.calculation._
+import models.liabilitycalculation.{AllowancesAndDeductions, ChargeableEventGainsIncome, LiabilityCalculationResponse, LiabilityCalculationResponseModel, MarriageAllowanceTransferOut, Metadata}
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,6 +48,39 @@ class CalculationService @Inject()(val individualCalculationsConnector: Individu
         Logger("application").error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
     }
+  }
+
+  def getLiabilityCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
+    Future.successful(
+      LiabilityCalculationResponse(
+        metadata = Metadata(calculationTimestamp = "2019-02-15T09:35:15.094Z", crystallised = true),
+        calculation = Some(models.liabilitycalculation.Calculation(
+          allowancesAndDeductions = Some(AllowancesAndDeductions(
+            personalAllowance = Some(12500),
+            reducedPersonalAllowance = Some(12500),
+            marriageAllowanceTransferOut = Some(MarriageAllowanceTransferOut(
+              personalAllowanceBeforeTransferOut = 5000.99,
+              transferredOutAmount = 5000.99)),
+            pensionContributions = Some(5000.99),
+            lossesAppliedToGeneralIncome = Some(12500),
+            giftOfInvestmentsAndPropertyToCharity = Some(12500),
+            grossAnnuityPayments = Some(5000.99),
+            qualifyingLoanInterestFromInvestments = Some(5000.99),
+            postCessationTradeReceipts = Some(5000.99),
+            paymentsToTradeUnionsForDeathBenefits = Some(5000.99))
+          ),
+          taxCalculation = Some(models.liabilitycalculation.taxcalculation.TaxCalculation(
+            incomeTax = models.liabilitycalculation.taxcalculation.IncomeTax(
+              totalIncomeReceivedFromAllSources = 12500,
+              totalTaxableIncome = 12500,
+              totalReliefs = Some(5000.99),
+              totalAllowancesAndDeductions = 12500
+            ),
+            totalIncomeTaxAndNicsDue = 5000.99
+          ))
+        ))
+      )
+    )
   }
 
   def getAllLatestCalculations(nino: String, orderedYears: List[Int])

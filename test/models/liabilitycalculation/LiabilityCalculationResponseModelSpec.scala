@@ -68,7 +68,7 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
           totalReliefs = None
         )
 
-        Calculation.getAllowancesAndDeductionsViewModel(Calculation()) shouldBe expectedAllowancesAndDeductionsViewModel
+        Calculation().getAllowancesAndDeductionsViewModel() shouldBe expectedAllowancesAndDeductionsViewModel
 
       }
     }
@@ -284,7 +284,7 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
           totalReliefs = Some(5000.99)
         )
 
-        Calculation.getAllowancesAndDeductionsViewModel(successModelFull.calculation.get) shouldBe expectedAllowancesAndDeductionsViewModel
+        successModelFull.calculation.get.getAllowancesAndDeductionsViewModel() shouldBe expectedAllowancesAndDeductionsViewModel
 
       }
     }

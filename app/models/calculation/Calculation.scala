@@ -154,7 +154,6 @@ object ReliefsClaimed {
   implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
 }
 
-
 case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
                                    reducedPersonalAllowance: Option[BigDecimal] = None,
                                    personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,

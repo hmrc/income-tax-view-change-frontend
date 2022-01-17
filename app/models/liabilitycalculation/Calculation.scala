@@ -18,7 +18,6 @@ package models.liabilitycalculation
 
 import models.liabilitycalculation.taxcalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
-import models.liabilitycalculation.taxcalculation._
 
 case class Calculation(
                         allowancesAndDeductions: Option[AllowancesAndDeductions] = None,
@@ -36,30 +35,32 @@ case class Calculation(
                         dividendsIncome: Option[DividendsIncome] = None,
                         incomeSummaryTotals: Option[IncomeSummaryTotals] = None,
                         taxCalculation: Option[TaxCalculation] = None
-                      )
+                      ) {
+
+  def getAllowancesAndDeductionsViewModel(): AllowancesAndDeductionsViewModel = {
+    AllowancesAndDeductionsViewModel(
+      personalAllowance = allowancesAndDeductions.flatMap(ad => ad.personalAllowance.map(pa => BigDecimal(pa))),
+      reducedPersonalAllowance = allowancesAndDeductions.flatMap(ad => ad.reducedPersonalAllowance.map(rpa => BigDecimal(rpa))),
+      personalAllowanceBeforeTransferOut = allowancesAndDeductions.flatMap(ad =>
+        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.personalAllowanceBeforeTransferOut))),
+      transferredOutAmount = allowancesAndDeductions.flatMap(ad =>
+        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.transferredOutAmount))),
+      pensionContributions = allowancesAndDeductions.flatMap(ad => ad.pensionContributions),
+      lossesAppliedToGeneralIncome = allowancesAndDeductions.flatMap(ad => ad.lossesAppliedToGeneralIncome.map(la => BigDecimal(la))),
+      giftOfInvestmentsAndPropertyToCharity = allowancesAndDeductions.flatMap(ad =>
+        ad.giftOfInvestmentsAndPropertyToCharity.map(gift => BigDecimal(gift))),
+      grossAnnuityPayments = allowancesAndDeductions.flatMap(ad => ad.grossAnnuityPayments),
+      qualifyingLoanInterestFromInvestments = allowancesAndDeductions.flatMap(ad => ad.qualifyingLoanInterestFromInvestments),
+      postCessationTradeReceipts = allowancesAndDeductions.flatMap(ad => ad.postCessationTradeReceipts),
+      paymentsToTradeUnionsForDeathBenefits = allowancesAndDeductions.flatMap(ad => ad.paymentsToTradeUnionsForDeathBenefits),
+      totalAllowancesAndDeductions = taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions),
+      totalReliefs = taxCalculation.flatMap(tc => tc.incomeTax.totalReliefs)
+    )
+  }
+}
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
-
-  def getAllowancesAndDeductionsViewModel(c: Calculation): AllowancesAndDeductionsViewModel = {
-    AllowancesAndDeductionsViewModel(
-      personalAllowance = c.allowancesAndDeductions.flatMap(ad => ad.personalAllowance),
-      reducedPersonalAllowance = c.allowancesAndDeductions.flatMap(ad => ad.reducedPersonalAllowance),
-      personalAllowanceBeforeTransferOut = c.allowancesAndDeductions.flatMap(ad =>
-        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.personalAllowanceBeforeTransferOut))),
-      transferredOutAmount = c.allowancesAndDeductions.flatMap(ad =>
-        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.transferredOutAmount))),
-      pensionContributions = c.allowancesAndDeductions.flatMap(ad => ad.pensionContributions),
-      lossesAppliedToGeneralIncome = c.allowancesAndDeductions.flatMap(ad => ad.lossesAppliedToGeneralIncome),
-      giftOfInvestmentsAndPropertyToCharity = c.allowancesAndDeductions.flatMap(ad => ad.giftOfInvestmentsAndPropertyToCharity),
-      grossAnnuityPayments = c.allowancesAndDeductions.flatMap(ad => ad.grossAnnuityPayments),
-      qualifyingLoanInterestFromInvestments = c.allowancesAndDeductions.flatMap(ad => ad.qualifyingLoanInterestFromInvestments),
-      postCessationTradeReceipts = c.allowancesAndDeductions.flatMap(ad => ad.postCessationTradeReceipts),
-      paymentsToTradeUnionsForDeathBenefits = c.allowancesAndDeductions.flatMap(ad => ad.paymentsToTradeUnionsForDeathBenefits),
-      totalAllowancesAndDeductions = c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions),
-      totalReliefs = c.taxCalculation.flatMap(tc => tc.incomeTax.totalReliefs)
-    )
-  }
 }
 
 

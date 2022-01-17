@@ -20,20 +20,25 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class AllowancesAndDeductionsViewModel(
-                            personalAllowance: Option[Int] = None,
-                            reducedPersonalAllowance: Option[Int] = None,
+                            personalAllowance: Option[BigDecimal] = None,
+                            reducedPersonalAllowance: Option[BigDecimal] = None,
                             personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
                             transferredOutAmount: Option[BigDecimal] = None,
                             pensionContributions: Option[BigDecimal] = None,
-                            lossesAppliedToGeneralIncome: Option[Int] = None,
-                            giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
+                            lossesAppliedToGeneralIncome: Option[BigDecimal] = None,
+                            giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
                             grossAnnuityPayments: Option[BigDecimal] = None,
                             qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
                             postCessationTradeReceipts: Option[BigDecimal] = None,
                             paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
-                            totalAllowancesAndDeductions: Option[Int] = None,
+                            totalAllowancesAndDeductions: Option[BigDecimal] = None,
                             totalReliefs: Option[BigDecimal] = None
-                          )
+                          ) {
+  val totalAllowancesDeductionsReliefs: Option[BigDecimal] = (totalAllowancesAndDeductions ++ totalReliefs).reduceOption(_ + _)
+
+  val personalAllowanceDisplayValue: Option[BigDecimal] =
+    personalAllowanceBeforeTransferOut.fold(reducedPersonalAllowance.fold(personalAllowance)(Some(_)))(Some(_))
+}
 
 case class AllowancesAndDeductions(
                                     personalAllowance: Option[Int] = None,
@@ -47,6 +52,21 @@ case class AllowancesAndDeductions(
                                     grossAnnuityPayments: Option[BigDecimal] = None,
                                     pensionContributions: Option[BigDecimal] = None
                                   )
+//case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
+//                                   reducedPersonalAllowance: Option[BigDecimal] = None,
+//                                   personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
+//                                   marriageAllowanceTransfer: Option[BigDecimal] = None,
+//                                   totalPensionContributions: Option[BigDecimal] = None,
+//                                   lossesAppliedToGeneralIncome: Option[BigDecimal] = None,
+//                                   giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
+//                                   totalAllowancesAndDeductions: Option[BigDecimal] = None,
+//                                   totalTaxableIncome: Option[BigDecimal] = None,
+//                                   totalReliefs: Option[BigDecimal] = None,
+//                                   grossAnnualPayments: Option[BigDecimal] = None,
+//                                   qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
+//                                   postCessationTradeReceipts: Option[BigDecimal] = None,
+//                                   paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None
+//                                  ) {
 
 object AllowancesAndDeductions {
   implicit val writes: OWrites[AllowancesAndDeductions] = (

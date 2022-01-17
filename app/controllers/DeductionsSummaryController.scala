@@ -17,19 +17,22 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.AllowanceAndDeductionsResponseAuditModel
+import audit.models._
 import auth.MtdItUserWithNino
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.calculation._
+import models.liabilitycalculation
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.DeductionBreakdown
+import views.html.DeductionBreakdownNew
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -42,6 +45,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
+                                            val deductionBreakdownViewNew: DeductionBreakdownNew,
                                             val itvcErrorHandler: ItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
@@ -56,6 +60,25 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
 
     action.async {
       implicit user =>
+        if (isEnabled(NewTaxCalcProxy)) {
+          calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
+            case liabilityCalc: LiabilityCalculationResponse =>
+              liabilityCalc.calculation.flatMap(c => c.allowancesAndDeductions) match {
+                case None =>
+                  Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new deductions data could be retrieved. Downstream error")
+                  itvcErrorHandler.showInternalServerError()
+                case Some(_) =>
+                  val viewModel = liabilityCalc.calculation.map(c =>
+                    c.getAllowancesAndDeductionsViewModel()).getOrElse(throw new Exception("deductions view model not found"))
+                  auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))
+                  Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear)))
+              }
+
+            case _: LiabilityCalculationError =>
+              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+              itvcErrorHandler.showInternalServerError()
+          }
+        } else {
           calculationService.getCalculationDetail(user.nino, taxYear).map {
             case calcDisplayModel: CalcDisplayModel =>
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
@@ -70,6 +93,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
               Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }
+        }
     }
   }
 
