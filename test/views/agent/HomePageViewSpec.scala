@@ -197,16 +197,31 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         "has a heading" in new Setup {
           getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
         }
-        "has a link to the tax years page" in new Setup {
+        "has a link to the view payments page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearOverviewController.show(currentTaxYear).url)
+          link.map(_.text) shouldBe Some(homeMessages.viewPaymentsLinkWithDateRange(currentTaxYear))
+        }
+        "has a link to the update and submit page" in new Setup {
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
+          link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+          link.map(_.text) shouldBe Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
+        }
+        "has a link to the tax years page" in new Setup {
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
           link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearsController.show().url)
           link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
         }
-        // todo needs to be fixed
-        "has a link to the view payments page" in new Setup {
-          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments/history")
-          link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
+      }
+
+      "have a payment history and credit tile" which {
+        "has a heading" in new Setup {
+          getElementById("payment-history-and-credit-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentHistoryAndCreditHeading)
+        }
+        "has a link to the payment and refund history page" in new Setup {
+          val link: Option[Element] = getElementById("payment-history-and-credit-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url)
+          link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
         }
       }
 

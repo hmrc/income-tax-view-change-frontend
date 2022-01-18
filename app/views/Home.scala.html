@@ -207,18 +207,13 @@
 
 @paymentHistoryAndCreditTile = {
 @home_tile("payment-history-and-credit-tile", messages("home.paymentHistoryAndCredit.heading")) {
-    @p(){
+    @p() {
         @if(paymentHistoryEnabled) {
             @link(
                 link = paymentHistoryControllerURL,
                 messageKey = "home.paymentHistoryAndCredit.view"
             )
         }
-        @* TODO check if it's correct *@
-        @link(
-            link = taxYearsControllerURL,
-            messageKey = "home.paymentHistoryAndCredit.link"
-        )
     }
 }
 }
@@ -238,13 +233,17 @@
 @returnsTile = {
 	@home_tile("returns-tile", messages("home.tax-years.heading")) {
             <ul class="govuk-list">
-                @* TODO needs to be implemented *@
                 <li>
-                    View your current 2021 to 2022 return
+                @link(
+                    link = getReturnHref(currentTaxYear),
+                    messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                )
                 </li>
-                @* TODO needs to be implemented *@
                 <li>
-                    Update and submit your 2021 to 2022 return
+                @link(
+                    link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
+                    messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                )
                 </li>
                 <li>
                 @link(
@@ -255,6 +254,14 @@
             </ul>
 	}
 }
+
+    @getReturnHref(year: Int) = @{
+        if (isAgent) {
+            controllers.agent.routes.TaxYearOverviewController.show(year).url
+        } else {
+            controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url
+        }
+    }
 
 @layout(
     pageTitle = pageTitleHeadingMessage,
