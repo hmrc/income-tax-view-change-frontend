@@ -71,14 +71,6 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     )(ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 
-  def setupMockGetAllLatestCalculations(nino: String, orderedYears: List[Int])(response: List[CalculationResponseModelWithYear]): Unit =
-    when(mockCalculationService
-      .getAllLatestCalculations(
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(orderedYears)
-      )(ArgumentMatchers.any()))
-    .thenReturn(Future.successful(response))
-
   def mockCalculationSuccess(): Unit =
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
   def mockCalculationSuccessNew(taxYear: Int = testYear): Unit =
@@ -91,16 +83,4 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     setupMockGetCalculation(testNino, testYear)(CalcDisplayNoDataFound)
   def mockCalculationNotFoundAgent(): Unit =
     setupMockGetCalculation(testNinoAgent, testYear)(CalcDisplayNoDataFound)
-  def mockGetAllLatestCalcSuccess():Unit =
-    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearList)
-  def mockGetAllLatestCalcSuccessOneNotFound(): Unit =
-    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListOneNotFound)
-  def mockGetAllLatestCrystallisedCalcSuccess():Unit =
-    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearCrystallisedList)
-  def mockGetAllLatestCrystallisedCalcWithError():Unit =
-    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithError)
-  def mockGetAllLatestCrystallisedCalcWithNotFound():Unit =
-    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithCalcNotFound)
-  def mockGetAllLatestCalcSuccessEmpty():Unit =
-    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(List())
 }

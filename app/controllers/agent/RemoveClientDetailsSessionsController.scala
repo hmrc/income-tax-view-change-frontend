@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
 import play.api.i18n.I18nSupport
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: AuthorisedFunctions)
                                                      (implicit mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandler: AgentItvcErrorHandler,
                                                       val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 

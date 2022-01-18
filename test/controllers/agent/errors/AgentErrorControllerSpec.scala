@@ -14,26 +14,30 @@
  * limitations under the License.
  */
 
-package controllers.errors
+package controllers.agent.errors
 
-import testConstants.MessagesLookUp.{AgentErrorMessages => pageMessages}
-import controllers.predicates.SessionTimeoutPredicate
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.MockItvcErrorHandler
+import mocks.auth.MockFrontendAuthorisedFunctions
 import org.jsoup.Jsoup
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.MessagesLookUp.{AgentErrorMessages => pageMessages}
 import testUtils.TestSupport
 import views.html.errorPages.AgentError
 
-class AgentErrorControllerSpec extends TestSupport with MockAuthenticationPredicate {
+class AgentErrorControllerSpec extends TestSupport
+  with MockFrontendAuthorisedFunctions
+  with MockItvcErrorHandler {
 
   val TestAgentErrorController = new AgentErrorController(
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
+    mockAuthService,
     app.injector.instanceOf[AgentError]
   )(
-    ec,
-    app.injector.instanceOf[MessagesControllerComponents]
+    app.injector.instanceOf[MessagesControllerComponents],
+    appConfig,
+    mockItvcErrorHandler,
+    ec
   )
 
   "Calling the show action of the NotAnAgentController" should {
@@ -42,15 +46,18 @@ class AgentErrorControllerSpec extends TestSupport with MockAuthenticationPredic
     lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
       status(result) shouldBe OK
     }
 
     "return HTML" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
 
     s"have the title '${pageMessages.title}'" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
       document.title() shouldBe pageMessages.title
     }
   }

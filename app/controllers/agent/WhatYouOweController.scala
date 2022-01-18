@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import models.financialDetails.WhatYouOweChargesList
@@ -32,7 +32,7 @@ import services.{IncomeSourceDetailsService, WhatYouOweService}
 import views.html.WhatYouOwe
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
@@ -43,7 +43,7 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                      val authorisedFunctions: FrontendAuthorisedFunctions
                                     )(implicit mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext,
-                                      itvcErrorHandler: ItvcErrorHandler
+                                      itvcErrorHandler: AgentItvcErrorHandler
                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private def view(charge: WhatYouOweChargesList, taxYear: Int,codingOutEnabled: Boolean, displayTotals: Boolean,

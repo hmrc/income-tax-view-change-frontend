@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
@@ -28,13 +28,11 @@ import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOvervie
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
-import play.api.http.Status.NOT_FOUND
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxYearOverview
 
@@ -53,7 +51,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                            val languageUtils: LanguageUtils,
                                            mcc: MessagesControllerComponents,
                                            implicit val ec: ExecutionContext,
-                                           val itvcErrorHandler: ItvcErrorHandler)
+                                           val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>

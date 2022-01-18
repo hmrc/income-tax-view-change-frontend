@@ -17,15 +17,15 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ConfirmClientController
 import controllers.agent.utils.SessionKeys
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.agent.confirmClient
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -33,7 +33,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val authorisedFunctions: AuthorisedFunctions)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,
-                                           val itvcErrorHandler: ItvcErrorHandler,
+                                           val itvcErrorHandler: AgentItvcErrorHandler,
                                            val ec: ExecutionContext)
   extends ConfirmClientController with FeatureSwitching with I18nSupport {
 

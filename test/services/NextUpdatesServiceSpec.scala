@@ -109,27 +109,27 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations(businessAndPropertyAligned).futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        getNextDeadlineDueDateAndOverDueObligations().futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations(propertyIncomeOnly).futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        getNextDeadlineDueDateAndOverDueObligations().futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).futureValue._1 shouldBe LocalDate.of(2017, 10, 31)
+        getNextDeadlineDueDateAndOverDueObligations().futureValue._1 shouldBe LocalDate.of(2017, 10, 31)
       }
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).failed.futureValue
+        val result = getNextDeadlineDueDateAndOverDueObligations().failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails).failed.futureValue
+        val result = getNextDeadlineDueDateAndOverDueObligations().failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Dummy Error Message"
       }

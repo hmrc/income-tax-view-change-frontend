@@ -16,7 +16,7 @@
 
 package mocks
 
-import config.ItvcErrorHandler
+import config.AgentItvcErrorHandler
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
@@ -27,7 +27,7 @@ import play.twirl.api.HtmlFormat
 trait MockItvcErrorHandler extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val mockItvcErrorHandler: ItvcErrorHandler = mock[ItvcErrorHandler]
+  val mockItvcErrorHandler: AgentItvcErrorHandler = mock[AgentItvcErrorHandler]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

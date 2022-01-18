@@ -19,8 +19,8 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.{AllowanceAndDeductionsResponseAuditModel, AllowanceAndDeductionsResponseAuditModelNew}
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved, NewTaxCalcProxy}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -43,7 +43,7 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
-                                            val itvcErrorHandler: ItvcErrorHandler)
+                                            val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
 

@@ -17,7 +17,7 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
@@ -39,12 +39,12 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val authorisedFunctions: AuthorisedFunctions)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
-                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandler: AgentItvcErrorHandler,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
   lazy val notAnAgentPredicate = {
-    val redirectNotAnAgent = Future.successful(Redirect(controllers.errors.routes.AgentErrorController.show()))
+    val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show()))
     defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
   }
 

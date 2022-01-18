@@ -54,7 +54,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Individual Calculation Service
   lazy val individualCalculationsService: String = servicesConfig.baseUrl("individual-calculations")
 
-	//View L&P
+  //Income tax calculation service
+  lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
+
+  //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
   //GG Sign In via BAS Gateway

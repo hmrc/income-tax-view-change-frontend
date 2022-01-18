@@ -19,8 +19,8 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch._
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.IncomeTaxAgentUser
@@ -49,7 +49,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
                                          implicit val ec: ExecutionContext,
-                                         val itvcErrorHandler: ItvcErrorHandler)
+                                         val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   private def view(documentDetailWithDueDate: DocumentDetailWithDueDate, chargeHistoryOpt: Option[List[ChargeHistoryModel]], latePaymentInterestCharge: Boolean,

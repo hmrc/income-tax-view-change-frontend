@@ -28,7 +28,6 @@ import testConstants.BaseTestConstants.{testNino, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.UnitSpec
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -62,11 +61,6 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
   def mockGetAllFinancialDetails(response: List[(Int, FinancialDetailsResponseModel)]): Unit = {
     when(mockFinancialDetailsService.getAllFinancialDetails(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
-  }
-
-  def mockGetChargeDueDates(response: Option[Either[(LocalDate, Boolean), Int]]): Unit = {
-    when(mockFinancialDetailsService.getChargeDueDates(any()))
-      .thenReturn(response)
   }
 
   def mockGetChargeHistoryDetails(response: Future[Option[List[ChargeHistoryModel]]]): Unit = {
