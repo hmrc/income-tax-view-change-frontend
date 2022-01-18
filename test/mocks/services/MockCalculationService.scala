@@ -81,8 +81,8 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
 
   def mockCalculationSuccess(): Unit =
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-  def mockCalculationSuccessNew(): Unit =
-    setupMockGetCalculationNew(testNino, testYear)(liabilityCalculationModelSuccessFull)
+  def mockCalculationSuccessNew(taxYear: Int = testYear): Unit =
+    setupMockGetCalculationNew(testNino, taxYear)(liabilityCalculationModelSuccessFull)
   def mockCalculationCrystalisationSuccess(): Unit =
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel.copy(crystallised = true)))
   def mockCalculationError(): Unit =

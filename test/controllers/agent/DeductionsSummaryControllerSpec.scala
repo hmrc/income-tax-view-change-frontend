@@ -19,7 +19,7 @@ package controllers.agent
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import audit.mocks.MockAuditingService
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
@@ -27,6 +27,7 @@ import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import testConstants.EstimatesTestConstants.testYear
 import testUtils.TestSupport
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,9 +43,10 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
     val controller: DeductionsSummaryController = new DeductionsSummaryController(
       app.injector.instanceOf[views.html.DeductionBreakdown],
+      app.injector.instanceOf[views.html.DeductionBreakdownNew],
       mockAuthService,
       mockAuditingService,
-      mockCalculationService,
+      mockCalculationService
     )(
       appConfig,
       app.injector.instanceOf[MessagesControllerComponents],
@@ -53,7 +55,28 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     )
   }
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disable(NewTaxCalcProxy)
+  }
+
   "showDeductionsSummary" when {
+    "NewTaxCalcProxy FS is enabled" should {
+
+      "render the Allowances and Deductions page" in new Setup {
+        enable(NewTaxCalcProxy)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockCalculationSuccessNew(taxYear = testYear)
+
+        val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
+        val document = result.toHtmlDocument
+
+        status(result) shouldBe Status.OK
+        document.title() shouldBe "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+      }
+
+    }
+
     "feature switch AgentViewer is enabled" should {
       "return Status OK when income sources and calculations come back with success" in new Setup {
 
