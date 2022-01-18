@@ -16,18 +16,14 @@
 
 package views
 
-import java.time.LocalDate
-
-import testConstants.EstimatesTestConstants._
-import testConstants.MessagesLookUp.{TaxYears => taxYears}
 import config.FrontendAppConfig
-import models.calculation.CalculationResponseModelWithYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.EstimatesTestConstants._
+import testConstants.MessagesLookUp.{TaxYears => taxYears}
 import testUtils.ViewSpec
 import views.html.TaxYears
 

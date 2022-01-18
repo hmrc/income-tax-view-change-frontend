@@ -16,19 +16,17 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
-import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import config.FrontendAppConfig
 import config.featureswitch._
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
+import mocks.services.MockIncomeSourceDetailsService
 import mocks.views.agent.MockTaxYears
-import models.calculation.{Calculation, CalculationErrorModel, CalculationResponseModelWithYear}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
