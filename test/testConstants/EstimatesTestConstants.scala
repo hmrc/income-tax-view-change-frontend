@@ -36,31 +36,4 @@ object EstimatesTestConstants {
 
 	val lastTaxCalcError: CalculationErrorModel = CalculationErrorModel(testErrorStatus, testErrorMessage)
 	val lastTaxCalcNotFound: CalculationResponseModel = CalculationErrorModel(Status.NOT_FOUND, "Not found")
-
-	val lastTaxCalcWithYearList = List(
-		CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
-		CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne)
-	)
-	val lastThreeTaxCalcWithYear = List(
-		CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
-		CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne),
-		CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusTwo)
-	)
-	val lastTaxCalcWithYearListOneNotFound = List(
-		CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
-		CalculationResponseModelWithYear(lastTaxCalcNotFound, testYearPlusOne)
-	)
-	val lastTaxCalcWithYearCrystallisedList = List(
-		CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
-		CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYearPlusOne)
-	)
-	val lastTaxCalcWithYearListWithError = List(
-		CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
-		CalculationResponseModelWithYear(lastTaxCalcError, testYearPlusOne)
-	)
-	val lastTaxCalcWithYearListWithCalcNotFound = List(
-		CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
-		CalculationResponseModelWithYear(lastTaxCalcNotFound, testYearPlusOne)
-	)
-
 }

@@ -17,11 +17,12 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.IndividualCalculationsConnector
+import connectors.{IncomeTaxCalculationConnector, IndividualCalculationsConnector}
 import enums.{Crystallised, Estimate}
 
 import javax.inject.{Inject, Singleton}
 import models.calculation._
+import models.liabilitycalculation.LiabilityCalculationResponseModel
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,8 +30,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationService @Inject()(val individualCalculationsConnector: IndividualCalculationsConnector,
-                                   val frontendAppConfig: FrontendAppConfig)(implicit ec: ExecutionContext) {
+class CalculationService @Inject()(individualCalculationsConnector: IndividualCalculationsConnector,
+                                   incomeTaxCalculationConnector: IncomeTaxCalculationConnector,
+                                   frontendAppConfig: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
   def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {
@@ -47,18 +49,6 @@ class CalculationService @Inject()(val individualCalculationsConnector: Individu
         Logger("application").error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
     }
-  }
-
-  def getAllLatestCalculations(nino: String, orderedYears: List[Int])
-                              (implicit headerCarrier: HeaderCarrier): Future[List[CalculationResponseModelWithYear]] = {
-    Future.sequence(
-      orderedYears.map { year =>
-        for {
-          calcIdOrError <- getCalculationId(nino, year)
-          lastCalc <- getLatestCalculation(nino, calcIdOrError)
-        } yield CalculationResponseModelWithYear(lastCalc, year)
-      }
-    )
   }
 
   def getLatestCalculation(nino: String, calcIdOrResponse: Either[CalculationResponseModel, String])
@@ -81,5 +71,10 @@ class CalculationService @Inject()(val individualCalculationsConnector: Individu
     val endYear = taxYear.toString
     val startYear = (taxYear - 1).toString
     s"$startYear-${endYear.takeRight(2)}"
+  }
+
+  def getLiabilityCalculationDetail(nino: String, taxYear: Int)
+                                   (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
+    incomeTaxCalculationConnector.getCalculationResponse(nino, taxYear.toString)
   }
 }
