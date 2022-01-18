@@ -78,7 +78,7 @@ home.overdue.date.payment.count                                 = {0} OVERDUE PA
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE
 home.tax-years.heading                                          = Returns
-home.tax-years.view                                             = View tax years
+home.tax-years.view                                             = View all tax years
 home.tax-years.viewPayments                                     = View payment history
 home.your-returns.heading                                       = Manage Income Tax
 home.your-returns.description                                   = Use this service to report untaxed income and any tax relief you’re claiming
@@ -625,7 +625,7 @@ titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Retu
 
 ## Payment History Page ##
 
-paymentHistory.heading                                          = Payment history
+paymentHistory.heading                                          = Payment and refund history
 paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments

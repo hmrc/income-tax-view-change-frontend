@@ -128,7 +128,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val updatesLink = "View update deadlines"
     val paymentLink = "Check what you owe"
     val taxYearsHeading = "Returns"
-    val taxYearsLink = "View tax years"
+    val taxYearsLink = "View all tax years"
     val viewPaymentslink = "View payment history"
     val yourIncomeTaxReturnHeading = "Your Income Tax return"
     val ManageYourIncomeTaxReturnHeading = "Manage Income Tax"

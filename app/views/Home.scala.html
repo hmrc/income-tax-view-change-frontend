@@ -120,7 +120,7 @@
                 @paymentsTile
                 @updatesTile
                 @paymentHistoryAndCreditTile
-                @taxYearsTile
+                @returnsTile
             </div>
         </div>
 
@@ -149,11 +149,13 @@
         }
         </div>
 
-        <div class="flex-container govuk-grid-row">
-            @paymentsTile
-            @updatesTile
-            @paymentHistoryAndCreditTile
-            @taxYearsTile
+        <div class="grid-row">
+            <div class="flex-container">
+                @paymentsTile
+                @updatesTile
+                @paymentHistoryAndCreditTile
+                @returnsTile
+            </div>
         </div>
 
     }
@@ -233,9 +235,17 @@
 }
 
 
-@taxYearsTile = {
-	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
+@returnsTile = {
+	@home_tile("returns-tile", messages("home.tax-years.heading")) {
             <ul class="govuk-list">
+                @* TODO needs to be implemented *@
+                <li>
+                    View your current 2021 to 2022 return
+                </li>
+                @* TODO needs to be implemented *@
+                <li>
+                    Update and submit your 2021 to 2022 return
+                </li>
                 <li>
                 @link(
                     link = taxYearsControllerURL,

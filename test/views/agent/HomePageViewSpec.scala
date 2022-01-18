@@ -193,21 +193,21 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
       }
 
-      "have a tax years tile" which {
+      "have a returns tile" which {
         "has a heading" in new Setup {
-          getElementById("tax-years-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
+          getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
         }
         "has a link to the tax years page" in new Setup {
-          val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").first)
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearsController.show().url)
           link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
         }
+        // todo needs to be fixed
         "has a link to the view payments page" in new Setup {
-          val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").get(1))
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments/history")
           link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
         }
-
       }
 
       s"have a change client link" in new Setup {
