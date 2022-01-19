@@ -42,7 +42,6 @@
 	overDueUpdatesCount: Option[Int],
   	utr: Option[String],
 	paymentHistoryEnabled: Boolean,
-    //TODO should be removed as redundant
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
   	currentTaxYear: Int,
@@ -239,12 +238,14 @@
                     messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
                 )
                 </li>
-                <li>
-                @link(
-                    link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
-                    messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
-                )
-                </li>
+                @if(ITSASubmissionIntegrationEnabled) {
+                    <li>
+                    @link(
+                        link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
+                        messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                    )
+                    </li>
+                }
                 <li>
                 @link(
                     link = taxYearsControllerURL,

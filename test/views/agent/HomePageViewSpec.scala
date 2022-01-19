@@ -207,6 +207,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
           link.map(_.text) shouldBe Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
         }
+        "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
+          link.map(_.attr("href")) should not be  Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+          link.map(_.text) should not be Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
+        }
         "has a link to the tax years page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
           link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearsController.show().url)
