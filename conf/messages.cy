@@ -61,7 +61,6 @@ home.your-returns.description                                   = Defnyddiwch y 
 home.tax-years.view                                             = Bwrw golwg dros flynyddoedd treth
 home.paymentHistoryAndCredit.heading                            = Payment history and credit
 home.paymentHistoryAndCredit.view                               = Payment and refund history
-home.paymentHistoryAndCredit.link                               = Credit and claim a refund
 home.tax-years.viewPayments                                     = Bwrw golwg dros hanes eich taliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}

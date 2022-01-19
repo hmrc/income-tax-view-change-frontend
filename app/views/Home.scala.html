@@ -91,6 +91,54 @@
         }
     }
 
+    @tiles() = {
+
+        <div class="grid-row">
+            <div class="flex-container">
+
+                <div class="card-container govuk-!-margin-right-6" id="cardAmount">
+                    <div class="card-body" style="width: 440px; border-bottom: 0">
+                        <div class="govuk-grid-column-full govuk-!-padding-bottom-0">
+                            @paymentsTile
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container" id="cardAmount">
+                    <div class="card-body" style="width: 440px; border-bottom: 0">
+                        <div class="govuk-grid-column-full govuk-!-padding-bottom-0">
+                            @updatesTile
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="grid-row">
+            <div class="flex-container">
+
+                <div class="card-container govuk-!-margin-right-6" id="cardAmount">
+                    <div class="card-body" style="width: 440px; border-bottom: 0px;">
+                        <div class="govuk-grid-column-full">
+                            @paymentHistoryAndCreditTile
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container" id="cardAmount">
+                    <div class="card-body" style="width: 440px; border-bottom: 0">
+                        <div class="govuk-grid-column-full">
+                            @returnsTile
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    }
+
     @customLayout = {
     @if(isAgent) {
         @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
@@ -114,14 +162,7 @@
             </div>
         }
 
-        <div class="grid-row">
-            <div class="flex-container">
-                @paymentsTile
-                @updatesTile
-                @paymentHistoryAndCreditTile
-                @returnsTile
-            </div>
-        </div>
+        @tiles
 
     } else {
         <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
@@ -148,15 +189,7 @@
         }
         </div>
 
-        <div class="grid-row">
-            <div class="flex-container">
-                @paymentsTile
-                @updatesTile
-                @paymentHistoryAndCreditTile
-                @returnsTile
-            </div>
-        </div>
-
+        @tiles
     }
     }
 
@@ -168,7 +201,7 @@
 			case _ => p()(paymentsTileContentPaymentsDueMany)
 		}}
 
-            @p(){
+            @p(classes = "govuk-!-margin-bottom-4"){
                 @link(
                     link = whatYouOweControllerURL,
                     messageKey = "home.payments.view"
@@ -195,7 +228,7 @@
 			case 1 => p()(updatesTileContentUpdatesDue1)
 			case _ => p()(updatesTileContentUpdatesDueMany)
 		}}
-            @p(){
+            @p(classes = "govuk-!-margin-bottom-4"){
                 @link(
                     link = nextUpdatesControllerURL,
                     messageKey = "home.updates.view"
@@ -206,7 +239,7 @@
 
 @paymentHistoryAndCreditTile = {
 @home_tile("payment-history-and-credit-tile", messages("home.paymentHistoryAndCredit.heading")) {
-    @p() {
+    @p(classes = "govuk-!-margin-bottom-4") {
         @if(paymentHistoryEnabled) {
             @link(
                 link = paymentHistoryControllerURL,
@@ -230,30 +263,28 @@
 
 
 @returnsTile = {
-	@home_tile("returns-tile", messages("home.tax-years.heading")) {
-            <ul class="govuk-list">
-                <li>
+    @home_tile("returns-tile", messages("home.tax-years.heading")) {
+        @p(classes = "govuk-!-margin-bottom-4") {
+            @link(
+                link = getReturnHref(currentTaxYear),
+                messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+            )
+        }
+        @p(classes = "govuk-!-margin-bottom-4") {
+            @if(ITSASubmissionIntegrationEnabled) {
                 @link(
-                    link = getReturnHref(currentTaxYear),
-                    messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                    link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
+                    messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
                 )
-                </li>
-                @if(ITSASubmissionIntegrationEnabled) {
-                    <li>
-                    @link(
-                        link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
-                        messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
-                    )
-                    </li>
-                }
-                <li>
-                @link(
-                    link = taxYearsControllerURL,
-                    messageKey = "home.tax-years.view"
-                )
-                </li>
-            </ul>
-	}
+            }
+        }
+        @p(classes = "govuk-!-margin-bottom-1") {
+            @link(
+                link = taxYearsControllerURL,
+                messageKey = "home.tax-years.view"
+            )
+        }
+    }
 }
 
     @getReturnHref(year: Int) = @{

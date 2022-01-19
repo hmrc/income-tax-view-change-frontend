@@ -73,7 +73,6 @@ home.updates.heading                                            = Next updates d
 home.updates.view                                               = View update deadlines
 home.paymentHistoryAndCredit.heading                            = Payment history and credit
 home.paymentHistoryAndCredit.view                               = Payment and refund history
-home.paymentHistoryAndCredit.link                               = Credit and claim a refund
 home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE
