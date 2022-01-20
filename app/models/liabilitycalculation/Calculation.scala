@@ -41,8 +41,6 @@ object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
 }
 
-
-
 case class ChargeableEventGainsIncome(totalOfAllGains: Int)
 
 object ChargeableEventGainsIncome {
