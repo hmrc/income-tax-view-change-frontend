@@ -63,16 +63,30 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   "showDeductionsSummary" when {
     "NewTaxCalcProxy FS is enabled" should {
 
-      "render the Allowances and Deductions page" in new Setup {
+      "render the Allowances and Deductions page with full calc data" in new Setup {
         enable(NewTaxCalcProxy)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockCalculationSuccessNew(taxYear = testYear)
+        mockCalculationSuccessFullNew(taxYear = testYear)
 
         val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
         val document = result.toHtmlDocument
 
         status(result) shouldBe Status.OK
         document.title() shouldBe "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+        document.getElementById("total-value").text() shouldBe "£17,500.99"
+      }
+
+      "render the Allowances and Deductions page with no calc data" in new Setup {
+        enable(NewTaxCalcProxy)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockCalculationSuccessMinimalNew(taxYear = testYear)
+
+        val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
+        val document = result.toHtmlDocument
+
+        status(result) shouldBe Status.OK
+        document.title() shouldBe "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+        document.getElementById("total-value").text() shouldBe "£0.00"
       }
 
     }

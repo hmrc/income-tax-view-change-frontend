@@ -31,6 +31,13 @@ object NewCalcBreakdownTestConstants {
       crystallised = true)
   )
 
+  val liabilityCalculationModelDeductionsMinimal2 = LiabilityCalculationResponse(
+    calculation = None,
+    metadata = Metadata(
+      calculationTimestamp = "2019-02-15T09:35:15.094Z",
+      crystallised = true)
+  )
+
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(

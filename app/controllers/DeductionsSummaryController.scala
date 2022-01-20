@@ -25,6 +25,7 @@ import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.calculation._
 import models.liabilitycalculation._
+import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -62,17 +63,9 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
         if (isEnabled(NewTaxCalcProxy)) {
           calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
-              liabilityCalc.calculation.flatMap(c => c.allowancesAndDeductions) match {
-                case None =>
-                  Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data could be retrieved.")
-                  itvcErrorHandler.showInternalServerError()
-                case Some(_) =>
-                  val viewModel = liabilityCalc.calculation.map(c =>
-                    c.getAllowancesAndDeductionsViewModel()).getOrElse(throw new Exception("deductions view model not found"))
-                  auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))
-                  Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear)))
-              }
-
+              val viewModel = AllowancesAndDeductionsViewModel().getAllowancesAndDeductionsViewModel(liabilityCalc.calculation)
+              auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))
+              Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear)))
             case _: LiabilityCalculationError =>
               Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()

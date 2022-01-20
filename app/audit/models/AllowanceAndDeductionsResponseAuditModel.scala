@@ -21,7 +21,7 @@ import auth.MtdItUserBase
 import models.calculation.AllowancesAndDeductions
 import play.api.libs.json.JsValue
 import utils.Utilities._
-import models.liabilitycalculation.AllowancesAndDeductionsViewModel
+import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 
 case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
                                                     aad: AllowancesAndDeductions,

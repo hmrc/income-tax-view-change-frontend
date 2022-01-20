@@ -16,15 +16,10 @@
 
 package views
 
-import enums.Estimate
-import models.calculation.CalcDisplayModel
-import models.liabilitycalculation.AllowancesAndDeductionsViewModel
+import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import testConstants.CalcBreakdownTestConstants
-import testConstants.CalcBreakdownTestConstants.allowancesAndDeductions
 import testConstants.MessagesLookUp.DeductionBreakdown
-import testConstants.NewCalcBreakdownTestConstants._
 import testUtils.ViewSpec
 import views.html.DeductionBreakdownNew
 

@@ -115,9 +115,8 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
     "newTaxCalcProxy is enabled" should {
       "return the correct income summary page" in {
-        When(s"I enable txmevents and newTaxCalcProxy feature switches")
+        When(s"I enable newTaxCalcProxy feature switch")
         enable(NewTaxCalcProxy)
-        enable(TxmEventsApproved)
 
         And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)

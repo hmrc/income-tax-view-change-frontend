@@ -37,26 +37,7 @@ case class Calculation(
                         taxCalculation: Option[TaxCalculation] = None
                       ) {
 
-  def getAllowancesAndDeductionsViewModel(): AllowancesAndDeductionsViewModel = {
-    AllowancesAndDeductionsViewModel(
-      personalAllowance = allowancesAndDeductions.flatMap(ad => ad.personalAllowance.map(pa => BigDecimal(pa))),
-      reducedPersonalAllowance = allowancesAndDeductions.flatMap(ad => ad.reducedPersonalAllowance.map(rpa => BigDecimal(rpa))),
-      personalAllowanceBeforeTransferOut = allowancesAndDeductions.flatMap(ad =>
-        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.personalAllowanceBeforeTransferOut))),
-      transferredOutAmount = allowancesAndDeductions.flatMap(ad =>
-        ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.transferredOutAmount))),
-      pensionContributions = allowancesAndDeductions.flatMap(ad => ad.pensionContributions),
-      lossesAppliedToGeneralIncome = allowancesAndDeductions.flatMap(ad => ad.lossesAppliedToGeneralIncome.map(la => BigDecimal(la))),
-      giftOfInvestmentsAndPropertyToCharity = allowancesAndDeductions.flatMap(ad =>
-        ad.giftOfInvestmentsAndPropertyToCharity.map(gift => BigDecimal(gift))),
-      grossAnnuityPayments = allowancesAndDeductions.flatMap(ad => ad.grossAnnuityPayments),
-      qualifyingLoanInterestFromInvestments = allowancesAndDeductions.flatMap(ad => ad.qualifyingLoanInterestFromInvestments),
-      postCessationTradeReceipts = allowancesAndDeductions.flatMap(ad => ad.postCessationTradeReceipts),
-      paymentsToTradeUnionsForDeathBenefits = allowancesAndDeductions.flatMap(ad => ad.paymentsToTradeUnionsForDeathBenefits),
-      totalAllowancesAndDeductions = taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions),
-      totalReliefs = taxCalculation.flatMap(tc => tc.incomeTax.totalReliefs)
-    )
-  }
+
 }
 
 object Calculation {

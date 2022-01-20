@@ -19,10 +19,11 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.{AllowanceAndDeductionsResponseAuditModel, AllowanceAndDeductionsResponseAuditModelNew}
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved, NewTaxCalcProxy}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
+import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -51,20 +52,11 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
     Authenticated.async { implicit request =>
       implicit user =>
 				if (isEnabled(NewTaxCalcProxy)) {
-					println("client nino is:" + getClientNino + " tax year:" + taxYear)
 					calculationService.getLiabilityCalculationDetail(getClientNino, taxYear).map {
 						case liabilityCalc: LiabilityCalculationResponse =>
-							liabilityCalc.calculation.flatMap(c => c.allowancesAndDeductions) match {
-								case None =>
-									Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data could be retrieved.")
-									itvcErrorHandler.showInternalServerError()
-								case Some(_) =>
-									val viewModel = liabilityCalc.calculation.map(c =>
-										c.getAllowancesAndDeductionsViewModel()).getOrElse(throw new Exception("deductions view model not found"))
-									auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(getMtdItUserWithNino(), viewModel))
-									Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
-							}
-
+							val viewModel = AllowancesAndDeductionsViewModel().getAllowancesAndDeductionsViewModel(liabilityCalc.calculation)
+							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(getMtdItUserWithNino(), viewModel))
+							Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
 						case _: LiabilityCalculationError =>
 							Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
 							itvcErrorHandler.showInternalServerError()

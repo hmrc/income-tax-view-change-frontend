@@ -27,7 +27,6 @@ import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockCalculationService
-import org.mockito.Mockito.reset
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
@@ -60,16 +59,31 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
   "showDeductionsSummary" when {
 
-    "NewTaxCalcProxy FS is enabled" should {
+    "NewTaxCalcProxy FS is enabled, all calc data available" should {
 
       lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
       lazy val document = result.toHtmlDocument
 
-      "render the IncomeBreakdown page" in {
+      "render the Allowances and Deductions page" in {
         enable(NewTaxCalcProxy)
-        mockCalculationSuccessNew()
+        mockCalculationSuccessFullNew()
         status(result) shouldBe Status.OK
         document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
+        document.getElementById("total-value").text() shouldBe "£17,500.99"
+      }
+    }
+
+    "NewTaxCalcProxy FS is enabled, no calc data available" should {
+
+      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
+
+      "render the Allowances and Deductions page" in {
+        enable(NewTaxCalcProxy)
+        mockCalculationSuccessMinimalNew()
+        status(result) shouldBe Status.OK
+        document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
+        document.getElementById("total-value").text() shouldBe "£0.00"
       }
     }
 
@@ -95,7 +109,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the IncomeBreakdown page" in {
+        "render the Allowances and deductions page" in {
           document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
         }
       }
