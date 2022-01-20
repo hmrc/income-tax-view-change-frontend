@@ -102,3 +102,11 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .no-wrap {
     white-space: nowrap;
 }
+
+.card-container {
+    margin-bottom: 2em;
+    padding: 1em 0.5em 1.5em;
+    background-color: #f8f8f8;
+    border: 1px solid #dee0e2;
+
+}

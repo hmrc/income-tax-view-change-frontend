@@ -94,7 +94,7 @@
     @tiles() = {
 
         <div class="grid-row">
-            <div class="flex-container">
+            <div class="flex-container govuk-!-padding-0">
 
                 <div class="card-container govuk-!-margin-right-6" id="cardAmount">
                     <div class="card-body" style="width: 440px; border-bottom: 0">
@@ -116,10 +116,10 @@
         </div>
 
         <div class="grid-row">
-            <div class="flex-container">
+            <div class="flex-container govuk-!-padding-0">
 
                 <div class="card-container govuk-!-margin-right-6" id="cardAmount">
-                    <div class="card-body" style="width: 440px; border-bottom: 0">
+                    <div class="card-body" style="width: 440px; height: 150px; border-bottom: 0">
                         <div class="govuk-grid-column-full">
                             @paymentHistoryAndCreditTile
                         </div>
@@ -127,7 +127,7 @@
                 </div>
 
                 <div class="card-container" id="cardAmount">
-                    <div class="card-body" style="width: 440px; border-bottom: 0">
+                    <div class="card-body" style="width: 440px; height: 150px; border-bottom: 0">
                         <div class="govuk-grid-column-full">
                             @returnsTile
                         </div>
@@ -141,55 +141,67 @@
 
     @customLayout = {
     @if(isAgent) {
-        @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
+        <div class="grid-row">
+            <div class="column-full">
+                @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
 
-        @p(classes = "govuk-hint margin-bottom-zero") {
-            @messages("home.utr", user.saUtr.getOrElse(""))
-            <br>
-            <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
-            @user.userName.map(_.name) @user.userName.map(_.lastName)
-        }
+                @p(classes = "govuk-hint margin-bottom-zero") {
+                    @messages("home.utr", user.saUtr.getOrElse(""))
+                    <br>
+                    <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
+                    @user.userName.map(_.name) @user.userName.map(_.lastName)
+                }
 
-        @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
-            @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
-        }
+                @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
+                    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+                }
 
-       @if(overDuePaymentsCount.isDefined) {
-            <div id="overdue-warning" class="grid-row">
-                <div class="column-full">
-               @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
-                </div>
+                @if(overDuePaymentsCount.isDefined) {
+                    <div id="overdue-warning" class="grid-row">
+                        <div class="column-full">
+                        @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
+                        </div>
+                    </div>
+                }
+
             </div>
-        }
+        </div>
 
         @tiles
 
     } else {
-        <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
-            <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
-            <span id="income-tax-heading">@messages("home.heading")</span>
-        </h1>
+        <div class="grid-row">
+            <div class="column-full">
 
-        @user.saUtr.map { utr =>
-            <div id="utr-reference-heading" class="form-hint heading-xl-addon">
-                @messages("home.utr", utr)
-            </div>
-        }
+                <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
+                    <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
+                    <span id="income-tax-heading">@messages("home.heading")</span>
+                </h1>
 
-       <div class="warning-wrapper">
-        @if(overDuePaymentsCount.getOrElse(0) > 0) {
-            <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
-                <div class="column-full">
-                    @govukWarningText(WarningText(
-                    iconFallbackText = "Warning",
-                    content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
-                    ))
+                @user.saUtr.map { utr =>
+                    <div id="utr-reference-heading" class="form-hint heading-xl-addon">
+                        @messages("home.utr", utr)
+                    </div>
+                }
+
+                <div class="warning-wrapper">
+                @if(overDuePaymentsCount.getOrElse(0) > 0) {
+                    <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
+                        <div class="column-full">
+                        @govukWarningText(WarningText(
+                            iconFallbackText = "Warning",
+                            content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
+                        ))
+                        </div>
+                    </div>
+                }
                 </div>
+
             </div>
-        }
         </div>
 
         @tiles
+
     }
     }
 
