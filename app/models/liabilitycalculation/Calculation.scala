@@ -35,10 +35,7 @@ case class Calculation(
                         dividendsIncome: Option[DividendsIncome] = None,
                         incomeSummaryTotals: Option[IncomeSummaryTotals] = None,
                         taxCalculation: Option[TaxCalculation] = None
-                      ) {
-
-
-}
+                      )
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
