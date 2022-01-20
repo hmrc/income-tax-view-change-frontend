@@ -20,7 +20,7 @@
 
 @(id: String, heading: String)(content: Html)(implicit messages: Messages)
 
-<div id="@{id}" class="tile tile-no-border">
+<div id="@{id}" class="tile">
 	<div class="tile-body">
 		@h2(classes = "govuk-heading-m", msg = heading)
 		@content
