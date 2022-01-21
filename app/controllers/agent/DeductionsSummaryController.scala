@@ -54,7 +54,7 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
 				if (isEnabled(NewTaxCalcProxy)) {
 					calculationService.getLiabilityCalculationDetail(getClientNino, taxYear).map {
 						case liabilityCalc: LiabilityCalculationResponse =>
-							val viewModel = AllowancesAndDeductionsViewModel().getAllowancesAndDeductionsViewModel(liabilityCalc.calculation)
+							val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
 							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(getMtdItUserWithNino(), viewModel))
 							Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
 						case _: LiabilityCalculationError =>

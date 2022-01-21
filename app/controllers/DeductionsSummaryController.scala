@@ -63,7 +63,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
         if (isEnabled(NewTaxCalcProxy)) {
           calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
-              val viewModel = AllowancesAndDeductionsViewModel().getAllowancesAndDeductionsViewModel(liabilityCalc.calculation)
+              val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))
               Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear)))
             case _: LiabilityCalculationError =>
