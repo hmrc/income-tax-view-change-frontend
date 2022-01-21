@@ -186,7 +186,7 @@
 
                 <div class="warning-wrapper">
                 @if(overDuePaymentsCount.getOrElse(0) > 0) {
-                    <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
+                    <div id="overdue-warning" class="flex-container govuk-!-padding-0">
                         <div class="column-full">
                         @govukWarningText(WarningText(
                             iconFallbackText = "Warning",
@@ -196,6 +196,7 @@
                     </div>
                 }
                 </div>
+
 
             </div>
         </div>
