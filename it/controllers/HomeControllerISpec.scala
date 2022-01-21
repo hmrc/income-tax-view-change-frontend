@@ -70,8 +70,8 @@ class HomeControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitle(title),
-          elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
-          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("6 OVERDUE PAYMENTS")
+          elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
+          elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )
 
         verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
@@ -113,8 +113,8 @@ class HomeControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitle(title),
-          elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
-          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("6 OVERDUE PAYMENTS")
+          elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
+          elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )
 
         verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)

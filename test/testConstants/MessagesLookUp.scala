@@ -125,10 +125,10 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     val updatesHeading = "Next updates due"
     val paymentsHeading = "Next payments due"
-    val updatesLink = "View next updates"
-    val paymentLink = "View what you owe"
-    val taxYearsHeading = "Tax years"
-    val taxYearsLink = "View tax years"
+    val updatesLink = "View update deadlines"
+    val paymentLink = "Check what you owe"
+    val taxYearsHeading = "Returns"
+    val taxYearsLink = "View all tax years"
     val viewPaymentslink = "View payment history"
     val yourIncomeTaxReturnHeading = "Your Income Tax return"
     val ManageYourIncomeTaxReturnHeading = "Manage Income Tax"
@@ -139,6 +139,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val saViewLandPServiceDescription = "Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax."
     val changeClientLink = "Change client"
     val backLink = "Back"
+    val paymentHistoryAndCreditHeading = "Payment history and credit"
+    val paymentHistoryAndCreditView = "Payment and refund history"
+
+    def viewPaymentsLinkWithDateRange(taxYear: Int): String = s"View your current ${taxYear - 1} to ${taxYear} return"
+    def viewUpdateAndSubmitLinkWithDateRange(taxYear: Int): String = s"Update and submit your ${taxYear - 1} to ${taxYear} return"
   }
 
   object IncomeBreakdown {

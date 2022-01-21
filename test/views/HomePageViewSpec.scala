@@ -171,52 +171,41 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
-    "have a tax years tile" which {
+    "have a returns tile" which {
       "has a heading" in new Setup {
-        getElementById("tax-years-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
+        getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
+      }
+      "has a link to the view payments page" in new Setup {
+        val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(currentTaxYear).url)
+        link.map(_.text) shouldBe Some(homeMessages.viewPaymentsLinkWithDateRange(currentTaxYear))
+      }
+      "has a link to the update and submit page" in new Setup {
+        val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
+        link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+        link.map(_.text) shouldBe Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
+      }
+      "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
+        val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
+        link.map(_.attr("href")) should not be  Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+        link.map(_.text) should not be Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
       }
       "has a link to the tax years page" in new Setup {
-        val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").first)
+        val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
         link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.viewTaxYears().url)
         link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
       }
-      "has a link to the view payments page" in new Setup {
-        val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").get(1))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.viewPaymentHistory().url)
-        link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
+    }
+
+    "have a payment history and credit tile" which {
+      "has a heading" in new Setup {
+        getElementById("payment-history-and-credit-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentHistoryAndCreditHeading)
       }
-
+      "has a link to the payment and refund history page" in new Setup {
+        val link: Option[Element] = getElementById("payment-history-and-credit-tile").map(_.select("a").first)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.viewPaymentHistory().url)
+        link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
+      }
     }
-  }
-
-  "have an your income tax returns tile" when {
-    "has a heading" in new Setup {
-      getElementById("manage-income-tax-tile").map(_.select("h2").text) shouldBe Some(homeMessages.ManageYourIncomeTaxReturnHeading)
-    }
-
-    "has a link to the send updates page" in new Setup {
-      val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
-      link.map(_.attr("href")) shouldBe Some(s"http://localhost:9302/update-and-submit-income-tax-return/$currentTaxYear/start")
-      document.getElementById("submit-your-returns").text() shouldBe homeMessages.submitYourReturnsLink
-    }
-
-    "has a link to the saViewLandPService" in new Setup {
-      val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
-      link.map(_.attr("href")) shouldBe Some("http://localhost:8930/self-assessment/ind/1234567890/account")
-      document.getElementById("saViewLandPService").text() shouldBe homeMessages.saViewLandPServiceLink
-    }
-
-
-    "has no link to the saViewLandPService when FS is OFF" in new Setup(ITSASubmissionIntegrationEnabled = false) {
-      val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
-      link.map(_.attr("href")) shouldBe None
-
-    }
-
-    "has no link to the saViewLandPService when FS is ON but saUTR is not defined" in new Setup(utr = None) {
-      val link: Option[Elements] = getElementById("saViewLandPService").map(_.select("h3"))
-      link.map(_.attr("h3")) shouldBe Some("")
-    }
-
   }
 }
