@@ -120,7 +120,7 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
           totalIncomeReceived = Some(12500)
         )
 
-        Calculation.getIncomeBreakdownViewModel(successModelFull.calculation.get) shouldBe expectedIncomeBreakdownViewModel
+        Calculation.getIncomeBreakdownViewModel(liabilityCalculationModelSuccessFull.calculation.get) shouldBe expectedIncomeBreakdownViewModel
       }
     }
 
