@@ -78,15 +78,11 @@ home.overdue.date.update.count                                  = {0} OVERDUE UP
 home.overdue.date                                               = OVERDUE
 home.tax-years.heading                                          = Returns
 home.tax-years.view                                             = View all tax years
-home.tax-years.viewPayments                                     = View payment history
 home.your-returns.heading                                       = Manage Income Tax
 home.your-returns.description                                   = Use this service to report untaxed income and any tax relief you’re claiming
 home.your-returns.agent.description                             = Use this service to report untaxed income and any tax relief you’re claiming.
 home.your-returns.updatesLink                                   = Update and submit your {0} to {1} return
 home.returns.viewLink                                           = View your current {0} to {1} return
-home.update-and-submit-your-returns.Link                        = Update and submit an Income Tax Return
-home.self-assessment.updatesLink                                = View your Self Assessment tax years
-home.view-self-assessment.Link                                  = View your Self Assessment tax years
 home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
 
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.

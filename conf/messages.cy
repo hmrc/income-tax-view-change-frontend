@@ -61,16 +61,13 @@ home.your-returns.description                                   = Defnyddiwch y 
 home.tax-years.view                                             = Bwrw golwg dros bob blwyddyn dreth
 home.paymentHistoryAndCredit.heading                            = Hanes taliadau a chredydau
 home.paymentHistoryAndCredit.view                               = Hanes taliadau ac ad-daliadau
-home.tax-years.viewPayments                                     = Bwrw golwg dros hanes eich taliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
-home.update-and-submit-your-returns.Link                        = Diweddaru a chyflwyno Ffurflen Treth Incwm
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.overdue.message.dunningLock.false                          = Mae gennych daliadau sy’n hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
-home.self-assessment.updatesLink                                = Bwrw golwg dros eich blynyddoedd treth ar gyfer Hunanasesiad
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
 
 
