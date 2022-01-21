@@ -16,8 +16,8 @@
 
 package models.liabilitycalculation
 
+import models.liabilitycalculation.taxcalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
-import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
 
 case class Calculation(

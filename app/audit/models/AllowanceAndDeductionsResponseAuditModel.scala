@@ -21,6 +21,7 @@ import auth.MtdItUserBase
 import models.calculation.AllowancesAndDeductions
 import play.api.libs.json.JsValue
 import utils.Utilities._
+import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 
 case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
                                                     aad: AllowancesAndDeductions,
@@ -46,5 +47,25 @@ case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
         ("personalAllowance", aad.personalAllowance) ++
         ("pensionContributions", aad.totalPensionContributions)
     }
+  }
+}
+
+case class AllowanceAndDeductionsResponseAuditModelNew(mtdItUser: MtdItUserBase[_],
+                                                       viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
+
+  override val transactionName: String = "allowances-deductions-details-response"
+  override val auditType: String = "AllowancesDeductionsDetailsResponse"
+
+  override val detail: JsValue = {
+    userAuditDetails(mtdItUser) ++
+      ("personalAllowance", viewModel.personalAllowance) ++
+      ("pensionContributions", viewModel.pensionContributions) ++
+      ("lossRelief", viewModel.lossesAppliedToGeneralIncome) ++
+      ("giftsToCharity", viewModel.giftOfInvestmentsAndPropertyToCharity) ++
+      ("annualPayments", viewModel.grossAnnuityPayments) ++
+      ("qualifyingLoanInterest", viewModel.qualifyingLoanInterestFromInvestments) ++
+      ("postCessationTradeReceipts", viewModel.postCessationTradeReceipts) ++
+      ("tradeUnionPayments", viewModel.paymentsToTradeUnionsForDeathBenefits) ++
+      ("marriageAllowanceTransfer", viewModel.transferredOutAmount)
   }
 }

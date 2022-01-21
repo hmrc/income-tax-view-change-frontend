@@ -179,7 +179,7 @@ class HomeControllerSpec extends TestSupport
 						contentType(result) shouldBe Some(HTML)
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 15 May 2021"
+						document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 15 May 2021"
 						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
 					}
 					"display the home page with right details and without dunning lock warning and one overdue payment from CESA" in new Setup {
@@ -198,7 +198,7 @@ class HomeControllerSpec extends TestSupport
 						contentType(result) shouldBe Some(HTML)
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+						document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
 					}
 					"display the home page with right details and with dunning lock warning and two overdue payments" in new Setup {
 
@@ -216,7 +216,7 @@ class HomeControllerSpec extends TestSupport
 						contentType(result) shouldBe Some(HTML)
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+						document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
 						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
 					}
 					"display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in new Setup {
@@ -236,7 +236,7 @@ class HomeControllerSpec extends TestSupport
 						contentType(result) shouldBe Some(HTML)
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "3 OVERDUE PAYMENTS"
+						document.select("#payments-tile p:nth-child(2)").text shouldBe "3 OVERDUE PAYMENTS"
 						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
 					}
 					"display the home page with right details and with dunning lock warning and one overdue payments from CESA" in new Setup {
@@ -255,7 +255,7 @@ class HomeControllerSpec extends TestSupport
 						contentType(result) shouldBe Some(HTML)
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+						document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
 						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
 					}
 					"display the home page with right details and without dunning lock warning and one overdue payments from CESA" in new Setup {
@@ -274,7 +274,7 @@ class HomeControllerSpec extends TestSupport
 						contentType(result) shouldBe Some(HTML)
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.agentTitle
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+						document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
 						document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
 					}
 				}

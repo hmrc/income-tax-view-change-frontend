@@ -107,7 +107,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitle("Payment history - Business Tax account - GOV.UK")
+        pageTitle("Payment and refund history - Business Tax account - GOV.UK")
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
@@ -125,7 +125,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitle("Payment history - Business Tax account - GOV.UK")
+        pageTitle("Payment and refund history - Business Tax account - GOV.UK")
       )
 
       verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)

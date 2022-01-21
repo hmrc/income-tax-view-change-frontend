@@ -204,8 +204,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							result should have(
 								httpStatus(OK),
 								pageTitle(agentTitle),
-								elementTextBySelector("#updates-tile > div > p:nth-child(2)")(LocalDate.now.toLongDate),
-								elementTextBySelector("#payments-tile > div > p:nth-child(2)")(LocalDate.now.toLongDate),
+								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
+								elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 							)
 
@@ -273,8 +273,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							result should have(
 								httpStatus(OK),
 								pageTitle(agentTitle),
-								elementTextBySelector("#updates-tile > div > p:nth-child(2)")(LocalDate.now.toLongDate),
-								elementTextBySelector("#payments-tile > div > p:nth-child(2)")(LocalDate.now.toLongDate),
+								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
+								elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 							)
 
@@ -344,8 +344,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							result should have(
 								httpStatus(OK),
 								pageTitle(agentTitle),
-								elementTextBySelector("#updates-tile > div > p:nth-child(2)")(LocalDate.now.toLongDate),
-								elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due"),
+								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
+								elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 							)
 
@@ -414,8 +414,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								result should have(
 									httpStatus(OK),
 									pageTitle(agentTitle),
-									elementTextBySelector("#updates-tile > div > p:nth-child(2)")(LocalDate.now.toLongDate),
-									elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due"),
+									elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
+									elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 								)
 
@@ -485,8 +485,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								result should have(
 									httpStatus(OK),
 									pageTitle(agentTitle),
-									elementTextBySelector("#updates-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-									elementTextBySelector("#payments-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
+									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
+									elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 								)
 
@@ -554,8 +554,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								result should have(
 									httpStatus(OK),
 									pageTitle(agentTitle),
-									elementTextBySelector("#updates-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-									elementTextBySelector("#payments-tile > div > p:nth-child(2)")(s"2 OVERDUE PAYMENTS"),
+									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
+									elementTextBySelector("#payments-tile p:nth-child(2)")(s"2 OVERDUE PAYMENTS"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 								)
 
@@ -625,8 +625,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 								result should have(
 									httpStatus(OK),
 									pageTitle(agentTitle),
-									elementTextBySelector("#updates-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-									elementTextBySelector("#payments-tile > div > p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
+									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
+									elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 								)
 
@@ -713,8 +713,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							result should have(
 								httpStatus(OK),
 								pageTitle(agentTitle),
-								elementTextBySelector("#updates-tile > div > p:nth-child(2)")("2 OVERDUE UPDATES"),
-								elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS"),
+								elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
+								elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 							)
 
@@ -800,8 +800,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 							result should have(
 								httpStatus(OK),
 								pageTitle(agentTitle),
-								elementTextBySelector("#updates-tile > div > p:nth-child(2)")("2 OVERDUE UPDATES"),
-								elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS"),
+								elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
+								elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
 							)
 
