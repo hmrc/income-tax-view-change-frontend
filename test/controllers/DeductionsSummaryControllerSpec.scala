@@ -22,7 +22,7 @@ import testConstants.EstimatesTestConstants.testYear
 import audit.mocks.MockAuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUserWithNino
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAuthenticationPredicate
@@ -44,6 +44,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     mockAuditingService,
     app.injector.instanceOf[views.html.DeductionBreakdown],
+    app.injector.instanceOf[views.html.DeductionBreakdownNew],
     app.injector.instanceOf[ItvcErrorHandler]
   )(
     appConfig,
@@ -51,70 +52,102 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     ec,
     languageUtils
   )
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disable(NewTaxCalcProxy)
+  }
 
   "showDeductionsSummary" when {
 
-      "given a tax year which can be found in ETMP with TxmApproved FS enabled" should {
+    "NewTaxCalcProxy FS is enabled, all calc data available" should {
 
-          lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
+      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
 
-          "return Status OK (200) with TxmApproved FS enabled" in {
-            enable(TxmEventsApproved)
-            mockCalculationSuccess()
-            status(result) shouldBe Status.OK
+      "render the Allowances and Deductions page" in {
+        enable(NewTaxCalcProxy)
+        mockCalculationSuccessFullNew()
+        status(result) shouldBe Status.OK
+        document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
+        document.getElementById("total-value").text() shouldBe "£17,500.99"
+      }
+    }
 
-            val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
-              saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
+    "NewTaxCalcProxy FS is enabled, no calc data available" should {
 
-            verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
-              calculationDataSuccessModel.allowancesAndDeductions, true))
-          }
+      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
 
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
+      "render the Allowances and Deductions page" in {
+        enable(NewTaxCalcProxy)
+        mockCalculationSuccessMinimalNew()
+        status(result) shouldBe Status.OK
+        document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
+        document.getElementById("total-value").text() shouldBe "£0.00"
+      }
+    }
 
-          "render the IncomeBreakdown page" in {
-            document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
-          }
-        }
-        "given a tax year which can be found in ETMP with TxmApproved FS disabled" should {
-          lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+    "given a tax year which can be found in ETMP with TxmApproved FS enabled" should {
 
-          "return Status OK (200) with TxmApproved FS false" in {
-            disable(TxmEventsApproved)
-            mockCalculationSuccess()
-            status(result) shouldBe Status.OK
+        lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
 
-            val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
-              saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
-            verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
-              calculationDataSuccessModel.allowancesAndDeductions, false))
-          }
-        }
-        "given a tax year which can not be found in ETMP" should {
+        "return Status OK (200) with TxmApproved FS enabled" in {
+          enable(TxmEventsApproved)
+          mockCalculationSuccess()
+          status(result) shouldBe Status.OK
 
-          lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+          val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
+            saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
-          "return Status Internal Server Error (500)" in {
-            mockCalculationNotFound()
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-
+          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
+            calculationDataSuccessModel.allowancesAndDeductions, true))
         }
 
-        "there is a downstream error" should {
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
 
-          lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
-
-          "return Status Internal Server Error (500)" in {
-            mockCalculationError()
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
+        "render the Allowances and deductions page" in {
+          document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
         }
       }
+      "given a tax year which can be found in ETMP with TxmApproved FS disabled" should {
+        lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+
+        "return Status OK (200) with TxmApproved FS false" in {
+          disable(TxmEventsApproved)
+          mockCalculationSuccess()
+          status(result) shouldBe Status.OK
+
+          val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
+            saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
+          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
+            calculationDataSuccessModel.allowancesAndDeductions, false))
+        }
+      }
+      "given a tax year which can not be found in ETMP" should {
+
+        lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+
+        "return Status Internal Server Error (500)" in {
+          mockCalculationNotFound()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+      }
+
+      "there is a downstream error" should {
+
+        lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+
+        "return Status Internal Server Error (500)" in {
+          mockCalculationError()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+    }
   }
 
 

@@ -21,7 +21,8 @@ import connectors.{IncomeTaxCalculationConnector, IndividualCalculationsConnecto
 import enums.{Crystallised, Estimate}
 
 import javax.inject.{Inject, Singleton}
-import models.calculation._
+import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound, CalcDisplayResponseModel,
+  Calculation, CalculationErrorModel, CalculationResponseModel}
 import models.liabilitycalculation.LiabilityCalculationResponseModel
 import play.api.Logger
 import play.api.http.Status
