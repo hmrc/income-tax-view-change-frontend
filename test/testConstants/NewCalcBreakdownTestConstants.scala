@@ -24,6 +24,10 @@ object NewCalcBreakdownTestConstants {
   val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
 
   val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = None
+    )),
+    messages = None,
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
@@ -32,6 +36,10 @@ object NewCalcBreakdownTestConstants {
   )
 
   val liabilityCalculationModelDeductionsMinimal2 = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = None
+    )),
+    messages = None,
     calculation = None,
     metadata = Metadata(
       calculationTimestamp = "2019-02-15T09:35:15.094Z",
@@ -39,6 +47,14 @@ object NewCalcBreakdownTestConstants {
   )
 
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = Some(true)
+    )),
+    messages = Some(Messages(
+      info = Some(Seq(Message(id = "infoId1", text = "info msg text1"))),
+      warnings = Some(Seq(Message(id = "warnId1", text = "warn msg text1"))),
+      errors = Some(Seq(Message(id = "errorId1", text = "error msg text1")))
+    )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
         personalAllowance = Some(12500),

@@ -17,19 +17,22 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.TaxCalculationDetailsResponseAuditModel
+import audit.models.{AllowanceAndDeductionsResponseAuditModelNew, TaxCalculationDetailsResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.calculation._
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxCalcBreakdown
+import views.html.TaxCalcBreakdownNew
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,6 +45,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
                                         calculationService: CalculationService,
                                         itvcErrorHandler: ItvcErrorHandler,
                                         taxCalcBreakdown: TaxCalcBreakdown,
+                                        taxCalcBreakdownNew: TaxCalcBreakdownNew,
                                         val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
@@ -55,20 +59,31 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
 
     action.async {
       implicit user => {
-        calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
-          case calcDisplayModel: CalcDisplayModel =>
-            if (isEnabled(TxmEventsApproved)) {
+        if (isEnabled(NewTaxCalcProxy)) {
+          calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
+            case liabilityCalc: LiabilityCalculationResponse =>
+              val viewModel = TaxDueSummaryViewModel().getTaxDueSummaryViewModel(liabilityCalc.calculation)
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear))
-            }
-            Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+              Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
+            case _: LiabilityCalculationError =>
+              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+              itvcErrorHandler.showInternalServerError()
+        } else {
+          calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
+            case calcDisplayModel: CalcDisplayModel =>
+              if (isEnabled(TxmEventsApproved)) {
+                auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear))
+              }
+              Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
-          case CalcDisplayNoDataFound =>
-            Logger("application").warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
-            Future.successful(itvcErrorHandler.showInternalServerError())
+            case CalcDisplayNoDataFound =>
+              Logger("application").warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
+              Future.successful(itvcErrorHandler.showInternalServerError())
 
-          case CalcDisplayError =>
-            Logger("application").error(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
-            Future.successful(itvcErrorHandler.showInternalServerError())
+            case CalcDisplayError =>
+              Logger("application").error(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
+              Future.successful(itvcErrorHandler.showInternalServerError())
+          }
         }
       }
     }

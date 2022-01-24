@@ -21,19 +21,48 @@ import play.api.libs.json._
 sealed trait LiabilityCalculationResponseModel
 
 case class LiabilityCalculationError(status: Int, message: String) extends LiabilityCalculationResponseModel
+
 object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-case class LiabilityCalculationResponse(metadata: Metadata,
-                                        calculation: Option[Calculation]
+case class LiabilityCalculationResponse(
+                                         inputs: Inputs,
+                                         metadata: Metadata,
+                                         messages: Option[Messages],
+                                         calculation: Option[Calculation]
                                        ) extends LiabilityCalculationResponseModel
+
 object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
 }
 
 case class Metadata(calculationTimestamp: String, crystallised: Boolean)
+
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]
 }
 
+case class Inputs(personalInformation: PersonalInformation)
+
+object Inputs {
+  implicit val format: OFormat[Inputs] = Json.format[Inputs]
+}
+
+case class PersonalInformation(taxRegime: String, class2VoluntaryContributions: Option[Boolean])
+
+object PersonalInformation {
+  implicit val format: OFormat[PersonalInformation] = Json.format[PersonalInformation]
+}
+
+case class Message(id: String, text: String)
+
+object Message {
+  implicit val format: OFormat[Message] = Json.format[Message]
+}
+
+case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None)
+
+object Messages {
+  implicit val format: OFormat[Messages] = Json.format[Messages]
+}

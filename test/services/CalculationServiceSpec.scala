@@ -22,13 +22,19 @@ import testConstants.EstimatesTestConstants._
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.{MockIncomeTaxCalculationConnector, MockIndividualCalculationsConnector}
 import models.calculation._
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, Metadata}
+import models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import play.api.http.Status
 import testUtils.TestSupport
 
 class CalculationServiceSpec extends TestSupport with MockIndividualCalculationsConnector with MockIncomeTaxCalculationConnector with FeatureSwitching {
 
-  val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(Metadata("2019-02-15T09:35:15.094Z", false), None)
+  val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = None
+    )),
+    messages = None,
+    metadata = Metadata("2019-02-15T09:35:15.094Z", false),
+    calculation = None)
   val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
 
