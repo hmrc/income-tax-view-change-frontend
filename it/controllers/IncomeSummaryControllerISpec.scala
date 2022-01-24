@@ -16,8 +16,9 @@
 
 package controllers
 
-import java.time.LocalDateTime
+import config.featureswitch.NewTaxCalcProxy
 
+import java.time.LocalDateTime
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -25,44 +26,82 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
 import testConstants.messages.{IncomeSummaryMessages => messages}
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
-  "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
+  "newTaxCalcProxy is disabled" should {
+    "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
 
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
-      "return the correct income summary page" in {
+      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
+        "return the correct income summary page" in {
+          disable(NewTaxCalcProxy)
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
 
-        And("I stub a successful calculation response for 2017-18")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
+          When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
+          val res = IncomeTaxViewChangeFrontend.getIncomeSummary(testYear)
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
-        val res = IncomeTaxViewChangeFrontend.getIncomeSummary(testYear)
+          verifyIncomeSourceDetailsCall(testMtditid, 0)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-        verifyIncomeSourceDetailsCall(testMtditid, 0)
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-
-        res should have(
-          httpStatus(OK),
-          pageTitle(messages.incomeSummaryTitle),
-          elementTextBySelector("h1")(messages.incomeSummaryHeading)
-        )
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.incomeSummaryTitle),
+            elementTextBySelector("h1")(messages.incomeSummaryHeading)
+          )
+        }
       }
+
+      unauthorisedTest("/calculation/" + testYear + "/income")
+
     }
+  }
 
-    unauthorisedTest("/calculation/" + testYear + "/income")
+  "newTaxCalcProxy is enabled" should {
+    "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
 
+      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
+        "return the correct income summary page" in {
+          enable(NewTaxCalcProxy)
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+          And("I stub a successful calculation response for 2017-18")
+
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
+            status = OK,
+            body = liabilityCalculationModelSuccessFull
+          )
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
+          val res = IncomeTaxViewChangeFrontend.getIncomeSummary(testYear)
+
+          verifyIncomeSourceDetailsCall(testMtditid, 0)
+          IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
+
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.incomeSummaryTitle),
+            elementTextBySelector("h1")(messages.incomeSummaryHeading)
+          )
+        }
+      }
+
+      unauthorisedTest("/calculation/" + testYear + "/income")
+
+    }
   }
 }

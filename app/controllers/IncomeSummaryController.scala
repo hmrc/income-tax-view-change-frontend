@@ -23,18 +23,21 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.calculation._
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.IncomeBreakdownOld
+import views.html.{IncomeBreakdown, IncomeBreakdownOld}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownOld,
+                                        val incomeBreakdown: IncomeBreakdown,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val authenticate: AuthenticationPredicate,
                                         val retrieveNino: NinoPredicate,
@@ -55,6 +58,23 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
   def showIncomeSummary(taxYear: Int): Action[AnyContent] =
     action.async {
       implicit user =>
+        if (isEnabled(NewTaxCalcProxy)) {
+          calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
+            case liabilityCalc: LiabilityCalculationResponse =>
+              val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
+              viewModel match {
+                case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl(taxYear), isAgent = false))
+                case _ =>
+                  Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
+                  itvcErrorHandler.showInternalServerError()
+              }
+
+            case _: LiabilityCalculationError =>
+              Logger("application").error(
+                s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No new calc income data error found. Downstream error")
+              itvcErrorHandler.showInternalServerError()
+          }
+        } else {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
               Future.successful(Ok(incomeBreakdownOld(calcDisplayModel, taxYear, backUrl(taxYear))))
@@ -67,9 +87,9 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
               Logger("application").error(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Downstream error")
               Future.successful(itvcErrorHandler.showInternalServerError())
           }
+        }
     }
 
   def backUrl(taxYear: Int): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url
-
 
 }

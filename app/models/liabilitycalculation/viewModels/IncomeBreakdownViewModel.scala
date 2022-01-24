@@ -16,26 +16,61 @@
 
 package models.liabilitycalculation.viewModels
 
+import models.liabilitycalculation.Calculation
+
 case class IncomeBreakdownViewModel(
-                                     totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal],
-                                     totalBenefitsInKind: Option[BigDecimal],
-                                     totalEmploymentExpenses: Option[BigDecimal],
-                                     totalSelfEmploymentProfit: Option[BigDecimal],
-                                     totalPropertyProfit: Option[BigDecimal],
-                                     totalFHLPropertyProfit: Option[BigDecimal],
-                                     totalForeignPropertyProfit: Option[BigDecimal],
-                                     totalEeaFhlProfit: Option[BigDecimal],
-                                     chargeableForeignDividends: Option[BigDecimal],
-                                     chargeableForeignSavingsAndGains: Option[BigDecimal],
-                                     chargeableOverseasPensionsStateBenefitsRoyalties: Option[BigDecimal],
-                                     chargeableAllOtherIncomeReceivedWhilstAbroad: Option[BigDecimal],
-                                     totalOverseasIncomeAndGains: Option[BigDecimal],
-                                     totalForeignBenefitsAndGifts: Option[BigDecimal],
-                                     savingsAndGainsTaxableIncome: Option[BigDecimal],
-                                     totalOfAllGains: Option[BigDecimal],
-                                     dividendsTaxableIncome: Option[BigDecimal],
-                                     totalOccupationalPensionIncome: Option[BigDecimal],
-                                     totalStateBenefitsIncome: Option[BigDecimal],
-                                     totalShareSchemesIncome: Option[BigDecimal],
-                                     totalIncomeReceived: Option[BigDecimal]
+                                     totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
+                                     totalBenefitsInKind: Option[BigDecimal] = None,
+                                     totalEmploymentExpenses: Option[BigDecimal] = None,
+                                     totalSelfEmploymentProfit: Option[BigDecimal] = None,
+                                     totalPropertyProfit: Option[BigDecimal] = None,
+                                     totalFHLPropertyProfit: Option[BigDecimal] = None,
+                                     totalForeignPropertyProfit: Option[BigDecimal] = None,
+                                     totalEeaFhlProfit: Option[BigDecimal] = None,
+                                     chargeableForeignDividends: Option[BigDecimal] = None,
+                                     chargeableForeignSavingsAndGains: Option[BigDecimal] = None,
+                                     chargeableOverseasPensionsStateBenefitsRoyalties: Option[BigDecimal] = None,
+                                     chargeableAllOtherIncomeReceivedWhilstAbroad: Option[BigDecimal] = None,
+                                     totalOverseasIncomeAndGains: Option[BigDecimal] = None,
+                                     totalForeignBenefitsAndGifts: Option[BigDecimal] = None,
+                                     savingsAndGainsTaxableIncome: Option[BigDecimal] = None,
+                                     totalOfAllGains: Option[BigDecimal] = None,
+                                     dividendsTaxableIncome: Option[BigDecimal] = None,
+                                     totalOccupationalPensionIncome: Option[BigDecimal] = None,
+                                     totalStateBenefitsIncome: Option[BigDecimal] = None,
+                                     totalShareSchemesIncome: Option[BigDecimal] = None,
+                                     totalIncomeReceived: Option[BigDecimal] = None
                                    )
+
+object IncomeBreakdownViewModel {
+  def apply(calcOpt: Option[Calculation]): Option[IncomeBreakdownViewModel] = {
+    calcOpt match {
+      case Some(c) =>
+        Some(IncomeBreakdownViewModel(
+          totalPayeEmploymentAndLumpSumIncome = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalPayeEmploymentAndLumpSumIncome),
+          totalBenefitsInKind = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalBenefitsInKind),
+          totalEmploymentExpenses = c.employmentExpenses.flatMap(ee => ee.totalEmploymentExpenses),
+          totalSelfEmploymentProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalSelfEmploymentProfit) map { i => i: BigDecimal },
+          totalPropertyProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalPropertyProfit) map { i => i: BigDecimal },
+          totalFHLPropertyProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalFHLPropertyProfit) map { i => i: BigDecimal },
+          totalForeignPropertyProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalForeignPropertyProfit) map { i => i: BigDecimal },
+          totalEeaFhlProfit = c.incomeSummaryTotals.flatMap(ist => ist.totalEeaFhlProfit) map { i => i: BigDecimal },
+          chargeableForeignDividends = c.dividendsIncome.flatMap(di => di.chargeableForeignDividends) map { i => i: BigDecimal },
+          chargeableForeignSavingsAndGains = c.savingsAndGainsIncome.flatMap(sagi => sagi.chargeableForeignSavingsAndGains) map { i => i: BigDecimal },
+          chargeableOverseasPensionsStateBenefitsRoyalties = c.foreignIncome.flatMap(fi => fi.chargeableOverseasPensionsStateBenefitsRoyalties),
+          chargeableAllOtherIncomeReceivedWhilstAbroad = c.foreignIncome.flatMap(fi => fi.chargeableAllOtherIncomeReceivedWhilstAbroad),
+          totalOverseasIncomeAndGains = c.foreignIncome.flatMap(fi => fi.overseasIncomeAndGains.flatMap(oiag => Some(oiag.gainAmount))),
+          totalForeignBenefitsAndGifts = c.foreignIncome.flatMap(fi => fi.totalForeignBenefitsAndGifts),
+          savingsAndGainsTaxableIncome = c.taxCalculation.flatMap(tc =>
+            Some(tc.incomeTax).flatMap(it => it.savingsAndGains.flatMap(sag => Some(sag.taxableIncome)))),
+          totalOfAllGains = c.chargeableEventGainsIncome.flatMap(cegi => Some(cegi.totalOfAllGains)),
+          dividendsTaxableIncome = c.taxCalculation.flatMap(tc => Some(tc.incomeTax).flatMap(it => it.dividends.flatMap(d => Some(d.taxableIncome)))),
+          totalOccupationalPensionIncome = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalOccupationalPensionIncome),
+          totalStateBenefitsIncome = c.stateBenefitsIncome.flatMap(sbi => sbi.totalStateBenefitsIncome),
+          totalShareSchemesIncome = c.shareSchemesIncome.flatMap(ssi => Some(ssi.totalIncome)),
+          totalIncomeReceived = c.taxCalculation.flatMap(tc => Some(tc.incomeTax).flatMap(it => Some(it.totalIncomeReceivedFromAllSources)))
+        ))
+      case _ => None
+    }
+  }
+}
