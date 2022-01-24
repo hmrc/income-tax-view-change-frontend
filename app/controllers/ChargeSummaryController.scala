@@ -22,9 +22,8 @@ import auth.MtdItUser
 import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, PaymentsWithChargeType}
@@ -46,7 +45,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         auditingService: AuditingService,
                                         itvcErrorHandler: ItvcErrorHandler,
                                         incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                        chargeSummaryView: ChargeSummary)
+                                        chargeSummaryView: ChargeSummary,
+                                        retrievebtaNavPartial: BtaNavBarPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
@@ -54,7 +54,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
   extends BaseController with FeatureSwitching with I18nSupport {
 
   def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial).async {
       implicit user =>
         financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
           val payments = financialResponses.collect {
@@ -108,7 +108,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
           chargeHistoryEnabled = isEnabled(ChargeHistory),
           paymentAllocationEnabled = paymentAllocationEnabled,
           latePaymentInterestCharge = isLatePaymentCharge,
-          codingOutEnabled = isEnabled(CodingOut)
+          codingOutEnabled = isEnabled(CodingOut),
+          btaNavPartial = user.btaNavPartial
         ))
       case _ =>
         Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")

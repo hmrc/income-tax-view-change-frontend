@@ -39,6 +39,7 @@
     currentTaxYear: Int,
     backUrl: String,
     utr: Option[String],
+    btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
     displayTotals: Boolean,
@@ -210,7 +211,8 @@
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial
 ) {
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
     @if(chargesList.isChargesListEmpty) {

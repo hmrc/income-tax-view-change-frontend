@@ -32,7 +32,8 @@
       link: link
 )
 
-@(payments: List[Payment], backUrl: String, saUtr: Option[String], isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(payments: List[Payment], backUrl: String, saUtr: Option[String], isAgent: Boolean = false ,
+btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @groupedPayments = @{
@@ -50,7 +51,8 @@
 @mainTemplate(
     pageTitle = messages("paymentHistory.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial
 ) {
 
 

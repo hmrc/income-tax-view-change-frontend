@@ -47,13 +47,15 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                           retrieveNino: NinoPredicate,
                                           nextUpdatesService: NextUpdatesService,
+                                          val retrieveBtaNavBar: BtaNavBarPredicate,
                                           val auditingService: AuditingService)
                                      (implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSourcesNoCache
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
+    retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
 
   private def view(taxYear: Int,
                    calculationOverview: Option[CalcOverview] = None,
@@ -67,7 +69,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
       charges = charge,
       obligations,
       backUrl = backUrl,
-        codingOutEnabled = codingOutEnabled
+      codingOutEnabled = codingOutEnabled,
+      btaNavPartial = user.btaNavPartial
     )
   }
 

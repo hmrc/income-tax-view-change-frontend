@@ -21,15 +21,15 @@ import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.core.Nino
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.PaymentAllocationsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.PaymentAllocation
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -40,13 +40,15 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              itvcErrorHandler: ItvcErrorHandler,
                                              paymentAllocations: PaymentAllocationsService,
+                                             val retrieveBtaNavBar: BtaNavBarPredicate,
                                              auditingService: AuditingService)
                                             (implicit mcc: MessagesControllerComponents,
                                              ec: ExecutionContext,
                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar)
 
   lazy val backUrl: String = controllers.routes.PaymentHistoryController.viewPaymentHistory().url
 

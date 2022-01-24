@@ -42,13 +42,16 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
                                         calculationService: CalculationService,
                                         itvcErrorHandler: ItvcErrorHandler,
                                         taxCalcBreakdown: TaxCalcBreakdown,
+                                        retrieveBtaNavPartial: BtaNavBarPredicate,
                                         val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
-                                        val executionContext: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                        val executionContext: ExecutionContext
+                                       ) extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen
+    retrieveIncomeSources andThen retrieveBtaNavPartial
 
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = {
@@ -60,7 +63,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear))
             }
-            Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
+            Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial)))
 
           case CalcDisplayNoDataFound =>
             Logger("application").warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")

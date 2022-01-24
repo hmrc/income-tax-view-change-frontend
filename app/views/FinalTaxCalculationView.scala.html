@@ -33,7 +33,7 @@
       govukInsetText : GovukInsetText
 )
 
-@(overview: CalcOverview, taxYear: Int, isAgent: Boolean = false, backUrl: String)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
+@(overview: CalcOverview, taxYear: Int, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
 
 @headingText = @{
     val key = s"final-tax-overview.${if(isAgent) "agent" else "individual"}.heading"
@@ -61,7 +61,8 @@
 @layout(
     pageTitle = headingText,
     backUrl = Some(backUrl),
-    itsaTaxYear = Some(taxYear)
+    itsaTaxYear = Some(taxYear),
+    btaNavPartial = btaNavPartial
 ) {
     @h1Caption(headingText, Some(subHeadingText))
 

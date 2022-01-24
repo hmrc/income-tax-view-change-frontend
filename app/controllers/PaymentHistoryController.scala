@@ -21,14 +21,14 @@ import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.PaymentHistoryService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.PaymentHistory
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,6 +38,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val retrieveNino: NinoPredicate,
                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                          auditingService: AuditingService,
+                                         retrieveBtaNavBar: BtaNavBarPredicate,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService)
                                         (implicit mcc: MessagesControllerComponents,
@@ -45,7 +46,8 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
-  def action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  def action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar)
 
   val viewPaymentHistory: Action[AnyContent] = action.async {
     implicit user =>

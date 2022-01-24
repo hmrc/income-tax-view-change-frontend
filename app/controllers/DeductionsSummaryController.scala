@@ -46,6 +46,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
                                             val deductionBreakdownViewNew: DeductionBreakdownNew,
+                                            val retrieveBtaNavBar: BtaNavFromNinoPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
@@ -53,7 +54,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val languageUtils: LanguageUtils)
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
+  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
 
 
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] = {
@@ -75,7 +76,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
             case calcDisplayModel: CalcDisplayModel =>
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
                 calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
-              Ok(deductionBreakdownView(calcDisplayModel, taxYear, backUrl(taxYear)))
+              Ok(deductionBreakdownView(calcDisplayModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial))
 
             case CalcDisplayNoDataFound =>
               Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")

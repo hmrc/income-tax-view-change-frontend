@@ -140,70 +140,70 @@
     }
 
     @customLayout = {
-    @if(isAgent) {
-        <div class="grid-row">
+        @if(isAgent) {
+            <div class="grid-row">
             <div class="column-full">
                 @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
 
-                @p(classes = "govuk-hint margin-bottom-zero") {
-                    @messages("home.utr", user.saUtr.getOrElse(""))
-                    <br>
-                    <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
-                    @user.userName.map(_.name) @user.userName.map(_.lastName)
-                }
+            @p(classes = "govuk-hint margin-bottom-zero") {
+                @messages("home.utr", user.saUtr.getOrElse(""))
+                <br>
+                <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
+                @user.userName.map(_.name) @user.userName.map(_.lastName)
+            }
 
-                @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
-                    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
-                }
+            @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
+                @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+            }
 
-                @if(overDuePaymentsCount.isDefined) {
-                    <div id="overdue-warning" class="grid-row">
-                        <div class="column-full">
-                        @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
-                        </div>
+           @if(overDuePaymentsCount.isDefined) {
+                <div id="overdue-warning" class="grid-row">
+                    <div class="column-full">
+                   @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
                     </div>
-                }
+                </div>
+            }
 
             </div>
-        </div>
+            </div>
 
-        @tiles
+            @tiles
 
-    } else {
-        <div class="grid-row">
+        } else {
+            <div class="grid-row">
             <div class="column-full">
 
                 <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
-                    <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
-                    <span id="income-tax-heading">@messages("home.heading")</span>
-                </h1>
+                <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
+                <span id="income-tax-heading">@messages("home.heading")</span>
+            </h1>
 
-                @user.saUtr.map { utr =>
-                    <div id="utr-reference-heading" class="form-hint heading-xl-addon">
-                        @messages("home.utr", utr)
-                    </div>
-                }
-
-                <div class="warning-wrapper">
-                @if(overDuePaymentsCount.getOrElse(0) > 0) {
-                    <div id="overdue-warning" class="flex-container govuk-!-padding-0">
-                        <div class="column-full">
-                        @govukWarningText(WarningText(
-                            iconFallbackText = "Warning",
-                            content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
-                        ))
-                        </div>
-                    </div>
-                }
+            @user.saUtr.map { utr =>
+                <div id="utr-reference-heading" class="form-hint heading-xl-addon">
+                    @messages("home.utr", utr)
                 </div>
+            }
 
-
+           <div class="warning-wrapper">
+            @if(overDuePaymentsCount.getOrElse(0) > 0) {
+                <div id="overdue-warning" class="flex-container govuk-!-padding-0">
+                    <div class="column-full">
+                        @govukWarningText(WarningText(
+                        iconFallbackText = "Warning",
+                        content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
+                        ))
+                    </div>
+                </div>
+            }
             </div>
-        </div>
 
-        @tiles
 
-    }
+                </div>
+            </div>
+
+                @tiles
+
+        }
     }
 
 @paymentsTile = {
@@ -311,7 +311,8 @@
 @layout(
     pageTitle = pageTitleHeadingMessage,
     mainClass = Some("full-width"),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial
 ) {
     @customLayout
 }

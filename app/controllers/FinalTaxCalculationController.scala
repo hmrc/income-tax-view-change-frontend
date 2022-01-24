@@ -18,7 +18,7 @@ package controllers
 
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel
@@ -28,8 +28,8 @@ import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerCompon
 import services.CalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.FinalTaxCalculationView
-
 import javax.inject.Inject
+
 import scala.concurrent.ExecutionContext
 
 class FinalTaxCalculationController @Inject()(
@@ -42,10 +42,12 @@ class FinalTaxCalculationController @Inject()(
                                                retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                calcService: CalculationService,
                                                itvcErrorHandler: ItvcErrorHandler,
+                                               val retrieveBtaNavBar: BtaNavBarPredicate,
                                                appConfig: FrontendAppConfig
                                              ) extends FrontendController(cc) with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen
+    retrieveIncomeSources andThen retrieveBtaNavBar
 
 
   def show(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
@@ -53,7 +55,7 @@ class FinalTaxCalculationController @Inject()(
       case CalcDisplayModel(_, _, calcDataModel, _) =>
         val calcOverview = CalcOverview(calcDataModel)
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(calcOverview, taxYear, isAgent = false, backUrl))
+        Ok(view(calcOverview, taxYear, isAgent = false, backUrl, btaNavPartial = user.btaNavPartial))
       case CalcDisplayNoDataFound =>
         Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
