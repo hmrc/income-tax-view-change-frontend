@@ -19,7 +19,7 @@ package controllers
 import testConstants.EstimatesTestConstants.testYear
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.AuditingService
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -28,12 +28,13 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
-import views.html.IncomeBreakdown
+import views.html.{IncomeBreakdown, IncomeBreakdownOld}
 
 class IncomeSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestIncomeSummaryController extends IncomeSummaryController(
+    app.injector.instanceOf[IncomeBreakdownOld],
     app.injector.instanceOf[IncomeBreakdown],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
@@ -48,12 +49,19 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     appConfig,
     app.injector.instanceOf[MessagesControllerComponents])
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disable(NewTaxCalcProxy)
+  }
+
   "showIncomeSummary" when {
 
-      "given a tax year which can be found in ETMP" should {
+    "NewTaxCalcProxy FS is disabled" should {
 
-        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
+      lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
+
+      "given a tax year which can be found in ETMP" should {
 
         "return Status OK (200)" in {
           mockCalculationSuccess()
@@ -92,7 +100,56 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
+    }
 
+    "NewTaxCalcProxy FS is enabled" when {
+
+      lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
+
+      "given a tax year which can be found in ETMP" should {
+
+        "return Status OK (200)" in {
+          enable(NewTaxCalcProxy)
+          mockCalculationSuccessFullNew()
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the IncomeBreakdown page" in {
+          document.title() shouldBe "Income - Business Tax account - GOV.UK"
+        }
+      }
+      "given a tax year which can not be found in ETMP" should {
+
+        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+
+        "return Status Internal Server Error (500)" in {
+          enable(NewTaxCalcProxy)
+          mockCalculationNotFoundNew()
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+      }
+
+      "there is a downstream error" should {
+
+        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+
+        "return Status Internal Server Error (500)" in {
+          enable(NewTaxCalcProxy)
+          mockCalculationErrorNew()
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+    }
   }
 }
 

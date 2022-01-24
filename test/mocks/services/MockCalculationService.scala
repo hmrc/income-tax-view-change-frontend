@@ -21,7 +21,7 @@ import testConstants.CalcBreakdownTestConstants._
 import testConstants.NewCalcBreakdownTestConstants._
 import testConstants.EstimatesTestConstants._
 import models.calculation._
-import models.liabilitycalculation.LiabilityCalculationResponseModel
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -81,8 +81,12 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel.copy(crystallised = true)))
   def mockCalculationError(): Unit =
     setupMockGetCalculation(testNino, testYear)(CalcDisplayError)
+  def mockCalculationErrorNew(): Unit =
+    setupMockGetCalculationNew(testNino, testYear)(LiabilityCalculationError(500, "Internal server error"))
   def mockCalculationNotFound(): Unit =
     setupMockGetCalculation(testNino, testYear)(CalcDisplayNoDataFound)
+  def mockCalculationNotFoundNew(): Unit =
+    setupMockGetCalculationNew(testNino, testYear)(LiabilityCalculationError(404, "not found"))
   def mockCalculationNotFoundAgent(): Unit =
     setupMockGetCalculation(testNinoAgent, testYear)(CalcDisplayNoDataFound)
 }
