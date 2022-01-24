@@ -71,8 +71,8 @@ home.payments.no-payments-due                                   = No payments du
 home.payments.view                                              = Check what you owe
 home.updates.heading                                            = Next updates due
 home.updates.view                                               = View update deadlines
-home.paymentHistoryAndCredit.heading                            = Payment history and credit
-home.paymentHistoryAndCredit.view                               = Payment and refund history
+home.paymentHistory.heading                                     = Payment history
+home.paymentHistory.view                                        = Payment and refund history
 home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE
@@ -621,7 +621,7 @@ titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Retu
 
 ## Payment History Page ##
 
-paymentHistory.heading                                          = Payment and refund history
+paymentHistory.heading                                          = Payment history
 paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments

@@ -139,7 +139,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val saViewLandPServiceDescription = "Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax."
     val changeClientLink = "Change client"
     val backLink = "Back"
-    val paymentHistoryAndCreditHeading = "Payment history and credit"
+    val paymentHistoryHeading = "Payment history"
     val paymentHistoryAndCreditView = "Payment and refund history"
 
     def viewPaymentsLinkWithDateRange(taxYear: Int): String = s"View your current ${taxYear - 1} to ${taxYear} return"
