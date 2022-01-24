@@ -34,10 +34,10 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val paymentHistoryView: PaymentHistory = app.injector.instanceOf[PaymentHistory]
 
   object PaymentHistoryMessages {
-    val title = "Payment history - Business Tax account - GOV.UK"
-    val titleWhenAgentView = "Payment history - Your client’s Income Tax details - GOV.UK"
+    val heading = "Payment and refund history"
+    val title = s"$heading - Business Tax account - GOV.UK"
+    val titleWhenAgentView = s"$heading - Your client’s Income Tax details - GOV.UK"
 
-    val heading = "Payment history"
     val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment service."
 
     def button(year: Int): String = s"$year payments"

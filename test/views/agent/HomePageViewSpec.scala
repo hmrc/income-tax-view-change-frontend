@@ -150,7 +150,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val paymentDueDateLongDate: String = s"31 January $year2019"
           getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDueDateLongDate)
         }
-        "has a link to view what you owe" in new Setup {
+        "has a link to check what you owe" in new Setup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments-owed")
           link.map(_.text) shouldBe Some(homeMessages.paymentLink)
@@ -193,31 +193,40 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
       }
 
-      "have a tax years tile" which {
+      "have a returns tile" which {
         "has a heading" in new Setup {
-          getElementById("tax-years-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
+          getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
+        }
+        "has a link to the view payments page" in new Setup {
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearOverviewController.show(currentTaxYear).url)
+          link.map(_.text) shouldBe Some(homeMessages.viewPaymentsLinkWithDateRange(currentTaxYear))
+        }
+        "has a link to the update and submit page" in new Setup {
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
+          link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+          link.map(_.text) shouldBe Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
+        }
+        "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
+          link.map(_.attr("href")) should not be  Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+          link.map(_.text) should not be Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
         }
         "has a link to the tax years page" in new Setup {
-          val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").first)
+          val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
           link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearsController.show().url)
           link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
         }
-        "has a link to the view payments page" in new Setup {
-          val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").get(1))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments/history")
-          link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
-        }
-
       }
 
-      "have an your income tax returns tile" when {
+      "have a payment history and credit tile" which {
         "has a heading" in new Setup {
-          getElementById("manage-income-tax-tile").map(_.select("h2").text) shouldBe Some(homeMessages.ManageYourIncomeTaxReturnHeading)
+          getElementById("payment-history-and-credit-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentHistoryAndCreditHeading)
         }
-        "has a link to the send updates page" in new Setup {
-          val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some(s"http://localhost:9302/update-and-submit-income-tax-return/$currentTaxYear/start")
-          link.map(_.text) shouldBe Some(homeMessages.submitYourReturnsLink)
+        "has a link to the payment and refund history page" in new Setup {
+          val link: Option[Element] = getElementById("payment-history-and-credit-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url)
+          link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
         }
       }
 

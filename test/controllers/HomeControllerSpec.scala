@@ -100,7 +100,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					status(result) shouldBe Status.OK
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
+					document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
 				}
 
 				"there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
@@ -116,7 +116,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					status(result) shouldBe Status.OK
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
+					document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
 				}
 
 				"display number of payments due when there are multiple payment due and dunning locks" in new Setup {
@@ -150,7 +150,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					status(result) shouldBe Status.OK
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+					document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
 					document.select("#overdue-warning").text shouldBe "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
 				}
 
@@ -192,7 +192,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					status(result) shouldBe Status.OK
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+					document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
 					document.select("#overdue-warning").text shouldBe "! Warning You have overdue payments. You may be charged interest on these until they are paid in full."
 				}
 
@@ -210,7 +210,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						status(result) shouldBe Status.OK
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
+						document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
 
 					}
 
@@ -227,7 +227,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						status(result) shouldBe Status.OK
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
+						document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
 						document.select("#overdue-warning").text shouldBe ""
 					}
 
@@ -249,7 +249,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 						status(result) shouldBe Status.OK
 						val document: Document = Jsoup.parse(contentAsString(result))
 						document.title shouldBe MessagesLookUp.HomePage.title
-						document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
+						document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
 						document.select("#overdue-warning").text shouldBe ""
 					}
 				}
@@ -273,7 +273,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 					status(result) shouldBe Status.OK
 					val document: Document = Jsoup.parse(contentAsString(result))
 					document.title shouldBe MessagesLookUp.HomePage.title
-					document.select("#updates-tile > div > p:nth-child(2)").text() shouldBe "1 January 2018"
+					document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2018"
 				}
 			}
 	}

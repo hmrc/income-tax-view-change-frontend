@@ -91,74 +91,117 @@
         }
     }
 
-    @customLayout = {
-    @if(isAgent) {
-        @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
-
-        @p(classes = "govuk-hint margin-bottom-zero") {
-            @messages("home.utr", user.saUtr.getOrElse(""))
-            <br>
-            <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
-            @user.userName.map(_.name) @user.userName.map(_.lastName)
-        }
-
-        @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
-            @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
-        }
-
-       @if(overDuePaymentsCount.isDefined) {
-            <div id="overdue-warning" class="grid-row">
-                <div class="column-full">
-               @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
-                </div>
-            </div>
-        }
+    @tiles() = {
 
         <div class="grid-row">
-            <div class="flex-container">
-                @paymentsTile
-                @updatesTile
-                @taxYearsTile
+            <div class="flex-container govuk-!-padding-0">
+
+                <div class="card-container govuk-!-margin-right-6" id="paymentsCard">
+                    <div class="card-body" style="width: 440px; border-bottom: 0">
+                        <div class="govuk-grid-column-full govuk-!-padding-bottom-0">
+                            @paymentsTile
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container" id="updatesCard">
+                    <div class="card-body" style="width: 440px; border-bottom: 0">
+                        <div class="govuk-grid-column-full govuk-!-padding-bottom-0">
+                            @updatesTile
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        @if(ITSASubmissionIntegrationEnabled) {
-            @YourIncomeTaxReturnTile
-        }
+        <div class="grid-row">
+            <div class="flex-container govuk-!-padding-0">
+
+                <div class="card-container govuk-!-margin-right-6" id="paymentHistoryAndCreditCard">
+                    <div class="card-body" style="width: 440px; height: 150px; border-bottom: 0">
+                        <div class="govuk-grid-column-full">
+                            @paymentHistoryAndCreditTile
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container" id="returnsCard">
+                    <div class="card-body" style="width: 440px; height: 150px; border-bottom: 0">
+                        <div class="govuk-grid-column-full">
+                            @returnsTile
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    }
+
+    @customLayout = {
+    @if(isAgent) {
+        <div class="grid-row">
+            <div class="column-full">
+                @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
+
+                @p(classes = "govuk-hint margin-bottom-zero") {
+                    @messages("home.utr", user.saUtr.getOrElse(""))
+                    <br>
+                    <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
+                    @user.userName.map(_.name) @user.userName.map(_.lastName)
+                }
+
+                @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
+                    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+                }
+
+                @if(overDuePaymentsCount.isDefined) {
+                    <div id="overdue-warning" class="grid-row">
+                        <div class="column-full">
+                        @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+        @tiles
 
     } else {
-        <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
-            <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
-            <span id="income-tax-heading">@messages("home.heading")</span>
-        </h1>
+        <div class="grid-row">
+            <div class="column-full">
 
-        @user.saUtr.map { utr =>
-            <div id="utr-reference-heading" class="form-hint heading-xl-addon">
-                @messages("home.utr", utr)
-            </div>
-        }
+                <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
+                    <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
+                    <span id="income-tax-heading">@messages("home.heading")</span>
+                </h1>
 
-       <div class="warning-wrapper">
-        @if(overDuePaymentsCount.getOrElse(0) > 0) {
-            <div id="overdue-warning" class="govuk-grid-row govuk-grid-row-spacing">
-                <div class="column-full">
-                    @govukWarningText(WarningText(
-                    iconFallbackText = "Warning",
-                    content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
-                    ))
+                @user.saUtr.map { utr =>
+                    <div id="utr-reference-heading" class="form-hint heading-xl-addon">
+                        @messages("home.utr", utr)
+                    </div>
+                }
+
+                <div class="warning-wrapper">
+                @if(overDuePaymentsCount.getOrElse(0) > 0) {
+                    <div id="overdue-warning" class="flex-container govuk-!-padding-0">
+                        <div class="column-full">
+                        @govukWarningText(WarningText(
+                            iconFallbackText = "Warning",
+                            content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
+                        ))
+                        </div>
+                    </div>
+                }
                 </div>
+
+
             </div>
-        }
         </div>
 
-        <div class="flex-container govuk-grid-row">
-            @paymentsTile
-            @updatesTile
-            @taxYearsTile
-        </div>
-        @if(ITSASubmissionIntegrationEnabled) {
-            @YourIncomeTaxReturnTile
-        }
+        @tiles
 
     }
     }
@@ -171,7 +214,7 @@
 			case _ => p()(paymentsTileContentPaymentsDueMany)
 		}}
 
-            @p(){
+            @p(classes = "govuk-!-margin-bottom-4"){
                 @link(
                     link = whatYouOweControllerURL,
                     messageKey = "home.payments.view"
@@ -198,13 +241,26 @@
 			case 1 => p()(updatesTileContentUpdatesDue1)
 			case _ => p()(updatesTileContentUpdatesDueMany)
 		}}
-            @p(){
+            @p(classes = "govuk-!-margin-bottom-4"){
                 @link(
                     link = nextUpdatesControllerURL,
                     messageKey = "home.updates.view"
                 )
             }
 	}
+}
+
+@paymentHistoryAndCreditTile = {
+@home_tile("payment-history-and-credit-tile", messages("home.paymentHistoryAndCredit.heading")) {
+    @p(classes = "govuk-!-margin-bottom-4") {
+        @if(paymentHistoryEnabled) {
+            @link(
+                link = paymentHistoryControllerURL,
+                messageKey = "home.paymentHistoryAndCredit.view"
+            )
+        }
+    }
+}
 }
 
 @updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
@@ -219,58 +275,38 @@
 }
 
 
-@taxYearsTile = {
-	@home_tile("tax-years-tile", messages("home.tax-years.heading")) {
-            <ul class="govuk-list">
-                <li>
+@returnsTile = {
+    @home_tile("returns-tile", messages("home.tax-years.heading")) {
+        @p(classes = "govuk-!-margin-bottom-4") {
+            @link(
+                link = getReturnHref(currentTaxYear),
+                messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+            )
+        }
+        @p(classes = "govuk-!-margin-bottom-4") {
+            @if(ITSASubmissionIntegrationEnabled) {
                 @link(
-                    link = taxYearsControllerURL,
-                    messageKey = "home.tax-years.view"
-                )
-                </li>
-                @if(paymentHistoryEnabled) {
-                    <li>
-                    @link(
-                        link = paymentHistoryControllerURL,
-                        messageKey = "home.tax-years.viewPayments"
-                    )
-                    </li>
-                }
-            </ul>
-	}
-}
-
-@YourIncomeTaxReturnTile= {
-    @if(ITSASubmissionIntegrationEnabled){
-        <div id="manage-income-tax-tile" class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                @h2(classes = "govuk-heading-l", msg = "home.manage-income-tax.heading")
-            </div>
-        </div>
-        <div id="submit-your-returns-tile" class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
-                @h3link(
-                    id =Some("submit-your-returns"),
                     link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
-                    messageKey = "home.your-returns.updatesLink")
-
-                @p(){@messages("home.your-returns.description")}
-            </div>
-            @if(!isAgent && utr.isDefined) {
-            <div id="saViewLandPTile">
-                <div class="govuk-grid-column-one-third">
-                    @h3link(
-                        link = appConfig.saViewLandPService(utr.get),
-                        messageKey = "home.self-assessment.updatesLink",
-                        id = Some("saViewLandPService")
-                    )
-                    @p(){@messages("home.self-assessment.description")}
-                </div>
-            </div>
+                    messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                )
             }
-        </div>
+        }
+        @p(classes = "govuk-!-margin-bottom-1") {
+            @link(
+                link = taxYearsControllerURL,
+                messageKey = "home.tax-years.view"
+            )
+        }
     }
 }
+
+    @getReturnHref(year: Int) = @{
+        if (isAgent) {
+            controllers.agent.routes.TaxYearOverviewController.show(year).url
+        } else {
+            controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url
+        }
+    }
 
 @layout(
     pageTitle = pageTitleHeadingMessage,

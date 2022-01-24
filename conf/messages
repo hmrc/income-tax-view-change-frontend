@@ -68,23 +68,21 @@ home.unique.taxpayer.reference                                  = Unique Taxpaye
 home.utr                                                        = UTR: {0}
 home.payments.heading                                           = Next payments due
 home.payments.no-payments-due                                   = No payments due
-home.payments.view                                              = View what you owe
+home.payments.view                                              = Check what you owe
 home.updates.heading                                            = Next updates due
-home.updates.view                                               = View next updates
+home.updates.view                                               = View update deadlines
+home.paymentHistoryAndCredit.heading                            = Payment history and credit
+home.paymentHistoryAndCredit.view                               = Payment and refund history
 home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE
-home.tax-years.heading                                          = Tax years
-home.tax-years.view                                             = View tax years
-home.tax-years.viewPayments                                     = View payment history
-home.manage-income-tax.heading                                  = Manage Income Tax
+home.tax-years.heading                                          = Returns
+home.tax-years.view                                             = View all tax years
 home.your-returns.heading                                       = Manage Income Tax
 home.your-returns.description                                   = Use this service to report untaxed income and any tax relief you’re claiming
 home.your-returns.agent.description                             = Use this service to report untaxed income and any tax relief you’re claiming.
-home.your-returns.updatesLink                                   = Update and submit an Income Tax Return
-home.update-and-submit-your-returns.Link                        = Update and submit an Income Tax Return
-home.self-assessment.updatesLink                                = View your Self Assessment tax years
-home.view-self-assessment.Link                                  = View your Self Assessment tax years
+home.your-returns.updatesLink                                   = Update and submit your {0} to {1} return
+home.returns.viewLink                                           = View your current {0} to {1} return
 home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
 
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
@@ -623,7 +621,7 @@ titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Retu
 
 ## Payment History Page ##
 
-paymentHistory.heading                                          = Payment history
+paymentHistory.heading                                          = Payment and refund history
 paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments

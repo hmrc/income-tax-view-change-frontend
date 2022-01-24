@@ -39,7 +39,7 @@ class AllowancesAndDeductionsViewModelSpec extends UnitSpec {
         totalReliefs = None
       )
 
-      AllowancesAndDeductionsViewModel().getAllowancesAndDeductionsViewModel(calcOpt = None) shouldBe expectedAllowancesAndDeductionsViewModel
+      AllowancesAndDeductionsViewModel(calcOpt = None) shouldBe expectedAllowancesAndDeductionsViewModel
 
     }
 
@@ -62,9 +62,8 @@ class AllowancesAndDeductionsViewModelSpec extends UnitSpec {
           totalReliefs = Some(5000.99)
         )
 
-        AllowancesAndDeductionsViewModel().getAllowancesAndDeductionsViewModel(
+        AllowancesAndDeductionsViewModel(
           calcOpt = liabilityCalculationModelSuccessFull.calculation) shouldBe expectedAllowancesAndDeductionsViewModel
-
       }
     }
   }

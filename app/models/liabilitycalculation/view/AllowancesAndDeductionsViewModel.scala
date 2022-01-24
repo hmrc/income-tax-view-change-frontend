@@ -37,8 +37,10 @@ case class AllowancesAndDeductionsViewModel(
 
   val personalAllowanceDisplayValue: Option[BigDecimal] =
     personalAllowanceBeforeTransferOut.fold(reducedPersonalAllowance.fold(personalAllowance)(Some(_)))(Some(_))
+}
 
-  def getAllowancesAndDeductionsViewModel(calcOpt: Option[Calculation]): AllowancesAndDeductionsViewModel = {
+object AllowancesAndDeductionsViewModel {
+  def apply(calcOpt: Option[Calculation]): AllowancesAndDeductionsViewModel = {
     calcOpt match {
       case Some(calc) =>
         AllowancesAndDeductionsViewModel(
@@ -61,6 +63,5 @@ case class AllowancesAndDeductionsViewModel(
         )
       case None => AllowancesAndDeductionsViewModel()
     }
-
   }
 }
