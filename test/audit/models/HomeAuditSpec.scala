@@ -22,8 +22,9 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.LocalDate
+
+import testConstants.PropertyDetailsTestConstants
 
 class HomeAuditSpec extends WordSpecLike with MustMatchers {
 
@@ -37,7 +38,7 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
       mtditid = "mtditid",
       nino = "nino",
       userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, None),
+      incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
       saUtr = Some("saUtr"),
       credId = Some("credId"),
       userType = userType,
@@ -52,7 +53,7 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
       mtditid = "mtditid",
       nino = "nino",
       userName = None,
-      incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, None),
+      incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
       saUtr = None,
       credId = None,
       userType = None,
