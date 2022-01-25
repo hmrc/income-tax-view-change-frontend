@@ -92,51 +92,19 @@
     }
 
     @tiles() = {
-
         <div class="grid-row">
             <div class="flex-container govuk-!-padding-0">
-
-                <div class="card-container govuk-!-margin-right-6" id="paymentsCard">
-                    <div class="card-body-custom" style="height: 12em; flex-wrap: wrap;">
-                        <div class="govuk-grid-column-full govuk-!-padding-bottom-0">
-                            @paymentsTile
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-container" id="updatesCard">
-                    <div class="card-body-custom" style="height: 12em; flex-wrap: wrap;">
-                        <div class="govuk-grid-column-full govuk-!-padding-bottom-0">
-                            @updatesTile
-                        </div>
-                    </div>
-                </div>
-
+                @paymentsTile
+                @updatesTile
             </div>
         </div>
 
         <div class="grid-row">
             <div class="flex-container govuk-!-padding-0">
-
-                <div class="card-container govuk-!-margin-right-6" id="paymentHistoryAndCreditCard">
-                    <div class="card-body-custom" style="height: 10em; flex-wrap: wrap;">
-                        <div class="govuk-grid-column-full">
-                            @paymentHistoryTile
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-container" id="returnsCard">
-                    <div class="card-body-custom" style="height: 10em; flex-wrap: wrap;">
-                        <div class="govuk-grid-column-full">
-                            @returnsTile
-                        </div>
-                    </div>
-                </div>
-
+                @paymentHistoryTile
+                @returnsTile
             </div>
         </div>
-
     }
 
     @customLayout = {
@@ -184,7 +152,7 @@
                     </div>
                 }
 
-                <div class="warning-wrapper">
+                <div class="warning-wrapper govuk-!-padding-0" >
                 @if(overDuePaymentsCount.getOrElse(0) > 0) {
                     <div id="overdue-warning" class="flex-container govuk-!-padding-0">
                         <div class="column-full">
