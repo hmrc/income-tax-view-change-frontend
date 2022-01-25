@@ -25,6 +25,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
+import testConstants.PropertyDetailsTestConstants
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with MustMatchers {
@@ -143,7 +144,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
         mtditid = testMtditid,
         nino = "nino",
         userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
         saUtr = Some("saUtr"),
         credId = Some("credId"),
         userType = Some("Individual"),
@@ -160,7 +161,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
         mtditid = testMtditid,
         nino = "nino",
         userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
         saUtr = Some("saUtr"),
         credId = Some("credId"),
         userType = userType,

@@ -22,6 +22,7 @@ import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
 import testUtils.TestSupport
+import testConstants.PropertyDetailsTestConstants
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class PaymentHistoryResponseAuditModelSpec extends TestSupport {
@@ -34,7 +35,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       mtditid = testMtditid,
       nino = testNino,
       userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
       userType = userType,
@@ -50,7 +51,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       mtditid = testMtditid,
       nino = testNino,
       userName = None,
-      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
       saUtr = None,
       credId = None,
       userType = None,

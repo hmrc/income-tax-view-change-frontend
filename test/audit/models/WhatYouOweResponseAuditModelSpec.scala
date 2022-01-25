@@ -17,6 +17,7 @@
 package audit.models
 
 import java.time.LocalDate
+
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
 import auth.MtdItUser
@@ -24,6 +25,7 @@ import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.{JsValue, Json}
+import testConstants.PropertyDetailsTestConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -46,7 +48,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       mtditid = testMtditid,
       nino = testNino,
       userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel(testMtditid, yearOfMigration, List.empty, None),
+      incomeSources = IncomeSourceDetailsModel(testMtditid, yearOfMigration, List.empty, Some(PropertyDetailsTestConstants.propertyDetails)),
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
       userType = userType,
