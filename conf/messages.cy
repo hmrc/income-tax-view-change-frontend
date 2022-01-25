@@ -59,8 +59,8 @@ home.tax-years.description                                      = Gwirio statws 
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.your-returns.description                                   = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.tax-years.view                                             = Bwrw golwg dros bob blwyddyn dreth
-home.paymentHistoryAndCredit.heading                            = Hanes taliadau a chredydau
-home.paymentHistoryAndCredit.view                               = Hanes taliadau ac ad-daliadau
+home.paymentHistory.heading                                     = Hanes taliadau
+home.paymentHistory.view                                        = Hanes taliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
@@ -566,7 +566,7 @@ titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
 titlePattern.serviceName.itsa.govUk = {0} - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK
 
 ## Payment History Page ##
-paymentHistory.heading                                          = Hanes taliadau ac ad-daliadau
+paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Os na allwch weld eich holl daliadau blaenorol yma, gallwch ddod o hyd iddynt yn eich
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
 paymentHistory.button                                           = Taliadau ar gyfer {0}
