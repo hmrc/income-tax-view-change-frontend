@@ -16,10 +16,7 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
-import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
@@ -31,6 +28,8 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentType, _}
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid}
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
@@ -114,7 +113,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           enable(NewTaxCalcProxy)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
-          setupMockGetCalculationNew("AA111111A", testYear)(liabilityCalculationModelSuccessFull)
+          setupMockGetCalculationNew("XAIT00000000015","AA111111A", testYear)(liabilityCalculationModelSuccessFull)
           mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessFull.calculation).get,
             controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
@@ -129,7 +128,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           enable(NewTaxCalcProxy)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockErrorIncomeSource()
-          setupMockGetCalculationNew("AA111111A", testYear)(liabilityCalculationModelSuccessFull)
+          setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(liabilityCalculationModelSuccessFull)
           mockShowInternalServerError()
           val exception = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient()).failed.futureValue
           exception shouldBe an[InternalServerException]
@@ -143,7 +142,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           enable(NewTaxCalcProxy)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
-          setupMockGetCalculationNew("AA111111A", testYear)(LiabilityCalculationError(500, "error"))
+          setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(500, "error"))
           mockShowInternalServerError()
 
           lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
