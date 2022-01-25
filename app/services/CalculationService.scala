@@ -16,18 +16,16 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserWithNino}
 import config.FrontendAppConfig
 import connectors.{IncomeTaxCalculationConnector, IndividualCalculationsConnector}
 import enums.{Crystallised, Estimate}
-
-import javax.inject.{Inject, Singleton}
-import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound, CalcDisplayResponseModel, Calculation, CalculationErrorModel, CalculationResponseModel}
+import models.calculation._
 import models.liabilitycalculation.LiabilityCalculationResponseModel
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
