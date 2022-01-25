@@ -30,8 +30,10 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.{TestSupport, ViewSpec}
 import views.html.Home
-
 import java.time.{LocalDate, Month}
+
+import testConstants.PropertyDetailsTestConstants
+
 import scala.util.Try
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -50,7 +52,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+    IncomeSourceDetailsModel(testMtditid, None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
     Some(testSaUtr),
     Some(testCredId),
     Some("agent"),

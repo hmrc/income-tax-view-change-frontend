@@ -22,6 +22,7 @@ import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import testConstants.PropertyDetailsTestConstants
 import testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {
@@ -125,7 +126,8 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
     "Supplied with no Obligations and optional fields" should {
 
       val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
-        MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(testMtditid, None, Nil, None), None, None, None, None)(FakeRequest()),
+        MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(testMtditid, None, Nil,
+          Some(PropertyDetailsTestConstants.propertyDetails)), None, None, None, None)(FakeRequest()),
         testSelfEmploymentId,
         List()
       )
