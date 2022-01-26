@@ -22,7 +22,7 @@ import play.api.libs.json.{Json}
 
 object IncomeTaxCalculationStub {
 
-  def getCalculationResponseUrl(nino: String, taxYear: String): String = s"/income-tax/nino/$nino?taxYear=$taxYear"
+  def getCalculationResponseUrl(nino: String, taxYear: String): String = s"/income-tax-calculation/income-tax/nino/$nino?taxYear=$taxYear"
 
   def stubGetCalculationResponse(nino: String, taxYear: String)(status: Int, body: LiabilityCalculationResponse): Unit = {
     WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear), status, Json.toJson(body).toString())

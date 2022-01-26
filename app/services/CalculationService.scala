@@ -19,15 +19,13 @@ package services
 import config.FrontendAppConfig
 import connectors.{IncomeTaxCalculationConnector, IndividualCalculationsConnector}
 import enums.{Crystallised, Estimate}
-
-import javax.inject.{Inject, Singleton}
-import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound, CalcDisplayResponseModel,
-  Calculation, CalculationErrorModel, CalculationResponseModel}
+import models.calculation._
 import models.liabilitycalculation.LiabilityCalculationResponseModel
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -74,8 +72,8 @@ class CalculationService @Inject()(individualCalculationsConnector: IndividualCa
     s"$startYear-${endYear.takeRight(2)}"
   }
 
-  def getLiabilityCalculationDetail(nino: String, taxYear: Int)
+  def getLiabilityCalculationDetail(mtditid: String, nino: String, taxYear: Int)
                                    (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    incomeTaxCalculationConnector.getCalculationResponse(nino, taxYear.toString)
+    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString)
   }
 }

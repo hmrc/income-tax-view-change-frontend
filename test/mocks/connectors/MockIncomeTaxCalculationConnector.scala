@@ -30,8 +30,9 @@ trait MockIncomeTaxCalculationConnector extends UnitSpec with MockitoSugar with 
 
   val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock[IncomeTaxCalculationConnector]
 
-  def mockGetCalculationResponse(nino: String, taxYear: String)(response: LiabilityCalculationResponseModel): Unit = {
+  def mockGetCalculationResponse(mtditid: String, nino: String, taxYear: String)(response: LiabilityCalculationResponseModel): Unit = {
     when(mockIncomeTaxCalculationConnector.getCalculationResponse(
+      ArgumentMatchers.eq(mtditid),
       ArgumentMatchers.eq(nino),
       ArgumentMatchers.eq(taxYear)
     )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn Future.successful(response)

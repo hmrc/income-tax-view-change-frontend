@@ -27,6 +27,7 @@ import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
+import testConstants.BaseTestConstants.testMtditid
 import testUtils.TestSupport
 import views.html.{IncomeBreakdown, IncomeBreakdownOld}
 
@@ -111,7 +112,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
         "return Status OK (200)" in {
           enable(NewTaxCalcProxy)
-          mockCalculationSuccessFullNew()
+          mockCalculationSuccessFullNew(testMtditid)
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.OK
         }
@@ -131,7 +132,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
         "return Status Internal Server Error (500)" in {
           enable(NewTaxCalcProxy)
-          mockCalculationNotFoundNew()
+          mockCalculationNotFoundNew(testMtditid)
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -144,7 +145,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
         "return Status Internal Server Error (500)" in {
           enable(NewTaxCalcProxy)
-          mockCalculationErrorNew()
+          mockCalculationErrorNew(testMtditid)
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }

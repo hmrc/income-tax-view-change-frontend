@@ -50,7 +50,7 @@ class IncomeSummaryController @Inject()(incomeBreakdown: IncomeBreakdown,
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
         if (isEnabled(NewTaxCalcProxy)) {
-          calculationService.getLiabilityCalculationDetail(getClientNino, taxYear).map {
+          calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
               viewModel match {
