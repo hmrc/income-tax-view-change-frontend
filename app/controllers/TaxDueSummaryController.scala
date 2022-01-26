@@ -25,7 +25,7 @@ import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.calculation._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
-import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
+import models.liabilitycalculation.view.{AllowancesAndDeductionsViewModel, TaxDueSummaryViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -62,12 +62,15 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
         if (isEnabled(NewTaxCalcProxy)) {
           calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
-              val viewModel = TaxDueSummaryViewModel().getTaxDueSummaryViewModel(liabilityCalc.calculation)
-              auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear))
+              val viewModel = TaxDueSummaryViewModel(liabilityCalc.calculation)
+//              if (isEnabled(TxmEventsApproved)) {
+//                auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
+//              }
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
             case _: LiabilityCalculationError =>
               Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()
+          }
         } else {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>

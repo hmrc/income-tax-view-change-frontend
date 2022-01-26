@@ -16,43 +16,22 @@
 
 package models.liabilitycalculation.view
 
-import models.liabilitycalculation.taxcalculation.{CgtTaxBands, Nic4Bands, TaxBands}
-import models.liabilitycalculation.{Calculation, ReliefsClaimed}
-import play.api.libs.json.{Json, OFormat}
-
-case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
-  // When updating the accepted messages also update the audit for the TaxCalculationDetailsResponseAuditModel
-  private val acceptedMessages: Seq[String] = Seq("C22202", "C22203", "C22206", "C22207", "C22210", "C22211",
-    "C22212", "C22213", "C22214", "C22215", "C22216", "C22217", "C22218")
-  val allMessages: Seq[Message] = {
-    info.getOrElse(Seq.empty) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
-  }
-  val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
-}
-
-object Messages {
-  implicit val format: OFormat[Messages] = Json.format[Messages]
-}
-
-case class Message(id: String, text: String)
-
-object Message {
-  implicit val format: OFormat[Message] = Json.format[Message]
-}
+import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
+import models.liabilitycalculation.{Calculation, Messages, ReliefsClaimed}
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: Option[String] = None,
                                    class2VoluntaryContributions: Option[Boolean] = None,
-                                   messages: Messages = Messages(),
+                                   messages: Option[Messages] = None,
                                    lossesAppliedToGeneralIncome: Option[Int] = None,
-                                   grossGiftAidPayments: Option[Int] = None,
-                                   giftAidTax: Option[String] = None,
-                                   marriageAllowanceTransferredInAmount: Option[String] = None,
-                                   reliefsClaimed: Seq[ReliefsClaimed],
+                                   grossGiftAidPayments: Option[BigDecimal] = None,
+                                   giftAidTax: Option[BigDecimal] = None,
+                                   marriageAllowanceTransferredInAmount: Option[BigDecimal] = None,
+                                   reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
                                    totalResidentialFinanceCostsRelief: Option[BigDecimal] = None,
                                    totalForeignTaxCreditRelief: Option[BigDecimal] = None,
                                    topSlicingReliefAmount: Option[BigDecimal] = None,
-                                   totalTaxableIncome: Option[Int] = None,
+                                   totalTaxableIncome: Option[BigDecimal] = None,
                                    payPensionsProfit: Seq[TaxBands] = Seq(),
                                    savingsAndGains: Seq[TaxBands] = Seq(),
                                    lumpSums: Seq[TaxBands] = Seq(),
@@ -63,44 +42,54 @@ case class TaxDueSummaryViewModel(
                                    totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                                    statePensionLumpSumCharges: Option[BigDecimal] = None,
                                    payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
-                                   nic4Bands: Seq[Nic4Bands] = Seq(),
+                                   nic4Bands: Option[Seq[Nic4Bands]] = None,
                                    class2NicsAmount: Option[BigDecimal] = None,
-                                   totalCapitalGainsIncome: Option[BigDecimal] = None,
-                                   adjustments: Option[BigDecimal] = None,
-                                   foreignTaxCreditRelief: Option[BigDecimal] = None,
-                                   taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
-                                   capitalGainsTaxDue: Option[BigDecimal] = None,
-                                   capitalGainsOverpaid: Option[BigDecimal] = None,
-                                   cgtTxBands: Seq[CgtTaxBands] = Seq(),
-                                   taxableGains: Option[BigDecimal] = None,
-                                   rate: Option[BigDecimal] = None,
-                                   taxAmount: Option[BigDecimal] = None,
+                                   capitalGainsTax: CapitalGainsTaxViewModel = CapitalGainsTaxViewModel(),
                                    totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
                                    saUnderpaymentsCodedOut: Option[BigDecimal] = None,
                                    totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                                    totalTaxDeducted: Option[BigDecimal] = None,
-                                   ukLandAndProperty: Option[BigDecimal] = None,
-                                   bbsi: Option[BigDecimal] = None,
-                                   cis: Option[BigDecimal] = None,
-                                   voidedIsa: Option[BigDecimal] = None,
-                                   payeEmployments: Option[BigDecimal] = None,
-                                   occupationalPensions: Option[BigDecimal] = None,
-                                   stateBenefits: Option[BigDecimal] = None,
-                                   specialWithholdingTaxOrUkTaxPaid: Option[BigDecimal] = None,
-                                   inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None
+                                   taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel()
                                  ) {
 
-  def get(calcOpt: Option[Calculation]): TaxDueSummaryViewModel = {
+  def getRateHeaderKey: String = {
+    taxRegime match {
+      case Some("Scotland") => ".scotland"
+      case _ => ".uk"
+    }
+  }
+
+  def getModifiedBaseTaxBand: Option[TaxBands] = {
+    val payPensionsProfitTaxBand = payPensionsProfit.find(_.name.equals("BRT"))
+    val savingsTaxBand = savingsAndGains.find(_.name.equals("BRT"))
+    val dividendsTaxBand = dividends.find(_.name.equals("BRT"))
+    val lumpSumsTaxBand = lumpSums.find(_.name.equals("BRT"))
+    val gainsOnLifePoliciesTaxBand = gainsOnLifePolicies.find(_.name.equals("BRT"))
+
+    (payPensionsProfitTaxBand, savingsTaxBand, dividendsTaxBand, lumpSumsTaxBand, gainsOnLifePoliciesTaxBand) match {
+      case (Some(_), _, _, _, _) => payPensionsProfitTaxBand
+      case (_, Some(_), _, _, _) => savingsTaxBand
+      case (_, _, Some(_), _, _) => dividendsTaxBand
+      case (_, _, _, Some(_), _) => lumpSumsTaxBand
+      case (_, _, _, _, Some(_)) => gainsOnLifePoliciesTaxBand
+      case _ => None
+    }
+  }
+}
+
+object TaxDueSummaryViewModel {
+
+  def apply(calcOpt: Option[Calculation]): TaxDueSummaryViewModel = {
     calcOpt match {
       case Some(calc) => TaxDueSummaryViewModel(
         taxRegime = None,
         class2VoluntaryContributions = None,
-        messages = Messages(),
+        messages = None,
         lossesAppliedToGeneralIncome = None,
         grossGiftAidPayments = None,
         giftAidTax = None,
         marriageAllowanceTransferredInAmount = None,
-        reliefsClaimed: Seq[ReliefsClaimed],
+        reliefsClaimed = None,
         totalResidentialFinanceCostsRelief = None,
         totalForeignTaxCreditRelief = None,
         topSlicingReliefAmount = None,
@@ -115,36 +104,78 @@ case class TaxDueSummaryViewModel(
         totalPensionSavingsTaxCharges = None,
         statePensionLumpSumCharges = None,
         payeUnderpaymentsCodedOut = None,
-        nic4Bands = Seq(),
+        nic4Bands = None,
         class2NicsAmount = None,
-        totalCapitalGainsIncome = None,
-        adjustments = None,
-        foreignTaxCreditRelief = None,
-        taxOnGainsAlreadyPaid = None,
-        capitalGainsTaxDue = None,
-        capitalGainsOverpaid = None,
-        cgtTxBands = Seq(),
-        taxableGains = None,
-        rate = None,
-        taxAmount = None,
+        capitalGainsTax = CapitalGainsTaxViewModel(
+          totalTaxableGains = None,
+          adjustments = None,
+          foreignTaxCreditRelief = None,
+          taxOnGainsAlreadyPaid = None,
+          capitalGainsTaxDue = None,
+          capitalGainsOverpaid = None,
+          propertyAndInterestTaxBands = Seq(),
+          otherGainsTaxBands = Seq(),
+          businessAssetsDisposalsAndInvestorsRel = None
+        ),
         totalStudentLoansRepaymentAmount = None,
         saUnderpaymentsCodedOut = None,
         totalIncomeTaxAndNicsDue = None,
         totalTaxDeducted = None,
-        ukLandAndProperty = None,
-        bbsi = None,
-        cis = None,
-        voidedIsa = None,
-        payeEmployments = None,
-        occupationalPensions = None,
-        stateBenefits = None,
-        specialWithholdingTaxOrUkTaxPaid = None,
-        inYearAdjustmentCodedInLaterTaxYear = None
+        taxDeductedAtSource = TaxDeductedAtSourceViewModel(
+          ukLandAndProperty = None,
+          cis = None,
+          voidISAs = None,
+          payeEmployments = None,
+          ukPensions = None,
+          stateBenefits = None,
+          specialWithholdingTax = None,
+          inYearAdjustmentCodedInLaterTaxYear = None
+        )
       )
       case None => TaxDueSummaryViewModel()
     }
   }
 
+}
 
+case class CapitalGainsTaxViewModel(
+                                     totalTaxableGains: Option[BigDecimal] = None,
+                                     adjustments: Option[BigDecimal] = None,
+                                     foreignTaxCreditRelief: Option[BigDecimal] = None,
+                                     taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
+                                     capitalGainsTaxDue: Option[BigDecimal] = None,
+                                     capitalGainsOverpaid: Option[BigDecimal] = None,
+                                     propertyAndInterestTaxBands: Seq[CgtTaxBands] = Seq(),
+                                     otherGainsTaxBands: Seq[CgtTaxBands] = Seq(),
+                                     businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None
+                                   )
 
+case class TaxDeductedAtSourceViewModel(
+                                         payeEmployments: Option[BigDecimal] = None,
+                                         ukPensions: Option[BigDecimal] = None,
+                                         stateBenefits: Option[BigDecimal] = None,
+                                         cis: Option[BigDecimal] = None,
+                                         ukLandAndProperty: Option[BigDecimal] = None,
+                                         specialWithholdingTax: Option[BigDecimal] = None,
+                                         voidISAs: Option[BigDecimal] = None,
+                                         savings: Option[BigDecimal] = None,
+                                         inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
+                                         total: Option[BigDecimal] = None,
+                                         totalIncomeTaxAndNicsDue: Option[BigDecimal] = None
+                                       ) {
+  val allFields: Seq[(String, BigDecimal)] = Seq(
+    "inYearAdjustment" -> inYearAdjustmentCodedInLaterTaxYear,
+    "payeEmployments" -> payeEmployments,
+    "ukPensions" -> ukPensions,
+    "stateBenefits" -> stateBenefits,
+    "cis" -> cis,
+    "ukLandAndProperty" -> ukLandAndProperty,
+    "specialWithholdingTax" -> specialWithholdingTax,
+    "voidISAs" -> voidISAs,
+    "savings" -> savings
+  ).collect {
+    case (key, Some(amount)) => key -> amount
+  }
+  val nonEmpty: Boolean = allFields.nonEmpty
+}
 
