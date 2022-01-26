@@ -92,19 +92,6 @@ class TaxYearsControllerSpec extends TestSupport
 				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
 			}
 		}
-		"there is no firstAccountingPeriodEndDate from income source details" should {
-			"show the tax years page" in new Setup {
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockNoIncomeSources()
-
-				mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
-
-				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
-
-				status(result) shouldBe OK
-				contentType(result) shouldBe Some(HTML)
-			}
-		}
 		"all data is returned successfully" should {
 			"show the tax years page" in new Setup {
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

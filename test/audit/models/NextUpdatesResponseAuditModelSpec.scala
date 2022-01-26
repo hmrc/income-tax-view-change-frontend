@@ -127,7 +127,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
       val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
         MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(testMtditid, None, Nil,
-          Some(PropertyDetailsTestConstants.propertyDetails)), None, None, None, None)(FakeRequest()),
+          None), None, None, None, None)(FakeRequest()),
         testSelfEmploymentId,
         List()
       )

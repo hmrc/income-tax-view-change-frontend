@@ -27,7 +27,6 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
-import testConstants.PropertyDetailsTestConstants
 
 class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
 
@@ -60,7 +59,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         mtditid = testMtditid,
         nino = testNino,
         userName = Some(Name(Some("firstName"), Some("lastName"))),
-        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, Some(PropertyDetailsTestConstants.propertyDetails)),
+        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
         saUtr = Some(testSaUtr),
         credId = Some(testCredId),
         userType = userType,
