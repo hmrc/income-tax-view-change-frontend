@@ -27,7 +27,6 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.Logger
 import play.api.libs.json.Json
-import testConstants.PropertyDetailsTestConstants
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {

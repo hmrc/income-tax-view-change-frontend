@@ -44,7 +44,7 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
     }
   }
 
-  def firstAccountingTaxYear(yearOption: Option[Int], property: Option[PropertyDetailsModel]): Int = {
+  def firstAccountingTaxYearIntVal(yearOption: Option[Int], property: Option[PropertyDetailsModel]): Int = {
     /**
      * The function takes list of BusinessDetailsModel and an object of type Option[Int]
      * Returns option content if any, throws an exception of list of business details models is not empty.
@@ -83,11 +83,11 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
 
   val startingTaxYear: Int = {
     // Get sequence of accounting periods as type LocalDate dates
-    val tmpSeq = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
+    val acctPeriodEndDateSeq = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
     // Get first accounting period option
-    val firstAcctOption = tmpSeq.map(_.getYear).sortWith(_ < _).headOption
+    val firstAcctPeriodOption = acctPeriodEndDateSeq.map(_.getYear).sortWith(_ < _).headOption
     // return Int value representing first acctounting period year or throw missing data exception
-    firstAccountingTaxYear(firstAcctOption, property)
+    firstAccountingTaxYearIntVal(firstAcctPeriodOption, property)
   }
 
   def orderedTaxYearsByAccountingPeriods: List[Int] = {

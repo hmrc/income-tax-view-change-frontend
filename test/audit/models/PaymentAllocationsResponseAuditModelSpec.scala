@@ -27,7 +27,6 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
-
 class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "payment-allocations-response"

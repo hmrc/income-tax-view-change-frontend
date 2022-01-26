@@ -24,7 +24,6 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 import java.time.LocalDate
 
 object IncomeSourceDetailsTestConstants {
-
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(business1, business2), Some(propertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2017"), List(business1), None)
   val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testMtdItId, Some(LocalDate.now().getYear.toString), List(business1), None)

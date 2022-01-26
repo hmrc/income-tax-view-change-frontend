@@ -22,7 +22,6 @@ import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.PropertyDetailsTestConstants
 import testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {

@@ -24,8 +24,6 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
-import testConstants.PropertyDetailsTestConstants
-
 class HomeAuditSpec extends WordSpecLike with MustMatchers {
 
   val transactionName: String = "itsa-home-page"
