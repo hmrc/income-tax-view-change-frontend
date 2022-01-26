@@ -29,7 +29,6 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
 import views.html.TaxYearOverview
 
@@ -54,22 +53,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   extends BaseController with FeatureSwitching with I18nSupport {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSourcesNoCache
-
-  private def view(taxYear: Int,
-                   calculationOverview: Option[CalcOverview] = None,
-                   charge: List[DocumentDetailWithDueDate],
-                   obligations: ObligationsModel,
-                   codingOutEnabled: Boolean
-                  )(implicit user: MtdItUser[_]): Html = {
-    taxYearOverviewView(
-      taxYear = taxYear,
-      overviewOpt = calculationOverview,
-      charges = charge,
-      obligations,
-      backUrl = backUrl,
-        codingOutEnabled = codingOutEnabled
-    )
-  }
 
   private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])
                                    (implicit user: MtdItUser[AnyContent]): Future[Result] = {
@@ -112,30 +95,38 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
       toDate = LocalDate.of(taxYear, 4, 5)
     )
   }
+  private def getBackURL(request: Request[AnyContent]): String = {
+    val homeReferer: Option[Boolean] = request.headers.get(REFERER).map(_.contains(homeUrl))
+    homeReferer match {
+      case Some(true) => homeUrl
+      case _ => backUrl
+    }
+  }
 
   private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
-    implicit user =>
+      implicit user =>
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
-          withTaxYearFinancials(taxYear) { charges =>
+          withTaxYearFinancials(taxYear) { chargesValue =>
             withObligationsModel(taxYear) map {
               case obligationsModel: ObligationsModel =>
                 if (isEnabled(TxmEventsApproved)) {
-                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, calculation, charges, obligationsModel))
+                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, calculation, chargesValue, obligationsModel))
                 }
                 val codingOutEnabled = isEnabled(CodingOut)
-                Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation)),
-                  charge = charges, obligations = obligationsModel, codingOutEnabled = codingOutEnabled)
+                Ok(taxYearOverviewView(taxYear, overviewOpt = Some(CalcOverview(calculation)),
+                  charges = chargesValue, obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.request))
                 ).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
           }
         case CalcDisplayNoDataFound =>
           val codingOutEnabled = isEnabled(CodingOut)
-          withTaxYearFinancials(taxYear) { charges =>
+          withTaxYearFinancials(taxYear) { chargesValue =>
             withObligationsModel(taxYear) map {
-              case obligationsModel: ObligationsModel => Ok(view(taxYear, charge = charges,
-                obligations = obligationsModel, codingOutEnabled = codingOutEnabled)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+              case obligationsModel: ObligationsModel => Ok(taxYearOverviewView(taxYear, overviewOpt = None, charges = chargesValue,
+                obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.request)))
+                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
           }
@@ -156,6 +147,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   }
 
   lazy val backUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
-
+  lazy val homeUrl: String = controllers.routes.HomeController.home().url
 }
 
