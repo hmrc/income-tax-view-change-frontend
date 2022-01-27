@@ -52,4 +52,4 @@ case class MtdItUser[A](mtditid: String,
                         saUtr: Option[String],
                         credId: Option[String],
                         userType: Option[String],
-                        arn: Option[String])(implicit val request: Request[A]) extends MtdItUserBase[A]
+                        arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]

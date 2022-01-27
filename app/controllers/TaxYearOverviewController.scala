@@ -96,8 +96,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     )
   }
 
-  private def getBackURL(request: Request[AnyContent]): String = {
-    request.headers.get(REFERER).map(_.contains(backHomeUrl)) match {
+  private def getBackURL(referer: Option[String]): String = {
+    referer.map(_.contains(backHomeUrl)) match {
       case Some(true) => backHomeUrl
       case _ => backTaxYearsUrl
     }
@@ -115,7 +115,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                 }
                 val codingOutEnabled = isEnabled(CodingOut)
                 Ok(taxYearOverviewView(taxYear, overviewOpt = Some(CalcOverview(calculation)),
-                  charges = chargesValue, obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.request))
+                  charges = chargesValue, obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.headers.get(REFERER)))
                 ).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
@@ -125,7 +125,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
           withTaxYearFinancials(taxYear) { chargesValue =>
             withObligationsModel(taxYear) map {
               case obligationsModel: ObligationsModel => Ok(taxYearOverviewView(taxYear, overviewOpt = None, charges = chargesValue,
-                obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.request)))
+                obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.headers.get(REFERER))))
                 .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }

@@ -76,7 +76,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                 charges = documentDetailsWithDueDates,
                 obligations = obligations,
                 codingOutEnabled = codingOutEnabled,
-                backUrl = getBackURL(request),
+                backUrl = getBackURL(request.headers.get(REFERER)),
                 isAgent = true
               )).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
             }
@@ -85,8 +85,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
       }
   }
 
-  private def getBackURL(request: Request[AnyContent]): String = {
-    request.headers.get(REFERER).map(_.contains(backAgentHomeUrl)) match {
+  private def getBackURL(referer: Option[String]): String = {
+    referer.map(_.contains(backAgentHomeUrl)) match {
       case Some(true) => backAgentHomeUrl
       case _ => backAgentTaxYearsUrl
     }
