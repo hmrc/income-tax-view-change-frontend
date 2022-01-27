@@ -95,16 +95,16 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
       toDate = LocalDate.of(taxYear, 4, 5)
     )
   }
+
   private def getBackURL(request: Request[AnyContent]): String = {
-    val homeReferer: Option[Boolean] = request.headers.get(REFERER).map(_.contains(homeUrl))
-    homeReferer match {
-      case Some(true) => homeUrl
-      case _ => backUrl
+    request.headers.get(REFERER).map(_.contains(backHomeUrl)) match {
+      case Some(true) => backHomeUrl
+      case _ => backTaxYearsUrl
     }
   }
 
   private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
-      implicit user =>
+    implicit user =>
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
           withTaxYearFinancials(taxYear) { chargesValue =>
@@ -146,7 +146,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     }
   }
 
-  lazy val backUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
-  lazy val homeUrl: String = controllers.routes.HomeController.home().url
+  lazy val backTaxYearsUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
+  lazy val backHomeUrl: String = controllers.routes.HomeController.home().url
 }
 

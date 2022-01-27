@@ -96,6 +96,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     utils.SessionKeys.clientUTR -> "1234567890"
   )
 
+  lazy val fakeRequestWithActiveAndRefererToHomePage: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    SessionKeys.lastRequestTimestamp -> "1498236506662",
+    SessionKeys.authToken -> "Bearer Token"
+  ).withHeaders(
+    HeaderNames.REFERER -> "/report-quarterly/income-and-expenses/view"
+  )
+
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",
