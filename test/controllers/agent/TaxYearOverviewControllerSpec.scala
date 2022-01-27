@@ -56,6 +56,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 		val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(documentDetailClass2Nic)
 		val payeChargesList: List[DocumentDetailWithDueDate] = List(documentDetailPaye)
 		val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
+		val homeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
 		val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/agents/tax-years"
 
     val controller: TaxYearOverviewController = new TaxYearOverviewController(
@@ -72,12 +73,6 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
       app.injector.instanceOf[ExecutionContext],
       itvcErrorHandler = mockItvcErrorHandler
     )
-  }
-
-  "backUrl" should {
-    "return to the home page" in new Setup {
-      controller.backUrl() shouldBe controllers.agent.routes.TaxYearsController.show().url
-    }
   }
 
   "show" when {
@@ -322,5 +317,38 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 				contentAsString(result) shouldBe expectedContent
 			}
 		}
+
+		"all calls to retrieve data were successful and Referer was a Home page" should {
+			"show the Tax Year Overview Page and back link should be to the Home page" in new Setup {
+				enable(CodingOut)
+
+				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+				mockBothIncomeSources()
+				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+				setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
+					documentDetails = documentDetailClass2Nic.documentDetail
+				))
+				mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+					ObligationsModel(Nil)
+				)
+
+				val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel)
+				val expectedContent: String = taxYearOverviewView(
+					testYear,
+					Some(calcOverview),
+					class2NicsChargesList,
+					testObligtionsModel,
+					homeBackLink,
+					isAgent = true,
+					codingOutEnabled = true
+				).toString
+
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientAndRefererToHomePage())
+
+				status(result) shouldBe OK
+				contentAsString(result) shouldBe expectedContent
+			}
+		}
+
   }
 }

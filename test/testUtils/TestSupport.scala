@@ -120,6 +120,18 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       utils.SessionKeys.confirmedClient -> "true"
     )
 
+  def fakeRequestConfirmedClientAndRefererToHomePage(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true"
+    ).withHeaders(
+      HeaderNames.REFERER -> "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
+    )
+
   def agentUserConfirmedClient(clientNino: String = "AA111111A"): MtdItUser[_] = MtdItUser(
     mtditid = "XAIT00000000015",
     nino = clientNino,

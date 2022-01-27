@@ -30,7 +30,6 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -54,6 +53,9 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                            val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
+  lazy val backAgentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
+  lazy val backAgentHomeUrl: String = controllers.agent.routes.HomeController.show().url
+
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
@@ -68,38 +70,26 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                 }
               )
               val codingOutEnabled = isEnabled(CodingOut)
-              Future.successful(Ok(view(
-                taxYear,
-                calculationOpt.map(calc => CalcOverview(calc)),
-                documentDetailsWithDueDates = documentDetailsWithDueDates,
+              Future.successful(Ok(taxYearOverview(
+                taxYear = taxYear,
+                overviewOpt = calculationOpt.map(calc => CalcOverview(calc)),
+                charges = documentDetailsWithDueDates,
                 obligations = obligations,
-                codingOutEnabled = codingOutEnabled
-              )(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
+                codingOutEnabled = codingOutEnabled,
+                backUrl = getBackURL(request),
+                isAgent = true
+              )).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
             }
           }
         }
       }
   }
 
-  def backUrl(): String = {
-    controllers.agent.routes.TaxYearsController.show().url
-  }
-
-  private def view(taxYear: Int,
-                   calculationOverview: Option[CalcOverview],
-                   documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
-                   obligations: ObligationsModel,
-                   codingOutEnabled: Boolean
-                  )(implicit request: Request[_], user: MtdItUser[_]): Html = {
-    taxYearOverview(
-      taxYear = taxYear,
-      overviewOpt = calculationOverview,
-      charges = documentDetailsWithDueDates,
-      obligations = obligations,
-      backUrl = backUrl(),
-      isAgent = true,
-      codingOutEnabled = codingOutEnabled
-    )
+  private def getBackURL(request: Request[AnyContent]): String = {
+    request.headers.get(REFERER).map(_.contains(backAgentHomeUrl)) match {
+      case Some(true) => backAgentHomeUrl
+      case _ => backAgentTaxYearsUrl
+    }
   }
 
   private def withCalculation(nino: String, taxYear: Int)(f: Option[Calculation] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
