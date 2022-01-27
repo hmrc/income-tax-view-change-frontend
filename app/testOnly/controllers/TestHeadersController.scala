@@ -39,14 +39,8 @@ class TestHeadersController @Inject()(testHeaders: TestHeaders)
     TestHeadersForm.form.bindFromRequest().fold(
       _ => Redirect(routes.TestHeadersController.showTestHeaders()),
       success => {
-        if (success.headerName == "ITVC_CRYSTALLISATION_METADATA") {
-          Redirect(routes.TestHeadersController.showTestHeaders())
+        Redirect(routes.TestHeadersController.showTestHeaders())
             .withSession(request.session.data.updated("Gov-Test-Scenario", success.headerName).toSeq: _*)
-            .withSession(request.session + (SessionKeys.calculationId -> "041f7e4d-87d9-4d4a-a296-3cfbdf92f7e1")) //Cald ID from MTD Stubs
-        } else {
-          Redirect(routes.TestHeadersController.showTestHeaders())
-            .withSession(request.session.data.updated("Gov-Test-Scenario", success.headerName).toSeq: _*)
-        }
       }
     )
   }

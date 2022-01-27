@@ -16,6 +16,7 @@
 
 package connectors
 
+import auth.MtdItUserWithNino
 import config.FrontendAppConfig
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
@@ -30,12 +31,14 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
                                               config: FrontendAppConfig) extends RawResponseReads {
   val baseUrl: String = config.incomeTaxCalculationService
 
-  def getCalculationResponseUrl(nino: String): String =  s"$baseUrl/income-tax/nino/$nino"
+  def getCalculationResponseUrl(nino: String): String =  s"$baseUrl/income-tax-calculation/income-tax/nino/$nino"
 
-  def getCalculationResponse(nino: String, taxYear: String)(implicit headerCarrier: HeaderCarrier,
-                                                            ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
+  def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
+                            (implicit headerCarrier: HeaderCarrier,
+                             ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
 
-    http.GET[HttpResponse](getCalculationResponseUrl(nino), Seq(("taxYear", taxYear))) map { response =>
+    http.GET[HttpResponse](getCalculationResponseUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
+      headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>
       response.status match {
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(
