@@ -103,7 +103,7 @@
     </div>
     }
 
-    @if(viewModel.payPensionsProfit.filter(_.income > 0).nonEmpty) {
+    @if(viewModel.payPensionsProfitBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
         <table class="govuk-table">
             <caption
                     class="govuk-table__caption govuk-heading-l" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")
@@ -115,14 +115,14 @@
             </tr>
 
             <tbody class="govuk-table__body">
-            @for(band <- viewModel.payPensionsProfit.filter(_.income > 0).sortBy(_.rate)) {
+            @for(band <- viewModel.payPensionsProfitBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
                 @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
             }
             </tbody>
         </table>
     }
 
-    @if(viewModel.savingsAndGains.filter(_.income > 0).nonEmpty) {
+    @if(viewModel.savingsAndGainsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
         <table class="govuk-table">
             <caption
                     id = "savingsAndGains" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.savings")
@@ -134,7 +134,7 @@
             </tr>
 
             <tbody class="govuk-table__body">
-            @for(band <- viewModel.savingsAndGains.filter(_.income > 0)
+            @for(band <- viewModel.savingsAndGainsBands.getOrElse(Seq()).filter(_.income > 0)
                     .sortBy(_.name == "SSR").sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR")
                     .sortBy(_.name == "HRT").sortBy(_.name == "ART")
             ) {
@@ -144,7 +144,7 @@
         </table>
     }
 
-    @if(viewModel.dividends.filter(_.income > 0).nonEmpty) {
+    @if(viewModel.dividendsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
         <table class="govuk-table">
             <caption
                     id = "dividends" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.dividends")
@@ -156,7 +156,7 @@
             </tr>
 
             <tbody class="govuk-table__body">
-            @for(band <- viewModel.dividends.filter(_.income > 0)
+            @for(band <- viewModel.dividendsBands.getOrElse(Seq()).filter(_.income > 0)
                     .sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR").sortBy(_.name == "HRT")
                     .sortBy(_.name == "ZRTAR").sortBy(_.name == "ART")
             ) {
@@ -166,7 +166,7 @@
         </table>
     }
 
-    @if(viewModel.lumpSums.filter(_.income > 0).nonEmpty) {
+    @if(viewModel.lumpSumsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
         <table class="govuk-table">
             <caption
                     class="govuk-table__caption govuk-heading-l" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")
@@ -178,14 +178,14 @@
                 </tr>
 
             <tbody class="govuk-table__body">
-            @for(band <- viewModel.lumpSums.filter(_.income > 0).sortBy(_.rate)) {
+            @for(band <- viewModel.lumpSumsBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
                 @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
             }
             </tbody>
         </table>
     }
 
-    @if(viewModel.gainsOnLifePolicies.filter(_.income > 0).nonEmpty) {
+    @if(viewModel.gainsOnLifePoliciesBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
         <table class="govuk-table">
             <caption
                     id="gainsOnLifePolicies" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.gains_life_policies")
@@ -197,7 +197,7 @@
             </tr>
 
             <tbody class="govuk-table__body">
-            @for(band <- viewModel.gainsOnLifePolicies.filter(_.income > 0).sortBy(_.rate)) {
+            @for(band <- viewModel.gainsOnLifePoliciesBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
                 @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
             }
             </tbody>
@@ -277,7 +277,7 @@
         </table>
     }
 
-    @if((viewModel.class2VoluntaryContributions.isDefined) ||
+    @if((viewModel.class2NicsAmount && viewModel.class2VoluntaryContributions.isDefined) ||
     viewModel.giftAidTax.isDefined ||
     viewModel.totalPensionSavingsTaxCharges.isDefined ||
     viewModel.statePensionLumpSumCharges.isDefined

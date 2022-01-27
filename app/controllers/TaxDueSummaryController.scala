@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{AllowanceAndDeductionsResponseAuditModelNew, TaxCalculationDetailsResponseAuditModel}
+import audit.models.{AllowanceAndDeductionsResponseAuditModelNew, TaxCalculationDetailsResponseAuditModel, TaxCalculationDetailsResponseAuditModelNew}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -62,10 +62,10 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
         if (isEnabled(NewTaxCalcProxy)) {
           calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
-              val viewModel = TaxDueSummaryViewModel(liabilityCalc.calculation)
-//              if (isEnabled(TxmEventsApproved)) {
-//                auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
-//              }
+              val viewModel = TaxDueSummaryViewModel(liabilityCalc)
+              if (isEnabled(TxmEventsApproved)) {
+                auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
+              }
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
             case _: LiabilityCalculationError =>
               Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
