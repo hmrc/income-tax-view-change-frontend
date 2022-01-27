@@ -21,7 +21,9 @@ import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testConstants.PaymentAllocationsTestConstants.{singleTestPaymentAllocationChargeWithOutstandingAmountZero, _}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
+import models.financialDetails.DocumentDetail
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.Jsoup
@@ -32,6 +34,7 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.PaymentAllocation
 import testConstants.MessagesLookUp.{PaymentAllocation => paymentAllocationMessages}
+
 import scala.collection.JavaConverters._
 
 
@@ -48,6 +51,11 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail.copy(outstandingAmount = Some(0))),
     List(financialDetail)
+  )
+
+  val financialDetailsWithNoSubItem: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+    List(documentDetail),
+    List(financialDetail.copy(items = None))
   )
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
@@ -316,5 +324,13 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       document.getElementById("credit-on-account") shouldBe null
     }
 
+    "The payments allocation view has an empty financial details response model" should {
+      "throw a MissingFieldException" in {
+        val thrownException = intercept[MissingFieldException]{
+          financialDetailsWithNoSubItem
+        }
+        thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Financial Details Sub Item"
+      }
+    }
   }
 }
