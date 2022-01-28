@@ -67,7 +67,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
       "render the Allowances and Deductions page" in {
         enable(NewTaxCalcProxy)
-        mockCalculationSuccessFullNew()
+        mockCalculationSuccessFullNew(testMtditid)
         status(result) shouldBe Status.OK
         document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
         document.getElementById("total-value").text() shouldBe "£17,500.99"
@@ -81,7 +81,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
       "render the Allowances and Deductions page" in {
         enable(NewTaxCalcProxy)
-        mockCalculationSuccessMinimalNew()
+        mockCalculationSuccessMinimalNew(testMtditid)
         status(result) shouldBe Status.OK
         document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
         document.getElementById("total-value").text() shouldBe "£0.00"

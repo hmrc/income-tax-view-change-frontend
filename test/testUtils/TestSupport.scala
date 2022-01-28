@@ -97,6 +97,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     utils.SessionKeys.clientUTR -> "1234567890"
   )
 
+  lazy val fakeRequestWithActiveAndRefererToHomePage: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    SessionKeys.lastRequestTimestamp -> "1498236506662",
+    SessionKeys.authToken -> "Bearer Token"
+  ).withHeaders(
+    HeaderNames.REFERER -> "/report-quarterly/income-and-expenses/view"
+  )
+
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",
@@ -112,6 +119,18 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       utils.SessionKeys.clientMTDID -> "XAIT00000000015",
       utils.SessionKeys.clientNino -> clientNino,
       utils.SessionKeys.confirmedClient -> "true"
+    )
+
+  def fakeRequestConfirmedClientAndRefererToHomePage(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true"
+    ).withHeaders(
+      HeaderNames.REFERER -> "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
     )
 
   def agentUserConfirmedClient(clientNino: String = "AA111111A"): MtdItUser[_] = MtdItUser(

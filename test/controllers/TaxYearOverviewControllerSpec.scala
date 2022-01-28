@@ -70,6 +70,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
   val payeChargesList: List[DocumentDetailWithDueDate] = List(documentDetailPaye)
   val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
+  val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
 
 
   "The TaxYearOverview.renderTaxYearOverviewPage(year) action" when {
@@ -93,8 +94,36 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-
         val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some("text/html")
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
+      }
+    }
+
+    "all calls are returned correctly and Referer was a Home page" should {
+      "show the Tax Year Overview Page and back link should be to the Home page" in {
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccess()
+        mockFinancialDetailsSuccess()
+        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
+          toDate = LocalDate.of(testYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel)
+        val expectedContent: String = taxYearOverviewView(
+          testYear,
+          Some(calcOverview),
+          testChargesList,
+          testObligtionsModel,
+          homeBackLink,
+          codingOutEnabled = true
+        ).toString
+
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveAndRefererToHomePage)
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent

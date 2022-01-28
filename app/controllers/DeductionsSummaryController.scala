@@ -62,7 +62,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     action.async {
       implicit user =>
         if (isEnabled(NewTaxCalcProxy)) {
-          calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
+          calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))

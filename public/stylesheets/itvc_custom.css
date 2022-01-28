@@ -7,18 +7,18 @@
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     justify-content: flex-start;
-    padding: 0 15px;
+    padding: 1em 0.5em 1.5em;
 }
 
 .tile {
     flex-grow: 0;
     flex-basis: 100%;
     margin-bottom: 2em;
+    background-color: #f8f8f8;
     border: 1px solid #dee0e2;
-    background: #f3f2f1;
 }
 
-@media screen and (min-width: 600px) and (max-width: 900px) {
+@media screen and (min-width: 600px) {
     .tile {
         flex-basis: 46.99%;
     }
@@ -29,17 +29,6 @@
 
     .tile:nth-child(2n-1) {
         margin-right: 2%;
-    }
-}
-
-@media screen and (min-width: 900px) {
-    .tile {
-        flex-basis: 31%;
-    }
-
-    .tile:nth-child(3n-1) {
-        margin-left: 3%;
-        margin-right: 3%;
     }
 }
 
@@ -58,7 +47,7 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 
 .tile .tile-body {
     border-bottom: 0;
-    padding: 12px;
+    padding: 1em 1.5em 1.5em;
 }
 
 .tile .tile-body .heading-medium {
@@ -101,12 +90,4 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 
 .no-wrap {
     white-space: nowrap;
-}
-
-.card-container {
-    margin-bottom: 2em;
-    padding: 1em 0.5em 1.5em;
-    background-color: #f8f8f8;
-    border: 1px solid #dee0e2;
-
 }

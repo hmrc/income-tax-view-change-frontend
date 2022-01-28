@@ -17,11 +17,13 @@
 package views
 
 import config.FrontendAppConfig
+import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
 import models.financialDetails.Payment
 import testUtils.ViewSpec
 import views.html.PaymentHistory
+
 import java.time.LocalDate
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
@@ -34,7 +36,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val paymentHistoryView: PaymentHistory = app.injector.instanceOf[PaymentHistory]
 
   object PaymentHistoryMessages {
-    val heading = "Payment and refund history"
+    val heading = "Payment history"
     val title = s"$heading - Business Tax account - GOV.UK"
     val titleWhenAgentView = s"$heading - Your client’s Income Tax details - GOV.UK"
 
@@ -55,6 +57,10 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   val testPayments: List[Payment] = List(
     Payment(Some("AAAAA"), Some(10000), Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
     Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
+  )
+
+  val emptyPayments: List[Payment] = List(
+    Payment(reference = None, amount = None, method = None, lot = None, lotItem = None, date = None, transactionId = None)
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
@@ -113,6 +119,15 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           }
         }
       }
+    }
+  }
+
+  "The payments history view with an empty payment response model" should {
+    "throw a MissingFieldException" in {
+      val thrownException = intercept[MissingFieldException]{
+        paymentHistoryView(emptyPayments, "testBackURL", None, isAgent = false)
+      }
+      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Date"
     }
   }
 

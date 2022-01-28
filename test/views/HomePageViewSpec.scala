@@ -198,12 +198,12 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
-    "have a payment history and credit tile" which {
+    "have a payment history tile" which {
       "has a heading" in new Setup {
-        getElementById("payment-history-and-credit-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentHistoryAndCreditHeading)
+        getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentHistoryHeading)
       }
       "has a link to the payment and refund history page" in new Setup {
-        val link: Option[Element] = getElementById("payment-history-and-credit-tile").map(_.select("a").first)
+        val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.viewPaymentHistory().url)
         link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
       }
