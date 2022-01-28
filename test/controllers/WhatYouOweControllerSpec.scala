@@ -19,7 +19,7 @@ package controllers
 import testConstants.BaseTestConstants
 import testConstants.FinancialDetailsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -28,7 +28,7 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents}
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.WhatYouOweService
 import views.html.WhatYouOwe

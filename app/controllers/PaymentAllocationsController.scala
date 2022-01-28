@@ -60,7 +60,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
             }
-            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
+            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial))
           case _ => itvcErrorHandler.showInternalServerError()
         }
       } else Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))

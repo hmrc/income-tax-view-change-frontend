@@ -31,8 +31,8 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
   val docNumber = "docNumber1"
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    paymentHistoryBusinessAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
+    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
 

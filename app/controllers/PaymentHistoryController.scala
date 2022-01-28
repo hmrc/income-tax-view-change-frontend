@@ -59,7 +59,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
             if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
             }
-            Ok(paymentHistoryView(payments, backUrl = backUrl, user.saUtr))
+            Ok(paymentHistoryView(payments, backUrl = backUrl, user.saUtr, btaNavPartial = user.btaNavPartial))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
       }

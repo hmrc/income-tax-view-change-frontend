@@ -38,7 +38,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response" should {
       val testUser: MtdItUser[_] = MtdItUser(
-        testMtditid, testNino, userName = None, multipleBusinessesAndPropertyResponse,
+        testMtditid, testNino, userName = None, multipleBusinessesAndPropertyResponse, None,
         Some("1234567890"), Some("12345-credId"), Some(testUserTypeIndividual), arn = None
       )(FakeRequest())
 
@@ -77,8 +77,12 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
           pageTitle(messages.deductionsSummaryTitle),
           elementTextBySelector("h1")(messages.deductionsSummaryHeading)
         )
-      }
 
+      val testUser: MtdItUser[_] = MtdItUser(
+        testMtditid, testNino, userName = None, multipleBusinessesAndPropertyResponse, None,
+        Some("1234567890"), Some("12345-credId"), Some(testUserTypeIndividual), arn = None
+      )(FakeRequest())
+    }
       "with TxmEventsApproved DISABLED" in {
 
         When("I disable TxmEventsApproved")

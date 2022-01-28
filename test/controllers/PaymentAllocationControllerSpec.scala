@@ -21,11 +21,11 @@ package controllers
 import testConstants.PaymentAllocationsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import implicits.{ImplicitDateFormatter}
+import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.core.Nino
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel}
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -63,6 +63,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       MockIncomeSourceDetailsPredicate,
       app.injector.instanceOf[ItvcErrorHandler],
       paymentAllocation,
+      app.injector.instanceOf[BtaNavBarPredicate],
       mockAuditingService
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,

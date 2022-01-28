@@ -16,11 +16,12 @@
 
 package services
 
+import config.FrontendAppConfig
 import javax.inject.Inject
 import models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import play.api.i18n.{Lang, Messages}
 
-class BtaNavBarService @Inject()() {
+class BtaNavBarService @Inject()()(implicit val appConfig: FrontendAppConfig) {
 
   def notificationBadgeCount(messageCount: Int): String = {
     messageCount match {
@@ -45,7 +46,7 @@ class BtaNavBarService @Inject()() {
       case Some(NavContent(home, account, message, help, forms)) =>
         if(messages.lang == Lang("cy")){
           Seq(
-            ListLinks(home.cy, home.url),
+            ListLinks(home.cy, appConfig.homePageUrl),
             ListLinks(account.cy, account.url),
             ListLinks(message.cy, message.url, Some(notificationBadgeCount(message.alerts.getOrElse(0)))),
             formsNav(forms),
@@ -53,7 +54,7 @@ class BtaNavBarService @Inject()() {
           )
         } else {
           Seq(
-            ListLinks(home.en, home.url),
+            ListLinks(home.en, appConfig.homePageUrl),
             ListLinks(account.en, account.url),
             ListLinks(message.en, message.url, Some(notificationBadgeCount(message.alerts.getOrElse(0)))),
             formsNav(forms),

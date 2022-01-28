@@ -64,7 +64,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
               viewModel match {
-                case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl(taxYear), isAgent = false))
+                case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl(taxYear), isAgent = false, btaNavPartial = user.btaNavPartial))
                 case _ =>
                   Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
                   itvcErrorHandler.showInternalServerError()
@@ -78,8 +78,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
         } else {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial)))
-              Future.successful(Ok(incomeBreakdownOld(calcDisplayModel, taxYear, backUrl(taxYear))))
+              Future.successful(Ok(incomeBreakdownOld(calcDisplayModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial)))
 
             case CalcDisplayNoDataFound =>
               Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")

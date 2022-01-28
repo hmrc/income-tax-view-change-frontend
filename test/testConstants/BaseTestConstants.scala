@@ -49,13 +49,13 @@ object BaseTestConstants {
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual))(FakeRequest())
-  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some(testSaUtr), Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
+  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), btaNavPartial =  None, Some(testSaUtr), Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessesAndPropertyIncome, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
+    businessesAndPropertyIncome, btaNavPartial =  None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
   lazy val testMtdItAgentUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessesAndPropertyIncome, Some(testSaUtr), Some(testCredId), Some(testUserTypeAgent), Some(testArn))(FakeRequest())
+    businessesAndPropertyIncome, btaNavPartial =  None, Some(testSaUtr), Some(testCredId), Some(testUserTypeAgent), Some(testArn))(FakeRequest())
   lazy val testMtdItUserMinimal: MtdItUser[_] = MtdItUser(testMtditid, testNino, userName = None,
-    incomeSources = businessesAndPropertyIncome, saUtr = None, credId = None, userType = None, arn = None)(FakeRequest())
+    incomeSources = businessesAndPropertyIncome, btaNavPartial =  None, saUtr = None, credId = None, userType = None, arn = None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"

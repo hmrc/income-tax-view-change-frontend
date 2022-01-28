@@ -216,8 +216,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   }
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-    incomeSourceDetailsSuccess, Some("1234567890"), None, Some("Agent"), arn = Some("1")
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetailsSuccess,
+    None, Some("1234567890"), None, Some("Agent"), arn = Some("1")
   )(FakeRequest())
 
   s"[IT-AGENT-TEST-1] GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {

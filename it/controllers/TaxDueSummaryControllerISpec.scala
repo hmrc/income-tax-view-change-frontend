@@ -36,8 +36,8 @@ import play.api.test.FakeRequest
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
   "Calling the TaxDueSummaryController.showTaxDueSummary(taxYear)" when {

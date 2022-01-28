@@ -48,6 +48,7 @@ class HomePageViewSpec extends TestSupport {
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+    None,
     saUtr,
     Some("testCredId"),
     Some("Individual"),

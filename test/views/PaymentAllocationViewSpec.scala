@@ -43,7 +43,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val backUrl: String = controllers.routes.PaymentHistoryController.viewPaymentHistory().url
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
+    btaNavPartial =  None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail.copy(outstandingAmount = Some(0))),

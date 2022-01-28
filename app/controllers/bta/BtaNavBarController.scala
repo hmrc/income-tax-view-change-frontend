@@ -16,7 +16,6 @@
 
 package controllers.bta
 
-import auth.MtdItUser
 import connectors.BtaNavBarPartialConnector
 import javax.inject.Inject
 import play.api.Logging

@@ -42,8 +42,8 @@ import java.time.{LocalDate, LocalDateTime}
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), None, Some("Agent"), Some("1")
   )(FakeRequest())
 
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(

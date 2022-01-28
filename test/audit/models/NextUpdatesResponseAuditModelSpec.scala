@@ -125,7 +125,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
     "Supplied with no Obligations and optional fields" should {
 
       val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
-        MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(testMtditid, None, Nil, None), None, None, None, None)(FakeRequest()),
+        MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(testMtditid, None, Nil, None), None, None, None, None, None)(FakeRequest()),
         testSelfEmploymentId,
         List()
       )

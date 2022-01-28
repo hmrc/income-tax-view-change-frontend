@@ -25,6 +25,7 @@ import config.featureswitch.TxmEventsApproved
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.btaNavBar.BtaNavBarRequest
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
@@ -32,8 +33,8 @@ import play.api.test.FakeRequest
 class HomeControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,  None,
+    Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {

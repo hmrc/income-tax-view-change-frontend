@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.BtaPartial
+import views.html.bta.BtaPartial
 
 class BtaPartialViewSpec extends TestSupport {
 

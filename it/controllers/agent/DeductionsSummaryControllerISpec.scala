@@ -48,8 +48,8 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
   )
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-    incomeSource, Some("1234567890"), credId = None, Some(testUserTypeAgent), arn = Some("1")
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
+    None, Some("1234567890"), credId = None, Some(testUserTypeAgent), arn = Some("1")
   )(FakeRequest())
 
   lazy val incomeSource: IncomeSourceDetailsModel = IncomeSourceDetailsModel(

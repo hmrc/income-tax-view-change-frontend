@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status
@@ -41,6 +41,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
     app.injector.instanceOf[SessionTimeoutPredicate],
+    app.injector.instanceOf[BtaNavBarPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
