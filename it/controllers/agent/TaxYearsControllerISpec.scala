@@ -93,7 +93,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        None
+        Some(getCurrentTaxYearEnd)
       )
     )
   )

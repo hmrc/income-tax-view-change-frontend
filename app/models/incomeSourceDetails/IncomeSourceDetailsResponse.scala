@@ -33,18 +33,7 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
 
   override def toJson: JsValue = Json.toJson(this)
 
-  private def isModelUserMigrated: Boolean = {
-    /**
-     * The function examines content of the yearOfMigration option of the model.
-     * Returns boolean true if this model is for a migrated user, false otherwise
-     */
-    this.yearOfMigration match {
-      case Some(_) => true
-      case _ => false
-    }
-  }
-
-  def firstAccountingTaxYearIntVal(yearOption: Option[Int], property: Option[PropertyDetailsModel]): Int = {
+  def firstAccountingTaxYearIntVal(yearOption: Option[Int]): Int = {
     /**
      * The function takes list of BusinessDetailsModel and an object of type Option[Int]
      * Returns option content if any, throws an exception of list of business details models is not empty.
@@ -53,26 +42,21 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
      * Returns sentinel value of Int.MaxValue only to accommodate existing unit testing only, semantically
      * meaningless.
      */
-     if (!this.isModelUserMigrated) {
-       Int.MaxValue
-     } else {
-       yearOption match {
-         case Some(yearInt) => yearInt
-         case _ => {
-           property match {
-             case None => Int.MaxValue
-             case _ => {
-               businesses match {
-                 case Nil => Int.MaxValue
-                 case _ => {
-                   property.get.firstAccountingPeriodEndDate.getOrElse(throw new RuntimeException("User missing first accounting period information")).getYear
-                 }
-               }
-             }
-           }
-         }
-       }
-     }
+    yearOption match {
+      case Some(yearInt) => yearInt
+      case _ => {
+        property match {
+          case None => {
+            businesses match {
+              case Nil => Int.MaxValue
+              case _ => throw new RuntimeException("User missing first accounting period information (business exists)")
+            }
+          }
+          case Some(_) =>
+            throw new RuntimeException("User missing first accounting period information (property exists")
+        }
+      }
+    }
   }
 
   def sanitise: IncomeSourceDetailsModel = {
@@ -87,7 +71,7 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
     // Get first accounting period option
     val firstAcctPeriodOption = acctPeriodEndDateSeq.map(_.getYear).sortWith(_ < _).headOption
     // return Int value representing first acctounting period year or throw missing data exception
-    firstAccountingTaxYearIntVal(firstAcctPeriodOption, property)
+    firstAccountingTaxYearIntVal(firstAcctPeriodOption)
   }
 
   def orderedTaxYearsByAccountingPeriods: List[Int] = {

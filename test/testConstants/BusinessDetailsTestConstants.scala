@@ -63,21 +63,21 @@ object BusinessDetailsTestConstants {
     incomeSourceId = Some(testSelfEmploymentId2),
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName2),
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val business2018 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(test2018BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val business2019 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(test2019BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val alignedBusiness = BusinessDetailsModel(
@@ -91,7 +91,7 @@ object BusinessDetailsTestConstants {
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
