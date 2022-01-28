@@ -16,7 +16,6 @@
 
 package models.liabilitycalculation
 
-import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 import play.api.http.Status
 import play.api.libs.json._
 import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull

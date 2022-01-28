@@ -52,13 +52,14 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
     Authenticated.async { implicit request =>
       implicit user =>
 				if (isEnabled(NewTaxCalcProxy)) {
-					calculationService.getLiabilityCalculationDetail(getClientNino, taxYear).map {
+					calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map {
 						case liabilityCalc: LiabilityCalculationResponse =>
 							val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
 							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(getMtdItUserWithNino(), viewModel))
 							Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
 						case _: LiabilityCalculationError =>
-							Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+							Logger("application").error(
+								s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
 							itvcErrorHandler.showInternalServerError()
 					}
 				} else {
@@ -73,7 +74,8 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
 							itvcErrorHandler.showInternalServerError()
 
 						case CalcDisplayError =>
-							Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+							Logger("application").error(
+								s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
 							itvcErrorHandler.showInternalServerError()
 					}
 				}

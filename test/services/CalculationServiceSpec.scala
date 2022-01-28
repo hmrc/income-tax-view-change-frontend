@@ -80,23 +80,23 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
       "successful response is returned from the IncomeTaxCalculationConnector" should {
 
         "return a LiabilityCalculationModel" in {
-          mockGetCalculationResponse(testNino, "2018")(liabilityCalculationSuccessResponse)
+          mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationSuccessResponse)
 
-          TestCalculationService.getLiabilityCalculationDetail(testNino, testYear).futureValue shouldBe liabilityCalculationSuccessResponse
+          TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testYear).futureValue shouldBe liabilityCalculationSuccessResponse
 
         }
         "NOT_FOUND response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
-            mockGetCalculationResponse(testNino, "2018")(liabilityCalculationNotFoundResponse)
+            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNotFoundResponse)
 
-            TestCalculationService.getLiabilityCalculationDetail(testNino, testYear).futureValue shouldBe liabilityCalculationNotFoundResponse
+            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testYear).futureValue shouldBe liabilityCalculationNotFoundResponse
           }
         }
         "error response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
-            mockGetCalculationResponse(testNino, "2018")(liabilityCalculationErrorResponse)
+            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationErrorResponse)
 
-            TestCalculationService.getLiabilityCalculationDetail(testNino, testYear).futureValue shouldBe liabilityCalculationErrorResponse
+            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testYear).futureValue shouldBe liabilityCalculationErrorResponse
           }
         }
       }

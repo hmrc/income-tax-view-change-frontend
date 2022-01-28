@@ -16,6 +16,7 @@
 
 package views
 
+import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
 import org.jsoup.Jsoup
@@ -27,10 +28,13 @@ import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
 import views.html.ChargeSummary
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.PaymentAllocationsTestConstants.documentDetail
 
 import java.time.LocalDate
 
 class ChargeSummaryViewSpec extends ViewSpec {
+
+  lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
 
   class Setup(documentDetail: DocumentDetail,
               dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
@@ -43,7 +47,6 @@ class ChargeSummaryViewSpec extends ViewSpec {
               latePaymentInterestCharge: Boolean = false,
               codingOutEnabled: Boolean = false,
               isAgent: Boolean = false) {
-    val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
     val view: Html = chargeSummary(DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge, codingOutEnabled, isAgent)
     val document: Document = Jsoup.parse(view.toString())
@@ -646,6 +649,17 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
     }
   }
+
+  "The charge summary view when missing mandatory expected fields" should {
+    "throw a MissingFieldException" in {
+      val thrownException = intercept[MissingFieldException]{
+        chargeSummary(DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
+          paymentBreakdown, List(), List(), payments, true, false, false, false, false)
+      }
+      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
+    }
+  }
+
   "agent" when {
     "The charge summary view" should {
 

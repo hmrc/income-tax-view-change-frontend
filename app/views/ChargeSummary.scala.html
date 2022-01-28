@@ -21,6 +21,7 @@
 @import models.financialDetails.PaymentsWithChargeType
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import exceptions.MissingFieldException
 
 @import java.time.LocalDate
 @import models.chargeHistory.ChargeHistoryModel
@@ -99,7 +100,7 @@
                             <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
                         } else {
                             <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
-                            @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.get.toLongDate)
+                            @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
                         }
                     </b>
                 }
@@ -170,8 +171,8 @@
                         <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
                     }
                     @{
-                        if(latePaymentInterestCharge) documentDetail.interestEndDate.get.toLongDate
-                        else dueDate.get.toLongDate
+                        if(latePaymentInterestCharge) documentDetail.interestEndDate.getOrElse(throw new MissingFieldException("Interest End Date")).toLongDate
+                        else dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate
                     }
                 </dd>
             </div>
@@ -179,7 +180,7 @@
         @if(latePaymentInterestCharge) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
-                <dd class="govuk-summary-list__value">@messages("chargeSummary.lpi.interestPeriod.dates", documentDetail.interestFromDate.get.toLongDateShort, documentDetail.interestEndDate.get.toLongDateShort)</dd>
+                <dd class="govuk-summary-list__value">@messages("chargeSummary.lpi.interestPeriod.dates", documentDetail.interestFromDate.getOrElse(throw new MissingFieldException("Interest From Date")).toLongDateShort, documentDetail.interestEndDate.getOrElse(throw new MissingFieldException("Interest End Date")).toLongDateShort)</dd>
             </div>
         }
         <div class="govuk-summary-list__row">
@@ -191,8 +192,8 @@
             </dt>
             <dd class="govuk-summary-list__value">
             @{
-                if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.get.toCurrency
-                else documentDetail.originalAmount.get.toCurrency
+                if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
+                else documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
             }
             </dd>
         </div>
@@ -213,9 +214,9 @@
         <dl class="govuk-summary-list">
             @for(financialDetail <- paymentBreakdown) {
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.get}")</dt>
+                    <dt class="govuk-summary-list__key">@messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.getOrElse(throw new MissingFieldException("Message Key For Charge Type"))}")</dt>
                     <dd class="govuk-summary-list__value">
-                        @financialDetail.originalAmount.get.toCurrency
+                        @financialDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
                         @if(financialDetail.dunningLockExists) {
                             <br>
                             <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
@@ -239,7 +240,7 @@
                     <dt class="govuk-summary-list__key">@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</dt>
                     <dd class="govuk-summary-list__value">
                         @p(){
-                            @documentDetail.latePaymentInterestAmount.get.toCurrency
+                            @documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
                             <br>
                             <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
                         }
@@ -298,16 +299,16 @@
                         }</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")</td>
                         <td class="govuk-table__cell numeric">@{
-                            documentDetail.originalAmount.get.toCurrency
+                            documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
                         }</td>
                     </tr>
                 }
 
                 @if(latePaymentInterestCharge) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.get.toLongDateShort}</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.getOrElse(throw new MissingFieldException("Interest End Date")).toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell numeric">@{documentDetail.latePaymentInterestAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell numeric">@{documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency}</td>
                     </tr>
                 }
 
@@ -315,7 +316,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFrom, taxYearTo)</td>
-                        <td class="govuk-table__cell numeric">@{documentDetail.originalAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell numeric">@{documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency}</td>
                     </tr>
                 }
 
@@ -331,9 +332,9 @@
             @if(paymentAllocationEnabled && !latePaymentInterestCharge) {
                 @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.date.get).toLongDateShort</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.date.getOrElse(throw new MissingFieldException("Payment Date"))).toLongDateShort</td>
                         <td class="govuk-table__cell">
-                            @if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isDefined) {
+                            @if(payments.findMatchingPaymentDocument(payment.lot.getOrElse(throw new MissingFieldException("Payment Lot")), payment.lotItem.getOrElse(throw new MissingFieldException("Payment Lot Item"))).isDefined) {
                                 @if(isAgent) {
                                     <a class="govuk-link" href="@{controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
                                 } else {
@@ -344,11 +345,11 @@
                                 </a>
                             }
 
-                            @if(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).isEmpty) {
+                            @if(payments.findMatchingPaymentDocument(payment.lot.getOrElse(throw new MissingFieldException("Payment Lot")), payment.lotItem.getOrElse(throw new MissingFieldException("Payment Lot Item"))).isEmpty) {
                                 @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
                             }
                         </td>
-                        <td class="govuk-table__cell numeric">@payment.amount.get.abs.toCurrency</td>
+                        <td class="govuk-table__cell numeric">@payment.amount.getOrElse(throw new MissingFieldException("Payment Amount")).abs.toCurrency</td>
                     </tr>
                 }
             }

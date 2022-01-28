@@ -15,7 +15,7 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter._
-@import models.calculation.CalcDisplayModel
+@import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 
@@ -23,18 +23,18 @@
       p: p
 )
 
-@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(incomeBreakdownViewModel: IncomeBreakdownViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
-@if(dataItem.isDefined) {
-    <tr id="@messageCode" class="govuk-table__row">
-        <td class="govuk-table__cell">@messages(s"income_breakdown.table.$messageCode")</td>
-        <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">@{
-            if(isNegative) dataItem.get.toNegativeCurrency
-            else dataItem.get.toCurrency
-        }</td>
-    </tr>
-}
+    @if(dataItem.isDefined) {
+        <tr id="@messageCode" class="govuk-table__row">
+            <td class="govuk-table__cell">@messages(s"income_breakdown.table.$messageCode")</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">@{
+                if(isNegative) dataItem.get.toNegativeCurrency
+                else dataItem.get.toCurrency
+            }</td>
+        </tr>
+    }
 }
 
 @mainTemplate(pageTitle = messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl), isAgent = isAgent) {
@@ -58,29 +58,29 @@
             </tr>
             </thead>
             <tbody class = "govuk-table__body">
-            @tableRow("employment", calcModel.calcDataModel.payPensionsProfit.totalPayeEmploymentAndLumpSumIncome)
-            @tableRow("benefits_received", calcModel.calcDataModel.payPensionsProfit.totalBenefitsInKind)
-            @tableRow("allowable_expenses", calcModel.calcDataModel.payPensionsProfit.totalEmploymentExpenses, isNegative = true)
-            @tableRow("self_employment", calcModel.calcDataModel.payPensionsProfit.totalSelfEmploymentProfit)
-            @tableRow("property", calcModel.calcDataModel.payPensionsProfit.totalPropertyProfit)
-            @tableRow("profit_uk_furnished_holiday", calcModel.calcDataModel.payPensionsProfit.totalFHLPropertyProfit)
-            @tableRow("profit_foreign_property", calcModel.calcDataModel.payPensionsProfit.totalForeignPropertyProfit)
-            @tableRow("profit_eea_holiday", calcModel.calcDataModel.payPensionsProfit.totalEeaFhlProfit)
-            @tableRow("foreign_dividends_income", calcModel.calcDataModel.dividends.totalForeignDividends)
-            @tableRow("foreign_saving_income", calcModel.calcDataModel.savingsAndGains.totalForeignSavingsAndGainsIncome)
-            @tableRow("foreign_pensions", calcModel.calcDataModel.payPensionsProfit.totalOverseasPensionsStateBenefitsRoyalties)
-            @tableRow("foreign_income_abroad", calcModel.calcDataModel.payPensionsProfit.totalAllOtherIncomeReceivedWhilstAbroad)
-            @tableRow("foreign_income_gains", calcModel.calcDataModel.payPensionsProfit.totalOverseasIncomeAndGains)
-            @tableRow("foreign_benefits_gifts", calcModel.calcDataModel.payPensionsProfit.totalForeignBenefitsAndGifts)
-            @tableRow("bbsi", calcModel.calcDataModel.savingsAndGains.taxableIncome)
-            @tableRow("gains_insurance", calcModel.calcDataModel.savingsAndGains.totalOfAllGains)
-            @tableRow("dividends", calcModel.calcDataModel.dividends.taxableIncome)
-            @tableRow("occupational_pensions", calcModel.calcDataModel.payPensionsProfit.totalOccupationalPensionIncome)
-            @tableRow("state_benefit", calcModel.calcDataModel.payPensionsProfit.totalStateBenefitsIncome)
-            @tableRow("share_schemes", calcModel.calcDataModel.payPensionsProfit.totalShareSchemesIncome)
+            @tableRow("employment", incomeBreakdownViewModel.totalPayeEmploymentAndLumpSumIncome)
+            @tableRow("benefits_received", incomeBreakdownViewModel.totalBenefitsInKind)
+            @tableRow("allowable_expenses", incomeBreakdownViewModel.totalEmploymentExpenses, isNegative = true)
+            @tableRow("self_employment", incomeBreakdownViewModel.totalSelfEmploymentProfit)
+            @tableRow("property", incomeBreakdownViewModel.totalPropertyProfit)
+            @tableRow("profit_uk_furnished_holiday", incomeBreakdownViewModel.totalFHLPropertyProfit)
+            @tableRow("profit_foreign_property", incomeBreakdownViewModel.totalForeignPropertyProfit)
+            @tableRow("profit_eea_holiday", incomeBreakdownViewModel.totalEeaFhlProfit)
+            @tableRow("foreign_dividends_income", incomeBreakdownViewModel.chargeableForeignDividends)
+            @tableRow("foreign_saving_income", incomeBreakdownViewModel.chargeableForeignSavingsAndGains)
+            @tableRow("foreign_pensions", incomeBreakdownViewModel.chargeableOverseasPensionsStateBenefitsRoyalties)
+            @tableRow("foreign_income_abroad", incomeBreakdownViewModel.chargeableAllOtherIncomeReceivedWhilstAbroad)
+            @tableRow("foreign_income_gains", incomeBreakdownViewModel.totalOverseasIncomeAndGains)
+            @tableRow("foreign_benefits_gifts", incomeBreakdownViewModel.totalForeignBenefitsAndGifts)
+            @tableRow("bbsi", incomeBreakdownViewModel.savingsAndGainsTaxableIncome)
+            @tableRow("gains_insurance", incomeBreakdownViewModel.totalOfAllGains)
+            @tableRow("dividends", incomeBreakdownViewModel.dividendsTaxableIncome)
+            @tableRow("occupational_pensions", incomeBreakdownViewModel.totalOccupationalPensionIncome)
+            @tableRow("state_benefit", incomeBreakdownViewModel.totalStateBenefitsIncome)
+            @tableRow("share_schemes", incomeBreakdownViewModel.totalShareSchemesIncome)
             <tr class="govuk-table__row">
                 <td class="govuk-table__header total-section">@messages("income_breakdown.total")</td>
-                <td class="govuk-table__header govuk-table__header--numeric total-section">@calcModel.calcDataModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
+                <td class="govuk-table__header govuk-table__header--numeric total-section">@incomeBreakdownViewModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
             </tr>
             </tbody>
         </table>

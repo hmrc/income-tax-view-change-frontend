@@ -21,7 +21,7 @@ import testConstants.CalcBreakdownTestConstants._
 import testConstants.NewCalcBreakdownTestConstants._
 import testConstants.EstimatesTestConstants._
 import models.calculation._
-import models.liabilitycalculation.LiabilityCalculationResponseModel
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -48,9 +48,10 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-  def setupMockGetCalculationNew(nino: String, taxYear: Int)(response: LiabilityCalculationResponseModel): Unit = {
+  def setupMockGetCalculationNew(mtditid: String, nino: String, taxYear: Int)(response: LiabilityCalculationResponseModel): Unit = {
     when(mockCalculationService
       .getLiabilityCalculationDetail(
+        ArgumentMatchers.eq(mtditid),
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(taxYear)
       )(ArgumentMatchers.any()))
@@ -73,16 +74,20 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
 
   def mockCalculationSuccess(): Unit =
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-  def mockCalculationSuccessFullNew(taxYear: Int = testYear): Unit =
-    setupMockGetCalculationNew(testNino, taxYear)(liabilityCalculationModelSuccessFull)
-  def mockCalculationSuccessMinimalNew(taxYear: Int = testYear): Unit =
-    setupMockGetCalculationNew(testNino, taxYear)(liabilityCalculationModelDeductionsMinimal2)
+  def mockCalculationSuccessFullNew(mtditid: String = "XAIT00000000015", taxYear: Int = testYear): Unit =
+    setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelSuccessFull)
+  def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testYear): Unit =
+    setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal2)
   def mockCalculationCrystalisationSuccess(): Unit =
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel.copy(crystallised = true)))
   def mockCalculationError(): Unit =
     setupMockGetCalculation(testNino, testYear)(CalcDisplayError)
+  def mockCalculationErrorNew(mtditid: String = "XAIT00000000015"): Unit =
+    setupMockGetCalculationNew(mtditid, testNino, testYear)(LiabilityCalculationError(500, "Internal server error"))
   def mockCalculationNotFound(): Unit =
     setupMockGetCalculation(testNino, testYear)(CalcDisplayNoDataFound)
+  def mockCalculationNotFoundNew(mtditid: String = "XAIT00000000015"): Unit =
+    setupMockGetCalculationNew(mtditid, testNino, testYear)(LiabilityCalculationError(404, "not found"))
   def mockCalculationNotFoundAgent(): Unit =
     setupMockGetCalculation(testNinoAgent, testYear)(CalcDisplayNoDataFound)
 }

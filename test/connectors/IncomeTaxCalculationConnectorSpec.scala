@@ -33,6 +33,7 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
     setupMockHttpGetWithParams(connector.getCalculationResponseUrl(nino), Seq(("taxYear", taxYear)))(response)
   }
 
+  val mtditid = "XAIT0000123456"
   val nino: String = "AA123456A"
   val taxYear: String = "2019"
 
@@ -49,7 +50,7 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
     "return a calculation" when {
       "receiving an OK with valid Calculation json" in new GetCalculationResponseTest(nino, taxYear, HttpResponse(status = OK,
         json = calculationJson, headers = Map.empty)) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(nino, taxYear)
+        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
         result.futureValue shouldBe calculation
       }
@@ -57,19 +58,19 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
     "return an error" when {
       "receiving a 500+ response" in new GetCalculationResponseTest(nino, taxYear, HttpResponse(
         status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty)) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(nino, taxYear)
+        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
         result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, """"Error message"""")
       }
       "receiving a 499- response" in new GetCalculationResponseTest(nino, taxYear, HttpResponse(
         status = 499, json = Json.toJson("Error message"), headers = Map.empty)) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(nino, taxYear)
+        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
         result.futureValue shouldBe LiabilityCalculationError(499, """"Error message"""")
       }
       "receiving OK with invalid json" in new GetCalculationResponseTest(
         nino, taxYear, HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty)) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(nino, taxYear)
+        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
         result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
       }
