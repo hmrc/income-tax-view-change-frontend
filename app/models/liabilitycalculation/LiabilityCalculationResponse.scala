@@ -49,7 +49,7 @@ object Inputs {
   implicit val format: OFormat[Inputs] = Json.format[Inputs]
 }
 
-case class PersonalInformation(taxRegime: String, class2VoluntaryContributions: Option[Boolean])
+case class PersonalInformation(taxRegime: String, class2VoluntaryContributions: Option[Boolean] = None)
 
 object PersonalInformation {
   implicit val format: OFormat[PersonalInformation] = Json.format[PersonalInformation]

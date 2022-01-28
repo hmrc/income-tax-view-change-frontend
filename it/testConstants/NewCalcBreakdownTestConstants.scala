@@ -23,6 +23,10 @@ object NewCalcBreakdownTestConstants {
   val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
 
   val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK"
+    )),
+    messages = None,
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
@@ -172,13 +176,27 @@ object NewCalcBreakdownTestConstants {
           class2Nics = Some(Class2Nics(amount = Some(5000.99)))
         )),
         capitalGainsTax = Some(CapitalGainsTax(
-          totalCapitalGainsIncome = 5000.99,
+          totalTaxableGains = 5000.99,
           adjustments = Some(-99999999999.99),
           foreignTaxCreditRelief = Some(5000.99),
           taxOnGainsAlreadyPaid = Some(5000.99),
           capitalGainsTaxDue = 5000.99,
           capitalGainsOverpaid = Some(5000.99),
           residentialPropertyAndCarriedInterest = Some(ResidentialPropertyAndCarriedInterest(
+            cgtTaxBands = Seq(CgtTaxBands(
+              name = "lowerRate",
+              rate = 20,
+              income = 5000.99,
+              taxAmount = 5000.99
+            ),
+              CgtTaxBands(
+                name = "lowerRate2",
+                rate = 21,
+                income = 5000.99,
+                taxAmount = 5000.99
+              ))
+          )),
+          otherGains = Some(OtherGains(
             cgtTaxBands = Seq(CgtTaxBands(
               name = "lowerRate",
               rate = 20,
