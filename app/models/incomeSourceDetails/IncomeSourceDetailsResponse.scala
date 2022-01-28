@@ -38,7 +38,7 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
     this.copy(property = property2, businesses = businesses2)
   }
 
-  val startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
+  def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByAccountingPeriods: List[Int] = {
