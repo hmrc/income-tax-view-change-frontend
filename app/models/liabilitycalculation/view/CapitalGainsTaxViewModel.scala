@@ -34,7 +34,7 @@ object CapitalGainsTaxViewModel {
   def apply(capitalGainsTaxOpt: Option[CapitalGainsTax]): CapitalGainsTaxViewModel = {
     capitalGainsTaxOpt match {
       case Some(cgt) => CapitalGainsTaxViewModel(
-        totalTaxableGains = Some(cgt.totalCapitalGainsIncome),
+        totalTaxableGains = Some(cgt.totalTaxableGains),
         adjustments = cgt.adjustments,
         foreignTaxCreditRelief = cgt.foreignTaxCreditRelief,
         taxOnGainsAlreadyPaid = cgt.taxOnGainsAlreadyPaid,

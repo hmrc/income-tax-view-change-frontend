@@ -19,7 +19,7 @@ package models.liabilitycalculation.taxcalculation
 import play.api.libs.json._
 
 case class CapitalGainsTax(
-                            totalCapitalGainsIncome: BigDecimal,
+                            totalTaxableGains: BigDecimal,
                             adjustments: Option[BigDecimal] = None,
                             foreignTaxCreditRelief: Option[BigDecimal] = None,
                             taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
