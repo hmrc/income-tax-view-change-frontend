@@ -21,7 +21,9 @@ import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testConstants.PaymentAllocationsTestConstants.{singleTestPaymentAllocationChargeWithOutstandingAmountZero, _}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
+import models.financialDetails.DocumentDetail
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.Jsoup
@@ -32,6 +34,7 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.PaymentAllocation
 import testConstants.MessagesLookUp.{PaymentAllocation => paymentAllocationMessages}
+
 import scala.collection.JavaConverters._
 
 
@@ -316,5 +319,13 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       document.getElementById("credit-on-account") shouldBe null
     }
 
+    "The payments allocation view has NO payment allocation amount" should {
+      "throw a MissingFieldException" in {
+        val thrownException = intercept[MissingFieldException]{
+          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl)
+        }
+        thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
+      }
+    }
   }
 }
