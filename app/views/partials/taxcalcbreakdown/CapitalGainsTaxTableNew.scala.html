@@ -72,10 +72,10 @@
                     @cgtBandTableRow("assets_or_investors_relief", bandName = "single", income, rate, taxAmount)
                 }
             }
-            @for(cgtBand <- capitalGainsTax.propertyAndInterestTaxBands.filter(_.income > 0).sortBy(_.rate)) {
+            @for(cgtBand <- capitalGainsTax.propertyAndInterestTaxBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
                 @cgtBandRow("property_and_interest", cgtBand)
             }
-            @for(cgtBand <- capitalGainsTax.otherGainsTaxBands.filter(_.income > 0).sortBy(_.rate)) {
+            @for(cgtBand <- capitalGainsTax.otherGainsTaxBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
                 @cgtBandRow("other_gains", cgtBand)
             }
             @tableRow("cgt.adjustment", capitalGainsTax.adjustments)
