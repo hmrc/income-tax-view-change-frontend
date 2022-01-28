@@ -38,11 +38,11 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
     this.copy(property = property2, businesses = businesses2)
   }
 
-  val startingTaxYear: Option[Int] = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
-    .map(_.getYear).sortWith(_ < _).headOption
+  def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
+    .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByAccountingPeriods: List[Int] = {
-    startingTaxYear.fold((2018 to getCurrentTaxEndYear).toList)(year => (year to getCurrentTaxEndYear).toList)
+    (startingTaxYear to getCurrentTaxEndYear).toList
   }
 
   def orderedTaxYearsByYearOfMigration: List[Int] = {
