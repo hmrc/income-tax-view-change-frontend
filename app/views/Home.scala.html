@@ -19,6 +19,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import exceptions.MissingFieldException
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -195,11 +196,11 @@
 
 @paymentsTileContentPaymentsDue1 = {
     <span class="govuk-tag govuk-tag--red"> @{messages("taxYears.overdue")} </span>
-    @{nextPaymentDueDate.get.toLongDate}
+    @{nextPaymentDueDate.getOrElse(throw MissingFieldException("Next Payment Due Date")).toLongDate}
 }
 
 @paymentsTileContentPaymentsDueMany = {
-    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePaymentsCount.get)}</span>
+    <span id="overdue-payments-count" class="govuk-tag govuk-tag--red"> @{messages("home.updates.overdue.payments", overDuePaymentsCount.getOrElse(throw MissingFieldException("Over Due Payments Count")))}</span>
 }
 
 @updatesTile = {
@@ -239,7 +240,7 @@
 }
 
 @updatesTileContentUpdatesDueMany = {
-    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount.get)}</span>
+    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount.getOrElse(throw MissingFieldException("Over Due Updates Count")))}</span>
 }
 
 
