@@ -60,7 +60,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
     action.async {
       implicit user => {
         if (isEnabled(NewTaxCalcProxy)) {
-          calculationService.getLiabilityCalculationDetail(user.nino, taxYear).map {
+          calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = TaxDueSummaryViewModel(liabilityCalc)
               if (isEnabled(TxmEventsApproved)) {

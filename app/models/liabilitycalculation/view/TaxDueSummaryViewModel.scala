@@ -79,23 +79,6 @@ case class TaxDueSummaryViewModel(
 
 object TaxDueSummaryViewModel {
 
-  def getCapitalGainsTaxViewModel(capitalGainsTaxOpt: Option[CapitalGainsTax]): CapitalGainsTaxViewModel = {
-    capitalGainsTaxOpt match {
-      case Some(cgt) => CapitalGainsTaxViewModel(
-        totalTaxableGains = Some(cgt.totalCapitalGainsIncome),
-        adjustments = cgt.adjustments,
-        foreignTaxCreditRelief = cgt.foreignTaxCreditRelief,
-        taxOnGainsAlreadyPaid = cgt.taxOnGainsAlreadyPaid,
-        capitalGainsTaxDue = Some(cgt.capitalGainsTaxDue),
-        capitalGainsOverpaid = cgt.capitalGainsOverpaid,
-        propertyAndInterestTaxBands = cgt.residentialPropertyAndCarriedInterest.map(rpc => rpc.cgtTaxBands),
-        otherGainsTaxBands = cgt.otherGains.map(rpc => rpc.cgtTaxBands),
-        businessAssetsDisposalsAndInvestorsRel = cgt.businessAssetsDisposalsAndInvestorsRel
-      )
-      case None => CapitalGainsTaxViewModel()
-    }
-  }
-
   def apply(calcResponse: LiabilityCalculationResponse): TaxDueSummaryViewModel = {
     calcResponse.calculation match {
       case Some(calc) => TaxDueSummaryViewModel(

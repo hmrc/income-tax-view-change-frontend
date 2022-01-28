@@ -28,6 +28,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.TaxCalcBreakdown
+import views.html.TaxCalcBreakdownNew
 
 class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
@@ -40,6 +41,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     mockCalculationService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[TaxCalcBreakdown],
+    app.injector.instanceOf[TaxCalcBreakdownNew],
     mockAuditingService
   )(appConfig, languageUtils, app.injector.instanceOf[MessagesControllerComponents], ec)
 
