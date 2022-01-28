@@ -53,11 +53,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     List(financialDetail)
   )
 
-  val financialDetailsWithNoSubItem: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail),
-    List(financialDetail.copy(items = None))
-  )
-
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
     paymentAllocationView(viewModel, backUrl)){
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
@@ -324,12 +319,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       document.getElementById("credit-on-account") shouldBe null
     }
 
-    "The payments allocation view has an empty financial details response model" should {
+    "The payments allocation view has NO payment allocation amount" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException]{
-          financialDetailsWithNoSubItem
+          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl)
         }
-        thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Financial Details Sub Item"
+        thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
       }
     }
   }
