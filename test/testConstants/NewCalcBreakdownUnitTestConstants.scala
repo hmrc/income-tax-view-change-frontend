@@ -19,7 +19,7 @@ package testConstants
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 
-object NewCalcBreakdownTestConstants {
+object NewCalcBreakdownUnitTestConstants {
 
   val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
 

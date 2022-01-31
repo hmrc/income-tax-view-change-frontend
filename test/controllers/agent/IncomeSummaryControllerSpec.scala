@@ -30,7 +30,7 @@ import play.api.test.Helpers.{contentType, _}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid}
 import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
