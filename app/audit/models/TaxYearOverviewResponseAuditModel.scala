@@ -23,7 +23,7 @@ import implicits.ImplicitDateParser
 import models.calculation.Calculation
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.LiabilityCalculationResponse
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._

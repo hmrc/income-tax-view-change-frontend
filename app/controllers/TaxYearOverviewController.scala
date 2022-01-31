@@ -25,7 +25,7 @@ import controllers.predicates._
 import forms.utils.SessionKeys
 import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger

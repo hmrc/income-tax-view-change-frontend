@@ -25,7 +25,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents

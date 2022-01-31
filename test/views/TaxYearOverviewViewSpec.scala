@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html

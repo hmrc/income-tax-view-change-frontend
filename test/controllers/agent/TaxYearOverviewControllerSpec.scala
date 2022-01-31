@@ -23,7 +23,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
 import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, CalcOverview}
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}

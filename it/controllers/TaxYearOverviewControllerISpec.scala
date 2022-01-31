@@ -33,7 +33,7 @@ import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json

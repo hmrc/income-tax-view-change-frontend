@@ -26,7 +26,7 @@ import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview, Calculation}
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
