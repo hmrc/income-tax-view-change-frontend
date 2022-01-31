@@ -25,18 +25,21 @@ import config.featureswitch._
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail, verifyAuditEvent}
-import helpers.servicemocks.{IncomeTaxViewChangeStub, IndividualCalculationStub}
+import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
-import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER, INTERNAL_SERVER_ERROR}
+import models.liabilitycalculation.LiabilityCalculationError
+import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.{LocalDate, LocalDateTime}
@@ -221,857 +224,1225 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   )(FakeRequest())
 
   s"[IT-AGENT-TEST-1] GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
-    s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
-      " [IT-AGENT-TEST-1.1.1] the user is not authenticated" in {
-        stubAuthorisedAgentUser(authorised = false)
+    "New tax calc proxy is disabled" when {
+      s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+        " [IT-AGENT-TEST-1.1.1] the user is not authenticated" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = false)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
+          Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.SignInController.signIn().url)
+          )
+        }
+      }
+      s" [IT-AGENT-TEST-1.2] return $OK with technical difficulties" when {
+        " [IT-AGENT-TEST-1.2.1] the user is authenticated but doesn't have the agent enrolment" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+
+          Then(s"Technical difficulties are shown with status OK")
+          result should have(
+            httpStatus(OK),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+        }
+      }
+      s" [IT-AGENT-TEST-1.3] return $SEE_OTHER" when {
+        " [IT-AGENT-TEST-1.3.1] the agent does not have client details in session" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(routes.EnterClientsUTRController.show().url)
+          )
+        }
+        " [IT-AGENT-TEST-1.3.2] the agent has client details in session but no confirmation flag" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(routes.EnterClientsUTRController.show().url)
+          )
+        }
       }
     }
-    s" [IT-AGENT-TEST-1.2] return $OK with technical difficulties" when {
-      " [IT-AGENT-TEST-1.2.1] the user is authenticated but doesn't have the agent enrolment" in {
-        stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+    "New tax calc proxy is enabled" when {
+      s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+        " [IT-AGENT-TEST-1.1.1] the user is not authenticated" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = false)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
 
-        Then(s"Technical difficulties are shown with status OK")
-        result should have(
-          httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
-        )
+          Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.SignInController.signIn().url)
+          )
+        }
       }
-    }
-    s" [IT-AGENT-TEST-1.3] return $SEE_OTHER" when {
-      " [IT-AGENT-TEST-1.3.1] the agent does not have client details in session" in {
-        stubAuthorisedAgentUser(authorised = true)
+      s" [IT-AGENT-TEST-1.2] return $OK with technical difficulties" when {
+        " [IT-AGENT-TEST-1.2.1] the user is authenticated but doesn't have the agent enrolment" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
-        )
+          Then(s"Technical difficulties are shown with status OK")
+          result should have(
+            httpStatus(OK),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+        }
       }
-      " [IT-AGENT-TEST-1.3.2] the agent has client details in session but no confirmation flag" in {
-        stubAuthorisedAgentUser(authorised = true)
+      s" [IT-AGENT-TEST-1.3] return $SEE_OTHER" when {
+        " [IT-AGENT-TEST-1.3.1] the agent does not have client details in session" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(routes.EnterClientsUTRController.show().url)
+          )
+        }
+        " [IT-AGENT-TEST-1.3.2] the agent has client details in session but no confirmation flag" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(routes.EnterClientsUTRController.show().url)
+          )
+        }
       }
     }
   }
 
   s"[IT-AGENT-TEST-2] GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
-    " [IT-AGENT-TEST-2.1] return the tax year overview page with TxmEventsApproved FS enabled" when {
-      " [IT-AGENT-TEST-2.1.1] all calls were successful and returned data" in {
-        enable(TxmEventsApproved)
+    "New tax calc proxy is disabled" when {
+      " [IT-AGENT-TEST-2.1] return the tax year overview page" when {
+        " [IT-AGENT-TEST-2.1.1] all calls were successful and returned data" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
-          elementTextBySelectorList("#updates", "div", "table", "caption")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
           )
-        )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations))
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
-      }
-
-      " [IT-AGENT-TEST-2.1.2] should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
-        enable(TxmEventsApproved)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsDunningLockSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
-          elementTextBySelectorList("#updates", "div", "table", "caption")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
           )
-        )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, calculationDataSuccessModel, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates, allObligations))
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-
-      }
-      " [IT-AGENT-TEST-2.1.3] Calculation List was not found" in {
-        enable(TxmEventsApproved)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationListNotFound(testNino, calculationTaxYear)
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextByID("no-calc-data-header")("No calculation yet"),
-          elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
-        )
-
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-      }
-      " [IT-AGENT-TEST-2.1.4] Calculation data was not found" in {
-        enable(TxmEventsApproved)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculationNotFound(testNino, "2017-18")
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextByID("no-calc-data-header")("No calculation yet"),
-          elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
-        )
-
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-
-      }
-      " [IT-AGENT-TEST-2.1.5] financial details data was not found" in {
-        enable(TxmEventsApproved)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = NOT_FOUND,
-          response = Json.obj()
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "p")("No payments currently due."),
-          elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
-          elementTextBySelectorList("#updates", "div", "table", "caption")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
           )
-        )
 
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-      }
-      " [IT-AGENT-TEST-2.1.6] previous obligations data was not found" in {
-        enable(TxmEventsApproved)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
-          elementTextBySelectorList("#updates", "div", "table", "caption")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
           )
-        )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, currentObligationsSuccess))
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, Some(calculationDataSuccessModel), financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations))
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        }
+
+        " [IT-AGENT-TEST-2.1.2] should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsDunningLockSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2 Payment under review"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, Some(calculationDataSuccessModel), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates, allObligations))
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        }
+        " [IT-AGENT-TEST-2.1.3] Calculation List was not found" in {
+          disable(NewTaxCalcProxy)
+
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationListNotFound(testNino, calculationTaxYear)
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextByID("no-calc-data-header")("No calculation yet"),
+            elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
+        " [IT-AGENT-TEST-2.1.4] Calculation data was not found" in {
+          disable(NewTaxCalcProxy)
+
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculationNotFound(testNino, "2017-18")
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextByID("no-calc-data-header")("No calculation yet"),
+            elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        }
+        " [IT-AGENT-TEST-2.1.5] financial details data was not found" in {
+          disable(NewTaxCalcProxy)
+
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = NOT_FOUND,
+            response = Json.obj()
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
+            elementTextBySelectorList("#payments", "p")("No payments currently due."),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
+        " [IT-AGENT-TEST-2.1.6] previous obligations data was not found" in {
+          disable(NewTaxCalcProxy)
+
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, Some(calculationDataSuccessModel), financialDetailsSuccess.getAllDocumentDetailsWithDueDates, currentObligationsSuccess))
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
+      }
+      " [IT-AGENT-TEST-2.3] return a technical difficulties page to the user" when {
+        " [IT-AGENT-TEST-2.3.1] there was a problem retrieving the client's income sources" in {
+          disable(NewTaxCalcProxy)
+
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = INTERNAL_SERVER_ERROR,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          )
+
+        }
+        " [IT-AGENT-TEST-2.3.2] there was a problem retrieving the calculation list for the tax year" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = INTERNAL_SERVER_ERROR,
+            body = ListCalculationItems(Seq())
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+        }
+        " [IT-AGENT-TEST-2.3.3] there was a problem retrieving the calculation for the tax year" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = INTERNAL_SERVER_ERROR,
+            body = estimatedCalculationFullJson
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+
+        }
+        " [IT-AGENT-TEST-2.3.4] there was a problem retrieving financial details for the tax year" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = INTERNAL_SERVER_ERROR,
+            response = Json.obj()
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+
+        }
+        " [IT-AGENT-TEST-2.3.5] there was a problem retrieving current obligations" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdatesError(
+            nino = testNino
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+
+        }
+        " [IT-AGENT-TEST-2.3.6] there was a problem retrieving previous obligations" in {
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(
+              CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+            ))
+          )
+
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligationsError(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
       }
     }
-    " [IT-AGENT-TEST-2.2] return the tax year overview page with TxmEventsApproved FS disabled" when {
-      " [IT-AGENT-TEST-2.2.1] all calls were successful and returned data" in {
-        disable(TxmEventsApproved)
+    "New tax calc proxy is enabled" when {
+      " [IT-AGENT-TEST-2.1] return the tax year overview page" when {
+        " [IT-AGENT-TEST-2.1.1] all calls were successful and returned data" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
-          elementTextBySelectorList("#updates", "div", "table", "caption")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
           )
-        )
 
-        verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(testUser, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-
-      }
-      " [IT-AGENT-TEST-2.2.2] previous obligations data was not found" in {
-        disable(TxmEventsApproved)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          pageTitle(agentTitle),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£198,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
-          elementTextBySelectorList("#updates", "div", "table", "caption")(
-            expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
-          ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
-            expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+            status = OK,
+            body = liabilityCalculationModelSuccessFull
           )
-        )
 
-        verifyAuditDoesNotContainsDetail(TaxYearOverviewResponseAuditModel(testUser, calculationDataSuccessModel, financialDetailsSuccess.getAllDocumentDetailsWithDueDates, currentObligationsSuccess).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£-25,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£-25,500.99"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, None,
+            financialDetailsSuccess.getAllDocumentDetailsWithDueDates, allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)), true))
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        }
+
+        " [IT-AGENT-TEST-2.1.2] should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+            status = OK,
+            body = liabilityCalculationModelSuccessFull
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsDunningLockSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£-25,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£-25,500.99"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2 Payment under review"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, None,
+            financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates, allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)), true))
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        }
+        " [IT-AGENT-TEST-2.1.3] Calculation List was not found" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+            status = NOT_FOUND,
+            body = LiabilityCalculationError(NOT_FOUND, "not found")
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextByID("no-calc-data-header")("No calculation yet"),
+            elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
+        " [IT-AGENT-TEST-2.1.5] financial details data was not found" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+            status = OK,
+            body = liabilityCalculationModelSuccessFull
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = NOT_FOUND,
+            response = Json.obj()
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£-25,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£-25,500.99"),
+            elementTextBySelectorList("#payments", "p")("No payments currently due."),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
+        " [IT-AGENT-TEST-2.1.6] previous obligations data was not found" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
+
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+            status = OK,
+            body = liabilityCalculationModelSuccessFull
+          )
+
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd
+          )
+
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(agentTitle),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+            elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£-25,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+            elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+            elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£-25,500.99"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£100.00"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Payment on account 1 of 2"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(LocalDate.now.toLongDateShort),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
+            elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£1,000.00"),
+            elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
+            elementTextBySelectorList("#updates", "div", "table", "caption")(
+              expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
+            ),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Annual Update"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Test Trading Name"),
+            elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+              expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
+            )
+          )
+
+          verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, None,
+            financialDetailsSuccess.getAllDocumentDetailsWithDueDates, currentObligationsSuccess, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)), true))
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
       }
-    }
-    " [IT-AGENT-TEST-2.3] return a technical difficulties page to the user" when {
-      " [IT-AGENT-TEST-2.3.1] there was a problem retrieving the client's income sources" in {
-        enable(TxmEventsApproved)
+      " [IT-AGENT-TEST-2.3] return a technical difficulties page to the user" when {
+        " [IT-AGENT-TEST-2.3.1] there was a problem retrieving the client's income sources" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        stubAuthorisedAgentUser(authorised = true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = INTERNAL_SERVER_ERROR,
+            response = incomeSourceDetailsSuccess
+          )
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = INTERNAL_SERVER_ERROR,
-          response = incomeSourceDetailsSuccess
-        )
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          )
 
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
-        )
+        }
+        " [IT-AGENT-TEST-2.3.2] there was a problem retrieving the calculation list for the tax year" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-      }
-      " [IT-AGENT-TEST-2.3.2] there was a problem retrieving the calculation list for the tax year" in {
-        enable(TxmEventsApproved)
-        stubAuthorisedAgentUser(authorised = true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
+          IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+            status = INTERNAL_SERVER_ERROR,
+            body = LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error")
+          )
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = INTERNAL_SERVER_ERROR,
-          body = ListCalculationItems(Seq())
-        )
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
+        }
+        " [IT-AGENT-TEST-2.3.4] there was a problem retrieving financial details for the tax year" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
 
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
-        )
-      }
-      " [IT-AGENT-TEST-2.3.3] there was a problem retrieving the calculation for the tax year" in {
-        enable(TxmEventsApproved)
-        stubAuthorisedAgentUser(authorised = true)
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = INTERNAL_SERVER_ERROR,
+            response = Json.obj()
+          )
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
+        }
+        " [IT-AGENT-TEST-2.3.5] there was a problem retrieving current obligations" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = INTERNAL_SERVER_ERROR,
-          body = estimatedCalculationFullJson
-        )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
 
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
-        )
+          IncomeTaxViewChangeStub.stubGetNextUpdatesError(
+            nino = testNino
+          )
 
-      }
-      " [IT-AGENT-TEST-2.3.4] there was a problem retrieving financial details for the tax year" in {
-        enable(TxmEventsApproved)
-        stubAuthorisedAgentUser(authorised = true)
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+        }
+        " [IT-AGENT-TEST-2.3.6] there was a problem retrieving previous obligations" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsSuccess
+          )
 
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
 
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = INTERNAL_SERVER_ERROR,
-          response = Json.obj()
-        )
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+          IncomeTaxViewChangeStub.stubGetPreviousObligationsError(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd
+          )
 
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
-        )
+          val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
-      }
-      " [IT-AGENT-TEST-2.3.5] there was a problem retrieving current obligations" in {
-        enable(TxmEventsApproved)
-        stubAuthorisedAgentUser(authorised = true)
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          )
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdatesError(
-          nino = testNino
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
-        )
-
-      }
-      " [IT-AGENT-TEST-2.3.6] there was a problem retrieving previous obligations" in {
-        enable(TxmEventsApproved)
-        stubAuthorisedAgentUser(authorised = true)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
-
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(
-            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
-          ))
-        )
-
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-          nino = testNino,
-          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-          to = getCurrentTaxYearEnd.toString
-        )(
-          status = OK,
-          response = Json.toJson(financialDetailsSuccess)
-        )
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsError(
-          nino = testNino,
-          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
-          toDate = getCurrentTaxYearEnd
-        )
-
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
-        )
-
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        }
       }
     }
   }

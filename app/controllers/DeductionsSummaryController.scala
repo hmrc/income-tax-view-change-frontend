@@ -25,7 +25,7 @@ import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.calculation._
 import models.liabilitycalculation._
-import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
+import models.liabilitycalculation.viewModels.AllowancesAndDeductionsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

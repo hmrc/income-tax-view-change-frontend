@@ -16,37 +16,39 @@
 
 package views
 
+import java.time.LocalDate
+
 import config.featureswitch.FeatureSwitching
-import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatterImpl
+import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewModels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
-import views.html.TaxYearOverview
+import views.html.TaxYearOverviewOld
 
-import java.time.LocalDate
-
-class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
+class TaxYearOverviewViewOldSpec extends ViewSpec with FeatureSwitching {
 
   val testYear: Int = 2018
 
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
-  val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
+  val taxYearOverviewView: TaxYearOverviewOld = app.injector.instanceOf[TaxYearOverviewOld]
   val codingOutEnabled = Boolean
 
   import implicitDateFormatter._
 
-  def completeOverview(crystallised: Boolean): TaxYearOverviewViewModel = TaxYearOverviewViewModel(
-    timestamp = "2020-01-01T00:35:34.185Z",
-    income = 1,
+  def completeOverview(crystallised: Boolean): CalcOverview = CalcOverview(
+    timestamp = Some("2020-01-01T00:35:34.185Z"),
+    income = 1.01,
     deductions = 2.02,
-    totalTaxableIncome = 3,
+    totalTaxableIncome = 3.03,
     taxDue = 4.04,
+    payment = 5.05,
+    totalRemainingDue = 6.06,
     crystallised = crystallised
   )
 
