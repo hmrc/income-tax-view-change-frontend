@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.libs.json.Json
 
 object IncomeTaxCalculationStub {
