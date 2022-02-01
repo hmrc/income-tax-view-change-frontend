@@ -19,23 +19,25 @@ package controllers.agent
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import testConstants.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitleAgent}
-import audit.models.TaxCalculationDetailsResponseAuditModel
+import testConstants.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryHeadingAgentNew, taxDueSummaryTitleAgent}
+import audit.models.{TaxCalculationDetailsResponseAuditModel, TaxCalculationDetailsResponseAuditModelNew}
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import enums.Crystallised
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalcDisplayModel, Calculation, CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.liabilitycalculation.view.TaxDueSummaryViewModel
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 import java.time.{LocalDate, LocalDateTime}
 
@@ -139,10 +141,42 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         )
       }
     }
+
+    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid liability calculation response, " should {
+      "return the correct tax due page with a full Calculation" in {
+        enable(NewTaxCalcProxy)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          status = OK,
+          response = incomeSourceDetailsSuccess
+        )
+
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+        verifyAuditEvent(TaxCalculationDetailsResponseAuditModelNew(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
+
+        res should have(
+          httpStatus(OK),
+          pageTitle(taxDueSummaryTitleAgent),
+          elementTextBySelector("h1")(taxDueSummaryHeadingAgentNew)
+        )
+      }
+    }
+
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
       "feature switch TxMEventsApproved is enabled" should {
       "return the correct tax due page with a full Calculation" in {
         enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
@@ -177,6 +211,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       "return the correct tax due page with only gift aid Additional Charge in the Calculation" in {
         enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
@@ -211,6 +246,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       "return the correct tax due page with only pensions savings Additional Charge in the Calculation" in {
         enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
@@ -245,6 +281,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       "return the correct tax due page with only pensions lump sum Additional Charge in the Calculation" in {
         enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
@@ -279,6 +316,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       "return the correct tax due page with a minimal Calculation" in {
         enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)

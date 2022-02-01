@@ -52,7 +52,8 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
                                         mcc: MessagesControllerComponents,
                                         val executionContext: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources)
 
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = {
@@ -63,12 +64,12 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
           calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = TaxDueSummaryViewModel(liabilityCalc)
-              if (isEnabled(TxmEventsApproved)) {
-                auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
-              }
+              auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
             case _: LiabilityCalculationError =>
-              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+              Logger("application").error(
+                """[DeductionsSummaryController][showDeductionsSummary[""" + taxYear +
+                  """]] No new calc deductions data error found. Downstream error""")
               itvcErrorHandler.showInternalServerError()
           }
         } else {
@@ -80,11 +81,15 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
               Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
             case CalcDisplayNoDataFound =>
-              Logger("application").warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
+              Logger("application").warn(
+                """[TaxDueController][showTaxDueSummary[""" + taxYear +
+                  """]] No tax due data could be retrieved. Not found""")
               Future.successful(itvcErrorHandler.showInternalServerError())
 
             case CalcDisplayError =>
-              Logger("application").error(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
+              Logger("application").error(
+                """[TaxDueController][showTaxDueSummary[""" + taxYear +
+                  """]] No tax due data could be retrieved. Downstream error""")
               Future.successful(itvcErrorHandler.showInternalServerError())
           }
         }

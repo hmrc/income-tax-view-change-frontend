@@ -53,16 +53,15 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
 
         if (isEnabled(NewTaxCalcProxy)) {
-          println("got mtdiduser:" + mtdItUser.mtditid + "  " + mtdItUser.nino + ":" + taxYear)
           calculationService.getLiabilityCalculationDetail(mtdItUser.mtditid, mtdItUser.nino, taxYear).map {
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = TaxDueSummaryViewModel(liabilityCalc)
-              if (isEnabled(TxmEventsApproved)) {
-                auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(mtdItUser, viewModel, taxYear))
-              }
+              auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(mtdItUser, viewModel, taxYear))
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
             case _: LiabilityCalculationError =>
-              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+              Logger("application").error(
+                """[DeductionsSummaryController][showDeductionsSummary[""" + taxYear +
+                  """]] No new calc deductions data error found. Downstream error""")
               itvcErrorHandler.showInternalServerError()
           }
         } else {

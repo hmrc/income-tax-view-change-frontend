@@ -21,16 +21,18 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.{TaxDueSummaryMessages => messages}
-import audit.models.TaxCalculationDetailsResponseAuditModel
+import audit.models.{TaxCalculationDetailsResponseAuditModel, TaxCalculationDetailsResponseAuditModelNew}
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import enums.Crystallised
 import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalcDisplayModel, Calculation, CalculationItem, ListCalculationItems}
+import models.liabilitycalculation.view.TaxDueSummaryViewModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -40,11 +42,47 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
+
   "Calling the TaxDueSummaryController.showTaxDueSummary(taxYear)" when {
 
+    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid LiabilityCalculationResponse, " should {
+      "return the correct tax due summary page with the newtaxcalcproxy FS enabled" in {
+        enable(NewTaxCalcProxy)
+
+        Given("I stub the auth endpoint")
+        AuthStub.stubAuthorised()
+
+        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+        verifyAuditEvent(TaxCalculationDetailsResponseAuditModelNew(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
+
+        res should have(
+          httpStatus(OK),
+          pageTitle(messages.taxDueSummaryTitle),
+          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextByID("additional_charges")("Additional charges")
+        )
+      }
+    }
+
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " should {
+
       "return the correct tax due summary page with the TxMEventsApproved FS enabled" in {
         enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -169,6 +207,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       "return the correct tax due summary page using minimal calculation with no Additional Charges" in {
         enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
