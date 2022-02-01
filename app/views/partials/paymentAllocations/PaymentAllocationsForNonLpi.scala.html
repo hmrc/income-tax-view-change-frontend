@@ -16,6 +16,7 @@
 
 @import implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
+@import exceptions.MissingFieldException
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
@@ -29,18 +30,18 @@
             <td class="govuk-table__cell" id="payment-allocation-@index">
                 @if(isAgent){
                 <a class="govuk-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)">
-                    @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+                    @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
                     } else {
                 <a class="govuk-link" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)}" class="govuk-link">
-                @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
+                @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
                     }
-                    <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter)</span>
+                    <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter)</span>
                 </a>
                 <br>
-                <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
+                <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
             </td>
-            <td class="govuk-table__cell">@paymentAllocation.clearingDate.get.toLocalDate.toLongDateShort</td>
-            <td class="govuk-table__cell">@paymentAllocation.allocationDetail.get.amount.get.toCurrencyString</td>
+            <td class="govuk-table__cell">@paymentAllocation.clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date")).toLocalDate.toLongDateShort</td>
+            <td class="govuk-table__cell">@paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).amount.getOrElse(throw MissingFieldException("Payment Amount")).toCurrencyString</td>
         </tr>
     </tbody>
 

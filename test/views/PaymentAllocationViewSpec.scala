@@ -327,5 +327,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
       }
     }
+
+    "The payments allocation view has Allocation Detail" should {
+      "throw a MissingFieldException" in {
+        val thrownException = intercept[MissingFieldException] {
+          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl)
+        }
+        thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Clearing Date"
+      }
+    }
   }
 }
