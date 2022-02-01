@@ -55,10 +55,10 @@
 }
 
 @saNoteParagraph = {
-    @if(utr.isDefined) {
+    @utr.map { utr =>
         <div id="payments-due-note" class="govuk-inset-text">
             @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
-                link(link = appConfig.saViewLandPService(utr.get), outerMessage = ".",
+                link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
                     messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
                 )
             @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
