@@ -328,7 +328,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
     }
 
-    "The payments allocation view has Allocation Detail" should {
+    "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
           paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl)
