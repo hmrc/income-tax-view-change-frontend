@@ -16,24 +16,24 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import java.time.LocalDate
+@import models.calculation.CalcOverview
 @import models.nextUpdates.ObligationsModel
 @import models.financialDetails.DocumentDetailWithDueDate
 @import implicits.ImplicitDateFormatterImpl
-@import views.html.partials.taxOverviewBreakdownPartial
+@import views.html.partials.taxOverviewBreakdownPartialOld
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
-@import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        breakdownPartial: taxOverviewBreakdownPartial,
+        breakdownPartial: taxOverviewBreakdownPartialOld,
         h2: h2,
         h3: h3,
         p: p
 )
 
-@(taxYear: Int, overviewOpt: Option[TaxYearOverviewViewModel], charges: List[DocumentDetailWithDueDate],
+@(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate],
         obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean)(implicit request: Request[_],
         messages: Messages, user: auth.MtdItUser[_])
 
@@ -48,7 +48,7 @@
     @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-overview.tax-calculation.no-calc.note")))
 }
 
-@taxCalculationOverview(overview: TaxYearOverviewViewModel) = {
+@taxCalculationOverview(overview: CalcOverview) = {
     @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 }
 
@@ -184,11 +184,13 @@
                     @messages("tax-year-overview.calculation-date")
                 </dt>
                 <dd class="govuk-summary-list__value">
-                <p id="calculation-date">
-                    <span>@{
-                        overview.timestamp.toZonedDateTime.toLocalDate.toLongDate
-                    }</span>
-                </p>
+                @overview.timestamp.map { timestamp =>
+                    <p id="calculation-date">
+                        <span>@{
+                            timestamp.toZonedDateTime.toLocalDate.toLongDate
+                        }</span>
+                    </p>
+                }
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -196,8 +198,10 @@
                 @if(overview.crystallised) {
                     @messages("tax-year-overview.total-due")
                 } else {
-                    @{
-                        messages("tax-year-overview.tax-calculation.in-year", s"${taxYear - 1}", s"$taxYear")
+                    @overview.timestamp.map { timestamp =>
+                        @{
+                            messages("tax-year-overview.tax-calculation.in-year", s"${taxYear - 1}", s"$taxYear")
+                        }
                     }
                 }
                 </dt>

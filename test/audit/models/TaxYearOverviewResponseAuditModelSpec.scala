@@ -102,7 +102,7 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
         userType = userType,
         arn = agentReferenceNumber
       )(FakeRequest()),
-      calculation = calculation,
+      calculation = Some(calculation),
       payments = payments(paymentHasADunningLock),
       updates = updates
     )

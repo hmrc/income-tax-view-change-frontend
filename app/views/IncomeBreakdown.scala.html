@@ -15,7 +15,7 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter._
-@import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
+@import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 
@@ -26,13 +26,10 @@
 @(incomeBreakdownViewModel: IncomeBreakdownViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
-    @if(dataItem.isDefined) {
+    @dataItem.map { data =>
         <tr id="@messageCode" class="govuk-table__row">
             <td class="govuk-table__cell">@messages(s"income_breakdown.table.$messageCode")</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">@{
-                if(isNegative) dataItem.get.toNegativeCurrency
-                else dataItem.get.toCurrency
-            }</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">@{ if(isNegative) data.toNegativeCurrency else data.toCurrency }</td>
         </tr>
     }
 }

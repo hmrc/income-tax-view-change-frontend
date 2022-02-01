@@ -34,6 +34,19 @@ trait ImplicitCurrencyFormatter {
     }
     def toPence: Long = (x * 100).toLong
   }
+  implicit class CurrencyFormatterInt(x: Int) {
+    val f = new DecimalFormat("#,##0.00")
+    def toCurrency: Html = Html("&pound;" + f.format(x))
+    def toCurrencyString: String = "£" + f.format(x)
+    def toNegativeCurrency: Html = {
+      if(x > 0) {
+        Html("&minus;" + toCurrency)
+      } else {
+        toCurrency
+      }
+    }
+    def toPence: Long = (x * 100).toLong
+  }
 }
 
 object ImplicitCurrencyFormatter extends ImplicitCurrencyFormatter

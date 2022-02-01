@@ -19,9 +19,9 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUserBase
 import models.calculation.AllowancesAndDeductions
+import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.JsValue
 import utils.Utilities._
-import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
 
 case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
                                                     aad: AllowancesAndDeductions,

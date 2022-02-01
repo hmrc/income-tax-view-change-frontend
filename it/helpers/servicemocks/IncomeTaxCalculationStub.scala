@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models.liabilitycalculation.LiabilityCalculationResponse
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.libs.json.Json
 
 object IncomeTaxCalculationStub {
@@ -28,6 +28,9 @@ object IncomeTaxCalculationStub {
     WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear), status, Json.toJson(body).toString())
   }
 
+  def stubGetCalculationErrorResponse(nino: String, taxYear: String)(status: Int, body: LiabilityCalculationError): Unit = {
+    WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear), status, Json.toJson(body).toString())
+  }
   def verifyGetCalculationResponse(nino: String, taxYear: String, noOfCalls: Int = 1): Unit = {
     WiremockHelper.verifyGet(getCalculationResponseUrl(nino, taxYear), noOfCalls)
   }
