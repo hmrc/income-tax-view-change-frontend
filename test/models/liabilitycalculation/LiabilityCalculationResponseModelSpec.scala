@@ -28,13 +28,22 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
   "LastTaxCalculationResponseMode model" when {
     "successful successModelMinimal" should {
       val successModelMinimal = LiabilityCalculationResponse(
+        inputs = Inputs(personalInformation = PersonalInformation(
+          taxRegime = "UK", None
+        )),
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = "2019-02-15T09:35:15.094Z",
-          crystallised = true)
+          crystallised = true),
+        messages = None
       )
       val expectedJson = s"""
                             |{
+                            | "inputs": {
+                            |    "personalInformation": {
+                            |      "taxRegime": "UK"
+                            |    }
+                            |  },
                             |  "metadata" : {
                             |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
                             |    "crystallised" : true

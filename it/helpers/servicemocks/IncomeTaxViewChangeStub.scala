@@ -95,8 +95,8 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def stubGetPreviousObligationsNotFound(nino: String): Unit =
     WiremockHelper.stubGet(previousObligationsUrl(nino), Status.NOT_FOUND, "")
 
-  def verifyGetPreviousObligations(nino: String): Unit =
-    WiremockHelper.verifyGet(previousObligationsUrl(nino))
+  def verifyGetPreviousObligations(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
+    WiremockHelper.verifyGet(previousObligationsUrl(nino, fromDate, toDate))
 
   def verifyGetObligations(nino: String): Unit =
     WiremockHelper.verifyGet(obligationsUrl(nino))

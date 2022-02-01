@@ -23,7 +23,7 @@ import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApprove
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
-import models.liabilitycalculation.view.AllowancesAndDeductionsViewModel
+import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport

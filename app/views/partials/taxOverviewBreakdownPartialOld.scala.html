@@ -15,10 +15,10 @@
 *@
 
 @import implicits.ImplicitCurrencyFormatter._
-@import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+@import models.calculation.CalcOverview
 
 @this()
-@(overview: TaxYearOverviewViewModel, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean)(implicit messages: Messages)
+@(overview: CalcOverview, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean)(implicit messages: Messages)
 
 @if(isFinalCalc){
 
