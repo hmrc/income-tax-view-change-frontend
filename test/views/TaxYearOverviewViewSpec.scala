@@ -19,6 +19,7 @@ package views
 import java.time.LocalDate
 
 import config.featureswitch.FeatureSwitching
+import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatterImpl
 import models.calculation.CalcOverview
@@ -105,6 +106,11 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   )
 
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
+
+  val testWithOneMissingDueDateChargesList: List[DocumentDetailWithDueDate] = List(
+    fullDocumentDetailWithDueDateModel.copy(dueDate = None),
+    fullDocumentDetailWithDueDateModel
+  )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
@@ -513,6 +519,22 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
+      }
+
+      "throw exception when Due Date is missing as Agent" in {
+        val expectedException = intercept[MissingFieldException] {
+          new Setup(estimateView(testWithOneMissingDueDateChargesList, isAgent = true))
+        }
+
+        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
+      }
+
+      "throw exception when Due Date is missing as Individual" in {
+        val expectedException = intercept[MissingFieldException] {
+          new Setup(estimateView(testWithOneMissingDueDateChargesList))
+        }
+
+        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
       }
     }
     "the user is an agent" should {
