@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation.view
+package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.TaxDeductedAtSource
 

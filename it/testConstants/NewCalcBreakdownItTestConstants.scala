@@ -24,14 +24,14 @@ object NewCalcBreakdownItTestConstants {
 
   val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK"
+      taxRegime = "UK", class2VoluntaryContributions = None
     )),
-    messages = None,
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
       calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      crystallised = true),
+    messages = None
   )
 
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
@@ -218,8 +218,8 @@ object NewCalcBreakdownItTestConstants {
         )),
         totalStudentLoansRepaymentAmount = Some(5000.99),
         saUnderpaymentsCodedOut = Some(-99999999999.99),
-        totalIncomeTaxAndNicsDue = -99999999999.99,
-        totalTaxDeducted = Some(-99999999999.99)
+        totalIncomeTaxAndNicsDue = -25500.99,
+        totalTaxDeducted = Some(-20500.99)
       )),
       taxDeductedAtSource = Some(TaxDeductedAtSource(
         ukLandAndProperty = Some(5000.99),

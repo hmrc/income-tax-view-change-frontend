@@ -82,12 +82,12 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel.copy(crystallised = true)))
   def mockCalculationError(): Unit =
     setupMockGetCalculation(testNino, testYear)(CalcDisplayError)
-  def mockCalculationErrorNew(mtditid: String = "XAIT00000000015"): Unit =
-    setupMockGetCalculationNew(mtditid, testNino, testYear)(LiabilityCalculationError(500, "Internal server error"))
+  def mockCalculationErrorNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testYear): Unit =
+    setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(500, "Internal server error"))
   def mockCalculationNotFound(): Unit =
     setupMockGetCalculation(testNino, testYear)(CalcDisplayNoDataFound)
-  def mockCalculationNotFoundNew(mtditid: String = "XAIT00000000015"): Unit =
-    setupMockGetCalculationNew(mtditid, testNino, testYear)(LiabilityCalculationError(404, "not found"))
+  def mockCalculationNotFoundNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testYear): Unit =
+    setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(404, "not found"))
   def mockCalculationNotFoundAgent(): Unit =
     setupMockGetCalculation(testNinoAgent, testYear)(CalcDisplayNoDataFound)
 }

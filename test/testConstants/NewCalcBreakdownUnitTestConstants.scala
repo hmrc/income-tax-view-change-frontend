@@ -25,7 +25,11 @@ object NewCalcBreakdownUnitTestConstants {
 
   val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
+<<<<<<< HEAD:test/testConstants/NewCalcBreakdownUnitTestConstants.scala
       taxRegime = "UK", class2VoluntaryContributions = None
+=======
+      taxRegime = "UK", None
+>>>>>>> main:test/testConstants/NewCalcBreakdownTestConstants.scala
     )),
     messages = None,
     calculation = Some(Calculation(
@@ -37,7 +41,11 @@ object NewCalcBreakdownUnitTestConstants {
 
   val liabilityCalculationModelDeductionsMinimal2 = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
+<<<<<<< HEAD:test/testConstants/NewCalcBreakdownUnitTestConstants.scala
       taxRegime = "UK", class2VoluntaryContributions = None
+=======
+      taxRegime = "UK", None
+>>>>>>> main:test/testConstants/NewCalcBreakdownTestConstants.scala
     )),
     messages = None,
     calculation = None,

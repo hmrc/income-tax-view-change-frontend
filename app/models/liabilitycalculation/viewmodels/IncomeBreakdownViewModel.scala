@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation.viewModels
+package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.Calculation
 

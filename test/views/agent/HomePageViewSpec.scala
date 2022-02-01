@@ -21,6 +21,7 @@ import testConstants.MessagesLookUp.{Core => coreMessages, HomePage => homeMessa
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
+import exceptions.MissingFieldException
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -267,6 +268,15 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
     }
 
+    "the home view with an empty next payment due date and one overDuePaymentsCount" should {
+      "throw a MissingFieldException" in {
+        val expectedException: MissingFieldException = intercept[MissingFieldException]{
+          new Setup(ITSASubmissionIntegrationEnabled = true, nextPaymentDueDate = None, overDuePaymentsCount = Some(1))
+        }
+
+        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Next Payment Due Date"
+      }
+    }
 
   }
 
