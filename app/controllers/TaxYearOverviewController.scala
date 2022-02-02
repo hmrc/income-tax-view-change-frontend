@@ -166,9 +166,9 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   }
 
   private def getBackURL(referer: Option[String]): String = {
-    referer.map(_.contains(backHomeUrl)) match {
-      case Some(true) => backHomeUrl
-      case _ => backTaxYearsUrl
+    referer.map(getBaseURL(_).equals(taxYearsUrl)) match {
+      case Some(true) => taxYearsUrl
+      case _ => homeUrl
     }
   }
 
@@ -215,7 +215,12 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     }
   }
 
-  lazy val backTaxYearsUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
-  lazy val backHomeUrl: String = controllers.routes.HomeController.home().url
+  private def getBaseURL(input: String): String = {
+    input.drop(input.indexOf("/report-quarterly/"))
+  }
+
+  lazy val taxYearsUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
+
+  lazy val homeUrl: String = controllers.routes.HomeController.home().url
 }
 

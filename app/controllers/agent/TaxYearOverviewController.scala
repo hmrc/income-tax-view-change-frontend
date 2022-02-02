@@ -56,8 +56,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                            val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  lazy val backAgentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
-  lazy val backAgentHomeUrl: String = controllers.agent.routes.HomeController.show().url
+  lazy val agentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
+  lazy val agentHomeUrl: String = controllers.agent.routes.HomeController.show().url
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
@@ -93,10 +93,14 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
       }
   }
 
+  private def getBaseURL(input: String): String = {
+    input.drop(input.indexOf("/report-quarterly/"))
+  }
+
   private def getBackURL(referer: Option[String]): String = {
-    referer.map(_.contains(backAgentHomeUrl)) match {
-      case Some(true) => backAgentHomeUrl
-      case _ => backAgentTaxYearsUrl
+    referer.map(getBaseURL(_).equals(agentTaxYearsUrl)) match {
+      case Some(true) => agentTaxYearsUrl
+      case _ => agentHomeUrl
     }
   }
 

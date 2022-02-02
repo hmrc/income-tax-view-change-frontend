@@ -99,7 +99,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -165,7 +165,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -197,7 +197,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -231,7 +231,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -263,7 +263,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -292,7 +292,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             codingOutEnabled = true
           ).toString
 
-          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
           status(result) shouldBe Status.OK
           contentAsString(result) shouldBe expectedContent
@@ -376,7 +376,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
               codingOutEnabled = true
             ).toString
 
-            val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+            val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
             status(result) shouldBe Status.OK
             contentAsString(result) shouldBe expectedContent
@@ -421,7 +421,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -487,7 +487,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -519,7 +519,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -553,7 +553,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -585,7 +585,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -614,7 +614,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -696,7 +696,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             codingOutEnabled = true
           ).toString
 
-          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
           status(result) shouldBe Status.OK
           contentAsString(result) shouldBe expectedContent
