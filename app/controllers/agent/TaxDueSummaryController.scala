@@ -17,7 +17,7 @@
 package controllers.agent
 
 import audit.AuditingService
-import audit.models.{TaxCalculationDetailsResponseAuditModel, TaxCalculationDetailsResponseAuditModelNew}
+import audit.models._
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
@@ -60,8 +60,8 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
             case _: LiabilityCalculationError =>
               Logger("application").error(
-                """[DeductionsSummaryController][showDeductionsSummary[""" + taxYear +
-                  """]] No new calc deductions data error found. Downstream error""")
+                "[DeductionsSummaryController][showDeductionsSummary[" + taxYear +
+                  "]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }
         } else {

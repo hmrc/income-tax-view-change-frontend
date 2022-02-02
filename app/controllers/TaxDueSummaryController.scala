@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{AllowanceAndDeductionsResponseAuditModelNew, TaxCalculationDetailsResponseAuditModel, TaxCalculationDetailsResponseAuditModelNew}
+import audit.models._
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -68,8 +68,8 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
             case _: LiabilityCalculationError =>
               Logger("application").error(
-                """[DeductionsSummaryController][showDeductionsSummary[""" + taxYear +
-                  """]] No new calc deductions data error found. Downstream error""")
+                "[DeductionsSummaryController][showDeductionsSummary[" + taxYear +
+                  "]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }
         } else {
@@ -82,14 +82,14 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
 
             case CalcDisplayNoDataFound =>
               Logger("application").warn(
-                """[TaxDueController][showTaxDueSummary[""" + taxYear +
-                  """]] No tax due data could be retrieved. Not found""")
+                "[TaxDueController][showTaxDueSummary[" + taxYear +
+                  "]] No tax due data could be retrieved. Not found")
               Future.successful(itvcErrorHandler.showInternalServerError())
 
             case CalcDisplayError =>
               Logger("application").error(
-                """[TaxDueController][showTaxDueSummary[""" + taxYear +
-                  """]] No tax due data could be retrieved. Downstream error""")
+                "[TaxDueController][showTaxDueSummary[" + taxYear +
+                  "]] No tax due data could be retrieved. Downstream error")
               Future.successful(itvcErrorHandler.showInternalServerError())
           }
         }
