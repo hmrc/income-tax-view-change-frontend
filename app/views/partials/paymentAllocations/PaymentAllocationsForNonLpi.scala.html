@@ -17,24 +17,28 @@
 @import implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
 @import exceptions.MissingFieldException
+@import models.paymentAllocationCharges._
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, isAgent: Boolean)(implicit messages: Messages)
 @import implicitDateFormatter._
 
+@paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate, isAgent: Boolean) = @{
+    if(isAgent){
+        controllers.agent.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+    } else {
+        controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+    }
+}
+
 @for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
     <tbody class="govuk-table__body">
 
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-@index">
-                @if(isAgent){
-                <a class="govuk-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)">
+                <a class="govuk-link" href="@paymentAllocationHref(paymentAllocation, isAgent)">
                     @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
-                    } else {
-                <a class="govuk-link" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)}" class="govuk-link">
-                @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
-                    }
                     <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter)</span>
                 </a>
                 <br>
