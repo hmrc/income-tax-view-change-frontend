@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation.view
-
-//import models.liabilitycalculation._
+package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.{Message, Messages, ReliefsClaimed}
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}

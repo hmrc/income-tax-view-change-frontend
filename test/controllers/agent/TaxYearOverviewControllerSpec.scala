@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException

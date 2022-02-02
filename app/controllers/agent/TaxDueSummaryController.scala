@@ -23,7 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.calculation._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
-import models.liabilitycalculation.view.TaxDueSummaryViewModel
+import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import models.liabilitycalculation.view._
+import models.liabilitycalculation.viewmodels._
 import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation.ReliefsClaimed
 import play.api.libs.json._
