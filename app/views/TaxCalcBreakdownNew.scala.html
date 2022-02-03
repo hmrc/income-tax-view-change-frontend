@@ -341,7 +341,7 @@
         viewModel.payeUnderpaymentsCodedOut.nonEmpty ||
         viewModel.saUnderpaymentsCodedOut.nonEmpty
     ) {
-        <table class="govuk-table" id="capital-gains-tax-table">
+        <table class="govuk-table" id="other-charges-table">
             <caption
                     id ="other_charges"  class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.table.other_charges")
             </caption>
@@ -381,7 +381,7 @@
     }
 
     @if(viewModel.taxDeductedAtSource.nonEmpty) {
-        <table class="govuk-table" id="other-charges-table">
+        <table class="govuk-table" id="tax-deductions-table">
             <caption
                     id = "taxDeductedAtSource" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.taxDeductedAtSource")
             </caption>
@@ -409,7 +409,7 @@
             </tbody>
         </table>
     }
-    <table class="govuk-table" id="tax-deductions-table">
+    <table class="govuk-table">
         <tr class="govuk-table__row">
             <td class="govuk-table__header total-section-with-spacing">@messages("taxCal_breakdown.table.totalIncomeTaxAndNicsDue") </td>
             <td class="govuk-table__header govuk-table__header--numeric total-section-with-spacing">@viewModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrency</td>
