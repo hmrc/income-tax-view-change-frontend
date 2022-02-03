@@ -166,7 +166,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     )
   }
 
-  private def getBackURL(referer: Option[String])(implicit requestHeader: RequestHeader): String = {
+  private def getBackURL(referer: Option[String]): String = {
     referer.map(URI.create(_).getPath.equals(taxYearsUrl)) match {
       case Some(true) => taxYearsUrl
       case _ => homeUrl
