@@ -16,8 +16,10 @@
 
 package testConstants
 
+
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel}
 
 object NewCalcBreakdownUnitTestConstants {
 
@@ -249,4 +251,416 @@ object NewCalcBreakdownUnitTestConstants {
       crystallised = true)
   )
 
+
+  val taxDueSummaryViewModelStandard = TaxDueSummaryViewModel(
+    taxRegime = "Uk",
+    payPensionsProfitBands = Some(
+      Seq(
+        TaxBands(
+          name = "BRT",
+          rate = 20.0,
+          bandLimit = 12500,
+          apportionedBandLimit = 12500,
+          income = 20000,
+          taxAmount = 4000.00
+        ),
+        TaxBands(
+          name = "HRT",
+          rate = 40.0,
+          bandLimit = 12500,
+          apportionedBandLimit = 12500,
+          income = 100000,
+          taxAmount = 40000.00
+        ),
+        TaxBands(
+          name = "ART",
+          rate = 45.0,
+          bandLimit = 12500,
+          apportionedBandLimit = 12500,
+          income = 50000,
+          taxAmount = 22500.00
+        )
+      )
+    ),
+    dividendsBands = Some(Seq(
+      TaxBands(
+        name = "BRT",
+        rate = 7.5,
+        income = 1000,
+        taxAmount = 75.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ZRTBR",
+        rate = 0,
+        income = 1000,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "HRT",
+        rate = 37.5,
+        income = 2000,
+        taxAmount = 750.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ZRTHR",
+        rate = 0,
+        income = 2000,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 38.1,
+        income = 3000,
+        taxAmount = 1143.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ZRTAR",
+        rate = 0,
+        income = 3000,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    )),
+    savingsAndGainsBands = Some(Seq(
+      TaxBands(
+        name = "SSR",
+        rate = 0.0,
+        income = 1,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "BRT",
+        rate = 10.0,
+        income = 20,
+        taxAmount = 2.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ZRTBR",
+        rate = 0.0,
+        income = 20,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        income = 2000,
+        taxAmount = 800.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ZRTHR",
+        rate = 0.0,
+        income = 10000,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 50.0,
+        income = 100000,
+        taxAmount = 5000.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    )),
+    lumpSumsBands = Some(Seq(
+      TaxBands(
+        name = "BRT",
+        rate = 20.0,
+        income = 20000,
+        taxAmount = 4000.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        income = 100000,
+        taxAmount = 40000.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 45.0,
+        income = 50000,
+        taxAmount = 22500.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    )),
+    gainsOnLifePoliciesBands = Some(Seq(
+      TaxBands(
+        name = "BRT",
+        rate = 20.0,
+        income = 20000,
+        taxAmount = 4000.00,
+        bandLimit = 14000,
+        apportionedBandLimit = 14000),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        income = 100000,
+        taxAmount = 40000.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 45.0,
+        income = 50000,
+        taxAmount = 22500.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    )),
+    nic4Bands = Some(Seq(
+      Nic4Bands(
+        name = "ZRT",
+        rate = 1,
+        income = 2000,
+        amount = 100
+      ),
+      Nic4Bands(
+        name = "BRT",
+        rate = 2,
+        income = 3000,
+        amount = 200
+      ),
+      Nic4Bands(
+        name = "HRT",
+        rate = 3,
+        income = 5000,
+        amount = 300
+      ),
+      Nic4Bands(
+        name = "giftAidTax",
+        rate = 4,
+        income = 6000,
+        amount = 400
+      ),
+      Nic4Bands(
+        name = "totalPensionSavingsTaxCharges",
+        rate = 5,
+        income = 7000,
+        amount = 500
+      ),
+      Nic4Bands(
+        name = "statePensionLumpSumCharges",
+        rate = 6,
+        income = 8000,
+        amount = 600
+      ),
+      Nic4Bands(
+        name = "totalStudentLoansRepaymentAmount",
+        rate = 7,
+        income = 9000,
+        amount = 700
+      ),
+    )),
+    class2VoluntaryContributions = Some(true),
+    class2NicsAmount = Some(10000),
+    giftAidTax = Some(5000),
+    totalPensionSavingsTaxCharges = Some(5000),
+    statePensionLumpSumCharges = Some(5000),
+    totalStudentLoansRepaymentAmount = Some(5000),
+    marriageAllowanceTransferredInAmount = Some(252),
+    topSlicingReliefAmount = Some(1200),
+    totalResidentialFinanceCostsRelief = Some(5000),
+    totalForeignTaxCreditRelief = Some(6000),
+    totalNotionalTax = Some(7000),
+    incomeTaxDueAfterTaxReductions = Some(2000),
+    payeUnderpaymentsCodedOut = Some(254),
+    saUnderpaymentsCodedOut = Some(400),
+    reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1000)), ReliefsClaimed("vctSubscriptions", Some(2000)),
+      ReliefsClaimed("eisSubscriptions", Some(3000)), ReliefsClaimed("seedEnterpriseInvestment", Some(4000)),
+      ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("socialEnterpriseInvestment", Some(6000)),
+      ReliefsClaimed("maintenancePayments", Some(7000)),
+      ReliefsClaimed("qualifyingDistributionRedemptionOfSharesAndSecurities", Some(8000)),
+      ReliefsClaimed("nonDeductibleLoanInterest", Some(9000))
+    )),
+    capitalGainsTax = CapitalGainsTaxViewModel(
+      businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(
+        taxableGains = Some(10000.0),
+        rate = Some(10.0),
+        taxAmount = Some(1000.0)
+      )),
+      propertyAndInterestTaxBands = Some(Seq(
+        CgtTaxBands(
+          name = "higherRate",
+          rate = 28.0,
+          income = 30000.0,
+          taxAmount = 8400.0
+        ),
+        CgtTaxBands(
+          name = "lowerRate",
+          rate = 18.0,
+          income = 20000.0,
+          taxAmount = 3600.0
+        )
+      )),
+      otherGainsTaxBands = Some(Seq(
+        CgtTaxBands(
+          name = "higherRate",
+          rate = 28.0,
+          income = 12000.0,
+          taxAmount = 3360.0
+        ),
+        CgtTaxBands(
+          name = "lowerRate",
+          rate = 20.0,
+          income = 11000.0,
+          taxAmount = 2200.0
+        )
+      )),
+      totalTaxableGains = Some(1234.56),
+      adjustments = Some(123.45),
+      foreignTaxCreditRelief = Some(2345.67),
+      taxOnGainsAlreadyPaid = Some(3456.78),
+      capitalGainsTaxDue = Some(4567.89),
+      capitalGainsOverpaid = Some(234.56)
+    ),
+    taxDeductedAtSource = TaxDeductedAtSourceViewModel(
+      payeEmployments = Some(100.0),
+      ukPensions = Some(200.0),
+      stateBenefits = Some(300.0),
+      cis = Some(400.0),
+      ukLandAndProperty = Some(500.0),
+      specialWithholdingTax = Some(600.0),
+      voidISAs = Some(700.0),
+      savings = Some(800.0),
+      inYearAdjustmentCodedInLaterTaxYear = Some(900.0),
+      total = Some(1000.0),
+      totalIncomeTaxAndNicsDue = Some(1100.0)
+    ),
+    totalTaxDeducted = Some(1000)
+  )
+
+  val taxDueSummaryViewModelZeroIncome = TaxDueSummaryViewModel(
+    payPensionsProfitBands = Some(Seq(TaxBands(
+      name = "BRT",
+      rate = 20.0,
+      income = 0,
+      taxAmount = 4000.00,
+      bandLimit = 15000,
+      apportionedBandLimit = 15000),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        income = 0,
+        taxAmount = 40000.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 45.0,
+        income = 0,
+        taxAmount = 22500.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    )),
+    lumpSumsBands = Some(Seq(TaxBands(
+      name = "BRT",
+      rate = 20.0,
+      income = 0,
+      taxAmount = 4000.00,
+      bandLimit = 15000,
+      apportionedBandLimit = 15000),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        income = 0,
+        taxAmount = 40000.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 45.0,
+        income = 0,
+        taxAmount = 22500.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    )
+    ),
+    gainsOnLifePoliciesBands = Some(Seq(TaxBands(
+      name = "BRT",
+      rate = 20.0,
+      income = 0,
+      taxAmount = 4000.00,
+      bandLimit = 14000,
+      apportionedBandLimit = 14000),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        income = 0,
+        taxAmount = 40000.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 45.0,
+        income = 0,
+        taxAmount = 22500.00,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    )),
+    savingsAndGainsBands = Some(Seq(
+      TaxBands(
+        name = "SSR",
+        rate = 0.0,
+        income = 0,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "BRT",
+        rate = 10.0,
+        income = 0,
+        taxAmount = 2.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ZRTBR",
+        rate = 0.0,
+        income = 0,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        income = 0,
+        taxAmount = 800.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ZRTHR",
+        rate = 0.0,
+        income = 0,
+        taxAmount = 0.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000),
+      TaxBands(
+        name = "ART",
+        rate = 50.0,
+        income = 0,
+        taxAmount = 5000.0,
+        bandLimit = 15000,
+        apportionedBandLimit = 15000)
+    ))
+  )
+
+  val taxDueSummaryViewModelMarriageAllowance = TaxDueSummaryViewModel(
+    marriageAllowanceTransferredInAmount = Some(1234)
+  )
+
+  val taxDueSummaryViewModelTopSlicingRelief = TaxDueSummaryViewModel(
+    topSlicingReliefAmount = Some(2345)
+  )
+  val taxDueSummaryViewModelNic2 = TaxDueSummaryViewModel(
+    class2VoluntaryContributions = Some(false),
+    class2NicsAmount = Some(10000)
+  )
 }
