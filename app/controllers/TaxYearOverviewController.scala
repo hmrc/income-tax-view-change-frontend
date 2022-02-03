@@ -35,6 +35,7 @@ import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
 import views.html.{TaxYearOverview, TaxYearOverviewOld}
 
+import java.net.URI
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -165,8 +166,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     )
   }
 
-  private def getBackURL(referer: Option[String]): String = {
-    referer.map(getBaseURL(_).equals(taxYearsUrl)) match {
+  private def getBackURL(referer: Option[String])(implicit requestHeader: RequestHeader): String = {
+    referer.map(URI.create(_).getPath.equals(taxYearsUrl)) match {
       case Some(true) => taxYearsUrl
       case _ => homeUrl
     }
@@ -213,10 +214,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         Future.successful(itvcErrorHandler.showInternalServerError())
       }
     }
-  }
-
-  private def getBaseURL(input: String): String = {
-    input.drop(input.indexOf("/report-quarterly/"))
   }
 
   lazy val taxYearsUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url

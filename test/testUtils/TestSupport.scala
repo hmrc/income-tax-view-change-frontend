@@ -107,7 +107,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
   ).withHeaders(
-    HeaderNames.REFERER -> "/report-quarterly/income-and-expenses/view"
+    HeaderNames.REFERER -> "http://www.somedomain.org/report-quarterly/income-and-expenses/view"
   )
 
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(

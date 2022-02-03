@@ -37,6 +37,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.{TaxYearOverview, TaxYearOverviewOld}
 
+import java.net.URI
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -93,12 +94,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
       }
   }
 
-  private def getBaseURL(input: String): String = {
-    input.drop(input.indexOf("/report-quarterly/"))
-  }
-
   private def getBackURL(referer: Option[String]): String = {
-    referer.map(getBaseURL(_).equals(agentTaxYearsUrl)) match {
+    referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
       case Some(true) => agentTaxYearsUrl
       case _ => agentHomeUrl
     }
