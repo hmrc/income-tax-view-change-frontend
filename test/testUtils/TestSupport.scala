@@ -88,6 +88,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     HeaderNames.REFERER -> "/test/url"
   )
 
+  def fakeRequestWithActiveSessionWithReferer(referer: String): FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    SessionKeys.lastRequestTimestamp -> "1498236506662",
+    SessionKeys.authToken -> "Bearer Token"
+  ).withHeaders(
+    HeaderNames.REFERER -> referer
+  )
+
   lazy val fakeRequestWithTimeoutSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
@@ -100,7 +107,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
   ).withHeaders(
-    HeaderNames.REFERER -> "/report-quarterly/income-and-expenses/view"
+    HeaderNames.REFERER -> "http://www.somedomain.org/report-quarterly/income-and-expenses/view"
   )
 
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
@@ -120,7 +127,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       utils.SessionKeys.confirmedClient -> "true"
     )
 
-  def fakeRequestConfirmedClientAndRefererToHomePage(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+  def fakeRequestConfirmedClientWithReferer(clientNino: String = "AA111111A", referer: String): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
       utils.SessionKeys.clientFirstName -> "Test",
       utils.SessionKeys.clientLastName -> "User",
@@ -129,7 +136,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       utils.SessionKeys.clientNino -> clientNino,
       utils.SessionKeys.confirmedClient -> "true"
     ).withHeaders(
-      HeaderNames.REFERER -> "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
+      HeaderNames.REFERER -> referer
     )
 
   def agentUserConfirmedClient(clientNino: String = "AA111111A"): MtdItUser[_] = MtdItUser(
