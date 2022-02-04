@@ -237,7 +237,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -268,7 +268,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -301,7 +301,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -332,7 +332,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -365,7 +365,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientAndRefererToHomePage())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = homeBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -529,7 +529,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -560,7 +560,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -593,7 +593,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -624,7 +624,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent
@@ -657,7 +657,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 					codingOutEnabled = true
 				).toString
 
-				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientAndRefererToHomePage())
+				val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = homeBackLink))
 
 				status(result) shouldBe OK
 				contentAsString(result) shouldBe expectedContent

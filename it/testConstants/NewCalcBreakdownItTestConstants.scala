@@ -218,7 +218,7 @@ object NewCalcBreakdownItTestConstants {
         )),
         totalStudentLoansRepaymentAmount = Some(5000.99),
         saUnderpaymentsCodedOut = Some(-99999999999.99),
-        totalIncomeTaxAndNicsDue = -25500.99,
+        totalIncomeTaxAndNicsDue = 90500.99,
         totalTaxDeducted = Some(-20500.99)
       )),
       taxDeductedAtSource = Some(TaxDeductedAtSource(
