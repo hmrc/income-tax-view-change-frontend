@@ -16,6 +16,8 @@
 
 package helpers
 
+import java.time.LocalDate
+
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
@@ -33,10 +35,9 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
@@ -86,7 +87,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.now
-    if(currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6)))LocalDate.of(currentDate.getYear, 4, 5)
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
@@ -116,21 +117,21 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-      buildClient(uri)
-        .withHttpHeaders(headers: _*)
-        .get().futureValue
+    buildClient(uri)
+      .withHttpHeaders(headers: _*)
+      .get().futureValue
   }
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
-        .get().futureValue
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get().futureValue
   }
 
   def getWithCalcIdInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
-        .get().futureValue
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get().futureValue
   }
 
   def getWithCalcIdInSessionAndWithoutAwait(uri: String, additionalCookies: Map[String, String] = Map.empty): Future[WSResponse] = {
@@ -147,15 +148,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getCalculation(year: String): WSResponse = get(s"/calculation/$year")
 
     def getCalculationPoller(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse =
-      getWithCalcIdInSession(s"${if(isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
-      
+      getWithCalcIdInSession(s"${if (isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
+
     def getFinalTaxCalculationPoller(taxYear: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse = {
-      val agentString = if(isAgent) "/agents" else ""
+      val agentString = if (isAgent) "/agents" else ""
       getWithCalcIdInSession(s"$agentString/$taxYear/final-tax-overview/calculate", additionalCookies)
     }
 
     def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): Future[WSResponse] =
-      getWithCalcIdInSessionAndWithoutAwait(s"${if(isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
+      getWithCalcIdInSessionAndWithoutAwait(s"${if (isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
 
     def getIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income")
 
@@ -203,7 +204,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
   }
 
-  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int, callback: () => Unit): Unit = {
+  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls: Int, callback: () => Unit): Unit = {
     Given("I wiremock stub a successful Income Source Details response with property only")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -215,7 +216,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
     callback()
-    if(resetCacheAfterFirstCall) cache.removeAll()
+    if (resetCacheAfterFirstCall) cache.removeAll()
     callback()
     verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
   }

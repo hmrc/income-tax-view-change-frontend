@@ -14,36 +14,33 @@
  * limitations under the License.
  */
 
-package mocks.views.agent
+package mocks.services
 
-import models.calculation.CalcDisplayModel
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import models.btaNavBar.ListLinks
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import play.twirl.api.Html
-import views.html.TaxCalcBreakdown
+import play.api.http.Status.INTERNAL_SERVER_ERROR
+import services.BtaNavBarService
+import testConstants.BaseTestConstants.testListLink
 
-trait MockTaxCalcBreakdown extends BeforeAndAfterEach with MockitoSugar {
+trait MockBtaNavBarService extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val taxCalcBreakdown: TaxCalcBreakdown = mock[TaxCalcBreakdown]
+  val mockBtaNavBarService: BtaNavBarService = mock[BtaNavBarService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(taxCalcBreakdown)
+    reset(mockBtaNavBarService)
   }
 
-  def mockTaxCalcBreakdown(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String, isAgent:Boolean)
-                          (response: Html): Unit = {
-    when(taxCalcBreakdown.apply(
-      matches(calcModel),
-      matches(taxYear),
-      matches(backUrl),
-      matches(isAgent),
-      any()
-    )(any(), any()))
-      .thenReturn(response)
+  def setupMockGetBtaNavBar()(sources: Seq[ListLinks]): Unit = {
+    when(
+      mockBtaNavBarService.partialList(ArgumentMatchers.any())(ArgumentMatchers.any()))
+      .thenReturn(sources)
   }
+
+  def mockErrorBtaNavBar(): Unit = setupMockGetBtaNavBar()(testListLink)
 
 }

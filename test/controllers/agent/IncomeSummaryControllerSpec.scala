@@ -25,17 +25,17 @@ import models.calculation.CalcDisplayError
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentType, _}
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownTestConstant.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with FeatureSwitching
   with MockIncomeSummary with MockCalculationService with MockIncomeSourceDetailsService with MockItvcErrorHandler {
@@ -73,7 +73,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           mockIncomeBreakdownOld(testYear, calculationDisplaySuccessModel(calculationDataSuccessModel),
             controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
           contentType(result) shouldBe Some(HTML)
@@ -101,7 +101,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
           mockShowInternalServerError()
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -117,7 +117,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessFull.calculation).get,
             controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
           contentType(result) shouldBe Some(HTML)
@@ -145,7 +145,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(500, "error"))
           mockShowInternalServerError()
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           disable(NewTaxCalcProxy)

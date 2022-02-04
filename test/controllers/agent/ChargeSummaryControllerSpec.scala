@@ -34,8 +34,8 @@ import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.ChargeSummary
-
 import java.time.LocalDate
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ChargeSummaryControllerSpec extends TestSupport
@@ -198,7 +198,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), any(), any(),ameq(chargeHistoryListInAscendingOrder), any(),any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
+				verify(chargeSummary).apply(any(), any(), any(),ameq(chargeHistoryListInAscendingOrder), any(),any(), any(), any(), any(),
+					any(), ameq(true), any())(any(), any(), any())
 				verify(mockFinancialDetailsService).getChargeHistoryDetails(ameq("XAIT00000000015"), ameq(id1040000123))(any())
 			}
 
@@ -216,7 +217,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), any(),any(), ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
+					verify(chargeSummary).apply(any(), any(),any(), ameq(Nil), any(), any(), any(), any(), any(),
+						any(), ameq(true), any())(any(), any(), any())
 				}
 
 				"viewing a Late Payment Interest summary" in new Setup() {
@@ -230,7 +232,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe OK
-					verify(chargeSummary).apply(any(), any(),any(), ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
+					verify(chargeSummary).apply(any(), any(),any(), ameq(Nil), any(), any(), any(), any(), any(),
+						any(), ameq(true), any())(any(), any(), any())
 					verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 				}
 			}
@@ -266,7 +269,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(), any(),any(),ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
+				verify(chargeSummary).apply(any(), any(),any(),ameq(Nil), any(), any(), any(),
+					any(), any(), any(), ameq(true), any())(any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 
@@ -281,7 +285,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 					.apply(fakeRequestConfirmedClient("AB123456C"))
 
 				status(result) shouldBe OK
-				verify(chargeSummary).apply(any(),any(),any(),ameq(Nil), any(), any(), any(), any(), any(), any(), ameq(true))(any(), any(), any())
+				verify(chargeSummary).apply(any(),any(),any(),ameq(Nil), any(), any(), any(), any(),
+					any(), any(), ameq(true), any())(any(), any(), any())
 				verify(mockFinancialDetailsService, never).getChargeHistoryDetails(any(), any())(any())
 			}
 		}

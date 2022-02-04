@@ -18,7 +18,7 @@ package mocks.services
 
 import testConstants.BaseTestConstants._
 import testConstants.CalcBreakdownTestConstants._
-import testConstants.NewCalcBreakdownTestConstants._
+import testConstants.NewCalcBreakdownTestConstant._
 import testConstants.EstimatesTestConstants._
 import models.calculation._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel}

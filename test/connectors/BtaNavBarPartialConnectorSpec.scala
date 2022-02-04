@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import helpers.servicemocks.AuthStub.appConfig
 import models.btaNavBar.{NavContent, NavLinks}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
@@ -35,10 +36,10 @@ class BtaNavBarPartialConnectorSpec extends UnitSpec with MockitoSugar with Befo
   val mockHttpGet: HttpClient = mock[HttpClient]
   val frontendAppConfig = mock[FrontendAppConfig]
 
-  object TestBtaNavBarPartialConnector extends BtaNavBarPartialConnector(mockHttpGet, frontendAppConfig)
+  object TestBtaNavBarPartialConnector extends BtaNavBarPartialConnector(mockHttpGet, appConfig)
 
   val successResponseNavLinks = NavContent(
-    NavLinks("Home", "Hafan", "http://localhost:9020/business-account"),
+    NavLinks("Home", "Hafan", appConfig.homePageUrl),
     NavLinks("Manage account", "Rheoli'r cyfrif", "http://localhost:9020/business-account/manage-account"),
     NavLinks("Messages", "Negeseuon", "http://localhost:9020/business-account/messages", Some(5)),
     NavLinks("Help and contact", "Cymorth a chysylltu", "http://localhost:9733/business-account/help"),

@@ -18,7 +18,7 @@ package models.liabilitycalculation
 
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownTestConstant.liabilityCalculationModelSuccessFull
 import testUtils.UnitSpec
 
 import scala.io.Source

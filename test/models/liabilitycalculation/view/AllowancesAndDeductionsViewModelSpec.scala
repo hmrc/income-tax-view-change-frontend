@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.view
 
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownTestConstant.liabilityCalculationModelSuccessFull
 import testUtils.UnitSpec
 
 class AllowancesAndDeductionsViewModelSpec extends UnitSpec {

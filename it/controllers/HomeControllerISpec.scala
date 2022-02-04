@@ -21,7 +21,7 @@ import testConstants.NextUpdatesIntegrationTestConstants._
 import testConstants.messages.HomeMessages._
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.TxmEventsApproved
+import config.featureswitch.{BtaNavBar, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -82,8 +82,9 @@ class HomeControllerISpec extends ComponentSpecBase {
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
-      "render the home page with the payment due date with TxmEventsApproved FS disabled" in {
+      "render the home page with the payment due date and Bta Nav Bar with TxmEventsApproved FS disabled" in {
         disable(TxmEventsApproved)
+        enable(BtaNavBar)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -109,10 +110,11 @@ class HomeControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
 
         verifyNextUpdatesCall(testNino)
-
+//        Nav-Bar-Link-testEnHome  secondary-nav
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
+          elementValueByID("Nav-Bar-Link-testEnHome")("testEnHome"),
           pageTitle(title),
           elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
           elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")

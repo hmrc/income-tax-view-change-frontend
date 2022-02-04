@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models._
-import auth.MtdItUserWithNino
+import auth.{MtdItUserBase, MtdItUserWithNino}
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
@@ -33,8 +33,8 @@ import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.DeductionBreakdown
 import views.html.DeductionBreakdownNew
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.ExecutionContext
 
 @Singleton

@@ -16,20 +16,19 @@
 
 package services
 
-import controllers.ControllerSpecBase
-import controllers.actions.mocks.MockAuth
-import helpers.UnitSpec
 import models.btaNavBar._
+import org.scalatest.Matchers
+import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Lang, Messages}
+import testUtils.TestSupport
 
-class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with UnitSpec with MockAuth {
+class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matchers {
 
-  val mockService: PartialService = new BtaNavBarService
+  val mockService: BtaNavBarService = new BtaNavBarService()(appConfig)
   implicit val message: Messages = messages
 
-  "PartialService" must {
+  "BtaNavPartialPartialService" when {
     "notificationBadgeCount" should {
       "return a string of 0 when messageCount is 0" in {
         val result: String = mockService.notificationBadgeCount(messageCount = 0)
@@ -61,28 +60,28 @@ class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with Scala
       "return en messages when there is 1 alert and lang is set to eng" in {
         implicit val lang = messagesApi.preferred(Seq(Lang("en"))).lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(1))
-        val result = mockService.formsNav(testNavLinks)
+        val result = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("testEn", "testUrl", Some("1"))
       }
 
       "return cy messages when there is 1 alert and lang is set to eng" in {
         implicit val lang = messagesApi.preferred(Seq(Lang("cy"))).lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(1))
-        val result = mockService.formsNav(testNavLinks)
+        val result = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("testCy", "testUrl", Some("1"))
       }
 
       "return an empty ListLink with showBoolean set true when there are 0 alerts" in {
         implicit val lang = messages.lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(0))
-        val result = mockService.formsNav(testNavLinks)
+        val result = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("", "", showBoolean = Some(false))
       }
 
       "return an empty ListLink with showBoolean set true when there are no alerts provided" in {
         implicit val lang = messages.lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl")
-        val result = mockService.formsNav(testNavLinks)
+        val result = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("", "", showBoolean = Some(false))
       }
     }
@@ -100,11 +99,11 @@ class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with Scala
 
         val result = mockService.partialList(Some(navContent))(messages)
         result mustBe Seq(
-          ListLinks("testEnHome", "testUrl"),
+          ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("0")),
           ListLinks("testEnForm", "testUrl", Some("1")),
-          ListLinks("testEnHelp", "testUrl"),
+          ListLinks("testEnHelp", "testUrl")
         )
       }
 
@@ -121,7 +120,7 @@ class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with Scala
 
         val result = mockService.partialList(Some(navContent))(messages)
         result mustBe Seq(
-          ListLinks("testCyHome", "testUrl"),
+          ListLinks("testCyHome", appConfig.homePageUrl),
           ListLinks("testCyAccount", "testUrl"),
           ListLinks("testCyMessages", "testUrl", Some("0")),
           ListLinks("testCyForm", "testUrl", Some("1")),
@@ -141,7 +140,7 @@ class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with Scala
 
         val result = mockService.partialList(Some(navContent))
         result mustBe Seq(
-          ListLinks("testEnHome", "testUrl"),
+          ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("0")),
           ListLinks("", "", showBoolean = Some(false)),
@@ -161,7 +160,7 @@ class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with Scala
 
         val result = mockService.partialList(Some(navContent))
         result mustBe Seq(
-          ListLinks("testEnHome", "testUrl"),
+          ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("99")),
           ListLinks("testEnForm", "testUrl", Some("99")),
@@ -181,7 +180,7 @@ class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with Scala
 
         val result = mockService.partialList(Some(navContent))
         result mustBe Seq(
-          ListLinks("testEnHome", "testUrl"),
+          ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("+99")),
           ListLinks("testEnForm", "testUrl", Some("+99")),
@@ -195,7 +194,4 @@ class PartialServiceSpec extends ControllerSpecBase with MockitoSugar with Scala
       }
     }
   }
-}
-class BtaNavPartialServiceSpec {
-
 }

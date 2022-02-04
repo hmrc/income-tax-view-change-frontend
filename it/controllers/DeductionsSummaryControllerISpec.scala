@@ -17,15 +17,17 @@
 package controllers
 
 import java.time.LocalDateTime
+
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.{DeductionsSummaryMessages => messages}
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{NewTaxCalcProxy, TxmEventsApproved}
+import config.featureswitch.{BtaNavBar, NewTaxCalcProxy, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditEvent
+import helpers.servicemocks.BtaNavBarPartialConnectorStub._
 import helpers.servicemocks._
 import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
@@ -60,6 +62,11 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
           body = estimatedCalculationFullJson
         )
 
+        val testingUser: MtdItUser[_] = MtdItUser(
+          testMtditid, testNino, userName = None, multipleBusinessesAndPropertyResponse, None,
+          Some("1234567890"), Some("12345-credId"), Some(testUserTypeIndividual), arn = None
+        )(FakeRequest())
+
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
         val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
 
@@ -69,7 +76,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
         And("Audit TXM events have been fired with TxmApproved FS true")
         val expectedAllowancesAndDeductionsTrue = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
-        verifyAuditEvent(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductionsTrue, true))
+        verifyAuditEvent(AllowanceAndDeductionsResponseAuditModel(testingUser, expectedAllowancesAndDeductionsTrue, true))
 
         Then("I see Allowances and deductions page")
         res should have(
@@ -78,15 +85,15 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
           elementTextBySelector("h1")(messages.deductionsSummaryHeading)
         )
 
-      val testUser: MtdItUser[_] = MtdItUser(
-        testMtditid, testNino, userName = None, multipleBusinessesAndPropertyResponse, None,
-        Some("1234567890"), Some("12345-credId"), Some(testUserTypeIndividual), arn = None
-      )(FakeRequest())
     }
-      "with TxmEventsApproved DISABLED" in {
+      "with TxmEventsApproved DISABLED but Bta ENABLED" in {
 
-        When("I disable TxmEventsApproved")
+        When("I disable TxmEventsApproved and enable BtaNavBar")
         disable(TxmEventsApproved)
+        enable(BtaNavBar)
+
+        And("I wiremock stub a successful Bta Nav Bar PartialConnector response")
+        BtaNavBarPartialConnectorStub.withResponseForNavLinks()(200, Some(testNavLinkJson))
 
         And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -105,8 +112,11 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         val res2 = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
 
         Then("I see Allowances and deductions page")
+        println(elementValueByID("Nav-Bar-Link-testEnHome")("testEnHome"))
+        BtaNavBarPartialConnectorStub.verifyNavlinksContent(1)
         res2 should have(
           httpStatus(OK),
+          elementValueByID("Nav-Bar-Link-testEnHome")("testEnHome"),
           pageTitle(messages.deductionsSummaryTitle),
         )
 

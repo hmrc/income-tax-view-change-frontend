@@ -18,7 +18,7 @@ package models.liabilitycalculation.view
 
 import models.liabilitycalculation.Calculation
 import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownTestConstant.liabilityCalculationModelSuccessFull
 import testUtils.UnitSpec
 
 class IncomeBreakdownViewModelSpec extends UnitSpec {

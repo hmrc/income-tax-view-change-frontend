@@ -16,8 +16,8 @@
 
 package views
 
-import testConstants.BaseTestConstants._
-import testConstants.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
+import java.time.LocalDate
+
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -27,10 +27,10 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants._
+import testConstants.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
 import testUtils.TestSupport
 import views.html.Home
-
-import java.time.LocalDate
 
 
 class HomePageViewSpec extends TestSupport {
@@ -48,7 +48,7 @@ class HomePageViewSpec extends TestSupport {
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(testMtditid, None, Nil, None),
-    None,
+    testNavHtml,
     saUtr,
     Some("testCredId"),
     Some("Individual"),
@@ -90,6 +90,13 @@ class HomePageViewSpec extends TestSupport {
   }
 
   "home" should {
+
+    "provided with a btaNavPartial" should{
+
+      "render the btaNavPartial" in new Setup {
+        document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
+      }
+    }
 
     s"have the correct link to the government homepage" in new Setup {
       document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"

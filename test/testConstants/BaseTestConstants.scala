@@ -18,9 +18,12 @@ package testConstants
 
 import IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
+import helpers.servicemocks.AuthStub.appConfig
+import models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import models.core.Nino
 import play.api.http.Status
 import play.api.test.FakeRequest
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.auth.core._
 
@@ -71,6 +74,30 @@ object BaseTestConstants {
   val testErrorNotFoundStatus: Int = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
 
+  val testNavLinks: NavContent = NavContent(
+    NavLinks("testEnHome", "testCyHome", "testUrl"),
+    NavLinks("testEnAccount", "testCyAccount", "testUrl"),
+    NavLinks("testEnMessages", "testCyMessages", "testUrl"),
+    NavLinks("testEnHelp", "testCyHelp", "testUrl"),
+    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
+  )
+
+  val testListLink = Seq(
+    ListLinks("testEnHome", appConfig.homePageUrl),
+    ListLinks("testEnAccount", "testUrl"),
+    ListLinks("testEnMessages", "testUrl", Some("0")),
+    ListLinks("testEnForm", "testUrl", Some("1")),
+    ListLinks("testEnHelp", "testUrl")
+  )
+
+  val testListLinkCy = Seq(
+    ListLinks("testEnHome", appConfig.homePageUrl),
+    ListLinks("testEnAccount", "testUrl"),
+    ListLinks("testEnMessages", "testUrl", Some("0")),
+    ListLinks("testEnForm", "testUrl", Some("1")),
+    ListLinks("testEnHelp", "testUrl")
+  )
+
   def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
                               affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
@@ -102,4 +129,13 @@ object BaseTestConstants {
 
   val testReferrerUrl = "/test/url"
 
+  val testNavHtml: Option[Html] = Some(HtmlFormat.raw(
+    "<html><head></head><body>  <nav id='secondary-nav' class='hmrc-account-menu'> " +
+    "<ul class='hmrc-account-menu__main govuk-grid-column-full' style='padding: 0;'>" +
+    "<li> <a href='http://localhost:9081/report-quarterly/income-and-expenses/view' id='nav-bar-link-testEnHome' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnHome'> testEnHome </a> </li>" +
+    "<li> <a href='testUrl' id='nav-bar-link-testEnAccount' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnAccount'> testEnAccount </a> </li>" +
+    "<li> <a href='testUrl' id='nav-bar-link-testEnMessages' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnMessages'> testEnMessages </a> </li>" +
+    "<li> <a href='testUrl' id='nav-bar-link-testEnForm' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnForm'> testEnForm <span class='hmrc-notification-badge'>1</span> </a> </li>" +
+    "<li> <a href='testUrl' id='nav-bar-link-testEnHelp' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnHelp'> testEnHelp </a> </li>" +
+    "</ul>  </nav> </body></html>"))
 }
