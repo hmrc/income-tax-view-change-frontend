@@ -68,7 +68,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
             case _: LiabilityCalculationError =>
               Logger("application").error(
-                "[DeductionsSummaryController][showDeductionsSummary[" + taxYear +
+                "[TaxDueController][showTaxDueSummary[" + taxYear +
                   "]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }

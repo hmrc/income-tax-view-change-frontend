@@ -16,22 +16,15 @@
 
 package views
 
-import enums.{Crystallised, Estimate}
-import models.liabilitycalculation.taxcalculation.{Nic4Bands, PayPensionsProfit, TaxBands}
-import models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel}
-import models.liabilitycalculation.{Message, Messages, ReliefsClaimed}
+import models.liabilitycalculation.taxcalculation.TaxBands
+import models.liabilitycalculation.{Message, Messages}
 import testConstants.NewCalcBreakdownUnitTestConstants._
-//import models.calculation.TaxDeductedAtSource.{Message, Messages}
-//import models.calculation.{AllowancesAndDeductions, LiabilityCalculationResponse}
-import models.liabilitycalculation.LiabilityCalculationResponse
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
-//import testConstants.CalcBreakdownTestConstants
-//import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
 import testConstants.MessagesLookUp.TaxCalcBreakdown
 import testUtils.ViewSpec
 import views.html.TaxCalcBreakdownNew
