@@ -112,10 +112,7 @@
                 } else {
                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort</td>
                         <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
-                        @documentDetailWithDueDate.documentDetail.originalAmount.map { originalAmount =>
-                            <td class="govuk-table__cell">@originalAmount.toCurrencyString</td>
-                        }
-
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                 }
             </tr>
         }

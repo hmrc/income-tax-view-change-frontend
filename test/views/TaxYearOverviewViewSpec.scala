@@ -113,6 +113,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     fullDocumentDetailWithDueDateModel
   )
 
+  val testWithMissingOriginalAmountChargesList: List[DocumentDetailWithDueDate] = List(
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(originalAmount = None))
+  )
+
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false): Html = taxYearOverviewView(
@@ -536,6 +540,22 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         }
 
         expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
+      }
+
+      "throw exception when Original Amount is missing as Agent" in {
+        val expectedException = intercept[MissingFieldException] {
+          new Setup(estimateView(testWithMissingOriginalAmountChargesList, isAgent = true))
+        }
+
+        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
+      }
+
+      "throw exception when Original Amount is missing as Individual" in {
+        val expectedException = intercept[MissingFieldException] {
+          new Setup(estimateView(testWithMissingOriginalAmountChargesList))
+        }
+
+        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
       }
     }
     "the user is an agent" should {
