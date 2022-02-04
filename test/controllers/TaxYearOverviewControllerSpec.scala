@@ -27,6 +27,7 @@ import models.calculation.CalcOverview
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
+import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
@@ -688,19 +689,19 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             response = testObligtionsModel
           )
 
-          val expectedContent: String = taxYearOverviewViewOld(
+          val expectedContent: String =  Jsoup.parse(taxYearOverviewViewOld(
             testYear,
             None,
             testChargesList,
             testObligtionsModel,
             taxYearsBackLink,
             codingOutEnabled = true
-          ).toString
+          ).toString()).text()
 
           val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
           status(result) shouldBe Status.OK
-          contentAsString(result) shouldBe expectedContent
+          Jsoup.parse(contentAsString(result)).text() shouldBe expectedContent
           contentType(result) shouldBe Some("text/html")
           result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
         }
