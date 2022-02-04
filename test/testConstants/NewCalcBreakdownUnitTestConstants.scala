@@ -663,4 +663,69 @@ object NewCalcBreakdownUnitTestConstants {
     class2VoluntaryContributions = Some(false),
     class2NicsAmount = Some(10000)
   )
+  val taxDueSummaryViewModelNic2NoVoluntary = TaxDueSummaryViewModel(
+    class2NicsAmount = Some(10000)
+  )
+
+  val taxDueSummaryViewModelGiftAid = TaxDueSummaryViewModel(
+    totalIncomeTaxAndNicsDue = Some(543.21),
+    totalTaxableIncome = Some(0),
+    taxRegime = "UK",
+    giftAidTax = Some(5000)
+  )
+
+  val taxDueSummaryViewModelPensionLumpSum = TaxDueSummaryViewModel(
+    statePensionLumpSumCharges = Some(5000)
+  )
+
+  val taxDueSummaryViewModelPensionSavings = TaxDueSummaryViewModel(
+    totalPensionSavingsTaxCharges = Some(5000)
+  )
+
+  val taxDueSummaryViewModelScottishBands = TaxDueSummaryViewModel(
+    taxRegime = "Scotland",
+    payPensionsProfitBands = Some(Seq(
+      TaxBands(
+        name = "SRT",
+        rate = 10.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 2000.00
+      ),
+      TaxBands(
+        name = "BRT",
+        rate = 20.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 4000.00
+      ),
+      TaxBands(
+        name = "IRT",
+        rate = 25.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 45000.00
+      ),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 100000,
+        taxAmount = 40000.00
+      ),
+      TaxBands(
+        name = "ART_scottish",
+        rate = 45.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 500000,
+        taxAmount = 22500.00
+      )
+    ))
+  )
+
 }

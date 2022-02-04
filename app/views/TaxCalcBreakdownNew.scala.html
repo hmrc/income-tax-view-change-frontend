@@ -293,14 +293,16 @@
             </tr>
 
             <tbody class="govuk-table__body">
-                <tr>
-                    @viewModel.class2VoluntaryContributions.map { voluntary =>
-                        <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${voluntary}")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                            viewModel.class2NicsAmount.getOrElse(BigDecimal(0)).toCurrency
-                        }</td>
-                    }
-                </tr>
+                @viewModel.class2NicsAmount.map { amount =>
+                    <tr>
+                        @viewModel.class2VoluntaryContributions.map { voluntary =>
+                            <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${voluntary}")</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                                amount.toCurrency
+                            }</td>
+                        }
+                    </tr>
+                }
             </tbody>
             <tbody class="govuk-table__body">
             @viewModel.giftAidTax.map { amount =>
