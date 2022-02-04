@@ -38,7 +38,6 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
-  val codingOutEnabled = Boolean
 
   import implicitDateFormatter._
 
@@ -102,6 +101,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       documentDetail = fullDocumentDetailModel.copy
       (documentDescription = Some("TRM New Charge"),documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
   )
+
+  val documentDetailWithDueDateMissingDueDate: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    dueDate = None
+  ))
 
   val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
@@ -639,6 +642,22 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
+    }
+  }
+
+  "The TaxYearOverview view when missing mandatory fields" should {
+    "throw a MissingFieldException" in {
+      val thrownException = intercept[MissingFieldException]{
+        taxYearOverviewView(
+          taxYear = testYear,
+          overviewOpt = Some(completeOverview(false)),
+          charges = documentDetailWithDueDateMissingDueDate,
+          obligations = testObligationsModel,
+          backUrl = "testBackURL",
+          isAgent = false,
+          codingOutEnabled = false)
+      }
+      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
   }
 }
