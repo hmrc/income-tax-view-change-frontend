@@ -23,14 +23,26 @@ object NewCalcBreakdownTestConstants {
   val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
 
   val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", None
+    )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
       calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      crystallised = true),
+    messages = None
   )
 
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = Some(true)
+    )),
+    messages = Some(Messages(
+      info = Some(Seq(Message(id = "infoId1", text = "info msg text1"))),
+      warnings = Some(Seq(Message(id = "warnId1", text = "warn msg text1"))),
+      errors = Some(Seq(Message(id = "errorId1", text = "error msg text1")))
+    )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
         personalAllowance = Some(12500),
@@ -164,7 +176,7 @@ object NewCalcBreakdownTestConstants {
           class2Nics = Some(Class2Nics(amount = Some(5000.99)))
         )),
         capitalGainsTax = Some(CapitalGainsTax(
-          totalCapitalGainsIncome = 5000.99,
+          totalTaxableGains = 5000.99,
           adjustments = Some(-99999999999.99),
           foreignTaxCreditRelief = Some(5000.99),
           taxOnGainsAlreadyPaid = Some(5000.99),
@@ -192,8 +204,8 @@ object NewCalcBreakdownTestConstants {
         )),
         totalStudentLoansRepaymentAmount = Some(5000.99),
         saUnderpaymentsCodedOut = Some(-99999999999.99),
-        totalIncomeTaxAndNicsDue = -99999999999.99,
-        totalTaxDeducted = Some(-99999999999.99)
+        totalIncomeTaxAndNicsDue = -25500.99,
+        totalTaxDeducted = Some(-20500.99)
       )),
       taxDeductedAtSource = Some(TaxDeductedAtSource(
         ukLandAndProperty = Some(5000.99),

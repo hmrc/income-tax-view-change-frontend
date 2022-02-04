@@ -21,6 +21,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import org.scalacheck.Prop.{Exception, exception}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
@@ -54,13 +55,13 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
   ".viewTaxYears" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {
       "and firstAccountingPeriodEndDate is missing from income sources" should {
-				"return an OK (200)" in {
+				"return an Internal Server Error (500)" in {
 
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
-          status(result) shouldBe Status.OK
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
 

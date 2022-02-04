@@ -18,7 +18,7 @@ package mocks.views.agent
 
 import models.calculation.CalcDisplayModel
 import models.liabilitycalculation.LiabilityCalculationResponse
-import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
+import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}

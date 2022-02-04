@@ -16,27 +16,26 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import java.time.LocalDate
+@import models.calculation.CalcOverview
 @import models.nextUpdates.ObligationsModel
 @import models.financialDetails.DocumentDetailWithDueDate
 @import implicits.ImplicitDateFormatterImpl
-@import views.html.partials.taxOverviewBreakdownPartial
+@import views.html.partials.taxOverviewBreakdownPartialOld
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
-@import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
-@import exceptions.MissingFieldException
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        breakdownPartial: taxOverviewBreakdownPartial,
+        breakdownPartial: taxOverviewBreakdownPartialOld,
         h2: h2,
         h3: h3,
         p: p
 )
 
-@(taxYear: Int, overviewOpt: Option[TaxYearOverviewViewModel], charges: List[DocumentDetailWithDueDate],
-        obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean
-        )(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(taxYear: Int, overviewOpt: Option[CalcOverview], charges: List[DocumentDetailWithDueDate],
+        obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean)(implicit request: Request[_],
+        messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
@@ -49,7 +48,7 @@
     @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-overview.tax-calculation.no-calc.note")))
 }
 
-@taxCalculationOverview(overview: TaxYearOverviewViewModel) = {
+@taxCalculationOverview(overview: CalcOverview) = {
     @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 }
 
@@ -81,7 +80,7 @@
             <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-overview.payments")</caption>
             @paymentsTableHead("payments-table-head")
             <tbody>
-            @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.getOrElse(throw new MissingFieldException("Due Date"))).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
+            @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.get).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">
                         @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
@@ -98,17 +97,17 @@
                         @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-overview.payments.paymentUnderReview") </div>}
                     </td>
                     @if(documentDetailWithDueDate.isLatePaymentInterest && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined) {
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDateShort</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                         <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrencyString</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.get.toCurrencyString</td>
                     } else if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment) {
                         <td class="govuk-table__cell">@messages("tax-year-overview.na")</td>
                         <td class="govuk-table__cell">@messages("tax-year-overview.paye-tax-code")</td>
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("Amount Coded Out")).toCurrencyString</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.amountCodedOut.get.toCurrencyString</td>
                     } else {
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDateShort</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
                         <td class="govuk-table__cell">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrencyString</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
                     }
                 </tr>
             }
@@ -185,11 +184,13 @@
                     @messages("tax-year-overview.calculation-date")
                 </dt>
                 <dd class="govuk-summary-list__value">
-                <p id="calculation-date">
-                    <span>@{
-                        overview.timestamp.toZonedDateTime.toLocalDate.toLongDate
-                    }</span>
-                </p>
+                @overview.timestamp.map { timestamp =>
+                    <p id="calculation-date">
+                        <span>@{
+                            timestamp.toZonedDateTime.toLocalDate.toLongDate
+                        }</span>
+                    </p>
+                }
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -197,8 +198,10 @@
                 @if(overview.crystallised) {
                     @messages("tax-year-overview.total-due")
                 } else {
-                    @{
-                        messages("tax-year-overview.tax-calculation.in-year", s"${taxYear - 1}", s"$taxYear")
+                    @overview.timestamp.map { timestamp =>
+                        @{
+                            messages("tax-year-overview.tax-calculation.in-year", s"${taxYear - 1}", s"$taxYear")
+                        }
                     }
                 }
                 </dt>

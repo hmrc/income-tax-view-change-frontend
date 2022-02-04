@@ -21,10 +21,11 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import play.api.http.Status.{OK, SEE_OTHER, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import play.api.test.Helpers.status
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.messages.MyTaxYearsMessages.agentTitle
 
@@ -194,6 +195,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
         )
       }
+
       "when firstAccountingPeriodEndDate is missing from income sources" in {
         stubAuthorisedAgentUser(authorised = true)
 
@@ -205,8 +207,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
 
         result should have(
-          httpStatus(OK),
-          pageTitle("Tax years - Your client’s Income Tax details - GOV.UK")
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }

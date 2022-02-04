@@ -33,7 +33,9 @@ case class IncomeTax(
                       totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                       statePensionLumpSumCharges: Option[BigDecimal] = None,
                       payeUnderpaymentsCodedOut: Option[BigDecimal] = None
-                    )
+                    ) {
+  val totalAllowancesDeductionsReliefs: BigDecimal = BigDecimal.valueOf(totalAllowancesAndDeductions) + totalReliefs.getOrElse(0.00)
+}
 
 object IncomeTax {
   implicit val format: OFormat[IncomeTax] = Json.format[IncomeTax]

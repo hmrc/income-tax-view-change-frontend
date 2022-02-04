@@ -110,8 +110,8 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
     val title = "Eich trosolwg treth terfynol - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
-    val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch gwirio eich Ffurflen Dreth Incwm."
-    val insetTextLink = "gwirio eich Ffurflen Dreth Incwm."
+    val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio eich Ffurflen Dreth Incwm."
+    val insetTextLink = "wirio eich Ffurflen Dreth Incwm."
 
     val incomeText = "Incwm"
 

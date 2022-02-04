@@ -23,7 +23,7 @@ import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
 import mocks.views.agent.MockIncomeSummary
 import models.calculation.CalcDisplayError
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewModels.IncomeBreakdownViewModel
+import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentType, _}

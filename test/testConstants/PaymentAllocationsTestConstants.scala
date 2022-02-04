@@ -193,6 +193,29 @@ object PaymentAllocationsTestConstants {
 			)
 		))
 
+	val financialDetailsWithNoOriginalAmount: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+		List(documentDetail.copy(originalAmount = None)),
+		List(financialDetail)
+	)
+
+	val paymentAllocationViewModelWithNoOriginalAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithNoOriginalAmount,
+		Seq(
+			AllocationDetailWithClearingDate(
+				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+				Some("2021-01-31")),
+			AllocationDetailWithClearingDate(
+				Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+				Some("2021-01-31")
+			)
+		))
+
+	val paymentAllocationViewModelWithNoClearingAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+		Seq(
+			AllocationDetailWithClearingDate(
+				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+				None)
+		))
+
 	val lpiParentChargeDocumentDetail = DocumentDetail(
 		taxYear = "2020",
 		transactionId = "transactionId",

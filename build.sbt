@@ -39,7 +39,7 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.17.0-play-28"
 )
 
-def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
+def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
@@ -51,7 +51,19 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   caffeine
 )
 
-lazy val appDependencies: Seq[ModuleID] = compile ++ test()
+def it(scope: String = "it"): Seq[ModuleID] = Seq(
+  "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
+  "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
+  "org.pegdown" % "pegdown" % pegdownVersion % scope,
+  "org.jsoup" % "jsoup" % jsoupVersion % scope,
+  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+  "org.mockito" % "mockito-core" % mockitoVersion % scope,
+  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
+  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-28" % scope,
+  caffeine
+)
+
+lazy val appDependencies: Seq[ModuleID] = compile ++ test() ++ it()
 
 lazy val plugins: Seq[Plugins] = Seq.empty
 lazy val playSettings: Seq[Setting[_]] = Seq.empty

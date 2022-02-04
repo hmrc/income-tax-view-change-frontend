@@ -93,7 +93,7 @@ class TaxYearsControllerSpec extends TestSupport
 			}
 		}
 		"there is no firstAccountingPeriodEndDate from income source details" should {
-			"show the tax years page" in new Setup {
+			"throw and exception" in new Setup {
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockNoIncomeSources()
 
@@ -101,8 +101,7 @@ class TaxYearsControllerSpec extends TestSupport
 
 				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-				status(result) shouldBe OK
-				contentType(result) shouldBe Some(HTML)
+        the[Exception] thrownBy status(result) should have message "User missing first accounting period information"
 			}
 		}
 		"all data is returned successfully" should {

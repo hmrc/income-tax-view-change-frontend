@@ -17,14 +17,13 @@
 package controllers.agent
 
 import java.time.{LocalDate, LocalDateTime}
-
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import testConstants.messages.{DeductionsSummaryMessages => messages}
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -64,6 +63,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
     property = None
   )
 
+  disable(NewTaxCalcProxy)
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {
     def test(txmApproved: Boolean): Unit = {
       And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")

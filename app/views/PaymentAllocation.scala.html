@@ -17,6 +17,7 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
+@import exceptions.MissingFieldException
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
@@ -41,11 +42,11 @@ btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Mess
     <dl class="govuk-summary-list" id="payment-allocation-charge-table">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
-                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.get.head.dueDate.get.toLocalDate.toLongDate}</dd>
+                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.getOrElse(throw new MissingFieldException("Financial Details Sub Item")).head.dueDate.getOrElse(throw new MissingFieldException("Payment Allocation Due Date")).toLocalDate.toLongDate}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>
-                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.get.abs.toCurrencyString}</dd>
+                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.getOrElse(throw new MissingFieldException("Payment Allocation Amount")).abs.toCurrencyString}</dd>
 
         </div>
     </dl>
