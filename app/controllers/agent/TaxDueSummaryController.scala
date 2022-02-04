@@ -58,9 +58,12 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
               val viewModel = TaxDueSummaryViewModel(liabilityCalc)
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(mtdItUser, viewModel, taxYear))
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
+            case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
+              Logger("application").info("[Agent][TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
+              itvcErrorHandler.showInternalServerError()
             case _: LiabilityCalculationError =>
               Logger("application").error(
-                "[DeductionsSummaryController][showDeductionsSummary[" + taxYear +
+                "[Agent][TaxDueController][showTaxDueSummary[" + taxYear +
                   "]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }

@@ -66,6 +66,9 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
               val viewModel = TaxDueSummaryViewModel(liabilityCalc)
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
               Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
+            case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
+              Logger("application").info("[TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
+              itvcErrorHandler.showInternalServerError()
             case _: LiabilityCalculationError =>
               Logger("application").error(
                 "[TaxDueController][showTaxDueSummary[" + taxYear +
