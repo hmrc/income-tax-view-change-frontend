@@ -89,6 +89,16 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         document.getElementById("total-value").text() shouldBe "£0.00"
       }
 
+      "render error page when NOT_FOUND is returned from calc" in new Setup {
+        enable(NewTaxCalcProxy)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockCalculationNotFoundNew(year = testYear)
+        mockShowInternalServerError()
+
+        val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
     }
 
     "feature switch AgentViewer is enabled" should {

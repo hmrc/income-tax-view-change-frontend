@@ -57,9 +57,13 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
 							val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
 							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(getMtdItUserWithNino(), viewModel))
 							Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
+						case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+							Logger("application").error(
+								s"[Agent][DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
+							itvcErrorHandler.showInternalServerError()
 						case _: LiabilityCalculationError =>
 							Logger("application").error(
-								s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+								s"[Agent][DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
 							itvcErrorHandler.showInternalServerError()
 					}
 				} else {
@@ -70,12 +74,13 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
 							Ok(deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true))
 
 						case CalcDisplayNoDataFound =>
-							Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
+							Logger("application").warn(
+								s"[Agent][DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
 							itvcErrorHandler.showInternalServerError()
 
 						case CalcDisplayError =>
 							Logger("application").error(
-								s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+								s"[Agent][DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
 							itvcErrorHandler.showInternalServerError()
 					}
 				}

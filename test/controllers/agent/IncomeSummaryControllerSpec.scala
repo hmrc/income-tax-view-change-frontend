@@ -22,13 +22,12 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
 import mocks.views.agent.MockIncomeSummary
 import models.calculation.CalcDisplayError
-import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentType, _}
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
@@ -57,6 +56,12 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       mockItvcErrorHandler
     )
   }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disable(NewTaxCalcProxy)
+  }
+
   "backUrl" should {
     "return to the taxyear overview" in new Setup {
       controller.backUrl(testYear) shouldBe controllers.agent.routes.TaxYearOverviewController.show(testYear).url
@@ -137,18 +142,31 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 
       }
 
-      "there is a downstream error" should {
+      "there is a downstream error which returns NOT_FOUND" should {
         "return Status Internal Server Error (500)" in new Setup {
           enable(NewTaxCalcProxy)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
-          setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(500, "error"))
+          mockCalculationNotFoundNew(nino = "AA111111A", year = testYear)
           mockShowInternalServerError()
 
           lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          disable(NewTaxCalcProxy)
+        }
+      }
+
+      "there is a downstream error which returns INTERNAL_SERVER_ERROR" should {
+        "return Status Internal Server Error (500)" in new Setup {
+          enable(NewTaxCalcProxy)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          mockBothIncomeSources()
+          mockCalculationErrorNew(nino = "AA111111A", year = testYear)
+          mockShowInternalServerError()
+
+          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
     }

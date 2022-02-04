@@ -16,6 +16,7 @@
 
 package controllers.agent
 
+import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
@@ -50,20 +51,7 @@ class IncomeSummaryController @Inject()(incomeBreakdown: IncomeBreakdown,
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
         if (isEnabled(NewTaxCalcProxy)) {
-          calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map {
-            case liabilityCalc: LiabilityCalculationResponse =>
-              val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
-              viewModel match {
-                case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl(taxYear), isAgent = true))
-                case _ =>
-                  Logger("application").warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
-                  itvcErrorHandler.showInternalServerError()
-              }
-            case _: LiabilityCalculationError =>
-              Logger("application").error(
-								s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No new calc income data error found. Downstream error")
-              itvcErrorHandler.showInternalServerError()
-          }
+          viewWithNewTaxCalcProxy(taxYear)
         } else {
           calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
             case calcDisplayModel: CalcDisplayModel => Future.successful(Ok(incomeBreakdownOld(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true)))
@@ -78,6 +66,27 @@ class IncomeSummaryController @Inject()(incomeBreakdown: IncomeBreakdown,
           }
         }
       }
+  }
+
+  def viewWithNewTaxCalcProxy(taxYear: Int)(implicit user: MtdItUser[AnyContent]): Future[Result] = {
+    calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map {
+      case liabilityCalc: LiabilityCalculationResponse =>
+        val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
+        viewModel match {
+          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl(taxYear), isAgent = true))
+          case _ =>
+            Logger("application").warn(s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
+            itvcErrorHandler.showInternalServerError()
+        }
+      case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+        Logger("application").info(
+          s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No income data found.")
+        itvcErrorHandler.showInternalServerError()
+      case _: LiabilityCalculationError =>
+        Logger("application").error(
+          s"[Agent][IncomeSummaryController][showIncomeSummary[$taxYear]] No new calc income data error found. Downstream error")
+        itvcErrorHandler.showInternalServerError()
+    }
   }
 
   def backUrl(taxYear: Int): String = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url
