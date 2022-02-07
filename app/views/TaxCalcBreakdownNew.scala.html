@@ -20,6 +20,7 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTableNew
 @import views.html.partials.taxcalcbreakdown.TableRow
+@import exceptions.MissingFieldException
 
 @this(
     mainTemplate: unifiedLayout,
@@ -47,10 +48,9 @@
 }
 
 @taxReductionsTableRow(reliefsClaimedType: String) = @{
-    if(viewModel.reliefsClaimed.isDefined) {
-        val relief = viewModel.reliefsClaimed.get.find(relief => relief.`type` == s"$reliefsClaimedType")
-        if(relief.isDefined) {
-            tableRow(s"$reliefsClaimedType", relief.get.amountUsed, isNegative = true)
+    viewModel.reliefsClaimed.flatMap { reliefsClaimed =>
+        reliefsClaimed.find(relief => relief.`type` == s"$reliefsClaimedType").map{ relief =>
+            tableRow(s"$reliefsClaimedType", relief.amountUsed, isNegative = true)
         }
     }
 }
@@ -71,8 +71,8 @@
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
     <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPayments.get.toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString)
+        @messages(s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments")).toCurrencyString,
+            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Get Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
     </div>
     }
 
@@ -85,25 +85,25 @@
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22205"))){
     <div class="govuk-inset-text">
         @messages(s"taxCal_breakdown.message.C22205",
-            BigDecimal(viewModel.lossesAppliedToGeneralIncome.get).toCurrencyString)
+            BigDecimal(viewModel.lossesAppliedToGeneralIncome.getOrElse(throw MissingFieldException("Losses Applied To General Income"))).toCurrencyString)
     </div>
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
     <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.C22208",viewModel.giftAidTax.get.toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString)
+        @messages(s"taxCal_breakdown.message.C22208",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
+            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Get Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
     </div>
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
     <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.C22209",viewModel.giftAidTax.get.toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString)
+        @messages(s"taxCal_breakdown.message.C22209",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
+            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Get Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
     </div>
     }
 
-    @if(viewModel.payPensionsProfitBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+    @if(viewModel.payPensionsProfitBands.getOrElse(Seq()).exists(_.income > 0)) {
         <table class="govuk-table" id="pay-pensions-profit-table">
             <caption
                     class="govuk-table__caption govuk-heading-l" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")
@@ -122,7 +122,7 @@
         </table>
     }
 
-    @if(viewModel.savingsAndGainsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+    @if(viewModel.savingsAndGainsBands.getOrElse(Seq()).exists(_.income > 0)) {
         <table class="govuk-table" id="savings-table">
             <caption
                     id = "savingsAndGains" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.savings")
@@ -144,7 +144,7 @@
         </table>
     }
 
-    @if(viewModel.dividendsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+    @if(viewModel.dividendsBands.getOrElse(Seq()).exists(_.income > 0)) {
         <table class="govuk-table" id="dividends-table">
             <caption
                     id = "dividends" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.dividends")
@@ -166,7 +166,7 @@
         </table>
     }
 
-    @if(viewModel.lumpSumsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+    @if(viewModel.lumpSumsBands.getOrElse(Seq()).exists(_.income > 0)) {
         <table class="govuk-table" id="employment-lump-sums-table">
             <caption
                     class="govuk-table__caption govuk-heading-l" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")
@@ -185,7 +185,7 @@
         </table>
     }
 
-    @if(viewModel.gainsOnLifePoliciesBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+    @if(viewModel.gainsOnLifePoliciesBands.getOrElse(Seq()).exists(_.income > 0)) {
         <table class="govuk-table" id="gains-on-life-policies-table">
             <caption
                     id="gainsOnLifePolicies" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.gains_life_policies")
@@ -270,7 +270,7 @@
                 <tr class="govuk-table__row">
                     <td class="govuk-table__header total-section">@messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions")</td>
                     <td class="govuk-table__header govuk-table__header--numeric total-section">@{
-                        viewModel.incomeTaxDueAfterTaxReductions.get.toCurrency
+                        incomeTaxDueAfterTaxReductions.toCurrency
                     }</td>
                 </tr>
             }
