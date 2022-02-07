@@ -235,6 +235,22 @@
             }
           ]
         },
+        "otherGains" : {
+          "cgtTaxBands" : [
+            {
+              "name" : "lowerRate",
+              "rate" : 20,
+              "income" : 5000.99,
+              "taxAmount" : 5000.99
+            },
+            {
+              "name" : "lowerRate2",
+              "rate" : 21,
+              "income" : 5000.99,
+              "taxAmount" : 5000.99
+            }
+          ]
+        },
         "adjustments" : -99999999999.99,
         "foreignTaxCreditRelief" : 5000.99,
         "taxOnGainsAlreadyPaid" : 5000.99,

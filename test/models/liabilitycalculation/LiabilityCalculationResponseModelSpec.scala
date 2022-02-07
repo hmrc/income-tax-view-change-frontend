@@ -18,7 +18,7 @@ package models.liabilitycalculation
 
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.NewCalcBreakdownTestConstant.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.UnitSpec
 
 import scala.io.Source
@@ -28,22 +28,16 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
   "LastTaxCalculationResponseMode model" when {
     "successful successModelMinimal" should {
       val successModelMinimal = LiabilityCalculationResponse(
-        inputs = Inputs(personalInformation = PersonalInformation(
-          taxRegime = "UK", None
-        )),
+        inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+        messages = None,
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = "2019-02-15T09:35:15.094Z",
-          crystallised = true),
-        messages = None
+          crystallised = true)
       )
       val expectedJson = s"""
                             |{
-                            | "inputs": {
-                            |    "personalInformation": {
-                            |      "taxRegime": "UK"
-                            |    }
-                            |  },
+                            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
                             |  "metadata" : {
                             |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
                             |    "crystallised" : true

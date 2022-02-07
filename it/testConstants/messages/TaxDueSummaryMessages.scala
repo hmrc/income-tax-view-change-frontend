@@ -22,5 +22,6 @@ object TaxDueSummaryMessages {
   val taxDueSummaryHeading = "6 April 2017 to 5 April 2018"
   val taxDueSummaryTitleAgent = "Tax calculation - Your client’s Income Tax details - GOV.UK"
   val taxDueSummaryHeadingAgent = "6 April 2021 to 5 April 2022 Tax calculation"
+  val taxDueSummaryHeadingAgentNew = "6 April 2017 to 5 April 2018 Tax calculation"
   val taxDueExplanation = "This calculation is based on your taxable income of {0}"
 }

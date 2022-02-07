@@ -26,10 +26,13 @@ object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-case class LiabilityCalculationResponse(inputs: Inputs,
-                                        metadata: Metadata,
-                                        messages: Option[Messages],
-                                        calculation: Option[Calculation]) extends LiabilityCalculationResponseModel
+
+case class LiabilityCalculationResponse(
+                                         inputs: Inputs,
+                                         metadata: Metadata,
+                                         messages: Option[Messages],
+                                         calculation: Option[Calculation]
+                                       ) extends LiabilityCalculationResponseModel
 
 object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
@@ -47,7 +50,7 @@ object Inputs {
   implicit val format: OFormat[Inputs] = Json.format[Inputs]
 }
 
-case class PersonalInformation(taxRegime: String, class2VoluntaryContributions: Option[Boolean])
+case class PersonalInformation(taxRegime: String, class2VoluntaryContributions: Option[Boolean] = None)
 
 object PersonalInformation {
   implicit val format: OFormat[PersonalInformation] = Json.format[PersonalInformation]
@@ -59,7 +62,15 @@ object Message {
   implicit val format: OFormat[Message] = Json.format[Message]
 }
 
-case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None)
+case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
+  // When updating the accepted messages also update the audit for the TaxCalculationDetailsResponseAuditModel
+  private val acceptedMessages: Seq[String] = Seq("C22202", "C22203", "C22206", "C22207", "C22210", "C22211",
+    "C22212", "C22213", "C22214", "C22215", "C22216", "C22217", "C22218")
+  val allMessages: Seq[Message] = {
+    info.getOrElse(Seq.empty) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
+  }
+  val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
+}
 
 object Messages {
   implicit val format: OFormat[Messages] = Json.format[Messages]

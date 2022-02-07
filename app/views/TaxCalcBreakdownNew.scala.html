@@ -1,0 +1,420 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.liabilitycalculation.viewmodels._
+@import models.liabilitycalculation.taxcalculation._
+@import views.html.layouts.unifiedLayout
+@import implicits.ImplicitCurrencyFormatter._
+@import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTableNew
+@import views.html.partials.taxcalcbreakdown.TableRow
+
+@this(
+    mainTemplate: unifiedLayout,
+    tableRow: TableRow,
+    capitalGainsTaxTable: CapitalGainsTaxTableNew
+)
+@(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+
+@taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false) = {
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell">
+        @messages(
+            if(scottishRegime && band.name == "ART") {
+                s"taxCal_breakdown.table.${band.name}_scottish"
+            } else {
+                s"taxCal_breakdown.table.${band.name}"
+            },
+            BigDecimal(band.income).toCurrencyString,
+            s"${band.rate}")
+        </td>
+        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+            band.taxAmount.toCurrency
+        }</td>
+    </tr>
+}
+
+@taxReductionsTableRow(reliefsClaimedType: String) = @{
+    if(viewModel.reliefsClaimed.isDefined) {
+        val relief = viewModel.reliefsClaimed.get.find(relief => relief.`type` == s"$reliefsClaimedType")
+        if(relief.isDefined) {
+            tableRow(s"$reliefsClaimedType", relief.get.amountUsed, isNegative = true)
+        }
+    }
+}
+
+@mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial) {
+
+    <h1 class="govuk-heading-xl">
+        <span class="govuk-caption-xl">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
+        @messages("taxCal_breakdown.heading")
+    </h1>
+
+    <div class="govuk-body-l" id="explanation">
+        @messages(
+            "taxCal_breakdown.explanation")
+        <strong class="bold">@viewModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrencyString</strong>
+
+    </div>
+
+    @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
+    <div class="govuk-inset-text">
+        @messages(s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPayments.get.toCurrencyString,
+            BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString)
+    </div>
+    }
+
+    @for(message <- viewModel.messages.map(_.genericMessages.sortBy(_.id)).getOrElse(Seq())) {
+    <div class="govuk-inset-text">
+        @messages(s"taxCal_breakdown.message.${message.id}")
+    </div>
+    }
+
+    @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22205"))){
+    <div class="govuk-inset-text">
+        @messages(s"taxCal_breakdown.message.C22205",
+            BigDecimal(viewModel.lossesAppliedToGeneralIncome.get).toCurrencyString)
+    </div>
+    }
+
+    @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
+    <div class="govuk-inset-text">
+        @messages(s"taxCal_breakdown.message.C22208",viewModel.giftAidTax.get.toCurrencyString,
+            BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString)
+    </div>
+    }
+
+    @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
+    <div class="govuk-inset-text">
+        @messages(s"taxCal_breakdown.message.C22209",viewModel.giftAidTax.get.toCurrencyString,
+            BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString)
+    </div>
+    }
+
+    @if(viewModel.payPensionsProfitBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+        <table class="govuk-table" id="pay-pensions-profit-table">
+            <caption
+                    class="govuk-table__caption govuk-heading-l" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages(s"taxCal_breakdown.table.head.rates${viewModel.getRateHeaderKey}")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+            @for(band <- viewModel.payPensionsProfitBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
+                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.savingsAndGainsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+        <table class="govuk-table" id="savings-table">
+            <caption
+                    id = "savingsAndGains" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.savings")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+            @for(band <- viewModel.savingsAndGainsBands.getOrElse(Seq()).filter(_.income > 0)
+                    .sortBy(_.name == "SSR").sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR")
+                    .sortBy(_.name == "HRT").sortBy(_.name == "ART")
+            ) {
+                @taxBandTableRow(band)
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.dividendsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+        <table class="govuk-table" id="dividends-table">
+            <caption
+                    id = "dividends" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.dividends")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+            @for(band <- viewModel.dividendsBands.getOrElse(Seq()).filter(_.income > 0)
+                    .sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR").sortBy(_.name == "HRT")
+                    .sortBy(_.name == "ZRTAR").sortBy(_.name == "ART")
+            ) {
+                @taxBandTableRow(band)
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.lumpSumsBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+        <table class="govuk-table" id="employment-lump-sums-table">
+            <caption
+                    class="govuk-table__caption govuk-heading-l" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")
+            </caption>
+
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header bold">@messages(s"taxCal_breakdown.table.head.rates${viewModel.getRateHeaderKey}")</th>
+                    <th scope="col" class="govuk-table__header govuk-table__header--numeric bold ">@messages("taxCal_breakdown.table.amount")</th>
+                </tr>
+
+            <tbody class="govuk-table__body">
+            @for(band <- viewModel.lumpSumsBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
+                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.gainsOnLifePoliciesBands.getOrElse(Seq()).filter(_.income > 0).nonEmpty) {
+        <table class="govuk-table" id="gains-on-life-policies-table">
+            <caption
+                    id="gainsOnLifePolicies" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.gains_life_policies")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+            @for(band <- viewModel.gainsOnLifePoliciesBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
+                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.nic4Bands.isDefined) {
+        <table class="govuk-table" id="class-4-national-insurance-table">
+            <caption
+                    class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.class4_national_insurance")
+            </caption>
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+            <tbody class="govuk-table__body">
+            @viewModel.nic4Bands.map { nicBands =>
+                @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                        @messages(
+                            s"taxCal_breakdown.table.${band.name}",
+                            BigDecimal(band.income).toCurrencyString,
+                            s"${band.rate}"
+                        )
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                            band.amount.toCurrency
+                        }</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.totalResidentialFinanceCostsRelief.nonEmpty ||
+            viewModel.totalNotionalTax.nonEmpty ||
+            viewModel.totalForeignTaxCreditRelief.nonEmpty ||
+            viewModel.reliefsClaimed.nonEmpty ||
+            viewModel.marriageAllowanceTransferredInAmount.nonEmpty ||
+            viewModel.topSlicingReliefAmount
+    ) {
+
+        <table class="govuk-table" id="tax-reductions-table">
+            <caption id ="reductions-title" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.table.tax_reductions")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.reduction")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            @tableRow("marriage_allowance_transfer", viewModel.marriageAllowanceTransferredInAmount, isNegative = true)
+            @taxReductionsTableRow("deficiencyRelief")
+            @tableRow("top_slicing_relief", viewModel.topSlicingReliefAmount, isNegative = true)
+            @taxReductionsTableRow("vctSubscriptions")
+            @taxReductionsTableRow("eisSubscriptions")
+            @taxReductionsTableRow("seedEnterpriseInvestment")
+            @taxReductionsTableRow("communityInvestment")
+            @taxReductionsTableRow("socialEnterpriseInvestment")
+            @taxReductionsTableRow("maintenancePayments")
+            @tableRow("property_finance_relief", viewModel.totalResidentialFinanceCostsRelief, isNegative = true)
+            @tableRow("total_notional_tax", viewModel.totalNotionalTax, isNegative = true)
+            @tableRow("total_foreign_tax_credit_relief", viewModel.totalForeignTaxCreditRelief, isNegative = true)
+            @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
+            @taxReductionsTableRow("nonDeductibleLoanInterest")
+
+            @viewModel.incomeTaxDueAfterTaxReductions.map { incomeTaxDueAfterTaxReductions =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__header total-section">@messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions")</td>
+                    <td class="govuk-table__header govuk-table__header--numeric total-section">@{
+                        viewModel.incomeTaxDueAfterTaxReductions.get.toCurrency
+                    }</td>
+                </tr>
+            }
+        </table>
+    }
+
+    @if((viewModel.class2NicsAmount.isDefined && viewModel.class2VoluntaryContributions.isDefined) ||
+    viewModel.giftAidTax.isDefined ||
+    viewModel.totalPensionSavingsTaxCharges.isDefined ||
+    viewModel.statePensionLumpSumCharges.isDefined
+    ) {
+        <table class="govuk-table" id="additional-charges-table">
+            <caption
+                    id = "additional_charges" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.additional_charges")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.charge_type")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+                @viewModel.class2NicsAmount.map { amount =>
+                    <tr>
+                        @viewModel.class2VoluntaryContributions.map { voluntary =>
+                            <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${voluntary}")</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                                amount.toCurrency
+                            }</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+            <tbody class="govuk-table__body">
+            @viewModel.giftAidTax.map { amount =>
+                <tr>
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.giftAidTax")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+            <tbody class="govuk-table__body">
+            @viewModel.totalPensionSavingsTaxCharges.map { amount =>
+                <tr>
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+            <tbody class="govuk-table__body">
+            @viewModel.statePensionLumpSumCharges.map { amount =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.statePensionLumpSumCharges")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    @capitalGainsTaxTable(viewModel.capitalGainsTax)
+
+    @if(viewModel.totalStudentLoansRepaymentAmount.nonEmpty ||
+        viewModel.payeUnderpaymentsCodedOut.nonEmpty ||
+        viewModel.saUnderpaymentsCodedOut.nonEmpty
+    ) {
+        <table class="govuk-table" id="other-charges-table">
+            <caption
+                    id ="other_charges"  class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.table.other_charges")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.charge_type")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+            @viewModel.totalStudentLoansRepaymentAmount.map { amount =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            @viewModel.payeUnderpaymentsCodedOut.map { amount =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.payeUnderpaymentsCodedOut", s"${taxYear - 1}", s"$taxYear")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            @viewModel.saUnderpaymentsCodedOut.map { amount =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.saUnderpaymentsCodedOut", s"${taxYear - 1}", s"$taxYear")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(viewModel.taxDeductedAtSource.nonEmpty) {
+        <table class="govuk-table" id="tax-deductions-table">
+            <caption
+                    id = "taxDeductedAtSource" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.taxDeductedAtSource")
+            </caption>
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.deduction")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+                @viewModel.taxDeductedAtSource.allFields.map { mapEntry =>
+                    <tr>
+                        <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.taxDeductedAtSource.${mapEntry._1}")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">@{
+                            mapEntry._2.toNegativeCurrency
+                        }</td>
+                    </tr>
+                }
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__header total-section">@messages("taxCal_breakdown.table.taxDeductedAtSource.total")</td>
+                    <td class="govuk-table__header govuk-table__header--numeric total-section-with-spacing">@{
+                        viewModel.totalTaxDeducted.getOrElse(BigDecimal(0)).toCurrency
+                    }</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    <table class="govuk-table">
+        <tr class="govuk-table__row">
+            <td class="govuk-table__header total-section-with-spacing">@messages("taxCal_breakdown.table.totalIncomeTaxAndNicsDue") </td>
+            <td class="govuk-table__header govuk-table__header--numeric total-section-with-spacing">@viewModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrency</td>
+        </tr>
+    </table>
+}

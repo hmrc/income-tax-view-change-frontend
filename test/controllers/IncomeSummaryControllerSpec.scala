@@ -140,7 +140,19 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
       }
 
-      "there is a downstream error" should {
+      "there is a downstream error which return NOT_FOUND" should {
+
+        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+
+        "return Status Internal Server Error (500)" in {
+          enable(NewTaxCalcProxy)
+          mockCalculationNotFoundNew(testMtditid)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+
+      "there is a downstream error which return INTERNAL_SERVER_ERROR" should {
 
         lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
 

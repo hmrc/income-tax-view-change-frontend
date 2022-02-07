@@ -14,41 +14,44 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package controllers
 
 import config.featureswitch.NewTaxCalcProxy
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import controllers.agent.utils.SessionKeys
-import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import models.liabilitycalculation.LiabilityCalculationError
+import helpers.ComponentSpecBase
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
+import models.calculation.{CalculationItem, ListCalculationItems}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import play.api.libs.ws.WSResponse
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
-class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionCookieBaker {
+class FinalTaxCalculationControllerOldISpec extends ComponentSpecBase {
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
-  val url: String = s"http://localhost:$port" + controllers.agent.routes.FinalTaxCalculationController.show(taxYear).url
+  val url: String = s"http://localhost:$port" + controllers.routes.FinalTaxCalculationController.show(taxYear).url
 
-  def calculationStub(taxYearString: String = "2017-18"): Unit = {
-    IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
+  def calculationStub(): Unit = {
+    IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
       status = OK,
-      body = liabilityCalculationModelSuccessFull
+      body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.of(taxYear, month, dayOfMonth, hour, minute))))
+    )
+    IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+      status = OK,
+      body = estimatedCalculationFullJson
     )
   }
 
   def calculationStubEmptyCalculations(): Unit = {
-    IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, "2018")(
+    IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
       status = NOT_FOUND,
-      body = LiabilityCalculationError(NOT_FOUND, "not found")
+      body = ListCalculationItems(Seq())
     )
   }
 
@@ -57,7 +60,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     val title = "h1"
 
     val insetText = "#main-content > div > div > div > p.govuk-inset-text"
-    val insetLinkText = "#main-content > div > div > div > p.govuk-inset-text > a"
+    val insetLinkText = "#main-content > div > div > div > p > a"
 
     val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > th > a"
     val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td"
@@ -77,39 +80,39 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   }
 
   object ExpectedValues {
-    val title = "Your client’s final tax overview - Update and submit an Income Tax Return - GOV.UK"
+    val title = "Your final tax overview - Update and submit an Income Tax Return - GOV.UK"
     val caption = "6 April 2017 to 5 April 2018"
 
-    val insetTextFull = "If you think this information is incorrect, you can check your client’s Income Tax Return."
-    val insetTextLink = "check your client’s Income Tax Return."
+    val insetTextFull = "If you think this information is incorrect, you can check your Income Tax Return."
+    val insetTextLink = "check your Income Tax Return."
     val insetLinkHref = "http://localhost:9302/update-and-submit-income-tax-return/2018/view"
 
     val incomeText = "Income"
-    val incomeAmount = "£12,500.00"
-    val incomeLink = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/income"
+    val incomeAmount = "£199,505.00"
+    val incomeLink = "/report-quarterly/income-and-expenses/view/calculation/2018/income"
 
     val allowanceText = "Allowances and deductions"
-    val allowanceAmount = "−£17,500.99"
-    val allowanceLink = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/deductions"
+    val allowanceAmount = "−£500.00"
+    val allowanceLink = "/report-quarterly/income-and-expenses/view/calculation/2018/deductions"
 
     val taxIsDueText = "Total taxable income"
-    val taxIsDueAmount = "£12,500.00"
+    val taxIsDueAmount = "£198,500.00"
 
     val contributionText = "Income Tax and National Insurance contributions"
-    val contributionAmount = "£90,500.99"
-    val contributionLink = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due"
+    val contributionAmount = "£90,500.00"
+    val contributionLink = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due"
 
-    val chargeInformationParagraph: String = "The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest."
+    val chargeInformationParagraph: String = "The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest."
 
     val continueButtonText = "Continue"
   }
 
   object ExpectedValuesWelsh {
-    val title = "Trosolwg treth terfynol eich cleient - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
+    val title = "Eich trosolwg treth terfynol - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
-    val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio Ffurflen Dreth Incwm eich cleient."
-    val insetTextLink = "wirio Ffurflen Dreth Incwm eich cleient."
+    val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio eich Ffurflen Dreth Incwm."
+    val insetTextLink = "wirio eich Ffurflen Dreth Incwm."
 
     val incomeText = "Incwm"
 
@@ -119,64 +122,22 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
     val contributionText = "Treth Incwm a chyfraniadau Yswiriant Gwladol"
 
-    val chargeInformationParagraph: String = "Gall y swm sydd angen i’ch cleient ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar ei gyfrif, er enghraifft, llog taliad hwyr."
+    val chargeInformationParagraph: String = "Gall y swm sydd angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr."
 
     val continueButtonText = "Yn eich blaen"
   }
 
-  val testArn: String = "1"
-
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
-
-  lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
-
-  lazy val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
-
-  lazy val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-    mtdbsa = testMtditid,
-    yearOfMigration = None,
-    businesses = List(BusinessDetailsModel(
-      Some("testId"),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-      Some("Test Trading Name"),
-      Some(LocalDate.of(2018, 1, 1))
-    )),
-    property = Some(
-      PropertyDetailsModel(
-        Some("testId2"),
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        Some(LocalDate.of(2018, 1, 1))
-      )
-    )
-  )
-
-  s"calling GET ${controllers.agent.routes.FinalTaxCalculationController.show(taxYear)}" should {
-    "NewTaxCalcProxy is enabled" when {
-      "display the page" which {
-        enable(NewTaxCalcProxy)
+  s"calling GET ${controllers.routes.FinalTaxCalculationController.show(taxYear)}" should {
+    "NewTaxCalcProxy is disabled" when {
+      "display the page in english" which {
+        disable(NewTaxCalcProxy)
         lazy val result = {
-          stubAuthorisedAgentUser(authorised = true)
+          isAuthorisedUser(authorised = true)
           calculationStub()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
           ws.url(url)
-            .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
             .get()
-
         }.futureValue
 
         lazy val document: Document = Jsoup.parse(result.body)
@@ -200,7 +161,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
           }
 
           "have the correct link text" which {
-            enable(NewTaxCalcProxy)
+            disable(NewTaxCalcProxy)
             lazy val insetElement = document.select(Selectors.insetLinkText)
 
             "has the correct text" in {
@@ -218,7 +179,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
         "have a table that" should {
 
           "have the correct income row content" which {
-            enable(NewTaxCalcProxy)
+            disable(NewTaxCalcProxy)
             lazy val key = document.select(Selectors.incomeRowText)
 
             "has the correct key text" in {
@@ -236,7 +197,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
           }
 
           "have the correct allowance row content" which {
-            enable(NewTaxCalcProxy)
+            disable(NewTaxCalcProxy)
             lazy val key = document.select(Selectors.allowanceRowText)
 
             "has the correct key text" in {
@@ -265,7 +226,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
           }
 
           "have the correct total contributions row content" which {
-            enable(NewTaxCalcProxy)
+            disable(NewTaxCalcProxy)
             lazy val key = document.select(Selectors.contributionDueRowText)
 
             "has the correct key text" in {
@@ -293,7 +254,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
         }
 
         "have a submit button" that {
-          enable(NewTaxCalcProxy)
+          disable(NewTaxCalcProxy)
           lazy val submitButton = document.select(Selectors.continueButton)
 
           "has the correct text" in {
@@ -303,20 +264,16 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       }
 
       "display the page in welsh" which {
-        enable(NewTaxCalcProxy)
-        lazy val result = {
-          stubAuthorisedAgentUser(authorised = true)
+        disable(NewTaxCalcProxy)
+        lazy val result: WSResponse = {
+          isAuthorisedUser(authorised = true)
           calculationStub()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
-
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
           ws.url(url)
-            .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie, HeaderNames.ACCEPT_LANGUAGE -> "cy")
+            .withHttpHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy")
             .get()
-
         }.futureValue
+
 
         lazy val document: Document = Jsoup.parse(result.body)
 
@@ -339,6 +296,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
           }
 
           "have the correct link text" which {
+            disable(NewTaxCalcProxy)
             lazy val insetElement = document.select(Selectors.insetLinkText)
 
             "has the correct text" in {
@@ -356,7 +314,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
         "have a table that" should {
 
           "have the correct income row content" which {
-
+            disable(NewTaxCalcProxy)
             lazy val key = document.select(Selectors.incomeRowText)
 
             "has the correct key text" in {
@@ -374,7 +332,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
           }
 
           "have the correct allowance row content" which {
-
+            disable(NewTaxCalcProxy)
             lazy val key = document.select(Selectors.allowanceRowText)
 
             "has the correct key text" in {
@@ -403,7 +361,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
           }
 
           "have the correct total contributions row content" which {
-
+            disable(NewTaxCalcProxy)
             lazy val key = document.select(Selectors.contributionDueRowText)
 
             "has the correct key text" in {
@@ -431,6 +389,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
         }
 
         "have a submit button" that {
+          disable(NewTaxCalcProxy)
           lazy val submitButton = document.select(Selectors.continueButton)
 
           "has the correct text" in {
@@ -442,19 +401,14 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       "show an error page" when {
 
         "there is no calc data model" which {
-          enable(NewTaxCalcProxy)
+          disable(NewTaxCalcProxy)
           lazy val result = {
-            stubAuthorisedAgentUser(authorised = true)
+            isAuthorisedUser(authorised = true)
             calculationStubEmptyCalculations()
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              status = OK,
-              response = incomeSourceDetailsSuccess
-            )
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
             ws.url(url)
-              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie)
               .get()
-
           }.futureValue
 
           "has a status of INTERNAL_SERVER_ERROR (500)" in {
@@ -465,20 +419,16 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     }
   }
 
-  s"calling POST ${controllers.agent.routes.FinalTaxCalculationController.submit(taxYear)}" should {
+  s"calling POST ${controllers.routes.FinalTaxCalculationController.submit(taxYear)}" should {
+
     "redirect to the confirmation page on income-tax-submission-frontend" which {
-      enable(NewTaxCalcProxy)
       lazy val result = {
-        stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
+        AuthStub.stubAuthorisedWithName()
         calculationStub()
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         ws.url(url)
           .withFollowRedirects(false)
-          .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie, "Csrf-Token" -> "nocheck")
           .post("{}")
       }.futureValue
 
@@ -494,20 +444,29 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
     "show an error page" when {
 
-      "there is no calc information" in {
-        enable(NewTaxCalcProxy)
+      "there is no name provided in the auth" in {
         lazy val result = {
-          stubAuthorisedAgentUser(authorised = true)
-          calculationStubEmptyCalculations()
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
+          AuthStub.stubAuthorised()
+          calculationStub()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-            ws.url(url)
-              .withFollowRedirects(false)
-              .withHttpHeaders(HeaderNames.COOKIE -> playSessionCookie, "Csrf-Token" -> "nocheck")
-              .post("{}")
+          ws.url(url)
+            .withFollowRedirects(false)
+            .post("{}")
+        }.futureValue
+
+        result.status shouldBe INTERNAL_SERVER_ERROR
+      }
+
+      "there is no calc information" in {
+        lazy val result = {
+          AuthStub.stubAuthorisedWithName()
+          calculationStubEmptyCalculations()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+          ws.url(url)
+            .withFollowRedirects(false)
+            .post("{}")
         }.futureValue
 
         result.status shouldBe INTERNAL_SERVER_ERROR
@@ -516,4 +475,5 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     }
 
   }
+
 }

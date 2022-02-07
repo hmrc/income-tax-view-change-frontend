@@ -87,6 +87,16 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         document.getElementById("total-value").text() shouldBe "£0.00"
       }
     }
+    "NewTaxCalcProxy FS is enabled, calc returns NOT_FOUND" should {
+
+      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+
+      "render error page" in {
+        enable(NewTaxCalcProxy)
+        mockCalculationNotFoundNew(testMtditid)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
 
     "given a tax year which can be found in ETMP with TxmApproved FS enabled" should {
 

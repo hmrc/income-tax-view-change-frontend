@@ -45,6 +45,15 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with MaterializerSupport with Injecting {
   this: Suite =>
 
+  import play.twirl.api.Html
+  import org.scalactic.Equality
+  implicit val htmlEq =
+    new Equality[Html] {
+      def areEqual(a: Html, b: Any): Boolean = {
+        Jsoup.parse(a.toString()).text() == Jsoup.parse(b.toString()).text()
+      }
+    }
+
   implicit val timeout: PatienceConfig = PatienceConfig(5.seconds)
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]

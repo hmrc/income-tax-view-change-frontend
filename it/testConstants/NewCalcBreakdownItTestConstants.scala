@@ -18,13 +18,13 @@ package testConstants
 import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation._
 
-object NewCalcBreakdownTestConstants {
+object NewCalcBreakdownItTestConstants {
 
   val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
 
   val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", None
+      taxRegime = "UK", class2VoluntaryContributions = None
     )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
@@ -196,6 +196,20 @@ object NewCalcBreakdownTestConstants {
                 taxAmount = 5000.99
               ))
           )),
+          otherGains = Some(OtherGains(
+            cgtTaxBands = Seq(CgtTaxBands(
+              name = "lowerRate",
+              rate = 20,
+              income = 5000.99,
+              taxAmount = 5000.99
+            ),
+              CgtTaxBands(
+                name = "lowerRate2",
+                rate = 21,
+                income = 5000.99,
+                taxAmount = 5000.99
+              ))
+          )),
           businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(
             taxableGains = Some(5000.99),
             rate = Some(20),
@@ -204,7 +218,7 @@ object NewCalcBreakdownTestConstants {
         )),
         totalStudentLoansRepaymentAmount = Some(5000.99),
         saUnderpaymentsCodedOut = Some(-99999999999.99),
-        totalIncomeTaxAndNicsDue = -25500.99,
+        totalIncomeTaxAndNicsDue = 90500.99,
         totalTaxDeducted = Some(-20500.99)
       )),
       taxDeductedAtSource = Some(TaxDeductedAtSource(

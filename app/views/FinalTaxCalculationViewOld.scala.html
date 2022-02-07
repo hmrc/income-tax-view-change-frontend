@@ -13,19 +13,18 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *@
-
+@import models.calculation.CalcOverview
 @import uk.gov.hmrc.govukfrontend.views.Aliases._
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import views.html.partials.taxOverviewBreakdownPartial
+@import views.html.partials.taxOverviewBreakdownPartialOld
 @import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.FrontendAppConfig
 @import views.html.components._
 @import views.html.layouts.layout
-@import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 
 @this(layout: layout,
-      breakdownPartial: taxOverviewBreakdownPartial,
+      breakdownPartial: taxOverviewBreakdownPartialOld,
       inset: GovukInsetText,
       form: FormWithCSRF,
       continueButton: ContinueButton,
@@ -34,7 +33,7 @@
       govukInsetText : GovukInsetText
 )
 
-@(overview: TaxYearOverviewViewModel, taxYear: Int, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
+@(overview: CalcOverview, taxYear: Int, isAgent: Boolean = false, backUrl: String)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
 
 @headingText = @{
     val key = s"final-tax-overview.${if(isAgent) "agent" else "individual"}.heading"
@@ -62,8 +61,7 @@
 @layout(
     pageTitle = headingText,
     backUrl = Some(backUrl),
-    itsaTaxYear = Some(taxYear),
-    btaNavPartial = btaNavPartial
+    itsaTaxYear = Some(taxYear)
 ) {
     @h1Caption(headingText, Some(subHeadingText))
 

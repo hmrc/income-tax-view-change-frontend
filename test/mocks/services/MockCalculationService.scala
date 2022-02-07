@@ -18,7 +18,7 @@ package mocks.services
 
 import testConstants.BaseTestConstants._
 import testConstants.CalcBreakdownTestConstants._
-import testConstants.NewCalcBreakdownTestConstant._
+import testConstants.NewCalcBreakdownUnitTestConstants._
 import testConstants.EstimatesTestConstants._
 import models.calculation._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel}
@@ -74,10 +74,10 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
 
   def mockCalculationSuccess(): Unit =
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-  def mockCalculationSuccessFullNew(mtditid: String = "XAIT00000000015", taxYear: Int = testYear, nino: String = testNino): Unit =
+  def mockCalculationSuccessFullNew(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessFull)
-  def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testYear, nino: String = testNino): Unit =
-    setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelDeductionsMinimal2)
+  def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testYear): Unit =
+    setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal)
   def mockCalculationCrystalisationSuccess(): Unit =
     setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel.copy(crystallised = true)))
   def mockCalculationError(): Unit =
