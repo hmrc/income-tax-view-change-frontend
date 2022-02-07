@@ -42,14 +42,6 @@ object NewCalcDataIntegrationTestConstants {
       |    "crystallised" : true
       |  },
       |  "calculation": {
-      |    "taxCalculation": {
-      |      "incomeTax": {
-      |        "totalIncomeReceivedFromAllSources": 1234,
-      |        "totalAllowancesAndDeductions": 1234,
-      |        "totalTaxableIncome": 1234
-      |      },
-      |      "totalIncomeTaxAndNicsDue": 12345
-      |    }
       |  }
       |}
       |""".stripMargin)
