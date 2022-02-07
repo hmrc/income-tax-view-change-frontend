@@ -16,18 +16,20 @@
 
 package testConstants
 
-import IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
-import helpers.servicemocks.AuthStub.appConfig
+import config.FrontendAppConfig
 import models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import models.core.Nino
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 
-object BaseTestConstants {
+object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val testMtditid = "XAIT0000123456"
   val testMtditidAgent = "XAIT00000000015"
@@ -73,6 +75,7 @@ object BaseTestConstants {
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
   val testErrorNotFoundStatus: Int = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
+  implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testNavLinks: NavContent = NavContent(
     NavLinks("testEnHome", "testCyHome", "testUrl"),

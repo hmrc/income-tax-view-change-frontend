@@ -18,11 +18,16 @@ package controllers.predicates
 
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
+import config.featureswitch.{BtaNavBar, FeatureSwitching}
 import controllers.bta.BtaNavBarController
 import mocks.services.{MockAsyncCacheApi, MockBtaNavBarService, MockIncomeSourceDetailsService}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.twirl.api.Html
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
@@ -30,10 +35,13 @@ import views.html.bta.BtaNavBar
 
 import scala.concurrent.Future
 
-class BtaNavBarPredicateSpec extends TestSupport with MockBtaNavBarService with MockAsyncCacheApi {
+class BtaNavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
 
-  object BtaNavBarPredicate extends BtaNavBarPredicate(app.injector.instanceOf[BtaNavBarController],
-    app.injector.instanceOf[ItvcErrorHandler])(appConfig, ec)
+  val mockBtaNavBarController = mock[BtaNavBarController]
+  val mockItvcErrorHandler = mock[ItvcErrorHandler]
+
+
+  object BtaNavBarPredicate extends BtaNavBarPredicate(mockBtaNavBarController, mockItvcErrorHandler)(appConfig, ec)
 
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
   lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
@@ -46,7 +54,8 @@ class BtaNavBarPredicateSpec extends TestSupport with MockBtaNavBarService with 
     "A valid response is received from the Bta Nav Bar Service" should {
 
       "return the expected MtdItUser" in {
-
+        enable(BtaNavBar)
+        when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
         val result = BtaNavBarPredicate.refine(successResponse)
         result.futureValue.right.get shouldBe successResponse
       }
@@ -56,6 +65,9 @@ class BtaNavBarPredicateSpec extends TestSupport with MockBtaNavBarService with 
     "An invalid response is received from the Income Source Details Service" should {
 
       "Return Status of 500 (ISE)" in {
+        enable(BtaNavBar)
+        when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
+        when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
 
         val result = BtaNavBarPredicate.refine(successResponse)
         status(Future.successful(result.futureValue.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR

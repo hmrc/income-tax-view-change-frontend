@@ -59,9 +59,9 @@ class BtaNavBarPredicate @Inject()(btaNavBarController: BtaNavBarController,
       Future.successful(Right(request))
     } else {
       btaNavBarController.btaNavBarPartial(request) map {
-        case partial: Option[Html] =>
+        case Some(partial) =>
           Right(MtdItUser[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, incomeSources = request.incomeSources,
-            btaNavPartial = partial, saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request))
+            btaNavPartial = Some(partial), saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request))
 
         case _ => Left(itvcErrorHandler.showInternalServerError()(request))
       }
