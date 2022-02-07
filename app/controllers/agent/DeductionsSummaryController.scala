@@ -58,7 +58,7 @@ class DeductionsSummaryController @Inject()(deductionBreakdown: DeductionBreakdo
 							auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(getMtdItUserWithNino(), viewModel))
 							Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), isAgent = true))
 						case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-							Logger("application").error(
+							Logger("application").info(
 								s"[Agent][DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
 							itvcErrorHandler.showInternalServerError()
 						case _: LiabilityCalculationError =>
