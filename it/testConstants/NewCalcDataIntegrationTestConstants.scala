@@ -22,17 +22,15 @@ object NewCalcDataIntegrationTestConstants {
 
   def getLiabilityCalcResponse(json: String): LiabilityCalculationResponse = {
     Json.fromJson[LiabilityCalculationResponse](Json.parse(json)) match {
-      case JsSuccess(value, path) =>
-        println("parsed json successfully" + value)
-        value
+      case JsSuccess(value, path) => value
       case _ =>
-        println("oculd not parse the json...)" + json)
+        println("oculd not parse the json: " + json)
         throw new Exception("invalid json, parse error")
     }
   }
 
-  val emptyCalcJson: JsValue =
-    Json.parse("""
+  val liabilityCalculationMinimal = getLiabilityCalcResponse(
+  """
       |{
       |  "inputs": {
       |    "personalInformation": {
@@ -42,327 +40,19 @@ object NewCalcDataIntegrationTestConstants {
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
       |    "crystallised" : true
+      |  },
+      |  "calculation": {
+      |    "taxCalculation": {
+      |      "incomeTax": {
+      |        "totalIncomeReceivedFromAllSources": 1234,
+      |        "totalAllowancesAndDeductions": 1234,
+      |        "totalTaxableIncome": 1234
+      |      },
+      |      "totalIncomeTaxAndNicsDue": 12345
+      |    }
       |  }
       |}
       |""".stripMargin)
-
-
-
-  val estimateCalculationEmptyJson: JsObject = Json.obj(
-    "metadata" -> Json.obj(
-      "crystallised" -> false
-    )
-  )
-
-  val crystallisedCalculationFullJson: JsObject = Json.obj(
-    "incomeTaxAndNicsCalculated" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalIncomeTaxAndNicsDue" -> 90500,
-        "totalIncomeTaxNicsCharged" -> 2.0,
-        "taxRegime" -> "Scotland",
-        "nics" -> Json.obj(
-          "class2NicsAmount" -> 10000,
-          "class4NicsAmount" -> 14000,
-          "totalNic" -> 3.0
-        )
-      ),
-      "detail" -> Json.obj(
-        "incomeTax" -> Json.obj(
-          "payPensionsProfit" -> Json.obj(
-            "incomeTaxAmount" -> 3.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 20000,
-                "taxAmount" -> 4000
-              ),
-              Json.obj(
-                "name" -> "HRT",
-                "rate" -> 40,
-                "income" -> 100000,
-                "taxAmount" -> 40000
-              ),
-              Json.obj(
-                "name" -> "ART",
-                "rate" -> 45,
-                "income" -> 50000,
-                "taxAmount" -> 22500
-              )
-            )
-          ),
-          "savingsAndGains" -> Json.obj(
-            "incomeTaxAmount" -> 1.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "SSR",
-                "rate" -> 0,
-                "income" -> 1,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "ZRT",
-                "rate" -> 0,
-                "income" -> 20,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 500,
-                "taxAmount" -> 100
-              ),
-              Json.obj(
-                "name" -> "HRT",
-                "rate" -> 40,
-                "income" -> 1000,
-                "taxAmount" -> 400
-              ),
-              Json.obj(
-                "name" -> "ART",
-                "rate" -> 45,
-                "income" -> 479,
-                "taxAmount" -> 215.55
-              )
-            )
-          ),
-          "dividends" -> Json.obj(
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "zero",
-                "rate" -> 0,
-                "income" -> 500,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "basic",
-                "rate" -> 7.5,
-                "income" -> 1000,
-                "taxAmount" -> 75
-              ),
-              Json.obj(
-                "name" -> "higher",
-                "rate" -> 37.5,
-                "income" -> 2000,
-                "taxAmount" -> 750
-              ),
-              Json.obj(
-                "name" -> "additional",
-                "rate" -> 38.1,
-                "income" -> 3000,
-                "taxAmount" -> 1143
-              )
-            )
-          )
-        )
-      )
-    )
-    ,
-    "taxableIncome" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalTaxableIncome" -> 198500,
-        "totalIncomeReceivedFromAllSources" -> 199505
-      ),
-      "detail" -> Json.obj(
-        "payPensionsProfit" -> Json.obj(
-          "totalSelfEmploymentProfit" -> 200000,
-          "totalPropertyProfit" -> 10000,
-          "taxableIncome" -> 4.0
-        ),
-        "savingsAndGains" -> Json.obj(
-          "taxableIncome" -> 2000
-        ),
-        "dividends" -> Json.obj(
-          "taxableIncome" -> 11000
-        )
-      )
-    )
-    ,
-    "endOfYearEstimate" -> Json.obj(
-      "summary" -> Json.obj(
-        "incomeTaxNicAmount" -> 66000
-      )
-    )
-    ,
-    "metadata" -> Json.obj(
-      "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
-      "crystallised" -> true
-    )
-    ,
-    "allowancesDeductionsAndReliefs" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalAllowancesAndDeductions" -> 100,
-        "totalReliefs" -> 400
-      ),
-      "detail" -> Json.obj(
-        "allowancesAndDeductions" -> Json.obj(
-          "personalAllowance" -> 11500,
-          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
-        )
-      )
-    )
-  )
-
-  val estimatedCalculationFullJson: JsObject = Json.obj(
-    "incomeTaxAndNicsCalculated" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalIncomeTaxAndNicsDue" -> 90500,
-        "totalIncomeTaxNicsCharged" -> 2.0,
-        "taxRegime" -> "Scotland",
-        "incomeTax" -> Json.obj(
-          "totalPensionSavingsTaxCharges" -> 5000.99,
-          "statePensionLumpSumCharges" -> 5000.99),
-        "nics" -> Json.obj(
-          "class2NicsAmount" -> 10000,
-          "class4NicsAmount" -> 14000,
-          "totalNic" -> 3.0
-        )
-      ),
-      "detail" -> Json.obj(
-        "nics" -> Json.obj(
-          "class2Nics" -> Json.obj(
-            "weeklyRate" -> 3.05,
-            "weeks" -> 52,
-            "limit" -> 6475,
-            "apportionedLimit" -> 6475,
-            "underSmallProfitThreshold" -> false,
-            "actualClass2Nic" -> false,
-            "class2VoluntaryContributions" -> true)
-        ),
-        "incomeTax" -> Json.obj(
-          "payPensionsProfit" -> Json.obj(
-            "incomeTaxAmount" -> 3.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 20000,
-                "taxAmount" -> 4000
-              ),
-              Json.obj(
-                "name" -> "HRT",
-                "rate" -> 40,
-                "income" -> 100000,
-                "taxAmount" -> 40000
-              ),
-              Json.obj(
-                "name" -> "ART",
-                "rate" -> 45,
-                "income" -> 50000,
-                "taxAmount" -> 22500
-              )
-            )
-          ),
-          "savingsAndGains" -> Json.obj(
-            "incomeTaxAmount" -> 1.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "SSR",
-                "rate" -> 0,
-                "income" -> 1,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "ZRT",
-                "rate" -> 0,
-                "income" -> 20,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 500,
-                "taxAmount" -> 100
-              ),
-              Json.obj(
-                "name" -> "HRT",
-                "rate" -> 40,
-                "income" -> 1000,
-                "taxAmount" -> 400
-              ),
-              Json.obj(
-                "name" -> "ART",
-                "rate" -> 45,
-                "income" -> 479,
-                "taxAmount" -> 215.55
-              )
-            )
-          ),
-          "giftAid" -> Json.obj(
-            "giftAidTax" -> 5000.99
-          ),
-          "dividends" -> Json.obj(
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "zero",
-                "rate" -> 0,
-                "income" -> 500,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "basic",
-                "rate" -> 7.5,
-                "income" -> 1000,
-                "taxAmount" -> 75
-              ),
-              Json.obj(
-                "name" -> "higher",
-                "rate" -> 37.5,
-                "income" -> 2000,
-                "taxAmount" -> 750
-              ),
-              Json.obj(
-                "name" -> "additional",
-                "rate" -> 38.1,
-                "income" -> 3000,
-                "taxAmount" -> 1143
-              )
-            )
-          )
-        )
-      )
-    ),
-    "taxableIncome" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalTaxableIncome" -> 198500,
-        "totalIncomeReceivedFromAllSources" -> 199505
-      ),
-      "detail" -> Json.obj(
-        "payPensionsProfit" -> Json.obj(
-          "totalSelfEmploymentProfit" -> 200000,
-          "totalPropertyProfit" -> 10000,
-          "taxableIncome" -> 4.0
-        ),
-        "savingsAndGains" -> Json.obj(
-          "taxableIncome" -> 2000
-        ),
-        "dividends" -> Json.obj(
-          "taxableIncome" -> 11000
-        )
-      )
-    ),
-    "endOfYearEstimate" -> Json.obj(
-      "summary" -> Json.obj(
-        "incomeTaxNicAmount" -> 66000
-      )
-    ),
-    "metadata" -> Json.obj(
-      "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
-      "crystallised" -> false
-    ),
-    "allowancesDeductionsAndReliefs" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalAllowancesAndDeductions" -> 100,
-        "totalReliefs" -> 400
-      ),
-      "detail" -> Json.obj(
-        "allowancesAndDeductions" -> Json.obj(
-          "personalAllowance" -> 11500,
-          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
-        )
-      )
-    )
-  )
 
   val liabilityCalculationGiftAid = getLiabilityCalcResponse(
     """
@@ -385,410 +75,56 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
+  val liabilityCalculationPensionLumpSums = getLiabilityCalcResponse(
+    """
+      |{
+      |  "inputs": {
+      |    "personalInformation": {
+      |      "taxRegime": "UK"
+      |    }
+      |  },
+      |  "metadata" : {
+      |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+      |    "crystallised" : true
+      |  },
+      |  "calculation": {
+      |    "taxCalculation": {
+      |      "incomeTax": {
+      |        "totalIncomeReceivedFromAllSources": 1234,
+      |        "totalAllowancesAndDeductions": 1234,
+      |        "totalTaxableIncome": 1234,
+      |        "statePensionLumpSumCharges": 5000.99
+      |      },
+      |      "totalIncomeTaxAndNicsDue": 12345
+      |    }
+      |  }
+      |}
+      |""".stripMargin)
 
-  val pensionSavingsCalculationJson: JsObject = Json.obj(
-    "incomeTaxAndNicsCalculated" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalIncomeTaxAndNicsDue" -> 90500,
-        "totalIncomeTaxNicsCharged" -> 2.0,
-        "incomeTax" -> Json.obj(
-          "totalPensionSavingsTaxCharges" -> 5000.99),
-        "taxRegime" -> "Scotland",
-        "nics" -> Json.obj()
-      ),
-      "detail" -> Json.obj(
-        "incomeTax" -> Json.obj(
-          "payPensionsProfit" -> Json.obj(
-            "incomeTaxAmount" -> 3.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 20000,
-                "taxAmount" -> 4000
-              )
-            )
-          ),
-          "savingsAndGains" -> Json.obj(
-            "incomeTaxAmount" -> 1.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "SSR",
-                "rate" -> 0,
-                "income" -> 1,
-                "taxAmount" -> 0
-              )
-            )
-          ),
-          "dividends" -> Json.obj(
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "zero",
-                "rate" -> 0,
-                "income" -> 500,
-                "taxAmount" -> 0
-              )
-            )
-          )
-        )
-      )
-    ),
-    "taxableIncome" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalTaxableIncome" -> 198500,
-        "totalIncomeReceivedFromAllSources" -> 199505
-      ),
-      "detail" -> Json.obj(
-        "payPensionsProfit" -> Json.obj(
-          "totalSelfEmploymentProfit" -> 200000,
-          "totalPropertyProfit" -> 10000,
-          "taxableIncome" -> 4.0
-        ),
-        "savingsAndGains" -> Json.obj(
-          "taxableIncome" -> 2000
-        ),
-        "dividends" -> Json.obj(
-          "taxableIncome" -> 11000
-        )
-      )
-    ),
-    "endOfYearEstimate" -> Json.obj(
-      "summary" -> Json.obj(
-        "incomeTaxNicAmount" -> 66000
-      )
-    ),
-    "metadata" -> Json.obj(
-      "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
-      "crystallised" -> false
-    ),
-    "allowancesDeductionsAndReliefs" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalAllowancesAndDeductions" -> 100,
-        "totalReliefs" -> 400
-      ),
-      "detail" -> Json.obj(
-        "allowancesAndDeductions" -> Json.obj(
-          "personalAllowance" -> 11500,
-          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
-        )
-      )
-    ))
-
-  val pensionLumpSumCalculationJson: JsObject = Json.obj(
-    "incomeTaxAndNicsCalculated" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalIncomeTaxAndNicsDue" -> 90500,
-        "totalIncomeTaxNicsCharged" -> 2.0,
-        "taxRegime" -> "Scotland",
-        "incomeTax" -> Json.obj("statePensionLumpSumCharges" -> 5000.99),
-        "nics" -> Json.obj()
-      ),
-      "detail" -> Json.obj(
-        "incomeTax" -> Json.obj(
-          "payPensionsProfit" -> Json.obj(
-            "incomeTaxAmount" -> 3.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 20000,
-                "taxAmount" -> 4000
-              )
-            )
-          ),
-          "savingsAndGains" -> Json.obj(
-            "incomeTaxAmount" -> 1.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "SSR",
-                "rate" -> 0,
-                "income" -> 1,
-                "taxAmount" -> 0
-              )
-            )
-          ),
-          "dividends" -> Json.obj(
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "zero",
-                "rate" -> 0,
-                "income" -> 500,
-                "taxAmount" -> 0
-              )
-            )
-          )
-        )
-      )
-    ),
-    "taxableIncome" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalTaxableIncome" -> 198500,
-        "totalIncomeReceivedFromAllSources" -> 199505
-      ),
-      "detail" -> Json.obj(
-        "payPensionsProfit" -> Json.obj(
-          "totalSelfEmploymentProfit" -> 200000,
-          "totalPropertyProfit" -> 10000,
-          "taxableIncome" -> 4.0
-        ),
-        "savingsAndGains" -> Json.obj(
-          "taxableIncome" -> 2000
-        ),
-        "dividends" -> Json.obj(
-          "taxableIncome" -> 11000
-        )
-      )
-    ),
-    "endOfYearEstimate" -> Json.obj(
-      "summary" -> Json.obj(
-        "incomeTaxNicAmount" -> 66000
-      )
-    ),
-    "metadata" -> Json.obj(
-      "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
-      "crystallised" -> false
-    ),
-    "allowancesDeductionsAndReliefs" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalAllowancesAndDeductions" -> 100,
-        "totalReliefs" -> 400
-      ),
-      "detail" -> Json.obj(
-        "allowancesAndDeductions" -> Json.obj(
-          "personalAllowance" -> 11500,
-          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
-        )
-      )
-    )
-  )
-
-  val minimalCalculationJson: JsObject = Json.obj(
-    "incomeTaxAndNicsCalculated" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalIncomeTaxAndNicsDue" -> 90500,
-        "totalIncomeTaxNicsCharged" -> 2.0,
-        "taxRegime" -> "Scotland",
-        "incomeTax" -> Json.obj(),
-        "nics" -> Json.obj()
-      ),
-      "detail" -> Json.obj(
-        "incomeTax" -> Json.obj(
-          "payPensionsProfit" -> Json.obj(
-            "incomeTaxAmount" -> 3.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 20000,
-                "taxAmount" -> 4000
-              )
-            )
-          ),
-          "savingsAndGains" -> Json.obj(
-            "incomeTaxAmount" -> 1.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "SSR",
-                "rate" -> 0,
-                "income" -> 1,
-                "taxAmount" -> 0
-              )
-            )
-          ),
-          "dividends" -> Json.obj(
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "zero",
-                "rate" -> 0,
-                "income" -> 500,
-                "taxAmount" -> 0
-              )
-            )
-          )
-        )
-      )
-    ),
-    "taxableIncome" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalTaxableIncome" -> 198500,
-        "totalIncomeReceivedFromAllSources" -> 199505
-      ),
-      "detail" -> Json.obj(
-        "payPensionsProfit" -> Json.obj(
-          "totalSelfEmploymentProfit" -> 200000,
-          "totalPropertyProfit" -> 10000,
-          "taxableIncome" -> 4.0
-        ),
-        "savingsAndGains" -> Json.obj(
-          "taxableIncome" -> 2000
-        ),
-        "dividends" -> Json.obj(
-          "taxableIncome" -> 11000
-        )
-      )
-    ),
-    "endOfYearEstimate" -> Json.obj(
-      "summary" -> Json.obj(
-        "incomeTaxNicAmount" -> 66000
-      )
-    ),
-    "metadata" -> Json.obj(
-      "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
-      "crystallised" -> false
-    ),
-    "allowancesDeductionsAndReliefs" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalAllowancesAndDeductions" -> 100,
-        "totalReliefs" -> 400
-      ),
-      "detail" -> Json.obj(
-        "allowancesAndDeductions" -> Json.obj(
-          "personalAllowance" -> 11500,
-          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
-        )
-      )
-    )
-  )
-
-  val estimatedNoEOYEstimateCalculationFullJson: JsObject = Json.obj(
-    "incomeTaxAndNicsCalculated" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalIncomeTaxAndNicsDue" -> 90500,
-        "totalIncomeTaxNicsCharged" -> 2.0,
-        "taxRegime" -> "Scotland",
-        "nics" -> Json.obj(
-          "class2NicsAmount" -> 10000,
-          "class4NicsAmount" -> 14000,
-          "totalNic" -> 3.0
-        )
-      ),
-      "detail" -> Json.obj(
-        "incomeTax" -> Json.obj(
-          "payPensionsProfit" -> Json.obj(
-            "incomeTaxAmount" -> 3.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 20000,
-                "taxAmount" -> 4000
-              ),
-              Json.obj(
-                "name" -> "HRT",
-                "rate" -> 40,
-                "income" -> 100000,
-                "taxAmount" -> 40000
-              ),
-              Json.obj(
-                "name" -> "ART",
-                "rate" -> 45,
-                "income" -> 50000,
-                "taxAmount" -> 22500
-              )
-            )
-          ),
-          "savingsAndGains" -> Json.obj(
-            "incomeTaxAmount" -> 1.0,
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "SSR",
-                "rate" -> 0,
-                "income" -> 1,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "ZRT",
-                "rate" -> 0,
-                "income" -> 20,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "BRT",
-                "rate" -> 20,
-                "income" -> 500,
-                "taxAmount" -> 100
-              ),
-              Json.obj(
-                "name" -> "HRT",
-                "rate" -> 40,
-                "income" -> 1000,
-                "taxAmount" -> 400
-              ),
-              Json.obj(
-                "name" -> "ART",
-                "rate" -> 45,
-                "income" -> 479,
-                "taxAmount" -> 215.55
-              )
-            )
-          ),
-          "dividends" -> Json.obj(
-            "taxBands" -> Json.arr(
-              Json.obj(
-                "name" -> "zero",
-                "rate" -> 0,
-                "income" -> 500,
-                "taxAmount" -> 0
-              ),
-              Json.obj(
-                "name" -> "basic",
-                "rate" -> 7.5,
-                "income" -> 1000,
-                "taxAmount" -> 75
-              ),
-              Json.obj(
-                "name" -> "higher",
-                "rate" -> 37.5,
-                "income" -> 2000,
-                "taxAmount" -> 750
-              ),
-              Json.obj(
-                "name" -> "additional",
-                "rate" -> 38.1,
-                "income" -> 3000,
-                "taxAmount" -> 1143
-              )
-            )
-          )
-        )
-      )
-    )
-    ,
-    "taxableIncome" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalTaxableIncome" -> 198500
-      ),
-      "detail" -> Json.obj(
-        "payPensionsProfit" -> Json.obj(
-          "totalSelfEmploymentProfit" -> 200000,
-          "totalPropertyProfit" -> 10000,
-          "taxableIncome" -> 4.0
-        ),
-        "savingsAndGains" -> Json.obj(
-          "taxableIncome" -> 2000
-        ),
-        "dividends" -> Json.obj(
-          "taxableIncome" -> 11000
-        )
-      )
-    ),
-    "metadata" -> Json.obj(
-      "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
-      "crystallised" -> false
-    )
-    ,
-    "allowancesDeductionsAndReliefs" -> Json.obj(
-      "summary" -> Json.obj(
-        "totalAllowancesAndDeductions" -> 100,
-        "totalReliefs" -> 400
-      ),
-      "detail" -> Json.obj(
-        "allowancesAndDeductions" -> Json.obj(
-          "personalAllowance" -> 11500,
-          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
-        )
-      )
-    )
-  )
+  val liabilityCalculationPensionSavings = getLiabilityCalcResponse(
+    """
+      |{
+      |  "inputs": {
+      |    "personalInformation": {
+      |      "taxRegime": "UK"
+      |    }
+      |  },
+      |  "metadata" : {
+      |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+      |    "crystallised" : true
+      |  },
+      |  "calculation": {
+      |    "taxCalculation": {
+      |      "incomeTax": {
+      |        "totalIncomeReceivedFromAllSources": 1234,
+      |        "totalAllowancesAndDeductions": 1234,
+      |        "totalTaxableIncome": 1234,
+      |        "totalPensionSavingsTaxCharges": 5000.99
+      |      },
+      |      "totalIncomeTaxAndNicsDue": 12345
+      |    }
+      |  }
+      |}
+      |""".stripMargin)
 
 }
