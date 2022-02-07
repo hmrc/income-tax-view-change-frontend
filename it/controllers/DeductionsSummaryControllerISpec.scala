@@ -30,7 +30,7 @@ import helpers.servicemocks._
 import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 import play.api.test.FakeRequest
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 

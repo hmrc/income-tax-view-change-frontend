@@ -18,11 +18,9 @@ package controllers.agent
 
 import config.featureswitch.NewTaxCalcProxy
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
 import controllers.agent.utils.SessionKeys
 import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
-import models.calculation.{CalculationItem, ListCalculationItems}
+import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
@@ -30,9 +28,9 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 
 class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionCookieBaker {
 

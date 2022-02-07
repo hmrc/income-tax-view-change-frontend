@@ -38,7 +38,7 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 

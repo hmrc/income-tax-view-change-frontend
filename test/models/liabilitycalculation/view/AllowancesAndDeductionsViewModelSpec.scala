@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.liabilitycalculation.view
+package models.liabilitycalculation.viewmodels
 
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.UnitSpec
 
 class AllowancesAndDeductionsViewModelSpec extends UnitSpec {

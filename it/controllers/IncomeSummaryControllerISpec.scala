@@ -26,7 +26,7 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 import testConstants.messages.{IncomeSummaryMessages => messages}
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase {

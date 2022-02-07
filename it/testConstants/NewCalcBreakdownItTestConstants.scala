@@ -13,37 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package testConstants
 
-import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation._
 
-object NewCalcBreakdownTestConstants {
+object NewCalcBreakdownItTestConstants {
 
   val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
 
   val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", None
+      taxRegime = "UK", class2VoluntaryContributions = None
     )),
-    messages = None,
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
       calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
-  )
-
-  val liabilityCalculationModelDeductionsMinimal2 = LiabilityCalculationResponse(
-    inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", None
-    )),
-    messages = None,
-    calculation = None,
-    metadata = Metadata(
-      calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      crystallised = true),
+    messages = None
   )
 
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
@@ -208,6 +196,20 @@ object NewCalcBreakdownTestConstants {
                 taxAmount = 5000.99
               ))
           )),
+          otherGains = Some(OtherGains(
+            cgtTaxBands = Seq(CgtTaxBands(
+              name = "lowerRate",
+              rate = 20,
+              income = 5000.99,
+              taxAmount = 5000.99
+            ),
+              CgtTaxBands(
+                name = "lowerRate2",
+                rate = 21,
+                income = 5000.99,
+                taxAmount = 5000.99
+              ))
+          )),
           businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(
             taxableGains = Some(5000.99),
             rate = Some(20),
@@ -216,8 +218,8 @@ object NewCalcBreakdownTestConstants {
         )),
         totalStudentLoansRepaymentAmount = Some(5000.99),
         saUnderpaymentsCodedOut = Some(-99999999999.99),
-        totalIncomeTaxAndNicsDue = -99999999999.99,
-        totalTaxDeducted = Some(-99999999999.99)
+        totalIncomeTaxAndNicsDue = 90500.99,
+        totalTaxDeducted = Some(-20500.99)
       )),
       taxDeductedAtSource = Some(TaxDeductedAtSource(
         ukLandAndProperty = Some(5000.99),

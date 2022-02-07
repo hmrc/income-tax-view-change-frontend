@@ -36,7 +36,7 @@ import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
 import testConstants.EstimatesTestConstants._
 import testConstants.FinancialDetailsTestConstants.{documentDetailClass2Nic, documentDetailPaye, financialDetails, fullDocumentDetailWithDueDateModel}
 import testConstants.MessagesLookUp
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
 import views.html.{TaxYearOverview, TaxYearOverviewOld}
 
