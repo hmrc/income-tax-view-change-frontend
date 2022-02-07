@@ -93,6 +93,15 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )
   )
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    And("I wiremock stub a successful income source Details response with single Business and Property income")
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+      status = OK,
+      response = incomeSourceDetailsSuccess
+    )
+  }
+
   "Calling the TaxDueSummaryController.showIncomeSummary(taxYear)" when {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
@@ -148,10 +157,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         "return the correct tax due page with a full Calculation" in {
           enable(NewTaxCalcProxy)
           stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
 
           IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
             status = OK,
@@ -177,8 +182,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "return the correct tax due summary page with just Gift Aid Additional charges" in {
 
         stubAuthorisedAgentUser(authorised = true)
-        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSourceDetailsSuccess)
 
         And("I stub a successful liability calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
@@ -203,8 +206,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "return the correct tax due summary page with just Pension Lump Sum Additional charges" in {
 
         stubAuthorisedAgentUser(authorised = true)
-        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSourceDetailsSuccess)
 
         And("I stub a successful liability calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
@@ -229,8 +230,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "return the correct tax due summary page with just Pension Savings Additional charges" in {
 
         stubAuthorisedAgentUser(authorised = true)
-        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSourceDetailsSuccess)
 
         And("I stub a successful liability calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
@@ -257,8 +256,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         enable(NewTaxCalcProxy)
 
         stubAuthorisedAgentUser(authorised = true)
-        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSourceDetailsSuccess)
 
         And("I stub a successful liability calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
@@ -290,13 +287,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         "return the correct tax due page with a full Calculation" in {
           enable(TxmEventsApproved)
           disable(NewTaxCalcProxy)
-
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
 
           val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
@@ -325,13 +316,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         "return the correct tax due page with only gift aid Additional Charge in the Calculation" in {
           enable(TxmEventsApproved)
           disable(NewTaxCalcProxy)
-
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
 
           val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
@@ -360,13 +345,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         "return the correct tax due page with only pensions savings Additional Charge in the Calculation" in {
           enable(TxmEventsApproved)
           disable(NewTaxCalcProxy)
-
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
 
           val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
@@ -395,13 +374,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         "return the correct tax due page with only pensions lump sum Additional Charge in the Calculation" in {
           enable(TxmEventsApproved)
           disable(NewTaxCalcProxy)
-
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
 
           val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
@@ -430,13 +403,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         "return the correct tax due page with a minimal Calculation" in {
           enable(TxmEventsApproved)
           disable(NewTaxCalcProxy)
-
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
 
           val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
