@@ -33,6 +33,7 @@ import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcDataIntegrationTestConstants.{liabilityCalculationGiftAid}
 
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -44,17 +45,81 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
 
   "Calling the TaxDueSummaryController.showTaxDueSummary(taxYear)" when {
+    "newtaxcalcproxy FS enabled" when {
+      enable(NewTaxCalcProxy)
 
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid LiabilityCalculationResponse, " should {
-      "return the correct tax due summary page with the newtaxcalcproxy FS enabled" in {
-        enable(NewTaxCalcProxy)
+      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid LiabilityCalculationResponse, " should {
+        "return the correct tax due summary page" in {
 
-        Given("I stub the auth endpoint")
-        AuthStub.stubAuthorised()
+          Given("I stub the auth endpoint")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+          And("I stub a successful liability calculation response")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+            status = OK,
+            body = liabilityCalculationModelSuccessFull
+          )
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+          val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+          verifyAuditEvent(TaxCalculationDetailsResponseAuditModelNew(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
+
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.taxDueSummaryTitle),
+            elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
+            elementTextByID("additional_charges")("Additional charges")
+          )
+        }
+      }
+
+
+      "return the correct tax due summary page with just Gift Aid Additional charges" in {
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+          status = OK,
+          body = liabilityCalculationGiftAid
+        )
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+        res should have(
+          httpStatus(OK),
+          pageTitle(messages.taxDueSummaryTitle),
+          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextByID("additional_charges")("Additional charges")
+        )
+      }
+
+      "return the correct tax due summary page with just Pension Lump Sum Additional charges" in {
+
+        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+        And("I stub a successful calculation response for 2017-18")
+//        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+//          status = OK,
+//          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+//        )
+//        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+//          status = OK,
+//          body = pensionLumpSumCalculationJson
+//        )
         And("I stub a successful liability calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
@@ -67,12 +132,86 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-        verifyAuditEvent(TaxCalculationDetailsResponseAuditModelNew(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
+        res should have(
+          httpStatus(OK),
+          pageTitle(messages.taxDueSummaryTitle),
+          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextByID("additional_charges")("Additional charges")
+        )
+      }
+
+      "return the correct tax due summary page with just Pension Savings Additional charges" in {
+
+        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+        And("I stub a successful calculation response for 2017-18")
+//        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+//          status = OK,
+//          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+//        )
+//        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+//          status = OK,
+//          body = pensionSavingsCalculationJson
+//        )
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
         res should have(
           httpStatus(OK),
           pageTitle(messages.taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextByID("additional_charges")("Additional charges")
+        )
+      }
+
+      "return the correct tax due summary page using minimal calculation with no Additional Charges" in {
+        enable(TxmEventsApproved)
+        disable(NewTaxCalcProxy)
+
+        And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+        And("I stub a successful calculation response for 2017-18")
+//        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+//          status = OK,
+//          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+//        )
+//        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+//          status = OK,
+//          body = minimalCalculationJson
+//        )
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+        val expectedCalculation = minimalCalculationJson.as[Calculation]
+        verifyAuditEvent(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt))
+
+        res should have(
+          httpStatus(OK),
+          pageTitle(messages.taxDueSummaryTitle),
+          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation")
+        )
+
+        res shouldNot have(
           elementTextByID("additional_charges")("Additional charges")
         )
       }
