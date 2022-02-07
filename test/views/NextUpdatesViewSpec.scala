@@ -112,7 +112,6 @@ class NextUpdatesViewSpec extends TestSupport {
 
 		s"have the correct TradeName" in new Setup(obligationsModel) {
 			val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
-			println(Console.BLUE + section)
 
 			section.select("dl").size() shouldBe 1
 			section.select("dl dt").text() shouldBe "Annual Update"
