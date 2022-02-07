@@ -67,16 +67,33 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitle(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleIndividual(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-        Then(s"the page title should be '$expectedValue'")
+        val expectedTitle = expectedValue + " - Business Tax account - GOV.UK"
+        Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
-          body.title == expectedValue,
+          body.title == expectedTitle,
           "pageTitle",
-          expectedValue,
+          expectedTitle,
+          body.title
+        )
+      }
+    }
+
+  def pageTitleAgent(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+        val expectedTitle = expectedValue + " - Your client’s Income Tax details - GOV.UK"
+        Then(s"the page title should be '$expectedTitle'")
+        HavePropertyMatchResult(
+          body.title == expectedTitle,
+          "pageTitle",
+          expectedTitle,
           body.title
         )
       }

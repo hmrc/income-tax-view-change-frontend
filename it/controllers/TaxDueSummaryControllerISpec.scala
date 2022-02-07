@@ -17,6 +17,7 @@
 package controllers
 
 import java.time.LocalDateTime
+
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -31,6 +32,7 @@ import helpers.servicemocks._
 import models.calculation.{CalcDisplayModel, Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 import play.api.test.FakeRequest
+import testConstants.messages.TaxDueSummaryMessages.taxDueSummaryTitle
 
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -71,7 +73,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -101,7 +103,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -131,7 +133,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -161,7 +163,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -195,7 +197,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation")
         )
 

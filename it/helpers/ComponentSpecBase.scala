@@ -56,6 +56,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
+  val titleInternalServer = "Sorry, we are experiencing technical difficulties - 500"
+  val titleNotFound = "Page not found - 404"
+  val titleThereIsAProblem = "There is a problem with the service"
+
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,

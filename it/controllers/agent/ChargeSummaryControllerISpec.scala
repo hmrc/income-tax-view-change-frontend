@@ -31,8 +31,10 @@ import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-
 import java.time.LocalDate
+
+import helpers.servicemocks.AuthStub.titleInternalServer
+import testConstants.messages.ChargeSummaryMessages.{lpiPoa1, poa1Title, saPayment}
 
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -95,7 +97,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(poa1Title),
         elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
         elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
         elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
@@ -132,7 +134,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(poa1Title),
         elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
@@ -169,7 +171,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(poa1Title),
         elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
@@ -204,7 +206,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(poa1Title),
         elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
@@ -225,7 +227,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(poa1Title),
         elementTextBySelector("main h2")("Important Payment breakdown"),
         elementTextBySelector("main h3")("Payment history")
       )
@@ -274,7 +276,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(lpiPoa1),
         elementTextBySelector("main h2")("Payment history")
       )
     }
@@ -302,7 +304,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       result should have(
         httpStatus(OK),
-        pageTitle("Self Assessment payment (through your PAYE tax code) - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(saPayment),
         elementTextBySelector("h1")(header),
         elementTextBySelector("#coding-out-notice")(insetPara),
         elementTextBySelector("#coding-out-message")(summaryMessage),
@@ -333,7 +335,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+        pageTitleAgent(poa1Title)
       )
     }
 
@@ -358,7 +360,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+        pageTitleAgent(poa1Title)
       )
     }
 
@@ -384,7 +386,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }

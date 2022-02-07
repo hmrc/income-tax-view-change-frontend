@@ -16,10 +16,13 @@
 
 package testConstants.messages
 
-object TaxDueSummaryMessages {
+object ChargeSummaryMessages {
 
-  val taxDueSummaryTitle = "Tax calculation"
-  val taxDueSummaryHeading = "6 April 2017 to 5 April 2018"
-  val taxDueSummaryHeadingAgent = "6 April 2021 to 5 April 2022 Tax calculation"
-  val taxDueExplanation = "This calculation is based on your taxable income of {0}"
+  val balancingPaymentTitle = "Balancing payment"
+  val poa1Title = "Payment on account 1 of 2"
+  val poa2Title = "Payment on account 2 of 2"
+  val lpiBalancingPayment = "Late payment interest on Balancing payment"
+  val lpiPoa1 = "Late payment interest on payment on account 1 of 2"
+  val lpiPoa2 = "Late payment interest on payment on account 2 of 2"
+  val saPayment = "Self Assessment payment (through your PAYE tax code)"
 }

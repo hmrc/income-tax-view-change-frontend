@@ -16,10 +16,8 @@
 
 package testConstants.messages
 
-object TaxDueSummaryMessages {
+object WhatYouOweMessages {
 
-  val taxDueSummaryTitle = "Tax calculation"
-  val taxDueSummaryHeading = "6 April 2017 to 5 April 2018"
-  val taxDueSummaryHeadingAgent = "6 April 2021 to 5 April 2022 Tax calculation"
-  val taxDueExplanation = "This calculation is based on your taxable income of {0}"
+  val whatYouOwePageTitle: String = "What you owe"
+
 }

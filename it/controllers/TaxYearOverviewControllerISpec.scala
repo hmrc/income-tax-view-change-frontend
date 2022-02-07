@@ -18,6 +18,7 @@ package controllers
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
+
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import testConstants.CalcDataIntegrationTestConstants._
@@ -39,6 +40,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.messages.TaxYearOverviewMessages.taxYearOverviewTitle
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -380,7 +382,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("h1.govuk-heading-xl")(headingStr),
             elementTextBySelector("#calculation-date")("6 July 2017"),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
@@ -464,7 +466,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("h1.govuk-heading-xl")(headingStr),
             elementTextBySelector("#calculation-date")("6 July 2017"),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£199,505.00"),
@@ -561,7 +563,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Balancing payment"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance")
 
@@ -628,7 +630,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
 
@@ -698,7 +700,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Balancing payment"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Class 2 National Insurance"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Cancelled Self Assessment payment (through your PAYE tax code)")
@@ -764,7 +766,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           And("Page is displayed with no payments due")
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("#payments p")("No payments currently due.")
           )
 
@@ -863,7 +865,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("h1.govuk-heading-xl")(headingStr),
             elementTextByID("no-calc-data-header")(TaxYearOverviewMessages.headingNoCalcData),
             elementTextByID("no-calc-data-note")(TaxYearOverviewMessages.noCalcDataNote)
@@ -1121,7 +1123,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("h1.govuk-heading-xl")(headingStr),
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
@@ -1199,7 +1201,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("h1.govuk-heading-xl")(headingStr),
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
@@ -1292,7 +1294,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Balancing payment"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance")
 
@@ -1354,7 +1356,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
 
@@ -1419,7 +1421,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Balancing payment"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Class 2 National Insurance"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Cancelled Self Assessment payment (through your PAYE tax code)")
@@ -1480,7 +1482,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           And("Page is displayed with no payments due")
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("#payments p")("No payments currently due.")
           )
 
@@ -1576,7 +1578,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title),
+            pageTitleIndividual(taxYearOverviewTitle),
             elementTextBySelector("h1.govuk-heading-xl")(headingStr),
             elementTextByID("no-calc-data-header")(TaxYearOverviewMessages.headingNoCalcData),
             elementTextByID("no-calc-data-note")(TaxYearOverviewMessages.noCalcDataNote)

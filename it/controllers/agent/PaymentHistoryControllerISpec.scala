@@ -34,6 +34,8 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
+import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
+
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -117,7 +119,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
       Then("The Payment History page is returned to the user")
       result should have(
-        httpStatus(OK)
+        httpStatus(OK),
+        pageTitleAgent(paymentHistoryTitle)
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
@@ -138,7 +141,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
       Then("The Payment History page is returned to the user")
       result should have(
-        httpStatus(OK)
+        httpStatus(OK),
+        pageTitleAgent(paymentHistoryTitle)
       )
 
       verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)

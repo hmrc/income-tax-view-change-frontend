@@ -18,6 +18,7 @@ package controllers.errors
 
 import helpers.agent.ComponentSpecBase
 import play.api.http.Status._
+import testConstants.messages.AgentMessages.agentError
 
 class AgentErrorControllerISpec extends ComponentSpecBase {
 
@@ -36,7 +37,7 @@ class AgentErrorControllerISpec extends ComponentSpecBase {
         Then("I can see the correct page")
         res should have(
           httpStatus(OK),
-          pageTitle("You can't use this service yet - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(agentError)
         )
       }
     }

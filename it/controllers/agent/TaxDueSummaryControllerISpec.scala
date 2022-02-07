@@ -19,7 +19,7 @@ package controllers.agent
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import testConstants.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitleAgent}
+import testConstants.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitle}
 import audit.models.TaxCalculationDetailsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
@@ -36,8 +36,9 @@ import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-
 import java.time.{LocalDate, LocalDateTime}
+
+import helpers.servicemocks.AuthStub.titleInternalServer
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -113,7 +114,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -167,7 +168,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
         )
 
@@ -201,7 +202,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
         )
 
@@ -235,7 +236,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
         )
 
@@ -269,7 +270,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
         )
 
@@ -303,7 +304,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
         )
 

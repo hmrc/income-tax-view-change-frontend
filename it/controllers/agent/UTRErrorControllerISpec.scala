@@ -4,6 +4,7 @@ package controllers.agent
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleThereIsAProblem}
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
@@ -41,7 +42,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -69,7 +70,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then("The UTR Error page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("There’s a problem - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleThereIsAProblem)
         )
       }
     }
@@ -99,7 +100,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then("Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }

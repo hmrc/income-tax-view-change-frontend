@@ -16,7 +16,7 @@
 package controllers.agent
 
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.HomeMessages.agentTitle
+import testConstants.messages.HomeMessages.title
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
@@ -36,8 +36,9 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.LocalDate
+
+import helpers.servicemocks.AuthStub.titleInternalServer
 
 class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -110,7 +111,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 				Then(s"Technical difficulties are shown with status OK")
 				result should have(
 					httpStatus(OK),
-					pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+					pageTitleAgent(titleInternalServer)
 				)
 			}
 		}
@@ -203,7 +204,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitle(agentTitle),
+								pageTitleAgent(title),
 								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -272,7 +273,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitle(agentTitle),
+								pageTitleAgent(title),
 								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -343,7 +344,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitle(agentTitle),
+								pageTitleAgent(title),
 								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -413,7 +414,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitle(agentTitle),
+									pageTitleAgent(title),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 									elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -484,7 +485,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitle(agentTitle),
+									pageTitleAgent(title),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -553,7 +554,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitle(agentTitle),
+									pageTitleAgent(title),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector("#payments-tile p:nth-child(2)")(s"2 OVERDUE PAYMENTS"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -624,7 +625,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitle(agentTitle),
+									pageTitleAgent(title),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -712,7 +713,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitle(agentTitle),
+								pageTitleAgent(title),
 								elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
 								elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -799,7 +800,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitle(agentTitle),
+								pageTitleAgent(title),
 								elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
 								elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -846,7 +847,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 					result should have(
 						httpStatus(INTERNAL_SERVER_ERROR),
-						pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+						pageTitleAgent(titleInternalServer)
 					)
 
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -867,7 +868,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 				result should have(
 					httpStatus(INTERNAL_SERVER_ERROR),
-					pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+					pageTitleAgent(titleInternalServer)
 				)
 			}
 		}
@@ -894,7 +895,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 			result should have(
 				httpStatus(INTERNAL_SERVER_ERROR),
-				pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+				pageTitleAgent(titleInternalServer)
 			)
 		}
 	}

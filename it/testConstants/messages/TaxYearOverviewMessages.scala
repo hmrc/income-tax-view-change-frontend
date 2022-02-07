@@ -18,8 +18,7 @@ package testConstants.messages
 
 object TaxYearOverviewMessages {
 
-  val title: String = "Tax year overview - Business Tax account - GOV.UK"
-  val agentTitle: String = "Tax year overview - Your client’s Income Tax details - GOV.UK"
+  val taxYearOverviewTitle: String = "Tax year overview"
   val heading: String = "Tax year overview"
   val headingNoCalcData: String = "No calculation yet"
   val noCalcDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."

@@ -30,6 +30,7 @@ import models.financialDetails.Payment
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -89,7 +90,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       Then(s"A not found page is returned to the user")
       result should have(
         httpStatus(NOT_FOUND),
-        pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
+        pageTitleIndividual(titleNotFound)
       )
     }
   }
@@ -107,7 +108,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitle("Payment history - Business Tax account - GOV.UK")
+        pageTitleIndividual(paymentHistoryTitle)
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
@@ -125,7 +126,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitle("Payment history - Business Tax account - GOV.UK")
+        pageTitleIndividual(paymentHistoryTitle)
       )
 
       verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)

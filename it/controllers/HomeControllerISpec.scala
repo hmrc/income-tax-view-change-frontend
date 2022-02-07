@@ -69,7 +69,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
-          pageTitle(title),
+          pageTitleIndividual(title),
           elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
           elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )
@@ -112,7 +112,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
-          pageTitle(title),
+          pageTitleIndividual(title),
           elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
           elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )

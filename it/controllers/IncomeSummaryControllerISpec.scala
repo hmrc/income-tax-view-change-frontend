@@ -17,8 +17,8 @@
 package controllers
 
 import config.featureswitch.NewTaxCalcProxy
-
 import java.time.LocalDateTime
+
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -27,6 +27,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.messages.IncomeSummaryMessages.incomeSummaryTitle
 import testConstants.messages.{IncomeSummaryMessages => messages}
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase {
@@ -59,7 +60,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
           res should have(
             httpStatus(OK),
-            pageTitle(messages.incomeSummaryTitle),
+            pageTitleIndividual(incomeSummaryTitle),
             elementTextBySelector("h1")(messages.incomeSummaryHeading)
           )
         }
@@ -94,7 +95,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
           res should have(
             httpStatus(OK),
-            pageTitle(messages.incomeSummaryTitle),
+            pageTitleIndividual(incomeSummaryTitle),
             elementTextBySelector("h1")(messages.incomeSummaryHeading)
           )
         }

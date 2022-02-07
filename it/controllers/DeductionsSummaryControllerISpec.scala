@@ -17,6 +17,7 @@
 package controllers
 
 import java.time.LocalDateTime
+
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -31,6 +32,7 @@ import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.messages.DeductionsSummaryMessages._
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
@@ -74,8 +76,8 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         Then("I see Allowances and deductions page")
         res should have(
           httpStatus(OK),
-          pageTitle(messages.deductionsSummaryTitle),
-          elementTextBySelector("h1")(messages.deductionsSummaryHeading)
+          pageTitleIndividual(deductionsSummaryTitle),
+          elementTextBySelector("h1")(deductionsSummaryHeading)
         )
       }
 
@@ -103,7 +105,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         Then("I see Allowances and deductions page")
         res2 should have(
           httpStatus(OK),
-          pageTitle(messages.deductionsSummaryTitle),
+          pageTitleIndividual(deductionsSummaryTitle),
         )
 
         And("Audit TXM events have been fired with TxmApproved FS false")
@@ -136,8 +138,8 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         Then("I see Allowances and deductions page")
         res should have(
           httpStatus(OK),
-          pageTitle(messages.deductionsSummaryTitle),
-          elementTextBySelector("h1")(messages.deductionsSummaryHeading)
+          pageTitleIndividual(deductionsSummaryTitle),
+          elementTextBySelector("h1")(deductionsSummaryHeading)
         )
 
       }

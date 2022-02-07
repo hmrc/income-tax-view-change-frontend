@@ -25,11 +25,11 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-import play.api.test.Helpers.status
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.MyTaxYearsMessages.agentTitle
-
+import testConstants.messages.MyTaxYearsMessages.{taxYearsTitle}
 import java.time.LocalDate
+
+import helpers.servicemocks.AuthStub.titleInternalServer
 
 class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -122,7 +122,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -165,7 +165,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(OK),
-          pageTitle(agentTitle),
+          pageTitleAgent(taxYearsTitle),
           elementTextBySelectorList("#main-content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)", "li:nth-of-type(1)")(
             expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),
@@ -192,7 +192,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
 
