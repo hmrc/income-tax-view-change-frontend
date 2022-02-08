@@ -16,6 +16,7 @@
 
 package views
 
+import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.{Message, Messages}
 import testConstants.NewCalcBreakdownUnitTestConstants._
@@ -47,6 +48,8 @@ class TaxCalcBreakdownViewNewSpec extends TaxCalcBreakdownViewNewBehaviour {
 }
 
 abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
+
+  val taxYear2017: Int = 2017
 
   def backUrl: String
 
@@ -146,12 +149,11 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
       "top rate displayed " +
       "for the 2017 tax year" should {
 
-      val taxYear = 2017
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
         payPensionsProfitBands = Some(taxBands)
       )
-      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear, backUrl)
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Pay, pensions and profit table" which {
 
@@ -176,12 +178,11 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
       "top rate displayed " +
       "for the 2017 tax year" should {
 
-      val taxYear = 2017
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
         lumpSumsBands = Some(taxBands)
       )
-      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear, backUrl)
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Lump sums table" which {
 
@@ -207,12 +208,11 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
       "top rate displayed " +
       "for the 2017 tax year" should {
 
-      val taxYear = 2017
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
         gainsOnLifePoliciesBands = Some(taxBands)
       )
-      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear, backUrl)
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Gains on life policies table" which {
 
@@ -239,20 +239,19 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
     "provided with a calculation that is without Pay, pensions and profit, without Savings, without Dividends, " +
       "without Additional charges and without Additional deductions sections but has total tax due amount display " +
       "for the 2017 tax year" should {
-      val taxYear = 2017
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Uk",
         payPensionsProfitBands = None
       )
-      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear, backUrl)
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe expectedPageTitle
       }
 
       "have the correct heading" in new Setup(view) {
-        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear)
-        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear)
+        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear2017)
+        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear2017)
       }
 
       "have the correct guidance" in new Setup(view) {
@@ -615,7 +614,6 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
   "The tax calc view should display messages" when {
 
     "provided with all matching generic messages" in {
-      val taxYear = 2017
       lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
         messages = Some(Messages(info = Some(Seq(
           Message("C22202", "message2"),
@@ -632,7 +630,7 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
           Message("C22217", "message17"),
           Message("C22218", "message18")
         ))))
-      ), taxYear, backUrl)
+      ), taxYear2017, backUrl)
 
       val document: Document = Jsoup.parse(view.body)
 
@@ -653,91 +651,234 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
     }
 
     "provided with message C22201" in {
-      val taxYear = 2017
 
-      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
-        grossGiftAidPayments = Some(5000.98),
-        lumpSumsBands = Some(Seq(TaxBands(
-          name = "BRT",
-          rate = 20.0,
-          income = 0,
-          taxAmount = 4000.00,
-          bandLimit = 15000,
-          apportionedBandLimit = 15000)
-        )),
-        messages = Some(Messages(info = Some(Seq(
-          Message("C22201", "message")
-        ))))
-      ), taxYear, backUrl)
+        lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+          grossGiftAidPayments = Some(5000.98),
+          lumpSumsBands = Some(Seq(TaxBands(
+            name = "BRT",
+            rate = 20.0,
+            income = 0,
+            taxAmount = 4000.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+          )),
+          messages = Some(Messages(info = Some(Seq(
+            Message("C22201", "message")
+          ))))
+        ), taxYear2017, backUrl)
 
-      val document: Document = Jsoup.parse(view.body)
+        val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
-    }
+        document.select(messageContentSelector).size shouldBe 1
+        document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
+      }
 
-    "provided with message C22205" in {
-      val taxYear = 2017
+      "A C22201 message" when {
+        "grossGiftAidPayments is not provided" should {
+          "produce MissingFieldException" in {
 
-      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
-        lossesAppliedToGeneralIncome = Some(1000),
-        messages = Some(Messages(info = Some(Seq(
-          Message("C22205", "message")
-        ))))
-      ), taxYear, backUrl)
+            val expectedException = intercept[MissingFieldException] {
+              taxCalcBreakdown(TaxDueSummaryViewModel(
+                grossGiftAidPayments = None,
+                lumpSumsBands = Some(Seq(TaxBands(
+                  name = "BRT",
+                  rate = 20.0,
+                  income = 0,
+                  taxAmount = 4000.00,
+                  bandLimit = 15000,
+                  apportionedBandLimit = 15000)
+                )),
+                messages = Some(Messages(info = Some(Seq(
+                  Message("C22201", "message")
+                ))))
+              ), taxYear2017, backUrl)
+            }
 
-      val document: Document = Jsoup.parse(view.body)
+            expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gross Gift Aid Payments"
+          }
+        }
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Total loss from all income sources was capped at £1,000.00"
-    }
+        "getModifiedBaseTaxBand returns None" should {
+          "produce MissingFieldException" in {
+
+            val expectedException = intercept[MissingFieldException] {
+              taxCalcBreakdown(TaxDueSummaryViewModel(
+                grossGiftAidPayments = Some(5000.98),
+                lumpSumsBands = Some(Seq()),
+                messages = Some(Messages(info = Some(Seq(
+                  Message("C22201", "message")
+                ))))
+              ), taxYear2017, backUrl)
+            }
+
+            expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
+          }
+        }
+      }
+
+      "provided with message C22205" in {
+
+        lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+          lossesAppliedToGeneralIncome = Some(1000),
+          messages = Some(Messages(info = Some(Seq(
+            Message("C22205", "message")
+          ))))
+        ), taxYear2017, backUrl)
+
+        val document: Document = Jsoup.parse(view.body)
+
+        document.select(messageContentSelector).size shouldBe 1
+        document.select(messageContentSelector).text shouldBe "Total loss from all income sources was capped at £1,000.00"
+      }
+
+      "A C22205 message" when {
+        "lossesAppliedToGeneralIncome is missing" should {
+          "produce MissingFieldException" in {
+
+            val expectedException = intercept[MissingFieldException] {
+              taxCalcBreakdown(TaxDueSummaryViewModel(
+                lossesAppliedToGeneralIncome = None,
+                messages = Some(Messages(info = Some(Seq(
+                  Message("C22205", "message")
+                ))))
+              ), taxYear2017, backUrl)
+            }
+
+            expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Losses Applied To General Income"
+          }
+        }
+      }
 
     "provided with message C22208" in {
-      val taxYear = 2017
 
-      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
-        giftAidTax = Some(5000.99),
-        lumpSumsBands = Some(Seq(TaxBands(
-          name = "BRT",
-          rate = 20.0,
-          income = 0,
-          taxAmount = 4000.00,
-          bandLimit = 15000,
-          apportionedBandLimit = 15000)
-        )),
-        messages = Some(Messages(info = Some(Seq(
-          Message("C22208", "message")
-        ))))
-      ), taxYear, backUrl)
+        lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+          giftAidTax = Some(5000.99),
+          lumpSumsBands = Some(Seq(TaxBands(
+            name = "BRT",
+            rate = 20.0,
+            income = 0,
+            taxAmount = 4000.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+          )),
+          messages = Some(Messages(info = Some(Seq(
+            Message("C22208", "message")
+          ))))
+        ), taxYear2017, backUrl)
 
-      val document: Document = Jsoup.parse(view.body)
+        val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
+        document.select(messageContentSelector).size shouldBe 1
+        document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
+      }
+
+      "A C22208 message" when {
+        "giftAidTax is missing" should {
+          "produce MissingFieldException" in {
+
+            val expectedException = intercept[MissingFieldException] {
+              taxCalcBreakdown(TaxDueSummaryViewModel(
+                giftAidTax = None,
+                lumpSumsBands = Some(Seq(TaxBands(
+                  name = "BRT",
+                  rate = 20.0,
+                  income = 0,
+                  taxAmount = 4000.00,
+                  bandLimit = 15000,
+                  apportionedBandLimit = 15000)
+                )),
+                messages = Some(Messages(info = Some(Seq(
+                  Message("C22208", "message")
+                ))))
+              ), taxYear2017, backUrl)
+            }
+
+            expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gift Aid Tax"
+          }
+        }
+
+        "getModifiedBaseTaxBand is missing" should {
+        "produce MissingFieldException when " in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              giftAidTax = Some(5000.99),
+              lumpSumsBands = Some(Seq()),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22208", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
+        }
+      }
     }
 
-    "provided with message C22209" in {
-      val taxYear = 2017
+    "provided with message C22209" in  {
 
-      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
-        giftAidTax = Some(5000.99),
-        lumpSumsBands = Some(Seq(TaxBands(
-          name = "BRT",
-          rate = 20.0,
-          income = 0,
-          taxAmount = 4000.00,
-          bandLimit = 15000,
-          apportionedBandLimit = 15000)
-        )),
-        messages = Some(Messages(info = Some(Seq(
-          Message("C22209", "message")
-        ))))
-      ), taxYear, backUrl)
+        lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+          giftAidTax = Some(5000.99),
+          lumpSumsBands = Some(Seq(TaxBands(
+            name = "BRT",
+            rate = 20.0,
+            income = 0,
+            taxAmount = 4000.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+          )),
+          messages = Some(Messages(info = Some(Seq(
+            Message("C22209", "message")
+          ))))
+        ), taxYear2017, backUrl)
 
-      val document: Document = Jsoup.parse(view.body)
+        val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
+        document.select(messageContentSelector).size shouldBe 1
+        document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
+      }
+
+    "A C22209 message" when {
+      "giftAidTax is missing" should {
+        "produce MissingFieldException" in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              giftAidTax = None,
+              lumpSumsBands = Some(Seq(TaxBands(
+                name = "BRT",
+                rate = 20.0,
+                income = 0,
+                taxAmount = 4000.00,
+                bandLimit = 15000,
+                apportionedBandLimit = 15000)
+              )),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22209", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gift Aid Tax"
+        }
+      }
+
+      "getModifiedBaseTaxBand is missing" should {
+        "produce MissingFieldException" in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              giftAidTax = Some(5000.99),
+              lumpSumsBands = Some(Seq()),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22209", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
+        }
+      }
     }
   }
 
