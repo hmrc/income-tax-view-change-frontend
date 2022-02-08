@@ -113,7 +113,6 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         val res2 = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
 
         verifyBtaNavPartialResponse
-        println("blahhere" + res2.body)
         Then("I see Allowances and deductions page")
         res2 should have(
           httpStatus(OK),
