@@ -264,7 +264,7 @@
             @tableRow("total_notional_tax", viewModel.totalNotionalTax, isNegative = true)
             @tableRow("total_foreign_tax_credit_relief", viewModel.totalForeignTaxCreditRelief, isNegative = true)
             @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
-            @taxReductionsTableRow("nonDeductableLoanInterest")
+            @taxReductionsTableRow("nonDeductibleLoanInterest")
 
             @viewModel.incomeTaxDueAfterTaxReductions.map { incomeTaxDueAfterTaxReductions =>
                 <tr class="govuk-table__row">
