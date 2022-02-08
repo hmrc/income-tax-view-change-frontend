@@ -105,7 +105,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             ukLandAndProperty = Some(5000.99),
             specialWithholdingTax = Some(5000.99),
             voidISAs = Some(5000.99),
-            savings = None,
+            savings = Some(5000.99),
             inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
             total = None,
             totalIncomeTaxAndNicsDue = None)
