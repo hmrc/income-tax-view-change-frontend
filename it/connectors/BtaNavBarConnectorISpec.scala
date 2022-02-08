@@ -1,14 +1,14 @@
 
 package connectors
 
+import helpers.ComponentSpecBase
 import helpers.servicemocks.BtaNavBarPartialConnectorStub
 import helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
-import helpers.{ComponentSpecBase, UnitSpec}
 import models.btaNavBar.{NavContent, NavLinks}
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.WordSpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HeaderCarrier
 import play.api.test.Injecting
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}

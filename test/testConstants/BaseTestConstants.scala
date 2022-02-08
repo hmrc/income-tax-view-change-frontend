@@ -77,14 +77,6 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testErrorMessage = "Dummy Error Message"
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testNavLinks: NavContent = NavContent(
-    NavLinks("testEnHome", "testCyHome", "testUrl"),
-    NavLinks("testEnAccount", "testCyAccount", "testUrl"),
-    NavLinks("testEnMessages", "testCyMessages", "testUrl"),
-    NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
-  )
-
   val testListLink = Seq(
     ListLinks("testEnHome", appConfig.homePageUrl),
     ListLinks("testEnAccount", "testUrl"),

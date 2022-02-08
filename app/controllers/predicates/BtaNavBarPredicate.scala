@@ -32,14 +32,13 @@
 
 package controllers.predicates
 
-import auth.{MtdItUser, MtdItUserBase, MtdItUserWithNino}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import auth.MtdItUser
 import config.featureswitch.{BtaNavBar, FeatureSwitching}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import javax.inject.{Inject, Singleton}
 import play.api.http.HeaderNames
 import play.api.mvc._
-import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -69,29 +68,3 @@ class BtaNavBarPredicate @Inject()(btaNavBarController: BtaNavBarController,
   }
 
 }
-
-//@Singleton
-//class BtaNavFromNinoPredicate @Inject()(btaNavBarController: BtaNavBarController,
-//                                        val itvcErrorHandler: ItvcErrorHandler)
-//                                       (implicit val appConfig: FrontendAppConfig,
-//                                        val executionContext: ExecutionContext) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with FeatureSwitching {
-//
-//  override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
-//    val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-//    implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(HeaderNames.COOKIE)))
-//
-//    if (isDisabled(BtaNavBar)) {
-//      Future.successful(Right(request))
-//    } else {
-//      btaNavBarController.btaNavBarPartial(request) map {
-//        case partial: Option[Html] =>
-//          Right(MtdItUserWithNino[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, btaNavPartial = partial,
-//            saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request))
-//        case _ => Left(itvcErrorHandler.showInternalServerError()(request))
-//      }
-//    }
-//  }
-//
-//}
-//
-//trait GetMtdItPartial

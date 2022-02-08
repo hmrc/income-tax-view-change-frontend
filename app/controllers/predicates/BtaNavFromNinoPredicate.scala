@@ -48,14 +48,13 @@
 
 package controllers.predicates
 
-import auth.{MtdItUser, MtdItUserWithNino}
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import auth.MtdItUserWithNino
 import config.featureswitch.{BtaNavBar, FeatureSwitching}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import javax.inject.{Inject, Singleton}
 import play.api.http.HeaderNames
 import play.api.mvc._
-import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -75,9 +74,10 @@ class BtaNavFromNinoPredicate @Inject()(btaNavBarController: BtaNavBarController
       Future.successful(Right(request))
     } else {
       btaNavBarController.btaNavBarPartial(request) map {
-        case partial: Option[Html] =>
-          Right(MtdItUserWithNino[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, btaNavPartial = partial,
+        case Some(partial) =>
+          Right(MtdItUserWithNino[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, btaNavPartial = Some(partial),
             saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request))
+
         case _ => Left(itvcErrorHandler.showInternalServerError()(request))
       }
     }

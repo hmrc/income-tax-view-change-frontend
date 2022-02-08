@@ -2,6 +2,11 @@
 package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import helpers.WiremockHelper
+import models.btaNavBar.NavContent
+import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseIntegrationTestConstants.testNavLinks
 
 object BtaNavBarPartialConnectorStub {
 
@@ -15,7 +20,7 @@ object BtaNavBarPartialConnectorStub {
     })
 
   def verifyNavlinksContent(count: Int): Unit =
-    verify(count, getRequestedFor(urlMatching(s"/business-account/partial/nav-links")))
+    verify(count, getRequestedFor(urlMatching("/business-account/partial/nav-links")))
 
   val testNavLinkJson: String =
     """
@@ -48,5 +53,13 @@ object BtaNavBarPartialConnectorStub {
       |          "alerts": 0
       |       }
       | }""".stripMargin
+
+  val getBtaNavLinksUrl: String = "/business-account/partial/nav-links"
+
+  def stubBtaNavPartialResponse()(status: Int, response: JsValue): Unit =
+    WiremockHelper.stubGet(getBtaNavLinksUrl, status, response.toString())
+
+  def verifyBtaNavPartialResponse: Unit =
+    WiremockHelper.verifyGet(getBtaNavLinksUrl)
 
 }

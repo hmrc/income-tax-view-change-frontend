@@ -15,20 +15,21 @@
  */
 package controllers
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
-import testConstants.NextUpdatesIntegrationTestConstants._
-import testConstants.messages.HomeMessages._
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{BtaNavBar, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.btaNavBar.BtaNavBarRequest
+import helpers.servicemocks.BtaNavBarPartialConnectorStub.{testNavLinkJson, verifyBtaNavPartialResponse}
+import helpers.servicemocks.{BtaNavBarPartialConnectorStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
+import testConstants.NextUpdatesIntegrationTestConstants._
+import testConstants.messages.HomeMessages._
 
 class HomeControllerISpec extends ComponentSpecBase {
 
@@ -95,6 +96,9 @@ class HomeControllerISpec extends ComponentSpecBase {
           singleObligationCrystallisationModel
         ))
 
+        And("I wiremock stub a successful Bta Nav Bar PartialConnector response")
+        BtaNavBarPartialConnectorStub.stubBtaNavPartialResponse()(OK, Json.parse(testNavLinkJson))
+
         And("I wiremock stub obligation responses")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
 
@@ -108,14 +112,13 @@ class HomeControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getHome
 
         verifyIncomeSourceDetailsCall(testMtditid)
-
+        verifyBtaNavPartialResponse
         verifyNextUpdatesCall(testNino)
-//        Nav-Bar-Link-testEnHome  secondary-nav
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
-          elementValueByID("Nav-Bar-Link-testEnHome")("testEnHome"),
           pageTitle(title),
+          elementTextByID("nav-bar-link-Home")("Home"),
           elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
           elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )

@@ -31,6 +31,7 @@ import helpers.servicemocks.BtaNavBarPartialConnectorStub._
 import helpers.servicemocks._
 import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
@@ -93,7 +94,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         enable(BtaNavBar)
 
         And("I wiremock stub a successful Bta Nav Bar PartialConnector response")
-        BtaNavBarPartialConnectorStub.withResponseForNavLinks()(200, Some(testNavLinkJson))
+        BtaNavBarPartialConnectorStub.stubBtaNavPartialResponse()(OK, Json.toJson(testNavLinks))
 
         And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -111,12 +112,12 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
         val res2 = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear)
 
+        verifyBtaNavPartialResponse
+        println("blahhere" + res2.body)
         Then("I see Allowances and deductions page")
-        println(elementValueByID("Nav-Bar-Link-testEnHome")("testEnHome"))
-        BtaNavBarPartialConnectorStub.verifyNavlinksContent(1)
         res2 should have(
           httpStatus(OK),
-          elementValueByID("Nav-Bar-Link-testEnHome")("testEnHome"),
+          elementTextByID("nav-bar-link-testEnHome")("testEnHome"),
           pageTitle(messages.deductionsSummaryTitle),
         )
 
