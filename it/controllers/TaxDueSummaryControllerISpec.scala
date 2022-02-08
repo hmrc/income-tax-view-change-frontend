@@ -74,7 +74,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
           res should have(
             httpStatus(OK),
-            pageTitle(messages.taxDueSummaryTitle),
+            pageTitleIndividual(taxDueSummaryTitle),
             elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
             elementTextByID("additional_charges")("Additional charges")
           )
@@ -100,7 +100,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -125,7 +125,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -150,7 +150,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -177,7 +177,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(messages.taxDueSummaryTitle),
+          pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation")
         )
 

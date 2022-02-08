@@ -175,7 +175,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
           res should have(
             httpStatus(OK),
-            pageTitle(taxDueSummaryTitleAgent),
+            pageTitleAgent(taxDueSummaryTitle),
             elementTextBySelector("h1")(taxDueSummaryHeadingAgentNew)
           )
         }
@@ -199,7 +199,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -223,7 +223,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -247,7 +247,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
           elementTextByID("additional_charges")("Additional charges")
         )
@@ -273,7 +273,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitle(taxDueSummaryTitleAgent),
+          pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation")
         )
 
