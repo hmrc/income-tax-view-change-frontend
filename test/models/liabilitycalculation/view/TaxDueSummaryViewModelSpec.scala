@@ -43,7 +43,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           capitalGainsTax = CapitalGainsTaxViewModel(None, None, None, None, None, None, None, None, None),
           totalStudentLoansRepaymentAmount = None, saUnderpaymentsCodedOut = None, totalIncomeTaxAndNicsDue = None,
           totalTaxDeducted = None,
-          taxDeductedAtSource = TaxDeductedAtSourceViewModel(None, None, None, None, None, None, None, None, None, None, None)
+          taxDeductedAtSource = TaxDeductedAtSourceViewModel(None, None, None, None, None, None, None, None, None)
         )
     }
 
@@ -106,9 +106,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             specialWithholdingTax = Some(5000.99),
             voidISAs = Some(5000.99),
             savings = Some(5000.99),
-            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
-            total = None,
-            totalIncomeTaxAndNicsDue = None)
+            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99))
         )
 
         TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull) shouldBe expectedTaxDueSummaryViewModel

@@ -27,9 +27,7 @@ case class TaxDeductedAtSourceViewModel(
                                          specialWithholdingTax: Option[BigDecimal] = None,
                                          voidISAs: Option[BigDecimal] = None,
                                          savings: Option[BigDecimal] = None,
-                                         inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
-                                         total: Option[BigDecimal] = None,
-                                         totalIncomeTaxAndNicsDue: Option[BigDecimal] = None
+                                         inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None
                                        ) {
   val allFields: Seq[(String, BigDecimal)] = Seq(
     "inYearAdjustment" -> inYearAdjustmentCodedInLaterTaxYear,
