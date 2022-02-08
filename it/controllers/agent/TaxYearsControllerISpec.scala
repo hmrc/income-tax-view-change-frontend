@@ -26,10 +26,10 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.MyTaxYearsMessages.{taxYearsTitle}
+import testConstants.messages.MyTaxYearsMessages.taxYearsTitle
 import java.time.LocalDate
 
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 
 class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -192,7 +192,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleIndividual(titleTechError)
         )
       }
 

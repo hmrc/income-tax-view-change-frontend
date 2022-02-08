@@ -18,7 +18,7 @@ package controllers.agent
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import testConstants.messages.TaxYearOverviewMessages.{taxYearOverviewTitle}
+import testConstants.messages.TaxYearOverviewMessages.taxYearOverviewTitle
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
@@ -43,7 +43,7 @@ import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSucc
 import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.{LocalDate, LocalDateTime}
 
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -778,7 +778,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitleAgent(titleInternalServer)
+            pageTitleIndividual(titleTechError)
           )
 
         }
@@ -1325,7 +1325,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitleAgent(titleInternalServer)
+            pageTitleIndividual(titleTechError)
           )
 
         }

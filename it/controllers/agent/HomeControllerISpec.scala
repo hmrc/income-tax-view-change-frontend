@@ -16,7 +16,7 @@
 package controllers.agent
 
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.HomeMessages.title
+import testConstants.messages.HomeMessages.{agentTitle, title}
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
@@ -38,7 +38,7 @@ import testConstants.OutstandingChargesIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 
 class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -204,7 +204,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitleAgent(title),
+								pageTitleAgent(agentTitle),
 								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -273,7 +273,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitleAgent(title),
+								pageTitleAgent(agentTitle),
 								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -344,7 +344,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitleAgent(title),
+								pageTitleAgent(agentTitle),
 								elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 								elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -414,7 +414,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitleAgent(title),
+									pageTitleAgent(agentTitle),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
 									elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -485,7 +485,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitleAgent(title),
+									pageTitleAgent(agentTitle),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -554,7 +554,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitleAgent(title),
+									pageTitleAgent(agentTitle),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector("#payments-tile p:nth-child(2)")(s"2 OVERDUE PAYMENTS"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -625,7 +625,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 								result should have(
 									httpStatus(OK),
-									pageTitleAgent(title),
+									pageTitleAgent(agentTitle),
 									elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
 									elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -713,7 +713,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitleAgent(title),
+								pageTitleAgent(agentTitle),
 								elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
 								elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -800,7 +800,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 							result should have(
 								httpStatus(OK),
-								pageTitleAgent(title),
+								pageTitleAgent(agentTitle),
 								elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
 								elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
 								elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
@@ -847,7 +847,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 					result should have(
 						httpStatus(INTERNAL_SERVER_ERROR),
-						pageTitleAgent(titleInternalServer)
+						pageTitleIndividual(titleTechError)
 					)
 
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -868,7 +868,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 				result should have(
 					httpStatus(INTERNAL_SERVER_ERROR),
-					pageTitleAgent(titleInternalServer)
+					pageTitleIndividual(titleTechError)
 				)
 			}
 		}
@@ -895,7 +895,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 			result should have(
 				httpStatus(INTERNAL_SERVER_ERROR),
-				pageTitleAgent(titleInternalServer)
+				pageTitleIndividual(titleTechError)
 			)
 		}
 	}

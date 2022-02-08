@@ -20,12 +20,12 @@ import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
 import testConstants.IncomeSourceIntegrationTestConstants._
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import testConstants.messages.AgentMessages.{agentError, clientUTRErrorTitle}
+import testConstants.messages.AgentMessages.{agentError, clientUTRErrorTitle, clientUTRTitle}
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -64,7 +64,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 			Then("The enter client's utr page is returned to the user")
 			result should have(
 				httpStatus(OK),
-				pageTitleAgent(clientUTRErrorTitle)
+				pageTitleAgent(clientUTRTitle)
 			)
     }
   }
@@ -105,7 +105,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(agentError)
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "an empty utr string is submitted" in {
@@ -116,7 +116,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(agentError)
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "a utr containing non-digits is submitted" in {
@@ -127,7 +127,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(agentError)
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "a utr which has less than 10 digits is submitted" in {
@@ -138,7 +138,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(agentError)
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "a utr which has more than 10 digits is submitted" in {
@@ -149,7 +149,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(agentError)
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
     }
@@ -269,7 +269,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleIndividual(titleTechError)
         )
       }
       "there was an unexpected response retrieving the business details" in {
@@ -294,7 +294,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleIndividual(titleTechError)
         )
       }
     }

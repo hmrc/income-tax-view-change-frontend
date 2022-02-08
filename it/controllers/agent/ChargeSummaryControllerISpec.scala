@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import java.time.LocalDate
 
-import helpers.servicemocks.AuthStub.titleInternalServer
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import testConstants.messages.ChargeSummaryMessages.{lpiPoa1, poa1Title, saPayment}
 
 
@@ -386,7 +386,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleIndividual(titleTechError)
         )
       }
     }
