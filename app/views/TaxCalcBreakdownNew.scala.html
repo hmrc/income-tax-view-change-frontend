@@ -72,7 +72,7 @@
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
     <div class="govuk-inset-text">
         @messages(s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments")).toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Get Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
     </div>
     }
 
@@ -92,14 +92,14 @@
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
     <div class="govuk-inset-text">
         @messages(s"taxCal_breakdown.message.C22208",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Get Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
     </div>
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
     <div class="govuk-inset-text">
         @messages(s"taxCal_breakdown.message.C22209",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Get Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
     </div>
     }
 

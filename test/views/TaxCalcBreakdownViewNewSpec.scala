@@ -711,7 +711,7 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
               ), taxYear2017, backUrl)
             }
 
-            expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Get Modified Base Tax Band"
+            expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
           }
         }
       }
@@ -810,7 +810,7 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
             ), taxYear2017, backUrl)
           }
 
-          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Get Modified Base Tax Band"
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
         }
       }
     }
@@ -876,7 +876,7 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
             ), taxYear2017, backUrl)
           }
 
-          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Get Modified Base Tax Band"
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
         }
       }
     }
