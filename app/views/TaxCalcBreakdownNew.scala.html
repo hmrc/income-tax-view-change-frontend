@@ -294,14 +294,14 @@
 
             <tbody class="govuk-table__body">
                 @viewModel.class2NicsAmount.map { amount =>
-                    <tr>
-                        @viewModel.class2VoluntaryContributions.map { voluntary =>
+                    @viewModel.class2VoluntaryContributions.map { voluntary =>
+                        <tr>
                             <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${voluntary}")</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
                                 amount.toCurrency
                             }</td>
-                        }
-                    </tr>
+                        </tr>
+                    }
                 }
             </tbody>
             <tbody class="govuk-table__body">
