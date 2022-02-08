@@ -242,7 +242,7 @@ case class TaxCalculationDetailsResponseAuditModelNew(mtdItUser: MtdItUser[_],
   )
 
   private val taxDeductionsFullSeq: Seq[(String, BigDecimal)] = {
-    val totalDeductions = viewModel.taxDeductedAtSource.total
+    val totalDeductions = viewModel.totalTaxDeducted
     totalDeductions.fold(viewModel.taxDeductedAtSource.allFields)(total =>
       viewModel.taxDeductedAtSource.allFields :+ (("Income Tax due after deductions", total)))
   }
