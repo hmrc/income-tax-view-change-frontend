@@ -69,7 +69,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"display the client name as ${testClientName.get}" in new Setup(confirmClientView) {
-      layoutContent.selectNth("p",1).text shouldBe testClientName.get
+      layoutContent.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe testClientName.get
     }
 
     s"have the sub heading ${confirmClientMessages.clientUTRHeading}" in new Setup(confirmClientView) {
@@ -77,7 +77,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"display the client UTR as ${testClientUTR.get}" in new Setup(confirmClientView) {
-      layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2) > p").text shouldBe testClientUTR.get
+      layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe testClientUTR.get
     }
 
     s"have a ${confirmClientMessages.changeClient} link" in new Setup(confirmClientView) {
