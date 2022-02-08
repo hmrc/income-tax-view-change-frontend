@@ -59,7 +59,8 @@ object TaxDeductedAtSourceViewModel {
           ukPensions = tds.occupationalPensions,
           stateBenefits = tds.stateBenefits,
           specialWithholdingTax = tds.specialWithholdingTaxOrUkTaxPaid,
-          inYearAdjustmentCodedInLaterTaxYear = tds.inYearAdjustmentCodedInLaterTaxYear
+          inYearAdjustmentCodedInLaterTaxYear = tds.inYearAdjustmentCodedInLaterTaxYear,
+          savings = tds.bbsi
         )
       case None => TaxDeductedAtSourceViewModel()
     }
