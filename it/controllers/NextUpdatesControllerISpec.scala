@@ -24,6 +24,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
+import testConstants.messages.NextUpdatesMessages.{nextUpdatesTitle, titleReportDeadlines}
 
 class NextUpdatesControllerISpec extends ComponentSpecBase {
 
@@ -50,7 +51,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle(obligationsMessages.nextUpdatesTitle)
+          pageTitleIndividual(nextUpdatesTitle)
         )
 
         Then("the page displays one eops property income obligation")
@@ -71,7 +72,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle(obligationsMessages.title)
+          pageTitleIndividual(titleReportDeadlines)
         )
 
         Then("the page displays no obligation dates")
@@ -96,7 +97,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle(obligationsMessages.nextUpdatesTitle)
+          pageTitleIndividual(nextUpdatesTitle)
         )
 
         Then("the page displays the property obligation dates")
@@ -125,7 +126,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle(obligationsMessages.nextUpdatesTitle)
+          pageTitleIndividual(nextUpdatesTitle)
         )
 
         Then("the page displays the property obligation dates")
@@ -151,7 +152,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle(obligationsMessages.nextUpdatesTitle)
+          pageTitleIndividual(nextUpdatesTitle)
         )
 
         Then("the page displays all the business obligation dates")
@@ -178,7 +179,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         Then("the view displays the correct title")
         res should have(
           httpStatus(OK),
-          pageTitle(obligationsMessages.nextUpdatesTitle)
+          pageTitleIndividual(nextUpdatesTitle)
         )
 
         Then("the page displays SE income source obligation dates")
@@ -204,7 +205,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         Then("the view displays the correct title")
         res should have(
           httpStatus(OK),
-          pageTitle(obligationsMessages.nextUpdatesTitle)
+          pageTitleIndividual(nextUpdatesTitle)
         )
 
       }

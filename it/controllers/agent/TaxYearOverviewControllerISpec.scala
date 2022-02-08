@@ -18,7 +18,7 @@ package controllers.agent
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import testConstants.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
-import testConstants.messages.TaxYearOverviewMessages.agentTitle
+import testConstants.messages.TaxYearOverviewMessages.taxYearOverviewTitle
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
@@ -41,8 +41,9 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.{LocalDate, LocalDateTime}
+
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -249,7 +250,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           Then(s"Technical difficulties are shown with status OK")
           result should have(
             httpStatus(OK),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
         }
       }
@@ -303,7 +304,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           Then(s"Technical difficulties are shown with status OK")
           result should have(
             httpStatus(OK),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
         }
       }
@@ -385,7 +386,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
@@ -470,7 +471,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
@@ -545,7 +546,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextByID("no-calc-data-header")("No calculation yet"),
             elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
           )
@@ -599,7 +600,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextByID("no-calc-data-header")("No calculation yet"),
             elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
           )
@@ -657,7 +658,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
@@ -732,7 +733,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("6 July 2017"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.00"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£199,505.00"),
@@ -777,7 +778,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+            pageTitleIndividual(titleTechError)
           )
 
         }
@@ -801,7 +802,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
         }
         " [IT-AGENT-TEST-2.3.3] there was a problem retrieving the calculation for the tax year" in {
@@ -831,7 +832,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
 
         }
@@ -871,7 +872,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
 
         }
@@ -915,7 +916,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
 
         }
@@ -966,7 +967,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
 
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
@@ -1015,7 +1016,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -1091,7 +1092,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -1167,7 +1168,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextByID("no-calc-data-header")("No calculation yet"),
             elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
           )
@@ -1214,7 +1215,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -1279,7 +1280,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(taxYearOverviewTitle),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
             elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
             elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -1324,7 +1325,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+            pageTitleIndividual(titleTechError)
           )
 
         }
@@ -1346,7 +1347,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
         }
         " [IT-AGENT-TEST-2.3.4] there was a problem retrieving financial details for the tax year" in {
@@ -1371,7 +1372,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
 
         }
@@ -1401,7 +1402,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
 
         }
@@ -1438,7 +1439,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
 
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)

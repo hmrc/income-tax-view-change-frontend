@@ -19,8 +19,9 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.PaymentDueTestConstraints.getCurrentTaxYearEnd
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.LocalDate
+
+import testConstants.messages.WhatYouOweMessages.whatYouOwePageTitle
 
 class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -122,7 +123,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("The Payment Due what you owe page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
@@ -173,7 +174,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("The Payment Due what you owe page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
           isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -234,7 +235,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("The Payment Due what you owe page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
@@ -374,7 +375,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("The Payment Due what you owe page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
@@ -416,7 +417,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("The Payment Due what you owe page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
           isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -477,7 +478,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("The Payment Due what you owe page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
@@ -530,7 +531,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page")
       result should have(
         httpStatus(OK),
-        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -578,7 +579,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page")
       res should have(
         httpStatus(OK),
-        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -631,7 +632,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the what you owe page with no dunningLocks")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false),
           elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")(""),
           elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
@@ -670,7 +671,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the what you owe page with dunning lock present")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
           elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
           elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
@@ -709,7 +710,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the what you owe page with multiple dunningLocks")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
           elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
           elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
@@ -739,7 +740,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -781,7 +782,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -837,7 +838,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -894,7 +895,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
@@ -941,7 +942,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -986,7 +987,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -1028,7 +1029,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -1087,7 +1088,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -1145,7 +1146,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
@@ -1192,7 +1193,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           result should have(
             httpStatus(OK),
-            pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+            pageTitleAgent(whatYouOwePageTitle),
             isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -1325,7 +1326,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
           httpStatus(OK),
-          pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+          pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("totals-row")(expectedValue = true)
         )
       }
@@ -1362,7 +1363,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page")
       result should have(
         httpStatus(OK),
-        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("totals-row")(expectedValue = false)
       )
     }
@@ -1395,7 +1396,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page with coding out in future payments")
       result should have(
         httpStatus(OK),
-        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
@@ -1440,7 +1441,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page with no coding out in future payments")
       result should have(
         httpStatus(OK),
-        pageTitle("What you owe - Your client’s Income Tax details - GOV.UK"),
+        pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = false),

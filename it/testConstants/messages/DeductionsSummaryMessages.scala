@@ -18,8 +18,7 @@ package testConstants.messages
 
 object DeductionsSummaryMessages {
 
-  val deductionsSummaryTitle = "Allowances and deductions - Business Tax account - GOV.UK"
-  val agentsDeductionsSummaryTitle = "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+  val deductionsSummaryTitle = "Allowances and deductions"
 
   val deductionsSummaryHeading = "6 April 2017 to 5 April 2018 Allowances and deductions"
 }

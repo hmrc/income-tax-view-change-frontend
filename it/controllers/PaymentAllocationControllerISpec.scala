@@ -15,6 +15,7 @@ import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.messages.PaymentAllocationMessages.paymentAllocationTitle
 
 class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -71,7 +72,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         Then(s"A not found page is returned to the user")
         result should have(
           httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Business Tax account - GOV.UK")
+          pageTitleIndividual(titleNotFound)
         )
       }
     }
@@ -94,7 +95,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         Then("The Payment allocation page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("Payment made to HMRC - Business Tax account - GOV.UK")
+          pageTitleIndividual(paymentAllocationTitle),
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
@@ -123,7 +124,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         Then("The Payment allocation page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitle("Payment made to HMRC - Business Tax account - GOV.UK"),
+          pageTitleIndividual(paymentAllocationTitle),
           elementAttributeBySelector("#payment-allocation-0 a", "href")(
             "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&latePaymentCharge=true"),
           elementTextBySelector("#payment-allocation-0 a")("Late payment interest for Balancing payment 9999")

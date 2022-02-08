@@ -27,6 +27,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.messages.IncomeSummaryMessages.incomeSummaryTitle
 import testConstants.messages.{IncomeSummaryMessages => messages}
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase {
@@ -59,7 +60,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
           res should have(
             httpStatus(OK),
-            pageTitle(messages.incomeSummaryTitle),
+            pageTitleIndividual(incomeSummaryTitle),
             elementTextBySelector("h1")(messages.incomeSummaryHeading)
           )
         }
@@ -94,7 +95,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
           res should have(
             httpStatus(OK),
-            pageTitle(messages.incomeSummaryTitle),
+            pageTitleIndividual(incomeSummaryTitle),
             elementTextBySelector("h1")(messages.incomeSummaryHeading)
           )
         }
