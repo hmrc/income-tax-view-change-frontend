@@ -37,6 +37,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.{TaxYearOverview, TaxYearOverviewOld}
 
+import java.net.URI
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,8 +57,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                            val itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  lazy val backAgentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
-  lazy val backAgentHomeUrl: String = controllers.agent.routes.HomeController.show().url
+  lazy val agentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
+  lazy val agentHomeUrl: String = controllers.agent.routes.HomeController.show().url
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
@@ -94,9 +95,9 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   }
 
   private def getBackURL(referer: Option[String]): String = {
-    referer.map(_.contains(backAgentHomeUrl)) match {
-      case Some(true) => backAgentHomeUrl
-      case _ => backAgentTaxYearsUrl
+    referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
+      case Some(true) => agentTaxYearsUrl
+      case _ => agentHomeUrl
     }
   }
 

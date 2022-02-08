@@ -18,7 +18,6 @@ package controllers
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
-
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcBreakdownIntegrationTestConstants.calculationDataSuccessModel
 import testConstants.CalcDataIntegrationTestConstants._
@@ -39,7 +38,7 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 import testConstants.messages.TaxYearOverviewMessages.taxYearOverviewTitle
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -1128,7 +1127,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
             elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
-            elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£-25,500.99"),
+            elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.99"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part paid"),
@@ -1206,7 +1205,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
             elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
-            elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£-25,500.99"),
+            elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.99"),
 
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2 Payment under review"),
             elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),

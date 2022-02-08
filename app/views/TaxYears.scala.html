@@ -68,7 +68,6 @@
     </tr>
 }
 
-
 @mainTemplate(
     pageTitle = messages("taxYears.heading"),
     backUrl = Some(backUrl),
@@ -96,13 +95,15 @@
         </div>
     }
 
-
-    @if(!isAgent && utr.isDefined) {
-        @p(id=Some("oldSa-para")){
-            @messages("taxYears.oldSa.content.text")
-            @link(link = appConfig.saViewLandPService(utr.get), messageKey = "taxYears.oldSa.content.link", id=Some("self-assessment-online-account-link"), outerMessage = ".", target = Some("_blank"))
+    @if(!isAgent) {
+        @utr.map { utrValue =>
+            @p(id = Some("oldSa-para")) {
+                @messages("taxYears.oldSa.content.text")
+                @link(link = appConfig.saViewLandPService(utrValue), messageKey = "taxYears.oldSa.content.link", id = Some("self-assessment-online-account-link"), outerMessage = ".", target = Some("_blank"))
+            }
         }
     }
+
     @if(isAgent) {
         @p(id=Some("oldSa-para-agent")){
             @messages("taxYears.oldSa.agent.content.1")

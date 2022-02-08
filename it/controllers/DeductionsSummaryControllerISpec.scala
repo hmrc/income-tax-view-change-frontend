@@ -17,7 +17,6 @@
 package controllers
 
 import java.time.LocalDateTime
-
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -31,7 +30,7 @@ import helpers.servicemocks._
 import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 import play.api.test.FakeRequest
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 import testConstants.messages.DeductionsSummaryMessages._
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {

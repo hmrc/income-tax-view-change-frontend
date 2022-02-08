@@ -16,31 +16,36 @@
 
 @import implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
+@import exceptions.MissingFieldException
+@import models.paymentAllocationCharges._
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, isAgent: Boolean)(implicit messages: Messages)
 @import implicitDateFormatter._
 
+@paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate, isAgent: Boolean) = @{
+    if(isAgent){
+        controllers.agent.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+    } else {
+        controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+    }
+}
+
 @for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
     <tbody class="govuk-table__body">
 
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-@index">
-                @if(isAgent){
-                <a class="govuk-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)">
-                    @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
-                    } else {
-                <a class="govuk-link" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.get.transactionId.get)}" class="govuk-link">
-                @messages(paymentAllocation.allocationDetail.get.getPaymentAllocationKeyInPaymentAllocations)
-                    }
-                    <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter)</span>
+                <a class="govuk-link" href="@paymentAllocationHref(paymentAllocation, isAgent)">
+                    @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
+                    <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter)</span>
                 </a>
                 <br>
-                <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
+                <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
             </td>
-            <td class="govuk-table__cell">@paymentAllocation.clearingDate.get.toLocalDate.toLongDateShort</td>
-            <td class="govuk-table__cell">@paymentAllocation.allocationDetail.get.amount.get.toCurrencyString</td>
+            <td class="govuk-table__cell">@paymentAllocation.clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date")).toLocalDate.toLongDateShort</td>
+            <td class="govuk-table__cell">@paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).amount.getOrElse(throw MissingFieldException("Payment Amount")).toCurrencyString</td>
         </tr>
     </tbody>
 

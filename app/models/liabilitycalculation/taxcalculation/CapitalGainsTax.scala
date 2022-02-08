@@ -26,6 +26,7 @@ case class CapitalGainsTax(
                             capitalGainsTaxDue: BigDecimal,
                             capitalGainsOverpaid: Option[BigDecimal] = None,
                             residentialPropertyAndCarriedInterest: Option[ResidentialPropertyAndCarriedInterest] = None,
+                            otherGains: Option[OtherGains] = None,
                             businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None
                           )
 
@@ -39,6 +40,14 @@ case class ResidentialPropertyAndCarriedInterest(
 
 object ResidentialPropertyAndCarriedInterest {
   implicit val format: OFormat[ResidentialPropertyAndCarriedInterest] = Json.format[ResidentialPropertyAndCarriedInterest]
+}
+
+case class OtherGains(
+                       cgtTaxBands: Seq[CgtTaxBands] = Seq()
+                     )
+
+object OtherGains {
+  implicit val format: OFormat[OtherGains] = Json.format[OtherGains]
 }
 
 case class CgtTaxBands(
@@ -55,7 +64,7 @@ object CgtTaxBands {
 case class BusinessAssetsDisposalsAndInvestorsRel(
                                                    taxableGains: Option[BigDecimal] = None,
                                                    rate: Option[BigDecimal] = None,
-                                                   taxAmount  : Option[BigDecimal] = None
+                                                   taxAmount: Option[BigDecimal] = None
                                                  )
 
 object BusinessAssetsDisposalsAndInvestorsRel {

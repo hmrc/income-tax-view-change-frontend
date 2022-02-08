@@ -18,24 +18,28 @@ package controllers.agent
 
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import testConstants.messages.TaxDueSummaryMessages.{taxDueSummaryHeadingAgent, taxDueSummaryTitle}
-import audit.models.TaxCalculationDetailsResponseAuditModel
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.TaxDueSummaryMessages._
+import audit.models.{TaxCalculationDetailsResponseAuditModel, TaxCalculationDetailsResponseAuditModelNew}
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import enums.Crystallised
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalcDisplayModel, Calculation, CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcDataIntegrationTestConstants._
+
 import java.time.{LocalDate, LocalDateTime}
 
 import helpers.servicemocks.AuthStub.titleInternalServer
@@ -91,6 +95,15 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )
   )
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    And("I wiremock stub a successful income source Details response with single Business and Property income")
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+      status = OK,
+      response = incomeSourceDetailsSuccess
+    )
+  }
+
   "Calling the TaxDueSummaryController.showIncomeSummary(taxYear)" when {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
@@ -140,176 +153,283 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         )
       }
     }
-    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch TxMEventsApproved is enabled" should {
-      "return the correct tax due page with a full Calculation" in {
-        enable(TxmEventsApproved)
 
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = incomeSourceDetailsSuccess
-        )
+    "NewTaxCalcProxy Feature Switch is Enabled" when {
+      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid liability calculation response, " should {
+        "return the correct tax due page with a full Calculation" in {
+          enable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+            status = OK,
+            body = liabilityCalculationModelSuccessFull
+          )
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
+          When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due")
+          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-        When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-        res should have(
-          httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
-        )
+          verifyAuditEvent(TaxCalculationDetailsResponseAuditModelNew(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
 
-        val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
-        verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
+          res should have(
+            httpStatus(OK),
+            pageTitle(taxDueSummaryTitleAgent),
+            elementTextBySelector("h1")(taxDueSummaryHeadingAgentNew)
+          )
+        }
       }
 
-      "return the correct tax due page with only gift aid Additional Charge in the Calculation" in {
-        enable(TxmEventsApproved)
+      "return the correct tax due summary page with just Gift Aid Additional charges" in {
 
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          response = incomeSourceDetailsSuccess
+          body = liabilityCalculationGiftAid
         )
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = giftAidCalculationJson
-        )
-
-        When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          pageTitle(taxDueSummaryTitleAgent),
+          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextByID("additional_charges")("Additional charges")
         )
-
-        val expectedCalculation = giftAidCalculationJson.as[Calculation]
-        verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
       }
 
-      "return the correct tax due page with only pensions savings Additional Charge in the Calculation" in {
-        enable(TxmEventsApproved)
+      "return the correct tax due summary page with just Pension Lump Sum Additional charges" in {
 
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          response = incomeSourceDetailsSuccess
+          body = liabilityCalculationPensionLumpSums
         )
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = pensionSavingsCalculationJson
-        )
-
-        When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          pageTitle(taxDueSummaryTitleAgent),
+          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextByID("additional_charges")("Additional charges")
         )
-
-        val expectedCalculation = pensionSavingsCalculationJson.as[Calculation]
-        verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
       }
 
-      "return the correct tax due page with only pensions lump sum Additional Charge in the Calculation" in {
-        enable(TxmEventsApproved)
+      "return the correct tax due summary page with just Pension Savings Additional charges" in {
 
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          response = incomeSourceDetailsSuccess
+          body = liabilityCalculationPensionSavings
         )
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = pensionLumpSumCalculationJson
-        )
-
-        When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          pageTitle(taxDueSummaryTitleAgent),
+          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextByID("additional_charges")("Additional charges")
         )
-
-        val expectedCalculation = pensionLumpSumCalculationJson.as[Calculation]
-        verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
       }
 
-      "return the correct tax due page with a minimal Calculation" in {
+      "return the correct tax due summary page using minimal calculation with no Additional Charges" in {
         enable(TxmEventsApproved)
+        enable(NewTaxCalcProxy)
 
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          response = incomeSourceDetailsSuccess
+          body = liabilityCalculationMinimal
         )
 
-        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-          status = OK,
-          body = estimatedCalculationFullJson
-        )
-
-        When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          pageTitle(taxDueSummaryTitleAgent),
+          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation")
         )
 
-        val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
-        verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
+        res shouldNot have(
+          elementTextByID("additional_charges")("Additional charges")
+        )
+      }
+    }
+
+    "NewTaxCalcProxy Feature Switch is disabled" when {
+      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
+        "feature switch TxMEventsApproved is enabled" should {
+        "return the correct tax due page with a full Calculation" in {
+          enable(TxmEventsApproved)
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
+          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent(taxDueSummaryTitle),
+            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          )
+
+          val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
+          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
+        }
+
+        "return the correct tax due page with only gift aid Additional Charge in the Calculation" in {
+          enable(TxmEventsApproved)
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = giftAidCalculationJson
+          )
+
+          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
+          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent(taxDueSummaryTitle),
+            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          )
+
+          val expectedCalculation = giftAidCalculationJson.as[Calculation]
+          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
+        }
+
+        "return the correct tax due page with only pensions savings Additional Charge in the Calculation" in {
+          enable(TxmEventsApproved)
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = pensionSavingsCalculationJson
+          )
+
+          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
+          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent(taxDueSummaryTitle),
+            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          )
+
+          val expectedCalculation = pensionSavingsCalculationJson.as[Calculation]
+          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
+        }
+
+        "return the correct tax due page with only pensions lump sum Additional Charge in the Calculation" in {
+          enable(TxmEventsApproved)
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = pensionLumpSumCalculationJson
+          )
+
+          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
+          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent(taxDueSummaryTitle),
+            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          )
+
+          val expectedCalculation = pensionLumpSumCalculationJson.as[Calculation]
+          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
+        }
+
+        "return the correct tax due page with a minimal Calculation" in {
+          enable(TxmEventsApproved)
+          disable(NewTaxCalcProxy)
+          stubAuthorisedAgentUser(authorised = true)
+
+          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+
+          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
+          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+          res should have(
+            httpStatus(OK),
+            pageTitleAgent(taxDueSummaryTitle),
+            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
+          )
+
+          val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
+          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
+        }
       }
     }
   }

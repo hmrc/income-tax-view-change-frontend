@@ -209,6 +209,13 @@ object PaymentAllocationsTestConstants {
 			)
 		))
 
+	val paymentAllocationViewModelWithNoClearingAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+		Seq(
+			AllocationDetailWithClearingDate(
+				Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+				None)
+		))
+
 	val lpiParentChargeDocumentDetail = DocumentDetail(
 		taxYear = "2020",
 		transactionId = "transactionId",

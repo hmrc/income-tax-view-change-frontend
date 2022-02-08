@@ -37,12 +37,14 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
   val nino: String = "AA123456A"
   val taxYear: String = "2019"
 
-  val calculation: LiabilityCalculationResponse = LiabilityCalculationResponse(inputs = Inputs(personalInformation = PersonalInformation(
-    taxRegime = "UK", None)), metadata = Metadata("2019-02-15T09:35:15.094Z", false), calculation = None, messages = None)
-
-  val calculationJson: JsObject = Json.obj("inputs" -> Json.obj(
-    "personalInformation" -> Json.obj("taxRegime" -> "UK")),
-  "metadata" -> Json.obj("calculationTimestamp" -> "2019-02-15T09:35:15.094Z", "crystallised" -> false))
+  val calculation: LiabilityCalculationResponse = LiabilityCalculationResponse(
+    inputs = Inputs(PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+    messages = None,
+    metadata = Metadata("2019-02-15T09:35:15.094Z", false),
+    calculation = None)
+  val calculationJson: JsObject = Json.obj("inputs" -> Json.obj("personalInformation" ->
+      Json.obj("taxRegime" -> "UK")),
+        "metadata" -> Json.obj("calculationTimestamp" -> "2019-02-15T09:35:15.094Z", "crystallised" -> false))
 
   "IncomeTaxCalculationConnector.getCalculationResponse" should {
     "return a calculation" when {

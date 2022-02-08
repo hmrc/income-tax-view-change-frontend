@@ -66,8 +66,12 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
               val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))
               Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear)))
+            case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+              Logger("application").info(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
+              itvcErrorHandler.showInternalServerError()
             case _: LiabilityCalculationError =>
-              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+              Logger("application").error(
+                s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }
         } else {
@@ -82,7 +86,8 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
               itvcErrorHandler.showInternalServerError()
 
             case CalcDisplayError =>
-              Logger("application").error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
+              Logger("application").error(
+                s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
               itvcErrorHandler.showInternalServerError()
           }
         }

@@ -44,9 +44,9 @@
     }
 
     @formHint.map { hint =>
-        <label class="govuk-hint govuk-label" id="@field.name-hint">
+        <div class="govuk-hint govuk-label" id="@field.name-hint">
             @hint
-        </label>
+        </div>
     }
 
     @fieldError.map { error =>
@@ -68,7 +68,11 @@
                 aria-describedby="@field.name-hint"
             }
         }
-        value="@field.value.getOrElse("")"
+        @if(field.value.isDefined){
+               value ="@field.value.get"
+        } else {
+
+          }
     >
 
 </div>

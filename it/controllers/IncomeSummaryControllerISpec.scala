@@ -17,8 +17,8 @@
 package controllers
 
 import config.featureswitch.NewTaxCalcProxy
-import java.time.LocalDateTime
 
+import java.time.LocalDateTime
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -26,7 +26,7 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 import testConstants.messages.IncomeSummaryMessages.incomeSummaryTitle
 import testConstants.messages.{IncomeSummaryMessages => messages}
 

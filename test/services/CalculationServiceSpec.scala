@@ -30,12 +30,12 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
 
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", None
+      taxRegime = "UK", class2VoluntaryContributions = None
     )),
+    messages = None,
     metadata = Metadata("2019-02-15T09:35:15.094Z", false),
-    calculation = None,
-    messages = None
-  )
+    calculation = None)
+
   val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
 
