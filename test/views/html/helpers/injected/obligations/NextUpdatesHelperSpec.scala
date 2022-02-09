@@ -63,9 +63,9 @@ class NextUpdatesHelperSpec extends TestSupport {
     "display the updates under the first deadline" in new Setup(obligationsModel) {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(1)")
 
-      section.select("tbody tr").size() shouldBe 1
-      section.select("tbody tr td:nth-of-type(1)").text() shouldBe "Quarterly"
-      section.select("tbody tr td:nth-of-type(2)").text() shouldBe testTradeName
+      section.select("dl").size() shouldBe 1
+      section.select("dl dt").text() shouldBe "Quarterly"
+      section.select("dl dd").text() shouldBe testTradeName
     }
 
     "display the later due date" in new Setup(obligationsModel) {
@@ -75,9 +75,9 @@ class NextUpdatesHelperSpec extends TestSupport {
     "display the updates under the second deadline" in new Setup(obligationsModel) {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
 
-      section.select("tbody tr").size() shouldBe 1
-      section.select("tbody tr td:nth-of-type(1)").text() shouldBe "Annual Update"
-      section.select("tbody tr td:nth-of-type(2)").text() shouldBe testTradeName
+      section.select("dl").size() shouldBe 1
+      section.select("dl dt").text() shouldBe "Annual Update"
+      section.select("dl dd").text() shouldBe testTradeName
     }
 
     "display the correct due date text for a quarterly date" in new Setup(obligationsModel) {

@@ -23,15 +23,17 @@
 @import implicitDateFormatter.longDate
 
 	@deadlineRow(deadline: NextUpdateModelWithIncomeType) = {
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">
+
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
 				@{if(deadline.obligation.obligationType == "Quarterly")  messages.translate("obligations.quarterly", Seq.empty).getOrElse(deadline.obligation.obligationType)}
 				@{if(deadline.obligation.obligationType == "EOPS")  messages.translate("nextUpdates.eops", Seq.empty).getOrElse(deadline.obligation.obligationType)}
 				@{if(deadline.obligation.obligationType == "Crystallised")  messages.translate("nextUpdates.crystallised", Seq.empty).getOrElse(deadline.obligation.obligationType)}
-			<td class="govuk-table__cell">@{messages(deadline.incomeType)}</td>
-		</tr>
-	}
+			</dt>
+			<dd class="govuk-summary-list__value">@{messages(deadline.incomeType)}</dd>
+		</div>
 
+	}
 	<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">
 
 		@for(collectedObligations <- obligations.obligationsByDate.zipWithIndex) {
@@ -48,19 +50,15 @@
 					</div>
 				</div>
 				<div class="govuk-accordion__section-content" id="accordion-with-summary-sections-content-@{collectedObligations._2 + 1}">
-					<table class="govuk-table">
-						<thead class="govuk-table__head">
-							<tr class="govuk-table__row">
-								<th class="govuk-table__header">@messages("nextUpdates.table.header.type")</th>
-								<th class="govuk-table__header">@messages("nextUpdates.table.header.source")</th>
-							</tr>
-						</thead>
-						<tbody>
+					<dl class="govuk-summary-list">
+
+
 							@for(obligation <- collectedObligations._1._2) {
 								@deadlineRow(obligation)
 							}
-						</tbody>
-					</table>
+
+
+					</dl>
 				</div>
 			</div>
 		}

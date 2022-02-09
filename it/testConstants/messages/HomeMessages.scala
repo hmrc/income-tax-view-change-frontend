@@ -18,8 +18,6 @@ package testConstants.messages
 
 object HomeMessages {
 
-  val title = "Income Tax - Business Tax account - GOV.UK"
-  val agentTitle = "Your client’s Income Tax - Your client’s Income Tax details - GOV.UK"
-  val internalServerError = "Sorry, we are experiencing technical difficulties - 500"
-
+  val title = "Income Tax"
+  val agentTitle = "Your client’s Income Tax"
 }

@@ -18,7 +18,7 @@ package controllers.agent
 
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
-import testConstants.messages.IncomeSummaryMessages.{agentTitle, incomeSummaryAgentHeading}
+import testConstants.messages.IncomeSummaryMessages.{incomeSummaryAgentHeading, incomeSummaryTitle}
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
@@ -35,6 +35,8 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyRe
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 import java.time.{LocalDate, LocalDateTime}
+
+import helpers.servicemocks.AuthStub.{titleInternalServer}
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -108,7 +110,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           Then(s"Technical difficulties are shown with status OK")
           result should have(
             httpStatus(OK),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
         }
       }
@@ -163,7 +165,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
           res should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(incomeSummaryTitle),
             elementTextBySelector("h1")(incomeSummaryAgentHeading)
           )
         }
@@ -197,7 +199,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           Then(s"Technical difficulties are shown with status OK")
           result should have(
             httpStatus(OK),
-            pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+            pageTitleAgent(titleInternalServer)
           )
         }
       }
@@ -245,7 +247,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
           res should have(
             httpStatus(OK),
-            pageTitle(agentTitle),
+            pageTitleAgent(incomeSummaryTitle),
             elementTextBySelector("h1")(incomeSummaryAgentHeading)
           )
         }

@@ -20,10 +20,12 @@ import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
 import testConstants.IncomeSourceIntegrationTestConstants._
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
+import testConstants.messages.AgentMessages.{agentError, clientUTRErrorTitle, clientUTRTitle}
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -62,7 +64,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 			Then("The enter client's utr page is returned to the user")
 			result should have(
 				httpStatus(OK),
-				pageTitle("What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
+				pageTitleAgent(clientUTRTitle)
 			)
     }
   }
@@ -90,7 +92,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -103,7 +105,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitle("Error: What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "an empty utr string is submitted" in {
@@ -114,7 +116,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitle("Error: What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "a utr containing non-digits is submitted" in {
@@ -125,7 +127,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitle("Error: What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "a utr which has less than 10 digits is submitted" in {
@@ -136,7 +138,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitle("Error: What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
       "a utr which has more than 10 digits is submitted" in {
@@ -147,7 +149,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitle("Error: What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(clientUTRErrorTitle)
         )
       }
     }
@@ -267,7 +269,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          pageTitleIndividual(titleTechError)
         )
       }
       "there was an unexpected response retrieving the business details" in {
@@ -292,7 +294,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          pageTitleIndividual(titleTechError)
         )
       }
     }

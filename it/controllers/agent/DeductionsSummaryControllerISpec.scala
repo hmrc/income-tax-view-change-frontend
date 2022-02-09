@@ -17,6 +17,7 @@
 package controllers.agent
 
 import java.time.{LocalDate, LocalDateTime}
+
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalcDataIntegrationTestConstants._
 import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
@@ -33,6 +34,7 @@ import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
 import play.api.test.FakeRequest
+import testConstants.messages.DeductionsSummaryMessages.deductionsSummaryTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -100,7 +102,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       Then("I see Allowances and deductions page")
       res should have(
         httpStatus(OK),
-        pageTitle(messages.agentsDeductionsSummaryTitle),
+        pageTitleAgent(deductionsSummaryTitle),
       )
       val expectedAllowancesAndDeductions = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
       verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, txmApproved).detail)

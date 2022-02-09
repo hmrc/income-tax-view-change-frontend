@@ -32,6 +32,7 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
+import testConstants.messages.NextUpdatesMessages.nextUpdatesTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -139,7 +140,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 			Then("the next update view displays the correct title")
 			res should have(
 				httpStatus(OK),
-				pageTitle("Next updates - Your client’s Income Tax details - GOV.UK")
+				pageTitleAgent(nextUpdatesTitle)
 			)
 
 			verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)

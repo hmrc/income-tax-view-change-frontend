@@ -20,6 +20,9 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import java.time.LocalDate
 
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleNotFound}
+import testConstants.messages.PaymentAllocationMessages.paymentAllocationTitle
+
 class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
@@ -105,7 +108,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -141,7 +144,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
         result should have(
           httpStatus(NOT_FOUND),
-          pageTitle("Page not found - 404 - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleNotFound)
         )
       }
     }
@@ -163,7 +166,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
       result should have(
         httpStatus(OK),
-        pageTitle("Payment made to HMRC - Your client’s Income Tax details - GOV.UK")
+        pageTitleAgent(paymentAllocationTitle)
       )
 
       verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
@@ -202,7 +205,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
       result should have(
         httpStatus(INTERNAL_SERVER_ERROR),
-        pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+        pageTitleAgent(titleInternalServer)
       )
     }
   }

@@ -1,11 +1,13 @@
 
 package controllers.agent
 
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.titleInternalServer
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
+import testConstants.messages.AgentMessages.confirmClientDetails
 
 class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -40,7 +42,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -67,7 +69,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
 			Then("The confirm client's utr page is returned to the user")
 			result should have(
 				httpStatus(OK),
-				pageTitle("Confirm your client’s details - Your client’s Income Tax details - GOV.UK")
+				pageTitleAgent(confirmClientDetails)
 			)
     }
   }
@@ -96,7 +98,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitle("Sorry, there is a problem with the service - Your client’s Income Tax details - GOV.UK")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }

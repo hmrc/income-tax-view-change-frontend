@@ -16,9 +16,8 @@
 
 package testConstants.messages
 
-object IncomeSummaryMessages {
+object WhatYouOweMessages {
 
-  val incomeSummaryTitle = "Income"
-  val incomeSummaryHeading = "6 April 2017 to 5 April 2018 Income"
-  val incomeSummaryAgentHeading = "6 April 2021 to 5 April 2022 Income"
+  val whatYouOwePageTitle: String = "What you owe"
+
 }

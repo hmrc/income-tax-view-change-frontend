@@ -531,9 +531,7 @@ object NewCalcBreakdownUnitTestConstants {
       specialWithholdingTax = Some(600.0),
       voidISAs = Some(700.0),
       savings = Some(800.0),
-      inYearAdjustmentCodedInLaterTaxYear = Some(900.0),
-      total = Some(1000.0),
-      totalIncomeTaxAndNicsDue = Some(1100.0)
+      inYearAdjustmentCodedInLaterTaxYear = Some(900.0)
     ),
     totalTaxDeducted = Some(1000)
   )

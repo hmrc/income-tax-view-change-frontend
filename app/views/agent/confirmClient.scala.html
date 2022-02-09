@@ -34,20 +34,27 @@
     backUrl = Some(backUrl),
     isAgent = true
 ) {
+
     @h1(msg = "agent.confirmClient.heading")
+    <dl class="govuk-summary-list govuk-summary-list--no-border">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+            @messages("agent.confirmClient.clientName")
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @clientName
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                @messages("agent.confirmClient.clientUtr")
+            </dt>
 
-    @h2(msg = "agent.confirmClient.clientName")
-
-    @p(){
-		@clientName
-    }
-
-    @h2(msg = "agent.confirmClient.clientUtr")
-
-    @p(){
-		@clientUtr
-    }
-
+            <dd class="govuk-summary-list__value">
+                @clientUtr
+            </dd>
+        </div>
+    </dl>
 	@p(){
 		@link(link = backUrl, messageKey = "agent.confirmClient.changeClient")
 	}

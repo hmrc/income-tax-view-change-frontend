@@ -30,8 +30,9 @@ import models.financialDetails.{FinancialDetail, Payment, PaymentsWithChargeType
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-
 import java.time.LocalDate
+
+import testConstants.messages.ChargeSummaryMessages.{balancingPaymentTitle, lpiBalancingPayment, lpiPoa2, poa1Title, saPayment}
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
@@ -79,7 +80,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Payment on account 1 of 2 - Business Tax account - GOV.UK"),
+        pageTitleIndividual(poa1Title),
         elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
         elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
         elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
@@ -140,8 +141,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Balancing payment - Business Tax account - GOV.UK"),
-        elementTextBySelector("main h2")("Important Payment breakdown")
+        pageTitleIndividual(balancingPaymentTitle),
+          elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
 
@@ -184,7 +185,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Balancing payment - Business Tax account - GOV.UK"),
+        pageTitleIndividual(balancingPaymentTitle),
         elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
@@ -223,7 +224,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Balancing payment - Business Tax account - GOV.UK"),
+        pageTitleIndividual(balancingPaymentTitle),
         elementTextBySelector("main h2")("Payment history")
       )
     }
@@ -264,7 +265,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on Balancing payment - Business Tax account - GOV.UK"),
+        pageTitleIndividual(lpiBalancingPayment),
         elementTextBySelector("main h2")("Payment history"),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Late payment interest for Balancing payment created")
       )
@@ -289,7 +290,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on Balancing payment - Business Tax account - GOV.UK"),
+        pageTitleIndividual(lpiBalancingPayment),
         elementTextBySelector("main h2")("Payment history"),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
 
@@ -315,7 +316,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on Balancing payment - Business Tax account - GOV.UK"),
+        pageTitleIndividual(lpiBalancingPayment),
         elementTextBySelector("main h2")("")
       )
     }
@@ -353,7 +354,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Late payment interest on payment on account 2 of 2 - Business Tax account - GOV.UK"),
+        pageTitleIndividual(lpiPoa2),
         elementTextBySelector("main h2")("")
       )
     }
@@ -397,7 +398,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitle("Self Assessment payment (through your PAYE tax code) - Business Tax account - GOV.UK"),
+        pageTitleIndividual(saPayment),
         elementTextBySelector("h1")(header),
         elementTextBySelector("#coding-out-notice")(insetPara),
         elementTextBySelector("#coding-out-message")(summaryMessage),
@@ -426,7 +427,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     result should have(
       httpStatus(OK),
-      pageTitle("Balancing payment - Business Tax account - GOV.UK")
+      pageTitleIndividual(balancingPaymentTitle)
     )
   }
 
@@ -448,7 +449,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     result should have(
       httpStatus(OK),
-      pageTitle("Balancing payment - Business Tax account - GOV.UK")
+      pageTitleIndividual(balancingPaymentTitle)
     )
   }
 
@@ -471,7 +472,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       result should have(
         httpStatus(INTERNAL_SERVER_ERROR),
-        pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
+        pageTitleIndividual(titleInternalServer)
       )
     }
   }
