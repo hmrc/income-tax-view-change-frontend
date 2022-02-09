@@ -166,13 +166,13 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         result should have(
           httpStatus(OK),
           pageTitleAgent(taxYearsTitle),
-          elementTextBySelectorList("#main-content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)", "li:nth-of-type(1)")(
+          elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
             expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),
-          elementTextBySelectorList("#main-content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "li:nth-of-type(1)")(
+          elementTextBySelectorList(s"#viewReturn-link-${getCurrentTaxYearEnd.getYear}")(
             expectedValue = s"View return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),
-          elementTextBySelectorList("#main-content", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "li:nth-of-type(2)")(
+          elementTextBySelectorList(s"#updateReturn-link-${getCurrentTaxYearEnd.getYear}")(
             expectedValue = s"Update return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           )
         )

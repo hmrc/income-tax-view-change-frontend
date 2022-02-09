@@ -51,21 +51,13 @@
 }
 
 @taxYearRow(year: Int) = {
-    <tr class="govuk-table__row">
-        <td class="govuk-table__header">
-            <ul class="govuk-list" style="margin-bottom:0; display:inline-block;">
-                <li>@messages("taxYears.taxYears", s"${year - 1}", s"$year")</li>
-            </ul>
-        </td>
-        <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">
-            <ul class="govuk-list" style="margin-bottom:0; display:inline-block;">
-                <li>@viewReturnLink(year)</li>
-                @if(itsaSubmissionIntegrationEnabled) {
-                    <li>@updateReturnLink(year)</li>
-                }
-            </ul>
-        </td>
-    </tr>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__value">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</dt>
+        @if(itsaSubmissionIntegrationEnabled) {
+            <dd class="govuk-summary-list__actions">@updateReturnLink(year)</dd>
+        }
+        <dd class="govuk-summary-list__actions">@viewReturnLink(year)</dd>
+    </div>
 }
 
 @mainTemplate(
@@ -79,20 +71,9 @@
     @if(taxYears.isEmpty){
         <p id="no-taxYears">@messages("taxYears.noEstimates")</p>
     } else {
-        <div class="column-two-thirds">
-            <table class="govuk-table">
-                <caption class="govuk-table__caption govuk-table__caption--xl heading-xlarge govuk-visually-hidden">@messages("taxYears.heading")</caption>
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">@messages("taxYears.table.taxYear.heading")</th>
-                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("taxYears.table.options.heading")</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                @taxYears.map(taxYearRow)
-                </tbody>
-            </table>
-        </div>
+        <dl class="govuk-summary-list">
+            @taxYears.map(taxYearRow)
+        </dl>
     }
 
     @if(!isAgent) {
@@ -107,7 +88,7 @@
     @if(isAgent) {
         @p(id=Some("oldSa-para-agent")){
             @messages("taxYears.oldSa.agent.content.1")
-            @link(link = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service",
+            @link(link = appConfig.saForAgents,
                 messageKey = "taxYears.oldSa.agent.content.2", id=Some("self-assessment-for-agents-link"),
                 outerMessage = ".", target = Some("_blank"))
             @messages("taxYears.oldSa.agent.content.3")
