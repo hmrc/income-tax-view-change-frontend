@@ -16,21 +16,21 @@
 
 package controllers
 
-import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
-import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
-import testConstants.EstimatesTestConstants.testYear
 import audit.mocks.MockAuditingService
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{BtaNavFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{charset, contentType, _}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
+import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
+import testConstants.EstimatesTestConstants.testYear
 import testUtils.TestSupport
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
@@ -45,6 +45,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     mockAuditingService,
     app.injector.instanceOf[views.html.DeductionBreakdown],
     app.injector.instanceOf[views.html.DeductionBreakdownNew],
+    app.injector.instanceOf[BtaNavFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler]
   )(
     appConfig,
@@ -108,7 +109,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
           status(result) shouldBe Status.OK
 
           val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
-            saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
+            btaNavPartial =  None, saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
           verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
             calculationDataSuccessModel.allowancesAndDeductions, true))
@@ -132,7 +133,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
           status(result) shouldBe Status.OK
 
           val expectedMtdItUser = MtdItUserWithNino(mtditid = testMtditid, nino = testNino, userName = Some(testRetrievedUserName),
-            saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
+            btaNavPartial =  None, saUtr = None, credId = Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
           verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
             calculationDataSuccessModel.allowancesAndDeductions, false))
         }

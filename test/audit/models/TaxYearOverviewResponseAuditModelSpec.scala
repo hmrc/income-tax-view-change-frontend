@@ -97,6 +97,7 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
         nino = "nino",
         userName = Some(Name(Some("firstName"), Some("lastName"))),
         incomeSources = IncomeSourceDetailsModel("mtditid", None, business, None),
+        btaNavPartial =  None,
         saUtr = Some("saUtr"),
         credId = Some("credId"),
         userType = userType,

@@ -51,13 +51,15 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                           retrieveNino: NinoPredicate,
                                           nextUpdatesService: NextUpdatesService,
+                                          val retrieveBtaNavBar: BtaNavBarPredicate,
                                           val auditingService: AuditingService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSourcesNoCache
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
+    retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
@@ -181,7 +183,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
             val codingOutEnabled = isEnabled(CodingOut)
             if (isEnabled(NewTaxCalcProxy)) {
               calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map { liabilityCalcResponse =>
-                view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled, backUrl = getBackURL(user.headers.get(REFERER)))
+                view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
+                  backUrl = getBackURL(user.headers.get(REFERER)))
                   .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               }
             } else {
@@ -195,7 +198,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                 case CalcDisplayNoDataFound =>
                   val codingOutEnabled = isEnabled(CodingOut)
                   Future.successful(Ok(viewOld(taxYear, charge = charges,
-                    obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.headers.get(REFERER)))).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview"))
+                    obligations = obligationsModel, codingOutEnabled = codingOutEnabled,
+                    backUrl = getBackURL(user.headers.get(REFERER)))).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview"))
                 case CalcDisplayError =>
                   Logger("application").error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
                   Future.successful(itvcErrorHandler.showInternalServerError())

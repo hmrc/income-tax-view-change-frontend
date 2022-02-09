@@ -120,8 +120,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
@@ -157,8 +157,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
@@ -192,8 +192,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       AuditStub.verifyAuditDoesNotContainsDetail(ChargeSummaryAudit(
         MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None,
+          Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
@@ -234,8 +234,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
@@ -262,8 +262,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
         paymentBreakdown = List.empty,

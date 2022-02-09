@@ -19,7 +19,7 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{CodingOut, FeatureSwitching, NewTaxCalcProxy}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
@@ -39,7 +39,6 @@ import testConstants.MessagesLookUp
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
 import views.html.{TaxYearOverview, TaxYearOverviewOld}
-
 import java.time.LocalDate
 
 class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationService
@@ -61,6 +60,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
     MockIncomeSourceDetailsPredicateNoCache,
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
+    app.injector.instanceOf[BtaNavBarPredicate],
     mockAuditingService
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],

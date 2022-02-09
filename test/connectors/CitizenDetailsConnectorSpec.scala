@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class CitizenDetailsConnectorSpec extends TestSupport with MockHttp{
+class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(status = Status.OK, json = testValidCitizenDetailsModelJson, headers = Map.empty)
   val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidCitizenDetailsJson, headers = Map.empty)

@@ -52,8 +52,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    paymentHistoryBusinessAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
+    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
   s"GET ${controllers.routes.PaymentHistoryController.viewPaymentHistory().url}" should {

@@ -17,8 +17,9 @@
 package testConstants
 
 import play.api.http.Status
-
 import java.time.LocalDate
+
+import models.btaNavBar.{NavContent, NavLinks}
 
 object BaseIntegrationTestConstants {
 
@@ -62,4 +63,12 @@ object BaseIntegrationTestConstants {
 
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
+
+  val testNavLinks: NavContent = NavContent(
+    NavLinks("testEnHome", "testCyHome", "testUrl"),
+    NavLinks("testEnAccount", "testCyAccount", "testUrl"),
+    NavLinks("testEnMessages", "testCyMessages", "testUrl"),
+    NavLinks("testEnHelp", "testCyHelp", "testUrl"),
+    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
+  )
 }

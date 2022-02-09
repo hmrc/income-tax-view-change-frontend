@@ -41,7 +41,7 @@ class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLooku
     lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName),
       Some("testUtr"), Some("testCredId"), Some("Individual"))(fakeRequestWithActiveSession)
     lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+      btaNavPartial =  None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
     lazy val ninoServiceSuccess = NinoResponseSuccess(testNino)
     lazy val ninoServiceError = NinoResponseError(testErrorStatus, testErrorMessage)

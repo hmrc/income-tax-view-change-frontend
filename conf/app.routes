@@ -67,7 +67,7 @@ GET         /uplift-failed                                                contro
 GET         /uplift-success                                               controllers.UpliftSuccessController.success
 
 #BTA Partial
-GET         /partial                                                      controllers.BTAPartialController.setupPartial
+GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial
 
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false)

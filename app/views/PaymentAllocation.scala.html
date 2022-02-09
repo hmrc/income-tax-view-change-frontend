@@ -25,13 +25,15 @@
 @this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
         paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, isAgent: Boolean = false,
+btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @mainTemplate(
     pageTitle = messages("paymentAllocation.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial
 ) {
 
 @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))

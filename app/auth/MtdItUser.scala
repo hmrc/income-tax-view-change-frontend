@@ -18,6 +18,7 @@ package auth
 
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
+import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
@@ -40,6 +41,7 @@ case class MtdItUserOptionNino[A](mtditid: String,
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,
                                 userName: Option[Name],
+                                btaNavPartial: Option[Html] = None,
                                 saUtr: Option[String],
                                 credId: Option[String],
                                 userType: Option[String],
@@ -49,6 +51,7 @@ case class MtdItUser[A](mtditid: String,
                         nino: String,
                         userName: Option[Name],
                         incomeSources: IncomeSourceDetailsModel,
+                        btaNavPartial: Option[Html] = None,
                         saUtr: Option[String],
                         credId: Option[String],
                         userType: Option[String],

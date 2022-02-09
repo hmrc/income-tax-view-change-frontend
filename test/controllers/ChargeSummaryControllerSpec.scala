@@ -21,7 +21,7 @@ import audit.mocks.MockAuditingService
 import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
@@ -74,7 +74,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
 			incomeTaxViewChangeConnector,
-      app.injector.instanceOf[views.html.ChargeSummary]
+      app.injector.instanceOf[views.html.ChargeSummary],
+      app.injector.instanceOf[BtaNavBarPredicate]
     )(
       app.injector.instanceOf[FrontendAppConfig],
       languageUtils,

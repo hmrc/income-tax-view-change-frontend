@@ -19,6 +19,7 @@ package views
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import testConstants.BaseTestConstants.testNavHtml
 import testConstants.MessagesLookUp.DeductionBreakdown
 import testUtils.ViewSpec
 import views.html.DeductionBreakdownNew
@@ -31,6 +32,15 @@ class DeductionBreakdownNewViewSpec extends ViewSpec {
   def deductionBreakdownNewView: DeductionBreakdownNew = app.injector.instanceOf[DeductionBreakdownNew]
 
   "The deduction breakdown view" when {
+
+    "provided with a btaNavPartial" should{
+      val taxYear = 2017
+      lazy val view = deductionBreakdownNewView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = testNavHtml)
+
+      "render the btaNavPartial" in new Setup(view) {
+        document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
+      }
+    }
 
     "provided with a calculation without tax deductions for the 2017 tax year" should {
       val taxYear = 2017

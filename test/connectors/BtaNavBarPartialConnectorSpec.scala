@@ -24,7 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import testUtils.UnitSpec
+import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,7 +38,7 @@ class BtaNavBarPartialConnectorSpec extends UnitSpec with MockitoSugar with Befo
   object TestBtaNavBarPartialConnector extends BtaNavBarPartialConnector(mockHttpGet, frontendAppConfig)
 
   val successResponseNavLinks = NavContent(
-    NavLinks("Home", "Hafan", "http://localhost:9020/business-account"),
+    NavLinks("Home", "Hafan", frontendAppConfig.homePageUrl),
     NavLinks("Manage account", "Rheoli'r cyfrif", "http://localhost:9020/business-account/manage-account"),
     NavLinks("Messages", "Negeseuon", "http://localhost:9020/business-account/messages", Some(5)),
     NavLinks("Help and contact", "Cymorth a chysylltu", "http://localhost:9733/business-account/help"),

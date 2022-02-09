@@ -52,6 +52,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+    btaNavPartial =  None,
     Some(testSaUtr),
     Some(testCredId),
     Some("agent"),

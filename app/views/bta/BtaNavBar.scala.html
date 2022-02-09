@@ -1,0 +1,26 @@
+
+@import models.btaNavBar.ListLinks
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcNotificationBadge
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.NotificationBadge
+
+@this(hmrcNotificationBadge : HmrcNotificationBadge)
+
+@(navLinks: Seq[ListLinks])(implicit messages: Messages)
+<nav id="secondary-nav" class="hmrc-account-menu">
+    <ul class="hmrc-account-menu__main govuk-grid-column-full" style="padding: 0;">
+        @for( nav <- navLinks) {
+        @if(nav.showBoolean.contains(false)){} else {
+            <li>
+                <a href="@nav.url" id="nav-bar-link-@nav.message.replace(' ','-')" class="hmrc-account-menu__link" data-journey-click="link - click:Service info:Business tax @nav.message">
+                    @nav.message
+                    @nav.alerts match {
+                        case Some(alert) if(alert != "0") => { @hmrcNotificationBadge(NotificationBadge(alert))}
+                            case _ => {}
+                        }
+                    }
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>

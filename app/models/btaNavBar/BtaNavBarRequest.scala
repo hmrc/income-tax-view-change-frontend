@@ -16,13 +16,13 @@
 
 package models.btaNavBar
 
-import play.api.libs.json.{Json, Reads}
+import auth.MtdItUser
+import play.api.libs.json.Json
+import play.twirl.api.Html
 
-// These case classes are likely to be needed when implementing the service and controller
-//
-//case class ServiceInfoRequest[A](request: AuthenticatedRequest[A], serviceInfoContent: Option[Html]) extends WrappedRequest[A](request)
-//
-//case class ListLinks(message: String, url: String, alerts: Option[String] = None, showBoolean: Option[Boolean] = Some(true))
+case class BtaNavBarRequest[A](request: MtdItUser[A], serviceInfoContent: Option[Html])
+
+case class ListLinks(message: String, url: String, alerts: Option[String] = None, showBoolean: Option[Boolean] = Some(true))
 
 case class NavLinks(en: String, cy: String, url: String, alerts: Option[Int] = None)
 

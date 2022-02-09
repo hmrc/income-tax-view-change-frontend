@@ -18,19 +18,20 @@ package controllers
 
 import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.TaxYears
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearsController @Inject() (taxYearsView: TaxYears)
-                                   (implicit val appConfig: FrontendAppConfig,
+class TaxYearsController @Inject()(taxYearsView: TaxYears)
+                                  (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val executionContext: ExecutionContext,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
+                                   val btaNavBarPredicate: BtaNavBarPredicate,
                                    val authenticate: AuthenticationPredicate,
                                    val retrieveNino: NinoPredicate,
                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -38,9 +39,11 @@ class TaxYearsController @Inject() (taxYearsView: TaxYears)
                                    val itvcErrorHandler: ItvcErrorHandler
                                   ) extends BaseController with I18nSupport with FeatureSwitching {
 
-  val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+  val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen btaNavBarPredicate).async {
     implicit user =>
-			Future.successful(Ok(taxYearsView(taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse, backUrl = backUrl, utr = user.saUtr, isEnabled(ITSASubmissionIntegration))))
+      Future.successful(Ok(taxYearsView(taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse, backUrl = backUrl,
+        utr = user.saUtr, itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration), btaNavPartial = user.btaNavPartial)))
   }
 
   lazy val backUrl: String = controllers.routes.HomeController.home().url

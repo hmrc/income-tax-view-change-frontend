@@ -59,6 +59,11 @@ trait GenericStubMethods extends CustomMatchers {
     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid, noOfCalls)
   }
 
+  def verifyBtaNavBarCall(mtditid: String, noOfCalls: Int = 1): Unit = {
+    Then(s"Verify that Income Source Details has been called for MTDITID = $mtditid")
+    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid, noOfCalls)
+  }
+
   def verifyNextUpdatesCall(nino: String): Unit = {
     IncomeTaxViewChangeStub.verifyGetNextUpdates(nino)
   }

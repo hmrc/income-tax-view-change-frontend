@@ -38,8 +38,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
   val docNumber = "docNumber1"
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    paymentHistoryBusinessAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
+    None, Some("1234567890"), None, Some("Agent"), Some("1")
   )(FakeRequest())
 
   val getCurrentTaxYearEnd: LocalDate = {

@@ -45,16 +45,18 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
                                         calculationService: CalculationService,
                                         itvcErrorHandler: ItvcErrorHandler,
                                         taxCalcBreakdown: TaxCalcBreakdown,
+                                        retrieveBtaNavPartial: BtaNavBarPredicate,
                                         taxCalcBreakdownNew: TaxCalcBreakdownNew,
                                         val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
-                                        val executionContext: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                        val executionContext: ExecutionContext
+                                       ) extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources)
 
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen
+    retrieveIncomeSources andThen retrieveBtaNavPartial
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = {
 
@@ -65,7 +67,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = TaxDueSummaryViewModel(liabilityCalc)
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
-              Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear)))
+              Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear), false, user.btaNavPartial))
             case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
               Logger("application").info("[TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
               itvcErrorHandler.showInternalServerError()
@@ -81,8 +83,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
               if (isEnabled(TxmEventsApproved)) {
                 auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(user, calcDisplayModel, taxYear))
               }
-              Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
-
+              Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), false, user.btaNavPartial)))
             case CalcDisplayNoDataFound =>
               Logger("application").warn(
                 "[TaxDueController][showTaxDueSummary[" + taxYear +

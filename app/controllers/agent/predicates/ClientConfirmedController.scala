@@ -71,7 +71,7 @@ trait ClientConfirmedController extends BaseAgentController {
   def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService, useCache: Boolean)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
     val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
-      getClientMtditid, getClientNino, getClientName, getClientUtr, user.credId, Some("Agent"), user.agentReferenceNumber
+      getClientMtditid, getClientNino, getClientName, None, getClientUtr, user.credId, Some("Agent"), user.agentReferenceNumber
     )
 
     val cacheKey = if (useCache) {
@@ -80,7 +80,8 @@ trait ClientConfirmedController extends BaseAgentController {
     } else None
     incomeSourceDetailsService.getIncomeSourceDetails(cacheKey)(hc = hc, mtdUser = userWithNino) map {
       case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
-        userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, userWithNino.saUtr, userWithNino.credId, userWithNino.userType, userWithNino.arn)
+        userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, None, userWithNino.saUtr,
+        userWithNino.credId, userWithNino.userType, userWithNino.arn)
       case _ => throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
     }
   }

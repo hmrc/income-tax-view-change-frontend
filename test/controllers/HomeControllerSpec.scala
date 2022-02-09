@@ -17,7 +17,7 @@
 package controllers
 
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.calculation.Calculation
 import models.financialDetails._
@@ -33,8 +33,8 @@ import play.api.test.Helpers._
 import services.{FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import testConstants.MessagesLookUp
 import utils.CurrentDateProvider
-
 import java.time.{LocalDate, Month}
+
 import scala.concurrent.Future
 
 class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with BeforeAndAfterEach {
@@ -71,6 +71,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			financialDetailsService,
 			currentDateProvider,
 			whatYouOweService,
+			app.injector.instanceOf[BtaNavBarPredicate],
 			mockAuditingService)(
       ec,
       app.injector.instanceOf[MessagesControllerComponents],

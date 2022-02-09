@@ -34,7 +34,7 @@ trait MockTaxYears extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockTaxYears(years: List[Int], backUrl: String)(response: Html): Unit = {
-    when(taxYears(matches(years), matches(backUrl), any(), any(), any())(any(), any()))
+    when(taxYears(matches(years), matches(backUrl), any(), any(), any(), any())(any(), any()))
       .thenReturn(response)
   }
 

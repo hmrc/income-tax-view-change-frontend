@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsResponseModel}
 import play.api.Logger
@@ -40,6 +40,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val whatYouOweService: WhatYouOweService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
+                                     val retrieveBtaNavBar: BtaNavBarPredicate,
                                      val auditingService: AuditingService,
                                      implicit val appConfig: FrontendAppConfig,
                                      mcc: MessagesControllerComponents,
@@ -51,7 +52,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel])
   }
 
-  val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+  val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar ).async {
     implicit user =>
         whatYouOweService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
@@ -63,7 +64,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             val displayTotals = isEnabled(WhatYouOweTotals)
 
             Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock ,
-              currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr,
+              currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr, btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock, codingOutEnabled = codingOutEnabled, displayTotals = displayTotals)
             ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
         } recover {

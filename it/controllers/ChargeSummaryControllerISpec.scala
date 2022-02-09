@@ -89,7 +89,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "ITSA- POA 1"),
@@ -126,7 +126,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
@@ -170,7 +170,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
@@ -209,7 +209,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       AuditStub.verifyAuditDoesNotContainsDetail(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "TRM New Charge"),
@@ -250,7 +250,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"),
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-02-14", "TRM New Charge"),

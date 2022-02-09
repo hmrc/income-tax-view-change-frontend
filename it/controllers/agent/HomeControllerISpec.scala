@@ -83,8 +83,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
   )
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-    incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetailsModel,
+		None, Some("1234567890"), None, Some("Agent"), Some(testArn)
   )(FakeRequest())
 
 

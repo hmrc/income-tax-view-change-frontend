@@ -25,7 +25,13 @@
         appConfig: config.FrontendAppConfig
 )
 
-@(taxYears: List[Int], backUrl: String, utr: Option[String] = None, itsaSubmissionIntegrationEnabled: Boolean, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(taxYears: List[Int],
+    backUrl: String,
+    utr: Option[String] = None,
+    itsaSubmissionIntegrationEnabled: Boolean,
+    isAgent: Boolean = false,
+    btaNavPartial: Option[Html] = None
+)(implicit request: Request[_], messages: Messages)
 
 @getReturnHref(year: Int) = @{
     if (isAgent) {
@@ -71,7 +77,8 @@
 @mainTemplate(
     pageTitle = messages("taxYears.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial
 ) {
 
     @h1(msg = "taxYears.heading", id=Some("heading"))

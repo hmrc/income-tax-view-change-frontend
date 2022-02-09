@@ -40,6 +40,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = singleBusinessIncomeWithCurrentYear,
+    btaNavPartial =  None,
     saUtr = Some("1234567890"),
     credId = Some("credId"),
     userType = Some("Individual"),

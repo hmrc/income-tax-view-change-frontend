@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models._
-import auth.MtdItUserWithNino
+import auth.{MtdItUserBase, MtdItUserWithNino}
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
@@ -33,8 +33,8 @@ import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.DeductionBreakdown
 import views.html.DeductionBreakdownNew
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -46,6 +46,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
                                             val deductionBreakdownViewNew: DeductionBreakdownNew,
+                                            val retrieveBtaNavBar: BtaNavFromNinoPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
@@ -53,7 +54,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val languageUtils: LanguageUtils)
   extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
+  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
 
 
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] = {
@@ -65,7 +66,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))
-              Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear)))
+              Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial))
             case error: LiabilityCalculationError if error.status == NOT_FOUND =>
               Logger("application").info(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
               itvcErrorHandler.showInternalServerError()
@@ -79,7 +80,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
             case calcDisplayModel: CalcDisplayModel =>
               auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
                 calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
-              Ok(deductionBreakdownView(calcDisplayModel, taxYear, backUrl(taxYear)))
+              Ok(deductionBreakdownView(calcDisplayModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial))
 
             case CalcDisplayNoDataFound =>
               Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
