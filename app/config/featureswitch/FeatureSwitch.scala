@@ -38,7 +38,7 @@ object FeatureSwitch {
     WhatYouOweTotals,
     BtaNavBar,
     NewTaxCalcProxy,
-    Class4UpliftEnabled,
+    Class4UpliftEnabled
   )
 
   def apply(str: String): FeatureSwitch =
