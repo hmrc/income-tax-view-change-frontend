@@ -60,7 +60,7 @@
         <div id="payments-due-note" class="govuk-inset-text">
             @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
                 link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-                    messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
+                    messageKey = getPrefix("sa-link"), messageKeyExt = messages("pagehelp.opensInNewTabText"), id=Some("sa-note-migrated-link"), rel="noreferrer noopener", target=Some("_blank")).toString()),
                 )
             @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
         </div>
@@ -117,7 +117,7 @@
         @p(){
             @getMessage("dunningLock.text", "")
             @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
-                id = Some("disagree-with-tax-appeal-link"), target = Some("_blank"))
+                messageKeyExt = messages("pagehelp.opensInNewTabText"), id = Some("disagree-with-tax-appeal-link"), rel="noreferrer noopener", target = Some("_blank"))
         }
         </div>
     }
@@ -350,7 +350,8 @@
                 @if(chargesList.interestOnOverdueCharges) {
                     @p(id=Some("interest-rate-para"), classes="govuk-body interest-rate")(Html(getMessage("over-due.interest-rate-1", "") +
                         link(outerMessage = ".", link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates",
-                            messageKey = getPrefix("over-due.interest-rate.link"), id = Some("interest-rate-link"), target = Some("_blank")).toString() + getMessage("over-due.interest-rate-2")),
+                            messageKey = getPrefix("over-due.interest-rate.link"), messageKeyExt = messages("pagehelp.opensInNewTabText"), id = Some("interest-rate-link"),
+                            rel="noreferrer noopener", target = Some("_blank")).toString() + getMessage("over-due.interest-rate-2")),
                         )
                 }
             }
