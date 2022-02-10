@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models._
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
+import config.featureswitch.{Class4UpliftEnabled, FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
@@ -67,7 +67,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
             case liabilityCalc: LiabilityCalculationResponse =>
               val viewModel = TaxDueSummaryViewModel(liabilityCalc)
               auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(user, viewModel, taxYear))
-              Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear), false, user.btaNavPartial))
+              Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear),isAgent = false, user.btaNavPartial, class4UpliftEnabled = isEnabled(Class4UpliftEnabled)))
             case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
               Logger("application").info("[TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
               itvcErrorHandler.showInternalServerError()
