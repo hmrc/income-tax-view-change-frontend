@@ -83,7 +83,7 @@ class WhatYouOweControllerSpec extends TestSupport
         val result = controller.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
 
 
       }
@@ -99,7 +99,7 @@ class WhatYouOweControllerSpec extends TestSupport
         val result = controller.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
 
 
       }
