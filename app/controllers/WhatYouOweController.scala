@@ -18,20 +18,56 @@ package controllers
 
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
-import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import auth.MtdItUser
+import config.featureswitch.{CodingOut, FeatureSwitch, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
+import config.{FrontendAppConfig, ShowInternalServerError, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate,
+  SessionTimeoutPredicate, BtaNavBarPredicate}
 import forms.utils.SessionKeys
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
 import play.api.Logger
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.Results._
 import services.WhatYouOweService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
-import javax.inject.Inject
 
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
+trait WhatYouOweRequestHandler {
+  def handleRequest(whatYouOweService: WhatYouOweService,
+                    auditingService: AuditingService,
+                    whatYouOwe: WhatYouOwe,
+                    backUrl: String,
+                    itvcErrorHandler: ShowInternalServerError,
+                    isEnabled: (FeatureSwitch) => Boolean,
+                    isAgent: Boolean)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+    whatYouOweService.getWhatYouOweChargesList().map {
+      whatYouOweChargesList =>
+        if (isEnabled(TxmEventsApproved)) {
+          auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
+        }
+
+        val codingOutEnabled = isEnabled(CodingOut)
+        val displayTotals = isEnabled(WhatYouOweTotals)
+
+        Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
+          currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
+          btaNavPartial = user.btaNavPartial,
+          dunningLock = whatYouOweChargesList.hasDunningLock, codingOutEnabled = codingOutEnabled, displayTotals = displayTotals, isAgent = isAgent)
+        ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error received while getting WhatYouOwe page details: ${ex.getMessage}")
+        itvcErrorHandler.showInternalServerError()
+    }
+  }
+}
 
 class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
@@ -46,32 +82,24 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      mcc: MessagesControllerComponents,
                                      implicit val ec: ExecutionContext,
                                      whatYouOwe: WhatYouOwe
-                                    ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                    ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with WhatYouOweRequestHandler {
 
   def hasFinancialDetailsError(financialDetails: List[FinancialDetailsResponseModel]): Boolean = {
     financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel])
   }
 
-  val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar ).async {
+  val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar ).async {
     implicit user =>
-        whatYouOweService.getWhatYouOweChargesList().map {
-          whatYouOweChargesList =>
-            if (isEnabled(TxmEventsApproved)) {
-              auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
-            }
-
-            val codingOutEnabled = isEnabled(CodingOut)
-            val displayTotals = isEnabled(WhatYouOweTotals)
-
-            Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock ,
-              currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, user.saUtr, btaNavPartial = user.btaNavPartial,
-              dunningLock = whatYouOweChargesList.hasDunningLock, codingOutEnabled = codingOutEnabled, displayTotals = displayTotals)
-            ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
-        } recover {
-          case ex: Exception =>
-            Logger("application").error(s"Error received while getting what you page details: ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
-        }
+      handleRequest(
+        whatYouOweService = whatYouOweService,
+        auditingService = auditingService,
+        whatYouOwe = whatYouOwe,
+        backUrl = backUrl,
+        itvcErrorHandler = itvcErrorHandler,
+        isEnabled = isEnabled,
+        isAgent = true
+      )
   }
 
 

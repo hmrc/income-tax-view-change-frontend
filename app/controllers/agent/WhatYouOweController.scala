@@ -17,17 +17,13 @@
 package controllers.agent
 
 import audit.AuditingService
-import audit.models.WhatYouOweResponseAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
+import auth.FrontendAuthorisedFunctions
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import controllers.WhatYouOweRequestHandler
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys
-import models.financialDetails.WhatYouOweChargesList
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, WhatYouOweService}
 import views.html.WhatYouOwe
 
@@ -44,45 +40,22 @@ class WhatYouOweController @Inject()(whatYouOweView: WhatYouOwe,
                                     )(implicit mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext,
                                       itvcErrorHandler: AgentItvcErrorHandler
-                                    ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
-
-  private def view(charge: WhatYouOweChargesList, taxYear: Int,codingOutEnabled: Boolean, displayTotals: Boolean,
-                   hasLpiWithDunningBlock: Boolean, dunningLock: Boolean)(implicit user: MtdItUser[_]): Html = {
-    whatYouOweView.apply(
-      chargesList = charge,
-      currentTaxYear = taxYear,
-      hasLpiWithDunningBlock = hasLpiWithDunningBlock,
-      backUrl = backUrl,
-      utr = user.saUtr,
-      dunningLock = dunningLock,
-      codingOutEnabled = codingOutEnabled,
-      displayTotals = displayTotals,
-      isAgent = true
-    )
-  }
+                                    ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with WhatYouOweRequestHandler {
 
   def show: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
-						whatYouOweService.getWhatYouOweChargesList().map {
-							whatYouOweChargesList => {
-								if (isEnabled(TxmEventsApproved)) {
-									auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
-								}
-                val codingOutEnabled = isEnabled(CodingOut)
-                val displayTotals = isEnabled(WhatYouOweTotals)
-								Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear,codingOutEnabled = codingOutEnabled,
-                  displayTotals = displayTotals, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
-                  dunningLock = whatYouOweChargesList.hasDunningLock)
-								).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
-							}
-						} recover {
-							case ex: Exception =>
-								Logger("application").error(s"Error received while getting agent what you page details: ${ex.getMessage}")
-								itvcErrorHandler.showInternalServerError()
-						}
+            handleRequest(
+              whatYouOweService = whatYouOweService,
+              auditingService = auditingService,
+              whatYouOwe = whatYouOweView,
+              backUrl = backUrl,
+              itvcErrorHandler = itvcErrorHandler,
+              isEnabled = isEnabled,
+              isAgent = true
+            )
         }
   }
 
