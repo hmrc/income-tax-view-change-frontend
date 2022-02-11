@@ -31,8 +31,8 @@ import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.{IncomeBreakdown, IncomeBreakdownOld}
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -45,6 +45,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
                                         val calculationService: CalculationService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                         val auditingService: AuditingService,
+                                        val retrieveBtaNavBar: BtaNavFromNinoPredicate,
                                         val itvcErrorHandler: ItvcErrorHandler)
                                        (implicit val executionContext: ExecutionContext,
                                         val languageUtils: LanguageUtils,
@@ -52,7 +53,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
                                         mcc: MessagesControllerComponents)
                                         extends BaseController with ImplicitDateFormatter with FeatureSwitching  with I18nSupport {
 
-  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
+  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
 
 
   def showIncomeSummary(taxYear: Int): Action[AnyContent] =
@@ -63,7 +64,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
         } else {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(incomeBreakdownOld(calcDisplayModel, taxYear, backUrl(taxYear))))
+              Future.successful(Ok(incomeBreakdownOld(calcDisplayModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial)))
 
             case CalcDisplayNoDataFound =>
               Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
@@ -81,7 +82,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdownOld: IncomeBreakdownO
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
         viewModel match {
-          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl(taxYear), isAgent = false))
+          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl(taxYear), isAgent = false, btaNavPartial = user.btaNavPartial))
           case _ =>
             Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()

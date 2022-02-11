@@ -37,9 +37,9 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
   )
 
   lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
   lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
   "The IncomeSourceDetailsPredicate" when {
 

@@ -16,12 +16,15 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import audit.AuditingService
 import audit.models.HomeAudit
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -32,8 +35,6 @@ import services.{FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.CurrentDateProvider
 
-import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,6 +48,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val financialDetailsService: FinancialDetailsService,
                                val currentDateProvider: CurrentDateProvider,
                                val whatYouOweService: WhatYouOweService,
+                               val retrieveBtaNavBar: BtaNavBarPredicate,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                mcc: MessagesControllerComponents,
@@ -69,7 +71,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     )
   }
 
-  val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+  val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
 
       nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>

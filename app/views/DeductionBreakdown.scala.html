@@ -24,7 +24,7 @@
         p: p
 )
 
-@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
     @dataItem.map { data =>
@@ -36,7 +36,7 @@
 }
 
 
-@mainTemplate(pageTitle = messages("deduction_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent) {
+@mainTemplate(pageTitle = messages("deduction_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial) {
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>

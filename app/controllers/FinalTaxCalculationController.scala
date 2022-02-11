@@ -19,7 +19,7 @@ package controllers
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview}
 import models.finalTaxCalculation.TaxReturnRequestModel
@@ -47,10 +47,12 @@ class FinalTaxCalculationController @Inject()(
                                                retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                calcService: CalculationService,
                                                itvcErrorHandler: ItvcErrorHandler,
+                                               val retrieveBtaNavBar: BtaNavBarPredicate,
                                                val appConfig: FrontendAppConfig
                                              ) extends FrontendController(cc) with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen
+    retrieveIncomeSources andThen retrieveBtaNavBar
 
 
   def show(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
@@ -71,7 +73,7 @@ class FinalTaxCalculationController @Inject()(
         case CalcDisplayModel(_, _, calcDataModel, _) =>
           val calcOverview = CalcOverview(calcDataModel)
           lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-          Ok(viewOld(calcOverview, taxYear, isAgent = false, backUrl))
+          Ok(viewOld(calcOverview, taxYear, isAgent = false, backUrl = backUrl))
         case CalcDisplayNoDataFound =>
           Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
           itvcErrorHandler.showInternalServerError()

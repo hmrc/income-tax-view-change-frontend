@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.bta
 
-import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import testUtils.TestSupport
-import views.html.BtaPartial
+import views.html.bta.BtaPartial
 
 class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 

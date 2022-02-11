@@ -15,25 +15,27 @@
  */
 package controllers
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
-import testConstants.NextUpdatesIntegrationTestConstants._
-import testConstants.messages.HomeMessages._
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.TxmEventsApproved
+import config.featureswitch.{BtaNavBar, TxmEventsApproved}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.BtaNavBarPartialConnectorStub.{testNavLinkJson, verifyBtaNavPartialResponse}
+import helpers.servicemocks.{BtaNavBarPartialConnectorStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
+import testConstants.NextUpdatesIntegrationTestConstants._
+import testConstants.messages.HomeMessages._
 
 class HomeControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,  None,
+    Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
@@ -81,8 +83,9 @@ class HomeControllerISpec extends ComponentSpecBase {
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
-      "render the home page with the payment due date with TxmEventsApproved FS disabled" in {
+      "render the home page with the payment due date and Bta Nav Bar with TxmEventsApproved FS disabled" in {
         disable(TxmEventsApproved)
+        enable(BtaNavBar)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -92,6 +95,9 @@ class HomeControllerISpec extends ComponentSpecBase {
           singleObligationOverdueModel(testPropertyId),
           singleObligationCrystallisationModel
         ))
+
+        And("I wiremock stub a successful Bta Nav Bar PartialConnector response")
+        BtaNavBarPartialConnectorStub.stubBtaNavPartialResponse()(OK, Json.parse(testNavLinkJson))
 
         And("I wiremock stub obligation responses")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
@@ -106,13 +112,13 @@ class HomeControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getHome
 
         verifyIncomeSourceDetailsCall(testMtditid)
-
+        verifyBtaNavPartialResponse
         verifyNextUpdatesCall(testNino)
-
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
           pageTitleIndividual(title),
+          elementTextByID("nav-bar-link-Home")("Home"),
           elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
           elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )

@@ -34,7 +34,7 @@ trait MockChargeSummary extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockChargeSummary()(response: Html): Unit = {
-    when(chargeSummary.apply(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any(), any(), any()))
+    when(chargeSummary.apply(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(response)
   }
 

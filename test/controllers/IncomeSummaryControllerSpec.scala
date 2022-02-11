@@ -16,18 +16,18 @@
 
 package controllers
 
-import testConstants.EstimatesTestConstants.testYear
-import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{BtaNavFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import testConstants.BaseTestConstants.testMtditid
+import testConstants.EstimatesTestConstants.testYear
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
 import views.html.{IncomeBreakdown, IncomeBreakdownOld}
 
@@ -44,6 +44,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
+    app.injector.instanceOf[BtaNavFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler])(
     ec,
     languageUtils,

@@ -54,6 +54,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       nino = testNino,
       userName = Some(testRetrievedUserName),
       incomeSources = IncomeSourceDetailsModel("testMtdItId", Some(migrationYear.toString), List(), None),
+      btaNavPartial =  None,
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
       userType = Some(testUserTypeIndividual),
@@ -61,7 +62,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), dunningLock, codingOutEnabled, displayTotals)(FakeRequest(),individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, displayTotals)(FakeRequest(),individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -933,7 +934,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException]{
           whatYouOweView(whatYouOweDataCodingOutWithoutAmountCodingOut, false, LocalDate.now().getYear, "testBackURL",
-            Some("1234567890"), true, true, true)
+            Some("1234567890"), None,true, true, true)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Amount Coded Out"
       }

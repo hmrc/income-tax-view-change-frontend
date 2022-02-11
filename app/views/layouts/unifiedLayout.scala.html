@@ -51,7 +51,8 @@
     timeout: Boolean = true,
     isAgent: Boolean = false,
     itsaTaxYear: Option[Int] = None,
-    form: Option[Form[_]] = None
+    form: Option[Form[_]] = None,
+    btaNavPartial: Option[Html] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
@@ -91,6 +92,7 @@
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(CurrentLanguage()))
+    @{btaNavPartial.getOrElse()}
     <div class="nav-bar-wrapper">
         @languageSelection()
         @backUrl.map(backLink(_))

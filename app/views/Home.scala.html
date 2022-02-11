@@ -153,10 +153,10 @@
                     </div>
                 }
 
-                <div class="warning-wrapper govuk-!-padding-0" >
-                @if(overDuePaymentsCount.getOrElse(0) > 0) {
-                    <div id="overdue-warning" class="flex-container govuk-!-padding-0">
-                        <div class="column-full">
+           <div class="warning-wrapper govuk-!-padding-0" >
+            @if(overDuePaymentsCount.getOrElse(0) > 0) {
+                <div id="overdue-warning" class="flex-container govuk-!-padding-0">
+                    <div class="column-full">
                         @govukWarningText(WarningText(
                             iconFallbackText = "Warning",
                             content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
@@ -280,7 +280,8 @@
 @layout(
     pageTitle = pageTitleHeadingMessage,
     mainClass = Some("full-width"),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial
 ) {
     @customLayout
 }

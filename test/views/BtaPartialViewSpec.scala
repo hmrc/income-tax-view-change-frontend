@@ -16,12 +16,11 @@
 
 package views
 
-import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import org.jsoup.Jsoup
-import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
+import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import testUtils.TestSupport
-import views.html.BtaPartial
+import views.html.bta.BtaPartial
 
 class BtaPartialViewSpec extends TestSupport {
 
@@ -48,7 +47,7 @@ class BtaPartialViewSpec extends TestSupport {
       lazy val homeButton = document.getElementById("it-quarterly-reporting-home-button")
 
       s"has the correct link to '${controllers.routes.HomeController.home().url}'" in {
-        homeButton.attr("href") shouldBe appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.home().url
+        homeButton.attr("href") shouldBe appConfig.homePageUrl
       }
 
       s"has the correct button text of '${btaPartialMessages.button}'" in {

@@ -314,8 +314,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   unauthorisedTest(s"/calculation/$testYear")
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
   s"GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}" when {
@@ -495,9 +495,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
             elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
           )
 
-          AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
-            MtdItUser(testMtditid, testNino, None,
-              singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
+            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
             )(FakeRequest()), Some(calculationDataSuccessModel), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates, allObligations))
         }
 
@@ -769,9 +769,9 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
             elementTextBySelector("#payments p")("No payments currently due.")
           )
 
-          AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
-            MtdItUser(testMtditid, testNino, None,
-              multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
             )(FakeRequest()), Some(calculationDataSuccessModel), emptyPaymentsList, allObligations))
         }
 
@@ -1231,8 +1231,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
 
           AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
-            MtdItUser(testMtditid, testNino, None,
-              singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+          MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
+            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
             )(FakeRequest()), None, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates,
             allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)), true))
         }
@@ -1486,8 +1486,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
 
           AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
-            MtdItUser(testMtditid, testNino, None,
-              multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+          MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
             )(FakeRequest()), None, emptyPaymentsList, allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)), true))
         }
 

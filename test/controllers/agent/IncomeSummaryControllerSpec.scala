@@ -24,7 +24,7 @@ import mocks.views.agent.MockIncomeSummary
 import models.calculation.CalcDisplayError
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentType, _}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
@@ -34,7 +34,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with FeatureSwitching
   with MockIncomeSummary with MockCalculationService with MockIncomeSourceDetailsService with MockItvcErrorHandler {
@@ -78,7 +78,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           mockIncomeBreakdownOld(testYear, calculationDisplaySuccessModel(calculationDataSuccessModel),
             controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
           contentType(result) shouldBe Some(HTML)
@@ -106,7 +106,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
           mockShowInternalServerError()
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -122,7 +122,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessFull.calculation).get,
             controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
           contentType(result) shouldBe Some(HTML)
@@ -164,7 +164,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
           mockCalculationErrorNew(nino = "AA111111A", year = testYear)
           mockShowInternalServerError()
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result: Future[Result] = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }

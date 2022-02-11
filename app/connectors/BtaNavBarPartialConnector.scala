@@ -37,7 +37,7 @@ class BtaNavBarPartialConnector @Inject()(val http: HttpClient,
     http.GET[Option[NavContent]](s"$btaNavLinksUrl")
       .recover {
         case e =>
-          logger.warn(s"[ServiceInfoPartialConnector][getNavLinks] - Unexpected error ${e.getMessage}")
+          logger.warn(s"[BtaNavBarPartialConnector][getNavLinks] - Unexpected error ${e.getMessage}")
           None
       }
   }

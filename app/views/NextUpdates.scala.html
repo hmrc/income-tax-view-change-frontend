@@ -36,7 +36,8 @@
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
 	backUrl = Some(backUrl),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial
 ) {
 
 	@h1(msg = "nextUpdates.heading")

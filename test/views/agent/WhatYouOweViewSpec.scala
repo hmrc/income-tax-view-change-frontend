@@ -52,6 +52,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       nino = "AA111111A",
       userName = Some(Name(Some("Test"), Some("User"))),
       incomeSources = IncomeSourceDetailsModel("testMtdItId", Some(migrationYear.toString), List(), None),
+      btaNavPartial =  None,
       saUtr = Some("1234567890"),
       credId = Some(testCredId),
       userType = Some(testUserTypeAgent),

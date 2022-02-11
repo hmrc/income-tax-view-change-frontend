@@ -60,6 +60,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
+  //SA for Agents Online Service
+  lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+
+
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")

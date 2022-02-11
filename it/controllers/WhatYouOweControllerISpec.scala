@@ -36,8 +36,8 @@ import testConstants.messages.WhatYouOweMessages.whatYouOwePageTitle
 class WhatYouOweControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None,
-    paymentHistoryBusinessAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
+    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
   val testTaxYear: Int = getCurrentTaxYearEnd.getYear - 1

@@ -14,6 +14,10 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
   vertical-align: middle;
 }
 
+.hmrc-account-menu {
+  border-top: 1px solid #b1b4b6;
+}
+
 .nav-bar-wrapper {
   display: flex;
   flex-direction: row-reverse;

@@ -78,6 +78,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       },
       property = None
     ),
+    btaNavPartial =  None,
     Some("testUtr"),
     Some("testCredId"),
     Some("Individual"),
@@ -98,7 +99,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       )
     ),
     property = None
-  ), None, None, None, None)(FakeRequest())
+  ), btaNavPartial =  None, None, None, None, None)(FakeRequest())
 
   "getFinancialDetails" when {
     "a successful financial details response is returned from the connector" should {

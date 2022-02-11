@@ -73,8 +73,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
   )
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-    incomeSourceDetails, Some("1234567890"), None, Some("Agent"), Some("1")
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetails,
+		None, Some("1234567890"), None, Some("Agent"), Some("1")
   )(FakeRequest())
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]

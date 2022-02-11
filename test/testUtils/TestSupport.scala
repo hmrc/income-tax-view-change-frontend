@@ -30,7 +30,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Result}
-import play.api.test.FakeRequest
+import play.api.test.{FakeRequest, Injecting}
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
@@ -42,7 +42,7 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with MaterializerSupport {
+trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with MaterializerSupport with Injecting {
   this: Suite =>
 
   import play.twirl.api.Html
@@ -63,6 +63,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(languageUtils)
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  def messagesApi: MessagesApi = inject[MessagesApi]
 
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock[ItvcHeaderCarrierForPartialsConverter]
 
@@ -78,6 +79,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = businessAndPropertyAligned,
+    btaNavPartial =  None,
     saUtr = Some(testSaUtr),
     credId = Some(testCredId),
     userType = Some(testUserTypeIndividual),
@@ -153,6 +155,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     nino = clientNino,
     userName = Some(Name(Some("Test"), Some("User"))),
     incomeSources = businessesAndPropertyIncome,
+    btaNavPartial =  None,
     saUtr = Some("1234567890"),
     credId = Some(testCredId),
     userType = Some(testUserTypeAgent),

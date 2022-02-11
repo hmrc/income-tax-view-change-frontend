@@ -37,7 +37,8 @@ object FeatureSwitch {
     CodingOut,
     WhatYouOweTotals,
     BtaNavBar,
-    NewTaxCalcProxy
+    NewTaxCalcProxy,
+    Class4UpliftEnabled
   )
 
   def apply(str: String): FeatureSwitch =
@@ -103,4 +104,9 @@ case object BtaNavBar extends FeatureSwitch {
 case object NewTaxCalcProxy extends FeatureSwitch {
   override val name = s"$prefix.enable-new-tax-calculation-proxy"
   override val displayText = "New Tax Calculation Proxy"
+}
+
+case object Class4UpliftEnabled extends FeatureSwitch {
+  override val name = s"$prefix.class4-uplift-enabled"
+  override val displayText = "Class4 Uplift Enabled"
 }
