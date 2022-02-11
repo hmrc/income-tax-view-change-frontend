@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import exceptions.MissingFieldException
 import models.outstandingCharges.OutstandingChargesModel
 
 import java.time.LocalDate
@@ -31,6 +32,11 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
   def bcdChargeTypeDefinedAndGreaterThanZero: Boolean =
     if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
       && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0) true
+    else false
+
+  def codedOutDocumentDetailNonEmpty: Boolean =
+    if (codedOutDocumentDetail.isDefined && codedOutDocumentDetail.get.amountCodedOut.isDefined
+      && codedOutDocumentDetail.get.amountCodedOut.get > 0) true
     else false
 
   def isChargesListEmpty: Boolean = allCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
@@ -51,7 +57,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
   def sortedOverduePaymentLists: List[DocumentDetailWithDueDate] = overduePaymentList.sortWith((charge1, charge2) =>
     charge1.currentDueDate.exists(date1 => charge2.currentDueDate.exists(_.isAfter(date1))))
 
-  def getEarliestTaxYearAndAmountByDueDate: (Int, BigDecimal) = {
+  def getEarliestTaxYearAndAmountByDueDate: Option[(Int, BigDecimal)] = {
 
     implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -60,15 +66,19 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
     if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined && sortedListOfCharges.isDefined) {
       val bcdDueDate: LocalDate = LocalDate.parse(outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get)
       if (bcdDueDate.isBefore(sortedListOfCharges.get.dueDate.get)) {
-        (bcdDueDate.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount)
+        Some((bcdDueDate.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
+      } else if(sortedListOfCharges.isDefined) {
+        Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.documentDetail.remainingToPay))
       } else {
-        (sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.documentDetail.remainingToPay)
+        None
       }
     } else {
       if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined) {
-        (LocalDate.parse(outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount)
+        Some((LocalDate.parse(outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
+      } else if(sortedListOfCharges.isDefined){
+        Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.documentDetail.remainingToPay))
       } else {
-        (sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.documentDetail.remainingToPay)
+        None
       }
     }
   }
