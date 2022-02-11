@@ -360,10 +360,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     }
 
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      val header = "Tax year 6 April 2017 to 5 April 2018 Self Assessment payment (through your PAYE tax code)"
+      val header = "Tax year 6 April 2017 to 5 April 2018 Balancing payment collected through PAYE tax code"
       val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
       val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
-      val remainingText = "Collected through your PAYE tax code for 2017 to 2018 tax year"
       val payHistoryLine1 = "29 Mar 2018 Amount collected through your PAYE tax code for 2017 to 2018 tax year £2,500.00"
 
       Given("the CodingOut feature switch is enabled")
@@ -402,8 +401,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         elementTextBySelector("h1")(header),
         elementTextBySelector("#coding-out-notice")(insetPara),
         elementTextBySelector("#coding-out-message")(summaryMessage),
-        elementTextBySelector(".govuk-summary-list__row:nth-child(1) .govuk-summary-list__value")("£2,500.00"),
-        elementTextBySelector(".govuk-summary-list__row:nth-child(2) .govuk-summary-list__value")(remainingText),
         elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1)
       )
     }

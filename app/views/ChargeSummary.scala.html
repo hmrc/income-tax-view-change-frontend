@@ -69,15 +69,6 @@
 @taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
 @taxYearTo = @{documentDetail.taxYear}
 
-@checkPayeCodePara = {
-    @p(id = Some("check-paye-para")){
-        @messages("chargeSummary.check-paye-tax-code-1")
-        <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@currentTaxYearEnd">
-            @messages("chargeSummary.check-paye-tax-code-2")</a>
-        @messages("chargeSummary.check-paye-tax-code-3", taxYearFrom, taxYearTo)
-    }
-}
-
 @codingOutMessage = {
     @p(id=Some("coding-out-message")){
         @messages("chargeSummary.codingOutMessage", taxYearFrom, taxYearTo)
@@ -122,7 +113,6 @@
     </h1>
 
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
-        @checkPayeCodePara
         <div id="coding-out-wrapper" class="govuk-inset-text">
             @p(id = Some("coding-out-notice")) {
                 @messages("chargeSummary.codingOutInset-1")
@@ -139,7 +129,6 @@
     }
 
     @if(codingOutEnabled && documentDetail.isCancelledPayeSelfAssessment){
-        @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper" class="govuk-inset-text">
             @p(id = Some("cancelled-coding-out-notice")) {
                 @messages("chargeSummary.cancelledPayeInset-1")
@@ -183,6 +172,7 @@
                 <dd class="govuk-summary-list__value">@messages("chargeSummary.lpi.interestPeriod.dates", documentDetail.interestFromDate.getOrElse(throw new MissingFieldException("Interest From Date")).toLongDateShort, documentDetail.interestEndDate.getOrElse(throw new MissingFieldException("Interest End Date")).toLongDateShort)</dd>
             </div>
         }
+        @if(!(codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@{
                 if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
@@ -205,10 +195,37 @@
                 } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
                 else documentDetail.remainingToPay.toCurrency
             }
+                }
             </dd>
         </div>
     </dl>
 
+@if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+<p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
+    <strong class="govuk-body govuk-!-font-weight-bold govuk-!-margin-right-8">@{
+        if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
+        messages("chargeSummary.paymentAmountCodingOut")
+        } else messages("chargeSummary.paymentAmount")
+        }
+    </strong>
+        @{
+        if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
+        else documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
+        }
+</p>
+
+
+
+<p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
+    @{
+        if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+        messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
+        } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+        else documentDetail.remainingToPay.toCurrency
+        }
+
+</p>
+}
     @if(hasPaymentBreakdown) {
         <h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
         <dl class="govuk-summary-list">
