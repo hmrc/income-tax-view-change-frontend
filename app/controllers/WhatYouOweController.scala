@@ -98,7 +98,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         backUrl = backUrl,
         itvcErrorHandler = itvcErrorHandler,
         isEnabled = isEnabled,
-        isAgent = true
+        isAgent = false
       )
   }
 
