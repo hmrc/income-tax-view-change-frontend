@@ -270,14 +270,14 @@
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
                                 @messages(
-                                    s"taxCal_breakdown.table.${band.name}",
+                                    s"taxCal_breakdown.table.nic4.${band.name}",
                                     BigDecimal(band.income).toCurrencyString,
                                     s"${band.rate}"
                                 )
                                 @if(class4UpliftEnabled) {
                                     <div>
                                         <span class="govuk-body-s uplift">
-                                        @messages("taxCal_breakdown.table.BRT.uplift")
+                                        @messages("taxCal_break down.table.BRT.uplift")
                                         </span>
                                     </div>
                                 }
