@@ -25,7 +25,7 @@ import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeout
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.core.Nino
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -33,7 +33,6 @@ import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 import play.api.test.Helpers._
 import services.PaymentAllocationsService
-import services.PaymentAllocationsService.PaymentAllocationError
 import views.html.PaymentAllocation
 
 import scala.concurrent.Future
@@ -102,7 +101,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
         when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
-          .thenReturn(Future.successful(Left(PaymentAllocationError)))
+          .thenReturn(Future.successful(Left(PaymentAllocationError())))
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 

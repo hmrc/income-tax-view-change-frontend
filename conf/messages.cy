@@ -31,6 +31,12 @@ agent-error.heading                                            = Ni allwch ddefn
 agent-error.note                                               = I ddefnyddio’r gwasanaeth hwn, mae’n rhaid i chi sefydlu
 agent-error.link                                               = cyfrif gwasanaethau asiant
 
+
+## Custom Error Page ##
+error.custom.heading                                          = Mae problem wedi codi
+error.custom.message                                          = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
+error.custom.link                                             = Ewch yn ôl i ‘Troi Treth yn Ddigidol ar gyfer Treth Incwm’
+
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
 bta.messages                                                    = Negeseuon

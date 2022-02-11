@@ -23,6 +23,7 @@ import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.core.Nino
+import models.paymentAllocationCharges.PaymentAllocationError
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.PaymentAllocationsService
@@ -61,6 +62,9 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
               auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
             }
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial))
+            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
+          case Left(PaymentAllocationError(Some(404))) =>
+            Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
           case _ => itvcErrorHandler.showInternalServerError()
         }
       } else Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
