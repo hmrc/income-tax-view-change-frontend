@@ -32,8 +32,7 @@
     h1: h1,
     h2: h2,
     p: p,
-    link: link,
-    list: bulletPointList
+    link: link
 )
 
 @(chargesList: WhatYouOweChargesList,
@@ -56,21 +55,6 @@
     if(isAgent) messages(s"whatYouOwe.$key", args: _*) else messages(s"whatYouOwe.$key", args: _*)
 }
 
-@saNoteParagraph = {
-    @utr.map { utr =>
-        <div id="payments-due-note" class="govuk-inset-text">
-            @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
-                link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-                    messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
-                )
-            @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
-        </div>
-    }
-}
-
-@paymentDaysNoteParagraph = {
-    @p(id = Some("payment-days-note"))(Html(getMessage("payment-days-note")) )
-}
 
 @paymentTypesDropdown(classes: String = "govuk-details") = {
     <details class="@classes" data-module="govuk-details">
