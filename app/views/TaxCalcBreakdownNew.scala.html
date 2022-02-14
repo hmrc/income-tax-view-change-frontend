@@ -307,12 +307,13 @@
                                     BigDecimal(band.income).toCurrencyString,
                                     s"${band.rate}"
                                 )
-
-                            <div>
-                                <span class="govuk-body-s uplift">
-                                @messages("taxCal_breakdown.table.BRT.uplift")
-                                </span>
-                            </div>
+                            @if(band.name == "BRT" || band.name == "HRT") {
+                                <div>
+                                    <span class="govuk-body-s uplift">
+                                    @messages("taxCal_breakdown.table.BRT.uplift")
+                                    </span>
+                                </div>
+                            }
 
                             </td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@{

@@ -207,6 +207,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object TaxCalcBreakdown {
     val title = "Tax calculation - Business Tax account - GOV.UK"
     val agentTitle = "Tax calculation - Your client’s Income Tax details - GOV.UK"
+    val upliftMessage = "1.25% uplift in National Insurance contributions funds NHS, health and social care"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
 
@@ -321,6 +322,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val capitalGainsTaxDue: String = "Capital Gains Tax due"
     val capitalGainsTaxOverpaid: String = "Capital Gains Tax calculated as overpaid"
     //additional deduction
+    val Nic4New_ZRT: String = "Class 4 National Insurance (£2,000.00 at 1%)"
+    val Nic4New_BRT: String = s"Class 4 National Insurance (£3,000.00 at 2%) $upliftMessage"
+    val Nic4New_HRT: String = s"Class 4 National Insurance (£5,000.00 at 3%) $upliftMessage"
     val BBSI: String = "Interest received from UK banks and building societies"
     val employments: String = "All employments"
     val ukPensions: String = "UK pensions"
