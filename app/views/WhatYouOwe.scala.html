@@ -227,20 +227,8 @@
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
     @if(chargesList.isChargesListEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
-    } else {
-        @user.incomeSources.yearOfMigration.map { yearOfMigration =>
-            @if(displayTotals) {
-                @if(currentTaxYear > yearOfMigration.toInt &&
-                        (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
+    }
 
-                }
-            }
-        }
-
-        @if(utr.isDefined && !isAgent) {
-        <div>
-        </div>
-        }
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                 <div id="balancing-charge-type-table">
@@ -311,13 +299,14 @@
                                         charge.documentDetail.interestOutstandingAmount.getOrElse(throw new MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
                                     }</td>
                                 </tr>
-                        @if(chargesList.dueInThirtyDaysList.nonEmpty) {
-                        @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
-                        @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index)
-                        }
-                        }
+
                             }
                         }
+                          @if(chargesList.dueInThirtyDaysList.nonEmpty) {
+                            @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
+                            @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index)
+                            }
+                          }
                         </tbody>
                     </table>
                 </div>
@@ -339,9 +328,10 @@
                         }
                     </div>
                 }
-            }
+
 
         </div>
+
 
 @if(!chargesList.codedOutDocumentDetail.isDefined) {
 @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
