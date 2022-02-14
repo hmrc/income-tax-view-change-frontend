@@ -164,7 +164,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val codingOutHeader = "Collected through PAYE tax code"
   val codingOutNotice = "You have £444.23 of tax for the 2020 to 2021 tax year being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically."
 
-
   val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
