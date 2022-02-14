@@ -213,7 +213,15 @@
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
     @if(chargesList.isChargesListEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
-    }
+    }  else {
+        @user.incomeSources.yearOfMigration.map { yearOfMigration =>
+          @if(displayTotals) {
+            @if(currentTaxYear > yearOfMigration.toInt &&
+             (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
+
+           }
+         }
+       }
 
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
@@ -316,8 +324,7 @@
                         }
                     </div>
                 }
-
-
+         }
         </div>
 
 
