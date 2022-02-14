@@ -26,9 +26,9 @@
 
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
-				@{if(deadline.obligation.obligationType == "Quarterly")  messages.translate("obligations.quarterly", Seq.empty).getOrElse(deadline.obligation.obligationType)}
-				@{if(deadline.obligation.obligationType == "EOPS")  messages.translate("nextUpdates.eops", Seq.empty).getOrElse(deadline.obligation.obligationType)}
-				@{if(deadline.obligation.obligationType == "Crystallised")  messages.translate("nextUpdates.crystallised", Seq.empty).getOrElse(deadline.obligation.obligationType)}
+				@{if(deadline.obligation.obligationType == "Quarterly")  messages("nextUpdates.quarterly")}
+				@{if(deadline.obligation.obligationType == "EOPS")  messages("nextUpdates.eops")}
+				@{if(deadline.obligation.obligationType == "Crystallised")  messages("nextUpdates.crystallised")}
 			</dt>
 			<dd class="govuk-summary-list__value">@{messages(deadline.incomeType)}</dd>
 		</div>
