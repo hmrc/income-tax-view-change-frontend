@@ -697,4 +697,4 @@ language-switcher.nav                                           = Language switc
 
 #technical helper
 getpagehelp.linkText                                            = Get help with this page
-pagehelp.opensInNewTabText                                      = (opens in new tab){0}
+pagehelp.opensInNewTabText                                      = {0}(opens in new tab){1}

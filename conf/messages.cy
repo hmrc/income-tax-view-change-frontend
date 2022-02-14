@@ -619,7 +619,7 @@ language-switcher.nav                                           = Switcher iaith
 
 #technical helper
 getpagehelp.linkText                                            = Help gyda’r dudalen hon
-pagehelp.opensInNewTabText                                      = (yn agor tab newydd)
+pagehelp.opensInNewTabText                                      = {0}(yn agor tab newydd){}
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad a wnaed i CThEM
