@@ -34,8 +34,8 @@ class TaxCalcBreakdownViewNewSpec extends TaxCalcBreakdownViewNewBehaviour {
 
   override val backUrl = "testUrl"
 
-  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String): Html =
-    app.injector.instanceOf[TaxCalcBreakdownNew].apply(taxDueSummaryViewModel, taxYear, backUrl)
+  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html =
+    app.injector.instanceOf[TaxCalcBreakdownNew].apply(taxDueSummaryViewModel, taxYear, backUrl, class4UpliftEnabled = class4UpliftEnabled)
 
   override val expectedPageTitle: String = TaxCalcBreakdown.title
 
@@ -53,7 +53,7 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
 
   def backUrl: String
 
-  def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String): Html
+  def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html
 
   def expectedPageTitle: String
 

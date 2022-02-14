@@ -204,6 +204,38 @@
         </table>
     }
 
+    @if(!class4UpliftEnabled) {
+        @if(viewModel.nic4Bands.isDefined) {
+            <table class="govuk-table" id="class-4-national-insurance-table">
+                <caption
+                class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.class4_national_insurance")
+                </caption>
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.rate_band")</th>
+                    <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+                </tr>
+                <tbody class="govuk-table__body">
+                @viewModel.nic4Bands.map { nicBands =>
+                    @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                            @messages(
+                                s"taxCal_breakdown.table.${band.name}",
+                                BigDecimal(band.income).toCurrencyString,
+                                s"${band.rate}"
+                            )
+                            </td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                                band.amount.toCurrency
+                            }</td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        }
+    }
+
     @if(viewModel.totalResidentialFinanceCostsRelief.nonEmpty ||
             viewModel.totalNotionalTax.nonEmpty ||
             viewModel.totalForeignTaxCreditRelief.nonEmpty ||
@@ -265,6 +297,7 @@
 @*            todo check if we need it
 @*            @if(viewModel.nic4Bands.isDefined)  *@
             <tbody class="govuk-table__body">
+            @if(class4UpliftEnabled) {
                 @viewModel.nic4Bands.map { nicBands =>
                     @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) {
                         <tr class="govuk-table__row">
@@ -274,13 +307,13 @@
                                     BigDecimal(band.income).toCurrencyString,
                                     s"${band.rate}"
                                 )
-                                @if(class4UpliftEnabled) {
-                                    <div>
-                                        <span class="govuk-body-s uplift">
-                                        @messages("taxCal_break down.table.BRT.uplift")
-                                        </span>
-                                    </div>
-                                }
+
+                            <div>
+                                <span class="govuk-body-s uplift">
+                                @messages("taxCal_breakdown.table.BRT.uplift")
+                                </span>
+                            </div>
+
                             </td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
                                 band.amount.toCurrency
@@ -288,6 +321,7 @@
                         </tr>
                     }
                 }
+            }
             </tbody>
 
             <tbody class="govuk-table__body">
