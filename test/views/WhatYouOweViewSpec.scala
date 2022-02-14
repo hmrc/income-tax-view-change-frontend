@@ -161,6 +161,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
   val codingOutAmount = 444.23
+  val codingOutHeader = "Collected through PAYE tax code"
+  val codingOutNotice = "You have £444.23 of tax for the 2020 to 2021 tax year being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically."
+
+
   val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
@@ -916,6 +920,28 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
       }
+    }
+
+    "When codingOut is enabled - At crystallization, the user has the coding out requested amount fully collected" should {
+      "only show coding out content under header" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+        pageDocument.getElementById("coding-out-header").text() shouldBe codingOutHeader
+        pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
+        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
+          "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
+        pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
+      }
+
+      "show no payments due content when coding out is disabled" in new Setup(noChargesModel, codingOutEnabled = false) {
+        pageDocument.title() shouldBe whatYouOwe.title
+        pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
+        pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+        pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
+        pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
+      }
+
+
     }
 
     "displayTotals feature switch is enabled" should {
