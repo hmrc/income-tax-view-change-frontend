@@ -98,7 +98,9 @@
                 @p(){
                     <b>
                         @if(latePaymentInterestCharge){
-                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText") @messages("pagehelp.opensInNewTabText")</a>
+                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" rel="noreferrer noopener" target="_blank">
+                                @messages("chargeSummary.dunning.locks.banner.linkText")
+                                @messages("pagehelp.opensInNewTabText",".")</a>
                         } else {
                             <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
                             @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
@@ -132,7 +134,7 @@
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
                     messageKey = "chargeSummary.codingOutInset-2",
-                    messageKeyExt = messages("pagehelp.opensInNewTabText"),
+                    messageKeyExt = messages("pagehelp.opensInNewTabText",""),
                     rel="noreferrer noopener"
                 )
                 @messages("chargeSummary.codingOutInset-3")
@@ -151,7 +153,7 @@
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
                     messageKey = "chargeSummary.cancelledPayeInset-2",
-                    messageKeyExt = messages("pagehelp.opensInNewTabText"),
+                    messageKeyExt = messages("pagehelp.opensInNewTabText","."),
                     rel="noreferrer noopener"
                 )
                 @messages("chargeSummary.cancelledPayeInset-3")
