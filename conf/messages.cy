@@ -453,9 +453,8 @@ whatYouOwe.over-due.interest-rate                               = Mae unrhyw log
 whatYouOwe.over-due.interest-rate-1                             = Mae unrhyw log am dalu’n hwyr ar y {0}
 whatYouOwe.over-due.interest-rate-2                             = Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
 whatYouOwe.over-due.interest-rate.link                          = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd)
-whatYouOwe.dunningLock.text                                     = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd ac {0}
-whatYouOwe.dunningLock.link                                     = mae ymchwiliad i’ch penderfyniad treth ar y gweill (yn agor tab newydd).
-
+whatYouOwe.dunningLock.text                                     = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd oherwydd {0}
+whatYouOwe.dunningLock.link                                     = bod apêl ar y gweill yn erbyn penderfyniad treth (yn agor tab newydd).
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
