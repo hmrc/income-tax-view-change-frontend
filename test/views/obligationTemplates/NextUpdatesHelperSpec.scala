@@ -65,7 +65,7 @@ class NextUpdatesHelperSpec extends TestSupport {
 			val section = pageDocument.select(".govuk-accordion__section:nth-of-type(1)")
 
 			section.select("dl").size() shouldBe 1
-			section.select("dl dt").text() shouldBe "Quarterly"
+			section.select("dl dt").text() shouldBe "Quarterly update"
 			section.select("dl dd").text() shouldBe testTradeName
 		}
 
