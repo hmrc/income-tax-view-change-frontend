@@ -929,7 +929,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
-
       "show no payments due content when coding out is disabled" in new Setup(noChargesModel, codingOutEnabled = false) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
@@ -939,8 +938,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
         pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
       }
-
-
     }
 
     "displayTotals feature switch is enabled" should {
