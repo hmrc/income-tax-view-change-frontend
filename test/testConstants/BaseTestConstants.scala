@@ -36,11 +36,11 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
   val testUserNino: Nino = Nino(testNino)
-  val testSaUtrId = 1234567890
+  val testSaUtrId = "1234567890"
   val testSaUtr = "testSaUtr"
   val taxYear: String = "2020-04-05"
   val taxYear2020: String = "2020"
-  val idNumber: Int = 1234567890
+  val idNumber = "1234567890"
   val idType: String = "utr"
   val ninoIdType: String = "NINO"
   val docNumber: String = "XM0026100122"
