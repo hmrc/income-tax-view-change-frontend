@@ -277,7 +277,7 @@
         </table>
     }
 
-    @if((viewModel.class2NicsAmount.isDefined && viewModel.class2VoluntaryContributions.isDefined) ||
+    @if((viewModel.class2NicsAmount.isDefined) ||
     viewModel.giftAidTax.isDefined ||
     viewModel.totalPensionSavingsTaxCharges.isDefined ||
     viewModel.statePensionLumpSumCharges.isDefined
@@ -294,14 +294,12 @@
 
             <tbody class="govuk-table__body">
                 @viewModel.class2NicsAmount.map { amount =>
-                    @viewModel.class2VoluntaryContributions.map { voluntary =>
-                        <tr>
-                            <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${voluntary}")</td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                                amount.toCurrency
-                            }</td>
-                        </tr>
-                    }
+                    <tr>
+                        <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${viewModel.class2VoluntaryContributions}")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                            amount.toCurrency
+                        }</td>
+                    </tr>
                 }
             </tbody>
             <tbody class="govuk-table__body">

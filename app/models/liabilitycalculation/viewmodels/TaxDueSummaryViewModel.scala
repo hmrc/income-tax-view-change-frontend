@@ -21,7 +21,7 @@ import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, Reli
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",
-                                   class2VoluntaryContributions: Option[Boolean] = None,
+                                   class2VoluntaryContributions: Boolean = false,
                                    messages: Option[Messages] = None,
                                    lossesAppliedToGeneralIncome: Option[Int] = None,
                                    grossGiftAidPayments: Option[BigDecimal] = None,
@@ -83,7 +83,7 @@ object TaxDueSummaryViewModel {
     calcResponse.calculation match {
       case Some(calc) => TaxDueSummaryViewModel(
         taxRegime = calcResponse.inputs.personalInformation.taxRegime,
-        class2VoluntaryContributions = calcResponse.inputs.personalInformation.class2VoluntaryContributions,
+        class2VoluntaryContributions = calcResponse.inputs.personalInformation.class2VoluntaryContributions.getOrElse(false),
         messages = calcResponse.messages,
         lossesAppliedToGeneralIncome = calc.allowancesAndDeductions.flatMap(ad => ad.lossesAppliedToGeneralIncome),
         grossGiftAidPayments = calc.giftAid.map(ga => ga.grossGiftAidPayments),
