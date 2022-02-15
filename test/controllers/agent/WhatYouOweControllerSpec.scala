@@ -95,7 +95,7 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-        val result = controller.viewWhatYouOweAgent()(fakeRequestConfirmedClient())
+        val result = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
         result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -111,7 +111,7 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-        val result = controller.viewWhatYouOweAgent()(fakeRequestConfirmedClient())
+        val result = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
         result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -128,7 +128,7 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-        val result = controller.viewWhatYouOweAgent()(fakeRequestConfirmedClient())
+        val result = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -137,7 +137,7 @@ class WhatYouOweControllerSpec extends TestSupport
     "User fails to be authorised" in new Setup {
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
-      val result = controller.viewWhatYouOweAgent()(fakeRequestWithActiveSession)
+      val result = controller.showAgent()(fakeRequestWithActiveSession)
 
       status(result) shouldBe Status.SEE_OTHER
 

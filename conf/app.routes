@@ -37,9 +37,8 @@ GET         /payment                                                      contro
 GET         /charges/payments-made                                        controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
 
 #Payments due
-GET         /payments-owed                                                controllers.WhatYouOweController.viewWhatYouOwe
-#Next Payments Due
-GET         /agents/payments-owed                                          controllers.WhatYouOweController.viewWhatYouOweAgent
+GET         /payments-owed                                                controllers.WhatYouOweController.show
+GET         /agents/payments-owed                                         controllers.WhatYouOweController.showAgent
 
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)

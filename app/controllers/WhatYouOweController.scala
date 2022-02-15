@@ -85,7 +85,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     }
   }
 
-  def viewWhatYouOwe: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -99,7 +99,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
       )
   }
 
-  def viewWhatYouOweAgent: Action[AnyContent] = Authenticated.async {
+  def showAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {

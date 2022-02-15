@@ -19,10 +19,9 @@ package controllers
 import testConstants.BaseTestConstants
 import testConstants.FinancialDetailsTestConstants._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockBtaNavBarPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -90,7 +89,7 @@ with MockFrontendAuthorisedFunctions {
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-          val result = controller.viewWhatYouOwe(fakeRequestWithActiveSession)
+          val result = controller.show(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -106,7 +105,7 @@ with MockFrontendAuthorisedFunctions {
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-          val result = controller.viewWhatYouOwe(fakeRequestWithActiveSession)
+          val result = controller.show(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -122,7 +121,7 @@ with MockFrontendAuthorisedFunctions {
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-          val result = controller.viewWhatYouOwe(fakeRequestWithActiveSession)
+          val result = controller.show(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
