@@ -62,7 +62,6 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
               auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
             }
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial))
-            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl))
           case Left(PaymentAllocationError(Some(404))) =>
             Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
           case _ => itvcErrorHandler.showInternalServerError()
