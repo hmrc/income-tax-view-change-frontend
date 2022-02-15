@@ -234,6 +234,7 @@ taxCal_breakdown.table.ZRTAR                                        = Additional
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 taxCal_breakdown.table.BRT.uplift                                   = 1.25% uplift in National Insurance contributions funds NHS, health and social care
+taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
 taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
 taxCal_breakdown.table.nic2.true                                    = Voluntary Class 2 National Insurance
@@ -249,6 +250,7 @@ taxCal_breakdown.table.head.cgt_type                                = Capital Ga
 taxCal_breakdown.table.head.national_insurance_type                 = National insurance type
 taxCal_breakdown.table.head.rates.uk                                = UK rates for England and Northern Ireland
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
+taxCal_breakdown.table.head.national_insurance_type                 = National insurance type
 
 taxCal_breakdown.table.cgt.taxable_capital_gains                    = Taxable Capital Gains
 taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief and or Investors'' Relief gains ({0} at {1}%)

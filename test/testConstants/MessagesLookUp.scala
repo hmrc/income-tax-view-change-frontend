@@ -220,6 +220,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val sectionHeadingGainsOnLifePolicies: String = "Gains on life policies"
     val sectionHeadingNIC4: String = "Class 4 National Insurance"
     val sectionHeadingAdditionalChar: String = "Additional charges"
+    val sectionHeadingNationalInsuranceContributionsChar: String = "National Insurance contributions"
     val sectionHeadingTaxReductions: String = "Tax reductions"
     val marriageAllowanceTransfer: String = "Marriage Allowance Transfer"
     val topSlicingRelief: String = "Top Slicing Relief"
@@ -248,6 +249,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val scotlandRateTableHead = "UK rates for Scotland"
     val rateBandTableHeader = "Rate band"
     val chargeTypeTableHeader = "Charge type"
+    val nationalInsuranceTypeTableHeader = "National insurance type"
     //pay, pension and profit table
     val pPP_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
     val pPP_HRT: String = "Higher rate (£100,000.00 at 40.0%)"
@@ -323,8 +325,10 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val capitalGainsTaxOverpaid: String = "Capital Gains Tax calculated as overpaid"
     //additional deduction
     val Nic4New_ZRT: String = "Class 4 National Insurance (£2,000.00 at 1%)"
-    val Nic4New_BRT: String = s"Class 4 National Insurance (£3,000.00 at 2%) $upliftMessage"
-    val Nic4New_HRT: String = s"Class 4 National Insurance (£5,000.00 at 3%) $upliftMessage"
+    val Nic4New_BRT: String = s"Class 4 National Insurance (£3,000.00 at 2%)"
+    val Nic4New_HRT: String = s"Class 4 National Insurance (£5,000.00 at 3%)"
+    val Nic4NewWithUplift_BRT: String = s"$Nic4New_BRT $upliftMessage"
+    val Nic4NewWithUplift_HRT: String = s"$Nic4New_HRT $upliftMessage"
     val BBSI: String = "Interest received from UK banks and building societies"
     val employments: String = "All employments"
     val ukPensions: String = "UK pensions"
