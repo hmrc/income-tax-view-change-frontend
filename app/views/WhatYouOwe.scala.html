@@ -55,6 +55,18 @@
     if(isAgent) messages(s"whatYouOwe.$key", args: _*) else messages(s"whatYouOwe.$key", args: _*)
 }
 
+@saNoteParagraph = {
+@utr.map { utr =>
+<div id="payments-due-note" class="govuk-inset-text">
+    @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
+    link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
+    messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
+    )
+    @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
+</div>
+}
+}
+
 @paymentTypesDropdown(classes: String = "govuk-details") = {
     <details class="@classes" data-module="govuk-details">
         <summary class="govuk-details__summary" id="payment-type-dropdown-title">
@@ -212,6 +224,8 @@
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
     @if(chargesList.isChargesListEmpty && !chargesList.codedOutDocumentDetailNonEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
+        @saNoteParagraph
+
     } else {
         @user.incomeSources.yearOfMigration.map { yearOfMigration =>
             @if(displayTotals) {
