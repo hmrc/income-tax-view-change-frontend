@@ -33,7 +33,6 @@ import scala.concurrent.Future
 trait ClientConfirmedController extends BaseAgentController {
 
   override protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.confirmedClientPredicates
-//  val authorisedFunctions: AuthorisedFunctions
   val mcc: MessagesControllerComponents
 
   def getClientUtr(implicit request: Request[_]): Option[String] = {
