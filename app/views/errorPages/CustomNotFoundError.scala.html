@@ -30,7 +30,7 @@ link: link
     if(isAgent) controllers.agent.routes.HomeController.show().url else controllers.routes.HomeController.home().url
 }
 
-@mainTemplate(pageTitle = messages("error.custom.heading") isAgent = isAgent) {
+@mainTemplate(pageTitle = messages("error.custom.heading"), isAgent = isAgent) {
 
 @h1(msg = "error.custom.heading", classes="govuk-heading-xl govuk-!-margin-bottom-5")
 

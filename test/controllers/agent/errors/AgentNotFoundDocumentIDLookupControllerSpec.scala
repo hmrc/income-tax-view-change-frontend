@@ -58,7 +58,7 @@ class AgentNotFoundDocumentIDLookupControllerSpec extends TestSupport
 
     s"have the title '${pageMessages.title}'" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      document.title() shouldBe pageMessages.title
+      document.title() shouldBe pageMessages.AgentTitle
     }
   }
 }
