@@ -87,7 +87,7 @@
         @utr.map { utrValue =>
             @p(id = Some("oldSa-para")) {
                 @messages("taxYears.oldSa.content.text")
-                @link(link = appConfig.saViewLandPService(utrValue), messageKey = "taxYears.oldSa.content.link", id = Some("self-assessment-online-account-link"), outerMessage = ".", target = Some("_blank"))
+                @link(link = appConfig.saViewLandPService(utrValue), messageKey = "taxYears.oldSa.content.link", id = Some("self-assessment-online-account-link"), outerMessage = ".", target = Some("_blank"), rel= Some("noreferrer noopener"))
             }
         }
     }
@@ -97,7 +97,7 @@
             @messages("taxYears.oldSa.agent.content.1")
             @link(link = appConfig.saForAgents,
                 messageKey = "taxYears.oldSa.agent.content.2", id=Some("self-assessment-for-agents-link"),
-                outerMessage = ".", target = Some("_blank"))
+                outerMessage = ".", target = Some("_blank"), rel= Some("noreferrer noopener"))
             @messages("taxYears.oldSa.agent.content.3")
         }
     }

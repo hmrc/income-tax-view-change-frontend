@@ -98,9 +98,9 @@
                 @p(){
                     <b>
                         @if(latePaymentInterestCharge){
-                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
+                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank" rel="noreferrer noopener">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
                         } else {
-                            <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
+                            <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank" rel="noreferrer noopener">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
                             @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
                         }
                     </b>
@@ -131,6 +131,7 @@
                     id = Some("coding-out-notice-link"),
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
+                    rel= Some("noreferrer noopener"),
                     messageKey = "chargeSummary.codingOutInset-2"
                 )
                 @messages("chargeSummary.codingOutInset-3")
@@ -148,6 +149,7 @@
                     id = Some("cancelled-coding-out-notice-link"),
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
+                    rel= Some("noreferrer noopener"),
                     messageKey = "chargeSummary.cancelledPayeInset-2"
                 )
                 @messages("chargeSummary.cancelledPayeInset-3")
