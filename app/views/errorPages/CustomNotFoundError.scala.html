@@ -24,7 +24,11 @@ p: p,
 link: link
 )
 
-@()(implicit request : Request[_], messages: Messages)
+@(isAgent: Boolean = false)(implicit request : Request[_], messages: Messages)
+
+@homeUrl = @{
+    if(isAgent) controllers.agent.routes.HomeController.show().url else controllers.routes.HomeController.home().url
+}
 
 @mainTemplate(pageTitle = messages("error.custom.heading")) {
 
@@ -34,6 +38,6 @@ link: link
     @messages("error.custom.message")
 }
 
-@link(link = controllers.routes.HomeController.home().url, messageKey = "error.custom.link")
+@link(link = homeUrl, messageKey = "error.custom.link")
 
 }

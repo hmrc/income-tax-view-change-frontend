@@ -37,6 +37,6 @@ class AgentNotFoundDocumentIDLookupController @Inject()(val authorisedFunctions:
 
   val show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(timeoutPredicate) { implicit request =>
     implicit user =>
-      Future.successful(Ok(customNotFoundError()))
+      Future.successful(Ok(customNotFoundError(isAgent = true)))
   }
 }
