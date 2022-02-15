@@ -18,9 +18,10 @@ package controllers
 
 import testConstants.BaseTestConstants
 import testConstants.FinancialDetailsTestConstants._
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
+import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockBtaNavBarPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
@@ -35,8 +36,8 @@ import views.html.WhatYouOwe
 
 import scala.concurrent.Future
 
-class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockBtaNavBarPredicate {
-
+class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockBtaNavBarPredicate
+with MockFrontendAuthorisedFunctions {
 
   trait Setup {
 
@@ -50,8 +51,11 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       whatYouOweService,
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
+      app.injector.instanceOf[AgentItvcErrorHandler],
       MockBtaNavBarPredicate,
+      mockAuthService,
       mockAuditingService,
+      mockIncomeSourceDetailsService,
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
@@ -77,7 +81,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
 
-
   "The WhatYouOweController.viewPaymentsDue function" when {
       "obtaining a users charge" should {
         "send the user to the paymentsOwe page with full data of charges" in new Setup {
@@ -87,7 +90,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
+          val result = controller.viewWhatYouOwe(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -103,7 +106,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
+          val result = controller.viewWhatYouOwe(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -119,7 +122,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
+          val result = controller.viewWhatYouOwe(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }

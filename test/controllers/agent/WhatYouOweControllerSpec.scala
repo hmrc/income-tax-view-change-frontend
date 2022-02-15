@@ -16,11 +16,15 @@
 
 package controllers.agent
 
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import controllers.WhatYouOweController
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
 import controllers.agent.utils.SessionKeys
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockBtaNavBarPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
@@ -30,28 +34,39 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.WhatYouOweService
 import testUtils.TestSupport
+import views.html.WhatYouOwe
 
 import scala.concurrent.Future
 
 class WhatYouOweControllerSpec extends TestSupport
   with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate
-  with MockItvcErrorHandler {
+  with MockItvcErrorHandler
+  with MockBtaNavBarPredicate
+  with MockFrontendAuthorisedFunctions {
 
   trait Setup {
 
     val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
 
-    val controller = new WhatYouOweController(
-      app.injector.instanceOf[views.html.WhatYouOwe],
+    val controller = new controllers.WhatYouOweController(
+      app.injector.instanceOf[SessionTimeoutPredicate],
+      MockAuthenticationPredicate,
+      app.injector.instanceOf[NinoPredicate],
+      MockIncomeSourceDetailsPredicate,
       whatYouOweService,
-      mockIncomeSourceDetailsService,
+      app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
+      app.injector.instanceOf[ItvcErrorHandler],
+      app.injector.instanceOf[AgentItvcErrorHandler],
+      MockBtaNavBarPredicate,
+      mockAuthService,
       mockAuditingService,
-      appConfig,
-      mockAuthService
-    )(app.injector.instanceOf[MessagesControllerComponents],
+      mockIncomeSourceDetailsService,
+      app.injector.instanceOf[FrontendAppConfig],
+      app.injector.instanceOf[MessagesControllerComponents],
       ec,
-      mockItvcErrorHandler)
+      app.injector.instanceOf[WhatYouOwe]
+    )
   }
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
@@ -80,7 +95,7 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-        val result = controller.show()(fakeRequestConfirmedClient())
+        val result = controller.viewWhatYouOweAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
         result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -96,7 +111,7 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-        val result = controller.show()(fakeRequestConfirmedClient())
+        val result = controller.viewWhatYouOweAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
         result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
@@ -113,7 +128,7 @@ class WhatYouOweControllerSpec extends TestSupport
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-        val result = controller.show()(fakeRequestConfirmedClient())
+        val result = controller.viewWhatYouOweAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -122,7 +137,7 @@ class WhatYouOweControllerSpec extends TestSupport
     "User fails to be authorised" in new Setup {
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
-      val result = controller.show()(fakeRequestWithActiveSession)
+      val result = controller.viewWhatYouOweAgent()(fakeRequestWithActiveSession)
 
       status(result) shouldBe Status.SEE_OTHER
 

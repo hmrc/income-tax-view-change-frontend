@@ -18,26 +18,40 @@ package controllers
 
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
-import auth.MtdItUser
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{CodingOut, FeatureSwitch, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
-import config.{FrontendAppConfig, ShowInternalServerError, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate,
-  SessionTimeoutPredicate, BtaNavBarPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.api.mvc.Results._
-import services.WhatYouOweService
+import services.{IncomeSourceDetailsService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-trait WhatYouOweRequestHandler {
+class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                     val authenticate: AuthenticationPredicate,
+                                     val retrieveNino: NinoPredicate,
+                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                     val whatYouOweService: WhatYouOweService,
+                                     val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                     val itvcErrorHandler: ItvcErrorHandler,
+                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                     val retrieveBtaNavBar: BtaNavBarPredicate,
+                                     val authorisedFunctions: FrontendAuthorisedFunctions,
+                                     val auditingService: AuditingService,
+                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                     implicit val appConfig: FrontendAppConfig,
+                                     implicit override val mcc: MessagesControllerComponents,
+                                     implicit val ec: ExecutionContext,
+                                     whatYouOwe: WhatYouOwe
+                                    ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+
   def handleRequest(whatYouOweService: WhatYouOweService,
                     auditingService: AuditingService,
                     whatYouOwe: WhatYouOwe,
@@ -58,7 +72,10 @@ trait WhatYouOweRequestHandler {
         Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
           currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
-          dunningLock = whatYouOweChargesList.hasDunningLock, codingOutEnabled = codingOutEnabled, displayTotals = displayTotals, isAgent = isAgent)
+          dunningLock = whatYouOweChargesList.hasDunningLock,
+          codingOutEnabled = codingOutEnabled,
+          displayTotals = displayTotals,
+          isAgent = isAgent)(user, user, messages)
         ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
     } recover {
       case ex: Exception =>
@@ -67,42 +84,35 @@ trait WhatYouOweRequestHandler {
         itvcErrorHandler.showInternalServerError()
     }
   }
-}
 
-class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                     val authenticate: AuthenticationPredicate,
-                                     val retrieveNino: NinoPredicate,
-                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                     val whatYouOweService: WhatYouOweService,
-                                     val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                     val itvcErrorHandler: ItvcErrorHandler,
-                                     val retrieveBtaNavBar: BtaNavBarPredicate,
-                                     val auditingService: AuditingService,
-                                     implicit val appConfig: FrontendAppConfig,
-                                     mcc: MessagesControllerComponents,
-                                     implicit val ec: ExecutionContext,
-                                     whatYouOwe: WhatYouOwe
-                                    ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with WhatYouOweRequestHandler {
-
-  def hasFinancialDetailsError(financialDetails: List[FinancialDetailsResponseModel]): Boolean = {
-    financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel])
-  }
-
-  val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar ).async {
+  def viewWhatYouOwe: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         whatYouOweService = whatYouOweService,
         auditingService = auditingService,
         whatYouOwe = whatYouOwe,
-        backUrl = backUrl,
+        backUrl = controllers.routes.HomeController.home().url,
         itvcErrorHandler = itvcErrorHandler,
         isEnabled = isEnabled,
         isAgent = false
       )
   }
 
-
-  lazy val backUrl: String = controllers.routes.HomeController.home().url
-
+  def viewWhatYouOweAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              whatYouOweService = whatYouOweService,
+              auditingService = auditingService,
+              whatYouOwe = whatYouOwe,
+              backUrl = controllers.agent.routes.HomeController.show().url,
+              itvcErrorHandler = itvcErrorHandlerAgent,
+              isEnabled = isEnabled,
+              isAgent = true
+            )
+        }
+  }
 }

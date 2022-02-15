@@ -53,8 +53,8 @@
 }
 
 @whatYouOweUrl = @{
-    if(isAgent) controllers.agent.routes.WhatYouOweController.show().url
-    else controllers.routes.WhatYouOweController.viewPaymentsDue().url
+    if(isAgent) controllers.routes.WhatYouOweController.viewWhatYouOweAgent().url
+    else controllers.routes.WhatYouOweController.viewWhatYouOwe().url
 }
 
 @hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }

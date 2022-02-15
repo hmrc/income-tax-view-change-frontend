@@ -59,7 +59,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     None, Some("1234567890"), None, Some("Agent"), Some(testArn)
   )(FakeRequest())
 
-  s"GET ${controllers.agent.routes.WhatYouOweController.show().url}" should {
+  s"GET ${controllers.routes.WhatYouOweController.viewWhatYouOweAgent().url}" should {
     "SEE_OTHER to " when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
