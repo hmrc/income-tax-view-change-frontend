@@ -54,8 +54,8 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
         whatYouOweAllData().isChargesListEmpty shouldBe false
       }
       "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
-        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate._1 shouldBe LocalDate.now().minusMonths(13).getYear
-        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate._2 shouldBe 123456.67
+        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe LocalDate.now().minusMonths(13).getYear
+        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate.get._2 shouldBe 123456.67
       }
       "hasDunningLock should return false if there are no dunningLocks" in {
         whatYouOweAllData().hasDunningLock shouldBe false
@@ -77,8 +77,8 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
       }
       "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
         whatYouOweFinancialDataWithoutOutstandingCharges()
-          .getEarliestTaxYearAndAmountByDueDate._1 shouldBe LocalDate.now().minusDays(10).getYear
-        whatYouOweFinancialDataWithoutOutstandingCharges().getEarliestTaxYearAndAmountByDueDate._2 shouldBe 50.0
+          .getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe LocalDate.now().minusDays(10).getYear
+        whatYouOweFinancialDataWithoutOutstandingCharges().getEarliestTaxYearAndAmountByDueDate.get._2 shouldBe 50.0
       }
     }
   }

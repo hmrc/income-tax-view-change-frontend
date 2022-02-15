@@ -427,6 +427,7 @@ nextUpdates.previousYears.textTwo								   = page.
 nextUpdates.previousYears.link									   = tax years
 nextUpdates.eops            									   = Annual Update
 nextUpdates.crystallised            							   = Final Declaration
+nextUpdates.quarterly                                              = Quarterly update
 nextUpdates.crystallisedAll            							   = All income sources
 nextUpdates.propertyIncome            							   = Property income
 nextUpdates.business            							       = Business income
