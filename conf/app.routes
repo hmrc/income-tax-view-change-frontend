@@ -36,7 +36,7 @@ GET         /payment                                                      contro
 #Payment Allocation
 GET         /charges/payments-made                                        controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
 
-#Payments due
+#WhatYouOwe
 GET         /payments-owed                                                controllers.WhatYouOweController.show
 GET         /agents/payments-owed                                         controllers.WhatYouOweController.showAgent
 

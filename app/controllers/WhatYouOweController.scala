@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, FeatureSwitch, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
+import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -52,12 +52,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      whatYouOwe: WhatYouOwe
                                     ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def handleRequest(whatYouOweService: WhatYouOweService,
-                    auditingService: AuditingService,
-                    whatYouOwe: WhatYouOwe,
-                    backUrl: String,
+  def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
-                    isEnabled: (FeatureSwitch) => Boolean,
                     isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList().map {
@@ -89,12 +85,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        whatYouOweService = whatYouOweService,
-        auditingService = auditingService,
-        whatYouOwe = whatYouOwe,
         backUrl = controllers.routes.HomeController.home().url,
         itvcErrorHandler = itvcErrorHandler,
-        isEnabled = isEnabled,
         isAgent = false
       )
   }
@@ -105,12 +97,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              whatYouOweService = whatYouOweService,
-              auditingService = auditingService,
-              whatYouOwe = whatYouOwe,
               backUrl = controllers.agent.routes.HomeController.show().url,
               itvcErrorHandler = itvcErrorHandlerAgent,
-              isEnabled = isEnabled,
               isAgent = true
             )
         }
