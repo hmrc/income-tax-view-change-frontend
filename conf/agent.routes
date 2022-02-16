@@ -23,8 +23,7 @@ GET         /income-tax-account                                           contro
 GET         /                                                             controllers.agent.HomeController.show
 GET         /remove-client-sessions                                       controllers.agent.RemoveClientDetailsSessionsController.show
 
-#Next Payments Due
-GET         /payments-owed                                                controllers.agent.WhatYouOweController.show
+
 
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)

@@ -174,7 +174,7 @@ class HomePageViewSpec extends TestSupport {
       }
       "has a link to view payments" in new Setup {
         val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.viewPaymentsDue().url)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.show().url)
         link.map(_.text) shouldBe Some(homeMessages.paymentLink)
       }
     }

@@ -54,9 +54,9 @@
 @import implicitDateFormatter.longDate
 
     @whatYouOweControllerURL = @{
-        if(isAgent) { controllers.agent.routes.WhatYouOweController.show().url
+        if(isAgent) { controllers.routes.WhatYouOweController.showAgent().url
         } else {
-            controllers.routes.WhatYouOweController.viewPaymentsDue().url
+            controllers.routes.WhatYouOweController.show().url
         }
     }
 
