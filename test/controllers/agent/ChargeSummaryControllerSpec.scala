@@ -297,7 +297,7 @@ class ChargeSummaryControllerSpec extends TestSupport
     "the user comes from what you owe page" should {
       "return what you owe page url string result" in new Setup() {
 
-        val result: String = chargeSummaryController.backUrl(backLocation = Some("paymentDue"), currentYear)
+        val result: String = chargeSummaryController.backUrl(backLocation = Some("whatYouOwe"), currentYear)
 
         result shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
 
