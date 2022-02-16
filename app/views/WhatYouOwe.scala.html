@@ -283,7 +283,7 @@
             optId=Some("over-due-payments-heading"))
                 <div id="payments-due-table">
                     <table class="govuk-table">
-                        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("over-due-payments")</caption>
+                        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("payments-due")</caption>
                         @tableHead("over-due-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
@@ -320,6 +320,21 @@
                     </table>
                 </div>
 
+            }
+            @if(chargesList.dueInThirtyDaysList.nonEmpty && !chargesList.overduePaymentList.nonEmpty) {
+            @h2(msg = getMessage("payments-due"), classes = "govuk-heading-l",
+            optId=Some("over-due-payments-heading"))
+            <div id="payments-due-table">
+                <table class="govuk-table">
+                    <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("payments-due")</caption>
+                    @tableHead("over-due-payments-table-head")
+                    <tbody class="govuk-table__body">
+                    @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
+                    @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index)
+                    }
+                    </tbody>
+                </table>
+            </div>
             }
             @if(!chargesList.isChargesListEmpty) {
             @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
