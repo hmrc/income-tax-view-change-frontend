@@ -17,13 +17,12 @@
 package mocks.services
 
 import models.core.Nino
-import models.paymentAllocationCharges.PaymentAllocationViewModel
+import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.PaymentAllocationsService
-import services.PaymentAllocationsService.PaymentAllocationError
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ trait MockPaymentAllocationsService extends UnitSpec with MockitoSugar with Befo
   }
 
   def setupMockGetPaymentAllocation(nino: String, docNumber: String)
-                                   (response: Future[Either[PaymentAllocationError.type, PaymentAllocationViewModel]]): Unit =
+                                   (response: Future[Either[PaymentAllocationError, PaymentAllocationViewModel]]): Unit =
     when(mockPaymentAllocationsService
       .getPaymentAllocation(
         Nino(matches(nino)),
@@ -50,6 +49,6 @@ trait MockPaymentAllocationsService extends UnitSpec with MockitoSugar with Befo
     setupMockGetPaymentAllocation(nino, docNumber)(Future.successful(Right(model)))
 
   def setupMockGetPaymentAllocationError(nino: String, docNumber: String): Unit =
-    setupMockGetPaymentAllocation(nino, docNumber)(Future.successful(Left(PaymentAllocationError)))
+    setupMockGetPaymentAllocation(nino, docNumber)(Future.successful(Left(PaymentAllocationError())))
 
 }

@@ -20,9 +20,8 @@ import testConstants.BaseTestConstants._
 import testConstants.PaymentAllocationsTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockFinancialDetailsService
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationViewModel}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationError, PaymentAllocationViewModel}
 import models.paymentAllocations.PaymentAllocationsError
-import services.PaymentAllocationsService.PaymentAllocationError
 import testUtils.TestSupport
 
 class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockFinancialDetailsService {
@@ -59,17 +58,23 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
 
     "return an error" when {
 
-      "all calls succeed except the payment charges which returns an error" in {
+      "all calls succeed except the payment charges which returns a internal server error" in {
+        setupGetPaymentAllocationCharges(testNino, docNumber)(FinancialDetailsWithDocumentDetailsErrorModel(500, "INTERNAL_SERVER"))
+
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
+      }
+
+      "all calls succeed except the payment charges which returns a Not found error" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(FinancialDetailsWithDocumentDetailsErrorModel(404, "NOT FOUND"))
 
-        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError)
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError(Some(404)))
       }
 
       "all calls succeed except the call to payment Allocation which returns an error" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(PaymentAllocationsError(404, "NOT FOUND"))
 
-        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError)
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
       }
 
       "all calls succeed except the call to financial details with a payments SAP document number which returns an error" in {
@@ -79,7 +84,7 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
         setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModel)
 
 
-        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError)
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
       }
     }
   }

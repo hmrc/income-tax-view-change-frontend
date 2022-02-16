@@ -27,3 +27,5 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
                                       originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] = Seq(),
                                       latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
                                       isLpiPayment: Boolean = false)
+
+case class PaymentAllocationError(status: Option[Int] = None)
