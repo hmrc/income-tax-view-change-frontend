@@ -27,7 +27,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
       TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal) shouldBe
         TaxDueSummaryViewModel(
-          taxRegime = "UK", class2VoluntaryContributions = None,
+          taxRegime = "UK",
           messages = None, lossesAppliedToGeneralIncome = None,
           grossGiftAidPayments = None, giftAidTax = None,
           marriageAllowanceTransferredInAmount = None,
@@ -52,7 +52,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
       "create a full TaxDueSummaryViewModel when there is a full Calculation" in {
         val expectedTaxDueSummaryViewModel = TaxDueSummaryViewModel(
           taxRegime = "UK",
-          class2VoluntaryContributions = Some(true),
+          class2VoluntaryContributions = true,
           messages = Some(Messages(
             Some(List(Message("infoId1", "info msg text1"))),
             Some(List(Message("warnId1", "warn msg text1"))),

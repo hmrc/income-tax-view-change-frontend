@@ -270,7 +270,7 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
       lazy val viewNic2 = taxCalcBreakdown(taxDueSummaryViewModelNic2, taxYear, backUrl)
       lazy val viewMarriageAllowanceTransfer = taxCalcBreakdown(taxDueSummaryViewModelMarriageAllowance, taxYear, backUrl)
       lazy val viewTopSlicingRelief = taxCalcBreakdown(taxDueSummaryViewModelTopSlicingRelief, taxYear, backUrl)
-      lazy val viewNoVoluntaryNic2Flag = taxCalcBreakdown(taxDueSummaryViewModelNic2NoVoluntary, taxYear, backUrl)
+      lazy val viewNoNic2Amount = taxCalcBreakdown(taxDueSummaryViewModelNoNic2Amount, taxYear, backUrl)
       lazy val viewAdChGiftAid = taxCalcBreakdown(taxDueSummaryViewModelGiftAid, taxYear, backUrl)
       lazy val viewAdChPensionLumpSum = taxCalcBreakdown(taxDueSummaryViewModelPensionLumpSum, taxYear, backUrl)
       lazy val viewAdChPensionSavings = taxCalcBreakdown(taxDueSummaryViewModelPensionSavings, taxYear, backUrl)
@@ -515,7 +515,7 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
           row.select("td").last().text() shouldBe "£10,000.00"
         }
 
-        "has no Nic2 line when Voluntary contribution flag is missing " in new Setup(viewNoVoluntaryNic2Flag) {
+        "has no Nic2 line when there is no Nic2 Amount " in new Setup(viewNoNic2Amount) {
           pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
         }
 
