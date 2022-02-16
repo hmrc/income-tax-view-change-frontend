@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
@@ -35,6 +36,8 @@ import java.time.LocalDate
 class ChargeSummaryViewSpec extends ViewSpec {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
+  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val lang: Lang = Lang("GB")
 
   class Setup(documentDetail: DocumentDetail,
               dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
@@ -196,6 +199,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
   )
 
+  def checkPaymentProcessingInfo(document: Document): Unit = {
+    document.select("#payment-days-note").text() shouldBe msgs("chargeSummary.payment-days-note")
+    document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe
+      s"${msgs("chargeSummary.payments-bullet1-1")} ${msgs("chargeSummary.payments-bullet1-2")} ${msgs("chargeSummary.payments-bullet1-3")}"
+    document.select("#payment-processing-bullets li:nth-child(2)").text() shouldBe msgs("chargeSummary.payments-bullet2")
+  }
 
   "individual" when {
     "The charge summary view" should {
@@ -256,7 +265,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        document.select("#payment-days-note").text() shouldBe "Payments can take up to 7 days to process."
+        checkPaymentProcessingInfo(document)
       }
 
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
@@ -270,7 +279,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        document.select("div#payment-link-2018").text() shouldBe "Pay now"
+        document.select("div#payment-link-2018").text() shouldBe "Make a payment"
       }
 
       "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
@@ -429,11 +438,11 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a payment link when an outstanding amount is to be paid" in new Setup(documentDetailModel()) {
-        document.select("div#payment-link-2018").text() shouldBe "Pay now"
+        document.select("div#payment-link-2018").text() shouldBe "Make a payment"
       }
 
-      "have a paragraph explaining how many days a payment can take to process" in new Setup(documentDetailModel(lpiWithDunningBlock = None)) {
-        document.select("#main-content p:nth-child(5)").text() shouldBe "Payments can take up to 7 days to process."
+      "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+        checkPaymentProcessingInfo(document)
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
@@ -459,7 +468,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("div#payment-link-2018").text() shouldBe "Pay now"
+        document.select("div#payment-link-2018").text() shouldBe "Make a payment"
       }
 
       "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
@@ -667,8 +676,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
-      "should not have a paragraph explaining how many days a payment can take to process" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        document.select("#main-content p:nth-child(5)").text() shouldBe ""
+      "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+        checkPaymentProcessingInfo(document)
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {

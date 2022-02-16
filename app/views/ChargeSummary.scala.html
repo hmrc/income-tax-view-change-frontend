@@ -79,6 +79,19 @@
     }
 }
 
+@paymentProcessingInfo = {
+    @p(id = Some("payment-days-note")){
+        @messages("chargeSummary.payment-days-note")
+    }
+    <ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
+        <li>@messages("chargeSummary.payments-bullet1-1")
+            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2")
+            @messages("chargeSummary.payments-bullet1-3")
+        </li>
+        <li>@messages("chargeSummary.payments-bullet2")</li>
+    </ul>
+}
+
 @codingOutMessage = {
     @p(id=Some("coding-out-message")){
         @messages("chargeSummary.codingOutMessage", taxYearFrom, taxYearTo)
@@ -267,11 +280,14 @@
 
     @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
         <div id="payment-link-@{taxYearTo}">
-            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", taxYearFrom, taxYearTo)'>@messages("paymentDue.payNow")</a>
+            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)"
+               aria-label='@messages("paymentDue.pay-now-aria", taxYearFrom, taxYearTo)'>@messages("paymentDue.payNow")</a>
         </div>
-        @p(id = Some("payment-days-note")){
-            @messages("chargeSummary.payment-days-note")
-        }
+        @paymentProcessingInfo
+    }
+
+    @if(isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
+        @paymentProcessingInfo
     }
 
     @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
