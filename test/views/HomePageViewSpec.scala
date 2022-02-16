@@ -153,12 +153,16 @@ class HomePageViewSpec extends TestSupport {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
 
-      "dont display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0)) {
+      "don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0)) {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
       "display an overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = Some(1)) {
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
+      }
+
+      "as an agent don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0), isAgent = true) {
+        getTextOfElementById("overdue-warning") shouldBe None
       }
 
       "display an dunning lock overdue warning message when a payment is overdue" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
