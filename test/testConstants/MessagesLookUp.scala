@@ -625,8 +625,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val dropDownInfo = "What are the payment types?"
     val paymentDaysNote = "Payments can take up to 3 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
-    val paymentUnderReviewParaLink = "tax decision is being investigated (opens in new tab)."
-    val paymentUnderReviewPara = s"One or more of your payments are currently under review and your $paymentUnderReviewParaLink"
+    val paymentUnderReviewParaLink = "there is a current appeal against a tax decision (opens in new tab)."
+    val paymentUnderReviewPara = s"One or more of your payments are currently under review because $paymentUnderReviewParaLink"
 
     def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
 
