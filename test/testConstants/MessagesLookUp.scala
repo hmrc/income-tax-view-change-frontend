@@ -461,6 +461,14 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val signUp = "You need to sign up for quarterly reporting before you can view this page."
   }
 
+  object CustomNotFound {
+    val title = "There is a problem - Business Tax account - GOV.UK"
+    val AgentTitle = "There is a problem - Your client’s Income Tax details - GOV.UK"
+    val heading = "There is a problem"
+    val content = "The page you’re trying to view has changed"
+    val homepageLinkText = "Return to Making Tax Digital for Income Tax"
+  }
+
   object ExitSurvey {
     val title = "Give feedback - Business Tax account - GOV.UK"
     val heading = "Give feedback"

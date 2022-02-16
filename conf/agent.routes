@@ -68,3 +68,4 @@ GET         /calculation/:taxYear/submitted                               contro
 
 #Agent Error
 GET         /agent-error                                                  controllers.agent.errors.AgentErrorController.show
+GET         /custom-not-found                                             controllers.agent.errors.AgentNotFoundDocumentIDLookupController.show

@@ -153,7 +153,7 @@ class ChargeSummaryControllerSpec extends TestSupport
 						.apply(fakeRequestConfirmedClient("AB123456C"))
 
 					status(result) shouldBe SEE_OTHER
-					redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/income-tax-account")
+					redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/custom-not-found")
 
 				}
 			}

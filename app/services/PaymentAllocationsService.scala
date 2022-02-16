@@ -24,7 +24,6 @@ import models.financialDetails.FinancialDetailsModel
 import models.paymentAllocationCharges._
 import models.paymentAllocations.PaymentAllocations
 import play.api.Logger
-import services.PaymentAllocationsService.PaymentAllocationError
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -37,7 +36,7 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
                                          (implicit ec: ExecutionContext) {
 
   def getPaymentAllocation(nino: Nino, documentNumber: String)
-                          (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError.type, PaymentAllocationViewModel]] = {
+                          (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
 
     incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(nino, documentNumber) flatMap {
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel =>
@@ -49,7 +48,7 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
               createPaymentAllocationForLpi(paymentAllocations, documentDetailsWithFinancialDetailsModel) map { lpiPaymentAllocationDetails =>
                 lpiPaymentAllocationDetails.map(lpiPaymentAllocationDetails =>
                   Right(PaymentAllocationViewModel(paymentAllocationChargeModel = documentDetailsWithFinancialDetailsModel,
-                    latePaymentInterestPaymentAllocationDetails = Some(lpiPaymentAllocationDetails), isLpiPayment = true))).getOrElse(Left(PaymentAllocationError))
+                    latePaymentInterestPaymentAllocationDetails = Some(lpiPaymentAllocationDetails), isLpiPayment = true))).getOrElse(Left(PaymentAllocationError()))
               }
             } else {
               createPaymentAllocationWithClearingDate(nino, paymentAllocations, documentDetailsWithFinancialDetailsModel) map {
@@ -58,16 +57,19 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
                   Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, paymentAllocationWithClearingDate))
                 case _ =>
                   Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment allocations")
-                  Left(PaymentAllocationError)
+                  Left(PaymentAllocationError())
               }
             }
           case _ =>
             Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve payment allocations with document details")
-            Future.successful(Left(PaymentAllocationError))
+            Future.successful(Left(PaymentAllocationError()))
         }
+      case paymentAllocation: FinancialDetailsWithDocumentDetailsErrorModel if paymentAllocation.code == 404 =>
+        Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] payment allocation could not be found")
+        Future.successful(Left(PaymentAllocationError(Some(paymentAllocation.code))))
       case _ =>
         Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment charge model")
-        Future.successful(Left(PaymentAllocationError))
+        Future.successful(Left(PaymentAllocationError()))
     }
   }
 
@@ -105,9 +107,4 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
         }
       })
   }
-}
-
-object PaymentAllocationsService {
-
-  case object PaymentAllocationError
 }
