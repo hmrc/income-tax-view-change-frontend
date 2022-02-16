@@ -196,21 +196,15 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
-      "have Overdue amount and Total amount not displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
       "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(),
         migrationYear = LocalDate.now().getYear) {
         pageDocument.getElementById("overdueAmount") shouldBe null
         pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("totalBalance") shouldBe null
       }
-      s"have the title '${AgentPaymentDue.title}' and no page header and notes" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
+      s"have the title '${AgentPaymentDue.title}'" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
-        pageDocument.getElementById("sa-note-migrated") shouldBe null
-        pageDocument.getElementById("outstanding-charges-note-migrated") shouldBe null
+
       }
 
 
@@ -240,22 +234,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
       }
 
-      s"no table header for future payments" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("future-payments-heading") shouldBe null
-      }
 
       "when showing the Dunning Lock content" should {
-        "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
-          pageDocument.getElementById("overdueAmount") shouldBe null
-          pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-          pageDocument.getElementById("totalBalance") shouldBe null
-        }
-        "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock),
-          dunningLock = true, migrationYear = LocalDate.now().getYear) {
-          pageDocument.getElementById("overdueAmount") shouldBe null
-          pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-          pageDocument.getElementById("totalBalance") shouldBe null
-        }
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
           whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
@@ -270,35 +250,15 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           pageDocument.doesNotHave(Selectors.id("payment-under-review-info"))
         }
 
-        s"display ${AgentPaymentDue.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
-          whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
-          println(Console.BLUE + pageDocument)
-          val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-          val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
-
-          futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1WithTaxYearAndUnderReview
-          futurePaymentsTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.poa2WithTaxYear
-        }
-
-        s"display ${AgentPaymentDue.paymentUnderReview} when there is a dunningLock against multiple charges" in new Setup(
-          whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
-          val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-          val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
-
-          futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1WithTaxYearAndUnderReview
-          futurePaymentsTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.poa2WithTaxYearAndUnderReview
-        }
       }
 
     }
 
     "the user has charges and access viewer within 30 days of due date" should {
-      "have Balance due in 30 days amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe AgentPaymentDue.dueInThirtyDays
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
+      "have no Balance due in 30 days amount and no Total amount displayed " in new Setup(whatYouOweDataWithDataDueIn30Days()) {
+        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
         pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
-        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£1.00"
+        pageDocument.getElementById("totalBalance") shouldBe null
       }
       "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueIn30Days(),
         migrationYear = LocalDate.now().getYear) {
@@ -308,8 +268,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
-        pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe AgentPaymentDue.osChargesNote
       }
       s"have the Balancing Payment header and table data" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe AgentPaymentDue.preMtdPayments(
@@ -335,6 +293,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       s"have table header and data for due within 30 days" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
+        println(Console.BLUE + pageDocument)
         pageDocument.getElementById("due-in-thirty-days-payments-heading").text shouldBe AgentPaymentDue.dueInThirtyDays
 
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
