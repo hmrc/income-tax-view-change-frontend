@@ -371,6 +371,12 @@ breadcrumb-payment-history                                      = Payment histor
 standardError.heading                                           = Sorry, there is a problem with the service
 standardError.message                                           = Try again later.
 
+
+## Custom Error Page ##
+error.custom.heading                                          = There is a problem
+error.custom.message                                          = The page you’re trying to view has changed
+error.custom.link                                             = Return to Making Tax Digital for Income Tax
+
 ## Beta Banner ##
 betaBanner.beta                                                 = BETA
 betaBanner.newService                                           = This is a new service

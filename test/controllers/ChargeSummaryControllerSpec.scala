@@ -99,7 +99,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result = controller.showChargeSummary(2018, "fakeId")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
       }
     }
 

@@ -85,3 +85,6 @@ GET         /:taxYear/final-tax-overview/calculate                        contro
 
 GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
 GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
+
+#custom not found
+GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show
