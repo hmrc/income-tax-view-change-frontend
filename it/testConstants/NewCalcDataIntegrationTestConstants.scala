@@ -119,4 +119,65 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
+  val liabilityCalculationVoluntaryClass2Nic = getLiabilityCalcResponse(
+    """
+      |{
+      |  "inputs": {
+      |    "personalInformation": {
+      |      "taxRegime": "UK",
+      |      "class2VoluntaryContributions": true
+      |    }
+      |  },
+      |  "metadata" : {
+      |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+      |    "crystallised" : true
+      |  },
+      |  "calculation": {
+      |    "taxCalculation": {
+      |      "incomeTax": {
+      |        "totalIncomeReceivedFromAllSources": 1234,
+      |        "totalAllowancesAndDeductions": 1234,
+      |        "totalTaxableIncome": 1234
+      |      },
+      |      "nics": {
+      |        "class2Nics": {
+      |          "amount": 5001.11
+      |        }
+      |      },
+      |      "totalIncomeTaxAndNicsDue": 12345
+      |    }
+      |  }
+      |}
+      |""".stripMargin)
+
+  val liabilityCalculationNonVoluntaryClass2Nic = getLiabilityCalcResponse(
+    """
+      |{
+      |  "inputs": {
+      |    "personalInformation": {
+      |      "taxRegime": "UK"
+      |    }
+      |  },
+      |  "metadata" : {
+      |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+      |    "crystallised" : true
+      |  },
+      |  "calculation": {
+      |    "taxCalculation": {
+      |      "incomeTax": {
+      |        "totalIncomeReceivedFromAllSources": 1234,
+      |        "totalAllowancesAndDeductions": 1234,
+      |        "totalTaxableIncome": 1234
+      |      },
+      |      "nics": {
+      |        "class2Nics": {
+      |          "amount": 5001.11
+      |        }
+      |      },
+      |      "totalIncomeTaxAndNicsDue": 12345
+      |    }
+      |  }
+      |}
+      |""".stripMargin)
+
 }

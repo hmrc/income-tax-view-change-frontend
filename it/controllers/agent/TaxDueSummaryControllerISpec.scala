@@ -281,6 +281,58 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           elementTextByID("additional_charges")("Additional charges")
         )
       }
+
+      "return class2VoluntaryContributions as false when the flag is missing from the calc data" in {
+        enable(TxmEventsApproved)
+        enable(NewTaxCalcProxy)
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+          status = OK,
+          body = liabilityCalculationNonVoluntaryClass2Nic
+        )
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+        res should have(
+          httpStatus(OK),
+          pageTitleAgent(taxDueSummaryTitle),
+          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextBySelector("#additional-charges-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.false"))
+        )
+      }
+
+      "return class2VoluntaryContributions as true when the flag is returned in the calc data" in {
+        enable(TxmEventsApproved)
+        enable(NewTaxCalcProxy)
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        And("I stub a successful liability calculation response")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+          status = OK,
+          body = liabilityCalculationVoluntaryClass2Nic
+        )
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+        res should have(
+          httpStatus(OK),
+          pageTitleAgent(taxDueSummaryTitle),
+          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+          elementTextBySelector("#additional-charges-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.true"))
+        )
+      }
     }
 
     "NewTaxCalcProxy Feature Switch is disabled" when {
