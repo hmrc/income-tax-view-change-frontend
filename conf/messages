@@ -250,7 +250,6 @@ taxCal_breakdown.table.head.cgt_type                                = Capital Ga
 taxCal_breakdown.table.head.national_insurance_type                 = National insurance type
 taxCal_breakdown.table.head.rates.uk                                = UK rates for England and Northern Ireland
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
-taxCal_breakdown.table.head.national_insurance_type                 = National insurance type
 
 taxCal_breakdown.table.cgt.taxable_capital_gains                    = Taxable Capital Gains
 taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief and or Investors'' Relief gains ({0} at {1}%)
