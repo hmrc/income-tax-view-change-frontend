@@ -315,10 +315,10 @@
                                 BigDecimal(band.income).toCurrencyString,
                                 s"${band.rate}"
                             )
-                            @if(class4UpliftEnabled && Set("BRT", "HRT").contains(band.name)) {
+                            @if(class4UpliftEnabled && band.name != "ZRT") {
                                 <div>
                                     <span class="govuk-body-s uplift">
-                                    @messages("taxCal_breakdown.table.BRT.uplift")
+                                    @messages("taxCal_breakdown.table.uplift")
                                     </span>
                                 </div>
                             }
