@@ -40,7 +40,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val title = s"$heading - Business Tax account - GOV.UK"
     val titleWhenAgentView = s"$heading - Your client’s Income Tax details - GOV.UK"
 
-    val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment service."
+    val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment online account (opens in new tab)."
 
     def button(year: Int): String = s"$year payments"
 
@@ -51,7 +51,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val paymentHeadingDescription = "Description"
     val paymentHeadingAmount = "Amount"
     val partialH2Heading = "payments"
-    val saLink = "Self Assessment service"
+    val saLink = "Self Assessment online account (opens in new tab)"
   }
 
   val testPayments: List[Payment] = List(
