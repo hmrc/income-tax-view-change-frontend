@@ -321,13 +321,13 @@
                 </div>
 
             }
+            @if(!chargesList.isChargesListEmpty) {
+            @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
+            @dunningLockParagraph
+            }
 
             @if(codingOutEnabled) {
                 @chargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
-            @if(!chargesList.isChargesListEmpty) {
-            @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
-            }
-
             <div id="coding-out-wrapper" class="govuk-inset-text">
                         @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
                             @getMessage("codingOut-1a")
@@ -343,10 +343,7 @@
 
         </div>
 
-@if(!chargesList.codedOutDocumentDetail.isDefined) {
-@paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
-@dunningLockParagraph
-}
+
 
 @if(utr.isDefined && !isAgent && chargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
 <div id="payment-button">
