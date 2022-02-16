@@ -125,7 +125,7 @@
                     @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
                 }
 
-                @if(overDuePaymentsCount.isDefined) {
+                @if(overDuePaymentsCount.getOrElse(0) > 0) {
                     <div id="overdue-warning" class="grid-row">
                         <div class="column-full">
                         @govukWarningText(WarningText(content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))))
