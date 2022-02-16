@@ -281,7 +281,7 @@
             @if(chargesList.overduePaymentList.nonEmpty) {
             @h2(msg = getMessage("payments-due"), classes = "govuk-heading-l",
             optId=Some("over-due-payments-heading"))
-                <div id="over-due-payments-table">
+                <div id="payments-due-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("over-due-payments")</caption>
                         @tableHead("over-due-payments-table-head")
