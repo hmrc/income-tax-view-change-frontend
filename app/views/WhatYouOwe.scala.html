@@ -117,14 +117,23 @@
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.payment-type")</th>
-            @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year-summary")</th>
-            }
+
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount-due")</th>
         </tr>
     </thead>
 }
 
+@tableHeadBCD(headId: String) = {
+<thead class="govuk-table__head" id="@headId">
+<tr class="govuk-table__row">
+    <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
+    <th scope="col" class="govuk-table__header">@getMessage("tableHead.payment-type")</th>
+
+    <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount-due")</th>
+</tr>
+</thead>
+}
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
     showTaxYear: Boolean = true, linkSuffix: String) = @{
 
@@ -180,7 +189,7 @@
 <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="taxYearSummary-link-@index"
    href="@getReturnHref(year)">
     @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString)
-    <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+    <span class="govuk-visually-hidden">@getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString)</span>
 </a>
 }
 
@@ -242,7 +251,7 @@
                 <div id="balancing-charge-type-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("pre-mtd-payments")</caption>
-                        @tableHead("balancing-charge-type-table-head")
+                        @tableHeadBCD("balancing-charge-type-table-head")
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row " id="balancing-charge-type-0">
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw new MissingFieldException("Outstanding Charge Relevant Due Date"))).toLongDateShort</td>
@@ -323,11 +332,11 @@
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty && !chargesList.overduePaymentList.nonEmpty) {
             @h2(msg = getMessage("payments-due"), classes = "govuk-heading-l",
-            optId=Some("over-due-payments-heading"))
-            <div id="payments-due-table">
+            optId=Some("due-in-thirty-days-payments-heading"))
+            <div id="due-in-thirty-days-payments-table">
                 <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("payments-due")</caption>
-                    @tableHead("over-due-payments-table-head")
+                    <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("due-in-thirty-days-payments")</caption>
+                    @tableHead("due-in-thirty-days-payments-table-head")
                     <tbody class="govuk-table__body">
                     @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
                     @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index)
