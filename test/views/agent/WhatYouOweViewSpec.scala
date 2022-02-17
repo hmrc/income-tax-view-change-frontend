@@ -315,7 +315,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.doesNotHave(id("due-in-thirty-days-type-1-overdue"))
       }
 
-
       "when showing the Dunning Lock content" should {
 
         "display the paragraph about payments under review when there is a dunningLock" in new Setup(
@@ -641,7 +640,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear"
         overduePaymentsTableRow1.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
-
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("#payments-due-table tbody tr").get(1)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
