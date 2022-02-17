@@ -553,6 +553,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val title = "What you owe - Business Tax account - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
+    val paymentsDue= "Payments Due"
     val saLink = "Self Assessment online account (opens in new tab)"
     val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
@@ -609,7 +610,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
 
     val dueDate = "Due date"
-    val payNow = "Pay now"
+    val payNow = "Make a payment"
 
     def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
