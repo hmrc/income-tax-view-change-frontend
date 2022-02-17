@@ -19,11 +19,10 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching, NewTaxCalcProxy}
+import config.featureswitch.{CodingOut, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
-import models.calculation._
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
@@ -31,9 +30,8 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
-import views.html.{TaxYearOverview, TaxYearOverviewOld}
+import views.html.TaxYearOverview
 
 import java.net.URI
 import java.time.LocalDate
@@ -42,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
-                                          taxYearOverviewViewOld: TaxYearOverviewOld,
                                           authenticate: AuthenticationPredicate,
                                           calculationService: CalculationService,
                                           checkSessionTimeout: SessionTimeoutPredicate,
@@ -72,11 +69,10 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
       case liabilityCalc: LiabilityCalculationResponse =>
         val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalc)
         auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-          mtdItUser, None,
-          documentDetailsWithDueDates, obligations, Some(taxYearOverviewViewModel), true))
+          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearOverviewViewModel)))
 
         Logger("application").info(
-            s"[TaxYearOverviewController][view][$taxYear]] Rendered Tax year overview page with Calc data")
+          s"[TaxYearOverviewController][view][$taxYear]] Rendered Tax year overview page with Calc data")
 
         Ok(taxYearOverviewView(
           taxYear = taxYear,
@@ -88,8 +84,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-          mtdItUser, None,
-          documentDetailsWithDueDates, obligations, None, true))
+          mtdItUser, documentDetailsWithDueDates, obligations, None))
 
         Logger("application").info(
           s"[TaxYearOverviewController][view][$taxYear]] Rendered Tax year overview page with No Calc data")
@@ -107,23 +102,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
           s"[TaxYearOverviewController][view][$taxYear]] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
-  }
-
-  private def viewOld(taxYear: Int,
-                      calculationOverview: Option[CalcOverview] = None,
-                      charge: List[DocumentDetailWithDueDate],
-                      obligations: ObligationsModel,
-                      codingOutEnabled: Boolean,
-                      backUrl: String
-                     )(implicit user: MtdItUser[_]): Html = {
-    taxYearOverviewViewOld(
-      taxYear = taxYear,
-      overviewOpt = calculationOverview,
-      charges = charge,
-      obligations,
-      backUrl = backUrl,
-      codingOutEnabled = codingOutEnabled
-    )
   }
 
   private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])
@@ -181,29 +159,10 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         withObligationsModel(taxYear) flatMap {
           case obligationsModel: ObligationsModel =>
             val codingOutEnabled = isEnabled(CodingOut)
-            if (isEnabled(NewTaxCalcProxy)) {
-              calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map { liabilityCalcResponse =>
-                view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
-                  backUrl = getBackURL(user.headers.get(REFERER)))
-                  .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
-              }
-            } else {
-              calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
-                case CalcDisplayModel(_, _, calculation, _) =>
-                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, Some(calculation), charges, obligationsModel))
-
-                  Future.successful(Ok(viewOld(taxYear, calculationOverview = Some(CalcOverview(calculation)),
-                    charge = charges, obligations = obligationsModel, codingOutEnabled = codingOutEnabled, backUrl = getBackURL(user.headers.get(REFERER)))
-                  ).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview"))
-                case CalcDisplayNoDataFound =>
-                  val codingOutEnabled = isEnabled(CodingOut)
-                  Future.successful(Ok(viewOld(taxYear, charge = charges,
-                    obligations = obligationsModel, codingOutEnabled = codingOutEnabled,
-                    backUrl = getBackURL(user.headers.get(REFERER)))).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview"))
-                case CalcDisplayError =>
-                  Logger("application").error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
-                  Future.successful(itvcErrorHandler.showInternalServerError())
-              }
+            calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map { liabilityCalcResponse =>
+              view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
+                backUrl = getBackURL(user.headers.get(REFERER)))
+                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
             }
           case _ => Future.successful(itvcErrorHandler.showInternalServerError())
         }

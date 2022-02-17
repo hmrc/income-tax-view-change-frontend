@@ -16,15 +16,14 @@
 
 package audit.models
 
-import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import auth.MtdItUser
-import enums.{Crystallised, Estimate}
-import models.calculation.TaxDeductedAtSource.{Message, Messages}
-import models.calculation._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessFull}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with MustMatchers {
@@ -32,143 +31,38 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
   val transactionName: String = "tax-calculation-response"
   val auditType: String = "TaxCalculationDetailsResponse"
 
-  val testCalcDataModel: Calculation = Calculation(
-    totalIncomeTaxAndNicsDue = Some(10000),
-    crystallised = true,
-    totalTaxableIncome = Some(25000),
-    nic = Nic(
-      class4Bands = Some(Seq(
-        NicBand(
-          name = "SRT",
-          income = 12000,
-          rate = 10,
-          amount = 1200
-        )
-      )),
-      class2 = Some(1000.00),
-      class2VoluntaryContributions = Some(true)
-    ),
-    payPensionsProfit = PayPensionsProfit(
-      bands = List(TaxBand(
-        name = "BRT",
-        rate = 20,
-        income = 20000,
-        taxAmount = 4000,
-        bandLimit = 15000,
-        apportionedBandLimit = 15000
-      ))
-    ),
-    gainsOnLifePolicies = GainsOnLifePolicies(
-      bands = List(TaxBand(
-        name = "BRT",
-        rate = 20,
-        income = 20000,
-        taxAmount = 4000,
-        bandLimit = 15000,
-        apportionedBandLimit = 15000
-      ))
-    ),
-    reductionsAndCharges = ReductionsAndCharges(
-      totalStudentLoansRepaymentAmount = Some(1234),
-      totalResidentialFinanceCostsRelief = Some(4321),
-      reliefsClaimed = Some(Seq(ReliefsClaimed("vctSubscriptions", Some(5678))))
-    ),
-    lumpSums = LumpSums(
-      bands = List(TaxBand(
-        name = "BRT",
-        rate = 20,
-        income = 20000,
-        taxAmount = 4000,
-        bandLimit = 15000,
-        apportionedBandLimit = 15000
-      ))
-    ),
-    taxDeductedAtSource = TaxDeductedAtSource(
-      cis = Some(1350),
-      total = Some(1350)
-    ),
-    dividends = Dividends(
-      bands = List(TaxBand(
-        name = "ZRTBR",
-        rate = 0,
-        income = 10000,
-        taxAmount = 0,
-        bandLimit = 15000,
-        apportionedBandLimit = 15000
-      ))
-    ),
-    capitalGainsTax = CapitalGainsTax(
-      businessAssetsDisposalsAndInvestorsRel = SingleBandCgtDetail(
-        taxableGains = Some(12000),
-        rate = Some(12),
-        taxAmount = Some(1000)
-      ),
-      propertyAndInterestTaxBands = List(CgtTaxBand(
-        name = "lowerRate",
-        rate = 23,
-        income = 10000,
-        taxAmount = 2300
-      )),
-      otherGainsTaxBands = List(CgtTaxBand(
-        name = "higherRate",
-        rate = 44,
-        income = 35000,
-        taxAmount = 3400
-      )),
-      taxOnGainsAlreadyPaid = Some(3570)
-    ),
-    messages = Some(Messages(
-      info = Some(Seq(Message(id = "C22211", text = "testInfoMessage"))),
-      warnings = Some(Seq(Message(id = "C22214", text = "testWarningMessage"))),
-      errors = Some(Seq(Message(id="C22216", text = "testErrorMessage")))
-    )),
-    savingsAndGains = SavingsAndGains(
-      bands = List(TaxBand(
-        name = "ZRT",
-        rate = 0,
-        income = 10000,
-        taxAmount = 0,
-        bandLimit = 15000,
-        apportionedBandLimit = 15000
-      ))
-    )
-  )
-
-  val calcDisplayModel: CalcDisplayModel = CalcDisplayModel("", 1, testCalcDataModel, Crystallised)
-
-
-  val taxCalculationDetailsResponseAuditModelFull: TaxCalculationDetailsResponseAuditModel =
-    TaxCalculationDetailsResponseAuditModel(
+  val taxCalculationDetailsResponseAuditModelFull: TaxDueResponseAuditModel =
+    TaxDueResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = testMtditid,
         nino = "nino",
         userName = Some(Name(Some("firstName"), Some("lastName"))),
         incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
-        btaNavPartial =  None,
+        btaNavPartial = None,
         saUtr = Some("saUtr"),
         credId = Some("credId"),
         userType = Some("Individual"),
         arn = None
       )(FakeRequest()),
-      calcDisplayModel = calcDisplayModel,
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull),
       taxYear = testTaxYear
     )
 
   def taxCalculationDetailsResponseAuditModelMinimal(userType: Option[String] = Some("Individual"),
-                                                     arn: Option[String] = None): TaxCalculationDetailsResponseAuditModel =
-    TaxCalculationDetailsResponseAuditModel(
+                                                     arn: Option[String] = None): TaxDueResponseAuditModel =
+    TaxDueResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = testMtditid,
         nino = "nino",
         userName = Some(Name(Some("firstName"), Some("lastName"))),
         incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
-        btaNavPartial =  None,
+        btaNavPartial = None,
         saUtr = Some("saUtr"),
         credId = Some("credId"),
         userType = userType,
         arn = arn
       )(FakeRequest()),
-      calcDisplayModel = CalcDisplayModel("", 0, Calculation(crystallised = false), Estimate),
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal),
       taxYear = testTaxYear
     )
 
@@ -195,79 +89,164 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     "nationalInsuranceNumber" -> "nino",
     "credId" -> "credId",
     "mtditid" -> testMtditid,
-    "calculationOnTaxableIncome" -> 25000.00,
-    "incomeTaxAndNationalInsuranceContributionsDue" -> 10000.00,
+    "calculationOnTaxableIncome" -> 12500,
+    "incomeTaxAndNationalInsuranceContributionsDue" -> 5000.99,
     "class4NationalInsurance" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Starter rate (£12,000.00 at 10%)",
-        "amount" -> 1200
+        "rateBand" -> "Zero rate (£12,500.00 at 20%)",
+        "amount" -> 5000.99
       )
     ),
     "gainsOnLifePolicies" -> Json.arr(
       Json.obj(
-      "rateBand" -> "Basic rate (£20,000.00 at 20%)",
-      "amount" -> 4000
+        "rateBand" -> "Starting rate (£12,500.00 at 20%)",
+        "amount" -> 5000.99
       )
     ),
     "payPensionsProfit" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate (£20,000.00 at 20%)",
-        "amount" -> 4000
+        "rateBand" -> "Basic rate (£12,500.00 at 20%)",
+        "amount" -> 5000.99
       )
     ),
     "otherCharges" -> Json.arr(
       Json.obj(
         "chargeType" -> "Student Loan Repayments",
-        "amount" -> 1234
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "chargeType" -> "Underpaid tax for earlier years in your tax code for 2017 to 2018",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "chargeType" -> "Underpaid tax for earlier years in your self assessment for 2017 to 2018",
+        "amount" -> -2500.99
       )
     ),
     "employmentLumpSums" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate (£20,000.00 at 20%)",
-        "amount" -> 4000
+        "rateBand" -> "Starting rate (£12,500.00 at 20%)",
+        "amount" -> 5000.99
       )
     ),
     "taxDeductions" -> Json.arr(
       Json.obj(
+        "deductionType" -> "Outstanding debt collected through PAYE",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "deductionType" -> "All employments",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "deductionType" -> "UK pensions",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "deductionType" -> "State benefits",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
         "deductionType" -> "CIS and trading income",
-        "amount" -> 1350
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "deductionType" -> "UK land and property",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "deductionType" -> "Special withholding tax",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "deductionType" -> "Void ISAs",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "deductionType" -> "Interest received from UK banks and building societies",
+        "amount" -> 5000.99
       ),
       Json.obj(
         "deductionType" -> "Income Tax due after deductions",
-        "amount" -> 1350
+        "amount" -> 50000.99
       )
     ),
     "taxReductions" -> Json.arr(
       Json.obj(
         "reductionDescription" -> "Venture Capital Trust relief",
-        "amount" -> 5678
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "reductionDescription" -> "Deficiency Relief",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "reductionDescription" -> "Marriage allowance transfer",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "reductionDescription" -> "Top slicing relief",
+        "amount" -> 5000.99
       ),
       Json.obj(
         "reductionDescription" -> "Relief for finance costs",
-        "amount" -> 4321
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "reductionDescription" -> "Notional tax from gains on life policies etc.",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "reductionDescription" -> "Foreign Tax Credit Relief",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "reductionDescription" -> "Income Tax due after tax reductions",
+        "amount" -> 5000.99
       )
     ),
     "additionalCharges" -> Json.arr(
       Json.obj(
         "chargeType" -> "Voluntary Class 2 National Insurance",
-        "amount" -> 1000
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "chargeType" -> "Gift Aid tax charge",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "chargeType" -> "Total pension saving charges",
+        "amount" -> 5000.99
+      ),
+      Json.obj(
+        "chargeType" -> "State pension lump sum",
+        "amount" -> 5000.99
       )
     ),
     "dividends" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Basic rate band at nil rate (£10,000.00 at 0%)",
-        "amount" -> 0
+        "rateBand" -> "Starting rate (£12,500.00 at 20%)",
+        "amount" -> 5000.99
       )
     ),
     "capitalGainsTax" -> Json.obj(
-      "taxOnGainsAlreadyPaid" -> 3570,
+      "taxableCapitalGains" -> 5000.99,
+      "capitalGainsTaxAdjustment" -> -2500.99,
+      "foreignTaxCreditReliefOnCapitalGains" -> 5000.99,
+      "taxOnGainsAlreadyPaid" -> 5000.99,
+      "capitalGainsTaxDue" -> 5000.99,
+      "capitalGainsTaxCalculatedAsOverpaid"-> 5000.99,
       "rates" -> Json.arr(
-        Json.obj("rateBand" -> "Business Asset Disposal Relief and or Investors' Relief gains (£12,000.00 at 12%)",
-          "amount" -> 1000),
-        Json.obj("rateBand" -> "Residential property and carried interest basic rate (£10,000.00 at 23%)",
-          "amount" -> 2300),
-        Json.obj("rateBand" -> "Other gains higher rate (£35,000.00 at 44%)",
-          "amount" -> 3400)
+        Json.obj("rateBand" -> "Business Asset Disposal Relief and or Investors' Relief gains (£5,000.99 at 20%)",
+          "amount" -> 5000.99),
+        Json.obj("rateBand" -> "Residential property and carried interest basic rate (£5,000.99 at 20%)",
+          "amount" -> 5000.99),
+        Json.obj("rateBand" -> "Residential property and carried interest lowerRate2 (£5,000.99 at 21%)",
+          "amount" -> 5000.99),
+        Json.obj("rateBand" -> "Other gains basic rate (£5,000.99 at 20%)",
+          "amount" -> 5000.99),
+        Json.obj("rateBand" -> "Other gains lowerRate2 (£5,000.99 at 21%)",
+          "amount" -> 5000.99)
       )
     ),
     "taxCalculationMessage" -> Json.arr(
@@ -283,7 +262,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     ),
     "savings" -> Json.arr(
       Json.obj(
-        "rateBand" -> "Zero rate (£10,000.00 at 0%)",
+        "rateBand" -> "Zero rate (£12,500.00 at 0%)",
         "amount" -> 0
       )
     )
@@ -316,4 +295,4 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
   }
 
 
-  }
+}

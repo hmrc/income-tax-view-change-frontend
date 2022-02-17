@@ -16,38 +16,22 @@
 
 package mocks.views.agent
 
-import models.calculation.CalcDisplayModel
-import models.liabilitycalculation.LiabilityCalculationResponse
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.{IncomeBreakdown, IncomeBreakdownOld}
+import views.html.IncomeBreakdown
 
 trait MockIncomeSummary extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val incomeBreakdownOld: IncomeBreakdownOld = mock[IncomeBreakdownOld]
   val incomeBreakdown: IncomeBreakdown = mock[IncomeBreakdown]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(incomeBreakdown)
-    reset(incomeBreakdownOld)
-  }
-
-  def mockIncomeBreakdownOld(taxYear: Int, calcModel: CalcDisplayModel, backUrl: String, isAgent:Boolean)
-                            (response: Html): Unit = {
-    when(incomeBreakdownOld.apply(
-      matches(calcModel),
-      matches(taxYear),
-      matches(backUrl),
-      matches(isAgent),
-      any()
-    )(any(), any()))
-      .thenReturn(response)
   }
 
   def mockIncomeBreakdown(taxYear: Int, calcModel: IncomeBreakdownViewModel, backUrl: String, isAgent:Boolean)

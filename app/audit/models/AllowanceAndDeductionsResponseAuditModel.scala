@@ -18,40 +18,12 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUserBase
-import models.calculation.AllowancesAndDeductions
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.JsValue
 import utils.Utilities._
 
 case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
-                                                    aad: AllowancesAndDeductions,
-                                                    txmEventApproved: Boolean) extends ExtendedAuditModel {
-
-  override val transactionName: String = "allowances-deductions-details-response"
-  override val auditType: String = "AllowancesDeductionsDetailsResponse"
-
-  override val detail: JsValue = {
-    if(txmEventApproved) {
-      userAuditDetails(mtdItUser) ++
-        ("personalAllowance", aad.personalAllowance) ++
-        ("pensionContributions", aad.totalPensionContributions) ++
-        ("lossRelief", aad.lossesAppliedToGeneralIncome) ++
-        ("giftsToCharity", aad.giftOfInvestmentsAndPropertyToCharity) ++
-        ("annualPayments", aad.grossAnnualPayments) ++
-        ("qualifyingLoanInterest", aad.qualifyingLoanInterestFromInvestments) ++
-        ("postCessationTradeReceipts", aad.postCessationTradeReceipts) ++
-        ("tradeUnionPayments", aad.paymentsToTradeUnionsForDeathBenefits) ++
-        ("marriageAllowanceTransfer", aad.marriageAllowanceTransfer)
-    } else {
-      userAuditDetails(mtdItUser) ++
-        ("personalAllowance", aad.personalAllowance) ++
-        ("pensionContributions", aad.totalPensionContributions)
-    }
-  }
-}
-
-case class AllowanceAndDeductionsResponseAuditModelNew(mtdItUser: MtdItUserBase[_],
-                                                       viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
+                                                    viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
 
   override val transactionName: String = "allowances-deductions-details-response"
   override val auditType: String = "AllowancesDeductionsDetailsResponse"

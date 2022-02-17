@@ -16,27 +16,24 @@
 
 package controllers.agent
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.CalcDataIntegrationTestConstants._
-import testConstants.messages.IncomeSummaryMessages.{incomeSummaryAgentHeading, incomeSummaryTitle}
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessAndPropertyResponseWoMigration}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.messages.IncomeSummaryMessages.{incomeSummaryAgentHeading, incomeSummaryTitle}
 
-import java.time.{LocalDate, LocalDateTime}
-
-import helpers.servicemocks.AuthStub.{titleInternalServer}
+import java.time.LocalDate
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -84,173 +81,77 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )
   )
 
-  "newTaxCalcProxy is disabled" should {
-    "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
-      s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
-        "the user is not authenticated" in {
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = false)
+  "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+      "the user is not authenticated" in {
+        stubAuthorisedAgentUser(authorised = false)
 
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
 
-          Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn().url)
-          )
-        }
-      }
-      s"return $OK with technical difficulties" when {
-        "the user is authenticated but doesn't have the agent enrolment" in {
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
-
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
-
-          Then(s"Technical difficulties are shown with status OK")
-          result should have(
-            httpStatus(OK),
-            pageTitleAgent(titleInternalServer)
-          )
-        }
-      }
-      s"return $SEE_OTHER" when {
-        "the agent does not have client details in session" in {
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
-
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
-
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(routes.EnterClientsUTRController.show().url)
-          )
-        }
-        "the agent has client details in session but no confirmation flag" in {
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
-
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
-
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(routes.EnterClientsUTRController.show().url)
-          )
-        }
-      }
-      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-        "feature switch AgentViewer is enabled" should {
-        "return the correct income summary page" in {
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = incomeSourceDetailsSuccess
-          )
-
-          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
-
-          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
-
-          When(s"I call GET ${routes.IncomeSummaryController.showIncomeSummary(getCurrentTaxYearEnd.getYear).url}")
-          val res = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
-
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(incomeSummaryTitle),
-            elementTextBySelector("h1")(incomeSummaryAgentHeading)
-          )
-        }
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.SignInController.signIn().url)
+        )
       }
     }
-  }
+    s"return $OK with technical difficulties" when {
+      "the user is authenticated but doesn't have the agent enrolment" in {
+        stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
-  "newTaxCalcProxy is enabled" should {
-    "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
-      s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
-        "the user is not authenticated" in {
-          enable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = false)
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
 
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
-
-          Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn().url)
-          )
-        }
+        Then(s"Technical difficulties are shown with status OK")
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent(titleInternalServer)
+        )
       }
-      s"return $OK with technical difficulties" when {
-        "the user is authenticated but doesn't have the agent enrolment" in {
-          enable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
+    }
+    s"return $SEE_OTHER" when {
+      "the agent does not have client details in session" in {
+        stubAuthorisedAgentUser(authorised = true)
 
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
 
-          Then(s"Technical difficulties are shown with status OK")
-          result should have(
-            httpStatus(OK),
-            pageTitleAgent(titleInternalServer)
-          )
-        }
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(routes.EnterClientsUTRController.show().url)
+        )
       }
-      s"return $SEE_OTHER" when {
-        "the agent does not have client details in session" in {
-          enable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
+      "the agent has client details in session but no confirmation flag" in {
+        stubAuthorisedAgentUser(authorised = true)
 
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
 
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(routes.EnterClientsUTRController.show().url)
-          )
-        }
-        "the agent has client details in session but no confirmation flag" in {
-          enable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
-
-          val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
-
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(routes.EnterClientsUTRController.show().url)
-          )
-        }
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(routes.EnterClientsUTRController.show().url)
+        )
       }
-      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid Liability Calc response" should {
-        "return the correct income summary page" in {
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          enable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            status = OK,
-            response = businessAndPropertyResponse
-          )
+    }
+    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid Liability Calc response" should {
+      "return the correct income summary page" in {
+        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          status = OK,
+          response = businessAndPropertyResponse
+        )
 
-          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
-            status = OK,
-            body = liabilityCalculationModelSuccessFull
-          )
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
 
-          When(s"I call GET ${routes.IncomeSummaryController.showIncomeSummary(getCurrentTaxYearEnd.getYear).url}")
-          val res = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        When(s"I call GET ${routes.IncomeSummaryController.showIncomeSummary(getCurrentTaxYearEnd.getYear).url}")
+        val res = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(incomeSummaryTitle),
-            elementTextBySelector("h1")(incomeSummaryAgentHeading)
-          )
-        }
+        res should have(
+          httpStatus(OK),
+          pageTitleAgent(incomeSummaryTitle),
+          elementTextBySelector("h1")(incomeSummaryAgentHeading)
+        )
       }
     }
   }

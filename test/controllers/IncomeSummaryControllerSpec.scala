@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
+import config.featureswitch.FeatureSwitching
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{BtaNavFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -29,13 +29,12 @@ import testConstants.BaseTestConstants.testMtditid
 import testConstants.EstimatesTestConstants.testYear
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
-import views.html.{IncomeBreakdown, IncomeBreakdownOld}
+import views.html.IncomeBreakdown
 
 class IncomeSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestIncomeSummaryController extends IncomeSummaryController(
-    app.injector.instanceOf[IncomeBreakdownOld],
     app.injector.instanceOf[IncomeBreakdown],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
@@ -53,115 +52,61 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(NewTaxCalcProxy)
   }
 
   "showIncomeSummary" when {
 
-    "NewTaxCalcProxy FS is disabled" should {
+    lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+    lazy val document = result.toHtmlDocument
+
+    "given a tax year which can be found in ETMP" should {
+
+      "return Status OK (200)" in {
+        mockCalculationSuccessFullNew(testMtditid)
+        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+        status(result) shouldBe Status.OK
+      }
+
+      "return HTML" in {
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+      }
+
+      "render the IncomeBreakdown page" in {
+        document.title() shouldBe "Income - Business Tax account - GOV.UK"
+      }
+    }
+    "given a tax year which can not be found in ETMP" should {
 
       lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-      lazy val document = result.toHtmlDocument
 
-      "given a tax year which can be found in ETMP" should {
-
-        "return Status OK (200)" in {
-          mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the IncomeBreakdown page" in {
-          document.title() shouldBe "Income - Business Tax account - GOV.UK"
-        }
-      }
-      "given a tax year which can not be found in ETMP" should {
-
-        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-
-        "return Status Internal Server Error (500)" in {
-          mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
+      "return Status Internal Server Error (500)" in {
+        mockCalculationNotFoundNew(testMtditid)
+        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
-      "there is a downstream error" should {
+    }
 
-        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+    "there is a downstream error which return NOT_FOUND" should {
 
-        "return Status Internal Server Error (500)" in {
-          mockCalculationError()
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
+      lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+
+      "return Status Internal Server Error (500)" in {
+        mockCalculationNotFoundNew(testMtditid)
+        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
-    "NewTaxCalcProxy FS is enabled" when {
+    "there is a downstream error which return INTERNAL_SERVER_ERROR" should {
 
       lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-      lazy val document = result.toHtmlDocument
 
-      "given a tax year which can be found in ETMP" should {
-
-        "return Status OK (200)" in {
-          enable(NewTaxCalcProxy)
-          mockCalculationSuccessFullNew(testMtditid)
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the IncomeBreakdown page" in {
-          document.title() shouldBe "Income - Business Tax account - GOV.UK"
-        }
-      }
-      "given a tax year which can not be found in ETMP" should {
-
-        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-
-        "return Status Internal Server Error (500)" in {
-          enable(NewTaxCalcProxy)
-          mockCalculationNotFoundNew(testMtditid)
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-      }
-
-      "there is a downstream error which return NOT_FOUND" should {
-
-        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-
-        "return Status Internal Server Error (500)" in {
-          enable(NewTaxCalcProxy)
-          mockCalculationNotFoundNew(testMtditid)
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-      }
-
-      "there is a downstream error which return INTERNAL_SERVER_ERROR" should {
-
-        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-
-        "return Status Internal Server Error (500)" in {
-          enable(NewTaxCalcProxy)
-          mockCalculationErrorNew(testMtditid)
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
+      "return Status Internal Server Error (500)" in {
+        mockCalculationErrorNew(testMtditid)
+        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }
