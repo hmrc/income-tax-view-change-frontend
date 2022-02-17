@@ -463,7 +463,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
 
-
       "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
         new Setup(whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
         pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
@@ -651,7 +650,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
       }
 
-
       "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(whatYouOweDataWithOverdueData()) {
         pageDocument.select(".interest-rate").first() shouldBe null
       }
@@ -751,7 +749,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
-      }
+    }
       s"have payment data with button" in new Setup(whatYouOweDataWithMixedData1) {
 
         pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
@@ -841,7 +839,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "have the link to their previous Self Assessment online account in the sa-note" in new Setup(noChargesModel) {
         verifySelfAssessmentLink()
       }
-
 
       "not have button Pay now" in new Setup(noChargesModel) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
