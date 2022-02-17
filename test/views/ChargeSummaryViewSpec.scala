@@ -279,7 +279,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        document.select("div#payment-link-2018").text() shouldBe "Make a payment"
+        document.select("div#payment-link-2018").text() shouldBe msgs("paymentDue.payNow")
       }
 
       "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
@@ -438,7 +438,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a payment link when an outstanding amount is to be paid" in new Setup(documentDetailModel()) {
-        document.select("div#payment-link-2018").text() shouldBe "Make a payment"
+        document.select("div#payment-link-2018").text() shouldBe msgs("paymentDue.payNow")
       }
 
       "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
