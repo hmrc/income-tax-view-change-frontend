@@ -567,6 +567,10 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val paymentType = "Payment type"
     val taxYearSummary = "Tax year summary"
     val amountDue = "Amount due"
+
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
+    val paymentsMade = "Any payments you make:"
     val poa1Text = "Payment on account 1 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val poa2Text = "Payment on account 2 of 2"

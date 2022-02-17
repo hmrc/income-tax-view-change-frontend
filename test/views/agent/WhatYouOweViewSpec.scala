@@ -332,7 +332,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           pageDocument.doesNotHave(id("payment-under-review-info"))
         }
 
-        s"payment processing bullet list exists when Dunning lock content is there" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
+        s"payment processing bullet list exists when overdue and due within 30 days is there" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock), dunningLock = true) {
           pageDocument.getElementById("payments-made").text shouldBe AgentPaymentDue.paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
@@ -396,7 +396,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
       }
 
-      s"payment processing bullet list exists when Dunning lock content is there" in new Setup(whatYouOweDataWithOverdueData()) {
+      s"payment processing bullet list exists when overdue charge is there" in new Setup(whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("payments-made").text shouldBe AgentPaymentDue.paymentsMade
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
         paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
@@ -427,7 +427,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
             LocalDate.now().getYear).url
         }
 
-      s"payment processing bullet list exists when Dunning lock content is there" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
+      s"payment processing bullet list exists when overdue lpi is there" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
         pageDocument.getElementById("payments-made").text shouldBe AgentPaymentDue.paymentsMade
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
         paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
@@ -524,8 +524,9 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearOverdueAndUnderReview
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYearOverdue
+        }
 
-          s"payment processing bullet list exists when single charge is there" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock), dunningLock = true) {
+          s"payment processing bullet list exists when single lpi charge is there" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock), dunningLock = true) {
             pageDocument.getElementById("payments-made").text shouldBe AgentPaymentDue.paymentsMade
             val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
             paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1

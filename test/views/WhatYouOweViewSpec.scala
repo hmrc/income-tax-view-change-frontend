@@ -254,19 +254,39 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payment-details-content-2").text shouldBe whatYouOwe.lpiHeading + " " + whatYouOwe.lpiLine1
 
       }
+      "should have payment processing bullets when payment due in more than 30 days" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
-      "display the paragraph about payments under review when there is a dunningLock" in new Setup(
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
+
+      "display the paragraph about payments under review and bullet points when there is a dunningLock" in new Setup(
         whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
         val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
         pageDocument.getElementById("payment-under-review-info").text shouldBe whatYouOwe.paymentUnderReviewPara
         paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
         paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
-      "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
+      "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new Setup(
         whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks)) {
         pageDocument.getElementById("payment-under-review-info") shouldBe null
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
     }
@@ -345,12 +365,28 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
         paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
       }
+      "should have payment processing bullets when there is dunningLock" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
 
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
       "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
         whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
         pageDocument.getElementById("payment-under-review-info") shouldBe null
       }
+      "should have payment processing bullets when there is no dunningLock" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
 
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
       s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
         whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
@@ -359,6 +395,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearAndUnderReview
         dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYear
       }
+      "should have payment processing bullets when there is a single charge" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
+
 
       s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against multiple charges" in new Setup(
         whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
@@ -367,6 +413,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYearAndUnderReview
         dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYearAndUnderReview
+      }
+      "should have payment processing bullets when there is multiple charge" in new Setup(
+        whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
     }
 
@@ -394,11 +449,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe whatYouOwe.overdueTag
       }
-      "have payment type dropdown details" in new Setup(whatYouOweDataWithOverdueData()) {
+      "have payment type dropdown details and bullet point list" in new Setup(whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
         pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
         pageDocument.getElementById("payment-details-content-2").text shouldBe whatYouOwe.lpiHeading + " " + whatYouOwe.lpiLine1
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
 
       }
 
@@ -426,7 +487,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             LocalDate.now().getYear).url
       }
 
-      "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
+      "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new Setup(whatYouOweDataWithOverdueLPI(List(Some(34.56), None)))  {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
+
+      "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
         new Setup(whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56),Some(1000))) {
           pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
 
@@ -448,9 +518,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("LpiDunningBlock").text shouldBe "Payment under review"
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
             LocalDate.now().getYear).url
+
+          pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+          paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+          paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
-      "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
+      "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
         new Setup(whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56),Some(0))) {
           pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
 
@@ -472,9 +548,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
             LocalDate.now().getYear).url
 
+          pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+          paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+          paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+
         }
 
-      "have overdue payments header and data with POA1 charge type and No Late payment interest" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
+      "have overdue payments header, bullet points and data with POA1 charge type and No Late payment interest" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
         pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
 
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
@@ -495,9 +577,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
           LocalDate.now().getYear).url
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
-      "have overdue payments header and data with POA1 charge type" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
+      "have overdue payments header, bullet points and data with POA1 charge type" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
         pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
 
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
@@ -520,6 +608,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
           LocalDate.now().getYear).url
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
       "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
         val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
@@ -539,6 +633,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe whatYouOwe.interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
         overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
+      }
+      "should have payment processing bullets when there is accruing interest" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
       "only show interest for POA when there is no late Payment Interest" in new Setup(whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
@@ -602,7 +704,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
       }
 
-      s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueMixedData2(List(None,None,None))) {
+      "should have payment processing bullets when there is mixed dates" in new Setup(whatYouOweDataWithMixedData1) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
+
+      s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueMixedData2(List(None,None,None))) {
         val overdueTableHeader: Element = pageDocument.select("tr").first()
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
@@ -633,7 +744,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("taxYearSummary-30days-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
           LocalDate.now().getYear).url
 
-
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
       }
@@ -649,7 +764,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has charges and access viewer with mixed dates and ACI value of zero" should {
 
-      s"have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
+      s"have the mtd payments header, bullets and table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
           (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
@@ -694,6 +809,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
         pageDocument.getElementById("taxYearSummary-30days-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
           LocalDate.now().getYear).url
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
       s"have payment data with button" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
@@ -725,6 +846,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "not have button Pay now" in new Setup(noChargesModel) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
+      "should have payment processing bullets" in new Setup(noChargesModel) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
     }
 
     "codingOut is enabled" should {
@@ -738,6 +867,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("over-due-type-0") should not be null
         pageDocument.getElementById("over-due-type-0").text().contains("Class 2 National Insurance") shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+      }
+
+      "should have payment processing bullets when there is coding out" in new Setup(whatYouOweDataWithCodingOut) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
       "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
@@ -758,6 +896,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.select("#over-due-type-0 a").get(0).text() shouldBe "Balancing payment 2021"
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
 
+      }
+      "should have payment processing bullets" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
     }
 
