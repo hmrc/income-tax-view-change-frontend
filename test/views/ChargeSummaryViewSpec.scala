@@ -242,6 +242,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "have a paragraphs explaining Cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
         documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        document.select("#check-paye-para").text() shouldBe Messages.payeTaxCodeText(2018)
+        document.select("#paye-tax-code-link").attr("href") shouldBe Messages.payeTaxCodeLink
         document.select("#cancelled-coding-out-notice").text() shouldBe Messages.cancelledPayeTaxCodeInsetText
         document.select("#cancelled-coding-out-notice a").attr("href") shouldBe Messages.cancellledPayeTaxCodeInsetLink
 
@@ -632,6 +634,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
         }
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe CodingOutMessages.header
+          document.select("#check-paye-para").text() shouldBe Messages.payeTaxCodeText(2018)
+          document.select("#paye-tax-code-link").attr("href") shouldBe Messages.payeTaxCodeLink
           document.select("#coding-out-notice").text() shouldBe CodingOutMessages.insetPara
           document.select("#coding-out-message").text() shouldBe CodingOutMessages.summaryMessage
           document.select("#coding-out-notice-link").attr("href") shouldBe CodingOutMessages.noticeLink
