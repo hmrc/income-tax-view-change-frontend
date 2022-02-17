@@ -344,10 +344,10 @@
                 </table>
             </div>
             }
-            @if(!chargesList.isChargesListEmpty) {
-            @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
-            @dunningLockParagraph
-            }
+             @if(!chargesList.isChargesListEmpty) {
+                @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
+               @dunningLockParagraph
+             }
 
             @if(codingOutEnabled) {
                 @chargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
