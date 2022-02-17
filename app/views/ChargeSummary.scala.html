@@ -184,6 +184,7 @@
                 <dd class="govuk-summary-list__value">@messages("chargeSummary.lpi.interestPeriod.dates", documentDetail.interestFromDate.getOrElse(throw new MissingFieldException("Interest From Date")).toLongDateShort, documentDetail.interestEndDate.getOrElse(throw new MissingFieldException("Interest End Date")).toLongDateShort)</dd>
             </div>
         }
+        @if(!(codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@{
                 if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
@@ -206,10 +207,37 @@
                 } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
                 else documentDetail.remainingToPay.toCurrency
             }
+                }
             </dd>
         </div>
     </dl>
 
+@if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+<p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
+    <strong class="govuk-body govuk-!-font-weight-bold govuk-!-margin-right-8">@{
+        if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
+        messages("chargeSummary.paymentAmountCodingOut")
+        } else messages("chargeSummary.paymentAmount")
+        }
+    </strong>
+        @{
+        if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
+        else documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
+        }
+</p>
+
+
+
+<p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
+    @{
+        if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+        messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
+        } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+        else documentDetail.remainingToPay.toCurrency
+        }
+
+</p>
+}
     @if(hasPaymentBreakdown) {
         <h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
         <dl class="govuk-summary-list">
