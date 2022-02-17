@@ -434,31 +434,7 @@ object NewCalcBreakdownUnitTestConstants {
         rate = 3,
         income = 5000,
         amount = 300
-      ),
-      Nic4Bands(
-        name = "giftAidTax",
-        rate = 4,
-        income = 6000,
-        amount = 400
-      ),
-      Nic4Bands(
-        name = "totalPensionSavingsTaxCharges",
-        rate = 5,
-        income = 7000,
-        amount = 500
-      ),
-      Nic4Bands(
-        name = "statePensionLumpSumCharges",
-        rate = 6,
-        income = 8000,
-        amount = 600
-      ),
-      Nic4Bands(
-        name = "totalStudentLoansRepaymentAmount",
-        rate = 7,
-        income = 9000,
-        amount = 700
-      ),
+      )
     )),
     class2VoluntaryContributions = Some(true),
     class2NicsAmount = Some(10000),

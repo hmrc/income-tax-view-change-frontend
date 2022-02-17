@@ -230,6 +230,8 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
+taxCal_breakdown.table.uplift                                       = 1.25% uplift in National Insurance contributions funds NHS, health and social care
+taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
 taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
 taxCal_breakdown.table.nic2.true                                    = Voluntary Class 2 National Insurance
@@ -242,7 +244,7 @@ taxCal_breakdown.table.head.charge_type                             = Charge typ
 taxCal_breakdown.table.head.reduction                               = Reduction
 taxCal_breakdown.table.head.rate_band                               = Rate band
 taxCal_breakdown.table.head.cgt_type                                = Capital Gains Tax type
-taxCal_breakdown.table.head.national_insurance_type                 = National insurance type
+taxCal_breakdown.table.head.national_insurance_type                 = National Insurance type
 taxCal_breakdown.table.head.rates.uk                                = UK rates for England and Northern Ireland
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
 

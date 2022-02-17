@@ -91,3 +91,7 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .no-wrap {
     white-space: nowrap;
 }
+
+.uplift {
+    color: #505a5f;
+}
