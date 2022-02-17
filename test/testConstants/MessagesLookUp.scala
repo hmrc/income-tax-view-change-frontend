@@ -609,6 +609,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val interestRatesPara = s"Any overdue payment interest is at the $interestRatesLink. The rate may have changed since the interest was first charged."
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+    def taxYearSummaryText(from: String, to: String): String = s"$from to $to $from to $to"
+
 
     val dueDate = "Due date"
     val payNow = "Make a payment"
@@ -624,6 +626,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
     val dropDownInfo = "What are the payment types?"
+    val paymentsMade = "Any payments you make:"
     val paymentDaysNote = "Payments can take up to 3 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
     val paymentUnderReviewParaLink = "there is a current appeal against a tax decision (opens in new tab)."
@@ -638,6 +641,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2Text = "Payment on account 2 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val latePoa2Text = "Late payment interest for payment on account 2 of 2"
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
     val remainingBalance = "Balancing payment"
     val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
     val interestOnRemainingBalance = "Interest on Balancing payment"

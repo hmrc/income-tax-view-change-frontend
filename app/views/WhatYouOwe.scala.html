@@ -185,15 +185,15 @@
     }
 }
 
-@taxYearSummaryLink(year: Int, index:Int) = {
-<a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="taxYearSummary-link-@index"
+@taxYearSummaryLink(year: Int, index:Int, id:String) = {
+<a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="@id-@index"
    href="@getReturnHref(year)">
     @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString)
     <span class="govuk-visually-hidden">@getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString)</span>
 </a>
 }
 
-@tableRow(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean, index:Int) = {
+@tableRow(rowId2: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean, index:Int, id:String) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell govuk-!-width-one-quarter" >
             @if(isOverduePayment && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)(
@@ -214,7 +214,7 @@
                 <div class="form-hint govuk-body-s" id="LpiDunningBlock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
-        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index)</td>
+        <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index, id)</td>
 
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
             if(isOverduePayment && documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined)
@@ -296,7 +296,7 @@
                         @tableHead("over-due-payments-table-head")
                         <tbody class="govuk-table__body">
                         @for((charge, index) <- chargesList.sortedOverduePaymentLists.zipWithIndex) {
-                            @tableRow(s"over-due-type-$index", charge, isOverduePayment = true, index)
+                            @tableRow(s"over-due-type-$index", charge, isOverduePayment = true, index, "taxYearSummary-link")
                             @if(charge.documentDetail.hasAccruingInterest) {
                                 <tr class="govuk-table__row" id=@(s"overdue-charge-interest-$index")>
                                     <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
@@ -311,7 +311,7 @@
                                         </div>
                                     </td>
                                     <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                                        @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index)
+                                        @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
                                     </td>
                                     <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
                                         charge.documentDetail.interestOutstandingAmount.getOrElse(throw new MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
@@ -319,12 +319,13 @@
                                 </tr>
 
                             }
+
                         }
-                          @if(chargesList.dueInThirtyDaysList.nonEmpty) {
-                            @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
-                             @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index)
-                            }
-                          }
+                        @if(chargesList.dueInThirtyDaysList.nonEmpty) {
+                        @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
+                        @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index, "taxYearSummary-30days-link")
+                        }
+                        }
                         </tbody>
                     </table>
                 </div>
@@ -339,7 +340,7 @@
                     @tableHead("due-in-thirty-days-payments-table-head")
                     <tbody class="govuk-table__body">
                     @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
-                    @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index)
+                    @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index, "taxYearSummary-30days-link")
                     }
                     </tbody>
                 </table>
