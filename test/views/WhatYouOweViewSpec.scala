@@ -319,7 +319,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have table header and data for due within 30 days" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.getElementById("due-in-thirty-days-payments-heading").text shouldBe whatYouOwe.paymentsDue
+        pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
 
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
         dueWithInThirtyDaysHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -465,7 +465,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
         new Setup(whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
-        pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
+        pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
 
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -497,7 +497,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
         new Setup(whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56),Some(1000))) {
-          pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
+          pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(3)
           overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -527,7 +527,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
         new Setup(whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56),Some(0))) {
-          pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
+          pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(3)
           overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -556,7 +556,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
       "have overdue payments header, bullet points and data with POA1 charge type and No Late payment interest" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
-        pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
+        pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
 
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
@@ -585,7 +585,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have overdue payments header, bullet points and data with POA1 charge type" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
-        pageDocument.getElementById("over-due-payments-heading").text shouldBe whatYouOwe.paymentsDue
+        pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
 
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate

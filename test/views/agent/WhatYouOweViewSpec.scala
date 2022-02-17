@@ -284,7 +284,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       s"have table header and data for due within 30 days" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.getElementById("due-in-thirty-days-payments-heading").text shouldBe AgentPaymentDue.paymentsDue
+        pageDocument.getElementById("payments-due").text shouldBe AgentPaymentDue.paymentsDue
 
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
         dueWithInThirtyDaysHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
@@ -405,7 +405,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
       "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
         new Setup(whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
-          pageDocument.getElementById("over-due-payments-heading").text shouldBe AgentPaymentDue.paymentsDue
+          pageDocument.getElementById("payments-due").text shouldBe AgentPaymentDue.paymentsDue
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(3)
           overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
@@ -436,7 +436,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
 
       "have overdue payments header and data with POA1 charge type and No Late payment interest" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
-        pageDocument.getElementById("over-due-payments-heading").text shouldBe AgentPaymentDue.paymentsDue
+        pageDocument.getElementById("payments-due").text shouldBe AgentPaymentDue.paymentsDue
 
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
@@ -460,7 +460,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
 
       "have overdue payments header and data with POA1 charge type" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
-        pageDocument.getElementById("over-due-payments-heading").text shouldBe AgentPaymentDue.paymentsDue
+        pageDocument.getElementById("payments-due").text shouldBe AgentPaymentDue.paymentsDue
 
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate

@@ -285,9 +285,9 @@
                     </table>
                 </div>
             }
-            @if(chargesList.overduePaymentList.nonEmpty) {
+            @if(chargesList.overduePaymentList.nonEmpty || chargesList.dueInThirtyDaysList.nonEmpty) {
             @h2(msg = getMessage("payments-due"), classes = "govuk-heading-l",
-            optId=Some("over-due-payments-heading"))
+            optId=Some("payments-due"))
                 <div id="payments-due-table">
                     <table class="govuk-table">
                         <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("payments-due")</caption>
@@ -319,31 +319,15 @@
                             }
 
                         }
-                         @if(chargesList.dueInThirtyDaysList.nonEmpty) {
                            @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
                               @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index, "taxYearSummary-30days-link")
-                            }
-                         }
+                          }
                         </tbody>
                     </table>
                 </div>
 
             }
-            @if(chargesList.dueInThirtyDaysList.nonEmpty && !chargesList.overduePaymentList.nonEmpty) {
-            @h2(msg = getMessage("payments-due"), classes = "govuk-heading-l",
-            optId=Some("due-in-thirty-days-payments-heading"))
-            <div id="due-in-thirty-days-payments-table">
-                <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("due-in-thirty-days-payments")</caption>
-                    @tableHead("due-in-thirty-days-payments-table-head")
-                    <tbody class="govuk-table__body">
-                    @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
-                    @tableRow(s"due-in-thirty-days-type-$index", charge, isOverduePayment = false, index, "taxYearSummary-30days-link")
-                    }
-                    </tbody>
-                </table>
-            </div>
-            }
+
              @if(!chargesList.isChargesListEmpty) {
                 @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
                @dunningLockParagraph
