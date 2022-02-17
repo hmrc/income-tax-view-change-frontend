@@ -216,7 +216,7 @@
     btaNavPartial = btaNavPartial
 ) {
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
-    @if(chargesList.isChargesListEmpty) {
+    @if(chargesList.isChargesListEmpty && !chargesList.codedOutDocumentDetailNonEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph
         @paymentDaysNoteParagraph
@@ -256,23 +256,25 @@
             }
         }
 
-        @if(utr.isDefined && !isAgent) {
+        @if(utr.isDefined && !isAgent && chargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
         <div>
             @creditOnAccountNotePanel
             <div id="payment-button">
-                @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence).url,
+                @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence).url,
                 messageKey = getPrefix("payNow"), classes = "govuk-button", role=Some("button"),
                 id = Some("payment-button-link"),
                 ariaLabel = Some(getMessage("pay-now-aria",
-                (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
-                chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)))
+                (chargesList.getEarliestTaxYearAndAmountByDueDate.get._1 - 1).toString,
+                chargesList.getEarliestTaxYearAndAmountByDueDate.get._1.toString)))
             </div>
             @paymentDaysNoteParagraph
         </div>
         }
-        @saNoteParagraph
-        @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
-        @dunningLockParagraph
+        @if(!chargesList.isChargesListEmpty) {
+            @saNoteParagraph
+            @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
+            @dunningLockParagraph
+        }
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                 @h2(msg = getMessage("pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString), classes = "govuk-heading-l", optId=Some("pre-mtd-payments-heading"))

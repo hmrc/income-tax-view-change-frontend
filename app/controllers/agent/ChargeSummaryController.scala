@@ -89,7 +89,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                 doShowChargeSummary(taxYear, chargeId, isLatePaymentCharge, financialDetailsModel, payments)(hc, mtdItUser, user)
               case Some(_: FinancialDetailsModel) =>
                 Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
-                Future.successful(Redirect(controllers.agent.routes.HomeController.show().url))
+                Future.successful(Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url))
               case _ =>
                 Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
                 Future.successful(itvcErrorHandler.showInternalServerError())
@@ -151,7 +151,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
     case Some("taxYearOverview") => controllers.agent.routes.TaxYearOverviewController.show(taxYear).url + "#payments"
-    case Some("paymentDue") => controllers.agent.routes.WhatYouOweController.show().url
+    case Some("whatYouOwe") => controllers.routes.WhatYouOweController.showAgent().url
     case _ => controllers.agent.routes.HomeController.show().url
   }
 
