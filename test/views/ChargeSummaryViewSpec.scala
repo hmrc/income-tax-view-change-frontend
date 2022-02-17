@@ -468,7 +468,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("div#payment-link-2018").text() shouldBe "Make a payment"
+        document.select("div#payment-link-2018").text() shouldBe msgs("paymentDue.payNow")
       }
 
       "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
