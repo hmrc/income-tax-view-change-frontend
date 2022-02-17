@@ -597,7 +597,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2WithTaxYear = s"$poa2Text $currentYear"
     val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text $currentYear"
     val poa1WithTaxYearAndUnderReview = s"$poa1Text $currentYear $paymentUnderReview"
-    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text $paymentUnderReview"
+    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text $currentYear $paymentUnderReview"
     val poa2WithTaxYearAndUnderReview = s"$poa2Text $currentYear $paymentUnderReview"
     val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text $currentYear $paymentUnderReview"
 

@@ -484,7 +484,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
           whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock), dunningLock = true) {
-          println(Console.BLUE + pageDocument)
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
 
@@ -507,20 +506,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithMixedData1) {
         pageDocument.title() shouldBe AgentPaymentDue.title
       }
-      "have Balance due in 30 days, Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithMixedData1) {
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe AgentPaymentDue.dueInThirtyDays
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
-        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
-        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
-        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
-        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
-      }
-      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithMixedData1,
-        migrationYear = LocalDate.now().getYear) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
       s"not have MTD payments heading" in new Setup(whatYouOweDataWithMixedData1) {
         pageDocument.doesNotHave(id("pre-mtd-payments-heading"))
       }
@@ -532,47 +517,21 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(1)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear " +
-          AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear"
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
+
+        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
+        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear"
+        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
-      }
-      s"have due within thirty days header and data with hyperlink and no overdue tag" in new Setup(whatYouOweDataWithMixedData2) {
-        val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
-        dueWithInThirtyDaysHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
-        dueWithInThirtyDaysHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
-        dueWithInThirtyDaysHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
-
-        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
-        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
-        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
-          AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000123").url
         pageDocument.doesNotHave(id("due-in-thirty-days-type-0-overdue"))
-      }
-      s"have future payments with table header, data and hyperlink without overdue tag" in new Setup(whatYouOweDataWithMixedData1) {
-        pageDocument.getElementById("future-payments-heading").text shouldBe AgentPaymentDue.futurePayments
-
-        val futurePaymentsHeader: Element = pageDocument.select("tr").get(2)
-        futurePaymentsHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
-        futurePaymentsHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
-        futurePaymentsHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
-
-        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-        futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
-        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
-          AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-        futurePaymentsTableRow1.select("td").last().text() shouldBe "£25.00"
-
-        pageDocument.getElementById("future-payments-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000123").url
-        pageDocument.doesNotHave(id("future-payments-type-0-overdue"))
       }
       s"have payment data with button" in new Setup(whatYouOweDataWithMixedData1) {
         pageDocument.doesNotHave(id("pre-mtd-payments-heading"))
@@ -580,24 +539,9 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     }
 
     "the user has charges and access viewer with mixed dates and ACI value of zero" should {
-      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe AgentPaymentDue.dueInThirtyDays
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
-        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe AgentPaymentDue.overduePaymentsDue
-        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
-        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe AgentPaymentDue.totalPaymentsDue
-        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
-      }
-      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue,
-        migrationYear = LocalDate.now().getYear) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
+
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.title() shouldBe AgentPaymentDue.title
-        pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe AgentPaymentDue.osChargesNote
       }
       s"have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithWithAciValueZeroAndOverdue) {
@@ -616,22 +560,29 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
       s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataTestActiveWithMixedData2(List(None,None,None,None))) {
-        val overdueTableHeader: Element = pageDocument.select("#over-due-payments-table thead tr").get(0)
+        val overdueTableHeader: Element = pageDocument.select("#payments-due-table thead tr").get(0)
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
         overdueTableHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
-        val overduePaymentsTableRow1: Element = pageDocument.select("#over-due-payments-table tbody tr").get(0)
+        val overduePaymentsTableRow1: Element = pageDocument.select("#payments-due-table tbody tr").get(0)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear " +
-          AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear"
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
+
+        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("#payments-due-table tbody tr").get(1)
+        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear"
+          dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
-      }
 
+        pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+          LocalDate.now().getYear, "1040000123").url
+        pageDocument.doesNotHave(id("due-in-thirty-days-type-0-overdue"))
+      }
 
       "have accruing interest displayed below each overdue POA" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
         def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"overdue-charge-interest-$index")
@@ -650,52 +601,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
       }
 
-      "have a paragraph explaining interest rates" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
-        pageDocument.getElementsByClass("interest-rate").get(0).text() shouldBe whatYouOwe.interestRatesPara
 
-        val expectedUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates"
-        pageDocument.getElementById("interest-rate-link").attr("href") shouldBe expectedUrl
-      }
-
-      "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(whatYouOweDataWithOverdueData()) {
-        pageDocument.getOptionalSelector(".interest-rate") shouldBe None
-      }
-
-
-      s"have due within thirty days header and data with hyperlink and no overdue tag" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
-        val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(4)
-        dueWithInThirtyDaysHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
-        dueWithInThirtyDaysHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
-        dueWithInThirtyDaysHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
-
-        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(5)
-        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
-        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
-          AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
-
-        pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000123").url
-        pageDocument.doesNotHave(id("due-in-thirty-days-type-0-overdue"))
-      }
-      s"have future payments with table header, data and hyperlink without overdue tag" in new Setup(whatYouOweDataWithWithAciValueZeroAndFuturePayments) {
-        pageDocument.getElementById("future-payments-heading").text shouldBe AgentPaymentDue.futurePayments
-
-        val futurePaymentsHeader: Element = pageDocument.select("tr").get(4)
-        futurePaymentsHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
-        futurePaymentsHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
-        futurePaymentsHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
-
-        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(5)
-        futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
-        futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear " +
-          AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-        futurePaymentsTableRow1.select("td").last().text() shouldBe "£25.00"
-
-        pageDocument.getElementById("future-payments-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000123").url
-        pageDocument.doesNotHave(id("future-payments-type-0-overdue"))
-      }
     }
 
     "the user has no charges" should {
@@ -705,30 +611,17 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe AgentPaymentDue.osChargesNote
       }
-      "have Overdue amount and Total amount displayed " in new Setup(noChargesModel) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
 
       "have the link to their previous Self Assessment online account in the sa-note" in new Setup(noChargesModel) {
         verifySelfAssessmentLink()
       }
 
-      "have note credit-on-account as a panel" in new Setup(noChargesModel) {
-        pageDocument.getElementById("credit-on-account").classNames.toArray should contain("govuk-inset-text")
-      }
 
       "not have button Pay now" in new Setup(noChargesModel) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
     }
 
-    "displayTotals feature switch is enabled" should {
-      "have totals displayed" in new Setup(whatYouOweDataWithDataDueIn30Days(), displayTotals = true) {
-        pageDocument.getElementById("totals-row") should not be null
-      }
-    }
 
     "displayTotals feature switch is disabled" should {
       "have NO totals displayed" in new Setup(whatYouOweDataWithDataDueIn30Days(), displayTotals = false) {
@@ -739,24 +632,13 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
   "codingOut is enabled" should {
     "have coding out message displayed at the bottom of the page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
-      pageDocument.getElementById("coding-out-header") should not be null
       pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
     }
     "have a class 2 Nics overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
       pageDocument.getElementById("over-due-type-0") should not be null
       pageDocument.getElementById("over-due-type-0").text().contains("Class 2 National Insurance") shouldBe true
-      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
-      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
-      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
-    }
-    "have a class 2 Nics future entry" in new Setup(whatYouOweDataWithCodingOutFuture, codingOutEnabled = true) {
-      pageDocument.getElementById("coding-out-header") should not be null
-      pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString) shouldBe true
-      pageDocument.getElementById("future-payments-type-0") should not be null
-      pageDocument.getElementById("future-payments-type-0").text().contains("Class 2 National Insurance") shouldBe true
-      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 0
-      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 1
-      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+
     }
 
     "have a link to the SA summary coding out page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true){
@@ -765,28 +647,22 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     }
 
     "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
-      pageDocument.getElementById("coding-out-header") shouldBe null
       pageDocument.getElementById("coding-out-notice") shouldBe null
       pageDocument.getElementById("over-due-type-0") should not be null
       pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
-      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
-      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
-      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       pageDocument.getElementById("coding-out-summary-link") shouldBe null
     }
   }
 
   "codingOut is disabled" should {
     "have no coding out message displayed" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
-      pageDocument.getElementById("coding-out-header") shouldBe null
       pageDocument.getElementById("coding-out-notice") shouldBe null
     }
     "have a balancing charge overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
       pageDocument.getElementById("over-due-type-0") should not be null
-      pageDocument.select("#over-due-type-0 a").text() shouldBe "Balancing payment 2021"
-      pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
-      pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
-      pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+      pageDocument.select("#over-due-type-0 a").get(0).text() shouldBe "Balancing payment 2021"
+      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
   }
 

@@ -32,10 +32,10 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.WhatYouOwe
-
 import java.time.LocalDate
+
 import play.api.test.FakeRequest
-import testConstants.MessagesLookUp.WhatYouOwe.paymentUnderReview
+import testConstants.MessagesLookUp.WhatYouOwe.{paymentDaysNote, paymentUnderReview}
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
 
@@ -227,22 +227,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
-      "have the link to their previous Self Assessment online account in the sa-note" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
-        verifySelfAssessmentLink()
-      }
-      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe whatYouOwe.overduePaymentsDue
-        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
-        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
-      }
-      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(),
-        migrationYear = LocalDate.now().getYear) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
+
       "have the Balancing Payment title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
 
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
@@ -269,35 +254,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
 
-      "table header and data for future payments" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days(noDunningLocks)) {
-        pageDocument.getElementById("future-payments-heading").text shouldBe whatYouOwe.futurePayments
-        val futurePaymentsHeader: Element = pageDocument.select("tr").get(2)
-        futurePaymentsHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
-        futurePaymentsHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
-        futurePaymentsHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
-
-        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-        futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(45).toLongDateShort
-        futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1WithTaxYear
-        futurePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
-
-        pageDocument.getElementById("future-payments-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000124").url
-        pageDocument.getElementById("future-payments-type-0-overdue") shouldBe null
-
-        val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
-        futurePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().plusDays(50).toLongDateShort
-        futurePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2WithTaxYear
-        futurePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
-
-        pageDocument.getElementById("future-payments-type-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000125").url
-        pageDocument.getElementById("future-payments-type-1-overdue") shouldBe null
-
-
-        pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
-        pageDocument.getElementById("over-due-payments-heading") shouldBe null
-      }
       "display the paragraph about payments under review when there is a dunningLock" in new Setup(
         whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
         val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
@@ -314,6 +270,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
         whatYouOweDataWithDataDueInMoreThan30Days(oneDunningLock)) {
+        println(Console.BLUE + pageDocument)
+
         val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
 
@@ -444,19 +402,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has charges and access viewer after due date" should {
-      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe whatYouOwe.overduePaymentsDue
-        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
-        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£2.00"
-      }
-      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(),
-        migrationYear = LocalDate.now().getYear) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
+
       "have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithOverdueData()) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
@@ -751,20 +697,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has charges and access viewer with mixed dates and ACI value of zero" should {
-      "have Overdue amount and Total amount displayed " in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(0).text shouldBe whatYouOwe.dueInThirtyDays
-        pageDocument.getElementById("balanceDueWithin30Days").select("p").get(1).text shouldBe "£1.00"
-        pageDocument.getElementById("overdueAmount").select("p").get(0).text shouldBe whatYouOwe.overduePaymentsDue
-        pageDocument.getElementById("overdueAmount").select("p").get(1).text shouldBe "£2.00"
-        pageDocument.getElementById("totalBalance").select("p").get(0).text shouldBe whatYouOwe.totalPaymentsDue
-        pageDocument.getElementById("totalBalance").select("p").get(1).text shouldBe "£3.00"
-      }
-      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue,
-        migrationYear = LocalDate.now().getYear) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
+
       s"have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
         whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
@@ -873,7 +806,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-header") should not be null
         pageDocument.getElementById("coding-out-summary-link") should not be null
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
             "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
@@ -882,25 +814,23 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "have a class 2 Nics overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
         pageDocument.getElementById("over-due-type-0") should not be null
         pageDocument.getElementById("over-due-type-0").text().contains("Class 2 National Insurance") shouldBe true
-        pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
       }
       "have a class 2 Nics future entry" in new Setup(whatYouOweDataWithCodingOutFuture, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-header") should not be null
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString) shouldBe true
         pageDocument.getElementById("future-payments-type-0") should not be null
         pageDocument.getElementById("future-payments-type-0").text().contains("Class 2 National Insurance") shouldBe true
-        pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 0
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 0
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 1
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
       }
       "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-header") shouldBe null
         pageDocument.getElementById("coding-out-notice") shouldBe null
         pageDocument.getElementById("over-due-type-0") should not be null
         pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
-        pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
         pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
         pageDocument.getElementById("coding-out-summary-link") shouldBe null
@@ -909,21 +839,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "codingOut is disabled" should {
       "have no coding out message displayed" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
-        pageDocument.getElementById("coding-out-header") shouldBe null
         pageDocument.getElementById("coding-out-notice") shouldBe null
       }
       "have a balancing charge overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
         pageDocument.getElementById("over-due-type-0") should not be null
-        pageDocument.select("#over-due-type-0 a").text() shouldBe "Balancing payment 2021"
-        pageDocument.select("#over-due-payments-table tbody > tr").size() shouldBe 1
-        pageDocument.select("#future-payments-table tbody > tr").size() shouldBe 0
-        pageDocument.select("#due-in-thirty-days-payments-table tbody > tr").size() shouldBe 0
+        pageDocument.select("#over-due-type-0 a").get(0).text() shouldBe "Balancing payment 2021"
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+
       }
     }
 
     "When codingOut is enabled - At crystallization, the user has the coding out requested amount fully collected" should {
       "only show coding out content under header" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-header").text() shouldBe codingOutHeader
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
