@@ -79,7 +79,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             res should have(
               httpStatus(OK),
               pageTitleIndividual(whatYouOwePageTitle),
-              isElementVisibleById("totals-row")(expectedValue = true)
             )
           }
         }
@@ -126,15 +125,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById("payment-days-note")(expectedValue = true),
-                isElementVisibleById("credit-on-account")(expectedValue = true),
                 isElementVisibleById("payment-button")(expectedValue = true),
-                isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById("sa-note-migrated")(expectedValue = false),
+                isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = false),
               )
 
             }
@@ -188,17 +181,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
                 isElementVisibleById("over-due-type-1")(expectedValue = true),
                 isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
-                isElementVisibleById("interest-rate-para")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById(s"payment-days-note")(expectedValue = true),
-                isElementVisibleById(s"credit-on-account")(expectedValue = true),
                 isElementVisibleById(s"payment-button")(expectedValue = true),
-                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               )
 
             }
@@ -252,15 +238,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("over-due-payments-heading")(expectedValue = true),
                 isElementVisibleById("over-due-type-0")(expectedValue = true),
                 isElementVisibleById("over-due-type-1")(expectedValue = false),
-                isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
+                isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
                 isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById(s"payment-days-note")(expectedValue = true),
-                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               )
             }
 
@@ -510,15 +491,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById("payment-days-note")(expectedValue = true),
-                isElementVisibleById("credit-on-account")(expectedValue = true),
                 isElementVisibleById("payment-button")(expectedValue = true),
-                isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById("sa-note-migrated")(expectedValue = false),
+                isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = false),
               )
 
             }
@@ -562,17 +537,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
                 isElementVisibleById("over-due-type-1")(expectedValue = true),
                 isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
-                isElementVisibleById("interest-rate-para")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById(s"payment-days-note")(expectedValue = true),
-                isElementVisibleById(s"credit-on-account")(expectedValue = true),
                 isElementVisibleById(s"payment-button")(expectedValue = true),
-                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               )
 
             }
@@ -616,17 +584,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("overdue-charge-interest-0")(expectedValue = true),
                 isElementVisibleById("over-due-type-1")(expectedValue = true),
                 isElementVisibleById("overdue-charge-interest-1")(expectedValue = true),
-                isElementVisibleById("interest-rate-para")(expectedValue = true),
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById(s"payment-days-note")(expectedValue = true),
-                isElementVisibleById(s"credit-on-account")(expectedValue = true),
                 isElementVisibleById(s"payment-button")(expectedValue = true),
-                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               )
             }
 
@@ -669,17 +630,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
                 isElementVisibleById("over-due-type-1")(expectedValue = true),
                 isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
-                isElementVisibleById("interest-rate-para")(expectedValue = false),
                 isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById(s"payment-days-note")(expectedValue = true),
-                isElementVisibleById(s"credit-on-account")(expectedValue = true),
                 isElementVisibleById(s"payment-button")(expectedValue = true),
-                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               )
             }
 
@@ -733,15 +687,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
                 isElementVisibleById("over-due-payments-heading")(expectedValue = true),
                 isElementVisibleById("over-due-type-0")(expectedValue = true),
                 isElementVisibleById("over-due-type-1")(expectedValue = false),
-                isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
+                isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
                 isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
-                isElementVisibleById("future-payments-heading")(expectedValue = false),
-                isElementVisibleById(s"payment-days-note")(expectedValue = true),
-                isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                isElementVisibleById("overdueAmount")(expectedValue = true),
-                isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-                isElementVisibleById("totalBalance")(expectedValue = true)
+                isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+                isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               )
             }
           }
@@ -779,16 +728,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = false),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = false),
-              isElementVisibleById("payment-days-note")(expectedValue = true),
-              isElementVisibleById("credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
               isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = false),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
-              isElementVisibleById("totalBalance")(expectedValue = false)
             )
           }
         }
@@ -828,16 +771,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = false),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = false),
-              isElementVisibleById("payment-days-note")(expectedValue = true),
-              isElementVisibleById("credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
               isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = false),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
-              isElementVisibleById("totalBalance")(expectedValue = false)
             )
 
           }
@@ -894,16 +831,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = false),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = false),
-              isElementVisibleById("payment-days-note")(expectedValue = true),
-              isElementVisibleById("credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
               isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = false),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
-              isElementVisibleById("totalBalance")(expectedValue = false)
             )
 
           }
@@ -960,16 +891,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = false),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = false),
-              isElementVisibleById("payment-days-note")(expectedValue = true),
-              isElementVisibleById("credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = false),
               isElementVisibleById("no-payments-due")(expectedValue = true),
               isElementVisibleById("sa-note-migrated")(expectedValue = true),
               isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = false),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
-              isElementVisibleById("totalBalance")(expectedValue = false)
             )
 
           }
@@ -1026,16 +951,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = true),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = false),
-              isElementVisibleById(s"payment-days-note")(expectedValue = true),
-              isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
-              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = true),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-              isElementVisibleById("totalBalance")(expectedValue = true)
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
             )
 
           }
@@ -1091,16 +1010,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = true),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = false),
-              isElementVisibleById(s"payment-days-note")(expectedValue = true),
-              isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
-              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = true),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-              isElementVisibleById("totalBalance")(expectedValue = true)
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
             )
 
           }
@@ -1144,18 +1057,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = true),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = true),
-              isElementVisibleById("future-payments-type-0")(expectedValue = true),
-              isElementVisibleById("future-payments-type-1")(expectedValue = true),
-              isElementVisibleById(s"payment-days-note")(expectedValue = true),
-              isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
-              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = true),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-              isElementVisibleById("totalBalance")(expectedValue = true)
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
             )
 
           }
@@ -1199,18 +1104,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = true),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = true),
-              isElementVisibleById("future-payments-type-0")(expectedValue = true),
-              isElementVisibleById("future-payments-type-1")(expectedValue = true),
-              isElementVisibleById(s"payment-days-note")(expectedValue = true),
-              isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
-              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = true),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-              isElementVisibleById("totalBalance")(expectedValue = true)
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
             )
           }
         }
@@ -1255,21 +1152,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = true),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = true),
-              isElementVisibleById("future-payments-type-0")(expectedValue = true),
-              isElementVisibleById("future-payments-type-1")(expectedValue = true),
-              isElementVisibleById("future-payments-type-2")(expectedValue = true),
-              isElementVisibleById("future-payments-type-3")(expectedValue = false),
-              isElementVisibleById(s"payment-days-note")(expectedValue = true),
-              isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
-              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = true),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-              isElementVisibleById("totalBalance")(expectedValue = true),
-              isElementVisibleById("coding-out-header")(expectedValue = true),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               isElementVisibleById("coding-out-notice")(expectedValue = true)
             )
           }
@@ -1316,20 +1202,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               isElementVisibleById("payment-details-content-1")(expectedValue = true),
               isElementVisibleById("over-due-payments-heading")(expectedValue = false),
               isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
-              isElementVisibleById("future-payments-heading")(expectedValue = true),
-              isElementVisibleById("future-payments-type-0")(expectedValue = true),
-              isElementVisibleById("future-payments-type-1")(expectedValue = false),
-              isElementVisibleById("future-payments-type-2")(expectedValue = false),
-              isElementVisibleById(s"payment-days-note")(expectedValue = true),
-              isElementVisibleById(s"credit-on-account")(expectedValue = true),
               isElementVisibleById(s"payment-button")(expectedValue = true),
               isElementVisibleById(s"no-payments-due")(expectedValue = false),
-              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-              isElementVisibleById("overdueAmount")(expectedValue = true),
-              isElementVisibleById("balanceDueWithin30Days")(expectedValue = true),
-              isElementVisibleById("totalBalance")(expectedValue = true),
-              isElementVisibleById("coding-out-header")(expectedValue = false),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
               isElementVisibleById("coding-out-notice")(expectedValue = false)
             )
           }
@@ -1368,7 +1244,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(OK),
             pageTitleIndividual(whatYouOwePageTitle),
-            isElementVisibleById("totals-row")(expectedValue = false)
           )
         }
       }
