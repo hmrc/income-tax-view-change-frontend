@@ -249,7 +249,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val scotlandRateTableHead = "UK rates for Scotland"
     val rateBandTableHeader = "Rate band"
     val chargeTypeTableHeader = "Charge type"
-    val nationalInsuranceTypeTableHeader = "National insurance type"
+    val nationalInsuranceTypeTableHeader = "National Insurance type"
     //pay, pension and profit table
     val pPP_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
     val pPP_HRT: String = "Higher rate (£100,000.00 at 40.0%)"

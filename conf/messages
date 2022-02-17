@@ -244,7 +244,7 @@ taxCal_breakdown.table.head.charge_type                             = Charge typ
 taxCal_breakdown.table.head.reduction                               = Reduction
 taxCal_breakdown.table.head.rate_band                               = Rate band
 taxCal_breakdown.table.head.cgt_type                                = Capital Gains Tax type
-taxCal_breakdown.table.head.national_insurance_type                 = National insurance type
+taxCal_breakdown.table.head.national_insurance_type                 = National Insurance type
 taxCal_breakdown.table.head.rates.uk                                = UK rates for England and Northern Ireland
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
 

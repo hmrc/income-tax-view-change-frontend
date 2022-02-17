@@ -538,11 +538,6 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
         )
       }
 
-      // todo check if we need this test for a National Insurance contributions table
-     /* "has no Nic2 line when Voluntary contribution flag is missing " in new Setup(viewNoVoluntaryNic2Flag) {
-        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
-      }*/
-
       "have no Capital Gains Tax table and heading when there is no any CGT value" in new Setup(zeroIncome) {
         pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingCapitalGainsTax
       }
