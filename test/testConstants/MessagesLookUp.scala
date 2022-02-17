@@ -565,6 +565,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
 
     val paymentType = "Payment type"
+    val taxYearSummary = "Tax year summary"
     val amountDue = "Amount due"
     val poa1Text = "Payment on account 1 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
@@ -631,6 +632,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
 
     val paymentType = "Payment type"
+    val taxYearSummary = "Tax year summary"
     val amountDue = "Amount due"
     val poa1Text = "Payment on account 1 of 2"
     val poa2Text = "Payment on account 2 of 2"
@@ -665,6 +667,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+    def taxYearSummaryText(from: String, to: String): String = s"$from to $to $from to $to"
 
     val dueDate = "Due date"
   }

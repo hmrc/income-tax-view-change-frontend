@@ -196,12 +196,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
 
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
-      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days(),
-        migrationYear = LocalDate.now().getYear) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
+
       s"have the title '${AgentPaymentDue.title}'" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
 
@@ -255,17 +250,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     }
 
     "the user has charges and access viewer within 30 days of due date" should {
-      "have no Balance due in 30 days amount and no Total amount displayed " in new Setup(whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
-      "not display totals at the top if its first year of migration" in new Setup(whatYouOweDataWithDataDueIn30Days(),
-        migrationYear = LocalDate.now().getYear) {
-        pageDocument.getElementById("overdueAmount") shouldBe null
-        pageDocument.getElementById("balanceDueWithin30Days") shouldBe null
-        pageDocument.getElementById("totalBalance") shouldBe null
-      }
+
       s"have the title '${AgentPaymentDue.title}' and notes" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
       }
@@ -298,16 +283,20 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
         dueWithInThirtyDaysHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         dueWithInThirtyDaysHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
+        dueWithInThirtyDaysHeader.select("th").get(2).text() shouldBe AgentPaymentDue.taxYearSummary
         dueWithInThirtyDaysHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().toLongDateShort
         dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear"
+        dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.doesNotHave(id("due-in-thirty-days-type-0-overdue"))
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(
+          LocalDate.now().getYear).url
       }
       s"have data with POA2 with hyperlink and no overdue" in new Setup(whatYouOweDataWithDataDueIn30Days()) {
         val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(4)
@@ -400,16 +389,20 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           val overdueTableHeader: Element = pageDocument.select("tr").get(3)
           overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
           overdueTableHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
+          overdueTableHeader.select("th").get(2).text() shouldBe AgentPaymentDue.taxYearSummary
           overdueTableHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " +
             AgentPaymentDue.latePoa1Text + s" $currentYear"
+          overduePaymentsTableRow1.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
           pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
             LocalDate.now().getYear, "1040000124",latePaymentCharge = true).url
           pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(
+            LocalDate.now().getYear).url
         }
 
 
@@ -419,17 +412,22 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
+        overdueTableHeader.select("th").get(2).text() shouldBe AgentPaymentDue.taxYearSummary
         overdueTableHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " +
           AgentPaymentDue.poa1Text + s" $currentYear"
+        overduePaymentsTableRow1.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
+
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(
+          LocalDate.now().getYear).url
       }
 
       "have overdue payments header and data with POA1 charge type" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
@@ -438,6 +436,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
+        overdueTableHeader.select("th").get(2).text() shouldBe AgentPaymentDue.taxYearSummary
         overdueTableHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
@@ -446,24 +445,30 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         */
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " +
           AgentPaymentDue.poa1Text + s" $currentYear"
+        overduePaymentsTableRow1.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(
+          LocalDate.now().getYear).url
       }
       s"have overdue payments with POA2 charge type with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueLPI(List(None, None))) {
         val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
         overduePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
         overduePaymentsTableRow2.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear"
+        overduePaymentsTableRow2.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("over-due-type-1-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-1-overdue").text shouldBe AgentPaymentDue.overdueTag
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(
+          LocalDate.now().getYear).url
+
       }
       s"have payments data with button" in new Setup(whatYouOweDataWithOverdueData()) {
-        pageDocument.doesNotHave(id("future-payments-heading"))
         pageDocument.doesNotHave(id("due-in-thirty-days-payments-heading"))
       }
 
@@ -560,28 +565,39 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
       s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataTestActiveWithMixedData2(List(None,None,None,None))) {
+        println(Console.BLUE + pageDocument)
         val overdueTableHeader: Element = pageDocument.select("#payments-due-table thead tr").get(0)
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
+        overdueTableHeader.select("th").get(2).text() shouldBe AgentPaymentDue.taxYearSummary
         overdueTableHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("#payments-due-table tbody tr").get(0)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " + AgentPaymentDue.poa2Text + s" $currentYear"
+        overduePaymentsTableRow1.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
+
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("#payments-due-table tbody tr").get(1)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
         dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + s" $currentYear"
-          dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
+        dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe AgentPaymentDue.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
 
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(
+          LocalDate.now().getYear).url
+
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000123").url
         pageDocument.doesNotHave(id("due-in-thirty-days-type-0-overdue"))
+
+        pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.agent.routes.TaxYearOverviewController.show(
+          LocalDate.now().getYear).url
       }
 
       "have accruing interest displayed below each overdue POA" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
@@ -622,12 +638,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       }
     }
 
-
-    "displayTotals feature switch is disabled" should {
-      "have NO totals displayed" in new Setup(whatYouOweDataWithDataDueIn30Days(), displayTotals = false) {
-        pageDocument.getElementById("totals-row") shouldBe null
-      }
-    }
   }
 
   "codingOut is enabled" should {

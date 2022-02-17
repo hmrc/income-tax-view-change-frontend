@@ -242,6 +242,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
         remainingBalanceTable.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
         remainingBalanceTable.select("td").get(1).text() shouldBe whatYouOwe.remainingBalance
+
         remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
         pageDocument.getElementById("balancing-charge-type-overdue") shouldBe null
@@ -303,6 +304,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
         dueWithInThirtyDaysHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         dueWithInThirtyDaysHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        dueWithInThirtyDaysHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
         dueWithInThirtyDaysHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
         val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
@@ -405,7 +407,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
-        overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+          overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
+          overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
@@ -424,6 +427,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val overdueTableHeader: Element = pageDocument.select("tr").get(3)
           overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
           overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+          overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
           overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
@@ -444,6 +448,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val overdueTableHeader: Element = pageDocument.select("tr").get(3)
           overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
           overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+          overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
           overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
@@ -462,6 +467,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
         overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
@@ -481,6 +487,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overdueTableHeader: Element = pageDocument.select("tr").get(3)
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
         overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
@@ -580,6 +587,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overdueTableHeader: Element = pageDocument.select("tr").first()
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
         overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(1)
@@ -634,6 +642,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val overdueTableHeader: Element = pageDocument.select("tr").get(2)
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
         overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
