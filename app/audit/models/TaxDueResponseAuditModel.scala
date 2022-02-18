@@ -144,10 +144,6 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     amount.map(TaxCalcLineItem(description, _))
   }
 
-  private def doubleOptLineItem(description: Option[String], amount: Option[BigDecimal]): Option[TaxCalcLineItem] = {
-    for {desc <- description; amt <- amount} yield TaxCalcLineItem(desc, amt)
-  }
-
   private val additionalChargesSeq: Seq[TaxCalcLineItem] = Seq() ++
     optLineItem(class2NicVoluntary(viewModel.class2VoluntaryContributions), viewModel.class2NicsAmount) ++
     optLineItem("Gift Aid tax charge", viewModel.giftAidTax) ++
