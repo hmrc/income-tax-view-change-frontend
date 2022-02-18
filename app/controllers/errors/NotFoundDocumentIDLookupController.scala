@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.agent.utils
+package controllers.errors
 
-object SessionKeys {
+import com.google.inject.{Inject, Singleton}
+import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.errorPages.CustomNotFoundError
 
-  val clientNino: String = "ClientNino"
-  val clientMTDID: String = "ClientMTDID"
-  val clientUTR: String = "ClientUTR"
-  val clientFirstName: String = "ClientFirstName"
-  val clientLastName: String = "ClientLastName"
-  val chargeSummaryBackPage: String = "chargeSummaryBackPage"
+import scala.concurrent.Future
 
-  val confirmedClient: String = "ConfirmedClient"
+@Singleton
+class NotFoundDocumentIDLookupController @Inject()(customNotFoundError: CustomNotFoundError)
+                                                  (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc){
+  val show: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(customNotFoundError()))
+  }
 }

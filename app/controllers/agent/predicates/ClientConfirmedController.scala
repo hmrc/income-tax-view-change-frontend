@@ -24,6 +24,7 @@ import controllers.predicates.agent.AgentAuthenticationPredicate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException}
 
@@ -32,7 +33,6 @@ import scala.concurrent.Future
 trait ClientConfirmedController extends BaseAgentController {
 
   override protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.confirmedClientPredicates
-
   val mcc: MessagesControllerComponents
 
   def getClientUtr(implicit request: Request[_]): Option[String] = {

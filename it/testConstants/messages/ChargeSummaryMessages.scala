@@ -24,5 +24,5 @@ object ChargeSummaryMessages {
   val lpiBalancingPayment = "Late payment interest on Balancing payment"
   val lpiPoa1 = "Late payment interest on payment on account 1 of 2"
   val lpiPoa2 = "Late payment interest on payment on account 2 of 2"
-  val saPayment = "Self Assessment payment (through your PAYE tax code)"
+  val saPayment = "Balancing payment collected through PAYE tax code"
 }

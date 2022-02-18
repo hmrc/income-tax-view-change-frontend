@@ -282,10 +282,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
 
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      val header = s"Tax year 6 April ${currentTaxYearEnd.getYear - 1} to 5 April ${currentTaxYearEnd.getYear} Self Assessment payment (through your PAYE tax code)"
+      val header = s"Tax year 6 April ${currentTaxYearEnd.getYear - 1} to 5 April ${currentTaxYearEnd.getYear} Balancing payment collected through PAYE tax code"
       val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
       val summaryMessage = s"This is the remaining tax you owe for the ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year."
-      val remainingText = s"Collected through your PAYE tax code for ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year"
       val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year £2,500.00"
 
       Given("the CodingOut feature switch is enabled")
@@ -308,8 +307,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         elementTextBySelector("h1")(header),
         elementTextBySelector("#coding-out-notice")(insetPara),
         elementTextBySelector("#coding-out-message")(summaryMessage),
-        elementTextBySelector(".govuk-summary-list__row:nth-child(1) .govuk-summary-list__value")("£2,500.00"),
-        elementTextBySelector(".govuk-summary-list__row:nth-child(2) .govuk-summary-list__value")(remainingText),
         elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1)
       )
     }

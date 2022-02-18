@@ -36,8 +36,9 @@ GET         /payment                                                      contro
 #Payment Allocation
 GET         /charges/payments-made                                        controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
 
-#Payments due
-GET         /payments-owed                                                controllers.WhatYouOweController.viewPaymentsDue
+#WhatYouOwe
+GET         /payments-owed                                                controllers.WhatYouOweController.show
+GET         /agents/payments-owed                                         controllers.WhatYouOweController.showAgent
 
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
@@ -85,3 +86,6 @@ GET         /:taxYear/final-tax-overview/calculate                        contro
 
 GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
 GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
+
+#custom not found
+GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show

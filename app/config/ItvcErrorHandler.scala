@@ -25,8 +25,12 @@ import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
 
+trait ShowInternalServerError {
+  def showInternalServerError()(implicit request: Request[_]): Result
+}
+
 class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
-                                 val messagesApi: MessagesApi) extends FrontendErrorHandler with I18nSupport {
+                                 val messagesApi: MessagesApi) extends FrontendErrorHandler with I18nSupport with ShowInternalServerError {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html =
     errorTemplate(pageTitle, heading, message, isAgent = false)
