@@ -613,7 +613,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val interestRatesPara = s"Any overdue payment interest is at the $interestRatesLink. The rate may have changed since the interest was first charged."
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
-    def taxYearSummaryText(from: String, to: String): String = s"$from to $to $from to $to"
+    def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
 
 
     val dueDate = "Due date"
@@ -676,7 +676,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
-    def taxYearSummaryText(from: String, to: String): String = s"$from to $to $from to $to"
+    def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
 
     val dueDate = "Due date"
   }

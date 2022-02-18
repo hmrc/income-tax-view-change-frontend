@@ -497,6 +497,7 @@ whatYouOwe.over-due.interest-rate.link                             = current int
 whatYouOwe.future-payments                                         = Future payments
 whatYouOwe.due-in-thirty-days-payments                             = Due within 30 days
 whatYouOwe.payment-type.taxYear                                    = Tax year {0} to {1}
+whatYouOwe.taxYear                                                 = Tax year
 whatYouOwe.tax-year-summary.taxYear                                = {0} to {1}
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review because {0}
