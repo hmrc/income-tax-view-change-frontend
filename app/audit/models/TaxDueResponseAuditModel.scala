@@ -144,12 +144,8 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     amount.map(TaxCalcLineItem(description, _))
   }
 
-  private def doubleOptLineItem(description: Option[String], amount: Option[BigDecimal]): Option[TaxCalcLineItem] = {
-    for {desc <- description; amt <- amount} yield TaxCalcLineItem(desc, amt)
-  }
-
   private val additionalChargesSeq: Seq[TaxCalcLineItem] = Seq() ++
-    doubleOptLineItem(class2NicVoluntary(viewModel.class2VoluntaryContributions), viewModel.class2NicsAmount) ++
+    optLineItem(class2NicVoluntary(viewModel.class2VoluntaryContributions), viewModel.class2NicsAmount) ++
     optLineItem("Gift Aid tax charge", viewModel.giftAidTax) ++
     optLineItem("Total pension saving charges", viewModel.totalPensionSavingsTaxCharges) ++
     optLineItem("State pension lump sum", viewModel.statePensionLumpSumCharges)
@@ -164,8 +160,8 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     "amount" -> lineItem.amount
   )
 
-  private def class2NicVoluntary(voluntary: Option[Boolean]): Option[String] = {
-    voluntary map {
+  private def class2NicVoluntary(voluntary: Boolean): String = {
+    voluntary match {
       case true => "Voluntary Class 2 National Insurance"
       case false => "Class 2 National Insurance"
     }

@@ -176,6 +176,54 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         elementTextByID("additional_charges")("Additional charges")
       )
     }
+
+    "return class2VoluntaryContributions as false when the flag is missing from the calc data" in {
+      And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationNonVoluntaryClass2Nic
+      )
+
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+      res should have(
+        httpStatus(OK),
+        pageTitleIndividual(taxDueSummaryTitle),
+        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages.nonVoluntaryClass2Nics)
+      )
+    }
+
+    "return class2VoluntaryContributions as true when the flag is returned in the calc data" in {
+      And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationVoluntaryClass2Nic
+      )
+
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+      res should have(
+        httpStatus(OK),
+        pageTitleIndividual(taxDueSummaryTitle),
+        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages.voluntaryClass2Nics)
+      )
+    }
   }
 
   unauthorisedTest("/calculation/" + testYear + "/tax-due")
