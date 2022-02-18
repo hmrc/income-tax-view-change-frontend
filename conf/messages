@@ -99,7 +99,7 @@ banner.recruitment.dismiss                                      = No, thankyou.
 
 ## Tax Years Page ##
 taxYears.heading                                               = Tax years
-taxYears.viewReturn                                            = View return
+taxYears.viewReturn                                            = View summary
 taxYears.updateReturn                                          = Update return
 taxYears.taxYears                                              = 6 April {0} to 5 April {1}
 taxYears.ongoing                                               = ONGOING

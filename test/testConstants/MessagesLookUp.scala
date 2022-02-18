@@ -105,7 +105,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val taxYear: (String, String) => String = (year, yearPlusOne) => s"6 April $year to 5 April $yearPlusOne"
     val overdue = "OVERDUE"
     val updateReturn = "Update return"
-    val viewReturn = "View return"
+    val viewSummary = "View summary"
     val tableHeadingTaxYear = "Tax year"
     val tableHeadingOptions = "Options"
     val saLink = "Self Assessment online account (opens in new tab)"

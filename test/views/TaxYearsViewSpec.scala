@@ -61,9 +61,9 @@ class TaxYearsViewSpec extends ViewSpec {
 
         "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear)) {
           document.getElementById("viewReturn-link-2018").text() shouldBe
-            s"${taxYears.viewReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
+            s"${taxYears.viewSummary} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
           document.getElementById("viewReturn-link-2019").text() shouldBe
-            s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
+            s"${taxYears.viewSummary} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
         }
 
         "not display any update return link" in new Setup(List(testYearPlusOne, testYear)) {
@@ -81,11 +81,11 @@ class TaxYearsViewSpec extends ViewSpec {
 
         "display three view return links for the correct tax year" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)) {
           document.getElementById("viewReturn-link-2018").text() shouldBe
-            s"${taxYears.viewReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
+            s"${taxYears.viewSummary} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
           document.getElementById("viewReturn-link-2019").text() shouldBe
-            s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
+            s"${taxYears.viewSummary} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
           document.getElementById("viewReturn-link-2020").text() shouldBe
-            s"${taxYears.viewReturn} ${taxYears.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)}"
+            s"${taxYears.viewSummary} ${taxYears.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)}"
         }
 
         "not display any update return link" in new Setup(List(testYearPlusTwo, testYearPlusOne, testYear)) {
@@ -125,12 +125,12 @@ class TaxYearsViewSpec extends ViewSpec {
           document.getElementById(s"viewReturn-link-$testYear").attr("href") shouldBe
             controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYear).url
           document.getElementById(s"viewReturn-link-$testYear").text() shouldBe
-            s"${taxYears.viewReturn} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
+            s"${taxYears.viewSummary} ${taxYears.taxYear((testYear - 1).toString, testYear.toString)}"
 
           document.getElementById(s"viewReturn-link-$testYearPlusOne").attr("href") shouldBe
             controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearPlusOne).url
           document.getElementById(s"viewReturn-link-$testYearPlusOne").text() shouldBe
-            s"${taxYears.viewReturn} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
+            s"${taxYears.viewSummary} ${taxYears.taxYear(testYear.toString, testYearPlusOne.toString)}"
         }
 
         "display two update return links for the correct tax year" in new Setup(List(testYearPlusOne, testYear), true) {
