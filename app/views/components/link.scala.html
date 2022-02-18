@@ -20,17 +20,17 @@
     link: String,
     classes: String = "govuk-link govuk-body",
     messageKey: String,
-    messageKeyExt: String = "",
     id: Option[String] = None,
     target: Option[String] = None,
     ariaLabel: Option[String] = None,
     outerMessage: String = "",
     role: Option[String] = None,
-    rel: Option[String] = None
-
+    rel: Option[String] = None,
+    additionalOpenTabMessage: Option[String] = None
 )(implicit messages: Messages)
 
 <a href="@link" class="@classes" @id.map(id => s"id=$id") @rel.map(rel => s"rel=$rel") @target.map(target => s"target=$target")
     @role.map(role => s"role=$role")
-    aria-label="@ariaLabel.map(c=>s"$c")">@messages(messageKey)@messages(messageKeyExt)</a>@outerMessage
+    aria-label="@ariaLabel.map(c=>s"$c")">
+    @messages(messageKey)@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>@outerMessage
 

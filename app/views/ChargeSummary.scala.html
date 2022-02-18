@@ -98,15 +98,23 @@
                 @p(){
                     <b>
                         @if(latePaymentInterestCharge){
-                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" rel="noreferrer noopener" target="_blank">
-                                @messages("chargeSummary.dunning.locks.banner.linkText")
-                                @messages("pagehelp.opensInNewTabText"," ", "")</a>
+                            @link(
+                                classes="govuk-notification-banner__link govuk-notification-banner__heading",
+                                link=appConfig.taxAppealsUrl,
+                                rel=Some("noreferrer noopener"),
+                                target = Some("_blank"),
+                                messageKey = "chargeSummary.dunning.locks.banner.linkText"
+                            )
                         } else {
-                            <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" rel="noreferrer noopener" target="_blank">
-                                @messages("chargeSummary.dunning.locks.banner.linkText")
-                                @messages("pagehelp.opensInNewTabText"," ", ".")
-                            </a>
-                            @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
+                            @link(
+                                classes="govuk-notification-banner__link",
+                                link=appConfig.taxAppealsUrl,
+                                rel=Some("noreferrer noopener"),
+                                target = Some("_blank"),
+                                messageKey = "chargeSummary.dunning.locks.banner.linkText",
+                                additionalOpenTabMessage = Some(".")
+                            )
+                        @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
                         }
                     </b>
                 }
@@ -137,7 +145,6 @@
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
                     messageKey = "chargeSummary.codingOutInset-2",
-                    messageKeyExt = messages("pagehelp.opensInNewTabText"," ", ""),
                     rel=Some("noreferrer noopener")
                 )
                 @messages("chargeSummary.codingOutInset-3")
@@ -156,8 +163,8 @@
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
                     messageKey = "chargeSummary.cancelledPayeInset-2",
-                    messageKeyExt = messages("pagehelp.opensInNewTabText"," ", "."),
-                    rel=Some("noreferrer noopener")
+                    rel=Some("noreferrer noopener"),
+                    additionalOpenTabMessage = Some(".")
                 )
                 @messages("chargeSummary.cancelledPayeInset-3")
             }
