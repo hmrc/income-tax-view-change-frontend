@@ -16,20 +16,15 @@
 
 package controllers.agent
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.CalcDataIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.TaxDueSummaryMessages._
-import audit.models.{TaxCalculationDetailsResponseAuditModel, TaxCalculationDetailsResponseAuditModelNew}
+import audit.models.TaxDueResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
-import enums.Crystallised
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
+import helpers.servicemocks.AuditStub.verifyAuditEvent
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.calculation.{CalcDisplayModel, Calculation, CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
@@ -37,12 +32,13 @@ import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 import testConstants.NewCalcDataIntegrationTestConstants._
+import testConstants.messages.TaxDueSummaryMessages._
 
-import java.time.{LocalDate, LocalDateTime}
-
-import helpers.servicemocks.AuthStub.titleInternalServer
+import java.time.LocalDate
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -154,335 +150,176 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       }
     }
 
-    "NewTaxCalcProxy Feature Switch is Enabled" when {
-      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid liability calculation response, " should {
-        "return the correct tax due page with a full Calculation" in {
-          enable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
-
-          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-            status = OK,
-            body = liabilityCalculationModelSuccessFull
-          )
-
-          When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due")
-          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
-
-          verifyAuditEvent(TaxCalculationDetailsResponseAuditModelNew(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
-
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(taxDueSummaryTitle),
-            elementTextBySelector("h1")(taxDueSummaryHeadingAgentNew)
-          )
-        }
-      }
-
-      "return the correct tax due summary page with just Gift Aid Additional charges" in {
-
+    "isAuthorisedUser with an active enrolment, valid nino and tax year, valid liability calculation response, " should {
+      "return the correct tax due page with a full Calculation" in {
         stubAuthorisedAgentUser(authorised = true)
 
-        And("I stub a successful liability calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          body = liabilityCalculationGiftAid
+          body = liabilityCalculationModelSuccessFull
         )
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+        When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due")
         val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-        res should have(
-          httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextByID("additional_charges")("Additional charges")
-        )
-      }
-
-      "return the correct tax due summary page with just Pension Lump Sum Additional charges" in {
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        And("I stub a successful liability calculation response")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-          status = OK,
-          body = liabilityCalculationPensionLumpSums
-        )
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+        verifyAuditEvent(TaxDueResponseAuditModel(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
 
         res should have(
           httpStatus(OK),
           pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextByID("additional_charges")("Additional charges")
-        )
-      }
-
-      "return the correct tax due summary page with just Pension Savings Additional charges" in {
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        And("I stub a successful liability calculation response")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-          status = OK,
-          body = liabilityCalculationPensionSavings
-        )
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextByID("additional_charges")("Additional charges")
-        )
-      }
-
-      "return the correct tax due summary page using minimal calculation with no Additional Charges" in {
-        enable(TxmEventsApproved)
-        enable(NewTaxCalcProxy)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        And("I stub a successful liability calculation response")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-          status = OK,
-          body = liabilityCalculationMinimal
-        )
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation")
-        )
-
-        res shouldNot have(
-          elementTextByID("additional_charges")("Additional charges")
-        )
-      }
-
-      "return class2VoluntaryContributions as false when the flag is missing from the calc data" in {
-        enable(TxmEventsApproved)
-        enable(NewTaxCalcProxy)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        And("I stub a successful liability calculation response")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-          status = OK,
-          body = liabilityCalculationNonVoluntaryClass2Nic
-        )
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.false"))
-        )
-      }
-
-      "return class2VoluntaryContributions as true when the flag is returned in the calc data" in {
-        enable(TxmEventsApproved)
-        enable(NewTaxCalcProxy)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        And("I stub a successful liability calculation response")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-          status = OK,
-          body = liabilityCalculationVoluntaryClass2Nic
-        )
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
-        val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.true"))
+          elementTextBySelector("h1")(taxDueSummaryHeadingAgentNew)
         )
       }
     }
 
-    "NewTaxCalcProxy Feature Switch is disabled" when {
-      "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-        "feature switch TxMEventsApproved is enabled" should {
-        "return the correct tax due page with a full Calculation" in {
-          enable(TxmEventsApproved)
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
+    "return the correct tax due summary page with just Gift Aid Additional charges" in {
 
-          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+      stubAuthorisedAgentUser(authorised = true)
 
-          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationGiftAid
+      )
 
-          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(taxDueSummaryTitle),
-            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
-          )
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-          val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
-          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
-        }
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent(taxDueSummaryTitle),
+        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+        elementTextByID("additional_charges")("Additional charges")
+      )
+    }
 
-        "return the correct tax due page with only gift aid Additional Charge in the Calculation" in {
-          enable(TxmEventsApproved)
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
+    "return the correct tax due summary page with just Pension Lump Sum Additional charges" in {
 
-          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+      stubAuthorisedAgentUser(authorised = true)
 
-          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-            status = OK,
-            body = giftAidCalculationJson
-          )
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationPensionLumpSums
+      )
 
-          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(taxDueSummaryTitle),
-            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
-          )
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-          val expectedCalculation = giftAidCalculationJson.as[Calculation]
-          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
-        }
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent(taxDueSummaryTitle),
+        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+        elementTextByID("additional_charges")("Additional charges")
+      )
+    }
 
-        "return the correct tax due page with only pensions savings Additional Charge in the Calculation" in {
-          enable(TxmEventsApproved)
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
+    "return the correct tax due summary page with just Pension Savings Additional charges" in {
 
-          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+      stubAuthorisedAgentUser(authorised = true)
 
-          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-            status = OK,
-            body = pensionSavingsCalculationJson
-          )
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationPensionSavings
+      )
 
-          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(taxDueSummaryTitle),
-            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
-          )
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-          val expectedCalculation = pensionSavingsCalculationJson.as[Calculation]
-          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
-        }
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent(taxDueSummaryTitle),
+        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+        elementTextByID("additional_charges")("Additional charges")
+      )
+    }
 
-        "return the correct tax due page with only pensions lump sum Additional Charge in the Calculation" in {
-          enable(TxmEventsApproved)
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
+    "return the correct tax due summary page using minimal calculation with no Additional Charges" in {
 
-          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+      stubAuthorisedAgentUser(authorised = true)
 
-          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-            status = OK,
-            body = pensionLumpSumCalculationJson
-          )
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationMinimal
+      )
 
-          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(taxDueSummaryTitle),
-            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
-          )
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-          val expectedCalculation = pensionLumpSumCalculationJson.as[Calculation]
-          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
-        }
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent(taxDueSummaryTitle),
+        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation")
+      )
 
-        "return the correct tax due page with a minimal Calculation" in {
-          enable(TxmEventsApproved)
-          disable(NewTaxCalcProxy)
-          stubAuthorisedAgentUser(authorised = true)
+      res shouldNot have(
+        elementTextByID("additional_charges")("Additional charges")
+      )
+    }
 
-          val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+    "return class2VoluntaryContributions as false when the flag is missing from the calc data" in {
 
-          IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("calculationId1", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "calculationId1")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
+      stubAuthorisedAgentUser(authorised = true)
 
-          When(s"I call GET ${routes.TaxDueSummaryController.showTaxDueSummary(getCurrentTaxYearEnd.getYear).url}")
-          val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationNonVoluntaryClass2Nic
+      )
 
-          res should have(
-            httpStatus(OK),
-            pageTitleAgent(taxDueSummaryTitle),
-            elementTextBySelector("h1")(taxDueSummaryHeadingAgent)
-          )
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
 
-          val expectedCalculation = estimatedCalculationFullJson.as[Calculation]
-          verifyAuditContainsDetail(TaxCalculationDetailsResponseAuditModel(testUser, CalcDisplayModel("", 1, expectedCalculation, Crystallised), testYearInt).detail)
-        }
-      }
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent(taxDueSummaryTitle),
+        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.false"))
+      )
+    }
+
+    "return class2VoluntaryContributions as true when the flag is returned in the calc data" in {
+
+      stubAuthorisedAgentUser(authorised = true)
+
+      And("I stub a successful liability calculation response")
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+        status = OK,
+        body = liabilityCalculationVoluntaryClass2Nic
+      )
+
+      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
+      val res = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(testYearInt)(clientDetailsWithConfirmation)
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+
+      res should have(
+        httpStatus(OK),
+        pageTitleAgent(taxDueSummaryTitle),
+        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.true"))
+      )
     }
   }
 }

@@ -18,26 +18,23 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models._
-import config.featureswitch.{Class4UpliftEnabled, FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
+import config.featureswitch.{Class4UpliftEnabled, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
-import models.calculation._
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.TaxCalcBreakdown
-import views.html.TaxCalcBreakdownNew
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
-                                        taxCalcBreakdownNew: TaxCalcBreakdownNew,
                                         val appConfig: FrontendAppConfig,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
@@ -51,40 +48,20 @@ class TaxDueSummaryController @Inject()(taxCalcBreakdown: TaxCalcBreakdown,
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
-
-        if (isEnabled(NewTaxCalcProxy)) {
-          calculationService.getLiabilityCalculationDetail(mtdItUser.mtditid, mtdItUser.nino, taxYear).map {
-            case liabilityCalc: LiabilityCalculationResponse =>
-              val viewModel = TaxDueSummaryViewModel(liabilityCalc)
-              auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModelNew(mtdItUser, viewModel, taxYear))
-              Ok(taxCalcBreakdownNew(viewModel, taxYear, backUrl(taxYear), isAgent = true, class4UpliftEnabled = isEnabled(Class4UpliftEnabled)))
-            case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
-              Logger("application").info("[Agent][TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
-              itvcErrorHandler.showInternalServerError()
-            case _: LiabilityCalculationError =>
-              Logger("application").error(
-                "[Agent][TaxDueController][showTaxDueSummary[" + taxYear +
-                  "]] No new calc deductions data error found. Downstream error")
-              itvcErrorHandler.showInternalServerError()
-          }
-        } else {
-          calculationService.getCalculationDetail(getClientNino(request), taxYear) flatMap {
-            case calcDisplayModel: CalcDisplayModel =>
-              if (isEnabled(TxmEventsApproved)) {
-                auditingService.extendedAudit(TaxCalculationDetailsResponseAuditModel(mtdItUser, calcDisplayModel, taxYear))
-              }
-              Future.successful(Ok(taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear), isAgent = true)))
-
-            case CalcDisplayNoDataFound =>
-              Logger("application").warn(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-
-            case CalcDisplayError =>
-              Logger("application").error(s"[Agent][TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Downstream error")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
+        calculationService.getLiabilityCalculationDetail(mtdItUser.mtditid, mtdItUser.nino, taxYear).map {
+          case liabilityCalc: LiabilityCalculationResponse =>
+            val viewModel = TaxDueSummaryViewModel(liabilityCalc)
+            auditingService.extendedAudit(TaxDueResponseAuditModel(mtdItUser, viewModel, taxYear))
+            Ok(taxCalcBreakdown(viewModel, taxYear, backUrl(taxYear), isAgent = true, class4UpliftEnabled = isEnabled(Class4UpliftEnabled)))
+          case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
+            Logger("application").info("[Agent][TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
+            itvcErrorHandler.showInternalServerError()
+          case _: LiabilityCalculationError =>
+            Logger("application").error(
+              "[Agent][TaxDueController][showTaxDueSummary[" + taxYear +
+                "]] No new calc deductions data error found. Downstream error")
+            itvcErrorHandler.showInternalServerError()
         }
-
       }
   }
 

@@ -37,7 +37,6 @@ object FeatureSwitch {
     CodingOut,
     WhatYouOweTotals,
     BtaNavBar,
-    NewTaxCalcProxy,
     Class4UpliftEnabled
   )
 
@@ -99,11 +98,6 @@ case object WhatYouOweTotals extends FeatureSwitch {
 case object BtaNavBar extends FeatureSwitch {
   override val name = s"$prefix.enable-bta-nav-bar"
   override val displayText = "BTA Nav Bar"
-}
-
-case object NewTaxCalcProxy extends FeatureSwitch {
-  override val name = s"$prefix.enable-new-tax-calculation-proxy"
-  override val displayText = "New Tax Calculation Proxy"
 }
 
 case object Class4UpliftEnabled extends FeatureSwitch {

@@ -16,27 +16,27 @@
 
 package audit.models
 
-import java.time.LocalDate
-import testConstants.BaseTestConstants.taxYear
-import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
-import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import auth.MtdItUser
-import models.calculation.Calculation
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import testConstants.BaseTestConstants.taxYear
+import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import uk.gov.hmrc.auth.core.retrieve.Name
+
+import java.time.LocalDate
 
 class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatchers {
 
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
 
-  val calculation: Calculation = calculationDataSuccessModel
+  val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel("2017-07-06T12:34:56.789Z", false, 2010.00, 199505, 500.00, 198500)
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
     val dunningLock = if (hasDunningLock) Some("Stand over order") else None
@@ -103,9 +103,9 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
         userType = userType,
         arn = agentReferenceNumber
       )(FakeRequest()),
-      calculation = Some(calculation),
       payments = payments(paymentHasADunningLock),
-      updates = updates
+      updates = updates,
+      taxYearOverviewViewModel = Some(taxYearOverviewViewModel)
     )
 
   "TaxYearOverviewResponseAuditModel(mtdItUser, agentReferenceNumber, calculation, payments, updates)" should {
