@@ -16,27 +16,23 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy}
+import config.featureswitch.FeatureSwitching
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
-import mocks.views.agent.MockTaxCalcBreakdown
-import models.calculation.CalcDisplayError
 import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentType, _}
-import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
-import views.html.{TaxCalcBreakdown, TaxCalcBreakdownNew}
+import views.html.TaxCalcBreakdown
 
 import scala.concurrent.ExecutionContext
 
-class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationService with MockTaxCalcBreakdown
+class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockItvcErrorHandler {
 
   class Setup {
@@ -45,7 +41,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
     val controller: TaxDueSummaryController = new TaxDueSummaryController(
 			app.injector.instanceOf[TaxCalcBreakdown],
-			app.injector.instanceOf[TaxCalcBreakdownNew],
       appConfig = appConfig,
       authorisedFunctions = mockAuthService,
       calculationService = mockCalculationService,
@@ -65,9 +60,8 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
   }
 
   "showTaxDueSummary" when {
-		"given a tax year which can be found in ETMP with NewTaxCalcProxy Enabled" should {
+		"given a tax year which can be found in ETMP" should {
 			"return Status OK (200) with HTML" in new Setup {
-				enable(NewTaxCalcProxy)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockBothIncomeSources()
 				mockCalculationSuccessFullNew("XAIT00000000015", "AA111111A", testYear)
@@ -78,37 +72,9 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 				contentType(result) shouldBe Some(HTML)
 			}
 		}
-		"given a tax year which can be found in ETMP" should {
-			"return Status OK (200) with HTML" in new Setup {
-				disable(NewTaxCalcProxy)
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockBothIncomeSources()
-				setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-				mockTaxCalcBreakdown(testYear, calculationDisplaySuccessModel(calculationDataSuccessModel),
-					controllers.agent.routes.TaxYearOverviewController.show(testYear).url, isAgent)(HtmlFormat.empty)
 
-				lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
-
-				status(result) shouldBe OK
-				contentType(result) shouldBe Some(HTML)
-			}
-		}
 		"there was a problem retrieving income source details for the user" should {
 			"throw an internal server exception" in new Setup {
-				disable(NewTaxCalcProxy)
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockErrorIncomeSource()
-				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
-				mockShowInternalServerError()
-
-				val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient()).failed.futureValue
-				result shouldBe an[InternalServerException]
-				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
-			}
-		}
-		"there was a problem retrieving income source details for the user with NewTaxCalcProxy Enabled" should {
-			"throw an internal server exception" in new Setup {
-				enable(NewTaxCalcProxy)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockErrorIncomeSource()
 				setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(404, "Not Found"))
@@ -123,21 +89,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 		"there is a downstream error" should {
 			"return Status Internal Server Error (500)" in new Setup {
 				lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
-				disable(NewTaxCalcProxy)
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockBothIncomeSources()
-				setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
-				mockShowInternalServerError()
-				setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-
-				status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-			}
-		}
-
-		"there is a downstream error with NewTaxCalcProxy Enabled" should {
-			"return Status Internal Server Error (500)" in new Setup {
-				lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
-				enable(NewTaxCalcProxy)
 				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 				mockBothIncomeSources()
 				setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(500, "Some Error"))

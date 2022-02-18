@@ -18,12 +18,11 @@ package controllers
 
 import audit.AuditingService
 import audit.models._
-import auth.{MtdItUserBase, MtdItUserWithNino}
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
+import auth.MtdItUserWithNino
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
-import models.calculation._
 import models.liabilitycalculation._
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.Logger
@@ -32,9 +31,8 @@ import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.DeductionBreakdown
-import views.html.DeductionBreakdownNew
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -45,7 +43,6 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
-                                            val deductionBreakdownViewNew: DeductionBreakdownNew,
                                             val retrieveBtaNavBar: BtaNavFromNinoPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
@@ -61,36 +58,18 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
 
     action.async {
       implicit user =>
-        if (isEnabled(NewTaxCalcProxy)) {
-          calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
-            case liabilityCalc: LiabilityCalculationResponse =>
-              val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
-              auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModelNew(user, viewModel))
-              Ok(deductionBreakdownViewNew(viewModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial))
-            case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-              Logger("application").info(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
-              itvcErrorHandler.showInternalServerError()
-            case _: LiabilityCalculationError =>
-              Logger("application").error(
-                s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
-              itvcErrorHandler.showInternalServerError()
-          }
-        } else {
-          calculationService.getCalculationDetail(user.nino, taxYear).map {
-            case calcDisplayModel: CalcDisplayModel =>
-              auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
-                calcDisplayModel.calcDataModel.allowancesAndDeductions, isEnabled(TxmEventsApproved)))
-              Ok(deductionBreakdownView(calcDisplayModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial))
-
-            case CalcDisplayNoDataFound =>
-              Logger("application").warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
-              itvcErrorHandler.showInternalServerError()
-
-            case CalcDisplayError =>
-              Logger("application").error(
-                s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
-              itvcErrorHandler.showInternalServerError()
-          }
+        calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
+          case liabilityCalc: LiabilityCalculationResponse =>
+            val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
+            auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
+            Ok(deductionBreakdownView(viewModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial))
+          case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+            Logger("application").info(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
+            itvcErrorHandler.showInternalServerError()
+          case _: LiabilityCalculationError =>
+            Logger("application").error(
+              s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+            itvcErrorHandler.showInternalServerError()
         }
     }
   }

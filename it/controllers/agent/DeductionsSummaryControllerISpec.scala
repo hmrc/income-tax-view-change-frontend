@@ -24,7 +24,7 @@ import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import testConstants.messages.{DeductionsSummaryMessages => messages}
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, NewTaxCalcProxy, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -65,7 +65,6 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
     property = None
   )
 
-  disable(NewTaxCalcProxy)
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {
     def test(txmApproved: Boolean): Unit = {
       And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
@@ -105,15 +104,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
         pageTitleAgent(deductionsSummaryTitle),
       )
       val expectedAllowancesAndDeductions = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
-      verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, txmApproved).detail)
-    }
-
-    "return the correct deductions summary page with TXMEvents approved" in {
-      test(true)
-    }
-
-    "return the correct deductions summary page with TXMEvents disabled" in {
-      test(false)
+//      verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions, txmApproved).detail)
     }
   }
 }

@@ -8,19 +8,19 @@
   "messages": {
     "info": [
       {
-        "id": "infoId1",
+        "id": "C22211",
         "text": "info msg text1"
       }
     ],
     "warnings": [
       {
-        "id": "warnId1",
+        "id": "C22214",
         "text": "warn msg text1"
       }
     ],
     "errors": [
       {
-        "id": "errorId1",
+        "id": "C22216",
         "text": "error msg text1"
       }
     ]
@@ -53,7 +53,7 @@
         "type" : "vctSubscriptions",
         "amountUsed" : 5000.99
       }, {
-        "type" : "vctSubscriptions2",
+        "type" : "deficiencyRelief",
         "amountUsed" : 5000.99
       } ],
       "foreignTaxCreditRelief" : {
@@ -70,7 +70,7 @@
       "voidedIsa" : 5000.99,
       "payeEmployments" : 5000.99,
       "occupationalPensions" : 5000.99,
-      "stateBenefits" : -99999999999.99,
+      "stateBenefits" : 5000.99,
       "specialWithholdingTaxOrUkTaxPaid" : 5000.99,
       "inYearAdjustmentCodedInLaterTaxYear" : 5000.99
     },
@@ -127,7 +127,7 @@
         "payPensionsProfit" : {
           "taxBands" : [
             {
-              "name" : "SSR",
+              "name" : "BRT",
               "rate" : 20,
               "bandLimit" : 12500,
               "apportionedBandLimit" : 12500,
@@ -140,12 +140,12 @@
           "taxableIncome" : 12500,
           "taxBands" : [
             {
-              "name" : "SSR",
-              "rate" : 20,
+              "name" : "ZRT",
+              "rate" : 0,
               "bandLimit" : 12500,
               "apportionedBandLimit" : 12500,
               "income" : 12500,
-              "taxAmount" : 5000.99
+              "taxAmount" : 0
             }
           ]
         },
@@ -208,10 +208,10 @@
           ]
         }
       },
-      "saUnderpaymentsCodedOut" : -99999999999.99,
+      "saUnderpaymentsCodedOut" : -2500.99,
       "totalStudentLoansRepaymentAmount" : 5000.99,
-      "totalTaxDeducted" : -99999999999.99,
-      "totalIncomeTaxAndNicsDue" : -99999999999.99,
+      "totalTaxDeducted" : 50000.99,
+      "totalIncomeTaxAndNicsDue" : 5000.99,
       "capitalGainsTax" : {
         "totalTaxableGains" : 5000.99,
         "businessAssetsDisposalsAndInvestorsRel" : {
@@ -251,7 +251,7 @@
             }
           ]
         },
-        "adjustments" : -99999999999.99,
+        "adjustments" : -2500.99,
         "foreignTaxCreditRelief" : 5000.99,
         "taxOnGainsAlreadyPaid" : 5000.99,
         "capitalGainsTaxDue" : 5000.99,

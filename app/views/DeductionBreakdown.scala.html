@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *@
-
-@import models.calculation.CalcDisplayModel
 @import implicits.ImplicitCurrencyFormatter._
+@import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 
@@ -24,7 +23,7 @@
         p: p
 )
 
-@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(viewModel: AllowancesAndDeductionsViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
     @dataItem.map { data =>
@@ -43,7 +42,7 @@
         @messages("deduction_breakdown.heading")
     </h1>
     <div>
-        <table class="govuk-table">
+        <table class="govuk-table deductions-table">
             <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">
                 <span class="heading-secondary">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>
                 @messages("deduction_breakdown.heading")
@@ -54,19 +53,19 @@
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("deduction_breakdown.table.header.amount")</th>
             </tr>
             </thead>
-            <tbody class = "govuk-table__body">
-            @tableRow("personal_allowance", calcModel.calcDataModel.allowancesAndDeductions.personalAllowanceDisplayValue)
-            @tableRow("marriage_allowance_transfer", calcModel.calcDataModel.allowancesAndDeductions.marriageAllowanceTransfer, isNegative = true)
-            @tableRow("pension_contributions", calcModel.calcDataModel.allowancesAndDeductions.totalPensionContributions)
-            @tableRow("loss_relief", calcModel.calcDataModel.allowancesAndDeductions.lossesAppliedToGeneralIncome)
-            @tableRow("gift_of_investments_and_property_to_charity", calcModel.calcDataModel.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity)
-            @tableRow("annual_payments", calcModel.calcDataModel.allowancesAndDeductions.grossAnnualPayments)
-            @tableRow("qualifying_loan_interest", calcModel.calcDataModel.allowancesAndDeductions.qualifyingLoanInterestFromInvestments)
-            @tableRow("post_cessasation_trade_receipts", calcModel.calcDataModel.allowancesAndDeductions.postCessationTradeReceipts)
-            @tableRow("trade_union_payments", calcModel.calcDataModel.allowancesAndDeductions.paymentsToTradeUnionsForDeathBenefits)
+            <tbody class="govuk-table__body">
+                @tableRow("personal_allowance", viewModel.personalAllowanceDisplayValue)
+                @tableRow("marriage_allowance_transfer", viewModel.transferredOutAmount, isNegative = true)
+                @tableRow("pension_contributions", viewModel.pensionContributions)
+                @tableRow("loss_relief", viewModel.lossesAppliedToGeneralIncome)
+                @tableRow("gift_of_investments_and_property_to_charity", viewModel.giftOfInvestmentsAndPropertyToCharity)
+                @tableRow("annual_payments", viewModel.grossAnnuityPayments)
+                @tableRow("qualifying_loan_interest", viewModel.qualifyingLoanInterestFromInvestments)
+                @tableRow("post_cessasation_trade_receipts", viewModel.postCessationTradeReceipts)
+                @tableRow("trade_union_payments", viewModel.paymentsToTradeUnionsForDeathBenefits)
             <tr class="govuk-table__row">
                 <td class="govuk-table__header total-section">@messages("deduction_breakdown.total")</td>
-                <td class="govuk-table__header govuk-table__header--numeric total-section">@calcModel.calcDataModel.allowancesAndDeductions.totalAllowancesDeductionsReliefs.getOrElse(BigDecimal(0)).toCurrency</td>
+                <td id="total-value" class="govuk-table__header govuk-table__header--numeric total-section">@viewModel.totalAllowancesDeductionsReliefs.getOrElse(BigDecimal(0)).toCurrency</td>
             </tr>
             </tbody>
         </table>

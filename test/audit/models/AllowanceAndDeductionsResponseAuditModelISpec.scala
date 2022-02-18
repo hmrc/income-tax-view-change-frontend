@@ -16,9 +16,9 @@
 
 package audit.models
 
-import testConstants.BaseTestConstants._
-import models.calculation.AllowancesAndDeductions
+import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.Json
+import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 
 class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
@@ -29,20 +29,19 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
   "The AllowanceAndDeductionsResponseAuditModel with TxmApproved FS enabled" should {
 
     val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtdItAgentUser,
-      AllowancesAndDeductions(
+      AllowancesAndDeductionsViewModel(
         personalAllowance = Some(123.12),
-        totalPensionContributions = Some(456.78),
+        pensionContributions = Some(456.78),
         lossesAppliedToGeneralIncome = Some(1234.12),
         giftOfInvestmentsAndPropertyToCharity = Some(4561.78),
         totalAllowancesAndDeductions = Some(1),
-        totalTaxableIncome = Some(2),
         totalReliefs = Some(3),
-        grossAnnualPayments = Some(1235.12),
+        grossAnnuityPayments = Some(1235.12),
         qualifyingLoanInterestFromInvestments = Some(4562.78),
         postCessationTradeReceipts = Some(1236.12),
         paymentsToTradeUnionsForDeathBenefits = Some(4563.78),
-        marriageAllowanceTransfer = Some(256.78)
-      ), true
+        transferredOutAmount = Some(256.78)
+      )
     )
 
     s"Have the correct transaction name of '$transactionName'" in {
@@ -75,56 +74,7 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
       }
 
       "information for the audit has minimal details" in {
-        AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductions(), true).detail shouldBe Json.obj(
-          "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino
-        )
-      }
-    }
-  }
-  "The AllowanceAndDeductionsResponseAuditModel with TxmAproved FS disabled" should {
-
-    val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtdItAgentUser,
-      AllowancesAndDeductions(
-        personalAllowance = Some(123.12),
-        totalPensionContributions = Some(456.78),
-        lossesAppliedToGeneralIncome = Some(1234.12),
-        giftOfInvestmentsAndPropertyToCharity = Some(4561.78),
-        totalAllowancesAndDeductions = Some(1),
-        totalTaxableIncome = Some(2),
-        totalReliefs = Some(3),
-        grossAnnualPayments = Some(1235.12),
-        qualifyingLoanInterestFromInvestments = Some(4562.78),
-        postCessationTradeReceipts = Some(1236.12),
-        paymentsToTradeUnionsForDeathBenefits = Some(4563.78),
-        marriageAllowanceTransfer = Some(256.78)
-      ), false
-    )
-
-    s"Have the correct transaction name of '$transactionName'" in {
-      testAllowanceAndDeductionsResponseAuditModel.transactionName shouldBe transactionName
-    }
-
-    s"Have the correct audit event type of '$auditEvent'" in {
-      testAllowanceAndDeductionsResponseAuditModel.auditType shouldBe auditEvent
-    }
-
-    "Have the correct details for the audit event" when {
-      "information for the audit is complete" in {
-        testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino,
-          "saUtr" -> testSaUtr,
-          "credId" -> testCredId,
-          "userType" -> testUserTypeAgent,
-          "agentReferenceNumber" -> testArn,
-          "personalAllowance" -> 123.12,
-          "pensionContributions" -> 456.78
-        )
-      }
-
-      "information for the audit has minimal details" in {
-        AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductions(), false).detail shouldBe Json.obj(
+        AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductionsViewModel()).detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
           "nationalInsuranceNumber" -> testNino
         )

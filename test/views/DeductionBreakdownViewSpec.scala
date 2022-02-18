@@ -16,14 +16,11 @@
 
 package views
 
-import testConstants.CalcBreakdownTestConstants
-import testConstants.MessagesLookUp.DeductionBreakdown
-import enums.Estimate
-import models.calculation.CalcDisplayModel
+import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import testConstants.CalcBreakdownTestConstants.allowancesAndDeductions
-import testConstants.EstimatesTestConstants.testYearPlusOne
+import testConstants.BaseTestConstants.testNavHtml
+import testConstants.MessagesLookUp.DeductionBreakdown
 import testUtils.ViewSpec
 import views.html.DeductionBreakdown
 
@@ -36,12 +33,19 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
   "The deduction breakdown view" when {
 
+    "provided with a btaNavPartial" should{
+      val taxYear = 2017
+      lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = testNavHtml)
+
+      "render the btaNavPartial" in new Setup(view) {
+        document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
+      }
+    }
+
     "provided with a calculation without tax deductions for the 2017 tax year" should {
       val taxYear = 2017
 
-      lazy val view = deductionBreakdownView(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationNoBillModel,
-        Estimate), taxYear, backUrl)
+      lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe DeductionBreakdown.title
@@ -84,9 +88,22 @@ class DeductionBreakdownViewSpec extends ViewSpec {
     "provided with a calculation with all tax deductions for the 2018 tax year" should {
       val taxYear = 2018
 
-      lazy val view = deductionBreakdownView(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationAllDeductionSources,
-        Estimate), taxYear, backUrl)
+      val deductions = AllowancesAndDeductionsViewModel(
+        personalAllowance = Some(11500.00),
+        reducedPersonalAllowance = None,
+        personalAllowanceBeforeTransferOut = None,
+        transferredOutAmount = Some(7500),
+        pensionContributions = Some(12500),
+        lossesAppliedToGeneralIncome = Some(13500),
+        giftOfInvestmentsAndPropertyToCharity = Some(10000),
+        grossAnnuityPayments = Some(1000),
+        qualifyingLoanInterestFromInvestments = Some(1001),
+        postCessationTradeReceipts = Some(1002),
+        paymentsToTradeUnionsForDeathBenefits = Some(1003),
+        totalAllowancesAndDeductions = Some(47000),
+        totalReliefs = Some(500)
+      )
+      lazy val view = deductionBreakdownView(deductions, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe DeductionBreakdown.title
@@ -151,15 +168,20 @@ class DeductionBreakdownViewSpec extends ViewSpec {
                                                     reducedPersonalAllowance: Option[BigDecimal] = None,
                                                     personalAllowance: Option[BigDecimal] = Some(11500.00)) extends Setup(
         deductionBreakdownView(
-          CalcDisplayModel("", 1,
-            CalcBreakdownTestConstants.calculationAllDeductionSources.copy(
-              allowancesAndDeductions = allowancesAndDeductions.copy(
-                personalAllowance = personalAllowance,
-                reducedPersonalAllowance = reducedPersonalAllowance,
-                personalAllowanceBeforeTransferOut = personalAllowanceBeforeTransferOut
-              )
-            ),
-            Estimate
+          AllowancesAndDeductionsViewModel(
+            personalAllowance = personalAllowance,
+            reducedPersonalAllowance = reducedPersonalAllowance,
+            personalAllowanceBeforeTransferOut = personalAllowanceBeforeTransferOut,
+            transferredOutAmount = Some(1234.56),
+            pensionContributions = Some(1234.56),
+            lossesAppliedToGeneralIncome = Some(1234.56),
+            giftOfInvestmentsAndPropertyToCharity = Some(1234.56),
+            grossAnnuityPayments = Some(1234.56),
+            qualifyingLoanInterestFromInvestments = Some(1234.56),
+            postCessationTradeReceipts = Some(1234.56),
+            paymentsToTradeUnionsForDeathBenefits = Some(1234.56),
+            totalAllowancesAndDeductions = Some(1234.56),
+            totalReliefs = Some(1234.56)
           ),
           taxYear2018, "testBackURL")
       )
