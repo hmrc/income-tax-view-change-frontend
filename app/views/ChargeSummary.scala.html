@@ -177,40 +177,41 @@
                     }
                 </dd>
             </div>
-        }
+
         @if(latePaymentInterestCharge) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
                 <dd class="govuk-summary-list__value">@messages("chargeSummary.lpi.interestPeriod.dates", documentDetail.interestFromDate.getOrElse(throw new MissingFieldException("Interest From Date")).toLongDateShort, documentDetail.interestEndDate.getOrElse(throw new MissingFieldException("Interest End Date")).toLongDateShort)</dd>
             </div>
         }
-        @if(!(codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@{
                 if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
-                    messages("chargeSummary.paymentAmountCodingOut")
+                messages("chargeSummary.paymentAmountCodingOut")
                 } else messages("chargeSummary.paymentAmount")
-            }
+                }
             </dt>
             <dd class="govuk-summary-list__value">
-            @{
+                @{
                 if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
                 else documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
-            }
+                }
             </dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
             <dd class="govuk-summary-list__value">@{
                 if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-                    messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
+                messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
                 } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
                 else documentDetail.remainingToPay.toCurrency
-            }
+                }
             </dd>
         </div>
+        }
+
     </dl>
-}
+
 
 @if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
 <p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
