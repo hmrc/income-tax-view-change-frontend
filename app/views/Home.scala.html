@@ -115,8 +115,7 @@
                 @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
 
                 @p(classes = "govuk-hint margin-bottom-zero") {
-                    @messages("home.utr", user.saUtr.getOrElse(""))
-                    <br>
+                    <span style="display:block">@messages("home.utr", user.saUtr.getOrElse(""))</span>
                     <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
                     @user.userName.map(_.name) @user.userName.map(_.lastName)
                 }
