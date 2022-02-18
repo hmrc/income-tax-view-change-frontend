@@ -436,7 +436,7 @@ object NewCalcBreakdownUnitTestConstants {
         amount = 300
       )
     )),
-    class2VoluntaryContributions = Some(true),
+    class2VoluntaryContributions = true,
     class2NicsAmount = Some(10000),
     giftAidTax = Some(5000),
     totalPensionSavingsTaxCharges = Some(5000),
@@ -634,10 +634,10 @@ object NewCalcBreakdownUnitTestConstants {
     topSlicingReliefAmount = Some(2345)
   )
   val taxDueSummaryViewModelNic2 = TaxDueSummaryViewModel(
-    class2VoluntaryContributions = Some(false),
     class2NicsAmount = Some(10000)
   )
-  val taxDueSummaryViewModelNic2NoVoluntary = TaxDueSummaryViewModel(
+  val taxDueSummaryViewModelVoluntaryNic2 = TaxDueSummaryViewModel(
+    class2VoluntaryContributions = true,
     class2NicsAmount = Some(10000)
   )
 
