@@ -32,3 +32,7 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 .client-utr{
   font-weight: bold;
   }
+
+#amount-due{
+  white-space: nowrap;
+}
