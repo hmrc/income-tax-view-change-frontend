@@ -59,6 +59,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
   lazy val agentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
   lazy val agentHomeUrl: String = controllers.agent.routes.HomeController.show().url
+  lazy val agentWhatYouOweUrl: String =controllers.agent.routes.WhatYouOweController.show().url
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
@@ -97,6 +98,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   private def getBackURL(referer: Option[String]): String = {
     referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
       case Some(true) => agentTaxYearsUrl
+      case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get=> agentWhatYouOweUrl
       case _ => agentHomeUrl
     }
   }
