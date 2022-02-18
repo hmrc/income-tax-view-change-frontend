@@ -35,9 +35,8 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
   def getLatestCalculationId(nino: String, taxYear: String)(implicit headerCarrier: HeaderCarrier,
                                                             ec: ExecutionContext): Future[Either[CalculationResponseModel, String]] = {
 
-    val headerCarrierVal = headerCarrier
     http.GET[HttpResponse](listCalculationsUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
-      headerCarrierVal.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"), ec) map {
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"), ec) map {
       response =>
         response.status match {
           case OK =>
