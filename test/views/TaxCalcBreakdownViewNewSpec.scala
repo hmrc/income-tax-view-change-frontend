@@ -269,9 +269,9 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
       lazy val viewWithClass4UpliftEnabled = taxCalcBreakdown(taxDueSummaryViewModelStandard, taxYear, backUrl, class4UpliftEnabled = true)
       lazy val viewNone = taxCalcBreakdown(TaxDueSummaryViewModel(), taxYear, backUrl)
       lazy val viewNic2 = taxCalcBreakdown(taxDueSummaryViewModelNic2, taxYear, backUrl)
+      lazy val viewVoluntaryNic2 = taxCalcBreakdown(taxDueSummaryViewModelVoluntaryNic2, taxYear, backUrl)
       lazy val viewMarriageAllowanceTransfer = taxCalcBreakdown(taxDueSummaryViewModelMarriageAllowance, taxYear, backUrl)
       lazy val viewTopSlicingRelief = taxCalcBreakdown(taxDueSummaryViewModelTopSlicingRelief, taxYear, backUrl)
-      lazy val viewNoNic2Amount = taxCalcBreakdown(taxDueSummaryViewModelNoNic2Amount, taxYear, backUrl)
       lazy val viewAdChGiftAid = taxCalcBreakdown(taxDueSummaryViewModelGiftAid, taxYear, backUrl)
       lazy val viewAdChPensionLumpSum = taxCalcBreakdown(taxDueSummaryViewModelPensionLumpSum, taxYear, backUrl)
       lazy val viewAdChPensionSavings = taxCalcBreakdown(taxDueSummaryViewModelPensionSavings, taxYear, backUrl)
@@ -536,6 +536,34 @@ abstract class TaxCalcBreakdownViewNewBehaviour extends ViewSpec {
             (4, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
           )
         )
+      }
+
+      "have a Nics table showing Class 2 Nics when the voluntaryClass2Contributions flag is false" which {
+        shouldHaveACorrectTableContent(viewNic2)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.Nic2, "£10,000.00")
+          )
+        )
+      }
+
+      "have a Nics table showing Voluntary Class 2 Nics when the voluntaryClass2Contributions flag is true" which {
+        shouldHaveACorrectTableContent(viewVoluntaryNic2)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
+          )
+        )
+      }
+
+      "have no National Insurance contributions table and heading when there is no Nic4 or Nic2 data" in new Setup(viewNone) {
+        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar
       }
 
       "have no Capital Gains Tax table and heading when there is no any CGT value" in new Setup(zeroIncome) {

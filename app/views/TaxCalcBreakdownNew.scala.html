@@ -247,8 +247,7 @@
         </table>
     }
 
-    @if((viewModel.class2NicsAmount.isDefined) ||
-    viewModel.giftAidTax.isDefined ||
+    @if(viewModel.giftAidTax.isDefined ||
     viewModel.totalPensionSavingsTaxCharges.isDefined ||
     viewModel.statePensionLumpSumCharges.isDefined
     ) {
@@ -295,55 +294,59 @@
         </table>
     }
 
-    <table class="govuk-table" id="national-insurance-contributions-table">
-        <caption
-        class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.national_insurance_contributions")
-        </caption>
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.national_insurance_type")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
-        </tr>
+    @if(viewModel.nic4Bands.exists(_.nonEmpty) ||
+    viewModel.class2NicsAmount.isDefined
+    ) {
+        <table class="govuk-table" id="national-insurance-contributions-table">
+            <caption
+            class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.national_insurance_contributions")
+            </caption>
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.national_insurance_type")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
+            </tr>
 
-        @if(viewModel.nic4Bands.isDefined) {
-            <tbody class="govuk-table__body">
-            @viewModel.nic4Bands.map { nicBands =>
-                @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">
-                            @messages(
-                                "taxCal_breakdown.table.nic4",
-                                BigDecimal(band.income).toCurrencyString,
-                                s"${band.rate}"
-                            )
-                            @if(class4UpliftEnabled && band.name != "ZRT") {
-                                <div>
-                                    <span class="govuk-body-s uplift">
-                                    @messages("taxCal_breakdown.table.uplift")
-                                    </span>
-                                </div>
-                            }
+            @if(viewModel.nic4Bands.isDefined) {
+                <tbody class="govuk-table__body">
+                @viewModel.nic4Bands.map { nicBands =>
+                    @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                @messages(
+                                    "taxCal_breakdown.table.nic4",
+                                    BigDecimal(band.income).toCurrencyString,
+                                    s"${band.rate}"
+                                )
+                                @if(class4UpliftEnabled && band.name != "ZRT") {
+                                    <div>
+                                        <span class="govuk-body-s uplift">
+                                        @messages("taxCal_breakdown.table.uplift")
+                                        </span>
+                                    </div>
+                                }
 
-                        </td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                            band.amount.toCurrency
-                        }</td>
-                    </tr>
+                            </td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                                band.amount.toCurrency
+                            }</td>
+                        </tr>
+                    }
                 }
+                </tbody>
+            }
+
+            <tbody class="govuk-table__body">
+            @viewModel.class2NicsAmount.map { amount =>
+            <tr>
+                <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${viewModel.class2VoluntaryContributions}")</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                    amount.toCurrency
+                    }</td>
+            </tr>
             }
             </tbody>
-        }
-
-        <tbody class="govuk-table__body">
-        @viewModel.class2NicsAmount.map { amount =>
-        <tr>
-            <td class="govuk-table__cell">@messages(s"taxCal_breakdown.table.nic2.${viewModel.class2VoluntaryContributions}")</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                amount.toCurrency
-                }</td>
-        </tr>
-        }
-        </tbody>
-    </table>
+        </table>
+    }
 
     @capitalGainsTaxTable(viewModel.capitalGainsTax)
 

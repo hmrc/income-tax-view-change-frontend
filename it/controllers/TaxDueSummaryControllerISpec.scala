@@ -209,7 +209,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           httpStatus(OK),
           pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextBySelector("#additional-charges-table tbody:nth-child(3) td:nth-child(1)")(messages.nonVoluntaryClass2Nics)
+          elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages.nonVoluntaryClass2Nics)
         )
       }
 
@@ -236,7 +236,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           httpStatus(OK),
           pageTitleIndividual(taxDueSummaryTitle),
           elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextBySelector("#additional-charges-table tbody:nth-child(3) td:nth-child(1)")(messages.voluntaryClass2Nics)
+          elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages.voluntaryClass2Nics)
         )
       }
     }

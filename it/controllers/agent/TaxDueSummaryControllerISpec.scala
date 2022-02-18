@@ -304,7 +304,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           httpStatus(OK),
           pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextBySelector("#additional-charges-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.false"))
+          elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.false"))
         )
       }
 
@@ -330,7 +330,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           httpStatus(OK),
           pageTitleAgent(taxDueSummaryTitle),
           elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextBySelector("#additional-charges-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.true"))
+          elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.true"))
         )
       }
     }
