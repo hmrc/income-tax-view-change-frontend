@@ -294,7 +294,7 @@
         </table>
     }
 
-    @if(viewModel.nic4Bands.exists(_.nonEmpty) ||
+    @if(viewModel.nic4Bands.exists(_.exists(_.income > 0)) ||
     viewModel.class2NicsAmount.isDefined
     ) {
         <table class="govuk-table" id="national-insurance-contributions-table">
