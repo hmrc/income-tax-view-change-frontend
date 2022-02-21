@@ -281,7 +281,7 @@
     }
 
     @if(hasInterestLocks && hasAccruedInterest) {
-        @p(){
+        @p(id=Some("p-interest-locks-msg")){
             @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText")
             @messages("chargeSummary.interestLocks.text")
         }
