@@ -19,7 +19,6 @@ package controllers
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.calculation.Calculation
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup
@@ -50,9 +49,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 		emptyWhatYouOweChargesList.copy(
 			outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD",Some("2019-01-31"), 1.67, 2345))))
 		)
-
-	val emptyEstimateCalculation: Calculation = Calculation(crystallised = false)
-	val emptyCrystallisedCalculation: Calculation = Calculation(crystallised = true)
 
 	trait Setup {
 		val NextUpdatesService: NextUpdatesService = mock[NextUpdatesService]

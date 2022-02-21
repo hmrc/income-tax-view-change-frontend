@@ -30,8 +30,7 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.testMtditid
-import testConstants.EstimatesTestConstants._
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.{documentDetailClass2Nic, documentDetailPaye, financialDetails, fullDocumentDetailWithDueDateModel}
 import testConstants.MessagesLookUp
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
@@ -63,7 +62,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
 
-  lazy val messagesLookUp = new MessagesLookUp.Calculation(testYear)
+  lazy val messagesLookUp = new MessagesLookUp.Calculation(testTaxYear)
 
   val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true),
@@ -82,14 +81,14 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessFullNew(testMtditid)
         mockFinancialDetailsSuccess()
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
         val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
         val expectedContent: String = taxYearOverviewView(
-          testYear,
+          testTaxYear,
           Some(calcOverview),
           testChargesList,
           testObligtionsModel,
@@ -97,7 +96,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -111,14 +110,14 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessFullNew(testMtditid)
         mockFinancialDetailsSuccess()
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
         val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
         val expectedContent: String = taxYearOverviewView(
-          testYear,
+          testTaxYear,
           Some(calcOverview),
           testChargesList,
           testObligtionsModel,
@@ -126,7 +125,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveAndRefererToHomePage)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveAndRefererToHomePage)
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -146,14 +145,14 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             documentDetails = documentDetailClass2Nic.documentDetail
           )
         )
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
         val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
         val expectedContent: String = taxYearOverviewView(
-          testYear,
+          testTaxYear,
           Some(calcOverview),
           class2NicsChargesList,
           testObligtionsModel,
@@ -161,7 +160,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -177,14 +176,14 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             documentDetails = documentDetailPaye.documentDetail
           )
         )
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
         val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
         val expectedContent: String = taxYearOverviewView(
-          testYear,
+          testTaxYear,
           Some(calcOverview),
           payeChargesList,
           testObligtionsModel,
@@ -192,7 +191,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -210,14 +209,14 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             documentDetails = documentDetailClass2Nic.documentDetail
           )
         )
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
         val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
         val expectedContent: String = taxYearOverviewView(
-          testYear,
+          testTaxYear,
           Some(calcOverview),
           testEmptyChargesList,
           testObligtionsModel,
@@ -225,7 +224,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -241,14 +240,14 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             documentDetails = documentDetailPaye.documentDetail
           )
         )
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
         val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
         val expectedContent: String = taxYearOverviewView(
-          testYear,
+          testTaxYear,
           Some(calcOverview),
           testEmptyChargesList,
           testObligtionsModel,
@@ -256,7 +255,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -268,15 +267,15 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessFullNew(testMtditid)
         mockFinancialDetailsNotFound()
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
 
         val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
         val expectedContent: String = taxYearOverviewView(
-          testYear,
+          testTaxYear,
           Some(calcOverview),
           testEmptyChargesList,
           testObligtionsModel,
@@ -284,7 +283,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           codingOutEnabled = true
         ).toString
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -298,7 +297,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
         mockSingleBusinessIncomeSource()
         mockFinancialDetailsFailed()
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some("text/html")
@@ -309,12 +308,12 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
       "show the internal server error page" in {
         mockSingleBusinessIncomeSource()
         mockFinancialDetailsNotFound()
-        mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear, 4, 5))(
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = NextUpdatesErrorModel(500, "INTERNAL_SERVER_ERROR")
         )
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some("text/html")
@@ -325,7 +324,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
 
-        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+        val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -336,7 +335,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
         "return Internal Service Error (500)" in {
           mockPropertyIncomeSource()
 
-          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(-testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(-testTaxYear)(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -347,13 +346,13 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           mockSingleBusinessIncomeSource()
           mockCalculationNotFoundNew(testMtditid)
           mockFinancialDetailsSuccess()
-          mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6),
-            toDate = LocalDate.of(testYear, 4, 5))(
+          mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+            toDate = LocalDate.of(testTaxYear, 4, 5))(
             response = testObligtionsModel
           )
 
           val expectedContent: String =  Jsoup.parse(taxYearOverviewView(
-            testYear,
+            testTaxYear,
             None,
             testChargesList,
             testObligtionsModel,
@@ -361,7 +360,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             codingOutEnabled = true
           ).toString()).text()
 
-          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
 
           status(result) shouldBe Status.OK
           Jsoup.parse(contentAsString(result)).text() shouldBe expectedContent
@@ -375,7 +374,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
           mockSingleBusinessIncomeSource()
           mockCalculationErrorNew(testMtditid)
 
-          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+          val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear)(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           contentType(result) shouldBe Some("text/html")

@@ -16,17 +16,14 @@
 
 package mocks.services
 
-import testConstants.BaseTestConstants._
-import testConstants.CalcBreakdownTestConstants._
-import testConstants.NewCalcBreakdownUnitTestConstants._
-import testConstants.EstimatesTestConstants._
-import models.calculation._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.CalculationService
+import testConstants.BaseTestConstants._
+import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -40,14 +37,6 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     reset(mockCalculationService)
   }
 
-  def setupMockGetCalculation(nino: String, taxYear: Int)(response: CalcDisplayResponseModel): Unit =
-    when(mockCalculationService
-      .getCalculationDetail(
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(taxYear)
-      )(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-
   def setupMockGetCalculationNew(mtditid: String, nino: String, taxYear: Int)(response: LiabilityCalculationResponseModel): Unit = {
     when(mockCalculationService
       .getLiabilityCalculationDetail(
@@ -58,36 +47,23 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockGetCalculationId(nino: String, taxYear: Int)(response: Either[CalculationResponseModel, String]): Unit = {
-    when(mockCalculationService.getCalculationId(
-      ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(taxYear)
-    )(ArgumentMatchers.any())) thenReturn Future.successful(response)
-  }
-
-  def setupMockGetLatestCalculation(nino: String, idResult: Either[CalculationResponseModel, String])(response: CalculationResponseModel): Unit = {
+  def setupMockGetLatestCalculation(mtditid: String, nino: String, calcId: String)(response: LiabilityCalculationResponseModel): Unit = {
     when(mockCalculationService.getLatestCalculation(
+      ArgumentMatchers.eq(mtditid),
       ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(idResult)
+      ArgumentMatchers.eq(calcId)
     )(ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 
-  def mockCalculationSuccess(): Unit =
-    setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-  def mockCalculationSuccessFullNew(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testYear): Unit =
+  def mockCalculationSuccessFullNew(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessFull)
-  def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testYear): Unit =
+
+  def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal)
-  def mockCalculationCrystalisationSuccess(): Unit =
-    setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel.copy(crystallised = true)))
-  def mockCalculationError(): Unit =
-    setupMockGetCalculation(testNino, testYear)(CalcDisplayError)
-  def mockCalculationErrorNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testYear): Unit =
+
+  def mockCalculationErrorNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(500, "Internal server error"))
-  def mockCalculationNotFound(): Unit =
-    setupMockGetCalculation(testNino, testYear)(CalcDisplayNoDataFound)
-  def mockCalculationNotFoundNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testYear): Unit =
+
+  def mockCalculationNotFoundNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(404, "not found"))
-  def mockCalculationNotFoundAgent(): Unit =
-    setupMockGetCalculation(testNinoAgent, testYear)(CalcDisplayNoDataFound)
 }

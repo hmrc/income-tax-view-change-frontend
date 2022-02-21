@@ -22,7 +22,8 @@ import play.api.libs.json.Json
 
 object IncomeTaxCalculationStub {
 
-  def getCalculationResponseUrl(nino: String, taxYear: String): String = s"/income-tax-calculation/income-tax/nino/$nino?taxYear=$taxYear"
+  def getCalculationResponseUrl(nino: String, taxYear: String): String = s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
+  def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String = s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
   def stubGetCalculationResponse(nino: String, taxYear: String)(status: Int, body: LiabilityCalculationResponse): Unit = {
     WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear), status, Json.toJson(body).toString())
@@ -33,6 +34,17 @@ object IncomeTaxCalculationStub {
   }
   def verifyGetCalculationResponse(nino: String, taxYear: String, noOfCalls: Int = 1): Unit = {
     WiremockHelper.verifyGet(getCalculationResponseUrl(nino, taxYear), noOfCalls)
+  }
+
+  def stubGetCalculationResponseByCalcId(nino: String, calcId: String)(status: Int, body: LiabilityCalculationResponse): Unit = {
+    WiremockHelper.stubGet(getCalculationResponseByCalcIdUrl(nino, calcId), status, Json.toJson(body).toString())
+  }
+
+  def stubGetCalculationErrorResponseByCalcId(nino: String, calcId: String)(status: Int, body: LiabilityCalculationError): Unit = {
+    WiremockHelper.stubGet(getCalculationResponseByCalcIdUrl(nino, calcId), status, Json.toJson(body).toString())
+  }
+  def verifyGetCalculationResponseByCalcId(nino: String, calcId: String, noOfCalls: Int = 1): Unit = {
+    WiremockHelper.verifyGet(getCalculationResponseByCalcIdUrl(nino, calcId), noOfCalls)
   }
 
 }

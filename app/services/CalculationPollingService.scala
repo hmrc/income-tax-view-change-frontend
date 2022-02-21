@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import models.calculation._
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import org.joda.time.Duration
 import play.api.Logger
 import play.api.http.Status
@@ -38,7 +38,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
 
   private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
 
-  def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String)
+  def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, mtditid: String)
                                                       (implicit headerCarrier: HeaderCarrier): Future[Int] = {
 
 
@@ -55,12 +55,12 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       isLocked =>
         if(isLocked) {
           //to avoid wait time for first call, calling getCalculationResponse with end time as current time
-          getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino).flatMap {
+          getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid).flatMap {
             case statusCode if !retryableStatusCodes.contains(statusCode) => {
               lockKeeper.releaseLock
               Future.successful(statusCode)
             }
-            case _ => pollCalcInIntervals(calcId, nino, lockKeeper, endTimeInMillis)
+            case _ => pollCalcInIntervals(calcId, nino, mtditid, lockKeeper, endTimeInMillis)
           }
         } else {
           Future.successful(Status.INTERNAL_SERVER_ERROR)
@@ -71,7 +71,10 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
   //Waits for polling interval time to complete and responds with response code from calculation service.
   private def getCalculationResponse(endTimeForEachInterval: Long,
                                      endTimeInMillis: Long,
-                                     calcId: String, nino: String)
+                                     calcId: String,
+                                     nino: String,
+                                     mtditid: String
+                                    )
                                     (implicit hc: HeaderCarrier): Future[Int] = {
 
     Logger("application").debug(s"[CalculationPollingService][getCalculationResponse] Starting polling for  calcId: $calcId and nino: $nino")
@@ -79,16 +82,16 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       //Waiting until interval time is complete
     }
 
-    calculationService.getLatestCalculation(nino, Right(calcId)).map {
-      case _: Calculation => Status.OK
-      case error: CalculationErrorModel => {
+    calculationService.getLatestCalculation(mtditid, nino, calcId).map {
+      case _: LiabilityCalculationResponse => Status.OK
+      case error: LiabilityCalculationError => {
         if(System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
-        else error.code
+        else error.status
       }
     }
   }
 
-  private def pollCalcInIntervals(calcId: String, nino: String,
+  private def pollCalcInIntervals(calcId: String, nino: String, mtditid: String,
                                   lockKeeper: PollCalculationLockKeeper,
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
@@ -97,13 +100,13 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
         Await.result(getCalculationResponse(
           System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerInterval,
           endTimeInMillis,
-          calcId, nino
+          calcId, nino, mtditid
         ), frontendAppConfig.calcPollSchedulerTimeout.millis))) {
         //polling calc service until non retryable response code is received
       }
 
       lockKeeper.releaseLock
-      getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino)
+      getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid)
     }
   }
 }

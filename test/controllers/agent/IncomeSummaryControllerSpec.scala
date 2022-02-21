@@ -21,7 +21,6 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
 import mocks.views.agent.MockIncomeSummary
-import models.calculation.CalcDisplayError
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}

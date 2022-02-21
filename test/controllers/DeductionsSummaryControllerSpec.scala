@@ -25,8 +25,7 @@ import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.testMtditid
-import testConstants.EstimatesTestConstants.testYear
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testUtils.TestSupport
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
@@ -57,7 +56,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
     "all calc data available" should {
 
-      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testTaxYear)(fakeRequestWithActiveSession)
       lazy val document = result.toHtmlDocument
 
       "render the Allowances and Deductions page" in {
@@ -70,7 +69,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
     "no calc data available" should {
 
-      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testTaxYear)(fakeRequestWithActiveSession)
       lazy val document = result.toHtmlDocument
 
       "render the Allowances and Deductions page" in {
@@ -82,7 +81,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     }
     "calc returns NOT_FOUND" should {
 
-      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testTaxYear)(fakeRequestWithActiveSession)
 
       "render error page" in {
         mockCalculationNotFoundNew(testMtditid)
