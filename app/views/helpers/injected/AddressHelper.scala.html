@@ -27,7 +27,7 @@
     <dd class="cya-answer">
         @addressLines.zipWithIndex.map {
             case (line: String, index: Int) => {
-                <span id="address-line-@{index+1}">@line</span><br>
+                <div id="address-line-@{index+1}">@line</div>
             }
         }
     </dd>

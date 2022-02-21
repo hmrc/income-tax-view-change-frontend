@@ -27,7 +27,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
       TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal) shouldBe
         TaxDueSummaryViewModel(
-          taxRegime = "UK", class2VoluntaryContributions = None,
+          taxRegime = "UK",
           messages = None, lossesAppliedToGeneralIncome = None,
           grossGiftAidPayments = None, giftAidTax = None,
           marriageAllowanceTransferredInAmount = None,
@@ -52,24 +52,24 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
       "create a full TaxDueSummaryViewModel when there is a full Calculation" in {
         val expectedTaxDueSummaryViewModel = TaxDueSummaryViewModel(
           taxRegime = "UK",
-          class2VoluntaryContributions = Some(true),
+          class2VoluntaryContributions = true,
           messages = Some(Messages(
-            Some(List(Message("infoId1", "info msg text1"))),
-            Some(List(Message("warnId1", "warn msg text1"))),
-            Some(List(Message("errorId1", "error msg text1"))))
+            Some(List(Message("C22211", "info msg text1"))),
+            Some(List(Message("C22214", "warn msg text1"))),
+            Some(List(Message("C22216", "error msg text1"))))
           ),
           lossesAppliedToGeneralIncome = Some(12500),
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
-            ReliefsClaimed("vctSubscriptions2", Some(5000.99)))),
+            ReliefsClaimed("deficiencyRelief", Some(5000.99)))),
           totalResidentialFinanceCostsRelief = Some(5000.99),
           totalForeignTaxCreditRelief = Some(5000.99),
           topSlicingReliefAmount = Some(5000.99),
           totalTaxableIncome = Some(12500),
-          payPensionsProfitBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
-          savingsAndGainsBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
+          payPensionsProfitBands = Some(List(TaxBands("BRT", 20, 12500, 12500, 12500, 5000.99))),
+          savingsAndGainsBands = Some(List(TaxBands("ZRT", 0, 12500, 12500, 12500, 0))),
           lumpSumsBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
           dividendsBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
           gainsOnLifePoliciesBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
@@ -82,7 +82,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           class2NicsAmount = Some(5000.99),
           capitalGainsTax = CapitalGainsTaxViewModel(
             totalTaxableGains = Some(5000.99),
-            adjustments = Some(-99999999999.99),
+            adjustments = Some(-2500.99),
             foreignTaxCreditRelief = Some(5000.99),
             taxOnGainsAlreadyPaid = Some(5000.99),
             capitalGainsTaxDue = Some(5000.99),
@@ -94,13 +94,13 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(Some(5000.99),
               Some(20), Some(5000.99)))),
           totalStudentLoansRepaymentAmount = Some(5000.99),
-          saUnderpaymentsCodedOut = Some(-99999999999.99),
-          totalIncomeTaxAndNicsDue = Some(-99999999999.99),
-          totalTaxDeducted = Some(-99999999999.99),
+          saUnderpaymentsCodedOut = Some(-2500.99),
+          totalIncomeTaxAndNicsDue = Some(5000.99),
+          totalTaxDeducted = Some(50000.99),
           taxDeductedAtSource = TaxDeductedAtSourceViewModel(
             payeEmployments = Some(5000.99),
             ukPensions = Some(5000.99),
-            stateBenefits = Some(-99999999999.99),
+            stateBenefits = Some(5000.99),
             cis = Some(5000.99),
             ukLandAndProperty = Some(5000.99),
             specialWithholdingTax = Some(5000.99),

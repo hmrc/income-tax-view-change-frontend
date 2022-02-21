@@ -22,7 +22,7 @@ import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsAppro
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.core.Nino
-import models.paymentAllocationCharges.PaymentAllocationViewModel
+import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -56,6 +56,8 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
                 auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(mtdItUser, viewModel))
               }
               Ok(paymentAllocationView(viewModel, backUrl = backUrl, isAgent = true))
+            case Left(PaymentAllocationError(Some(404))) =>
+              Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
             case _ => itvcErrorHandler.showInternalServerError()
           }
         }

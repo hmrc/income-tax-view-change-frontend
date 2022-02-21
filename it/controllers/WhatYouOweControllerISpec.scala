@@ -51,6 +51,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           "render the payments due totals" in {
 
             Given("Display Totals feature is enabled")
+            enable(TxmEventsApproved)
             enable(WhatYouOweTotals)
 
             And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
@@ -69,7 +70,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
+            AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")

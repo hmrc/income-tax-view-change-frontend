@@ -16,17 +16,17 @@
 
 package views
 
-import testConstants.CalcBreakdownTestConstants
-import testConstants.CalcBreakdownTestConstants.calculationDataSuccessModel
-import testConstants.MessagesLookUp.TaxCalcBreakdown
-import enums.{Crystallised, Estimate}
-import models.calculation.TaxDeductedAtSource.{Message, Messages}
-import models.calculation.{AllowancesAndDeductions, CalcDisplayModel}
+import exceptions.MissingFieldException
+import models.liabilitycalculation.taxcalculation.TaxBands
+import models.liabilitycalculation.{Message, Messages}
+import testConstants.NewCalcBreakdownUnitTestConstants._
+import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
+import testConstants.MessagesLookUp.TaxCalcBreakdown
 import testUtils.ViewSpec
 import views.html.TaxCalcBreakdown
 
@@ -34,8 +34,8 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override val backUrl = "testUrl"
 
-  override def taxCalcBreakdown(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String): Html =
-    app.injector.instanceOf[TaxCalcBreakdown].apply(calcModel, taxYear, backUrl)
+  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html =
+    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl, class4UpliftEnabled = class4UpliftEnabled)
 
   override val expectedPageTitle: String = TaxCalcBreakdown.title
 
@@ -45,14 +45,15 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override val headingSelector = ".govuk-caption-xl"
 
-
 }
 
 abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
+  val taxYear2017: Int = 2017
+
   def backUrl: String
 
-  def taxCalcBreakdown(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String): Html
+  def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html
 
   def expectedPageTitle: String
 
@@ -62,17 +63,97 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
   def headingSelector: String
 
+  type ROW_INDEX = Int
+  type COLUMN_TEXT = String
+  type BREAKDOWN_TABLE = TableFor3[ROW_INDEX, COLUMN_TEXT, COLUMN_TEXT]
+
+  def shouldHaveACorrectTableContent(view: Html)(tableNumber: Int, expectedCaption: String, expectedTableRows: BREAKDOWN_TABLE): Unit = {
+    lazy val tableIndex = tableNumber - 1
+    lazy val expectedRowsCount = expectedTableRows.length
+
+    s"has $expectedRowsCount rows in total" in new Setup(view) {
+      pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, expectedRowsCount)
+    }
+
+    s"has the heading $expectedCaption" in new Setup(view) {
+      pageContent(pageContentSelector).select("caption").get(tableIndex).text() shouldBe expectedCaption
+    }
+
+    forAll(expectedTableRows) { (rowIndex: Int, firstColumnText: String, secondColumnText: String) =>
+      if (rowIndex == 0) {
+
+        s"has a table headers: [$firstColumnText, $secondColumnText]" in new Setup(view) {
+          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(0)
+          row.select("th").first().text() shouldBe firstColumnText
+          row.select("th").last().text() shouldBe secondColumnText
+        }
+
+      } else {
+
+        s"has the row $rowIndex for $firstColumnText line with the correct amount value" in new Setup(view) {
+          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(rowIndex)
+          row.select("td").first().text() shouldBe firstColumnText
+          row.select("td").last().text() shouldBe secondColumnText
+        }
+
+      }
+    }
+  }
+
   "The taxCalc breakdown view with Scotland tax regime" when {
+
+    val taxBands = Seq(
+      TaxBands(
+        name = "SRT",
+        rate = 10.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 2000.00
+      ),
+      TaxBands(
+        name = "BRT",
+        rate = 20.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 4000.00
+      ),
+      TaxBands(
+        name = "IRT",
+        rate = 25.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 20000,
+        taxAmount = 45000.00
+      ),
+      TaxBands(
+        name = "HRT",
+        rate = 40.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 100000,
+        taxAmount = 40000.00
+      ),
+      TaxBands(
+        name = "ART_scottish",
+        rate = 45.0,
+        bandLimit = 12500,
+        apportionedBandLimit = 12500,
+        income = 500000,
+        taxAmount = 22500.00
+      )
+    )
 
     "provided with a calculation that is with Pay, pensions and profit table and with all three tax bands including " +
       "top rate displayed " +
       "for the 2017 tax year" should {
 
-      val taxYear = 2017
-
-      lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.scottishTaxBandModelJustPPP,
-        Crystallised), taxYear, backUrl)
+      val taxDueSummaryViewModel = TaxDueSummaryViewModel(
+        taxRegime = "Scotland",
+        payPensionsProfitBands = Some(taxBands)
+      )
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Pay, pensions and profit table" which {
 
@@ -97,11 +178,11 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "top rate displayed " +
       "for the 2017 tax year" should {
 
-      val taxYear = 2017
-
-      lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.scottishTaxBandModelJustLs,
-        Crystallised), taxYear, backUrl)
+      val taxDueSummaryViewModel = TaxDueSummaryViewModel(
+        taxRegime = "Scotland",
+        lumpSumsBands = Some(taxBands)
+      )
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Lump sums table" which {
 
@@ -127,11 +208,11 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "top rate displayed " +
       "for the 2017 tax year" should {
 
-      val taxYear = 2017
-
-      lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.scottishTaxBandModelJustGols,
-        Crystallised), taxYear, backUrl)
+      val taxDueSummaryViewModel = TaxDueSummaryViewModel(
+        taxRegime = "Scotland",
+        gainsOnLifePoliciesBands = Some(taxBands)
+      )
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have a Gains on life policies table" which {
 
@@ -153,25 +234,24 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
     }
   }
 
-
   "The taxCalc breakdown view with UK tax regime" when {
 
     "provided with a calculation that is without Pay, pensions and profit, without Savings, without Dividends, " +
       "without Additional charges and without Additional deductions sections but has total tax due amount display " +
       "for the 2017 tax year" should {
-      val taxYear = 2017
-
-      lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationBillTaxableIncomeZeroModel,
-        Crystallised), taxYear, backUrl)
+      val taxDueSummaryViewModel = TaxDueSummaryViewModel(
+        taxRegime = "Uk",
+        payPensionsProfitBands = None
+      )
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe expectedPageTitle
       }
 
       "have the correct heading" in new Setup(view) {
-        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear)
-        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear)
+        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear2017)
+        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear2017)
       }
 
       "have the correct guidance" in new Setup(view) {
@@ -180,49 +260,22 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
     }
 
+
     "provided with a calculation with all the sections displayed which includes Pay, pensions and profit, Savings, Dividends," +
       " lumpsums and gainsOnLifePolicies, Additional charges and Additional deductions as well as the total tax due amount for the 2018 tax year" should {
       val taxYear = 2018
 
-      lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.testCalcModelCrystallised,
-        Crystallised), taxYear, backUrl)
-
-      lazy val viewNic2 = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.testCalcModelNic2,
-        Crystallised), taxYear, backUrl)
-
-      lazy val viewAllIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationAllIncomeSources,
-        Crystallised), taxYear, backUrl)
-
-      lazy val viewMarriageAllowanceTransfer = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationJustMarriageAllowance,
-        Crystallised), taxYear, backUrl)
-
-      lazy val viewTopSlicingRelief = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.calculationTopSlicingRelief,
-        Crystallised), taxYear, backUrl)
-
-      lazy val viewNoVoluntaryNic2Flag = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.testNoVoluntaryNic2Flag,
-        Estimate), taxYear, backUrl)
-
-      lazy val viewAdChGiftAid = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.testCalcModelWithGiftAid,
-        Estimate), taxYear, backUrl)
-
-      lazy val viewAdChPensionLumpSum = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.testCalcModelWithPensionLumpSum,
-        Estimate), taxYear, backUrl)
-
-      lazy val viewAdChPensionSavings = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.testCalcModelWithPensionSavings,
-        Estimate), taxYear, backUrl)
-
-      lazy val zeroIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
-        CalcBreakdownTestConstants.testCalcModelZeroIncome,
-        Crystallised), taxYear, backUrl)
+      lazy val view = taxCalcBreakdown(taxDueSummaryViewModelStandard, taxYear, backUrl)
+      lazy val viewWithClass4UpliftEnabled = taxCalcBreakdown(taxDueSummaryViewModelStandard, taxYear, backUrl, class4UpliftEnabled = true)
+      lazy val viewNone = taxCalcBreakdown(TaxDueSummaryViewModel(), taxYear, backUrl)
+      lazy val viewNic2 = taxCalcBreakdown(taxDueSummaryViewModelNic2, taxYear, backUrl)
+      lazy val viewVoluntaryNic2 = taxCalcBreakdown(taxDueSummaryViewModelVoluntaryNic2, taxYear, backUrl)
+      lazy val viewMarriageAllowanceTransfer = taxCalcBreakdown(taxDueSummaryViewModelMarriageAllowance, taxYear, backUrl)
+      lazy val viewTopSlicingRelief = taxCalcBreakdown(taxDueSummaryViewModelTopSlicingRelief, taxYear, backUrl)
+      lazy val viewAdChGiftAid = taxCalcBreakdown(taxDueSummaryViewModelGiftAid, taxYear, backUrl)
+      lazy val viewAdChPensionLumpSum = taxCalcBreakdown(taxDueSummaryViewModelPensionLumpSum, taxYear, backUrl)
+      lazy val viewAdChPensionSavings = taxCalcBreakdown(taxDueSummaryViewModelPensionSavings, taxYear, backUrl)
+      lazy val zeroIncome = taxCalcBreakdown(taxDueSummaryViewModelZeroIncome, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe expectedPageTitle
@@ -354,34 +407,14 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         }
       }
 
-      "have a Nic 4 table" which {
-
-        shouldHaveACorrectTableContent(view)(
-          tableNumber = 6,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingNIC4,
-          expectedTableRows = Table(
-            ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.Nic4_ZRT, "£100.00"),
-            (2, TaxCalcBreakdown.Nic4_BRT, "£200.00"),
-            (3, TaxCalcBreakdown.Nic4_HRT, "£300.00"),
-            (4, TaxCalcBreakdown.giftAidTaxCharge, "£400.00"),
-            (5, TaxCalcBreakdown.totalPensionSavingCharges, "£500.00"),
-            (6, TaxCalcBreakdown.statePensionLumpSum, "£600.00"),
-            (7, TaxCalcBreakdown.totalStudentLoansRepaymentAmount, "£700.00")
-          )
-        )
-
-      }
-
-      "have no Tax reductions table and heading when there is no any reductions value" in new Setup(viewAllIncome) {
+      "have no Tax reductions table and heading when there is no any reductions value" in new Setup(viewNone) {
         pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingTaxReductions
       }
 
       "have a Tax reductions table" which {
 
         shouldHaveACorrectTableContent(view)(
-          tableNumber = 7,
+          tableNumber = 6,
           expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
@@ -430,15 +463,15 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         )
       }
 
-      "have no additional charges table and heading when there is no any other charges value" in new Setup(viewAllIncome) {
+      "have no additional charges table and heading when there is no any other charges value" in new Setup(viewNone) {
         pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
       }
 
       "have an additional charges table" which {
-        val tableNumber = 8
+        val tableNumber = 7
 
         "has all four table rows" in new Setup(view) {
-          pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, 5)
+          pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, 4)
         }
 
         "has the correct heading" in new Setup(view) {
@@ -451,25 +484,10 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
         }
 
-        "has a Voluntary Nic line with the correct value" in new Setup(view) {
-          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.VoluntaryNic2
-          row.select("td").last().text() shouldBe "£10,000.00"
-        }
-
-        "has a Nic2 line with the correct value" in new Setup(viewNic2) {
-          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic2
-          row.select("td").last().text() shouldBe "£10,000.00"
-        }
-
-        "has no Nic2 line when Voluntary contribution flag is missing " in new Setup(viewNoVoluntaryNic2Flag) {
-          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
-        }
-
         "has only a Gift Aid line with the correct heading and table" in new Setup(viewAdChGiftAid) {
           pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
+          println("giftaid row:" + row)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.GiftAid
           row.select("td").last().text() shouldBe "£5,000.00"
         }
@@ -488,6 +506,64 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 
+      }
+
+      "have a National Insurance contributions table" which {
+        shouldHaveACorrectTableContent(view)(
+          tableNumber = 8,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.Nic4New_ZRT, "£100.00"),
+            (2, TaxCalcBreakdown.Nic4New_BRT, "£200.00"),
+            (3, TaxCalcBreakdown.Nic4New_HRT, "£300.00"),
+            (4, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
+          )
+        )
+      }
+
+      "have a National Insurance contributions table with Uplift message when Class4Uplift is enabled" which {
+        shouldHaveACorrectTableContent(viewWithClass4UpliftEnabled)(
+          tableNumber = 8,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.Nic4New_ZRT, "£100.00"),
+            (2, TaxCalcBreakdown.Nic4NewWithUplift_BRT, "£200.00"),
+            (3, TaxCalcBreakdown.Nic4NewWithUplift_HRT, "£300.00"),
+            (4, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
+          )
+        )
+      }
+
+      "have a Nics table showing Class 2 Nics when the voluntaryClass2Contributions flag is false" which {
+        shouldHaveACorrectTableContent(viewNic2)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.Nic2, "£10,000.00")
+          )
+        )
+      }
+
+      "have a Nics table showing Voluntary Class 2 Nics when the voluntaryClass2Contributions flag is true" which {
+        shouldHaveACorrectTableContent(viewVoluntaryNic2)(
+          tableNumber = 1,
+          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedTableRows = Table(
+            ("row index", "column 1", "column 2"),
+            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
+            (1, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
+          )
+        )
+      }
+
+      "have no National Insurance contributions table and heading when there is no Nic4 or Nic2 data" in new Setup(viewNone) {
+        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar
       }
 
       "have no Capital Gains Tax table and heading when there is no any CGT value" in new Setup(zeroIncome) {
@@ -558,18 +634,17 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
     }
   }
 
-	"The tax calc view should display messages" when {
+  "The tax calc view should display messages" when {
 
-		"provided with all matching generic messages" in {
-			val taxYear = 2017
-			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
-				Some(Seq(
-					Message("C22202", "message2"),
-					Message("C22203", "message3"),
-					Message("C22206", "message6"),
-					Message("C22207", "message7"),
-					Message("C22210", "message10"),
-					Message("C22211", "message11"),
+    "provided with all matching generic messages" in {
+      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+        messages = Some(Messages(info = Some(Seq(
+          Message("C22202", "message2"),
+          Message("C22203", "message3"),
+          Message("C22206", "message6"),
+          Message("C22207", "message7"),
+          Message("C22210", "message10"),
+          Message("C22211", "message11"),
           Message("C22212", "message12"),
           Message("C22213", "message13"),
           Message("C22214", "message14"),
@@ -577,22 +652,18 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           Message("C22216", "message16"),
           Message("C22217", "message17"),
           Message("C22218", "message18")
-				))
-			)))
+        ))))
+      ), taxYear2017, backUrl)
 
-			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-				displayModel,
-				Crystallised), taxYear, backUrl)
+      val document: Document = Jsoup.parse(view.body)
 
-			val document: Document = Jsoup.parse(view.body)
-
-			document.select(messageContentSelector).size shouldBe 13
-			document.select(messageContentSelector).get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
-			document.select(messageContentSelector).get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
-			document.select(messageContentSelector).get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
-			document.select(messageContentSelector).get(3).text shouldBe "Your payroll giving amount has been included in your adjusted taxable income"
-			document.select(messageContentSelector).get(4).text shouldBe "Employment related expenses are capped at the total amount of employment income"
-			document.select(messageContentSelector).get(5).text shouldBe "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
+      document.select(messageContentSelector).size shouldBe 13
+      document.select(messageContentSelector).get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
+      document.select(messageContentSelector).get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
+      document.select(messageContentSelector).get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
+      document.select(messageContentSelector).get(3).text shouldBe "Your payroll giving amount has been included in your adjusted taxable income"
+      document.select(messageContentSelector).get(4).text shouldBe "Employment related expenses are capped at the total amount of employment income"
+      document.select(messageContentSelector).get(5).text shouldBe "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
       document.select(messageContentSelector).get(6).text shouldBe "Employment and Deduction related expenses have been limited to employment income."
       document.select(messageContentSelector).get(7).text shouldBe "Due to your employed earnings, paying Class 2 Voluntary may not be beneficial."
       document.select(messageContentSelector).get(8).text shouldBe "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
@@ -600,120 +671,238 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(10).text shouldBe "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
       document.select(messageContentSelector).get(11).text shouldBe "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
       document.select(messageContentSelector).get(12).text shouldBe "The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation."
-		}
-
-		"provided with message C22201" in {
-			val taxYear = 2017
-			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
-				Some(Seq(
-					Message("C22201", "message"),
-				))
-			)))
-
-			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-				displayModel,
-				Crystallised), taxYear, backUrl)
-
-			val document: Document = Jsoup.parse(view.body)
-
-			document.select(messageContentSelector).size shouldBe 1
-			document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
-		}
-
-		"provided with message C22205" in {
-			val taxYear = 2017
-			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
-				Some(Seq(
-					Message("C22205", "message"),
-				))
-			)),
-				allowancesAndDeductions = AllowancesAndDeductions(lossesAppliedToGeneralIncome = Some(1000.0))
-			)
-
-			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-				displayModel,
-				Crystallised), taxYear, backUrl)
-
-			val document: Document = Jsoup.parse(view.body)
-
-			document.select(messageContentSelector).size shouldBe 1
-			document.select(messageContentSelector).text shouldBe "Total loss from all income sources was capped at £1,000.00"
-		}
-
-		"provided with message C22208" in {
-			val taxYear = 2017
-			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
-				Some(Seq(
-					Message("C22208", "message"),
-				))
-			)))
-
-			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-				displayModel,
-				Crystallised), taxYear, backUrl)
-
-			val document: Document = Jsoup.parse(view.body)
-
-			document.select(messageContentSelector).size shouldBe 1
-			document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
-		}
-
-		"provided with message C22209" in {
-			val taxYear = 2017
-			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
-				Some(Seq(
-					Message("C22209", "message"),
-				))
-			)))
-
-			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
-				displayModel,
-				Crystallised), taxYear, backUrl)
-
-			val document: Document = Jsoup.parse(view.body)
-
-			document.select(messageContentSelector).size shouldBe 1
-			document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
-		}
-	}
-
-  type ROW_INDEX = Int
-  type COLUMN_TEXT = String
-  type BREAKDOWN_TABLE = TableFor3[ROW_INDEX, COLUMN_TEXT, COLUMN_TEXT]
-
-  private def shouldHaveACorrectTableContent(view: Html)(tableNumber: Int, expectedCaption: String, expectedTableRows: BREAKDOWN_TABLE): Unit = {
-    lazy val tableIndex = tableNumber - 1
-    lazy val expectedRowsCount = expectedTableRows.length
-
-    s"has $expectedRowsCount rows in total" in new Setup(view) {
-      pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, expectedRowsCount)
     }
 
-    s"has the heading $expectedCaption" in new Setup(view) {
-      pageContent(pageContentSelector).select("caption").get(tableIndex).text() shouldBe expectedCaption
+    "provided with message C22201" in {
+
+      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+        grossGiftAidPayments = Some(5000.98),
+        lumpSumsBands = Some(Seq(TaxBands(
+          name = "BRT",
+          rate = 20.0,
+          income = 0,
+          taxAmount = 4000.00,
+          bandLimit = 15000,
+          apportionedBandLimit = 15000)
+        )),
+        messages = Some(Messages(info = Some(Seq(
+          Message("C22201", "message")
+        ))))
+      ), taxYear2017, backUrl)
+
+      val document: Document = Jsoup.parse(view.body)
+
+      document.select(messageContentSelector).size shouldBe 1
+      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
     }
 
-    forAll(expectedTableRows) { (rowIndex: Int, firstColumnText: String, secondColumnText: String) =>
-      if(rowIndex == 0) {
+    "A C22201 message" when {
+      "grossGiftAidPayments is not provided" should {
+        "produce MissingFieldException" in {
 
-        s"has a table headers: [$firstColumnText, $secondColumnText]" in new Setup(view) {
-          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(0)
-          row.select("th").first().text() shouldBe firstColumnText
-          row.select("th").last().text() shouldBe secondColumnText
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              grossGiftAidPayments = None,
+              lumpSumsBands = Some(Seq(TaxBands(
+                name = "BRT",
+                rate = 20.0,
+                income = 0,
+                taxAmount = 4000.00,
+                bandLimit = 15000,
+                apportionedBandLimit = 15000)
+              )),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22201", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gross Gift Aid Payments"
         }
+      }
 
-      } else {
+      "getModifiedBaseTaxBand returns None" should {
+        "produce MissingFieldException" in {
 
-        s"has the row $rowIndex for $firstColumnText line with the correct amount value" in new Setup(view) {
-          val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(rowIndex)
-          row.select("td").first().text() shouldBe firstColumnText
-          row.select("td").last().text() shouldBe secondColumnText
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              grossGiftAidPayments = Some(5000.98),
+              lumpSumsBands = Some(Seq()),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22201", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
         }
-
       }
     }
 
+    "provided with message C22205" in {
+
+      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+        lossesAppliedToGeneralIncome = Some(1000),
+        messages = Some(Messages(info = Some(Seq(
+          Message("C22205", "message")
+        ))))
+      ), taxYear2017, backUrl)
+
+      val document: Document = Jsoup.parse(view.body)
+
+      document.select(messageContentSelector).size shouldBe 1
+      document.select(messageContentSelector).text shouldBe "Total loss from all income sources was capped at £1,000.00"
+    }
+
+    "A C22205 message" when {
+      "lossesAppliedToGeneralIncome is missing" should {
+        "produce MissingFieldException" in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              lossesAppliedToGeneralIncome = None,
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22205", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Losses Applied To General Income"
+        }
+      }
+    }
+
+    "provided with message C22208" in {
+
+      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+        giftAidTax = Some(5000.99),
+        lumpSumsBands = Some(Seq(TaxBands(
+          name = "BRT",
+          rate = 20.0,
+          income = 0,
+          taxAmount = 4000.00,
+          bandLimit = 15000,
+          apportionedBandLimit = 15000)
+        )),
+        messages = Some(Messages(info = Some(Seq(
+          Message("C22208", "message")
+        ))))
+      ), taxYear2017, backUrl)
+
+      val document: Document = Jsoup.parse(view.body)
+
+      document.select(messageContentSelector).size shouldBe 1
+      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
+    }
+
+    "A C22208 message" when {
+      "giftAidTax is missing" should {
+        "produce MissingFieldException" in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              giftAidTax = None,
+              lumpSumsBands = Some(Seq(TaxBands(
+                name = "BRT",
+                rate = 20.0,
+                income = 0,
+                taxAmount = 4000.00,
+                bandLimit = 15000,
+                apportionedBandLimit = 15000)
+              )),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22208", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gift Aid Tax"
+        }
+      }
+
+      "getModifiedBaseTaxBand is missing" should {
+        "produce MissingFieldException when " in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              giftAidTax = Some(5000.99),
+              lumpSumsBands = Some(Seq()),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22208", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
+        }
+      }
+    }
+
+    "provided with message C22209" in  {
+
+      lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
+        giftAidTax = Some(5000.99),
+        lumpSumsBands = Some(Seq(TaxBands(
+          name = "BRT",
+          rate = 20.0,
+          income = 0,
+          taxAmount = 4000.00,
+          bandLimit = 15000,
+          apportionedBandLimit = 15000)
+        )),
+        messages = Some(Messages(info = Some(Seq(
+          Message("C22209", "message")
+        ))))
+      ), taxYear2017, backUrl)
+
+      val document: Document = Jsoup.parse(view.body)
+
+      document.select(messageContentSelector).size shouldBe 1
+      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
+    }
+
+    "A C22209 message" when {
+      "giftAidTax is missing" should {
+        "produce MissingFieldException" in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              giftAidTax = None,
+              lumpSumsBands = Some(Seq(TaxBands(
+                name = "BRT",
+                rate = 20.0,
+                income = 0,
+                taxAmount = 4000.00,
+                bandLimit = 15000,
+                apportionedBandLimit = 15000)
+              )),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22209", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gift Aid Tax"
+        }
+      }
+
+      "getModifiedBaseTaxBand is missing" should {
+        "produce MissingFieldException" in {
+
+          val expectedException = intercept[MissingFieldException] {
+            taxCalcBreakdown(TaxDueSummaryViewModel(
+              giftAidTax = Some(5000.99),
+              lumpSumsBands = Some(Seq()),
+              messages = Some(Messages(info = Some(Seq(
+                Message("C22209", "message")
+              ))))
+            ), taxYear2017, backUrl)
+          }
+
+          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
+        }
+      }
+    }
   }
 
 }
-

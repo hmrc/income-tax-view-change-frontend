@@ -18,10 +18,10 @@ package controllers
 
 import testConstants.BaseTestConstants
 import testConstants.FinancialDetailsTestConstants._
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockBtaNavBarPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -29,14 +29,15 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers._
+import play.api.test.Helpers.{status, _}
 import services.WhatYouOweService
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import views.html.WhatYouOwe
 
 import scala.concurrent.Future
 
-class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockBtaNavBarPredicate {
-
+class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockBtaNavBarPredicate
+  with MockFrontendAuthorisedFunctions {
 
   trait Setup {
 
@@ -50,8 +51,11 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       whatYouOweService,
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
+      app.injector.instanceOf[AgentItvcErrorHandler],
       MockBtaNavBarPredicate,
+      mockAuthService,
       mockAuditingService,
+      mockIncomeSourceDetailsService,
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
@@ -71,59 +75,74 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00),List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00), List.empty)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
 
-
   "The WhatYouOweController.viewPaymentsDue function" when {
-      "obtaining a users charge" should {
-        "send the user to the paymentsOwe page with full data of charges" in new Setup {
-          mockSingleBISWithCurrentYearAsMigrationYear()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+    "obtaining a users charge" should {
+      "send the user to the paymentsOwe page with full data of charges" in new Setup {
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
-          when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
-            .thenReturn(Future.successful(whatYouOweChargesListFull))
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
+        val result = controller.show(fakeRequestWithActiveSession)
+        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
 
-          status(result) shouldBe Status.OK
-          result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+        status(result) shouldBe Status.OK
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+        status(resultAgent) shouldBe Status.OK
+        resultAgent.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
 
-        }
-
-        "return success page with empty data in WhatYouOwe model" in new Setup {
-
-          mockSingleBISWithCurrentYearAsMigrationYear()
-
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
-
-          when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
-            .thenReturn(Future.successful(whatYouOweChargesListEmpty))
-
-          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.OK
-          result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
-
-        }
-
-        "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
-
-          mockSingleBISWithCurrentYearAsMigrationYear()
-
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
-
-          when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
-            .thenReturn(Future.failed(new Exception("failed to retrieve data")))
-
-          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
       }
+
+      "return success page with empty data in WhatYouOwe model" in new Setup {
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+          .thenReturn(Future.successful(whatYouOweChargesListEmpty))
+
+        val result = controller.show(fakeRequestWithActiveSession)
+        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+        status(resultAgent) shouldBe Status.OK
+        resultAgent.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+
+      }
+
+      "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+          .thenReturn(Future.failed(new Exception("failed to retrieve data")))
+
+        val result = controller.show(fakeRequestWithActiveSession)
+        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "User fails to be authorised" in new Setup {
+        setupMockAgentAuthorisationException(withClientPredicate = false)
+
+        val result = controller.showAgent()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+
+      }
+    }
 
   }
 

@@ -200,8 +200,9 @@
         </td>
         <td class="govuk-table__cell govuk-!-width-one-half">
             @if(isOverduePayment){
-                <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
-                <br>
+                <div>
+                    <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
+                </div>
             }
 
             @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,

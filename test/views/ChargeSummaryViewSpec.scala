@@ -262,7 +262,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "not display the Payment breakdown list for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
@@ -439,13 +439,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
@@ -625,7 +625,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
           documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
         object CodingOutMessages {
-          val header = "Tax year 6 April 2017 to 5 April 2018 Self Assessment payment (through your PAYE tax code)"
+          val header = "Tax year 6 April 2017 to 5 April 2018 Balancing payment collected through PAYE tax code"
           val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
           val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
           val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
@@ -639,14 +639,49 @@ class ChargeSummaryViewSpec extends ViewSpec {
           document.select("#coding-out-notice").text() shouldBe CodingOutMessages.insetPara
           document.select("#coding-out-message").text() shouldBe CodingOutMessages.summaryMessage
           document.select("#coding-out-notice-link").attr("href") shouldBe CodingOutMessages.noticeLink
-          document.select(".govuk-summary-list__row").size() shouldBe 2
-          document.select(".govuk-summary-list__row .govuk-summary-list__value").get(0).text() shouldBe "£2,500.00"
-          document.select(".govuk-summary-list__row .govuk-summary-list__value").get(1).text() shouldBe CodingOutMessages.remainingText
           document.select("a.govuk-button").size() shouldBe 0
           document.select(".govuk-table tbody tr").size() shouldBe 1
           document.select(".govuk-table tbody tr").get(0).text() shouldBe CodingOutMessages.payHistoryLine1
         }
       }
+
+      "Scenario were Class2 NICs has been paid and only coding out information needs to be displayed" when {
+        val documentDetailCodingOut = documentDetailModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
+          documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
+          originalAmount = Some(2500.00))
+        object CodingOutMessages {
+          val header = "Tax year 6 April 2017 to 5 April 2018 Balancing payment collected through PAYE tax code"
+          val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
+          val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
+          val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+          val codingOutRemainingToPay = "(Collected through your PAYE tax code for 2017 to 2018 tax year)"
+        }
+        "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
+          document.select("h1").text() shouldBe CodingOutMessages.header
+          document.select("#coding-out-notice").text() shouldBe CodingOutMessages.insetPara
+          document.select("#coding-out-message").text() shouldBe CodingOutMessages.summaryMessage
+          document.select("#coding-out-notice-link").attr("href") shouldBe CodingOutMessages.noticeLink
+          document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
+          document.selectById("codingOutRemainingToPay").text() shouldBe CodingOutMessages.codingOutRemainingToPay
+          document.select("a.govuk-button").size() shouldBe 0
+          document.select(".govuk-table tbody tr").size() shouldBe 1
+        }
+        "Coding Out is Disabled" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
+          document.select("h1").text() shouldBe "Tax year 6 April 2018 to 5 April 2019 Balancing payment"
+          verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 May 2019")
+          verifySummaryListRow(2, Messages.fullPaymentAmount, "£1,400.00")
+          verifySummaryListRow(3, Messages.remainingToPay, "£1,400.00")
+          document.select("#coding-out-notice").text() shouldBe ""
+          document.select("#coding-out-message").text() shouldBe ""
+          document.select("#coding-out-notice-link").attr("href") shouldBe ""
+          document.select("a.govuk-button").size() shouldBe 1
+          document.select(".govuk-table tbody tr").size() shouldBe 1
+
+
+        }
+      }
+
+
     }
   }
 
@@ -674,13 +709,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {

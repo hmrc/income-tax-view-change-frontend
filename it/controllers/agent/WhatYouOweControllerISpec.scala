@@ -59,7 +59,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     None, Some("1234567890"), None, Some("Agent"), Some(testArn)
   )(FakeRequest())
 
-  s"GET ${controllers.agent.routes.WhatYouOweController.show().url}" should {
+  s"GET ${controllers.routes.WhatYouOweController.showAgent().url}" should {
     "SEE_OTHER to " when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
@@ -617,8 +617,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           httpStatus(OK),
           pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false),
-          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")(""),
-          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
+          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(3)")(""),
+          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(3)")("")
         )
       }
 
@@ -656,8 +656,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           httpStatus(OK),
           pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(1)")("Payment under review"),
-          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(1)")("")
+
+          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
         )
       }
 
@@ -695,8 +696,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           httpStatus(OK),
           pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(1)")("Payment under review"),
-          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(1)")("Payment under review")
+          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
         )
       }
     }

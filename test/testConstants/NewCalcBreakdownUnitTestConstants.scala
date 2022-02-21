@@ -53,9 +53,9 @@ object NewCalcBreakdownUnitTestConstants {
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
     messages = Some(Messages(
-      info = Some(Seq(Message(id = "infoId1", text = "info msg text1"))),
-      warnings = Some(Seq(Message(id = "warnId1", text = "warn msg text1"))),
-      errors = Some(Seq(Message(id = "errorId1", text = "error msg text1")))
+      info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
+      warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
+      errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
     )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
@@ -103,7 +103,7 @@ object NewCalcBreakdownUnitTestConstants {
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),
         ReliefsClaimed(
-          `type` = "vctSubscriptions2",
+          `type` = "deficiencyRelief",
           amountUsed = Some(5000.99)),
       ),
         residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
@@ -123,7 +123,7 @@ object NewCalcBreakdownUnitTestConstants {
           totalTaxableIncome = 12500,
           payPensionsProfit = Some(PayPensionsProfit(
             taxBands = Seq(TaxBands(
-              name = "SSR",
+              name = "BRT",
               rate = 20,
               bandLimit = 12500,
               apportionedBandLimit = 12500,
@@ -134,12 +134,12 @@ object NewCalcBreakdownUnitTestConstants {
           savingsAndGains = Some(SavingsAndGains(
             taxableIncome = 12500,
             taxBands = Seq(TaxBands(
-              name = "SSR",
-              rate = 20,
+              name = "ZRT",
+              rate = 0,
               bandLimit = 12500,
               apportionedBandLimit = 12500,
               income = 12500,
-              taxAmount = 5000.99
+              taxAmount = 0
             ))
           )),
           dividends = Some(Dividends(
@@ -191,7 +191,7 @@ object NewCalcBreakdownUnitTestConstants {
         )),
         capitalGainsTax = Some(CapitalGainsTax(
           totalTaxableGains = 5000.99,
-          adjustments = Some(-99999999999.99),
+          adjustments = Some(-2500.99),
           foreignTaxCreditRelief = Some(5000.99),
           taxOnGainsAlreadyPaid = Some(5000.99),
           capitalGainsTaxDue = 5000.99,
@@ -231,9 +231,9 @@ object NewCalcBreakdownUnitTestConstants {
           ))
         )),
         totalStudentLoansRepaymentAmount = Some(5000.99),
-        saUnderpaymentsCodedOut = Some(-99999999999.99),
-        totalIncomeTaxAndNicsDue = -99999999999.99,
-        totalTaxDeducted = Some(-99999999999.99)
+        saUnderpaymentsCodedOut = Some(-2500.99),
+        totalIncomeTaxAndNicsDue = 5000.99,
+        totalTaxDeducted = Some(50000.99)
       )),
       taxDeductedAtSource = Some(TaxDeductedAtSource(
         ukLandAndProperty = Some(5000.99),
@@ -242,7 +242,7 @@ object NewCalcBreakdownUnitTestConstants {
         voidedIsa = Some(5000.99),
         payeEmployments = Some(5000.99),
         occupationalPensions = Some(5000.99),
-        stateBenefits = Some(-99999999999.99),
+        stateBenefits = Some(5000.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
       )))),
@@ -434,33 +434,9 @@ object NewCalcBreakdownUnitTestConstants {
         rate = 3,
         income = 5000,
         amount = 300
-      ),
-      Nic4Bands(
-        name = "giftAidTax",
-        rate = 4,
-        income = 6000,
-        amount = 400
-      ),
-      Nic4Bands(
-        name = "totalPensionSavingsTaxCharges",
-        rate = 5,
-        income = 7000,
-        amount = 500
-      ),
-      Nic4Bands(
-        name = "statePensionLumpSumCharges",
-        rate = 6,
-        income = 8000,
-        amount = 600
-      ),
-      Nic4Bands(
-        name = "totalStudentLoansRepaymentAmount",
-        rate = 7,
-        income = 9000,
-        amount = 700
-      ),
+      )
     )),
-    class2VoluntaryContributions = Some(true),
+    class2VoluntaryContributions = true,
     class2NicsAmount = Some(10000),
     giftAidTax = Some(5000),
     totalPensionSavingsTaxCharges = Some(5000),
@@ -658,10 +634,10 @@ object NewCalcBreakdownUnitTestConstants {
     topSlicingReliefAmount = Some(2345)
   )
   val taxDueSummaryViewModelNic2 = TaxDueSummaryViewModel(
-    class2VoluntaryContributions = Some(false),
     class2NicsAmount = Some(10000)
   )
-  val taxDueSummaryViewModelNic2NoVoluntary = TaxDueSummaryViewModel(
+  val taxDueSummaryViewModelVoluntaryNic2 = TaxDueSummaryViewModel(
+    class2VoluntaryContributions = true,
     class2NicsAmount = Some(10000)
   )
 

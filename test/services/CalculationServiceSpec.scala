@@ -17,13 +17,13 @@
 package services
 
 import testConstants.BaseTestConstants._
-import testConstants.CalcBreakdownTestConstants._
 import testConstants.EstimatesTestConstants._
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.{MockIncomeTaxCalculationConnector, MockIndividualCalculationsConnector}
 import models.calculation._
 import models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import play.api.http.Status
+import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import testUtils.TestSupport
 
 class CalculationServiceSpec extends TestSupport with MockIndividualCalculationsConnector with MockIncomeTaxCalculationConnector with FeatureSwitching {

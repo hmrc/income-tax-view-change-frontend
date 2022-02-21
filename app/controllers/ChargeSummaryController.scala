@@ -26,7 +26,7 @@ import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, Inco
 import forms.utils.SessionKeys
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel, PaymentsWithChargeType}
+import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -70,7 +70,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
               doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments)
             case Some(_: FinancialDetailsModel) =>
               Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
-              Future.successful(Redirect(controllers.routes.HomeController.home().url))
+              Future.successful(Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url))
             case _ =>
               Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
               Future.successful(itvcErrorHandler.showInternalServerError())
@@ -150,7 +150,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
   private def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
     case Some("taxYearOverview") => controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url + "#payments"
-    case Some("whatYouOwe") => controllers.routes.WhatYouOweController.viewPaymentsDue().url
+    case Some("whatYouOwe") => controllers.routes.WhatYouOweController.show().url
     case _ => controllers.routes.HomeController.home().url
   }
 }

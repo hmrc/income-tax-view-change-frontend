@@ -31,6 +31,12 @@ agent-error.heading                                            = Ni allwch ddefn
 agent-error.note                                               = I ddefnyddio’r gwasanaeth hwn, mae’n rhaid i chi sefydlu
 agent-error.link                                               = cyfrif gwasanaethau asiant
 
+
+## Custom Error Page ##
+error.custom.heading                                          = Mae problem wedi codi
+error.custom.message                                          = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
+error.custom.link                                             = Ewch yn ôl i ‘Troi Treth yn Ddigidol ar gyfer Treth Incwm’
+
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
 bta.messages                                                    = Negeseuon
@@ -237,6 +243,8 @@ taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = ISAs di-ry
 taxCal_breakdown.table.taxDeductedAtSource.total					= Treth Incwm sy’n ddyledus ar ôl didyniadau
 taxCal_breakdown.table.nic2.false                                   = Yswiriant Gwladol Dosbarth 2
 taxCal_breakdown.table.nic2.true                                    = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
+taxCal_breakdown.table.uplift                                       = Mae’r cynnydd o 1.25% mewn cyfraniadau Yswiriant Gwladol yn ariannu’r GIG, iechyd a gofal cymdeithasol
+taxCal_breakdown.national_insurance_contributions                   = Cyfraniadau Yswiriant Gwladol
 
 taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth
 taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth
@@ -264,6 +272,7 @@ taxCal_breakdown.table.head.charge_type                         = Math o gost
 taxCal_breakdown.table.head.deduction                           = Math o ddidyniad
 taxCal_breakdown.table.amount                                   = Swm
 taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
+taxCal_breakdown.table.head.national_insurance_type             = Math o Yswiriant Gwladol
 
 taxCal_breakdown.table.capital_gains_tax                        = Treth Enillion Cyfalaf
 taxCal_breakdown.table.head.cgt_type                            = Math o Dreth Enillion Cyfalaf

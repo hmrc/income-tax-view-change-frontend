@@ -53,8 +53,8 @@
 }
 
 @whatYouOweUrl = @{
-    if(isAgent) controllers.agent.routes.WhatYouOweController.show().url
-    else controllers.routes.WhatYouOweController.viewPaymentsDue().url
+    if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
+    else controllers.routes.WhatYouOweController.show().url
 }
 
 @hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }
@@ -88,9 +88,7 @@
 @mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial) {
 
     @if(hasDunningLocks || documentDetail.hasLpiWithDunningBlock) {
-        <br>
-        <br>
-        <div id="dunningLocksBanner" class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div id="dunningLocksBanner" class="govuk-!-margin-top-8 govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
             <div class="govuk-notification-banner__header">
                 <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">@messages("chargeSummary.dunning.locks.banner.title")</h2>
             </div>
@@ -177,7 +175,7 @@
                     }
                 </dd>
             </div>
-        }
+
         @if(latePaymentInterestCharge) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
@@ -187,40 +185,71 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@{
                 if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
-                    messages("chargeSummary.paymentAmountCodingOut")
+                messages("chargeSummary.paymentAmountCodingOut")
                 } else messages("chargeSummary.paymentAmount")
-            }
+                }
             </dt>
             <dd class="govuk-summary-list__value">
-            @{
+                @{
                 if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
                 else documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
-            }
+                }
             </dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
             <dd class="govuk-summary-list__value">@{
                 if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-                    messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
+                messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
                 } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
                 else documentDetail.remainingToPay.toCurrency
-            }
+                }
             </dd>
         </div>
+        }
+
     </dl>
+
+
+@if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+<p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
+    <strong class="govuk-body govuk-!-font-weight-bold govuk-!-margin-right-8">@{
+        if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
+            messages("chargeSummary.paymentAmountCodingOut")
+        } else messages("chargeSummary.paymentAmount")
+        }
+    </strong>
+    @{
+    if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
+    else documentDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
+    }
+</p>
+
+
+
+<p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
+    @{
+    if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+        messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
+    } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+    else documentDetail.remainingToPay.toCurrency
+    }
+
+</p>
+}
 
     @if(hasPaymentBreakdown) {
         <h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
-        <dl class="govuk-summary-list">
+        <dl class="govuk-summary-list govuk-!-margin-bottom-8">
             @for(financialDetail <- paymentBreakdown) {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.getOrElse(throw new MissingFieldException("Message Key For Charge Type"))}")</dt>
                     <dd class="govuk-summary-list__value">
                         @financialDetail.originalAmount.getOrElse(throw new MissingFieldException("Original Amount")).toCurrency
                         @if(financialDetail.dunningLockExists) {
-                            <br>
-                            <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
+                            <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
+                                @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+                            </span>
                         }
                         @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningBlock) {
                             @p(){
@@ -242,18 +271,18 @@
                     <dd class="govuk-summary-list__value">
                         @p(){
                             @documentDetail.latePaymentInterestAmount.getOrElse(throw new MissingFieldException("Late Payment Interest Amount")).toCurrency
-                            <br>
-                            <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
+                            <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
+                                @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+                            </span>
                         }
                     </dd>
                 </div>
             }
         </dl>
-        <br>
     }
 
     @if(hasInterestLocks && hasAccruedInterest) {
-        @p(){
+        @p(id=Some("p-interest-locks-msg")){
             @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText")
             @messages("chargeSummary.interestLocks.text")
         }

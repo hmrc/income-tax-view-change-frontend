@@ -189,7 +189,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val paymentUnderReview: String = "Payment under review"
     val class2Nic: String = "Class 2 National Insurance"
     val remainingBalance: String = "Balancing payment"
-    val payeSA: String = "Self Assessment payment (through your PAYE tax code)"
+    val payeSA: String = "Balancing payment collected through PAYE tax code"
 
     val cancelledPaye: String = "Cancelled Self Assessment payment (through your PAYE tax code)"
     val na: String = "N/A"
