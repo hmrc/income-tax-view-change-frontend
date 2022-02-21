@@ -37,11 +37,10 @@
 
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-@index">
-                <a class="govuk-link" href="@paymentAllocationHref(paymentAllocation, isAgent)">
+                <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
                     @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
                     <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter)</span>
                 </a>
-                <br>
                 <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
             </td>
             <td class="govuk-table__cell">@paymentAllocation.clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date")).toLocalDate.toLongDateShort</td>
