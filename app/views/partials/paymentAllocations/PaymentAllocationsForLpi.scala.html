@@ -27,15 +27,14 @@
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-0">
                 @if(isAgent){
-                <a class="govuk-link" href="@{controllers.agent.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
+                    <a class="govuk-link" style="display:block" href="@{controllers.agent.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
                     @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
-                    } else {
-                <a class="govuk-link" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
-                @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
-                    }
-                    <span class="govuk-visually-hidden"> @lpiAllocationDetails.documentDetail.taxYear</span>
+                } else {
+                    <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
+                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
+                }
+                <span class="govuk-visually-hidden"> @lpiAllocationDetails.documentDetail.taxYear</span>
                 </a>
-                <br>
                 <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear)</span>
             </td>
             <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>

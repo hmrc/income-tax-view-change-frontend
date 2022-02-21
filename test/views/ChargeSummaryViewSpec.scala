@@ -262,7 +262,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "not display the Payment breakdown list for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
@@ -439,13 +439,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
@@ -709,13 +709,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#main-content p:nth-child(6)").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {

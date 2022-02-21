@@ -634,8 +634,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           httpStatus(OK),
           pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false),
-          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")(""),
-          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
+          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(3)")(""),
+          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(3)")("")
         )
       }
 
@@ -673,8 +673,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           httpStatus(OK),
           pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
-          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
+          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(3)")("Payment under review"),
+          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(3)")("")
         )
       }
 
@@ -712,8 +712,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           httpStatus(OK),
           pageTitleAgent(whatYouOwePageTitle),
           isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
-          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
+          elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(3)")("Payment under review"),
+          elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(3)")("Payment under review")
         )
       }
     }

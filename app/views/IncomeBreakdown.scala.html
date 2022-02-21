@@ -43,7 +43,7 @@
 
     <div>
 
-        <table class="govuk-table">
+        <table class="govuk-table govuk-!-margin-bottom-8">
             <caption id="income_breakdown" class="govuk-table__caption heading-large govuk-table__caption--m govuk-visually-hidden">
                 <span class="heading-secondary">@messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
                 @messages("income_breakdown.heading")
@@ -81,8 +81,6 @@
             </tr>
             </tbody>
         </table>
-        <br>
-        <br>
         @p(){@messages("income_breakdown.guidance_software")}
     </div>
 }
