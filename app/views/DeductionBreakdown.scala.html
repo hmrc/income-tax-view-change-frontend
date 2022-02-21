@@ -42,7 +42,7 @@
         @messages("deduction_breakdown.heading")
     </h1>
     <div>
-        <table class="govuk-table deductions-table">
+        <table class="govuk-table deductions-table govuk-!-margin-bottom-8">
             <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">
                 <span class="heading-secondary">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>
                 @messages("deduction_breakdown.heading")
@@ -69,8 +69,6 @@
             </tr>
             </tbody>
         </table>
-        <br>
-        <br>
         @p(){@messages("deduction_breakdown.guidance_software")}
     </div>
 }
