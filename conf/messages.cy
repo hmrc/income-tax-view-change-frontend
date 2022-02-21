@@ -85,7 +85,7 @@ banner.recruitment.dismiss                                      = Na, dim diolch
 
 ## Tax Years Page ##
 taxYears.heading                                               = Mlynyddoedd treth
-taxYears.viewReturn                                            = Gweld crynodeb
+taxYears.viewSummary                                           = Gweld crynodeb
 taxYears.updateReturn                                          = Diweddariad ffurflen
 taxYears.taxYears                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
 taxYears.table.taxYear.heading                                 = Blwyddyn dreth
