@@ -169,8 +169,8 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
             expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),
-          elementTextBySelectorList(s"#viewReturn-link-${getCurrentTaxYearEnd.getYear}")(
-            expectedValue = s"View return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+          elementTextBySelectorList(s"#viewSummary-link-${getCurrentTaxYearEnd.getYear}")(
+            expectedValue = s"View summary 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),
           elementTextBySelectorList(s"#updateReturn-link-${getCurrentTaxYearEnd.getYear}")(
             expectedValue = s"Update return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
