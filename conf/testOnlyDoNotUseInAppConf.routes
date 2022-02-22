@@ -44,9 +44,6 @@ GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch 
 + nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.submit
 
-GET         /report-quarterly/income-and-expenses/view/test-only/test-headers                         testOnly.controllers.TestHeadersController.showTestHeaders
-POST        /report-quarterly/income-and-expenses/view/test-only/test-headers                         testOnly.controllers.TestHeadersController.submitTestHeaders
-
 GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial
 
 ->          /                                                                                          prod.Routes
