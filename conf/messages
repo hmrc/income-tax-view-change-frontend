@@ -589,6 +589,7 @@ chargeSummary.paymentAllocations.bcd.vcnic2                        = Payment all
 chargeSummary.paymentAllocations.bcd.nic4                          = Payment allocated to Class 4 National Insurance for Balancing payment
 chargeSummary.paymentAllocations.bcd.sl                            = Payment allocated to Student Loans for Balancing payment
 chargeSummary.paymentAllocations.bcd.cgt                           = Payment allocated to Capital Gains Tax for Balancing payment
+
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
 chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
