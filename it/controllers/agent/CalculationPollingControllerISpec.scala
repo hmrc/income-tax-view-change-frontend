@@ -16,20 +16,20 @@
 
 package controllers.agent
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.CalcDataIntegrationTestConstants._
 import controllers.agent.utils.SessionKeys._
 import forms.utils.SessionKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
-import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.HeaderNames
 import play.api.http.Status._
 import repositories.MongoLockRepositoryImpl
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.NewCalcBreakdownItTestConstants._
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 class CalculationPollingControllerISpec extends ComponentSpecBase {
@@ -39,7 +39,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
-  
+
   val urlFinalCalcFalse: String = s"http://localhost:$port" + controllers.agent.routes.CalculationPollingController
     .calculationPoller(taxYear, isFinalCalc = false).url
 
@@ -48,25 +48,17 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
-  def calculationStub(taxYearString: String = "2017-18"): Unit = {
-    IndividualCalculationStub.stubGetCalculationList(testNino, taxYearString)(
+  def calculationStub(): Unit = {
+    IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(
       status = OK,
-      body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.of(LocalDate.now().getYear, month, dayOfMonth, hour, minute))))
-    )
-    IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-      status = OK,
-      body = estimatedCalculationFullJson
+      body = liabilityCalculationModelSuccessFull
     )
   }
 
-  def failedCalculationStub(taxYearString: String = "2017-18"): Unit = {
-    IndividualCalculationStub.stubGetCalculationList(testNino, taxYearString)(
-      status = OK,
-      body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.of(LocalDate.now().getYear, month, dayOfMonth, hour, minute))))
-    )
-    IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+  def failedCalculationStub(): Unit = {
+    IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idOne")(
       status = NOT_FOUND,
-      body = estimatedCalculationFullJson
+      body = LiabilityCalculationError(NOT_FOUND, "not found")
     )
   }
 
@@ -109,11 +101,11 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
   lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
   lazy val playSessionCookieNoCalcId: String = bakeSessionCookie(clientDetailsWithConfirmationNoCalcId)
-  
+
   s"calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}" when {
-    
+
     "the user is authorised with an active enrolment" should {
-      
+
       "redirect the user to the tax year overview page" which {
         lazy val result = {
           stubAuthorisedAgentUser(authorised = true)
@@ -128,19 +120,19 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
             .withFollowRedirects(false)
             .get()
         }.futureValue
-        
+
         "has the status of SEE_OTHER (303)" in {
           result.status shouldBe SEE_OTHER
         }
-        
+
         s"redirect to '${controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url}''" in {
           result.header("Location").head shouldBe controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url
         }
-        
+
       }
-      
+
       "redirect to internal server error" when {
-        
+
         "a non 200 status is returned from Calc service" which {
           lazy val result = {
             stubAuthorisedAgentUser(authorised = true)
@@ -155,12 +147,12 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               .withFollowRedirects(false)
               .get()
           }.futureValue
-          
+
           "has a result of 500" in {
             result.status shouldBe INTERNAL_SERVER_ERROR
           }
         }
-        
+
         "the calc ID is not in session" which {
           lazy val result = {
             stubAuthorisedAgentUser(authorised = true)
@@ -175,17 +167,18 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               .withFollowRedirects(false)
               .get()
           }.futureValue
-          
+
           "has a status of 500" in {
             result.status shouldBe INTERNAL_SERVER_ERROR
           }
-          
+
         }
 
         "calculation service returns non-retryable response back" in {
           lazy val res = {
             stubAuthorisedAgentUser(authorised = true)
-            IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
+            IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, "idTwo")(INTERNAL_SERVER_ERROR,
+              LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsSuccess
@@ -196,14 +189,14 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
               .withFollowRedirects(false)
               .get()
           }.futureValue
-          
+
           res.status shouldBe INTERNAL_SERVER_ERROR
         }
-        
+
       }
-      
+
     }
-    
+
   }
 
   s"calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = true).url}" when {
@@ -282,7 +275,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         "calculation service returns non-retryable response back" in {
           lazy val res = {
             stubAuthorisedAgentUser(authorised = true)
-            IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
+            IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, "idTwo")(INTERNAL_SERVER_ERROR,
+              LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsSuccess

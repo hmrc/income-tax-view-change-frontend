@@ -16,16 +16,26 @@
 
 package services
 
-import testConstants.BaseTestConstants._
-import testConstants.CalcBreakdownTestConstants.{calculationDataErrorModel, calculationDataSuccessModel}
 import config.FrontendAppConfig
 import mocks.services.{MockCalculationService, MockPollCalculationLockKeeper}
-import models.calculation.CalculationErrorModel
+import models.liabilitycalculation._
 import play.api.http.Status
+import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class CalculationPollingServiceSpec extends TestSupport with MockCalculationService with MockPollCalculationLockKeeper {
+
+  val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(
+      taxRegime = "UK", class2VoluntaryContributions = None
+    )),
+    messages = None,
+    metadata = Metadata("2019-02-15T09:35:15.094Z", false),
+    calculation = None)
+
+  val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
+  val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
 
   def fakeServicesConfig(interval : Int, timeout: Int): ServicesConfig = new ServicesConfig(conf) {
     override def getInt(key: String): Int = key match {
@@ -46,20 +56,20 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     "when MongoLock is acquired and success response is received from calculation service" should {
       "return a success response back" in {
         mockLockRepositoryIsLockedTrue()
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(calculationDataSuccessModel)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationSuccessResponse)
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.OK
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.OK
       }
     }
 
     "when MongoLock is acquired and non-retryable response is received from calculation service" should {
       "return a non-retryable(500) response back" in {
         mockLockRepositoryIsLockedTrue()
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(calculationDataErrorModel)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationErrorResponse)
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
@@ -67,33 +77,33 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
       "return a retryable(502) response back" in {
 
         mockLockRepositoryIsLockedTrue()
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.BAD_GATEWAY, "bad gateway"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.BAD_GATEWAY, "bad gateway"))
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
     "when MongoLock is acquired and retryable response(404) is received from calculation service for all retries" should {
       "return a retryable(404) response back" in {
         mockLockRepositoryIsLockedTrue()
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.NOT_FOUND, "Not found"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationNotFoundResponse)
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
     "when MongoLock is acquired and retryable response(404) is received initially from calculation service and 200 after few seconds" should {
       "return a retryable(404) response back" in {
         mockLockRepositoryIsLockedTrue()
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.NOT_FOUND, "Not found"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationNotFoundResponse)
 
         val result = TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
 
         Thread.sleep(1000)
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(calculationDataSuccessModel)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationSuccessResponse)
 
         result.futureValue shouldBe Status.OK
       }
@@ -102,13 +112,13 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     "when MongoLock is acquired and retryable response(502) is received initially from calculation service and 504 after few seconds" should {
       "return a retryable(404) response back" in {
         mockLockRepositoryIsLockedTrue()
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.BAD_GATEWAY, "Bad gateway found"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.BAD_GATEWAY, "Bad gateway found"))
 
         val result = TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
 
         Thread.sleep(1000)
-        setupMockGetLatestCalculation(testNino, Right(testCalcId))(CalculationErrorModel(Status.GATEWAY_TIMEOUT, "Gateway timeout"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.GATEWAY_TIMEOUT, "Gateway timeout"))
 
         result.futureValue shouldBe Status.GATEWAY_TIMEOUT
       }
@@ -119,7 +129,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         mockLockRepositoryIsLockedFalse()
 
         val result = TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino)
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
 
         result.futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }

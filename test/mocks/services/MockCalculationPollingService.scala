@@ -16,16 +16,14 @@
 
 package mocks.services
 
-import testConstants.BaseTestConstants._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
-import repositories.MongoLockRepository
 import services.CalculationPollingService
+import testConstants.BaseTestConstants._
 import testUtils.UnitSpec
-import utils.PollCalculationLockKeeper
 
 import scala.concurrent.Future
 
@@ -41,15 +39,18 @@ trait MockCalculationPollingService extends UnitSpec with MockitoSugar with Befo
     reset(mockCalculationPollingService)
   }
 
-  def setupMockInitiateCalculationPolling(calcId: String, nino: String)(response: Int): Unit =
+  def setupMockInitiateCalculationPolling(calcId: String, nino: String, mtditid: String)(response: Int): Unit =
     when(mockCalculationPollingService
       .initiateCalculationPollingSchedulerWithMongoLock(
         ArgumentMatchers.eq(calcId),
-        ArgumentMatchers.eq(nino)
+        ArgumentMatchers.eq(nino),
+        ArgumentMatchers.eq(mtditid)
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-  def mockCalculationPollingSuccess(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino)(Status.OK)
-  def mockCalculationPollingRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino)(Status.NOT_FOUND)
-  def mockCalculationPollingNonRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino)(Status.INTERNAL_SERVER_ERROR)
+  def mockCalculationPollingSuccess(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid)(Status.OK)
+
+  def mockCalculationPollingRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid)(Status.NOT_FOUND)
+
+  def mockCalculationPollingNonRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid)(Status.INTERNAL_SERVER_ERROR)
 }

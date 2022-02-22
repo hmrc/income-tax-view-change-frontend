@@ -16,7 +16,6 @@
 
 package connectors
 
-import auth.MtdItUserWithNino
 import config.FrontendAppConfig
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
@@ -31,7 +30,9 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
                                               config: FrontendAppConfig) extends RawResponseReads {
   val baseUrl: String = config.incomeTaxCalculationService
 
-  def getCalculationResponseUrl(nino: String): String =  s"$baseUrl/income-tax-calculation/income-tax/nino/$nino"
+  def getCalculationResponseUrl(nino: String): String = s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
+  def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
+    s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
   def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
                             (implicit headerCarrier: HeaderCarrier,
@@ -60,4 +61,32 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
     }
   }
 
+  def getCalculationResponseByCalcId(mtditid: String, nino: String, calcId: String)
+                            (implicit headerCarrier: HeaderCarrier,
+                             ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
+
+    http.GET[HttpResponse](getCalculationResponseByCalcIdUrl(nino, calcId))(httpReads,
+      headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>
+      response.status match {
+        case OK =>
+          response.json.validate[LiabilityCalculationResponse].fold(
+            invalid => {
+              Logger("application").error(
+                s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Json validation error parsing calculation response, error $invalid")
+              LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+            },
+            valid => valid
+          )
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(
+              s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Response status: ${response.status},body: ${response.body}")
+          } else {
+            Logger("application").warn(
+              s"[IncomeTaxCalculationConnector][getCalculationResponseByCalcId] - Response status: ${response.status}, body: ${response.body}")
+          }
+          LiabilityCalculationError(response.status, response.body)
+      }
+    }
+  }
 }

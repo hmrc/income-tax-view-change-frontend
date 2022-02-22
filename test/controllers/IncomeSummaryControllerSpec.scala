@@ -25,8 +25,7 @@ import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
-import testConstants.BaseTestConstants.testMtditid
-import testConstants.EstimatesTestConstants.testYear
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
 import views.html.IncomeBreakdown
@@ -56,7 +55,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   "showIncomeSummary" when {
 
-    lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+    lazy val result = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
     lazy val document = result.toHtmlDocument
 
     "given a tax year which can be found in ETMP" should {
@@ -78,7 +77,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     }
     "given a tax year which can not be found in ETMP" should {
 
-      lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
 
       "return Status Internal Server Error (500)" in {
         mockCalculationNotFoundNew(testMtditid)
@@ -90,7 +89,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
     "there is a downstream error which return NOT_FOUND" should {
 
-      lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
 
       "return Status Internal Server Error (500)" in {
         mockCalculationNotFoundNew(testMtditid)
@@ -101,7 +100,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
     "there is a downstream error which return INTERNAL_SERVER_ERROR" should {
 
-      lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
 
       "return Status Internal Server Error (500)" in {
         mockCalculationErrorNew(testMtditid)

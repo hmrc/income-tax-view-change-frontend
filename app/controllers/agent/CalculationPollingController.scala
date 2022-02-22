@@ -48,10 +48,10 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
       }
 
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
-        (request.session.get(SessionKeys.calculationId), user.nino) match {
-          case (Some(calculationId), nino) => {
+        (request.session.get(SessionKeys.calculationId), user.nino, user.mtditid) match {
+          case (Some(calculationId), nino, mtditid) => {
             Logger("application").info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
-            pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino) flatMap {
+            pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino, mtditid) flatMap {
               case OK =>
                 Logger("application").info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
                 Future.successful(Redirect(successfulPollRedirect))
