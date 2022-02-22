@@ -34,7 +34,7 @@ agent.confirmClient.confirmContinue                             = Confirm and co
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = There’s a problem
 agent.client_relationship_failure.info                          = You are not authorised to view this client’s information. Your client needs to {0} before you can log in to this service.
-agent.client_relationship_failure.info.link                     = authorise you as their agent (opens in new tab)
+agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Enter a different client’s details
 
 ## Agent - UTR Error
@@ -43,7 +43,7 @@ agent.utr_error.utr_wrong.part1                                 = The UTR you ha
 agent.utr_error.utr_wrong.part2                                 = may be wrong because:
 agent.utr_error.reason.bullet1                                  = you have entered it incorrectly
 agent.utr_error.reason.bullet2                                  = you or your client have not signed up to {0} yet
-agent.utr_error.reason.bullet2_link                             = Making Tax Digital for Income Tax (opens in new tab)
+agent.utr_error.reason.bullet2_link                             = Making Tax Digital for Income Tax
 agent.utr_error.go_back                                         = Go back and enter a different UTR
 
 ## Agent Error Page ##
@@ -109,9 +109,9 @@ taxYears.noEstimates                                           = You don’t hav
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
 taxYears.oldSa.content.text                                    = To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
-taxYears.oldSa.content.link                                    = Self Assessment online account (opens in new tab)
+taxYears.oldSa.content.link                                    = Self Assessment online account
 taxYears.oldSa.agent.content.1								   = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
-taxYears.oldSa.agent.content.2								   = Self Assessment for Agents Account (opens in new tab)
+taxYears.oldSa.agent.content.2								   = Self Assessment for Agents Account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your Agent Services account.
 
 ## Tax Year Overview ##
@@ -463,7 +463,7 @@ whatYouOwe.payments-made-bullet-1.2                                = payment met
 whatYouOwe.payments-made-bullet-1.3                                = you use
 whatYouOwe.payments-made-bullet-2                                = must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late
 whatYouOwe.sa-note                                                 = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
-whatYouOwe.sa-link                                                 = Self Assessment online account (opens in new tab)
+whatYouOwe.sa-link                                                 = Self Assessment online account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
 whatYouOwe.dropdown.info                                           = What are the payment types?
 whatYouOwe.payment-days-note                                       = Payments can take up to 7 days to process.
@@ -501,7 +501,7 @@ whatYouOwe.over-due.interest.line2                                 = {0} to {1} 
 whatYouOwe.over-due.interest-rate                                  = Any overdue payment interest is at the {0}. The rate may have changed since the interest was first charged.
 whatYouOwe.over-due.interest-rate-1                                = Any overdue payment interest is at the {0}
 whatYouOwe.over-due.interest-rate-2                                = The rate may have changed since the interest was first charged.
-whatYouOwe.over-due.interest-rate.link                             = current interest rate for late and early payments (opens in new tab)
+whatYouOwe.over-due.interest-rate.link                             = current interest rate for late and early payments
 whatYouOwe.future-payments                                         = Future payments
 whatYouOwe.due-in-thirty-days-payments                             = Due within 30 days
 whatYouOwe.payment-type.taxYear                                    = Tax year {0} to {1}
@@ -509,7 +509,7 @@ whatYouOwe.taxYear                                                 = Tax year
 whatYouOwe.tax-year-summary.taxYear                                = {0} to {1}
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review because {0}
-whatYouOwe.dunningLock.link                                        = there is a current appeal against a tax decision (opens in new tab).
+whatYouOwe.dunningLock.link                                        = there is a current appeal against a tax decision
 whatYouOwe.overdueAmount                                           = Overdue payments
 whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
 whatYouOwe.totalBalance                                            = Total payments
@@ -536,7 +536,7 @@ chargeSummary.remainingDue   									   = Remaining to pay
 chargeSummary.overdue                                              = OVERDUE
 
 chargeSummary.dunning.locks.banner.title						   = Important
-chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed (opens in new tab).
+chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed
 chargeSummary.dunning.locks.banner.note							   = You still need to pay the total of {0} as you may be charged interest if not paid by {1}.
 
 chargeSummary.nic2TaxYear                                          = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
@@ -601,14 +601,14 @@ chargeSummary.codingOutHeader                                      = Self Assess
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
 chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
 chargeSummary.codingOutInset-1                                     = If this tax cannot be collected
-chargeSummary.codingOutInset-2                                     = through your PAYE tax code (opens in new tab)
+chargeSummary.codingOutInset-2                                     = through your PAYE tax code
 chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.
 chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
 chargeSummary.check-paye-tax-code-1                                = Check if your
 chargeSummary.check-paye-tax-code-2                                = PAYE tax code
 chargeSummary.check-paye-tax-code-3                                = has changed for the {0} to {1} tax year.
 chargeSummary.cancelledPayeInset-1                                 = You have previously agreed to pay some of your Self Assessment bill
-chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code (opens in new tab).
+chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code
 chargeSummary.cancelledPayeInset-3                                 = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.
 
 ## Regimes
@@ -714,3 +714,4 @@ language-switcher.nav                                           = Language switc
 
 #technical helper
 getpagehelp.linkText                                            = Get help with this page
+pagehelp.opensInNewTabText                                      = ' (opens in new tab)'
