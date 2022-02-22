@@ -16,13 +16,14 @@
 
 package controllers
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.CalcDataIntegrationTestConstants._
 import forms.utils.SessionKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
+import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status._
 import repositories.MongoLockRepositoryImpl
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.NewCalcBreakdownItTestConstants._
 
 import scala.concurrent.ExecutionContext
 
@@ -34,145 +35,145 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
   s"GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}" when {
-      "the user is authorised with an active enrolment" when {
-        "redirects to calculation home page" in {
-          Given("Calculation service returns a successful response back")
+    "the user is authorised with an active enrolment" when {
+      "redirects to calculation home page" in {
+        Given("Calculation service returns a successful response back")
 
-          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
+        IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
-          val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear,Map(SessionKeys.calculationId -> "idOne"))
+        When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idOne"))
 
-          Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        Then("I check all calls expected were made")
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idOne")
 
-          And("The expected result is returned")
-          res should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
-          )
+        And("The expected result is returned")
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
+        )
 
-          mongoDbConnection.repo.findById("idOne").futureValue shouldBe None
-        }
-        "calculation service returns non-retryable response back" in {
-          Given("Calculation service returns a 500 error response back")
+        mongoDbConnection.repo.findById("idOne").futureValue shouldBe None
+      }
+      "calculation service returns non-retryable response back" in {
+        Given("Calculation service returns a 500 error response back")
 
-          IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idTwo")(INTERNAL_SERVER_ERROR,
+          LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
+        When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
-          val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear,Map(SessionKeys.calculationId -> "idTwo"))
+        val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idTwo"))
 
-          Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
+        Then("I check all calls expected were made")
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idTwo")
 
-          And("The expected result is returned")
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
-          mongoDbConnection.repo.findById("idTwo").futureValue shouldBe None
-        }
-        "calculation service returns retryable response back" in {
-          Given("Calculation service returns a 404 error response back during total duration of timeout interval")
+        And("The expected result is returned")
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+        mongoDbConnection.repo.findById("idTwo").futureValue shouldBe None
+      }
+      "calculation service returns retryable response back" in {
+        Given("Calculation service returns a 404 error response back during total duration of timeout interval")
 
-          IndividualCalculationStub.stubGetCalculationListNotFound(testNino,"idThree")
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idThree")(NOT_FOUND,
+          LiabilityCalculationError(NOT_FOUND, "not found"))
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
-          val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear,Map(SessionKeys.calculationId -> "idThree"))
+        When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idThree"))
 
-          Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idThree", 8)
+        Then("I check all calls expected were made")
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idThree", 8)
 
-          And("The expected result is returned")
-          res should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
-          mongoDbConnection.repo.findById("idThree").futureValue shouldBe None
-        }
-        "calculation service returns retryable response back initially and then returns success response before interval time completed" in {
-          Given("Calculation service returns a 404 error response back during total duration of timeout interval")
+        And("The expected result is returned")
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+        mongoDbConnection.repo.findById("idThree").futureValue shouldBe None
+      }
+      "calculation service returns retryable response back initially and then returns success response before interval time completed" in {
+        Given("Calculation service returns a 404 error response back during total duration of timeout interval")
 
-          IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "idFour")
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFour")(NOT_FOUND,
+          LiabilityCalculationError(NOT_FOUND, "not found"))
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
+        When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
-          val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear,Map(SessionKeys.calculationId -> "idFour"))
+        val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFour"))
 
-          Thread.sleep(100)
-          mongoDbConnection.repo.findById("idFour").futureValue.get.id shouldBe "idFour"
+        Thread.sleep(100)
+        mongoDbConnection.repo.findById("idFour").futureValue.get.id shouldBe "idFour"
 
-          //After 1.5 seconds responding with success message
-          Thread.sleep(1500)
-          IndividualCalculationStub.stubGetCalculation(testNino, "idFour")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
+        //After 1.5 seconds responding with success message
+        Thread.sleep(1500)
+        IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idFour")(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
 
-          And("The expected result is returned")
-          res.futureValue should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
-          )
+        And("The expected result is returned")
+        res.futureValue should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
+        )
 
-          Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idFour", 6)
+        Then("I check all calls expected were made")
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFour", 6)
 
-          mongoDbConnection.repo.findById("idFour").futureValue shouldBe None
-        }
-        "calculation service returns retryable response back initially and then returns non-retryable error before interval time completed" in {
-          Given("Calculation service returns a 404 error response back during total duration of timeout interval")
+        mongoDbConnection.repo.findById("idFour").futureValue shouldBe None
+      }
+      "calculation service returns retryable response back initially and then returns non-retryable error before interval time completed" in {
+        Given("Calculation service returns a 404 error response back during total duration of timeout interval")
 
-          IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "idFive")
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive")(NOT_FOUND, LiabilityCalculationError(NOT_FOUND, "not found"))
 
-          When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
+        When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
-          val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear,Map(SessionKeys.calculationId -> "idFive"))
+        val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFive"))
 
-          Thread.sleep(100)
-          mongoDbConnection.repo.findById("idFive").futureValue.get.id shouldBe "idFive"
+        Thread.sleep(100)
+        mongoDbConnection.repo.findById("idFive").futureValue.get.id shouldBe "idFive"
 
-          //After 1.5 seconds responding with success message
-          Thread.sleep(1500)
-          IndividualCalculationStub.stubGetCalculationError(testNino, "idFive")
+        //After 1.5 seconds responding with success message
+        Thread.sleep(1500)
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive")(INTERNAL_SERVER_ERROR,
+          LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
 
-          And("The expected result is returned")
-          res.futureValue should have(
-            httpStatus(INTERNAL_SERVER_ERROR)
-          )
+        And("The expected result is returned")
+        res.futureValue should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
 
-          Then("I check all calls expected were made")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idFive", 6)
+        Then("I check all calls expected were made")
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFive", 6)
 
-          mongoDbConnection.repo.findById("idFive").futureValue shouldBe None
-        }
+        mongoDbConnection.repo.findById("idFive").futureValue shouldBe None
+      }
     }
   }
 
   s"calling GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = true).url}" when {
-    
+
     "the user is authorised with an active enrolment" should {
-      
+
       "redirect the user to the final tax calculation page" which {
         lazy val result = {
-          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(OK, estimatedCalculationFullJson)
+          IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(OK, liabilityCalculationModelSuccessFull)
           IncomeTaxViewChangeFrontend.getFinalTaxCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idOne"))
         }
-        
+
         "has the status of SEE_OTHER (303)" in {
           result.status shouldBe SEE_OTHER
         }
-        
+
         s"redirect to '${controllers.routes.FinalTaxCalculationController.show(testTaxYear).url}''" in {
           result.header("Location").head shouldBe controllers.routes.FinalTaxCalculationController.show(testTaxYear).url
         }
-        
       }
-      
     }
-    
   }
-
 }

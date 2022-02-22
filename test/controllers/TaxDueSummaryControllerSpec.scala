@@ -24,7 +24,7 @@ import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.EstimatesTestConstants.testYear
+import testConstants.BaseTestConstants.testTaxYear
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
 import views.html.TaxCalcBreakdown
@@ -47,7 +47,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
   "showTaxDueSummary" when {
 
     "given a tax year which can be found in ETMP" should {
-      lazy val result = TestTaxDueSummaryController.showTaxDueSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestTaxDueSummaryController.showTaxDueSummary(testTaxYear)(fakeRequestWithActiveSession)
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
@@ -67,7 +67,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     }
 
     "given a tax year which can not be found in ETMP" should {
-      lazy val result = TestTaxDueSummaryController.showTaxDueSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestTaxDueSummaryController.showTaxDueSummary(testTaxYear)(fakeRequestWithActiveSession)
       "return Status ISE (500)" in {
         mockCalculationNotFoundNew("XAIT0000123456")
         setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
@@ -76,7 +76,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     }
 
     "there is a downstream error" should {
-      lazy val result = TestTaxDueSummaryController.showTaxDueSummary(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestTaxDueSummaryController.showTaxDueSummary(testTaxYear)(fakeRequestWithActiveSession)
 
       "return Status Internal Server Error (500)" in {
         mockCalculationErrorNew("XAIT0000123456")

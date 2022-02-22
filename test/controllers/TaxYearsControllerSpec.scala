@@ -21,12 +21,11 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import org.scalacheck.Prop.{Exception, exception}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.CalculationService
-import testConstants.EstimatesTestConstants._
+import testConstants.BaseTestConstants.testTaxYear
 import testConstants.IncomeSourceDetailsTestConstants._
 import testConstants.MessagesLookUp
 import testUtils.TestSupport
@@ -50,7 +49,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[ItvcErrorHandler]
   )
 
-  lazy val CalcMessages = new MessagesLookUp.Calculation(testYear)
+  lazy val CalcMessages = new MessagesLookUp.Calculation(testTaxYear)
 
   ".viewTaxYears" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {

@@ -16,17 +16,14 @@
 
 package services
 
-import testConstants.BaseTestConstants._
-import testConstants.EstimatesTestConstants._
 import config.featureswitch.FeatureSwitching
-import mocks.connectors.{MockIncomeTaxCalculationConnector, MockIndividualCalculationsConnector}
-import models.calculation._
-import models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
+import mocks.connectors.MockIncomeTaxCalculationConnector
+import models.liabilitycalculation._
 import play.api.http.Status
-import testConstants.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIndividualCalculationsConnector with MockIncomeTaxCalculationConnector with FeatureSwitching {
+class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationConnector with FeatureSwitching {
 
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -40,64 +37,31 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
 
 
-  object TestCalculationService extends CalculationService(
-    mockIndividualCalculationsConnector,
-    mockIncomeTaxCalculationConnector,
-    appConfig
-  )
+  object TestCalculationService extends CalculationService(mockIncomeTaxCalculationConnector)
 
   "The CalculationService.getCalculationDetail method" when {
 
     "when the  Calculation Data api feature switch is enabled" should {
-
-      "successful response is returned from the IndividualCalculationConnector" should {
-
-        "return a CalculationModel" in {
-          mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
-          mockGetCalculation(testNino, "testIdOne")(calculationDataSuccessModel)
-
-          TestCalculationService.getCalculationDetail(testNino, testYear).futureValue shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
-
-        }
-        "NOT_FOUND response is returned from the IndividualCalculationConnector" should {
-          "return a CalculationErrorModel" in {
-            mockGetLatestCalculationId(testNino, "2017-18")(
-              Left(CalculationErrorModel(Status.NOT_FOUND, "not found"))
-            )
-
-            TestCalculationService.getCalculationDetail(testNino, testYear).futureValue shouldBe CalcDisplayNoDataFound
-          }
-        }
-        "error response is returned from the IndividualCalculationConnector" should {
-          "return a CalculationErrorModel" in {
-            mockGetLatestCalculationId(testNino, "2017-18")(
-              Left(CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Internal server error"))
-            )
-
-            TestCalculationService.getCalculationDetail(testNino, testYear).futureValue shouldBe CalcDisplayError
-          }
-        }
-      }
       "successful response is returned from the IncomeTaxCalculationConnector" should {
 
         "return a LiabilityCalculationModel" in {
           mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationSuccessResponse)
 
-          TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testYear).futureValue shouldBe liabilityCalculationSuccessResponse
+          TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationSuccessResponse
 
         }
         "NOT_FOUND response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
             mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNotFoundResponse)
 
-            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testYear).futureValue shouldBe liabilityCalculationNotFoundResponse
+            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationNotFoundResponse
           }
         }
         "error response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
             mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationErrorResponse)
 
-            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testYear).futureValue shouldBe liabilityCalculationErrorResponse
+            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationErrorResponse
           }
         }
       }

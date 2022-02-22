@@ -24,10 +24,11 @@
     target: Option[String] = None,
     ariaLabel: Option[String] = None,
     outerMessage: String = "",
-    role: Option[String] = None
+    role: Option[String] = None,
+    rel: Option[String] = None
 )(implicit messages: Messages)
 
 <a href="@link" class="@classes" @id.map(id => s"id=$id") @target.map(target => s"target=$target")
     @role.map(role => s"role=$role")
-    aria-label="@ariaLabel.map(c=>s"$c")">@messages(messageKey)</a>@outerMessage
+    aria-label="@ariaLabel.map(c=>s"$c")  @rel.map(rel => s"rel=$rel")">@messages(messageKey)</a>@outerMessage
 
