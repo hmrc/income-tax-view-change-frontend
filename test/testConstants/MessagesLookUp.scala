@@ -569,19 +569,24 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val title = "What you owe - Business Tax account - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
+    val paymentsDue= "Payments Due"
     val saLink = "Self Assessment online account (opens in new tab)"
     val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
     val dropDownInfo = "What are the payment types?"
     val paymentDaysNote = "Payments can take up to 7 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
-    val paymentUnderReviewParaLink = "tax decision is being investigated (opens in new tab)."
-    val paymentUnderReviewPara = s"One or more of your payments are currently under review and your $paymentUnderReviewParaLink"
-
+    val paymentUnderReviewParaLink = "there is a current appeal against a tax decision (opens in new tab)."
+    val paymentUnderReviewPara = s"One or more of your payments are currently under review because $paymentUnderReviewParaLink"
     def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
 
     val paymentType = "Payment type"
+    val taxYearSummary = "Tax year summary"
     val amountDue = "Amount due"
+
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
+    val paymentsMade = "Any payments you make:"
     val poa1Text = "Payment on account 1 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val poa2Text = "Payment on account 2 of 2"
@@ -609,14 +614,14 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val futurePayments = "Future payments"
     val totalPaymentsDue = "Total payments"
 
-    val poa1WithTaxYear = s"$poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa2WithTaxYear = s"$poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)}"
-    val poa1WithTaxYearAndUnderReview = s"$poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa2WithTaxYearAndUnderReview = s"$poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
-    val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text $currentYear ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
+    val poa1WithTaxYear = s"$poa1Text $currentYear"
+    val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text $currentYear"
+    val poa2WithTaxYear = s"$poa2Text $currentYear"
+    val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text $currentYear"
+    val poa1WithTaxYearAndUnderReview = s"$poa1Text $currentYear $paymentUnderReview"
+    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text $currentYear $paymentUnderReview"
+    val poa2WithTaxYearAndUnderReview = s"$poa2Text $currentYear $paymentUnderReview"
+    val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text $currentYear $paymentUnderReview"
 
     def interestFromToDate(from: String, to: String, rate: String) = s"Interest for late payment $from to $to at $rate%"
 
@@ -624,9 +629,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val interestRatesPara = s"Any overdue payment interest is at the $interestRatesLink. The rate may have changed since the interest was first charged."
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+    def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
+
 
     val dueDate = "Due date"
-    val payNow = "Pay now"
+    val payNow = "Make a payment"
 
     def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
@@ -639,19 +646,23 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
     val dropDownInfo = "What are the payment types?"
+    val paymentsMade = "Any payments you make:"
     val paymentDaysNote = "Payments can take up to 3 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
-    val paymentUnderReviewParaLink = "tax decision is being investigated (opens in new tab)."
-    val paymentUnderReviewPara = s"One or more of your payments are currently under review and your $paymentUnderReviewParaLink"
+    val paymentUnderReviewParaLink = "there is a current appeal against a tax decision (opens in new tab)."
+    val paymentUnderReviewPara = s"One or more of your payments are currently under review because $paymentUnderReviewParaLink"
 
     def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
 
     val paymentType = "Payment type"
+    val taxYearSummary = "Tax year summary"
     val amountDue = "Amount due"
     val poa1Text = "Payment on account 1 of 2"
     val poa2Text = "Payment on account 2 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val latePoa2Text = "Late payment interest for payment on account 2 of 2"
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
     val remainingBalance = "Balancing payment"
     val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
     val interestOnRemainingBalance = "Interest on Balancing payment"
@@ -664,6 +675,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val lpiHeading = "Late payment interest"
     val lpiLine1   = "This is interest you owe for a late payment."
     val overduePayments = "Overdue payments"
+    val paymentsDue= "Payments Due"
     val overduePaymentsDue = "Overdue payments"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
@@ -680,6 +692,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+    def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
 
     val dueDate = "Due date"
   }
