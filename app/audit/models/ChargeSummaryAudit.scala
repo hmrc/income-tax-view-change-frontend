@@ -37,10 +37,10 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   }
 
   val getChargeType: String = docDateDetail.documentDetail.documentDescription match {
-    case Some("ITSA- POA 1") => if(isLatePaymentCharge)"Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
-    case Some("ITSA - POA 2") => if(isLatePaymentCharge)"Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
+    case Some("ITSA- POA 1") => if (isLatePaymentCharge) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
+    case Some("ITSA - POA 2") => if (isLatePaymentCharge) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
     case Some("TRM New Charge") | Some("TRM Amend Charge") =>
-      if( isLatePaymentCharge)"Late Payment Interest on remaining balance" else "Remaining balance"
+      if (isLatePaymentCharge) "Late Payment Interest on remaining balance" else "Remaining balance"
     case error => {
       Logger("application").error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
@@ -101,15 +101,15 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   )
 
   private val paymentAllocationsChargeHistory: Seq[JsObject] =
-    if(!isLatePaymentCharge) paymentAllocations.flatMap(paymentAllocationsChargeHistoryJSon)
+    if (!isLatePaymentCharge) paymentAllocations.flatMap(paymentAllocationsChargeHistoryJSon)
     else Seq.empty
 
   private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] =
-    paymentAllocation.payments.map( payment => Json.obj()++
-      ("date", payment.date)++
-      ("description", Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary)))++
+    paymentAllocation.payments.map(payment => Json.obj() ++
+      ("date", payment.date) ++
+      ("description", Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))) ++
       ("amount", payment.amount.map(_.abs))
-  )
+    )
 
   private val paymentBreakdowns: Seq[JsObject] = paymentBreakdown.map(paymentBreakdownsJson)
 
@@ -119,16 +119,16 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     "chargeUnderReview" -> paymentBreakdown.dunningLockExists,
     "interestLock" -> paymentBreakdown.interestLockExists)
 
-  private val fullPaymentAmount = if(isLatePaymentCharge)
+  private val fullPaymentAmount = if (isLatePaymentCharge)
     docDateDetail.documentDetail.latePaymentInterestAmount else docDateDetail.documentDetail.originalAmount
 
-  private val remainingToPay = if(isLatePaymentCharge)
+  private val remainingToPay = if (isLatePaymentCharge)
     docDateDetail.documentDetail.interestRemainingToPay else docDateDetail.documentDetail.remainingToPay
 
-  private val dueDate = if(isLatePaymentCharge) docDateDetail.documentDetail.interestEndDate else docDateDetail.dueDate
+  private val dueDate = if (isLatePaymentCharge) docDateDetail.documentDetail.interestEndDate else docDateDetail.dueDate
 
   private val chargeDetails: JsObject = Json.obj(
-    "chargeType" -> getChargeType)++
+    "chargeType" -> getChargeType) ++
     ("interestPeriod", interestPeriod) ++
     ("dueDate", dueDate) ++
     ("fullPaymentAmount", fullPaymentAmount) ++
@@ -137,8 +137,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   def release6Update: JsObject = {
     if (txmEventsR6) {
       Json.obj("paymentBreakdown" -> paymentBreakdowns) ++
-      Json.obj("chargeHistory" -> chargeHistory)++
-      Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
+        Json.obj("chargeHistory" -> chargeHistory) ++
+        Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
     } else Json.obj()
   }
 

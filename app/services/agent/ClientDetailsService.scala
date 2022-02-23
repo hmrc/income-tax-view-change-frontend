@@ -28,15 +28,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector,
-																		 incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
-																		(implicit ec: ExecutionContext) {
+                                     incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+                                    (implicit ec: ExecutionContext) {
 
   def checkClientDetails(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] =
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
         incomeTaxViewChangeConnector.getBusinessDetails(nino) flatMap {
           case IncomeSourceDetailsModel(mtdbsa, _, _, _) =>
-						Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
+            Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
           case _ => Future.successful(Left(UnexpectedResponse))
         }

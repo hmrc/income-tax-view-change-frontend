@@ -38,14 +38,14 @@ class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: A
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show().url)
-				.removingFromSession(
-					SessionKeys.clientFirstName,
-					SessionKeys.clientLastName,
-					SessionKeys.clientMTDID,
-					SessionKeys.clientUTR,
-					SessionKeys.clientNino
-				))
+      Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show().url)
+        .removingFromSession(
+          SessionKeys.clientFirstName,
+          SessionKeys.clientLastName,
+          SessionKeys.clientMTDID,
+          SessionKeys.clientUTR,
+          SessionKeys.clientNino
+        ))
 
   }
 }

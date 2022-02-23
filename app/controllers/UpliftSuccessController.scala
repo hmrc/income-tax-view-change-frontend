@@ -27,15 +27,15 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import scala.concurrent.{ExecutionContext, Future}
 
 class UpliftSuccessController @Inject()(implicit val appConfig: FrontendAppConfig,
-																			 mcc: MessagesControllerComponents,
-																			 val auditingService: AuditingService,
-																			 implicit val executionContext: ExecutionContext,
-																			 val authenticate: AuthenticationPredicate,
-																			 val retrieveNino: NinoPredicate) extends BaseController()(mcc) with FeatureSwitching {
+                                        mcc: MessagesControllerComponents,
+                                        val auditingService: AuditingService,
+                                        implicit val executionContext: ExecutionContext,
+                                        val authenticate: AuthenticationPredicate,
+                                        val retrieveNino: NinoPredicate) extends BaseController()(mcc) with FeatureSwitching {
 
-	val success: Action[AnyContent] = (authenticate andThen retrieveNino).async {
-		implicit user =>
-			auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
-			Future.successful(Redirect(controllers.routes.HomeController.home().url))
-	}
+  val success: Action[AnyContent] = (authenticate andThen retrieveNino).async {
+    implicit user =>
+      auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
+      Future.successful(Redirect(controllers.routes.HomeController.home().url))
+  }
 }

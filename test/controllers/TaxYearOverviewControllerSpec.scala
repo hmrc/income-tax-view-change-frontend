@@ -351,7 +351,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
             response = testObligtionsModel
           )
 
-          val expectedContent: String =  Jsoup.parse(taxYearOverviewView(
+          val expectedContent: String = Jsoup.parse(taxYearOverviewView(
             testTaxYear,
             None,
             testChargesList,

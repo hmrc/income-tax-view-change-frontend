@@ -42,7 +42,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView)
   }
 
   lazy val show: Action[AnyContent] = Action { implicit req =>
-    val featureSwitches = ListMap(switches.toSeq sortBy(_.displayText) map (switch => switch -> isEnabled(switch)):_*)
+    val featureSwitches = ListMap(switches.toSeq sortBy (_.displayText) map (switch => switch -> isEnabled(switch)): _*)
     Ok(view(featureSwitches))
   }
 

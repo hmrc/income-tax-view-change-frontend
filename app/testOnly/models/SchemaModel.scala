@@ -19,11 +19,11 @@ package testOnly.models
 import play.api.libs.json.{JsValue, Json, OFormat}
 
 case class SchemaModel(
-                        _id: String,              // Name of the Schema
-                        url: String,              // URL Regex
-                        method: String,           // Http Method Type
-                        responseSchema: JsValue   // Response Schema to validate against
-                       )
+                        _id: String, // Name of the Schema
+                        url: String, // URL Regex
+                        method: String, // Http Method Type
+                        responseSchema: JsValue // Response Schema to validate against
+                      )
 
 object SchemaModel {
   implicit val formats: OFormat[SchemaModel] = Json.format[SchemaModel]

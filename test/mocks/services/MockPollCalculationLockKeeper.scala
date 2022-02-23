@@ -51,6 +51,7 @@ trait MockPollCalculationLockKeeper extends UnitSpec with MongoSpecSupport with 
     .thenReturn(Future.successful(locked))
 
   def mockLockRepositoryIsLockedTrue(): Unit = setupLockRepositoryLock(true)
+
   def mockLockRepositoryIsLockedFalse(): Unit = setupLockRepositoryLock(false)
 
 

@@ -27,7 +27,7 @@ import scala.concurrent.Future
 @Singleton
 class NinoLookupService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
-  def getNino(mtdRef:String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
+  def getNino(mtdRef: String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
     Logger("application").debug(s"[NinoLookupService][getNino] - Requesting NINO from connector for user with MtdRef: $mtdRef")
     incomeTaxViewChangeConnector.getNino(mtdRef)
   }

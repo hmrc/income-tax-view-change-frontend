@@ -98,7 +98,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "TxmEventsApproved FS is enabled" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           mtdItUser = MtdItUserWithNino(
-            btaNavPartial =  None,
+            btaNavPartial = None,
             saUtr = Some(testSaUtr),
             nino = testNino,
             mtditid = testMtditidAgent,
@@ -137,7 +137,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "TxmEventsApproved FS is disabled" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           mtdItUser = MtdItUserWithNino(
-            btaNavPartial =  None,
+            btaNavPartial = None,
             saUtr = Some(testSaUtr),
             nino = testNino,
             mtditid = testMtditidAgent,

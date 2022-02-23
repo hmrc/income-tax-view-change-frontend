@@ -25,7 +25,7 @@ import scala.concurrent.Future
 
 @Singleton
 class NotEnrolledController @Inject()(notEnrolled: NotEnrolled)
-                                     (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc){
+                                     (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(notEnrolled()))
   }

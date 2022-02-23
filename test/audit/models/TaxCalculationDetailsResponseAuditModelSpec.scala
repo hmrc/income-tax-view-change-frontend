@@ -235,7 +235,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
       "foreignTaxCreditReliefOnCapitalGains" -> 5000.99,
       "taxOnGainsAlreadyPaid" -> 5000.99,
       "capitalGainsTaxDue" -> 5000.99,
-      "capitalGainsTaxCalculatedAsOverpaid"-> 5000.99,
+      "capitalGainsTaxCalculatedAsOverpaid" -> 5000.99,
       "rates" -> Json.arr(
         Json.obj("rateBand" -> "Business Asset Disposal Relief and or Investors' Relief gains (£5,000.99 at 20%)",
           "amount" -> 5000.99),

@@ -49,15 +49,15 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 
     val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
 
-		val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-			dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true),
-			fullDocumentDetailWithDueDateModel)
-		val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
-		val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(documentDetailClass2Nic)
-		val payeChargesList: List[DocumentDetailWithDueDate] = List(documentDetailPaye)
-		val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
-		val homeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
-		val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/agents/tax-years"
+    val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+      dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true),
+      fullDocumentDetailWithDueDateModel)
+    val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
+    val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(documentDetailClass2Nic)
+    val payeChargesList: List[DocumentDetailWithDueDate] = List(documentDetailPaye)
+    val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
+    val homeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
+    val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/agents/tax-years"
 
     val controller: TaxYearOverviewController = new TaxYearOverviewController(
       taxYearOverview = taxYearOverviewView,
@@ -76,279 +76,279 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
   }
 
 
-	"the user is not authenticated" should {
-		"redirect them to sign in" in new Setup {
-			setupMockAgentAuthorisationException(withClientPredicate = false)
+  "the user is not authenticated" should {
+    "redirect them to sign in" in new Setup {
+      setupMockAgentAuthorisationException(withClientPredicate = false)
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestWithActiveSession)
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestWithActiveSession)
 
-			status(result) shouldBe SEE_OTHER
-			redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
-		}
-	}
-	"the user has timed out" should {
-		"redirect to the session timeout page" in new Setup {
-			setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+    }
+  }
+  "the user has timed out" should {
+    "redirect to the session timeout page" in new Setup {
+      setupMockAgentAuthorisationException(exception = BearerTokenExpired())
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestWithClientDetails)
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestWithClientDetails)
 
-			status(result) shouldBe SEE_OTHER
-			redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
-		}
-	}
-	"the user does not have an agent reference number" should {
-		"return Ok with technical difficulties" in new Setup {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
-			mockShowOkTechnicalDifficulties()
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+    }
+  }
+  "the user does not have an agent reference number" should {
+    "return Ok with technical difficulties" in new Setup {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
+      mockShowOkTechnicalDifficulties()
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestWithActiveSession)
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestWithActiveSession)
 
-			status(result) shouldBe OK
-			contentType(result) shouldBe Some(HTML)
-		}
-	}
-	"there was a problem retrieving income source details for the user" should {
-		"throw an internal server exception" in new Setup {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockErrorIncomeSource()
-			mockShowInternalServerError()
-			val result = controller.show(taxYear = testYear)(fakeRequestConfirmedClient()).failed.futureValue
-			result shouldBe an[InternalServerException]
-			result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
-		}
-	}
-	"there was a problem retrieving the calculation for the user" should {
-		"return technical difficulties" in new Setup {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
-			mockCalculationErrorNew(nino = "AA111111A", year = testYear)
-			mockShowInternalServerError()
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
+  "there was a problem retrieving income source details for the user" should {
+    "throw an internal server exception" in new Setup {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockErrorIncomeSource()
+      mockShowInternalServerError()
+      val result = controller.show(taxYear = testYear)(fakeRequestConfirmedClient()).failed.futureValue
+      result shouldBe an[InternalServerException]
+      result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+    }
+  }
+  "there was a problem retrieving the calculation for the user" should {
+    "return technical difficulties" in new Setup {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
+      mockCalculationErrorNew(nino = "AA111111A", year = testYear)
+      mockShowInternalServerError()
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-			status(result) shouldBe INTERNAL_SERVER_ERROR
-			contentType(result) shouldBe Some(HTML)
-		}
-	}
-	"there was a problem retrieving the charges for the user" should {
-		"return technical difficulties" in new Setup {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(testFinancialDetailsErrorModel)
-			mockShowInternalServerError()
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
+  "there was a problem retrieving the charges for the user" should {
+    "return technical difficulties" in new Setup {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(testFinancialDetailsErrorModel)
+      mockShowInternalServerError()
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-			status(result) shouldBe INTERNAL_SERVER_ERROR
-			contentType(result) shouldBe Some(HTML)
-		}
-	}
-	"there was a problem retrieving the updates for the user" should {
-		"return technical difficulties" in new Setup {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
-			)
-			mockShowInternalServerError()
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
+  "there was a problem retrieving the updates for the user" should {
+    "return technical difficulties" in new Setup {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
+      )
+      mockShowInternalServerError()
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-			status(result) shouldBe INTERNAL_SERVER_ERROR
-			contentType(result) shouldBe Some(HTML)
-		}
-	}
-	"no calculation data was returned" should {
-		"show the tax year overview page" in new Setup {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			mockCalculationNotFoundNew(nino = "AA111111A", year = testYear)
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+      status(result) shouldBe INTERNAL_SERVER_ERROR
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
+  "no calculation data was returned" should {
+    "show the tax year overview page" in new Setup {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      mockCalculationNotFoundNew(nino = "AA111111A", year = testYear)
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-			status(result) shouldBe OK
-			contentType(result) shouldBe Some(HTML)
-		}
-	}
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
 
-	"all calls to retrieve data were successful" should {
-		"show the tax year overview page" in new Setup {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
+  "all calls to retrieve data were successful" should {
+    "show the tax year overview page" in new Setup {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetailsModel(testYear))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
 
-			status(result) shouldBe OK
-			contentType(result) shouldBe Some(HTML)
-		}
-	}
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
 
-	"the coding out feature switch is enabled" should {
-		"include Class 2 Nics in the charges list when Class 2 Nics is present" in new Setup {
-			enable(CodingOut)
+  "the coding out feature switch is enabled" should {
+    "include Class 2 Nics in the charges list when Class 2 Nics is present" in new Setup {
+      enable(CodingOut)
 
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
-				documentDetails = documentDetailClass2Nic.documentDetail
-			))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
+        documentDetails = documentDetailClass2Nic.documentDetail
+      ))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
 
-			val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-			val expectedContent: String = taxYearOverviewView(
-				testYear,
-				Some(calcOverview),
-				class2NicsChargesList,
-				testObligtionsModel,
-				taxYearsBackLink,
-				isAgent = true,
-				codingOutEnabled = true
-			).toString
+      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearOverviewView(
+        testYear,
+        Some(calcOverview),
+        class2NicsChargesList,
+        testObligtionsModel,
+        taxYearsBackLink,
+        isAgent = true,
+        codingOutEnabled = true
+      ).toString
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
-			status(result) shouldBe OK
-			contentAsString(result) shouldBe expectedContent
-		}
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe expectedContent
+    }
 
-		"include Paye in the charges list when Paye is present" in new Setup {
-			enable(CodingOut)
+    "include Paye in the charges list when Paye is present" in new Setup {
+      enable(CodingOut)
 
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
-				documentDetails = documentDetailPaye.documentDetail
-			))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
+        documentDetails = documentDetailPaye.documentDetail
+      ))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
 
-			val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-			val expectedContent: String = taxYearOverviewView(
-				testYear,
-				Some(calcOverview),
-				payeChargesList,
-				testObligtionsModel,
-				taxYearsBackLink,
-				isAgent = true,
-				codingOutEnabled = true
-			).toString
+      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearOverviewView(
+        testYear,
+        Some(calcOverview),
+        payeChargesList,
+        testObligtionsModel,
+        taxYearsBackLink,
+        isAgent = true,
+        codingOutEnabled = true
+      ).toString
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
-			status(result) shouldBe OK
-			contentAsString(result) shouldBe expectedContent
-		}
-	}
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe expectedContent
+    }
+  }
 
-	"the coding out feature switch is disabled" should {
-		"not include Class 2 Nics in the charges list when Class 2 Nics is present" in new Setup {
-			disable(CodingOut)
+  "the coding out feature switch is disabled" should {
+    "not include Class 2 Nics in the charges list when Class 2 Nics is present" in new Setup {
+      disable(CodingOut)
 
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
-				documentDetails = documentDetailClass2Nic.documentDetail
-			))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
+        documentDetails = documentDetailClass2Nic.documentDetail
+      ))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
 
-			val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-			val expectedContent: String = taxYearOverviewView(
-				testYear,
-				Some(calcOverview),
-				testEmptyChargesList,
-				testObligtionsModel,
-				taxYearsBackLink,
-				isAgent = true,
-				codingOutEnabled = true
-			).toString
+      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearOverviewView(
+        testYear,
+        Some(calcOverview),
+        testEmptyChargesList,
+        testObligtionsModel,
+        taxYearsBackLink,
+        isAgent = true,
+        codingOutEnabled = true
+      ).toString
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
-			status(result) shouldBe OK
-			contentAsString(result) shouldBe expectedContent
-		}
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe expectedContent
+    }
 
-		"not include Paye in the charges list when Paye is present" in new Setup {
-			disable(CodingOut)
+    "not include Paye in the charges list when Paye is present" in new Setup {
+      disable(CodingOut)
 
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
-				documentDetails = documentDetailPaye.documentDetail
-			))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
+        documentDetails = documentDetailPaye.documentDetail
+      ))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
 
-			val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-			val expectedContent: String = taxYearOverviewView(
-				testYear,
-				Some(calcOverview),
-				testEmptyChargesList,
-				testObligtionsModel,
-				taxYearsBackLink,
-				isAgent = true,
-				codingOutEnabled = true
-			).toString
+      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearOverviewView(
+        testYear,
+        Some(calcOverview),
+        testEmptyChargesList,
+        testObligtionsModel,
+        taxYearsBackLink,
+        isAgent = true,
+        codingOutEnabled = true
+      ).toString
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = taxYearsBackLink))
 
-			status(result) shouldBe OK
-			contentAsString(result) shouldBe expectedContent
-		}
-	}
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe expectedContent
+    }
+  }
 
-	"all calls to retrieve data were successful and Referer was a Home page" should {
-		"show the Tax Year Overview Page and back link should be to the Home page" in new Setup {
-			enable(CodingOut)
+  "all calls to retrieve data were successful and Referer was a Home page" should {
+    "show the Tax Year Overview Page and back link should be to the Home page" in new Setup {
+      enable(CodingOut)
 
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockBothIncomeSources()
-			mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
-			setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
-				documentDetails = documentDetailClass2Nic.documentDetail
-			))
-			mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
-				ObligationsModel(Nil)
-			)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockBothIncomeSources()
+      mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
+      setupMockGetFinancialDetailsWithTaxYearAndNino(testYear, "AA111111A")(financialDetails(
+        documentDetails = documentDetailClass2Nic.documentDetail
+      ))
+      mockgetNextUpdates(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+        ObligationsModel(Nil)
+      )
 
-			val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-			val expectedContent: String = taxYearOverviewView(
-				testYear,
-				Some(calcOverview),
-				class2NicsChargesList,
-				testObligtionsModel,
-				homeBackLink,
-				isAgent = true,
-				codingOutEnabled = true
-			).toString
+      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearOverviewView(
+        testYear,
+        Some(calcOverview),
+        class2NicsChargesList,
+        testObligtionsModel,
+        homeBackLink,
+        isAgent = true,
+        codingOutEnabled = true
+      ).toString
 
-			val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = homeBackLink))
+      val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClientWithReferer(referer = homeBackLink))
 
-			status(result) shouldBe OK
-			contentAsString(result) shouldBe expectedContent
-		}
-	}
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe expectedContent
+    }
+  }
 }

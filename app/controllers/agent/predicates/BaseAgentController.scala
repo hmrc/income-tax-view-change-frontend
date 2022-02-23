@@ -33,7 +33,7 @@ trait BaseAgentController extends BaseFrontendController {
 
     override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates, requireClientSelected = true)
 
-		def asyncWithoutClientAuth(authPredicate: AuthPredicate[IncomeTaxAgentUser] = baseAgentPredicates): AuthenticatedAction[IncomeTaxAgentUser] =
+    def asyncWithoutClientAuth(authPredicate: AuthPredicate[IncomeTaxAgentUser] = baseAgentPredicates): AuthenticatedAction[IncomeTaxAgentUser] =
       asyncInternal(authPredicate, requireClientSelected = false)
   }
 }

@@ -50,18 +50,18 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     financialDetail(taxYear = taxYear, chargeType = "NIC4 Wales", dunningLock = Some("Stand over order"))
   )
 
-	def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
+  def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
-							chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel()) {
+              chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel()) {
     val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
-		val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+    val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
 
     when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
       .thenReturn(Future.successful(List((2018, financialDetails))))
 
-		when(incomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
-			.thenReturn(Future.successful(chargeHistory))
+    when(incomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+      .thenReturn(Future.successful(chargeHistory))
 
     mockBothIncomeSources()
 
@@ -73,7 +73,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       financialDetailsService,
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
-			incomeTaxViewChangeConnector,
+      incomeTaxViewChangeConnector,
       app.injector.instanceOf[views.html.ChargeSummary],
       app.injector.instanceOf[BtaNavBarPredicate]
     )(
@@ -106,9 +106,9 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "load the page" when {
 
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
-				enable(ChargeHistory)
-				enable(PaymentAllocation)
-				val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
+        enable(ChargeHistory)
+        enable(PaymentAllocation)
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -117,16 +117,16 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
 
-			"provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018, lpiWithDunningBlock = None)) {
-				enable(ChargeHistory)
+      "provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018, lpiWithDunningBlock = None)) {
+        enable(ChargeHistory)
         disable(PaymentAllocation)
-				val result = controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
+        val result = controller.showChargeSummary(2018, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
 
-				status(result) shouldBe Status.OK
-				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe paymentHistoryHeading
-			}
+      }
 
       "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
         financialDetailsModel(2018, lpiWithDunningBlock = None).copy(financialDetails = financialDetailsWithLocks(2018))) {
@@ -184,13 +184,13 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
     "load an error page" when {
 
-			"the charge history response is an error" in new Setup(financialDetailsModel(2018), chargeHistory = ChargesHistoryErrorModel(500, "Failure")) {
-				enable(ChargeHistory)
-				val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
+      "the charge history response is an error" in new Setup(financialDetailsModel(2018), chargeHistory = ChargesHistoryErrorModel(500, "Failure")) {
+        enable(ChargeHistory)
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
-				status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-			}
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+      }
 
       "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
         val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)

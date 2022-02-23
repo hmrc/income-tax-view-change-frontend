@@ -46,7 +46,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val backUrl: String = controllers.routes.PaymentHistoryController.viewPaymentHistory().url
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    btaNavPartial =  None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
+    btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail.copy(outstandingAmount = Some(0))),
@@ -54,7 +54,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
-    paymentAllocationView(viewModel, backUrl)){
+    paymentAllocationView(viewModel, backUrl)) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
@@ -80,7 +80,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
 
     "check that the second section information is present" when {
-      "has a main heading" in  new PaymentAllocationSetup(){
+      "has a main heading" in new PaymentAllocationSetup() {
         document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
 
 
@@ -95,7 +95,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a payment within the table" in new PaymentAllocationSetup() {
-        val allTableData =  document.selectHead("tbody").selectHead("tr")
+        val allTableData = document.selectHead("tbody").selectHead("tr")
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocation
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocated
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmount
@@ -103,7 +103,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a Credit on account row within payment details" in new PaymentAllocationSetup() {
-        val allTableData =  document.getElementById("credit-on-account").getElementsByTag("td")
+        val allTableData = document.getElementById("credit-on-account").getElementsByTag("td")
         allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
         allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
 
@@ -136,7 +136,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
 
     "check that the second section information is present" when {
-      "has a main heading" in  new PaymentAllocationSetup(paymentAllocationViewModelLpi){
+      "has a main heading" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
       }
 
@@ -149,7 +149,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        val allTableData =  document.selectHead("tbody").selectHead("tr")
+        val allTableData = document.selectHead("tbody").selectHead("tr")
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocationLpi
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocatedLpi
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmountLpi
@@ -308,7 +308,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
 
     "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
-      val allTableData: Elements =  document.getElementById("credit-on-account").getElementsByTag("td")
+      val allTableData: Elements = document.getElementById("credit-on-account").getElementsByTag("td")
       allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
       allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
 
@@ -321,7 +321,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "The payments allocation view has NO payment allocation amount" should {
       "throw a MissingFieldException" in {
-        val thrownException = intercept[MissingFieldException]{
+        val thrownException = intercept[MissingFieldException] {
           paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"

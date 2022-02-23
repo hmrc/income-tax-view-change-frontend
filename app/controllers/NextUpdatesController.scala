@@ -44,7 +44,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       val retrieveBtaNavBar: BtaNavBarPredicate,
                                       val appConfig: FrontendAppConfig)
                                      (implicit mcc: MessagesControllerComponents,
-                                          val executionContext: ExecutionContext)
+                                      val executionContext: ExecutionContext)
   extends BaseController with I18nSupport {
 
   val getNextUpdates: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -58,16 +58,16 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   }
 
   private def renderViewNextUpdates[A](implicit user: MtdItUser[A]): Future[Result] = {
-      auditNextUpdates(user)
-      for {
-        nextUpdates <- getObligations()
+    auditNextUpdates(user)
+    for {
+      nextUpdates <- getObligations()
     } yield {
-        if (nextUpdates.obligations.nonEmpty) {
-          Ok(nextUpdatesView(nextUpdates, backUrl = backUrl))
-				} else {
-					itvcErrorHandler.showInternalServerError
-        }
+      if (nextUpdates.obligations.nonEmpty) {
+        Ok(nextUpdatesView(nextUpdates, backUrl = backUrl))
+      } else {
+        itvcErrorHandler.showInternalServerError
       }
+    }
   }
 
   private def getObligations[A](previous: Boolean = false)

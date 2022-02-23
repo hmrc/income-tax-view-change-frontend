@@ -24,7 +24,9 @@ object TaxYearOverviewMessages {
   val noCalcDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
 
   def titleOld(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
+
   def headingOld(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
+
   def calculationDateOld(date: String): String = s"Calculation date: $date"
 
 }

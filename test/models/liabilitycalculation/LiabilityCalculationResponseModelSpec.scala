@@ -35,15 +35,16 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
           calculationTimestamp = "2019-02-15T09:35:15.094Z",
           crystallised = true)
       )
-      val expectedJson = s"""
-                            |{
-                            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
-                            |  "metadata" : {
-                            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-                            |    "crystallised" : true
-                            |  }
-                            |}
-                            |""".stripMargin.trim
+      val expectedJson =
+        s"""
+           |{
+           |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
+           |  "metadata" : {
+           |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+           |    "crystallised" : true
+           |  }
+           |}
+           |""".stripMargin.trim
 
 
       "be translated to Json correctly" in {

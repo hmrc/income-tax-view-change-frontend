@@ -40,7 +40,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
         lot = Some("lot"), lotItem = Some(lotItem), date = Some(date), transactionId = None)),
-      mainType = Some(mainType) , chargeType = Some(chargeType))
+      mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
     paymentsWithCharge("SA Balancing Charge", "ITSA NI", "2019-08-13", -10000.0, lotItem = "000001"),
@@ -51,7 +51,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
@@ -93,7 +93,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "ITSA- POA 1"),
-        paymentBreakdown = List(financialDetailModelPartial(chargeType = "ITSA England & NI", originalAmount =10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
+        paymentBreakdown = List(financialDetailModelPartial(chargeType = "ITSA England & NI", originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         None,
@@ -142,7 +142,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual(balancingPaymentTitle),
-          elementTextBySelector("main h2")("Important Payment breakdown")
+        elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
 
@@ -387,7 +387,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
             "amountCodedOut" -> 2500.00
           )),
         "financialDetails" -> Json.arr()))
-
 
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "CODINGOUT01")

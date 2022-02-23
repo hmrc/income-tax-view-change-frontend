@@ -29,8 +29,8 @@ object FeatureSwitch {
   val switches: Set[FeatureSwitch] = Set(
     ITSASubmissionIntegration,
     PaymentHistory,
-		IvUplift,
-		ChargeHistory,
+    IvUplift,
+    ChargeHistory,
     TxmEventsApproved,
     PaymentAllocation,
     TxmEventsR6,
@@ -56,18 +56,18 @@ case object ITSASubmissionIntegration extends FeatureSwitch {
 }
 
 case object PaymentHistory extends FeatureSwitch {
-	override val name = s"$prefix.enable-payment-history-page"
-	override val displayText = "Payment History"
+  override val name = s"$prefix.enable-payment-history-page"
+  override val displayText = "Payment History"
 }
 
 case object IvUplift extends FeatureSwitch {
-	override val name = s"$prefix.enable-iv-uplift"
-	override val displayText = "IV Uplift"
+  override val name = s"$prefix.enable-iv-uplift"
+  override val displayText = "IV Uplift"
 }
 
 case object ChargeHistory extends FeatureSwitch {
-	override val name: String = s"$prefix.enable-charge-history"
-	override val displayText: String = "Charge History"
+  override val name: String = s"$prefix.enable-charge-history"
+  override val displayText: String = "Charge History"
 }
 
 case object PaymentAllocation extends FeatureSwitch {

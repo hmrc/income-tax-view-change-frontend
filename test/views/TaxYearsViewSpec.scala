@@ -33,10 +33,10 @@ class TaxYearsViewSpec extends ViewSpec {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   class Setup(calcs: List[Int],
-                        itsaSubmissionFeatureSwitch: Boolean = false,
-                        utr: Option[String] = None, isAgent: Boolean = false)  {
+              itsaSubmissionFeatureSwitch: Boolean = false,
+              utr: Option[String] = None, isAgent: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
-      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, isAgent = isAgent)(FakeRequest(),implicitly)
+      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, isAgent = isAgent)(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

@@ -60,7 +60,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         nino = testNino,
         userName = Some(Name(Some("firstName"), Some("lastName"))),
         incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
-        btaNavPartial =  None,
+        btaNavPartial = None,
         saUtr = Some(testSaUtr),
         credId = Some(testCredId),
         userType = userType,

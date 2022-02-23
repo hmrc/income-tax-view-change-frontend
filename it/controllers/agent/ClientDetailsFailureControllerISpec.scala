@@ -51,15 +51,15 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
       }
     }
     s"return $OK with the enter client utr page" in {
-			stubAuthorisedAgentUser(authorised = true)
+      stubAuthorisedAgentUser(authorised = true)
 
-			val result: WSResponse = IncomeTaxViewChangeFrontend.getClientRelationshipFailure
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getClientRelationshipFailure
 
-			Then("The enter client's utr page is returned to the user")
-			result should have(
-				httpStatus(OK),
-				pageTitleAgent(titleThereIsAProblem)
-			)
+      Then("The enter client's utr page is returned to the user")
+      result should have(
+        httpStatus(OK),
+        pageTitleAgent(titleThereIsAProblem)
+      )
     }
   }
 }

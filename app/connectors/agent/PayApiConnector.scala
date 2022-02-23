@@ -59,7 +59,7 @@ class PayApiConnector @Inject()(val http: HttpClient,
           valid => valid
         )
       case response =>
-        if(response.status >= 500) {
+        if (response.status >= 500) {
           Logger("application").error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
         } else {
           Logger("application").warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")

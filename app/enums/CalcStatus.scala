@@ -28,6 +28,7 @@ object CalcStatus {
       json.validate[JsString] map {
         case JsString(name) => statusNames(name)
       }
+
     override def writes(s: CalcStatus): JsValue = JsString(s.name)
 
     val statuses = Seq(Estimate, Crystallised)
@@ -41,6 +42,7 @@ object CalcStatus {
 case object Estimate extends CalcStatus {
   val name = "Estimate"
 }
+
 case object Crystallised extends CalcStatus {
   val name = "Crystallised"
 }

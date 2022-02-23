@@ -32,7 +32,7 @@ class PaymentSpec extends WordSpecLike with Matchers {
     "lot" -> "lot",
     "lotItem" -> "lotItem",
     "date" -> "date",
-    "transactionId"-> "DOCID01"
+    "transactionId" -> "DOCID01"
   )
 
   val paymentMinimal: Payment = Payment(None, None, None, None, None, None, None)

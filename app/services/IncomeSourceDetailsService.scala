@@ -33,6 +33,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
                                            val cache: AsyncCacheApi) {
   implicit val ec = ExecutionContext.global
   val cacheExpiry: Duration = Duration(1, "day")
+
   def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
     cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
       incomeSources match {
@@ -48,7 +49,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
   }
 
   def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
-                                                    mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
+                                                              mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
     if (cacheKey.isDefined) {
       getCachedIncomeSources(cacheKey.get).flatMap {
         case Some(sources: IncomeSourceDetailsModel) =>

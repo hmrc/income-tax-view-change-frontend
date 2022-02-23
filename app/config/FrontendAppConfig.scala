@@ -44,7 +44,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
 
 
-
   //SA-API Config
   lazy val saApiService: String = servicesConfig.baseUrl("self-assessment-api")
 
@@ -67,11 +66,13 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val homePageUrl: String = servicesConfig.getString("base.fullUrl")
 
   //Exit Survey
-  lazy val exitSurveyBaseUrl:String = servicesConfig.getString("feedback-frontend.host") + servicesConfig.getString("feedback-frontend.url")
+  lazy val exitSurveyBaseUrl: String = servicesConfig.getString("feedback-frontend.host") + servicesConfig.getString("feedback-frontend.url")
+
   def exitSurveyUrl(identifier: String): String = s"$exitSurveyBaseUrl/$identifier"
 
   //Sign out
   lazy val ggUrl: String = servicesConfig.getString(s"government-gateway.url")
+
   def ggSignOutUrl(identifier: String): String = s"$ggUrl/bas-gateway/sign-out-without-state?continue=${exitSurveyUrl(identifier)}"
 
   //MTD Income Tax Enrolment
@@ -150,8 +151,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
     "cymraeg" -> Lang("cy")
   )
 
-	//Auth variables
-	lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
+  //Auth variables
+  lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
 
   def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.ItvcLanguageController.switchToLanguage(lang)
 

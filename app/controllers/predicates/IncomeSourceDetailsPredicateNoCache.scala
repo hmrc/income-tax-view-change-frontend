@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceDetailsPredicateNoCache @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val itvcErrorHandler: ItvcErrorHandler)
-                                            (implicit val executionContext: ExecutionContext,
-                                             mcc: MessagesControllerComponents) extends BaseController with
+                                                    val itvcErrorHandler: ItvcErrorHandler)
+                                                   (implicit val executionContext: ExecutionContext,
+                                                    mcc: MessagesControllerComponents) extends BaseController with
   ActionRefiner[MtdItUserWithNino, MtdItUser] {
 
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUser[A]]] = {

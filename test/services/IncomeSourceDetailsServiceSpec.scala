@@ -28,6 +28,7 @@ import play.api.cache.AsyncCacheApi
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
   with MockAuditingService with MockAsyncCacheApi {
   val cache = app.injector.instanceOf[AsyncCacheApi]
+
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector, cache)
 
   override def beforeEach() {

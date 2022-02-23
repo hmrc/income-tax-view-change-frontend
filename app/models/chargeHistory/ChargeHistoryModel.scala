@@ -23,22 +23,22 @@ import java.time.LocalDate
 
 
 case class ChargeHistoryModel(taxYear: String,
-															 documentId: String,
-                               documentDate: String,
-                               documentDescription: String,
-                               totalAmount: BigDecimal,
-                               reversalDate: LocalDate,
-                               reversalReason: String) {
+                              documentId: String,
+                              documentDate: String,
+                              documentDescription: String,
+                              totalAmount: BigDecimal,
+                              reversalDate: LocalDate,
+                              reversalReason: String) {
 
-	val reasonCode: String = reversalReason match {
-		case "amended return" => "amend"
-		case "Customer Request" => "request"
-		case error =>
-			Logger("application").error(s"[ChargeHistoryModel][reasonCode] Missing or non-matching history reason: $error found")
-			"unrecognisedReason"
-	}
+  val reasonCode: String = reversalReason match {
+    case "amended return" => "amend"
+    case "Customer Request" => "request"
+    case error =>
+      Logger("application").error(s"[ChargeHistoryModel][reasonCode] Missing or non-matching history reason: $error found")
+      "unrecognisedReason"
+  }
 }
 
-  object ChargeHistoryModel {
-    implicit val format: Format[ChargeHistoryModel] = Json.format[ChargeHistoryModel]
+object ChargeHistoryModel {
+  implicit val format: Format[ChargeHistoryModel] = Json.format[ChargeHistoryModel]
 }

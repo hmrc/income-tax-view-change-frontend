@@ -38,9 +38,9 @@ class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: C
 
   def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
-			Future.successful(Ok(clientRelationshipFailure(
-				postAction = routes.EnterClientsUTRController.show()
-			)))
+      Future.successful(Ok(clientRelationshipFailure(
+        postAction = routes.EnterClientsUTRController.show()
+      )))
   }
 
 }

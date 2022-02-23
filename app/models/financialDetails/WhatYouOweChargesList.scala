@@ -67,7 +67,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
       val bcdDueDate: LocalDate = LocalDate.parse(outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get)
       if (bcdDueDate.isBefore(sortedListOfCharges.get.dueDate.get)) {
         Some((bcdDueDate.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
-      } else if(sortedListOfCharges.isDefined) {
+      } else if (sortedListOfCharges.isDefined) {
         Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.documentDetail.remainingToPay))
       } else {
         None
@@ -75,7 +75,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
     } else {
       if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined) {
         Some((LocalDate.parse(outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
-      } else if(sortedListOfCharges.isDefined){
+      } else if (sortedListOfCharges.isDefined) {
         Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.documentDetail.remainingToPay))
       } else {
         None

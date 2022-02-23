@@ -53,6 +53,7 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
       app.injector.instanceOf[ExecutionContext],
       mockItvcErrorHandler)
   }
+
   val isAgent: Boolean = true
   val date: LocalDate = LocalDate.now
 

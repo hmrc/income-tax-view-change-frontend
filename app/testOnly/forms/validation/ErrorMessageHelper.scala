@@ -63,10 +63,10 @@ object ErrorMessageHelper {
     }
 
   /**
-    *
-    * @param form
-    * @return (String,SummaryError) where the String is the anchor and SummaryError describes the error message
-    */
+   *
+   * @param form
+   * @return (String,SummaryError) where the String is the anchor and SummaryError describes the error message
+   */
   def getSummaryErrors(form: Form[_]): Seq[(String, SummaryError)] = {
     val err = form.errors
     err.map(e => {

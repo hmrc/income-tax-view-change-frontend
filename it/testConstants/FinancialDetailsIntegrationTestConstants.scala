@@ -65,13 +65,13 @@ object FinancialDetailsIntegrationTestConstants {
           amount = Some(100),
           clearingDate = Some("clearingDate"),
           clearingReason = Some("clearingReason"),
-            outgoingPaymentMethod= Some("outgoingPaymentMethod"),
-            paymentReference = Some("paymentReference"),
-            paymentAmount =  Some(100),
-            paymentMethod = Some("paymentMethod"),
-            paymentLot = Some("paymentLot"),
-            paymentLotItem = Some("paymentLotItem"),
-            paymentId = Some("paymentId")
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentId")
         )
       ))
   )
@@ -97,13 +97,13 @@ object FinancialDetailsIntegrationTestConstants {
     )
 
   def financialDetailModelPartial(taxYear: Int = 2018,
-                      mainType: String = "SA Payment on Account 1",
-                      chargeType: String = "NIC4 Wales",
-                      originalAmount: BigDecimal = 100,
-                      dunningLock: Option[String] = None,
-                      interestLock: Option[String] = None,
-                      accruedInterest: Option[BigDecimal] = None,
-                      additionalSubItems: Seq[SubItem] = Seq()): FinancialDetail = FinancialDetail.apply(
+                                  mainType: String = "SA Payment on Account 1",
+                                  chargeType: String = "NIC4 Wales",
+                                  originalAmount: BigDecimal = 100,
+                                  dunningLock: Option[String] = None,
+                                  interestLock: Option[String] = None,
+                                  accruedInterest: Option[BigDecimal] = None,
+                                  additionalSubItems: Seq[SubItem] = Seq()): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
     transactionId = Some(id1040000123),
@@ -157,17 +157,16 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot")),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId2"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)),interestLock = Some(interestLock(1))))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)), interestLock = Some(interestLock(1))))))
       )
     )
-
 
 
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
@@ -196,14 +195,14 @@ object FinancialDetailsIntegrationTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       documentDetails = List(
-        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId1"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot")),
-        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100),Some(100), Some("latePaymentInterestId2"),
-          Some(LocalDate.of(2018, 3, 29)),Some(LocalDate.of(2018, 3, 29)),Some(100),Some(100),Some("paymentLotItem"), Some("paymentLot"))
+        DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot")),
+        DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId2"),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1),transactionIds(1), Some("transactionDate"),Some("type"),Some(100),Some(100),Some(100),Some(100),Some("NIC4 Wales"),Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
@@ -240,7 +239,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
+    paymentAmount = Some(100),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),
@@ -253,7 +252,7 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate= Some("transactionDate"),
+    transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
@@ -268,7 +267,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
+    paymentAmount = Some(100),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),
@@ -281,7 +280,7 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate= Some("transactionDate"),
+    transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
@@ -296,7 +295,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
+    paymentAmount = Some(100),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),
@@ -309,7 +308,7 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate= Some("transactionDate"),
+    transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
@@ -322,7 +321,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
+    paymentAmount = Some(100),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),
@@ -335,7 +334,7 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate= Some("transactionDate"),
+    transactionDate = Some("transactionDate"),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
@@ -348,7 +347,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
+    paymentAmount = Some(100),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),
@@ -376,7 +375,7 @@ object FinancialDetailsIntegrationTestConstants {
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
-    paymentAmount =  Some(100),
+    paymentAmount = Some(100),
     paymentMethod = Some("paymentMethod"),
     paymentLot = Some("paymentLot"),
     paymentLotItem = Some("paymentLotItem"),

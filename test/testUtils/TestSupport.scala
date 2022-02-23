@@ -47,6 +47,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
 
   import play.twirl.api.Html
   import org.scalactic.Equality
+
   implicit val htmlEq =
     new Equality[Html] {
       def areEqual(a: Html, b: Any): Boolean = {
@@ -63,6 +64,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(languageUtils)
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+
   def messagesApi: MessagesApi = inject[MessagesApi]
 
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock[ItvcHeaderCarrierForPartialsConverter]
@@ -79,7 +81,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = businessAndPropertyAligned,
-    btaNavPartial =  None,
+    btaNavPartial = None,
     saUtr = Some(testSaUtr),
     credId = Some(testCredId),
     userType = Some(testUserTypeIndividual),
@@ -155,7 +157,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     nino = clientNino,
     userName = Some(Name(Some("Test"), Some("User"))),
     incomeSources = businessesAndPropertyIncome,
-    btaNavPartial =  None,
+    btaNavPartial = None,
     saUtr = Some("1234567890"),
     credId = Some(testCredId),
     userType = Some(testUserTypeAgent),

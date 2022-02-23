@@ -52,7 +52,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(testMtditid, None, Nil, None),
-    btaNavPartial =  None,
+    btaNavPartial = None,
     Some(testSaUtr),
     Some(testCredId),
     Some("agent"),
@@ -77,7 +77,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
               dunningLockExists: Boolean = false,
               currentTaxYear: Int = currentTaxYear,
               isAgent: Boolean = true
-              ) {
+             ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
@@ -211,7 +211,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
-          link.map(_.attr("href")) should not be  Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+          link.map(_.attr("href")) should not be Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
           link.map(_.text) should not be Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
         }
         "has a link to the tax years page" in new Setup {
@@ -271,7 +271,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     "the home view with an empty next payment due date and one overDuePaymentsCount" should {
       "throw a MissingFieldException" in {
-        val expectedException: MissingFieldException = intercept[MissingFieldException]{
+        val expectedException: MissingFieldException = intercept[MissingFieldException] {
           new Setup(ITSASubmissionIntegrationEnabled = true, nextPaymentDueDate = None, overDuePaymentsCount = Some(1))
         }
 

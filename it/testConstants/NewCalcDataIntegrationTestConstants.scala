@@ -30,7 +30,7 @@ object NewCalcDataIntegrationTestConstants {
   }
 
   val liabilityCalculationMinimal = getLiabilityCalcResponse(
-  """
+    """
       |{
       |  "inputs": {
       |    "personalInformation": {

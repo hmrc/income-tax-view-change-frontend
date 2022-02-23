@@ -58,7 +58,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     verify(0, postRequest)
   }
 
-  def verifyPostContainingJson(uri:String, bodyPart: Option[JsValue]): Unit = {
+  def verifyPostContainingJson(uri: String, bodyPart: Option[JsValue]): Unit = {
     val uriMapping = postRequestedFor(urlEqualTo(uri))
     val postRequest = bodyPart match {
       case Some(js) =>
@@ -69,7 +69,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     verify(postRequest)
   }
 
-  def verifyPostDoesNotContainJson(uri:String, bodyPart: Option[JsValue]): Unit = {
+  def verifyPostDoesNotContainJson(uri: String, bodyPart: Option[JsValue]): Unit = {
     val uriMapping = postRequestedFor(urlEqualTo(uri))
     val postRequest = bodyPart match {
       case Some(js) =>

@@ -40,7 +40,7 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
   override def languageMap: Map[String, Lang] = Map("en" -> english, "cy" -> welsh)
 
   private def switchLang(fragment: Option[String], lang: String)(implicit request: Request[AnyContent]): Future[Result] = {
-    val frag = if(fragment.isDefined) s"#${fragment.get}" else ""
+    val frag = if (fragment.isDefined) s"#${fragment.get}" else ""
     if (request.headers.get("Referer").isDefined) {
       val currentReferer = request.headers.get("Referer").get
       switchToLanguage(lang)(request.withHeaders(Headers("Referer" -> s"$currentReferer$frag")))

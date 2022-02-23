@@ -34,7 +34,7 @@ import testConstants.messages.HomeMessages._
 class HomeControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,  None,
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None,
     Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 

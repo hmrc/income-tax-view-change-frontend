@@ -54,7 +54,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
   ".viewTaxYears" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {
       "and firstAccountingPeriodEndDate is missing from income sources" should {
-				"return an Internal Server Error (500)" in {
+        "return an Internal Server Error (500)" in {
 
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
