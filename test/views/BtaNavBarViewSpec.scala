@@ -22,7 +22,7 @@ import testConstants.BaseTestConstants.testListLink
 import testUtils.TestSupport
 import views.html.bta.BtaNavBar
 
-class BtaNavBarViewSpec extends TestSupport{
+class BtaNavBarViewSpec extends TestSupport {
 
   val btaNavBarView = app.injector.instanceOf[BtaNavBar]
   lazy val page: HtmlFormat.Appendable = btaNavBarView(testListLink)(implicitly)
@@ -59,7 +59,7 @@ class BtaNavBarViewSpec extends TestSupport{
       link.attr("href") shouldBe "testUrl"
     }
 
-    "badge should show the right number" in{
+    "badge should show the right number" in {
       document.getElementsByClass("hmrc-notification-badge").text shouldBe "1"
     }
 

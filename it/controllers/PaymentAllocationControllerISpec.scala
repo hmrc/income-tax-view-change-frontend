@@ -37,7 +37,6 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
   )(FakeRequest())
 
 
-
   s"GET ${controllers.routes.PaymentAllocationsController.viewPaymentAllocation(docNumber).url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {

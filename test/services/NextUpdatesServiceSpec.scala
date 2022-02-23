@@ -192,7 +192,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         }
       }
 
-          "valid current obligations are returned but there are no previous obligations" should {
+      "valid current obligations are returned but there are no previous obligations" should {
         "return the current obligations" in {
           setupMockPreviousObligationsWithDates(
             from = LocalDate.now.minusDays(1),
@@ -213,7 +213,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         }
       }
 
-          "valid obligations are returned but current obligations are not in the correct time period" in {
+      "valid obligations are returned but current obligations are not in the correct time period" in {
         setupMockPreviousObligationsWithDates(
           from = LocalDate.now.minusDays(1),
           to = LocalDate.now.plusDays(1)
@@ -234,7 +234,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         ))
       }
 
-          "return an error" when {
+      "return an error" when {
         "an error is returned from current obligations" in {
           setupMockPreviousObligationsWithDates(
             from = LocalDate.now.minusDays(1),

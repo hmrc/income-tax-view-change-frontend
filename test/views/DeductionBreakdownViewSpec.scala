@@ -33,7 +33,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
   "The deduction breakdown view" when {
 
-    "provided with a btaNavPartial" should{
+    "provided with a btaNavPartial" should {
       val taxYear = 2017
       lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = testNavHtml)
 
@@ -68,7 +68,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have an deduction table" which {
 
         "has only two table row" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize (1, 2)
+          layoutContent hasTableWithCorrectSize(1, 2)
         }
 
         "has a table header and amount section" in new Setup(view) {
@@ -140,7 +140,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         )
 
         "has all eleven table rows, including a header row" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize (1, 11)
+          layoutContent hasTableWithCorrectSize(1, 11)
         }
 
         "has a table header and amount section" in new Setup(view) {
@@ -195,14 +195,14 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         }
 
         "all fields except personalAllowanceBeforeTransferOut" in
-          new DeductionBreakdownSetupVariedAllowances(reducedPersonalAllowance = Some(600.00)){
+          new DeductionBreakdownSetupVariedAllowances(reducedPersonalAllowance = Some(600.00)) {
             val row: Element = layoutContent.select("tr").get(1)
             row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
             row.select("td").last().text() shouldBe "£600.00"
 
           }
 
-        "only personal Allowance is present" in new DeductionBreakdownSetupVariedAllowances(){
+        "only personal Allowance is present" in new DeductionBreakdownSetupVariedAllowances() {
           val row: Element = layoutContent.select("tr").get(1)
           row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
           row.select("td").last().text() shouldBe "£11,500.00"

@@ -33,21 +33,21 @@ class ClientDetailsServiceSpec extends TestSupport
     mockIncomeTaxViewChangeConnector
   )
 
-	def createDelegatedEnrolment(id: String): Enrolment = {
-		Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", id)), "Activated", Some("mtd-it-auth"))
-	}
+  def createDelegatedEnrolment(id: String): Enrolment = {
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", id)), "Activated", Some("mtd-it-auth"))
+  }
 
   ".checkClientDetails" should {
     "return client details" when {
       "a successful citizen details response contains a nino" when {
         "income source details are returned with an mtdbsa identifer" in {
 
-					setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
-					setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", None, List(), None)))
+          setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
+          setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", None, List(), None)))
 
-					val result = TestClientDetailsService.checkClientDetails("testSaUtr").futureValue
+          val result = TestClientDetailsService.checkClientDetails("testSaUtr").futureValue
 
-					result shouldBe Right(ClientDetailsService.ClientDetails(Some("James"), Some("Bond"), "TESTNINO123", "mtdbsaId"))
+          result shouldBe Right(ClientDetailsService.ClientDetails(Some("James"), Some("Bond"), "TESTNINO123", "mtdbsaId"))
         }
       }
     }

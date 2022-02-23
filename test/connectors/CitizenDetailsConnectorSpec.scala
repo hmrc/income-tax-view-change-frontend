@@ -32,7 +32,7 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(status = Status.OK, json = testValidCitizenDetailsModelJson, headers = Map.empty)
   val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidCitizenDetailsJson, headers = Map.empty)
-  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body ="Error Message")
+  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
 
   object TestCitizenDetailsConnector extends CitizenDetailsConnector(mockHttpGet, appConfig)
@@ -40,6 +40,7 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
   "CitizenDetailsConnector.getCitizenDetailsBySaUtrUrl" should {
 
     lazy val testUrl = TestCitizenDetailsConnector.getCitizenDetailsBySaUtrUrl(testSaUtr)
+
     def result: Future[CitizenDetailsResponseModel] = TestCitizenDetailsConnector.getCitizenDetailsBySaUtr(testSaUtr)
 
     "return a CitizenDetailsModel with JSON in case of success" in {

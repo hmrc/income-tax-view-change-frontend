@@ -39,7 +39,7 @@ import views.html.{NextUpdates, NoNextUpdates}
 import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
-                                            with MockNextUpdatesService {
+  with MockNextUpdatesService {
 
   object TestNextUpdatesController extends NextUpdatesController(
     app.injector.instanceOf[NoNextUpdates],

@@ -22,7 +22,7 @@ import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import testUtils.UnitSpec
 
-class CitizenDetailsResponseModelSpec  extends UnitSpec with Matchers {
+class CitizenDetailsResponseModelSpec extends UnitSpec with Matchers {
 
   "The CitizenDetailsModel" should {
 

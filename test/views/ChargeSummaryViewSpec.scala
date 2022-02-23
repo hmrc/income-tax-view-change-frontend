@@ -124,13 +124,16 @@ class ChargeSummaryViewSpec extends ViewSpec {
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
     def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
+
     val class2NicChargeCreated = "Class 2 National Insurance created"
     val cancelledSaPayeCreated = "Cancelled Self Assessment payment (through your PAYE tax code) created"
 
     def payeTaxCodeText(year: Int) = s"Check if your PAYE tax code has changed for the ${year - 1} to $year tax year."
+
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
     val cancelledPayeTaxCodeInsetText = "You have previously agreed to pay some of your Self Assessment bill through your PAYE tax code (opens in new tab). HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay."
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+
     def remainingTaxYouOwe(year: Int) = s"This is the remaining tax you owe for the ${year - 1} to $year tax year."
 
     val balancingChargeRequest = "Balancing payment reduced by taxpayer request"
@@ -195,7 +198,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None,None, Some("lotItem"), Some("lot"))),
+    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
   )
 
@@ -696,7 +699,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   "The charge summary view when missing mandatory expected fields" should {
     "throw a MissingFieldException" in {
-      val thrownException = intercept[MissingFieldException]{
+      val thrownException = intercept[MissingFieldException] {
         chargeSummary(DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
           paymentBreakdown, List(), List(), payments, true, false, false, false, false)
       }

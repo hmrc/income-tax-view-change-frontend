@@ -22,7 +22,7 @@ import mocks.services._
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
-trait MockIncomeSourceDetailsPredicateNoCache extends TestSupport with MockIncomeSourceDetailsService{
+trait MockIncomeSourceDetailsPredicateNoCache extends TestSupport with MockIncomeSourceDetailsService {
 
   object MockIncomeSourceDetailsPredicateNoCache extends IncomeSourceDetailsPredicateNoCache(
     mockIncomeSourceDetailsService, app.injector.instanceOf[ItvcErrorHandler])(

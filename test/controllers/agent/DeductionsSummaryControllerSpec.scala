@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockFrontendAuthorisedFunctions with MockIncomeSourceDetailsService
-  with FeatureSwitching with MockItvcErrorHandler with MockAuditingService{
+  with FeatureSwitching with MockItvcErrorHandler with MockAuditingService {
 
   class Setup {
 

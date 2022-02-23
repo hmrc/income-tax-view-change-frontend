@@ -48,13 +48,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true,
               displayTotals: Boolean = true
-              ) {
+             ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
       nino = testNino,
       userName = Some(testRetrievedUserName),
       incomeSources = IncomeSourceDetailsModel("testMtdItId", Some(migrationYear.toString), List(), None),
-      btaNavPartial =  None,
+      btaNavPartial = None,
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
       userType = Some(testUserTypeIndividual),
@@ -62,7 +62,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, displayTotals)(FakeRequest(),individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, displayTotals)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -96,7 +96,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     latePaymentInterestAmount = latePaymentInterest
   )
 
-  def financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest: Option[BigDecimal],lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
+  def financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
@@ -104,10 +104,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     taxYear = LocalDate.now().getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
     latePaymentInterestAmount = latePaymentInterest,
-      lpiWithDunningBlock = lpiWithDunningBlock
+    lpiWithDunningBlock = lpiWithDunningBlock
   )
 
-  def financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest: Option[BigDecimal],lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
+  def financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
@@ -134,14 +134,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def whatYouOweDataWithOverdueLPIDunningBlock(latePaymentInterest: Option[BigDecimal],
                                                lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest,lpiWithDunningBlock).getAllDocumentDetailsWithDueDates,
+    overduePaymentList = financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest, lpiWithDunningBlock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataWithOverdueLPIDunningBlockZero(latePaymentInterest: Option[BigDecimal],
-                                               lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+                                                   lpiWithDunningBlock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest,lpiWithDunningBlock).getAllDocumentDetailsWithDueDates,
+    overduePaymentList = financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest, lpiWithDunningBlock).getAllDocumentDetailsWithDueDates,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
@@ -160,6 +160,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     futurePayments = List(),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
+
   val codingOutAmount = 444.23
   val codingOutHeader = "Collected through PAYE tax code"
   val codingOutNotice = "You have £444.23 of tax for the 2020 to 2021 tax year being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically."
@@ -465,68 +466,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
         new Setup(whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
-        pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
-
-        val overdueTableHeader: Element = pageDocument.select("tr").get(3)
-        overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
-        overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
-          overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
-          overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
-
-        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
-          whatYouOwe.latePoa1Text + s" $currentYear"
-          overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-          overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
-
-        pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000124",latePaymentCharge = true).url
-        pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
-          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
-            LocalDate.now().getYear).url
-      }
-
-      "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new Setup(whatYouOweDataWithOverdueLPI(List(Some(34.56), None)))  {
-
-        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-      }
-
-      "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-        new Setup(whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56),Some(1000))) {
-          pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
-
-          val overdueTableHeader: Element = pageDocument.select("tr").get(3)
-          overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
-          overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
-          overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
-          overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
-
-          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
-          overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
-            whatYouOwe.latePoa1Text + s" $currentYear" + " " + paymentUnderReview
-          overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-          overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
-
-          pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
-            LocalDate.now().getYear, "1040000124",latePaymentCharge = true).url
-          pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
-          pageDocument.getElementById("LpiDunningBlock").text shouldBe "Payment under review"
-          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
-            LocalDate.now().getYear).url
-
-          pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-        }
-
-      "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
-        new Setup(whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56),Some(0))) {
           pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(3)
@@ -542,7 +481,69 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
           pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
-            LocalDate.now().getYear, "1040000124",latePaymentCharge = true).url
+            LocalDate.now().getYear, "1040000124", latePaymentCharge = true).url
+          pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
+            LocalDate.now().getYear).url
+        }
+
+      "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new Setup(whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
+
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
+
+      "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
+        new Setup(whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56), Some(1000))) {
+          pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
+
+          val overdueTableHeader: Element = pageDocument.select("tr").get(3)
+          overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+          overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+          overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
+          overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
+          overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
+            whatYouOwe.latePoa1Text + s" $currentYear" + " " + paymentUnderReview
+          overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
+
+          pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+            LocalDate.now().getYear, "1040000124", latePaymentCharge = true).url
+          pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
+          pageDocument.getElementById("LpiDunningBlock").text shouldBe "Payment under review"
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
+            LocalDate.now().getYear).url
+
+          pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+          paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+          paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        }
+
+      "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
+        new Setup(whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56), Some(0))) {
+          pageDocument.getElementById("payments-due").text shouldBe whatYouOwe.paymentsDue
+
+          val overdueTableHeader: Element = pageDocument.select("tr").get(3)
+          overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+          overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+          overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
+          overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
+          overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
+            whatYouOwe.latePoa1Text + s" $currentYear"
+          overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+          overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
+
+          pageDocument.getElementById("over-due-type-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+            LocalDate.now().getYear, "1040000124", latePaymentCharge = true).url
           pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
             LocalDate.now().getYear).url
@@ -594,9 +595,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
-/*
-        overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
-*/
+        /*
+                overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
+        */
         overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
           whatYouOwe.poa1Text + s" $currentYear"
         overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
@@ -627,6 +628,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "have accruing interest displayed below each overdue POA" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
         def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"overdue-charge-interest-$index")
+
         overduePaymentsInterestTableRow("0").select("td").get(1).text() shouldBe whatYouOwe.interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
         overduePaymentsInterestTableRow("0").select("td").last().text() shouldBe "£42.50"
 
@@ -644,6 +646,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "only show interest for POA when there is no late Payment Interest" in new Setup(whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
         def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"overdue-charge-interest-$index")
+
         overduePaymentsInterestTableRow("0") shouldBe null
 
         overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe whatYouOwe.interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
@@ -711,7 +714,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
-      s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueMixedData2(List(None,None,None))) {
+      s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
         val overdueTableHeader: Element = pageDocument.select("tr").first()
         overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
@@ -750,186 +753,186 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
     }
-      s"have payment data with button" in new Setup(whatYouOweDataWithMixedData1) {
+    s"have payment data with button" in new Setup(whatYouOweDataWithMixedData1) {
 
-        pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
+      pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(5000).url
+      pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(5000).url
 
-        pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
-      }
+      pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
+    }
+  }
+
+  "the user has charges and access viewer with mixed dates and ACI value of zero" should {
+
+    s"have the mtd payments header, bullets and table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
+      whatYouOweDataWithWithAciValueZeroAndOverdue) {
+      pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
+        (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
+      val remainingBalanceHeader: Element = pageDocument.select("tr").first()
+      remainingBalanceHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+      remainingBalanceHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+      remainingBalanceHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+      val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
+      remainingBalanceTable.select("td").first().text() shouldBe LocalDate.now().minusDays(15).toLongDateShort
+      remainingBalanceTable.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.remainingBalance
+      remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
+
+      pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe whatYouOwe.overdueTag
+    }
+    s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None))) {
+      val overdueTableHeader: Element = pageDocument.select("tr").get(2)
+      overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+      overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+      overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
+      overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+      val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
+      overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
+      overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.poa2Text + s" $currentYear"
+      overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+      overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
+
+      val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(4)
+      dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
+      dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + s" $currentYear"
+      dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+      dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
+
+      pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        LocalDate.now().getYear, "1040000125").url
+      pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
+      pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
+        LocalDate.now().getYear).url
+
+      pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        LocalDate.now().getYear, "1040000123").url
+      pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
+      pageDocument.getElementById("taxYearSummary-30days-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
+        LocalDate.now().getYear).url
+
+      pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+      paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+      paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
     }
 
-    "the user has charges and access viewer with mixed dates and ACI value of zero" should {
+    s"have payment data with button" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
 
-      s"have the mtd payments header, bullets and table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
-        whatYouOweDataWithWithAciValueZeroAndOverdue) {
-        pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
-          (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
-        val remainingBalanceHeader: Element = pageDocument.select("tr").first()
-        remainingBalanceHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
-        remainingBalanceHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
-        remainingBalanceHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+      pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
 
-        val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
-        remainingBalanceTable.select("td").first().text() shouldBe LocalDate.now().minusDays(15).toLongDateShort
-        remainingBalanceTable.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.remainingBalance
-        remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
-
-        pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe whatYouOwe.overdueTag
-      }
-      s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataTestActiveWithMixedData2(List(None,None,None,None))) {
-        val overdueTableHeader: Element = pageDocument.select("tr").get(2)
-        overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
-        overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
-        overdueTableHeader.select("th").get(2).text() shouldBe whatYouOwe.taxYearSummary
-        overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
-        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-        overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.poa2Text + s" $currentYear"
-        overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-        overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
-
-        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(4)
-        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
-        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + s" $currentYear"
-        dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
-        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
-
-        pageDocument.getElementById("over-due-type-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000125").url
-        pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
-        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
-          LocalDate.now().getYear).url
-
-        pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000123").url
-        pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
-        pageDocument.getElementById("taxYearSummary-30days-link-0").attr("href") shouldBe controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(
-          LocalDate.now().getYear).url
-
-        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-      }
-
-      s"have payment data with button" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
-
-        pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
-
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
-
-      }
+      pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
     }
 
-    "the user has no charges" should {
+  }
 
-      s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
-        pageDocument.title() shouldBe whatYouOwe.title
-        pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
-        pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+  "the user has no charges" should {
 
-      }
+    s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
+      pageDocument.title() shouldBe whatYouOwe.title
+      pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
+      pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
+      pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
+      pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
 
-      "have the link to their previous Self Assessment online account in the sa-note" in new Setup(noChargesModel) {
-        verifySelfAssessmentLink()
-      }
-
-      "not have button Pay now" in new Setup(noChargesModel) {
-        Option(pageDocument.getElementById("payment-button")) shouldBe None
-      }
-      "should have payment processing bullets" in new Setup(noChargesModel) {
-
-        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-      }
     }
 
-    "codingOut is enabled" should {
-      "have coding out message displayed at the bottom of the page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-summary-link") should not be null
-        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-            "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
-        pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
-      }
-      "have a class 2 Nics overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
-        pageDocument.getElementById("over-due-type-0") should not be null
-        pageDocument.getElementById("over-due-type-0").text().contains("Class 2 National Insurance") shouldBe true
-        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-      }
-
-      "should have payment processing bullets when there is coding out" in new Setup(whatYouOweDataWithCodingOut) {
-
-        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-      }
-
-      "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-notice") shouldBe null
-        pageDocument.getElementById("over-due-type-0") should not be null
-        pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
-        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-        pageDocument.getElementById("coding-out-summary-link") shouldBe null
-      }
+    "have the link to their previous Self Assessment online account in the sa-note" in new Setup(noChargesModel) {
+      verifySelfAssessmentLink()
     }
 
-    "codingOut is disabled" should {
-      "have no coding out message displayed" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
-        pageDocument.getElementById("coding-out-notice") shouldBe null
-      }
-      "have a balancing charge overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
-        pageDocument.getElementById("over-due-type-0") should not be null
-        pageDocument.select("#over-due-type-0 a").get(0).text() shouldBe "Balancing payment 2021"
-        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+    "not have button Pay now" in new Setup(noChargesModel) {
+      Option(pageDocument.getElementById("payment-button")) shouldBe None
+    }
+    "should have payment processing bullets" in new Setup(noChargesModel) {
 
-      }
-      "should have payment processing bullets" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+      pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+      paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+      paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+    }
+  }
 
-        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-      }
+  "codingOut is enabled" should {
+    "have coding out message displayed at the bottom of the page" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+      pageDocument.getElementById("coding-out-summary-link") should not be null
+      pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
+        "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
+      pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
+    }
+    "have a class 2 Nics overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+      pageDocument.getElementById("over-due-type-0") should not be null
+      pageDocument.getElementById("over-due-type-0").text().contains("Class 2 National Insurance") shouldBe true
+      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
 
-    "When codingOut is enabled - At crystallization, the user has the coding out requested amount fully collected" should {
-      "only show coding out content under header" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
-        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-          "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
-        pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
-      }
-      "show no payments due content when coding out is disabled" in new Setup(noChargesModel, codingOutEnabled = false) {
-        pageDocument.title() shouldBe whatYouOwe.title
-        pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
-        pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+    "should have payment processing bullets when there is coding out" in new Setup(whatYouOweDataWithCodingOut) {
 
-      }
+      pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+      paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+      paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
     }
 
-
-    "The payments history view with an empty payment response model" should {
-      "throw a MissingFieldException" in {
-        val thrownException = intercept[MissingFieldException]{
-          whatYouOweView(whatYouOweDataCodingOutWithoutAmountCodingOut, false, LocalDate.now().getYear, "testBackURL",
-            Some("1234567890"), None,true, true, true)
-        }
-        thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Amount Coded Out"
-      }
+    "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+      pageDocument.getElementById("coding-out-notice") shouldBe null
+      pageDocument.getElementById("over-due-type-0") should not be null
+      pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
+      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+      pageDocument.getElementById("coding-out-summary-link") shouldBe null
     }
+  }
+
+  "codingOut is disabled" should {
+    "have no coding out message displayed" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+      pageDocument.getElementById("coding-out-notice") shouldBe null
+    }
+    "have a balancing charge overdue entry" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+      pageDocument.getElementById("over-due-type-0") should not be null
+      pageDocument.select("#over-due-type-0 a").get(0).text() shouldBe "Balancing payment 2021"
+      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+
+    }
+    "should have payment processing bullets" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+
+      pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+      paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+      paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+    }
+  }
+
+  "When codingOut is enabled - At crystallization, the user has the coding out requested amount fully collected" should {
+    "only show coding out content under header" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+      pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
+      pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
+        "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
+      pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
+    }
+    "show no payments due content when coding out is disabled" in new Setup(noChargesModel, codingOutEnabled = false) {
+      pageDocument.title() shouldBe whatYouOwe.title
+      pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
+      pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
+      pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
+      pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+
+    }
+  }
+
+
+  "The payments history view with an empty payment response model" should {
+    "throw a MissingFieldException" in {
+      val thrownException = intercept[MissingFieldException] {
+        whatYouOweView(whatYouOweDataCodingOutWithoutAmountCodingOut, false, LocalDate.now().getYear, "testBackURL",
+          Some("1234567890"), None, true, true, true)
+      }
+      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Amount Coded Out"
+    }
+  }
 
 }

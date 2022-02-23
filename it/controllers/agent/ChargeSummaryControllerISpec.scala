@@ -52,7 +52,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
         lot = Some("lot"), lotItem = Some(lotItem), date = Some(date), transactionId = None)),
-      mainType = Some(mainType) , chargeType = Some(chargeType))
+      mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
     paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2019-08-13", -10000.0, lotItem = "000001"),
@@ -60,7 +60,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   )
 
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29).toString,
-    "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020,2,24), "amended return"))
+    "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
@@ -87,7 +87,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
 
       stubChargeHistorySuccess()
-
 
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
@@ -391,7 +390,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   }
 
   private def stubGetFinancialDetailsSuccess(chargeType1: Option[String] = Some("ITSA NI"),
-                                             chargeType2: Option[String] = Some("ITSA NI"), isLatePaymentInterest:Boolean = false): Unit = {
+                                             chargeType2: Option[String] = Some("ITSA NI"), isLatePaymentInterest: Boolean = false): Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
       from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -496,8 +495,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getChargeSummary(
-            currentTaxYearEnd.getYear.toString, "testId", clientDetails
-          ))
+          currentTaxYearEnd.getYear.toString, "testId", clientDetails
+        ))
     }
   }
 }

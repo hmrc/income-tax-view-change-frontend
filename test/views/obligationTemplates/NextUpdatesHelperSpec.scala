@@ -29,64 +29,64 @@ import views.html.helpers.injected.obligations.NextUpdatesHelper
 
 class NextUpdatesHelperSpec extends TestSupport {
 
-	lazy val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
+  lazy val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
 
-	class Setup(currentObligations: ObligationsModel) {
-		val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
-		val pageDocument: Document = Jsoup.parse(contentAsString(html))
-	}
+  class Setup(currentObligations: ObligationsModel) {
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
+    val pageDocument: Document = Jsoup.parse(contentAsString(html))
+  }
 
-	lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-		business1.incomeSourceId.get,
-		twoObligationsSuccessModel.obligations
-	)))
+  lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
+    business1.incomeSourceId.get,
+    twoObligationsSuccessModel.obligations
+  )))
 
-	lazy val crystallisedObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-		business1.incomeSourceId.get,
-		List(crystallisedObligation)
-	)))
+  lazy val crystallisedObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
+    business1.incomeSourceId.get,
+    List(crystallisedObligation)
+  )))
 
-	object Messages {
-		val quarterlyUpdateDue = "Update for: 1 July 2017 to 30 September 2017"
-		val nonQuarterlyUpdateDue = "Tax year: 1 October 2017 to 30 October 2018"
-	}
+  object Messages {
+    val quarterlyUpdateDue = "Update for: 1 July 2017 to 30 September 2017"
+    val nonQuarterlyUpdateDue = "Tax year: 1 October 2017 to 30 October 2018"
+  }
 
-	"Next updates helper" should {
+  "Next updates helper" should {
 
-		"display the correct number of accordion sections" in new Setup(obligationsModel) {
-			pageDocument.select(".govuk-accordion__section").size() shouldBe 2
-		}
+    "display the correct number of accordion sections" in new Setup(obligationsModel) {
+      pageDocument.select(".govuk-accordion__section").size() shouldBe 2
+    }
 
-		"display the earliest due date first" in new Setup(obligationsModel) {
-			pageDocument.select(".govuk-accordion__section:nth-of-type(1) h3").text() shouldBe "30 October 2017"
-		}
+    "display the earliest due date first" in new Setup(obligationsModel) {
+      pageDocument.select(".govuk-accordion__section:nth-of-type(1) h3").text() shouldBe "30 October 2017"
+    }
 
-		"display the updates under the first deadline" in new Setup(obligationsModel) {
-			val section = pageDocument.select(".govuk-accordion__section:nth-of-type(1)")
+    "display the updates under the first deadline" in new Setup(obligationsModel) {
+      val section = pageDocument.select(".govuk-accordion__section:nth-of-type(1)")
 
-			section.select("dl").size() shouldBe 1
-			section.select("dl dt").text() shouldBe "Quarterly update"
-			section.select("dl dd").text() shouldBe testTradeName
-		}
+      section.select("dl").size() shouldBe 1
+      section.select("dl dt").text() shouldBe "Quarterly update"
+      section.select("dl dd").text() shouldBe testTradeName
+    }
 
-		"display the later due date" in new Setup(obligationsModel) {
-			pageDocument.select(".govuk-accordion__section:nth-of-type(2) h3").text() shouldBe "31 October 2017"
-		}
+    "display the later due date" in new Setup(obligationsModel) {
+      pageDocument.select(".govuk-accordion__section:nth-of-type(2) h3").text() shouldBe "31 October 2017"
+    }
 
-		"display the updates under the second deadline" in new Setup(obligationsModel) {
-			val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
+    "display the updates under the second deadline" in new Setup(obligationsModel) {
+      val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
 
-			section.select("dl").size() shouldBe 1
-			section.select("dl dt").text() shouldBe "Annual Update"
-			section.select("dl dd").text() shouldBe testTradeName
-		}
+      section.select("dl").size() shouldBe 1
+      section.select("dl dt").text() shouldBe "Annual Update"
+      section.select("dl dd").text() shouldBe testTradeName
+    }
 
-		"display the correct due date text for a quarterly date" in new Setup(obligationsModel) {
-			pageDocument.select(".govuk-accordion__section:nth-of-type(1) .govuk-accordion__section-summary").text() shouldBe Messages.quarterlyUpdateDue
-		}
+    "display the correct due date text for a quarterly date" in new Setup(obligationsModel) {
+      pageDocument.select(".govuk-accordion__section:nth-of-type(1) .govuk-accordion__section-summary").text() shouldBe Messages.quarterlyUpdateDue
+    }
 
-		"display the correct due date text for a non-quarterly date" in new Setup(crystallisedObligationsModel) {
-			pageDocument.select(".govuk-accordion__section:nth-of-type(1) .govuk-accordion__section-summary").text() shouldBe Messages.nonQuarterlyUpdateDue
-		}
-	}
+    "display the correct due date text for a non-quarterly date" in new Setup(crystallisedObligationsModel) {
+      pageDocument.select(".govuk-accordion__section:nth-of-type(1) .govuk-accordion__section-summary").text() shouldBe Messages.nonQuarterlyUpdateDue
+    }
+  }
 }

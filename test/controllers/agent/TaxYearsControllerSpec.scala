@@ -81,42 +81,42 @@ class TaxYearsControllerSpec extends TestSupport
         contentType(result) shouldBe Some(HTML)
       }
     }
-		"there was a problem retrieving income source details for the user" should {
-			"throw an internal server exception" in new Setup {
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockErrorIncomeSource()
-				mockShowInternalServerError()
+    "there was a problem retrieving income source details for the user" should {
+      "throw an internal server exception" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockErrorIncomeSource()
+        mockShowInternalServerError()
 
-				val result = controller.show()(fakeRequestConfirmedClient()).failed.futureValue
-				result shouldBe an[InternalServerException]
-				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
-			}
-		}
-		"there is no firstAccountingPeriodEndDate from income source details" should {
-			"throw and exception" in new Setup {
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockNoIncomeSources()
+        val result = controller.show()(fakeRequestConfirmedClient()).failed.futureValue
+        result shouldBe an[InternalServerException]
+        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+      }
+    }
+    "there is no firstAccountingPeriodEndDate from income source details" should {
+      "throw and exception" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockNoIncomeSources()
 
-				mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
+        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
 
-				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
         the[Exception] thrownBy status(result) should have message "User missing first accounting period information"
-			}
-		}
-		"all data is returned successfully" should {
-			"show the tax years page" in new Setup {
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockBothIncomeSources()
+      }
+    }
+    "all data is returned successfully" should {
+      "show the tax years page" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
 
-				mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
+        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
 
-				val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
-				status(result) shouldBe OK
-				contentType(result) shouldBe Some(HTML)
-			}
-		}
+        status(result) shouldBe OK
+        contentType(result) shouldBe Some(HTML)
+      }
+    }
   }
 
 }

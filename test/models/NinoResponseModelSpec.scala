@@ -23,7 +23,7 @@ import org.scalatest.Matchers
 import play.api.libs.json.Json
 import testUtils.UnitSpec
 
-class NinoResponseModelSpec  extends UnitSpec with Matchers {
+class NinoResponseModelSpec extends UnitSpec with Matchers {
 
   "The NINO model" should {
     "be formatted to JSON correctly" in {
@@ -32,7 +32,7 @@ class NinoResponseModelSpec  extends UnitSpec with Matchers {
     "be able to parse a JSON input as a string into the model" in {
       Json.parse(testNinoModelJson.toString).as[NinoResponseSuccess] shouldBe testNinoModel
     }
-   }
+  }
 
   it should {
     "have the correct NINO" in {

@@ -35,13 +35,13 @@ trait MockPaymentAllocationView extends BeforeAndAfterEach with MockitoSugar {
     reset(paymentAllocationView)
   }
 
-  def mockPaymentAllocationView(viewModel: PaymentAllocationViewModel, backUrl: String, isAgent:Boolean)(response: Html): Unit = {
+  def mockPaymentAllocationView(viewModel: PaymentAllocationViewModel, backUrl: String, isAgent: Boolean)(response: Html): Unit = {
     when(paymentAllocationView.apply(
       matches(viewModel),
       matches(backUrl),
       matches(isAgent),
       any()
-    )(any(),any()))
+    )(any(), any()))
       .thenReturn(response)
   }
 }

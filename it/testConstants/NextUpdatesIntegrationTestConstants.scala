@@ -33,18 +33,18 @@ object NextUpdatesIntegrationTestConstants {
     "reason" -> reason
   )
 
-  val deadlineStart1 = LocalDate.of(2017,1,1)
-  val deadlineEnd1 = LocalDate.of(2017,3,31)
-  val deadlineStart2 = LocalDate.of(2017,4,1)
-  val deadlineEnd2 = LocalDate.of(2017,6,30)
-  val deadlineStart3 = LocalDate.of(2016,6,1)
-  val deadlineEnd3 = LocalDate.of(2017,6,30)
-  val deadlineStart4 = LocalDate.of(2017,7,1)
-  val deadlineEnd4 = LocalDate.of(2017,9,30)
-  val deadlineStart5 = LocalDate.of(2017,10,1)
-  val deadlineEnd5 = LocalDate.of(2018,1,31)
-  val deadlineStart6 = LocalDate.of(2017,11,1)
-  val deadlineEnd6 = LocalDate.of(2018,2,1)
+  val deadlineStart1 = LocalDate.of(2017, 1, 1)
+  val deadlineEnd1 = LocalDate.of(2017, 3, 31)
+  val deadlineStart2 = LocalDate.of(2017, 4, 1)
+  val deadlineEnd2 = LocalDate.of(2017, 6, 30)
+  val deadlineStart3 = LocalDate.of(2016, 6, 1)
+  val deadlineEnd3 = LocalDate.of(2017, 6, 30)
+  val deadlineStart4 = LocalDate.of(2017, 7, 1)
+  val deadlineEnd4 = LocalDate.of(2017, 9, 30)
+  val deadlineStart5 = LocalDate.of(2017, 10, 1)
+  val deadlineEnd5 = LocalDate.of(2018, 1, 31)
+  val deadlineStart6 = LocalDate.of(2017, 11, 1)
+  val deadlineEnd6 = LocalDate.of(2018, 2, 1)
 
   val testPropertyId = "1234"
 
@@ -77,7 +77,7 @@ object NextUpdatesIntegrationTestConstants {
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
-    ),NextUpdateModel(
+    ), NextUpdateModel(
       start = deadlineStart5,
       end = deadlineEnd5,
       due = LocalDate.now().plusDays(146),
@@ -94,10 +94,10 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  val singleObligationStart = LocalDate.of(2017,4,6)
-  val singleObligationEndQuarter = LocalDate.of(2017,5,5)
-  val singleObligationEnd = LocalDate.of(2017,7,5)
-  val singleObligationDue = LocalDate.of(2018,1,1)
+  val singleObligationStart = LocalDate.of(2017, 4, 6)
+  val singleObligationEndQuarter = LocalDate.of(2017, 5, 5)
+  val singleObligationEnd = LocalDate.of(2017, 7, 5)
+  val singleObligationDue = LocalDate.of(2018, 1, 1)
 
   val overdueDate: LocalDate = LocalDate.now().minusDays(1)
 
@@ -137,9 +137,9 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  val singleObligationStartEOPs = LocalDate.of(2017,4,6)
-  val singleObligationEndEOPs = LocalDate.of(2018,7,5)
-  val singleObligationDueEOPs = LocalDate.of(2018,1,1)
+  val singleObligationStartEOPs = LocalDate.of(2017, 4, 6)
+  val singleObligationEndEOPs = LocalDate.of(2018, 7, 5)
+  val singleObligationDueEOPs = LocalDate.of(2018, 1, 1)
 
   val singleObligationEOPSPropertyModel = NextUpdatesModel(testPropertyId, List(
     NextUpdateModel(
@@ -169,8 +169,8 @@ object NextUpdatesIntegrationTestConstants {
 
   def singleObligationPlusYearOpenModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
     NextUpdateModel(
-      start = LocalDate.of(2017,4,6),
-      end = LocalDate.of(2017,7,5),
+      start = LocalDate.of(2017, 4, 6),
+      end = LocalDate.of(2017, 7, 5),
       due = LocalDate.now().plusYears(1),
       obligationType = "Quarterly",
       dateReceived = None,
@@ -181,9 +181,9 @@ object NextUpdatesIntegrationTestConstants {
 
   def SEIncomeSourceEOPSModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
     NextUpdateModel(
-      start = LocalDate.of(2017,4,6),
-      end = LocalDate.of(2018,4,5),
-      due = LocalDate.of(2018,1,31),
+      start = LocalDate.of(2017, 4, 6),
+      end = LocalDate.of(2018, 4, 5),
+      due = LocalDate.of(2018, 1, 31),
       "EOPS",
       dateReceived = None,
       periodKey = "#003"
@@ -192,9 +192,9 @@ object NextUpdatesIntegrationTestConstants {
 
   val crystallisedEOPSModel = NextUpdatesModel(testMtditid, List(
     NextUpdateModel(
-      start = LocalDate.of(2017,4,6),
-      end = LocalDate.of(2018,4,5),
-      due = LocalDate.of(2019,1,31),
+      start = LocalDate.of(2017, 4, 6),
+      end = LocalDate.of(2018, 4, 5),
+      due = LocalDate.of(2019, 1, 31),
       "Crystallised",
       dateReceived = None,
       periodKey = "#003"
@@ -203,17 +203,17 @@ object NextUpdatesIntegrationTestConstants {
 
   val crystallisedEOPSModelMulti = NextUpdatesModel(testMtditid, List(
     NextUpdateModel(
-      start = LocalDate.of(2018,4,6),
-      end = LocalDate.of(2019,4,5),
-      due = LocalDate.of(2020,1,31),
+      start = LocalDate.of(2018, 4, 6),
+      end = LocalDate.of(2019, 4, 5),
+      due = LocalDate.of(2020, 1, 31),
       "Crystallised",
       dateReceived = None,
       periodKey = "#003"
     ),
     NextUpdateModel(
-      start = LocalDate.of(2017,4,6),
-      end = LocalDate.of(2018,4,5),
-      due = LocalDate.of(2019,1,31),
+      start = LocalDate.of(2017, 4, 6),
+      end = LocalDate.of(2018, 4, 5),
+      due = LocalDate.of(2019, 1, 31),
       "Crystallised",
       dateReceived = None,
       periodKey = "#003"

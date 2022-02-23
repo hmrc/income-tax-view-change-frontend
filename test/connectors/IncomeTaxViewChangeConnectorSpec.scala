@@ -77,7 +77,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getChargeHistoryUrl" should {
     "return the correct url" in new Setup {
-      getChargeHistoryUrl(testMtditid,docNumber) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/docId/$docNumber"
+      getChargeHistoryUrl(testMtditid, docNumber) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/docId/$docNumber"
     }
   }
 
@@ -441,14 +441,14 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a ChargeHistory model when successful JSON is received" in new Setup {
       setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponse)
 
-      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid, docNumber)
       result.futureValue shouldBe testValidChargeHistoryModel
 
     }
 
     "return a ChargeHistory model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getChargeHistoryUrlTestUrl)
-      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid, docNumber)
       result.futureValue shouldBe ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
     }
 
@@ -456,14 +456,14 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return ChargeHistoryErrorResponse model in case of failure" in new Setup {
       setupMockHttpGet(getChargeHistoryUrlTestUrl)(badResponse)
 
-      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid, docNumber)
       result.futureValue shouldBe ChargesHistoryErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return ChargeHistoryErrorResponse model in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponseBadJson)
 
-      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid, docNumber)
       result.futureValue shouldBe testChargeHistoryErrorModelParsing
     }
 
@@ -542,14 +542,14 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val successResponseMultiplePayments = HttpResponse(status = OK, json = validMultiplePaymentAllocationChargesJson, headers = Map.empty)
 
       "receiving an OK with only one valid data item" in new Setup {
-        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(successResponse)
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino, docNumber))(successResponse)
 
         val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testUserNino, docNumber)
         result.futureValue shouldBe paymentAllocationChargesModel
       }
 
       "receiving an OK with multiple valid data items" in new Setup {
-        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(successResponseMultiplePayments)
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino, docNumber))(successResponseMultiplePayments)
 
         val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testUserNino, docNumber)
         result.futureValue shouldBe paymentAllocationChargesModelMultiplePayments
@@ -559,7 +559,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a NOT FOUND payment allocation error" when {
 
       "receiving a not found response" in new Setup {
-        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(HttpResponse(status = Status.NOT_FOUND,
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino, docNumber))(HttpResponse(status = Status.NOT_FOUND,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testUserNino, docNumber)
@@ -570,7 +570,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return an INTERNAL_SERVER_ERROR payment allocation error" when {
 
       "receiving a 500+ response" in new Setup {
-        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino, docNumber))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testUserNino, docNumber)
@@ -578,7 +578,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       }
 
       "receiving a 400- response" in new Setup {
-        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino,docNumber))(HttpResponse(status = Status.BAD_REQUEST,
+        setupMockHttpGet(getFinancialDetailsByDocumentIdUrl(testNino, docNumber))(HttpResponse(status = Status.BAD_REQUEST,
           json = Json.toJson("Error message"), headers = Map.empty))
 
         val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testUserNino, docNumber)

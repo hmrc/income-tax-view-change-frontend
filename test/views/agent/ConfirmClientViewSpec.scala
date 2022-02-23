@@ -31,12 +31,12 @@ class ConfirmClientViewSpec extends ViewSpec {
   val confirmClient: confirmClient = app.injector.instanceOf[confirmClient]
 
 
-    val confirmClientView = confirmClient(
-      clientName = testClientName,
-      clientUtr = testClientUTR,
-      postAction = postAction,
-      backUrl = backUrl
-    )
+  val confirmClientView = confirmClient(
+    clientName = testClientName,
+    clientUtr = testClientUTR,
+    postAction = postAction,
+    backUrl = backUrl
+  )
 
   object confirmClientMessages {
     val title: String = "Confirm your client’s details - Your client’s Income Tax details - GOV.UK"

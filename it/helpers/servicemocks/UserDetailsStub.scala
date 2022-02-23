@@ -26,18 +26,18 @@ object UserDetailsStub extends ComponentSpecBase {
 
   def stubGetUserDetails(): Unit = {
     WiremockHelper.stubGet(getUserDetailsUrl, Status.OK,
-        s"""{
-           |    "name":"$testUserName",
-           |    "email":"test@test.com",
-           |    "affinityGroup" : "affinityGroup",
-           |    "credentialRole": "n/a",
-           |    "description" : "description",
-           |    "lastName":"test",
-           |    "dateOfBirth":"1980-06-30",
-           |    "postCode":"NW94HD",
-           |    "authProviderId": "12345-credId",
-           |    "authProviderType": "GovernmentGateway"
-           |}""".stripMargin)
+      s"""{
+         |    "name":"$testUserName",
+         |    "email":"test@test.com",
+         |    "affinityGroup" : "affinityGroup",
+         |    "credentialRole": "n/a",
+         |    "description" : "description",
+         |    "lastName":"test",
+         |    "dateOfBirth":"1980-06-30",
+         |    "postCode":"NW94HD",
+         |    "authProviderId": "12345-credId",
+         |    "authProviderType": "GovernmentGateway"
+         |}""".stripMargin)
   }
 
   def stubGetUserDetailsError(): Unit = {

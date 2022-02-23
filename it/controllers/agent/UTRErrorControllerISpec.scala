@@ -54,7 +54,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
 
         Then("The enter client's utr page is returned to the user")
-        result should have (
+        result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
         )
@@ -106,15 +106,15 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
     }
 
     s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" in {
-			stubAuthorisedAgentUser(authorised = true)
+      stubAuthorisedAgentUser(authorised = true)
 
-			val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
+      val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
 
-			Then(s"The user is redirected to ${controllers.agent.routes.EnterClientsUTRController.show().url}")
-			result should have(
-				httpStatus(SEE_OTHER),
-				redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
-			)
+      Then(s"The user is redirected to ${controllers.agent.routes.EnterClientsUTRController.show().url}")
+      result should have(
+        httpStatus(SEE_OTHER),
+        redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+      )
     }
   }
 

@@ -47,7 +47,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = oldUserDetails,
-    btaNavPartial =  None,
+    btaNavPartial = None,
     saUtr = Some("saUtr"),
     credId = Some("credId"),
     userType = Some("Individual"),

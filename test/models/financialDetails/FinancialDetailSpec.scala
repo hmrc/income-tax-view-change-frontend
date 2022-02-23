@@ -27,8 +27,11 @@ class FinancialDetailSpec extends UnitSpec {
     "working with Dunning Locks" when {
       val supportedLock = SubItem(dunningLock = Some("Stand over order"), amount = Some(123.45))
       val unsupportedLock = SubItem(dunningLock = Some("Disputed debt"), amount = Some(98.76))
+
       def financialDetailWithoutLocks: FinancialDetail = financialDetail()
+
       def financialDetailWithAllLocks: FinancialDetail = financialDetailWithoutLocks.copy(items = Some(Seq(supportedLock, unsupportedLock)))
+
       def financialDetailWithUnsupportedLocks: FinancialDetail = financialDetailWithoutLocks.copy(items = Some(Seq(unsupportedLock)))
 
       "calling a predicate for Dunning Locks" should {
@@ -66,6 +69,7 @@ class FinancialDetailSpec extends UnitSpec {
     }
     "working with Interest Locks" when {
       def financialDetailWithoutLocks: FinancialDetail = financialDetail()
+
       def financialDetailWithLocks(lock: String): FinancialDetail = financialDetailWithoutLocks.copy(
         items = Some(Seq(interestLockSubItem(lock)))
       )
@@ -80,7 +84,7 @@ class FinancialDetailSpec extends UnitSpec {
         "Breathing Space Moratorium Act")
 
       "calling a predicate for Interest Locks" should {
-        for(supportedLock <- supportedLocks) {
+        for (supportedLock <- supportedLocks) {
           s"return true when there are sub items with the $supportedLock Interest Lock" in {
             financialDetailWithLocks(supportedLock).interestLockExists shouldBe true
           }
