@@ -400,7 +400,7 @@ paymentDue.heading                                              = Taliadau treth
 paymentDue.description                                          = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
-paymentDue.payNow                                               = Talu nawr
+paymentDue.payNow                                               = Gwneud taliad
 paymentDue.pay-now-aria                                         = Talwch nawr ar gyfer Blwyddyn Dreth {0} i {1}
 paymentDue.tax-year                                             = Blwyddyn dreth {0} i {1}
 paymentDue.due                                                  = ddyledus
@@ -480,7 +480,12 @@ chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
 chargeSummary.overdue                                           = YN HWYR
-chargeSummary.payment-days-note                                 = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
+
+chargeSummary.payment-days-note                                    = Ynglŷn ag unrhyw daliadau a wnaed gennych:
+chargeSummary.payments-bullet1-1                                   = gall cymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
+chargeSummary.payments-bullet1-2                                   = dull talu
+chargeSummary.payments-bullet1-3                                   = rydych yn ei ddefnyddio
+chargeSummary.payments-bullet2                                     = mae’n rhaid iddo ein cyrraedd erbyn y dyddiad cau – os bydd eich taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
