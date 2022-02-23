@@ -54,8 +54,8 @@ object ClientsUTRForm {
       utr -> default(text, "")
         .transform[String](_.replaceAll("\\s", ""), identity)
         .verifying(
-        nonEmptyUTR andThen containsOnlyNumbers andThen isValidUTRLength
-      )
+          nonEmptyUTR andThen containsOnlyNumbers andThen isValidUTRLength
+        )
     )
   )
 

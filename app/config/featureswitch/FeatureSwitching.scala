@@ -18,7 +18,7 @@ package config.featureswitch
 
 import config.FrontendAppConfig
 
-trait FeatureSwitching  {
+trait FeatureSwitching {
 
   val appConfig: FrontendAppConfig
 

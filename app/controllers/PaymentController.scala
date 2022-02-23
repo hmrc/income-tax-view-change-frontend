@@ -48,12 +48,12 @@ class PaymentController @Inject()(implicit val config: FrontendAppConfig,
       user.saUtr match {
         case Some(utr) =>
           payApiConnector.startPaymentJourney(utr, paymentAmountInPence).map {
-          case model: PaymentJourneyModel => Redirect(model.nextUrl)
-          case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
-        }
+            case model: PaymentJourneyModel => Redirect(model.nextUrl)
+            case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
+          }
         case _ =>
           Logger("application").error("Failed to start payments journey due to missing UTR")
-          Future.failed( new Exception("Failed to start payments journey due to missing UTR"))
+          Future.failed(new Exception("Failed to start payments journey due to missing UTR"))
       }
   }
 }

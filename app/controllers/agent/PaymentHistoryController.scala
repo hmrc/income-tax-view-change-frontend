@@ -46,19 +46,19 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
   def viewPaymentHistory(): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-				for {
-					mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
-					paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
-				} yield {
-					paymentHistoryResponse match {
-						case Right(payments) =>
-							if (isEnabled(TxmEventsApproved)) {
-								auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
-							}
-							Ok(paymentHistory(payments, backUrl, mtdItUser.saUtr, isAgent = true))
-						case Left(_) => itvcErrorHandler.showInternalServerError()
-					}
-				}
+        for {
+          mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
+          paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
+        } yield {
+          paymentHistoryResponse match {
+            case Right(payments) =>
+              if (isEnabled(TxmEventsApproved)) {
+                auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
+              }
+              Ok(paymentHistory(payments, backUrl, mtdItUser.saUtr, isAgent = true))
+            case Left(_) => itvcErrorHandler.showInternalServerError()
+          }
+        }
     }
 
   def backUrl: String = controllers.agent.routes.HomeController.show().url

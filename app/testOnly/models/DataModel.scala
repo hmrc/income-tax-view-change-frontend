@@ -19,12 +19,12 @@ package testOnly.models
 import play.api.libs.json.{JsValue, Json, OFormat}
 
 case class DataModel(
-                        _id: String,                  // URL of the Request
-                        schemaId: String,             // Name of the Schema to Validate Against
-                        method: String,               // HttpMethod Type
-                        status: Int,                  // Response Status
-                        response: Option[JsValue]     // Response Body
-                      )
+                      _id: String, // URL of the Request
+                      schemaId: String, // Name of the Schema to Validate Against
+                      method: String, // HttpMethod Type
+                      status: Int, // Response Status
+                      response: Option[JsValue] // Response Body
+                    )
 
 object DataModel {
   implicit val formats: OFormat[DataModel] = Json.format[DataModel]

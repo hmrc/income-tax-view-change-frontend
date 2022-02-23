@@ -29,7 +29,9 @@ object Constraints {
   )
 
   val validJson: Constraint[String] = constraint[String](
-    x => Try {Json.parse(x)} match {
+    x => Try {
+      Json.parse(x)
+    } match {
       case Success(_) => Valid
       case Failure(_) => ErrorMessageFactory.error("Invalid Json Format")
     }
@@ -48,7 +50,9 @@ object Constraints {
   )
 
   val isNumeric: Constraint[String] = constraint[String](
-    x => Try {x.toInt} match {
+    x => Try {
+      x.toInt
+    } match {
       case Success(_) => Valid
       case Failure(_) => ErrorMessageFactory.error("Invalid Numeric")
     }

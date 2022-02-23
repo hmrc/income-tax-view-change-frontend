@@ -31,9 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class AgentNotFoundDocumentIDLookupController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                         customNotFoundError: CustomNotFoundError)
                                                        (implicit mcc: MessagesControllerComponents,
-                                     val appConfig: FrontendAppConfig,
-                                     val itvcErrorHandler: AgentItvcErrorHandler,
-                                     val ec: ExecutionContext) extends BaseAgentController with I18nSupport {
+                                                        val appConfig: FrontendAppConfig,
+                                                        val itvcErrorHandler: AgentItvcErrorHandler,
+                                                        val ec: ExecutionContext) extends BaseAgentController with I18nSupport {
 
   val show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(timeoutPredicate) { implicit request =>
     implicit user =>

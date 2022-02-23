@@ -53,7 +53,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     //Create MongoLock and call Calculation service
     lockKeeper.tryLock().flatMap {
       isLocked =>
-        if(isLocked) {
+        if (isLocked) {
           //to avoid wait time for first call, calling getCalculationResponse with end time as current time
           getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid).flatMap {
             case statusCode if !retryableStatusCodes.contains(statusCode) => {
@@ -78,14 +78,14 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                     (implicit hc: HeaderCarrier): Future[Int] = {
 
     Logger("application").debug(s"[CalculationPollingService][getCalculationResponse] Starting polling for  calcId: $calcId and nino: $nino")
-    while(System.currentTimeMillis() < endTimeForEachInterval) {
+    while (System.currentTimeMillis() < endTimeForEachInterval) {
       //Waiting until interval time is complete
     }
 
     calculationService.getLatestCalculation(mtditid, nino, calcId).map {
       case _: LiabilityCalculationResponse => Status.OK
       case error: LiabilityCalculationError => {
-        if(System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
+        if (System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
         else error.status
       }
     }

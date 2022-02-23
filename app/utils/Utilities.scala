@@ -25,5 +25,5 @@ object Utilities {
       json ++ optValue.fold(Json.obj())(value => Json.obj(key -> value))
     }
   }
-  
+
 }

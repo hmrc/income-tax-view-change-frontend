@@ -15,6 +15,7 @@
  */
 
 package services
+
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
@@ -48,6 +49,7 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
     }
   }
 }
-  object PaymentHistoryService {
+
+object PaymentHistoryService {
   case object PaymentHistoryError
 }

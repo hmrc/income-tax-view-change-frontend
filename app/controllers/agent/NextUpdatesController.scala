@@ -42,7 +42,7 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.NextUpdates,
                                       itvcErrorHandler: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent:Boolean)
+  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean)
                   (implicit user: MtdItUser[_]): Html = {
     agentNextUpdates(
       currentObligations = obligationsModel,
@@ -53,13 +53,13 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.NextUpdates,
 
   def getNextUpdates: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
-				mtdItUser =>
-					nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
-						case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl, isAgent = true)(mtdItUser))
-						case _ => itvcErrorHandler.showInternalServerError()
-					}
-			}
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
+        mtdItUser =>
+          nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
+            case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates, backUrl, isAgent = true)(mtdItUser))
+            case _ => itvcErrorHandler.showInternalServerError()
+          }
+      }
   }
 
   lazy val backUrl: String = controllers.agent.routes.HomeController.show().url

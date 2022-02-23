@@ -27,6 +27,7 @@ case class NinoResponseError(status: Int, reason: String) extends NinoResponse
 object NinoResponseSuccess {
   implicit val format: Format[NinoResponseSuccess] = Json.format[NinoResponseSuccess]
 }
+
 object NinoResponseError {
   implicit val format: Format[NinoResponseError] = Json.format[NinoResponseError]
 }

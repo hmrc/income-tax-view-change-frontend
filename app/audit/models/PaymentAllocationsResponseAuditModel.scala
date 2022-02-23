@@ -87,8 +87,12 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
             ("paymentAllocationDescription", allocationDetail.map(ad =>
               getAllocationDescriptionFromKey(ad.getPaymentAllocationKeyInPaymentAllocations))) ++
             ("dateAllocated", dateAllocated) ++
-            ("amount", allocationDetail.flatMap{_.amount}) ++
-            ("taxYear", allocationDetail.flatMap {_.to}.map(getTaxYearString))
+            ("amount", allocationDetail.flatMap {
+              _.amount
+            }) ++
+            ("taxYear", allocationDetail.flatMap {
+              _.to
+            }.map(getTaxYearString))
       })
     }
   }

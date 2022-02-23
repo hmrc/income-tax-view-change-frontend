@@ -49,38 +49,38 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   }
 
   def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
-		implicit user =>
-			Future.successful(Ok(enterClientsUTR(
-				clientUTRForm = ClientsUTRForm.form,
-				postAction = routes.EnterClientsUTRController.submit()
-			)))
+    implicit user =>
+      Future.successful(Ok(enterClientsUTR(
+        clientUTRForm = ClientsUTRForm.form,
+        postAction = routes.EnterClientsUTRController.submit()
+      )))
   }
 
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
-		implicit user =>
-			ClientsUTRForm.form.bindFromRequest.fold(
-				hasErrors => Future.successful(BadRequest(enterClientsUTR(
-					clientUTRForm = hasErrors,
-					postAction = routes.EnterClientsUTRController.submit()
-				))),
-				validUTR => {
-					clientDetailsService.checkClientDetails(
-						utr = validUTR
-					) map {
-						case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
-							val sessionValues: Seq[(String, String)] = Seq(
-								SessionKeys.clientMTDID -> mtdItId,
-								SessionKeys.clientNino -> nino,
-								SessionKeys.clientUTR -> validUTR
-							) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
-							Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionValues: _*)
-						case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
-							val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
-							Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*)
-						case Left(_) =>
-							throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
-					}
-				}
-			)
+    implicit user =>
+      ClientsUTRForm.form.bindFromRequest.fold(
+        hasErrors => Future.successful(BadRequest(enterClientsUTR(
+          clientUTRForm = hasErrors,
+          postAction = routes.EnterClientsUTRController.submit()
+        ))),
+        validUTR => {
+          clientDetailsService.checkClientDetails(
+            utr = validUTR
+          ) map {
+            case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
+              val sessionValues: Seq[(String, String)] = Seq(
+                SessionKeys.clientMTDID -> mtdItId,
+                SessionKeys.clientNino -> nino,
+                SessionKeys.clientUTR -> validUTR
+              ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
+              Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionValues: _*)
+            case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
+              val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
+              Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*)
+            case Left(_) =>
+              throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
+          }
+        }
+      )
   }
 }
