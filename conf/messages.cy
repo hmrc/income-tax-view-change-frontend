@@ -471,7 +471,7 @@ chargeSummary.paymentOnAccount2.text                            = Taliad ar gyfr
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
-chargeSummary.codingOut.text                                    = PAYE Self Assessment
+chargeSummary.codingOut.text                                    = Balancing payment collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                  = Cancelled Self Assessment payment (through your PAYE tax code)
 chargeSummary.paymentAmount                                     = Swm y taliad
 chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
@@ -546,19 +546,19 @@ chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’
 chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
 
-chargeSummary.codingOutHeader                                   = PAYE self assessment
-chargeSummary.codingOutMessage                                  = This is the remaining tax you owe for the {0} to {1} tax year.
-chargeSummary.codingOutRemainingToPay                           = Collected through your PAYE tax code for {0} to {1} tax year## Regimes
-chargeSummary.codingOutInset-1                                  = If this tax cannot be collectedregimes.UK = Y DU
-chargeSummary.codingOutInset-2                                  = through your PAYE tax code (opens in new tab)regimes.Scotland = Yr Alban
-chargeSummary.codingOutInset-3                                  = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.regimes.Wales = Cymru
-chargeSummary.codingOutPayHistoryAmount                         = Amount collected through your PAYE tax code for {0} to {1} tax year
-chargeSummary.check-paye-tax-code-1                             = Check if your## Timeout
-chargeSummary.check-paye-tax-code-2                             = PAYE tax codetimeoutDialog.minute                                            = munud
-chargeSummary.check-paye-tax-code-3                             = has changed for the {0} to {1} tax year.timeoutDialog.minutes                                           = munud
-chargeSummary.cancelledPayeInset-1                              = You have previously agreed to pay some of your Self Assessment billtimeoutDialog.minutes.two                                       = funud
-chargeSummary.cancelledPayeInset-2                              = through your PAYE tax code (opens in new tab).timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
-chargeSummary.cancelledPayeInset-3                              = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.timeoutDialog.seconds                                           = eiliad
+chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
+chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
+chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
+chargeSummary.codingOutInset-1                                     = If this tax cannot be collected
+chargeSummary.codingOutInset-2                                     = through your PAYE tax code (opens in new tab)
+chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.
+chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
+chargeSummary.check-paye-tax-code-1                                = Check if your
+chargeSummary.check-paye-tax-code-2                                = PAYE tax code
+chargeSummary.check-paye-tax-code-3                                = has changed for the {0} to {1} tax year.
+chargeSummary.cancelledPayeInset-1                                 = You have previously agreed to pay some of your Self Assessment bill
+chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code (opens in new tab).
+chargeSummary.cancelledPayeInset-3                                 = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.
 
 ## Regimes
 regimes.UK = Y DU
