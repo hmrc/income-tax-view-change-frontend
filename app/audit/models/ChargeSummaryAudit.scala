@@ -135,9 +135,9 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     Json.obj("remainingToPay" -> remainingToPay)
 
   def release6Update: JsObject = {
-      Json.obj("paymentBreakdown" -> paymentBreakdowns) ++
-        Json.obj("chargeHistory" -> chargeHistory) ++
-        Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
+    Json.obj("paymentBreakdown" -> paymentBreakdowns) ++
+      Json.obj("chargeHistory" -> chargeHistory) ++
+      Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
   }
 
   override val transactionName: String = "charge-summary"
