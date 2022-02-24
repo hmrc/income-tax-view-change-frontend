@@ -28,7 +28,7 @@ import utils.Utilities._
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDetailWithDueDate,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                               paymentAllocations: List[PaymentsWithChargeType], agentReferenceNumber: Option[String],
-                              txmEventsR6: Boolean, isLatePaymentCharge: Boolean) extends ExtendedAuditModel {
+                              isLatePaymentCharge: Boolean) extends ExtendedAuditModel {
 
   private val userType: JsObject = mtdItUser.userType match {
     case Some("Agent") => Json.obj("userType" -> "Agent")
@@ -135,11 +135,9 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     Json.obj("remainingToPay" -> remainingToPay)
 
   def release6Update: JsObject = {
-    if (txmEventsR6) {
       Json.obj("paymentBreakdown" -> paymentBreakdowns) ++
         Json.obj("chargeHistory" -> chargeHistory) ++
         Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
-    } else Json.obj()
   }
 
   override val transactionName: String = "charge-summary"
