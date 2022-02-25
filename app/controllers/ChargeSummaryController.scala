@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsR6}
+import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -142,7 +142,6 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocations,
         None,
-        isEnabled(TxmEventsR6),
         isLatePaymentCharge = isLatePaymentCharge
       ))
   }

@@ -62,7 +62,8 @@ btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Mess
 @if(saUtr.isDefined) {
     @p(){
         @messages("paymentHistory.info")
-        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "paymentHistory.textLink1", outerMessage = ".")
+        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
+            outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
         }
     }
 

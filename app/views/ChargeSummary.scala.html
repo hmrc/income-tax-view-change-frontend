@@ -109,9 +109,22 @@
                 @p(){
                     <b>
                         @if(latePaymentInterestCharge){
-                            <a class="govuk-notification-banner__link govuk-notification-banner__heading" href="@appConfig.taxAppealsUrl" target="_blank" rel="noreferrer noopener">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
+                            @link(
+                                classes="govuk-notification-banner__link govuk-notification-banner__heading",
+                                link=appConfig.taxAppealsUrl,
+                                rel=Some("noreferrer noopener"),
+                                target = Some("_blank"),
+                                messageKey = "chargeSummary.dunning.locks.banner.linkText"
+                            )
                         } else {
-                            <a class="govuk-notification-banner__link" href="@appConfig.taxAppealsUrl" target="_blank" rel="noreferrer noopener">@messages("chargeSummary.dunning.locks.banner.linkText")</a>
+                            @link(
+                                classes="govuk-notification-banner__link",
+                                link=appConfig.taxAppealsUrl,
+                                rel=Some("noreferrer noopener"),
+                                target = Some("_blank"),
+                                messageKey = "chargeSummary.dunning.locks.banner.linkText",
+                                additionalOpenTabMessage = Some(".")
+                            )
                             @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
                         }
                     </b>
@@ -161,7 +174,8 @@
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
                     rel= Some("noreferrer noopener"),
-                    messageKey = "chargeSummary.cancelledPayeInset-2"
+                    messageKey = "chargeSummary.cancelledPayeInset-2",
+                    additionalOpenTabMessage = Some(".")
                 )
                 @messages("chargeSummary.cancelledPayeInset-3")
             }

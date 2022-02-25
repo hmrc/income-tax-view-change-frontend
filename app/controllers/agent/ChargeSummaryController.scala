@@ -142,7 +142,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocations,
         agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber,
-        isEnabled(TxmEventsR6),
         isLatePaymentCharge = isLatePaymentCharge
       ))
   }
