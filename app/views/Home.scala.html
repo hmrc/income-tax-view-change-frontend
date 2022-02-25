@@ -187,7 +187,7 @@
                 @link(
                     link = whatYouOweControllerURL,
                     messageKey = "home.payments.view",
-ariaLabel= messages("home.payments.view").replaceAll(" " , "-")
+                    ariaLabel= messages("home.payments.view").replaceAll(" " , "-")
 
                 )
             }
@@ -216,7 +216,7 @@ ariaLabel= messages("home.payments.view").replaceAll(" " , "-")
                 @link(
                     link = nextUpdatesControllerURL,
                     messageKey = "home.updates.view",
-ariaLabel= messages("home.updates.view").replaceAll(" " , "-")
+                    ariaLabel= messages("home.updates.view").replaceAll(" " , "-")
 
 
                 )
@@ -231,7 +231,7 @@ ariaLabel= messages("home.updates.view").replaceAll(" " , "-")
             @link(
                 link = paymentHistoryControllerURL,
                 messageKey = "home.paymentHistory.view",
-ariaLabel= messages("home.paymentHistory.view").replaceAll(" " , "-")
+                ariaLabel= messages("home.paymentHistory.view").replaceAll(" " , "-")
 
             )
         }
@@ -257,7 +257,7 @@ ariaLabel= messages("home.paymentHistory.view").replaceAll(" " , "-")
             @link(
                 link = getReturnHref(currentTaxYear),
                 messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear"),
-ariaLabel= messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear").replaceAll(" " , "-")
+                ariaLabel= messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear").replaceAll(" " , "-")
 
             )
         }
@@ -266,7 +266,7 @@ ariaLabel= messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$curren
                 @link(
                     link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
                     messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear"),
-ariaLabel= messages("home.returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear").replaceAll(" " , "-")
+                    ariaLabel= messages("home.returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear").replaceAll(" " , "-")
 
                 )
             }
@@ -275,7 +275,7 @@ ariaLabel= messages("home.returns.updatesLink", s"${currentTaxYear - 1}", s"$cur
             @link(
                 link = taxYearsControllerURL,
                 messageKey = "home.tax-years.view",
-ariaLabel= messages("home.tax-years.view").replaceAll(" " , "-")
+                ariaLabel= messages("home.tax-years.view").replaceAll(" " , "-")
 
             )
         }
