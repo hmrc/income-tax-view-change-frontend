@@ -85,7 +85,8 @@
     }
     <ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
         <li>@messages("chargeSummary.payments-bullet1-1")
-            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2")
+            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2", ariaLabel= messages("chargeSummary.payments-bullet1-2").replaceAll(" " , "-")
+            )
             @messages("chargeSummary.payments-bullet1-3")
         </li>
         <li>@messages("chargeSummary.payments-bullet2")</li>
@@ -143,8 +144,10 @@
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
                     rel= Some("noreferrer noopener"),
-                    messageKey = "chargeSummary.codingOutInset-2"
-                )
+                    messageKey = "chargeSummary.codingOutInset-2",
+            ariaLabel= messages("chargeSummary.codingOutInset-2").replaceAll(" " , "-")
+
+            )
                 @messages("chargeSummary.codingOutInset-3")
             }
         </div>
@@ -161,8 +164,10 @@
                     link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
                     target = Some("_blank"),
                     rel= Some("noreferrer noopener"),
-                    messageKey = "chargeSummary.cancelledPayeInset-2"
-                )
+                    messageKey = "chargeSummary.cancelledPayeInset-2",
+            ariaLabel= messages("chargeSummary.cancelledPayeInset-2").replaceAll(" " , "-")
+
+            )
                 @messages("chargeSummary.cancelledPayeInset-3")
             }
         </div>
@@ -298,7 +303,8 @@
 
     @if(hasInterestLocks && hasAccruedInterest) {
         @p(id=Some("p-interest-locks-msg")){
-            @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText")
+            @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText" , ariaLabel= messages("chargeSummary.interestLocks.linkText").replaceAll(" " , "-")
+)
             @messages("chargeSummary.interestLocks.text")
         }
     } else {

@@ -74,10 +74,12 @@
 	@p(){
 		@messages("nextUpdates.previousYears.textOne")
     @if(isAgent) {
-        @link(link = controllers.agent.routes.TaxYearsController.show().url, messageKey = "nextUpdates.previousYears.link")
+        @link(link = controllers.agent.routes.TaxYearsController.show().url, messageKey = "nextUpdates.previousYears.link", ariaLabel= messages("nextUpdates.previousYears.link").replaceAll(" " , "-")
+)
     }
     @if(!isAgent) {
-        @link(link = controllers.routes.TaxYearsController.viewTaxYears().url, messageKey = "nextUpdates.previousYears.link")
+        @link(link = controllers.routes.TaxYearsController.viewTaxYears().url, messageKey = "nextUpdates.previousYears.link", ariaLabel= messages("nextUpdates.previousYears.link").replaceAll(" " , "-")
+)
      }
 		@messages("nextUpdates.previousYears.textTwo")
 	}

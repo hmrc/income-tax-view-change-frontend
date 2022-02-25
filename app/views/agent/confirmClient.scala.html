@@ -56,7 +56,8 @@
         </div>
     </dl>
 	@p(){
-		@link(link = backUrl, messageKey = "agent.confirmClient.changeClient")
+		@link(link = backUrl, messageKey = "agent.confirmClient.changeClient", ariaLabel= messages("agent.confirmClient.changeClient").replaceAll(" " , "-")
+)
 	}
 
     @form(postAction){
