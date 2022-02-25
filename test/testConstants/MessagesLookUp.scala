@@ -111,7 +111,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val saLink = "Self Assessment online account (opens in new tab)"
     val saLinkAgent = "Self Assessment for Agents Account (opens in new tab)"
     val saNote = s"To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous $saLink."
-    val saNoteAgent = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Account (opens in new tab). This will be a different Government Gateway ID and password to your Agent Services account."
+    val saNoteAgent = s"To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your $saLinkAgent. This will be a different Government Gateway ID and password to your Agent Services account."
   }
 
   // Home Page Messages
