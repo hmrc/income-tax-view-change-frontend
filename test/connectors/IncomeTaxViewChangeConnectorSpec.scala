@@ -28,7 +28,6 @@ import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
-import config.featureswitch.TxmEventsApproved
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import mocks.MockHttp
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
@@ -152,13 +151,12 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     val getIncomeSourcesTestUrl = s"http://localhost:9999/income-tax-view-change/income-sources/$testMtditid"
 
     "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
-      enable(TxmEventsApproved)
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponse)
 
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
 
-      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserNino, List(testSelfEmploymentId), Some(testPropertyIncomeId), Some(testMigrationYear2019), true))
+      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserNino, List(testSelfEmploymentId), Some(testPropertyIncomeId), Some(testMigrationYear2019)))
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {

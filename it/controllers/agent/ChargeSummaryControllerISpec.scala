@@ -21,7 +21,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsR6}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
@@ -105,7 +105,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     s"return $OK with correct page title and audit events when TxmEvents FS is enabled" in {
 
-      enable(TxmEventsApproved)
       enable(TxmEventsR6)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -140,7 +139,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     s"return $OK with correct page title and audit events when TxmEvents and PaymentAllocations FS is enabled" in {
 
-      enable(TxmEventsApproved)
       enable(TxmEventsR6)
       enable(PaymentAllocation)
       disable(ChargeHistory)
@@ -177,7 +175,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     s"return $OK with correct page title and no audit events when TxmEvents FS are disabled" in {
 
-      disable(TxmEventsApproved)
       disable(TxmEventsR6)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -211,7 +208,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
 
     s"return $OK with correct page title and audit events when TxmEvents and ChargeHistory and PaymentAllocation FSs are enabled" in {
-      enable(TxmEventsApproved)
       enable(TxmEventsR6)
       enable(ChargeHistory)
       enable(PaymentAllocation)
@@ -247,7 +243,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
 
     s"return $OK with correct page title and audit events when TxmEvents ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
-      enable(TxmEventsApproved)
       enable(TxmEventsR6)
       enable(ChargeHistory)
       enable(PaymentAllocation)

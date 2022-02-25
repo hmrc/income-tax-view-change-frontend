@@ -38,8 +38,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           testMtdUserNino,
           List(testSelfEmploymentId, testSelfEmploymentId2),
           Some(testPropertyIncomeId),
-          Some(testMigrationYear2019),
-          true
+          Some(testMigrationYear2019)
         )
 
         s"Have the correct transaction name of '$transactionName'" in {
@@ -59,35 +58,6 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
             "dateOfMigration" -> testMigrationYear2019,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
-            "mtditid" -> testMtdItUser.mtditid
-          )
-        }
-      }
-      "TxmEventsApproved FS is disabled" when {
-        val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserNino,
-          List(testSelfEmploymentId, testSelfEmploymentId2),
-          Some(testPropertyIncomeId),
-          Some(testMigrationYear2019),
-          false
-        )
-
-        s"Have the correct transaction name of '$transactionName'" in {
-          testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
-        }
-
-        s"Have the correct audit event type of '$auditType'" in {
-          testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
-        }
-
-        "Have the correct details for the audit event" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-            "propertyIncomeId" -> testPropertyIncomeId,
-            "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
-            "userType" -> testUserType,
-            "credId" -> testCredId,
-            "selfEmploymentIds" -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
             "mtditid" -> testMtdItUser.mtditid
           )
         }
@@ -109,7 +79,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           )(FakeRequest()),
           List(testSelfEmploymentId, testSelfEmploymentId2),
           Some(testPropertyIncomeId),
-          Some(testMigrationYear2019), true
+          Some(testMigrationYear2019)
         )
 
         s"Have the correct transaction name of '$transactionName'" in {
@@ -134,44 +104,6 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           )
         }
       }
-      "TxmEventsApproved FS is disabled" when {
-        val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          mtdItUser = MtdItUserWithNino(
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            nino = testNino,
-            mtditid = testMtditidAgent,
-            arn = Some("arn"),
-            userType = Some("Agent"),
-            credId = Some(testCredId),
-            userName = Some(Name(Some("firstName"), Some("lastName")))
-          )(FakeRequest()),
-          List(testSelfEmploymentId, testSelfEmploymentId2),
-          Some(testPropertyIncomeId),
-          Some(testMigrationYear2019), false
-        )
-
-        s"Have the correct transaction name of '$transactionName'" in {
-          testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
-        }
-
-        s"Have the correct audit event type of '$auditType'" in {
-          testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
-        }
-
-        "Have the correct details for the audit event which display the arn and Agent as user type" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-            "propertyIncomeId" -> testPropertyIncomeId,
-            "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testNino,
-            "agentReferenceNumber" -> "arn",
-            "userType" -> "Agent",
-            "credId" -> testCredId,
-            "selfEmploymentIds" -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
-            "mtditid" -> testMtditidAgent
-          )
-        }
-      }
     }
 
     "Supplied with Single Business IDs and a Property ID" should {
@@ -180,7 +112,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           testMtdUserNino,
           List(testSelfEmploymentId),
           Some(testPropertyIncomeId),
-          Some(testMigrationYear2019), true
+          Some(testMigrationYear2019)
         )
 
         s"Have the correct transaction name of '$transactionName'" in {
@@ -200,34 +132,6 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
             "dateOfMigration" -> testMigrationYear2019,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
-            "mtditid" -> testMtdItUser.mtditid
-          )
-        }
-      }
-      "TxmEventsApproved FS is disabled" when {
-        val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserNino,
-          List(testSelfEmploymentId),
-          Some(testPropertyIncomeId),
-          Some(testMigrationYear2019), false
-        )
-
-        s"Have the correct transaction name of '$transactionName'" in {
-          testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
-        }
-
-        s"Have the correct audit event type of '$auditType'" in {
-          testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
-        }
-
-        "Have the correct details for the audit event" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-            "propertyIncomeId" -> testPropertyIncomeId,
-            "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
-            "userType" -> testUserType,
-            "credId" -> testCredId,
-            "selfEmploymentIds" -> Json.toJson(List(testSelfEmploymentId)),
             "mtditid" -> testMtdItUser.mtditid
           )
         }
@@ -240,7 +144,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           testMtdUserNino,
           List(testSelfEmploymentId),
           Some(testPropertyIncomeId),
-          Some(testMigrationYear2019), true
+          Some(testMigrationYear2019)
         )
 
         s"Have the correct transaction name of '$transactionName'" in {
@@ -264,35 +168,6 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           )
         }
       }
-      "TxmEventsApproved FS is disabled" when {
-        val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserNino,
-          List(),
-          Some(testPropertyIncomeId),
-          Some(testMigrationYear2019), false
-        )
-
-        s"Have the correct transaction name of '$transactionName'" in {
-          testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
-        }
-
-        s"Have the correct audit event type of '$auditType'" in {
-          testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
-        }
-
-        "Have the correct details for the audit event" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-            "propertyIncomeId" -> testPropertyIncomeId,
-            "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
-            "userType" -> testUserType,
-            "credId" -> testCredId,
-            "selfEmploymentIds" -> Json.arr(),
-            "mtditid" -> testMtdItUser.mtditid
-
-          )
-        }
-      }
     }
 
     "Supplied with Single Business IDs and MtditUser, No Property ID, no year of Migration fields" should {
@@ -300,7 +175,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
-          None, None, true
+          None, None
         )
 
         s"Have the correct transaction name of '$transactionName'" in {
@@ -318,32 +193,6 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
             "userType" -> testUserType,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
-            "mtditid" -> testMtdItUser.mtditid
-          )
-        }
-      }
-      "TxmEventsApproved FS is disabled" when {
-        val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserNino,
-          List(testSelfEmploymentId),
-          None, None, false
-        )
-
-        s"Have the correct transaction name of '$transactionName'" in {
-          testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
-        }
-
-        s"Have the correct audit event type of '$auditType'" in {
-          testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
-        }
-
-        "Have the correct details for the audit event" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-            "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
-            "userType" -> testUserType,
-            "credId" -> testCredId,
-            "selfEmploymentIds" -> Json.toJson(List(testSelfEmploymentId)),
             "mtditid" -> testMtdItUser.mtditid
           )
         }
@@ -355,7 +204,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
-          None, None, true
+          None, None
         )
 
         s"Have the correct transaction name of '$transactionName'" in {
@@ -373,32 +222,6 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
             "userType" -> testUserType,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
-            "mtditid" -> testMtdItUser.mtditid
-          )
-        }
-      }
-      "TxmEventsApproved FS is disabled" when {
-        val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserNino,
-          List(testSelfEmploymentId),
-          None, None, false
-        )
-
-        s"Have the correct transaction name of '$transactionName'" in {
-          testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
-        }
-
-        s"Have the correct audit event type of '$auditType'" in {
-          testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
-        }
-
-        "Have the correct details for the audit event" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-            "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
-            "userType" -> testUserType,
-            "credId" -> testCredId,
-            "selfEmploymentIds" -> Json.toJson(List(testSelfEmploymentId)),
             "mtditid" -> testMtdItUser.mtditid
           )
         }
@@ -410,7 +233,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
-          None, None, true
+          None, None
         )
 
         s"Have the correct transaction name of '$transactionName'" in {
@@ -428,34 +251,6 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
             "userType" -> testUserType,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
-            "mtditid" -> testMtdItUser.mtditid
-          )
-        }
-      }
-      "TxmEventsApproved FS is disabled" when {
-        val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-          testMtdUserNino,
-          List(),
-          None,
-          Some(testMigrationYear2019),
-          false
-        )
-
-        s"Have the correct transaction name of '$transactionName'" in {
-          testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
-        }
-
-        s"Have the correct audit event type of '$auditType'" in {
-          testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
-        }
-
-        "Have the correct details for the audit event" in {
-          testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-            "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
-            "userType" -> testUserType,
-            "credId" -> testCredId,
-            "selfEmploymentIds" -> Json.arr(),
             "mtditid" -> testMtdItUser.mtditid
           )
         }

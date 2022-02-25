@@ -22,9 +22,9 @@ import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.featureswitch.{FeatureSwitching, PaymentHistory, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.Payment
 import play.api.http.Status._
@@ -97,7 +97,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   s"return $OK with the payment history page" when {
     "the payment history feature switch is enabled and with TxmEventsApproved FS enabled" in {
-      enable(TxmEventsApproved)
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -112,24 +111,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
-    }
-    "the payment history feature switch is enabled and with TxmEventsApproved FS disabled" in {
-      WireMock.reset()
-      disable(TxmEventsApproved)
-      isAuthorisedUser(authorised = true)
-      stubUserDetails()
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentsFull)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
-
-      Then("The Payment History page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleIndividual(paymentHistoryTitle)
-      )
-
-      verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
     }
   }
 

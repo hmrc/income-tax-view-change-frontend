@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, FeatureSwitching, TxmEventsApproved, WhatYouOweTotals}
+import config.featureswitch.{CodingOut, FeatureSwitching, WhatYouOweTotals}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -58,9 +58,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList().map {
       whatYouOweChargesList =>
-        if (isEnabled(TxmEventsApproved)) {
-          auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
-        }
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
 
         val codingOutEnabled = isEnabled(CodingOut)
         val displayTotals = isEnabled(WhatYouOweTotals)
