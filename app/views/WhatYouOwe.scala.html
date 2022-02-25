@@ -59,10 +59,14 @@
   @utr.map { utr =>
     <div id="payments-due-note" class="govuk-inset-text">
         @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
-        link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
+        link(link = appConfig.saViewLandPService(utr),
+            outerMessage = ".",
         ariaLabel= messages(getPrefix("sa-link")).replaceAll(" " , "-"),
-        messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"), target=Some("_blank")).toString()),
-         )
+        messageKey = getPrefix("sa-link"),
+            id=Some("sa-note-migrated-link"),
+            rel=Some("noreferrer noopener"),
+            target=Some("_blank")).toString())
+        )
         @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
     </div>
   }
@@ -107,7 +111,9 @@
         @p(){
             @getMessage("dunningLock.text", "")
             @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
-                id = Some("disagree-with-tax-appeal-link"), ariaLabel= messages(getPrefix("dunningLock.link")).replaceAll(" " , "-"), target = Some("_blank"), rel= Some("noreferrer noopener"))
+                id = Some("disagree-with-tax-appeal-link"), ariaLabel= messages(getPrefix("dunningLock.link")).replaceAll(" " , "-"), rel=Some("noreferrer noopener"), target = Some("_blank"),
+                additionalOpenTabMessage = Some(".")
+            )
         }
         </div>
     }

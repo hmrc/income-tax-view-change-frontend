@@ -100,8 +100,9 @@
     </div>
 
     <div class="govuk-body app-get-help-link">
-        <a lang="en" hreflang="en" class="govuk-link" target="_blank" href="@{appConfig.reportAProblemNonJSUrl}">
-        @messages("getpagehelp.linkText")
+        <a lang="en" hreflang="en" class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{appConfig.reportAProblemNonJSUrl}">
+            @messages("getpagehelp.linkText")
+            @messages("pagehelp.opensInNewTabText","", "")
         </a>
     </div>
 
