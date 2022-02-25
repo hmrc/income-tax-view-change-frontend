@@ -57,7 +57,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" should {
 
-    "load the page with right data for Payments Breakdown with TxmEventsR6 enabled" in {
+    "load the page with right data for Payments Breakdown" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
