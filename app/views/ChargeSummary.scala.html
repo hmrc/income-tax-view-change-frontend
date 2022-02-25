@@ -22,6 +22,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @import java.time.LocalDate
 @import models.chargeHistory.ChargeHistoryModel
@@ -32,7 +33,8 @@
     appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     p: p,
-    link: link
+    link: link,
+    govukInsetText : GovukInsetText
 )
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
@@ -98,6 +100,35 @@
     }
 }
 
+@codingOutMessageInset = {
+    @p(id = Some("coding-out-notice")) {
+        @messages("chargeSummary.codingOutInset-1")
+        @link(
+            id = Some("coding-out-notice-link"),
+            link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+            target = Some("_blank"),
+            rel= Some("noreferrer noopener"),
+            messageKey = "chargeSummary.codingOutInset-2"
+        )
+        @messages("chargeSummary.codingOutInset-3")
+    }
+}
+
+@codingOutCancelledMessageInset = {
+    @p(id = Some("cancelled-coding-out-notice")) {
+        @messages("chargeSummary.cancelledPayeInset-1")
+        @link(
+            id = Some("cancelled-coding-out-notice-link"),
+            link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+            target = Some("_blank"),
+            rel= Some("noreferrer noopener"),
+            messageKey = "chargeSummary.cancelledPayeInset-2",
+            additionalOpenTabMessage = Some(".")
+        )
+        @messages("chargeSummary.cancelledPayeInset-3")
+    }
+}
+
 @mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial) {
 
     @if(hasDunningLocks || documentDetail.hasLpiWithDunningBlock) {
@@ -148,37 +179,16 @@
 
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment){
         @checkPayeCodePara
-        <div id="coding-out-wrapper" class="govuk-inset-text">
-            @p(id = Some("coding-out-notice")) {
-                @messages("chargeSummary.codingOutInset-1")
-                @link(
-                    id = Some("coding-out-notice-link"),
-                    link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
-                    target = Some("_blank"),
-                    rel= Some("noreferrer noopener"),
-                    messageKey = "chargeSummary.codingOutInset-2"
-                )
-                @messages("chargeSummary.codingOutInset-3")
-            }
+        <div id="coding-out-wrapper">
+            @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
         </div>
         @codingOutMessage
     }
 
     @if(codingOutEnabled && documentDetail.isCancelledPayeSelfAssessment){
         @checkPayeCodePara
-        <div id="cancelled-coding-out-wrapper" class="govuk-inset-text">
-            @p(id = Some("cancelled-coding-out-notice")) {
-                @messages("chargeSummary.cancelledPayeInset-1")
-                @link(
-                    id = Some("cancelled-coding-out-notice-link"),
-                    link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
-                    target = Some("_blank"),
-                    rel= Some("noreferrer noopener"),
-                    messageKey = "chargeSummary.cancelledPayeInset-2",
-                    additionalOpenTabMessage = Some(".")
-                )
-                @messages("chargeSummary.cancelledPayeInset-3")
-            }
+        <div id="cancelled-coding-out-wrapper">
+            @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
         </div>
         @codingOutMessage
     }
