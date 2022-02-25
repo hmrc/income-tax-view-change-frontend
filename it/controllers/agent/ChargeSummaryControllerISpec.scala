@@ -21,7 +21,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch._
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
@@ -106,7 +106,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     s"return $OK with correct page title and audit events when TxmEvents FS is enabled" in {
 
       enable(TxmEventsApproved)
-      enable(TxmEventsR6)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -127,7 +126,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         agentReferenceNumber = Some("1"),
-        txmEventsR6 = true,
+
         isLatePaymentCharge = false
       ))
 
@@ -141,7 +140,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     s"return $OK with correct page title and audit events when TxmEvents and PaymentAllocations FS is enabled" in {
 
       enable(TxmEventsApproved)
-      enable(TxmEventsR6)
       enable(PaymentAllocation)
       disable(ChargeHistory)
       stubAuthorisedAgentUser(authorised = true)
@@ -164,7 +162,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
         agentReferenceNumber = Some("1"),
-        txmEventsR6 = true,
         isLatePaymentCharge = false
       ))
 
@@ -175,44 +172,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and no audit events when TxmEvents FS are disabled" in {
-
-      disable(TxmEventsApproved)
-      disable(TxmEventsR6)
-      stubAuthorisedAgentUser(authorised = true)
-
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-      stubGetFinancialDetailsSuccess(Some("ITSA NI"))
-
-      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        currentTaxYearEnd.getYear.toString, "testId", clientDetails
-      )
-
-      AuditStub.verifyAuditDoesNotContainsDetail(ChargeSummaryAudit(
-        MtdItUser(
-          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None,
-          Some("1234567890"), None, Some("Agent"), Some(testArn)
-        )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
-        paymentBreakdown = paymentBreakdown,
-        chargeHistories = chargeHistories,
-        paymentAllocations = List.empty,
-        agentReferenceNumber = Some("1"),
-        txmEventsR6 = true,
-        false
-      ).detail)
-
-      result should have(
-        httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("main h2")("Important Payment breakdown")
-      )
-    }
-
     s"return $OK with correct page title and audit events when TxmEvents and ChargeHistory and PaymentAllocation FSs are enabled" in {
       enable(TxmEventsApproved)
-      enable(TxmEventsR6)
       enable(ChargeHistory)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
@@ -241,14 +202,12 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
         agentReferenceNumber = Some("1"),
-        txmEventsR6 = true,
         isLatePaymentCharge = false
       ))
     }
 
     s"return $OK with correct page title and audit events when TxmEvents ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
       enable(TxmEventsApproved)
-      enable(TxmEventsR6)
       enable(ChargeHistory)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
@@ -269,7 +228,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
         agentReferenceNumber = Some("1"),
-        txmEventsR6 = true,
         isLatePaymentCharge = true
       ))
 
