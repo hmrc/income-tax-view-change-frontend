@@ -115,7 +115,9 @@
                                 link=appConfig.taxAppealsUrl,
                                 rel=Some("noreferrer noopener"),
                                 target = Some("_blank"),
-                                messageKey = "chargeSummary.dunning.locks.banner.linkText"
+                                messageKey = "chargeSummary.dunning.locks.banner.linkText",
+                                ariaLabel= messages("chargeSummary.dunning.locks.banner.linkText").replaceAll(" " , "-")
+
                             )
                         } else {
                             @link(
@@ -124,8 +126,10 @@
                                 rel=Some("noreferrer noopener"),
                                 target = Some("_blank"),
                                 messageKey = "chargeSummary.dunning.locks.banner.linkText",
-                                additionalOpenTabMessage = Some(".")
-                            )
+                                additionalOpenTabMessage = Some("."),
+                                ariaLabel= messages("chargeSummary.dunning.locks.banner.linkText").replaceAll(" " , "-")
+
+                        )
                             @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
                         }
                     </b>
