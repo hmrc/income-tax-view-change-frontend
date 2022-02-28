@@ -92,6 +92,7 @@ object FinancialDetailsIntegrationTestConstants {
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      None,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount)),
       financialDetails = List(financialDetail(taxYear))
     )
@@ -156,6 +157,7 @@ object FinancialDetailsIntegrationTestConstants {
                                 taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      None,
       documentDetails = List(
         DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot")),
@@ -194,6 +196,7 @@ object FinancialDetailsIntegrationTestConstants {
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      None,
       documentDetails = List(
         DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot")),

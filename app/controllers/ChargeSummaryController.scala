@@ -59,7 +59,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
         financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
           val payments = financialResponses.collect {
             case (_, model: FinancialDetailsModel) => model.filterPayments()
-          }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), List(), List()))((merged, next) => merged.mergeLists(next))
+          }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), None, List(), List()))((merged, next) => merged.mergeLists(next))
 
           val matchingYear = financialResponses.collect {
             case (year, response) if year == taxYear => response
