@@ -63,7 +63,7 @@ btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Mess
     @p(){
         @messages("paymentHistory.info")
         @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-              ariaLabel= messages(("paymentHistory.textLink1").replaceAll(" " , "-")),
+              ariaLabel= messages("paymentHistory.textLink1").replaceAll(" " , "-") + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"),
             outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
         }
     }

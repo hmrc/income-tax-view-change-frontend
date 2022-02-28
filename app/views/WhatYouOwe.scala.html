@@ -111,7 +111,7 @@
         @p(){
             @getMessage("dunningLock.text", "")
             @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
-                id = Some("disagree-with-tax-appeal-link"), ariaLabel= messages(getPrefix("dunningLock.link")).replaceAll(" " , "-"), rel=Some("noreferrer noopener"), target = Some("_blank"),
+                id = Some("disagree-with-tax-appeal-link"), ariaLabel= messages(getPrefix("dunningLock.link")).replaceAll(" " , "-")+ messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"), rel=Some("noreferrer noopener"), target = Some("_blank"),
                 additionalOpenTabMessage = Some(".")
             )
         }

@@ -127,7 +127,7 @@
                                 target = Some("_blank"),
                                 messageKey = "chargeSummary.dunning.locks.banner.linkText",
                                 additionalOpenTabMessage = Some("."),
-                                ariaLabel= messages("chargeSummary.dunning.locks.banner.linkText").replaceAll(" " , "-")
+                                ariaLabel= messages("chargeSummary.dunning.locks.banner.linkText").replaceAll(" " , "-") + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-")
 
                         )
                             @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
