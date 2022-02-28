@@ -112,6 +112,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     FinancialDetailsModel(balanceDetails, codingDetails, documentDetails ++ financialDetailsModel.documentDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
+
+  def getDocumentDetailWithCodingDetails(documentDetail: DocumentDetail): Option[DocumentDetailWithCodingDetails] = {
+    codingDetails.flatMap(_.find(_.taxYearReturn == documentDetail.taxYear)).map(DocumentDetailWithCodingDetails(documentDetail, _))
+  }
 }
 
 
@@ -124,3 +128,5 @@ case class FinancialDetailsErrorModel(code: Int, message: String) extends Financ
 object FinancialDetailsErrorModel {
   implicit val format: Format[FinancialDetailsErrorModel] = Json.format[FinancialDetailsErrorModel]
 }
+
+case class DocumentDetailWithCodingDetails(documentDetail: DocumentDetail, codingDetails: CodingDetails)
