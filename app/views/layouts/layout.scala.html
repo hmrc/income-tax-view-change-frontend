@@ -87,7 +87,7 @@
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(CurrentLanguage()))
-    @{btaNavPartial.getOrElse()}
+    @{btaNavPartial.getOrElse(())}
         <div class="nav-bar-wrapper">
             @languageSelection()
             @backUrl.map(backLink(_))
