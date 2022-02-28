@@ -10,10 +10,11 @@ import play.sbt.routes.RoutesKeys
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "5.9.0"
-val govTemplateVersion        = "5.72.0-play-28"
+val bootstrapPlayVersion      = "5.20.0"
+val govTemplateVersion        = "5.75.0-play-28"
 val playPartialsVersion       = "8.2.0-play-28"
-val playUiVersion             = "9.7.0-play-28"
+val playUiVersion             = "9.8.0-play-28"
+val playFrontendHMRCVersion   = "3.4.0-play-28"
 val playLanguageVersion       = "5.1.0-play-28"
 val catsVersion               = "0.9.0"
 
@@ -36,7 +37,7 @@ val compile = Seq(
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
   "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-28",
   "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
-  "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.17.0-play-28"
+  "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion
 )
 
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
