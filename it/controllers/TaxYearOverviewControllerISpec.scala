@@ -44,6 +44,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
+    None,
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -69,6 +70,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   val immediatelyRejectedByNps: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
+    None,
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -110,6 +112,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   val rejectedByNpsPartWay: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
+    None,
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -153,6 +156,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   val codingOutPartiallyCollected: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
+    None,
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -210,6 +214,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
+    None,
     List(DocumentDetail(
       taxYear = getCurrentTaxYearEnd.getYear.toString,
       transactionId = "testDunningTransactionId",

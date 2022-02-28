@@ -109,10 +109,12 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         transactionId = Some("testTransactionId"),
         items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
       )
-    )
+    ),
+    codingDetails = None
   )
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00),
+    None,
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
