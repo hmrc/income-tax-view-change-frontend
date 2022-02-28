@@ -30,7 +30,6 @@ import testUtils.ViewSpec
 import views.html.ChargeSummary
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.PaymentAllocationsTestConstants.documentDetail
-
 import java.time.LocalDate
 
 class ChargeSummaryViewSpec extends ViewSpec {
@@ -109,6 +108,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
     val codingOutHeader = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
     val codingOutInsetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
@@ -268,7 +268,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        checkPaymentProcessingInfo(document)
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
       }
 
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
@@ -444,8 +444,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.select("div#payment-link-2018").text() shouldBe msgs("paymentDue.payNow")
       }
 
-      "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        checkPaymentProcessingInfo(document)
+      "have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
@@ -715,7 +715,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        checkPaymentProcessingInfo(document)
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {

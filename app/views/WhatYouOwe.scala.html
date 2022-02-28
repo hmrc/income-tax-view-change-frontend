@@ -375,7 +375,7 @@
       @p(id=Some("payments-made"))(Html(getMessage("payments-made")))
        <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
         <li>@messages("whatYouOwe.payments-made-bullet-1.1")
-            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id=Some("sa-tax-bill"),  messageKey = "whatYouOwe.payments-made-bullet-1.2")
+            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id=Some("sa-tax-bill"),  messageKey = "whatYouOwe.payments-made-bullet-1.2", target = Some("_blank"))
              @messages("whatYouOwe.payments-made-bullet-1.3")</li>
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
      </ul>
