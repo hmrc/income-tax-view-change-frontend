@@ -62,9 +62,11 @@ if(payButton) {
         }
         openAllButton.innerHTML = '<span class="govuk-visually-hidden"> sections</span>'
     }
-    setAccordionMessage()
-    openAllButton.addEventListener("click", setAccordionMessage);
-    for (let i = 0; i <= accordionSections.length -1; i++) {
-        document.getElementsByClassName('govuk-accordion__section-button')[i].addEventListener("click", setAccordionMessageForSections);
+    if(openAllButton) {
+        setAccordionMessage()
+        openAllButton.addEventListener("click", setAccordionMessage);
+        for (let i = 0; i <= accordionSections.length - 1; i++) {
+            document.getElementsByClassName('govuk-accordion__section-button')[i].addEventListener("click", setAccordionMessageForSections);
+        }
     }
 </script>
