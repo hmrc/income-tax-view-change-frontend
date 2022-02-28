@@ -24,6 +24,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
     mainTemplate: unifiedLayout,
@@ -32,7 +33,8 @@
     h1: h1,
     h2: h2,
     p: p,
-    link: link
+    link: link,
+    govukInsetText : GovukInsetText
 )
 
 @(chargesList: WhatYouOweChargesList,
@@ -55,20 +57,21 @@
     if(isAgent) messages(s"whatYouOwe.$key", args: _*) else messages(s"whatYouOwe.$key", args: _*)
 }
 
+@saNoteParagraphContent(utr: String) = {
+    @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
+        link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
+        messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"),
+        rel=Some("noreferrer noopener"), target=Some("_blank")).toString())
+    )
+    @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
+}
+
 @saNoteParagraph = {
-  @utr.map { utr =>
-    <div id="payments-due-note" class="govuk-inset-text">
-        @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
-        link(link = appConfig.saViewLandPService(utr),
-            outerMessage = ".",
-            messageKey = getPrefix("sa-link"),
-            id=Some("sa-note-migrated-link"),
-            rel=Some("noreferrer noopener"),
-            target=Some("_blank")).toString())
-        )
-        @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
+    @utr.map { utr =>
+    <div id="payments-due-note">
+        @govukInsetText(InsetText(content = HtmlContent(saNoteParagraphContent(utr))))
     </div>
-  }
+    }
 }
 
 @paymentTypesDropdown(classes: String = "govuk-details") = {
@@ -342,16 +345,9 @@
 
             @if(codingOutEnabled) {
                 @chargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
-            <div id="coding-out-wrapper" class="govuk-inset-text">
-                        @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
-                            @getMessage("codingOut-1a")
-                            <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">@codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("Amount Coded Out")).toCurrencyString</a>
-                            @getMessage("codingOut-1b")
-                            <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
-                                codedOutDocumentDetail.taxYear)</b>
-                            @getMessage("codingOut-3")
-                        }
-                    </div>
+                    <div id="coding-out-wrapper">
+                        @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codedOutDocumentDetail))))
+                    <div>
                 }
             }
 
@@ -380,7 +376,6 @@
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
      </ul>
 
-
 }
 
 
@@ -391,3 +386,14 @@
         controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false)
     }
  }
+
+@codingOutInsetContent(codedOutDocumentDetail: DocumentDetail) = {
+    @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
+        @getMessage("codingOut-1a")
+        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">@codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("Amount Coded Out")).toCurrencyString</a>
+        @getMessage("codingOut-1b")
+        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
+            codedOutDocumentDetail.taxYear)</b>
+        @getMessage("codingOut-3")
+    }
+}

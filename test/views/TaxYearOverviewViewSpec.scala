@@ -249,7 +249,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
-        layoutContent.selectHead("p.govuk-body").text shouldBe taxYearOverviewMessages.calcDateInfo
+        layoutContent.selectHead("p#calc-date-info").text shouldBe taxYearOverviewMessages.calcDateInfo
       }
 
       "not have a paragraph explaining the calc date for a crystallised year" in new Setup(crystallisedView()) {
