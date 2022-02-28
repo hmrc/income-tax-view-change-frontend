@@ -24,6 +24,7 @@
 @import views.html.components._
 @import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 @import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -31,7 +32,8 @@
         breakdownPartial: taxOverviewBreakdownPartial,
         h2: h2,
         h3: h3,
-        p: p
+        p: p,
+        govukInsetText: GovukInsetText
 )
 
 @(taxYear: Int, overviewOpt: Option[TaxYearOverviewViewModel], charges: List[DocumentDetailWithDueDate],
@@ -215,9 +217,9 @@
             </div>
         </dl>
         @if(!overview.crystallised) {
-            <div class="govuk-inset-text">
-            @p()(content = Html(messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)))
-            </div>
+            @govukInsetText(InsetText(content = HtmlContent(
+                p(id=Some("calc-date-info"))(content = Html(messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)))
+            )))
         }
     }
     <div class="govuk-tabs govuk-tabs-upper-padding" data-module="govuk-tabs">

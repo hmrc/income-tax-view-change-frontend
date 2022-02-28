@@ -21,11 +21,13 @@
 @import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTableNew
 @import views.html.partials.taxcalcbreakdown.TableRow
 @import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
     mainTemplate: unifiedLayout,
     tableRow: TableRow,
-    capitalGainsTaxTable: CapitalGainsTaxTableNew
+    capitalGainsTaxTable: CapitalGainsTaxTableNew,
+    govukInsetText: GovukInsetText
 )
 @(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, class4UpliftEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
@@ -70,37 +72,37 @@
     </div>
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
-    <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments")).toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
-    </div>
+        @govukInsetText(InsetText(content = HtmlContent(
+            messages(s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments")).toCurrencyString,
+                BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+        )))
     }
 
     @for(message <- viewModel.messages.map(_.genericMessages.sortBy(_.id)).getOrElse(Seq())) {
-    <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.${message.id}")
-    </div>
+        @govukInsetText(InsetText(content = HtmlContent(
+            messages(s"taxCal_breakdown.message.${message.id}")
+        )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22205"))){
-    <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.C22205",
-            BigDecimal(viewModel.lossesAppliedToGeneralIncome.getOrElse(throw MissingFieldException("Losses Applied To General Income"))).toCurrencyString)
-    </div>
+        @govukInsetText(InsetText(content = HtmlContent(
+            messages(s"taxCal_breakdown.message.C22205",
+                BigDecimal(viewModel.lossesAppliedToGeneralIncome.getOrElse(throw MissingFieldException("Losses Applied To General Income"))).toCurrencyString)
+        )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
-    <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.C22208",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
-    </div>
+        @govukInsetText(InsetText(content = HtmlContent(
+            messages(s"taxCal_breakdown.message.C22208",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
+                BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+        )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
-    <div class="govuk-inset-text">
-        @messages(s"taxCal_breakdown.message.C22209",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
-            BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
-    </div>
+        @govukInsetText(InsetText(content = HtmlContent(
+            messages(s"taxCal_breakdown.message.C22209",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
+                BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+        )))
     }
 
     @if(viewModel.payPensionsProfitBands.getOrElse(Seq()).exists(_.income > 0)) {
