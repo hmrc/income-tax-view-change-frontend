@@ -218,7 +218,7 @@
         </dl>
         @if(!overview.crystallised) {
             @govukInsetText(InsetText(content = HtmlContent(
-                messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)
+                p(id=Some("calc-date-info"))(content = Html(messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)))
             )))
         }
     }
