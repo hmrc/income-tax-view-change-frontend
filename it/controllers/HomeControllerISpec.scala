@@ -40,7 +40,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     "Authorised" should {
-      "render the home page with the payment due date with TxmEventsApproved FS enabled" in {
+      "render the home page with the payment due date" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 

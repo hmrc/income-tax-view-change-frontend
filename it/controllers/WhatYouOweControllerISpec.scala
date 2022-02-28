@@ -83,7 +83,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           }
         }
 
-        "TxmEventsApproved and WhatYouOweTotals FSs are enabled" when {
+        "WhatYouOweTotals FS enabled" when {
           enable(WhatYouOweTotals)
           "YearOfMigration exists" when {
             "render the payments due page with a multiple charge from financial details and BCD and ACI charges from CESA" in {
@@ -529,7 +529,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           }
         }
 
-        "YearOfMigration exists and No valid charges exists with with TxmEventsApproved FS enabled" when {
+        "YearOfMigration exists and No valid charges exists" when {
           "render the payments due page with a no charge" in {
 
             Given("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")

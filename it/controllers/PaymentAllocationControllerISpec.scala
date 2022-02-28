@@ -77,7 +77,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     }
 
     s"return $OK with the payment allocation page for non LPI" when {
-      "the payment allocation feature switch is enabled and with TxmEventsApproved FS enabled" in {
+      "the payment allocation feature switch is enabled" in {
         enable(PaymentAllocation)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
@@ -101,7 +101,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     }
 
     s"return $OK with the payment allocation page for LPI" when {
-      "the payment allocation feature switch is enabled and with TxmEventsApproved FS enabled" in {
+      "the payment allocation feature switch is enabled" in {
         enable(PaymentAllocation)
         isAuthorisedUser(authorised = true)
         stubUserDetails()

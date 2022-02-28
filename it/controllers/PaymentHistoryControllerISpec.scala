@@ -96,7 +96,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   }
 
   s"return $OK with the payment history page" when {
-    "the payment history feature switch is enabled and with TxmEventsApproved FS enabled" in {
+    "the payment history feature switch is enabled" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)

@@ -103,7 +103,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when TxmEvents FS is enabled" in {
+    s"return $OK with correct page title and audit events" in {
 
       stubAuthorisedAgentUser(authorised = true)
 
@@ -135,7 +135,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when TxmEvents and PaymentAllocations FS is enabled" in {
+    s"return $OK with correct page title and audit events when PaymentAllocations FS is enabled" in {
 
       enable(PaymentAllocation)
       disable(ChargeHistory)
@@ -202,7 +202,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ))
     }
 
-    s"return $OK with correct page title and audit events when TxmEvents ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
+    s"return $OK with correct page title and audit events when ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
       enable(ChargeHistory)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)

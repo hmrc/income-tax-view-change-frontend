@@ -144,7 +144,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
       "retrieving the client's obligations was successful" when {
         "retrieving the client's charges was successful" should {
           "display the page with the next upcoming payment and charge" when {
-            "there are payments upcoming and nothing is overdue with TxmEventsApproved FS enabled" in {
+            "there are payments upcoming and nothing is overdue" in {
 
               stubAuthorisedAgentUser(authorised = true)
 
@@ -214,7 +214,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             }
           }
           "display the page with no upcoming payment" when {
-            "there are no upcoming payments for the client with TxmEventsApproved FS enabled" in {
+            "there are no upcoming payments for the client" in {
 
               stubAuthorisedAgentUser(authorised = true)
 
@@ -282,7 +282,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
-            "display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS enabled" when {
+            "display the page with an overdue payment and an overdue obligation" when {
               "there is a single payment overdue and a single obligation overdue" in {
 
                 stubAuthorisedAgentUser(authorised = true)
@@ -421,7 +421,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               }
             }
           }
-          "display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS enabled" when {
+          "display the page with a count of the overdue payments a count of overdue obligations" when {
             "there is more than one payment overdue and more than one obligation overdue" in {
 
               stubAuthorisedAgentUser(authorised = true)

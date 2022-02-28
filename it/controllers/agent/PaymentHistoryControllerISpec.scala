@@ -103,7 +103,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   }
 
   s"return $OK with the enter client utr page" when {
-    "the TxmEventsApproved FS enabled" in {
+    s"return $OK" in {
       enable(PaymentHistory)
       stubAuthorisedAgentUser(authorised = true)
 

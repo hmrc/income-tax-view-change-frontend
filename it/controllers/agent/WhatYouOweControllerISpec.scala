@@ -97,7 +97,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   "WhatYouOweTotals FS is enabled" when {
     enable(WhatYouOweTotals)
-    "YearOfMigration exists and with TxmEventsApproved FS enabled" when {
+    "YearOfMigration exists" when {
       "with a multiple charge from financial details and BCD and ACI charges from CESA" in {
 
         stubAuthorisedAgentUser(authorised = true)
@@ -548,7 +548,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       }
     }
 
-    s"return $OK with TxmEventsApproved FS enabled" when {
+    s"return $OK" when {
       "YearOfMigration does not exists" when {
         "with a no charge" in {
           stubAuthorisedAgentUser(authorised = true)

@@ -18,6 +18,7 @@ package audit.models
 
 import testConstants.BaseTestConstants._
 import auth.MtdItUserWithNino
+import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testUtils.TestSupport
@@ -33,7 +34,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
   "The IncomeSourceDetailsResponseAuditModel" when {
 
     "Supplied with Multiple Business IDs and a Property ID for individual which display no arn and Individual as user type" should {
-      "TxmEventsApproved FS is enabled" when {
+      s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId, testSelfEmploymentId2),
@@ -65,7 +66,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     }
 
     "Supplied with Multiple Business IDs and a Property ID for agent" should {
-      "TxmEventsApproved FS is enabled" when {
+      s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           mtdItUser = MtdItUserWithNino(
             btaNavPartial = None,
@@ -107,7 +108,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     }
 
     "Supplied with Single Business IDs and a Property ID" should {
-      "TxmEventsApproved FS is enabled" when {
+      s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
@@ -139,7 +140,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     }
 
     "Supplied with No Business IDs and a Property ID" should {
-      "TxmEventsApproved FS is enabled" when {
+      s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
@@ -171,7 +172,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     }
 
     "Supplied with Single Business IDs and MtditUser, No Property ID, no year of Migration fields" should {
-      "TxmEventsApproved FS is enabled" when {
+      s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
@@ -200,7 +201,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     }
 
     "Supplied with Multiple Business IDs and No Property ID" should {
-      "TxmEventsApproved FS is enabled" when {
+      s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
@@ -229,7 +230,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     }
 
     "Supplied with No Business IDs and No Property ID" should {
-      "TxmEventsApproved FS is enabled" when {
+      s"return $OK" when {
         val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
           testMtdUserNino,
           List(testSelfEmploymentId),
