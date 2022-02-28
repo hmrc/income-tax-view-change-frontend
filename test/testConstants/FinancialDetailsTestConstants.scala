@@ -36,6 +36,13 @@ object FinancialDetailsTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(
+      Json.obj(
+        "taxYearReturn" -> "2018",
+        "amountCodedOut" -> 100.00,
+        "taxYearCoding" -> "2019"
+      )
+    ),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> "2019",
@@ -450,7 +457,7 @@ object FinancialDetailsTestConstants {
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    codingDetails = None,
+    codingDetails = Some(List(CodingDetails("2018", BigDecimal("100.00"), "2019"))),
     documentDetails = List(
       DocumentDetail("2019", id1040000123, Some("TRM New Charge"), Some("documentText"), Some(10.33), Some(10.33), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
         Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot")),
