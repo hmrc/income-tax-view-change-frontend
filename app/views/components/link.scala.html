@@ -22,7 +22,7 @@
     messageKey: String,
     id: Option[String] = None,
     target: Option[String] = None,
-    ariaLabel: String,
+    ariaLabel: Option[String] = None,
     outerMessage: String = "",
     role: Option[String] = None,
     rel: Option[String] = None,
@@ -31,5 +31,10 @@
 
 <a href="@link" class="@classes" @id.map(id => s"id=$id") rel="@rel.map(c=>s"$c")" @target.map(target => s"target=$target")
     @role.map(role => s"role=$role")
+    @if(ariaLabel == None) {
+        aria-label="@messages(messageKey).replaceAll(" ", "-")@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText").replaceAll(" ", "-")}">
+    } else {
     aria-label="@ariaLabel.map(c=>s"$c")">
+    }
+
     @messages(messageKey)@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>@outerMessage
