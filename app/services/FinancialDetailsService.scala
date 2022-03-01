@@ -41,7 +41,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
   def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
     val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
       case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-      case FinancialDetailsErrorModel(NOT_FOUND, _) => List.empty[LocalDate]
+      case _ => List.empty[LocalDate]
     }.sortWith(_ isBefore _)
 
     val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore LocalDate.now)

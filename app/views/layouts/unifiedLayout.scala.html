@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import views.helpers.CurrentLanguage
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -56,7 +56,6 @@
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
-    val homepageUrl = if (isAgent) controllers.agent.routes.HomeController.show().url else controllers.routes.HomeController.home.url
     val serviceName = if (isAgent) Some(messages("agent.base.service_name")) else Some(messages("base.service_name"))
     val serviceUrl = if (isAgent) controllers.agent.routes.HomeController.show().url else appConfig.businessTaxAccount
 
@@ -92,7 +91,7 @@
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(CurrentLanguage()))
-    @{btaNavPartial.getOrElse()}
+    @{btaNavPartial.getOrElse(())}
     <div class="nav-bar-wrapper">
         @languageSelection()
         @backUrl.map(backLink(_))
