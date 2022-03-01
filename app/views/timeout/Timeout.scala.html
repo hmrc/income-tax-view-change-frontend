@@ -31,6 +31,8 @@
     @link(
         link = controllers.routes.SignInController.signIn().url,
         messageKey = "timeout.signIn.2",
+ariaLabel= messages("timeout.signIn.2").replaceAll(" " , "-"),
+
         id = Some("sign-in-link"),
     )
     @messages("timeout.signIn.3")

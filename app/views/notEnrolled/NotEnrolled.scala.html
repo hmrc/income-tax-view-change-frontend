@@ -33,7 +33,8 @@
     @h1(msg="not_enrolled.heading", id=Some("page-heading"))
     @p(id=Some("sign-up")){
         @messages("not_enrolled.sign-up.1")
-        @link(link = appConfig.signUpUrl, messageKey = "not_enrolled.sign-up.2", id=Some("sign-up-link"))
+        @link(link = appConfig.signUpUrl, messageKey = "not_enrolled.sign-up.2", id=Some("sign-up-link"), ariaLabel= messages("not_enrolled.sign-up.2").replaceAll(" " , "-")
+)
         @messages("not_enrolled.sign-up.3")
     }
 

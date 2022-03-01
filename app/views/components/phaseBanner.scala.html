@@ -40,7 +40,8 @@
 @feedbackBanner = {
     @messages("betaBanner.newService")
     @messages("betaBanner.your")
-    @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("feedback-url"))
+    @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", ariaLabel= messages("betaBanner.feedback").replaceAll(" " , "-"),
+id=Some("feedback-url"))
     @messages("betaBanner.improve")
 }
 
