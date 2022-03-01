@@ -33,7 +33,7 @@
 
     @p(){
         @messages("agent-error.note")
-        @link(link = appConfig.setUpAgentServicesAccountUrl, messageKey = "agent-error.link", ariaLabel= messages("agent-error.link").replaceAll(" " , "-"), target = Some("_blank"), outerMessage = ".")
+        @link(link = appConfig.setUpAgentServicesAccountUrl, messageKey = "agent-error.link", ariaLabel= messages("agent-error.link").replaceAll(" " , "-") + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"), target = Some("_blank"), outerMessage = ".")
     }
 
 
