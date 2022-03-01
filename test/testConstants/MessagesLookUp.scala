@@ -421,7 +421,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object AgentErrorMessages {
     val heading: String = "You can't use this service yet"
     val title: String = s"$heading - Your client’s Income Tax details - GOV.UK"
-    val setupAccountLink = "set up an agent services account"
+    val setupAccountLink = "set up an agent services account (opens in new tab)"
     val notAnAgentNote: String = s"To use this service, you need to $setupAccountLink."
     val signOutButton: String = "Sign out"
   }
@@ -586,7 +586,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val taxYearSummary = "Tax year summary"
     val amountDue = "Amount due"
 
-    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
     val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
     val paymentsMade = "Any payments you make:"
     val poa1Text = "Payment on account 1 of 2"
@@ -664,7 +664,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2Text = "Payment on account 2 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val latePoa2Text = "Late payment interest for payment on account 2 of 2"
-    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
     val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
     val remainingBalance = "Balancing payment"
     val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
