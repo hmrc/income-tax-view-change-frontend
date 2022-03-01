@@ -135,7 +135,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], incomeTaxAgentUser: IncomeTaxAgentUser): Unit = {
-    if (isEnabled(TxmEventsApproved)) {
       auditingService.extendedAudit(ChargeSummaryAudit(
         mtdItUser = user,
         docDateDetail = documentDetailWithDueDate,
@@ -145,7 +144,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber,
         isLatePaymentCharge = isLatePaymentCharge
       ))
-    }
   }
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {

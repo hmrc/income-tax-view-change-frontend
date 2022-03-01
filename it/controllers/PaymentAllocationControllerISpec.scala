@@ -7,7 +7,7 @@ import testConstants.PaymentAllocationIntegrationTestConstants._
 import audit.models.PaymentAllocationsResponseAuditModel
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
@@ -77,8 +77,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     }
 
     s"return $OK with the payment allocation page for non LPI" when {
-      "the payment allocation feature switch is enabled and with TxmEventsApproved FS enabled" in {
-        enable(TxmEventsApproved)
+      "the payment allocation feature switch is enabled" in {
         enable(PaymentAllocation)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
@@ -102,8 +101,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     }
 
     s"return $OK with the payment allocation page for LPI" when {
-      "the payment allocation feature switch is enabled and with TxmEventsApproved FS enabled" in {
-        enable(TxmEventsApproved)
+      "the payment allocation feature switch is enabled" in {
         enable(PaymentAllocation)
         isAuthorisedUser(authorised = true)
         stubUserDetails()

@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -65,15 +65,9 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
   )
 
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {
-    def test(txmApproved: Boolean): Unit = {
+    def test(): Unit = {
       And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
       stubAuthorisedAgentUser(authorised = true)
-
-      if (txmApproved) {
-        enable(TxmEventsApproved)
-      } else {
-        disable(TxmEventsApproved)
-      }
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,

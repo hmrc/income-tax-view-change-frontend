@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
@@ -52,9 +52,7 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
         } yield {
           paymentHistoryResponse match {
             case Right(payments) =>
-              if (isEnabled(TxmEventsApproved)) {
-                auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
-              }
+              auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
               Ok(paymentHistory(payments, backUrl, mtdItUser.saUtr, isAgent = true))
             case Left(_) => itvcErrorHandler.showInternalServerError()
           }

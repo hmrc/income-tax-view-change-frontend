@@ -24,14 +24,12 @@ import utils.Utilities._
 case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserWithNino[_],
                                                  selfEmploymentIds: List[String],
                                                  propertyIncomeId: Option[String],
-                                                 yearOfMigration: Option[String],
-                                                 txmEventApproved: Boolean) extends ExtendedAuditModel {
+                                                 yearOfMigration: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = "income-source-details-response"
   override val auditType: String = "incomeSourceDetailsResponse"
 
   override val detail: JsValue = {
-    if (txmEventApproved) {
       Json.obj("mtditid" -> mtdItUser.mtditid,
         "nationalInsuranceNumber" -> mtdItUser.nino,
         "selfEmploymentIncomeSourceIds" -> selfEmploymentIds) ++
@@ -41,15 +39,5 @@ case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserWithNino[_]
         ("credId", mtdItUser.credId) ++
         ("propertyIncomeSourceId", propertyIncomeId) ++
         ("dateOfMigration", yearOfMigration)
-    } else {
-      Json.obj("mtditid" -> mtdItUser.mtditid,
-        "nationalInsuranceNumber" -> mtdItUser.nino,
-        "selfEmploymentIds" -> selfEmploymentIds) ++
-        ("agentReferenceNumber", mtdItUser.arn) ++
-        ("saUtr", mtdItUser.saUtr) ++
-        userType(mtdItUser.userType) ++
-        ("credId", mtdItUser.credId) ++
-        ("propertyIncomeId", propertyIncomeId)
-    }
   }
 }

@@ -103,9 +103,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when TxmEvents FS is enabled" in {
+    s"return $OK with correct page title and audit events" in {
 
-      enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -126,7 +125,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         agentReferenceNumber = Some("1"),
-
         isLatePaymentCharge = false
       ))
 
@@ -137,9 +135,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when TxmEvents and PaymentAllocations FS is enabled" in {
+    s"return $OK with correct page title and audit events when PaymentAllocations FS is enabled" in {
 
-      enable(TxmEventsApproved)
       enable(PaymentAllocation)
       disable(ChargeHistory)
       stubAuthorisedAgentUser(authorised = true)
@@ -172,8 +169,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
     }
 
-    s"return $OK with correct page title and audit events when TxmEvents and ChargeHistory and PaymentAllocation FSs are enabled" in {
-      enable(TxmEventsApproved)
+    s"return $OK with correct page title and audit events when ChargeHistory and PaymentAllocation FSs are enabled" in {
       enable(ChargeHistory)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
@@ -206,8 +202,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ))
     }
 
-    s"return $OK with correct page title and audit events when TxmEvents ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
-      enable(TxmEventsApproved)
+    s"return $OK with correct page title and audit events when ChargeHistory and PaymentAllocation FSs are enabled and LPI set to true" in {
       enable(ChargeHistory)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)

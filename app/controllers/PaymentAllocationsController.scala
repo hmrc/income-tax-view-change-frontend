@@ -58,9 +58,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
       if (isEnabled(PaymentAllocation)) {
         paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
           case Right(paymentAllocations) =>
-            if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-            }
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial))
           case Left(PaymentAllocationError(Some(404))) =>
             Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)

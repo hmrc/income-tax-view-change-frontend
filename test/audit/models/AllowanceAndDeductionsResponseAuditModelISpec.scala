@@ -26,8 +26,7 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
   val transactionName = "allowances-deductions-details-response"
   val auditEvent = "AllowancesDeductionsDetailsResponse"
 
-  "The AllowanceAndDeductionsResponseAuditModel with TxmApproved FS enabled" should {
-
+  "The AllowanceAndDeductionsResponseAuditModel" should {
     val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtdItAgentUser,
       AllowancesAndDeductionsViewModel(
         personalAllowance = Some(123.12),

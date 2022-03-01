@@ -102,7 +102,6 @@ class HomeController @Inject()(homeView: Home,
           overDueUpdatesCount = latestDeadlineDate._2.size
           paymentsDueMerged = (paymentsDue ::: getOutstandingChargesDueDate(outstandingChargesModel)).sortWith(_ isBefore _).headOption
         } yield {
-          if (isEnabled(TxmEventsApproved)) {
             auditingService.extendedAudit(HomeAudit(
               mtdItUser = mtdItUser,
               paymentsDueMerged,
@@ -110,8 +109,6 @@ class HomeController @Inject()(homeView: Home,
               overDuePaymentsCount,
               overDueUpdatesCount
             ))
-          }
-
           Ok(
             view(
               paymentsDueMerged,

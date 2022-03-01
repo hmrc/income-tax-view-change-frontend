@@ -144,7 +144,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
       "retrieving the client's obligations was successful" when {
         "retrieving the client's charges was successful" should {
           "display the page with the next upcoming payment and charge" when {
-            "there are payments upcoming and nothing is overdue with TxmEventsApproved FS enabled" in {
+            "there are payments upcoming and nothing is overdue" in {
 
               stubAuthorisedAgentUser(authorised = true)
 
@@ -200,7 +200,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-              enable(TxmEventsApproved)
               val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
 
               result should have(
@@ -214,80 +213,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
-            "there are payments upcoming and nothing is overdue with TxmEventsApproved FS disabled" in {
-
-              stubAuthorisedAgentUser(authorised = true)
-
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                status = OK,
-                response = incomeSourceDetailsModel
-              )
-
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                NextUpdatesModel(
-                  identification = "testId",
-                  obligations = List(
-                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
-                  ))
-              ))
-
-              IncomeTaxViewChangeStub.stubGetNextUpdates(
-                nino = testNino,
-                deadlines = currentObligations
-              )
-
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                nino = testNino,
-                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                to = getCurrentTaxYearEnd.toString
-              )(
-                status = OK,
-                response = Json.toJson(FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-                  documentDetails = List(
-                    DocumentDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
-                      transactionId = "testTransactionId",
-                      documentDescription = Some("ITSA- POA 1"),
-                      documentText = Some("documentText"),
-                      outstandingAmount = Some(500.00),
-                      originalAmount = Some(1000.00),
-                      documentDate = LocalDate.of(2018, 3, 29)
-                    )
-                  ),
-                  financialDetails = List(
-                    FinancialDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
-                      mainType = Some("SA Payment on Account 1"),
-                      transactionId = Some("testTransactionId"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
-                    )
-                  ),
-                  codingDetails = None
-                ))
-              )
-
-              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-              disable(TxmEventsApproved)
-              val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
-
-              result should have(
-                httpStatus(OK),
-                pageTitleAgent(agentTitle),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
-                elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
-                elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
-              )
-
-              verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
-              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-            }
           }
           "display the page with no upcoming payment" when {
-            "there are no upcoming payments for the client with TxmEventsApproved FS enabled" in {
-              enable(TxmEventsApproved)
+            "there are no upcoming payments for the client" in {
 
               stubAuthorisedAgentUser(authorised = true)
 
@@ -356,81 +284,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
-            "display the page with no upcoming payment with TxmEventsApproved FS disabled" when {
-              "there are no upcoming payments for the client" in {
-                disable(TxmEventsApproved)
-
-                stubAuthorisedAgentUser(authorised = true)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  NextUpdatesModel(
-                    identification = "testId",
-                    obligations = List(
-                      NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
-                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-                    documentDetails = List(
-                      DocumentDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
-                        transactionId = "testTransactionId",
-                        documentDescription = Some("ITSA- POA 1"),
-                        documentText = Some("documentText"),
-                        outstandingAmount = Some(0),
-                        originalAmount = Some(1000.00),
-                        documentDate = LocalDate.of(2018, 3, 29)
-                      )
-                    ),
-                    financialDetails = List(
-                      FinancialDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
-                        mainType = Some("SA Payment on Account 1"),
-                        transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
-                      )
-                    ),
-                    codingDetails = None
-                  ))
-                )
-
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-                val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitleAgent(agentTitle),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
-                  elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
-                )
-
-                verifyAuditDoesNotContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
-            }
-            "display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS enabled" when {
+            "display the page with an overdue payment and an overdue obligation" when {
               "there is a single payment overdue and a single obligation overdue" in {
-                enable(TxmEventsApproved)
 
                 stubAuthorisedAgentUser(authorised = true)
 
@@ -500,7 +355,6 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
               "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
-                enable(TxmEventsApproved)
 
                 stubAuthorisedAgentUser(authorised = true)
 
@@ -570,82 +424,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
-            "display the page with an overdue payment and an overdue obligation with TxmEventsApproved FS disabled" when {
-              "there is a single payment overdue and a single obligation overdue" in {
-                disable(TxmEventsApproved)
-
-                stubAuthorisedAgentUser(authorised = true)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  NextUpdatesModel(
-                    identification = "testId",
-                    obligations = List(
-                      NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
-                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-                    documentDetails = List(
-                      DocumentDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
-                        transactionId = "testTransactionId",
-                        documentDescription = Some("ITSA- POA 1"),
-                        documentText = Some("documentText"),
-                        outstandingAmount = Some(500.00),
-                        originalAmount = Some(1000.00),
-                        documentDate = LocalDate.of(2018, 3, 29)
-                      )
-                    ),
-                    financialDetails = List(
-                      FinancialDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
-                        mainType = Some("SA Payment on Account 1"),
-                        transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
-                      )
-                    ),
-                    codingDetails = None
-                  ))
-                )
-
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-                val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitleAgent(agentTitle),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-                  elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
-                )
-
-                verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
-            }
           }
-          "display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS enabled" when {
+          "display the page with a count of the overdue payments a count of overdue obligations" when {
             "there is more than one payment overdue and more than one obligation overdue" in {
-              enable(TxmEventsApproved)
 
               stubAuthorisedAgentUser(authorised = true)
 
@@ -731,97 +512,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
-          "display the page with a count of the overdue payments a count of overdue obligations with TxmEventsApproved FS disabled" when {
-            "there is more than one payment overdue and more than one obligation overdue" in {
-              disable(TxmEventsApproved)
-
-              stubAuthorisedAgentUser(authorised = true)
-
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                status = OK,
-                response = incomeSourceDetailsModel
-              )
-
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                NextUpdatesModel(
-                  identification = "testId",
-                  obligations = List(
-                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
-                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
-                  ))
-              ))
-
-              IncomeTaxViewChangeStub.stubGetNextUpdates(
-                nino = testNino,
-                deadlines = currentObligations
-              )
-
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                nino = testNino,
-                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                to = getCurrentTaxYearEnd.toString
-              )(
-                status = OK,
-                response = Json.toJson(FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-                  documentDetails = List(
-                    DocumentDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
-                      transactionId = "testTransactionId",
-                      documentText = Some("documentText"),
-                      documentDescription = Some("ITSA- POA 1"),
-                      outstandingAmount = Some(500.00),
-                      originalAmount = Some(1000.00),
-                      documentDate = LocalDate.of(2018, 3, 29)
-                    ),
-                    DocumentDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
-                      transactionId = "testTransactionId2",
-                      documentText = Some("documentText"),
-                      documentDescription = Some("ITSA - POA 2"),
-                      outstandingAmount = Some(500.00),
-                      originalAmount = Some(1000.00),
-                      documentDate = LocalDate.of(2018, 3, 29)
-                    )
-                  ),
-                  financialDetails = List(
-                    FinancialDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
-                      mainType = Some("SA Payment on Account 1"),
-                      transactionId = Some("testTransactionId"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
-                    ),
-                    FinancialDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
-                      mainType = Some("SA Payment on Account 2"),
-                      transactionId = Some("testTransactionId2"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString))))
-                    )
-                  ),
-                  codingDetails = None
-                ))
-              )
-
-              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-              val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
-
-              result should have(
-                httpStatus(OK),
-                pageTitleAgent(agentTitle),
-                elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
-                elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
-                elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
-              )
-
-              verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
-              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-            }
-          }
         }
         "retrieving the client's charges was unsuccessful" in {
-          enable(TxmEventsApproved)
 
           stubAuthorisedAgentUser(authorised = true)
 

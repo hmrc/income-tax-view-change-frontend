@@ -31,7 +31,6 @@ object FeatureSwitch {
     PaymentHistory,
     IvUplift,
     ChargeHistory,
-    TxmEventsApproved,
     PaymentAllocation,
     CodingOut,
     WhatYouOweTotals,
@@ -72,11 +71,6 @@ case object ChargeHistory extends FeatureSwitch {
 case object PaymentAllocation extends FeatureSwitch {
   override val name: String = s"$prefix.enable-payment-allocation"
   override val displayText: String = "Payment Allocation"
-}
-
-case object TxmEventsApproved extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-txm-events-approved"
-  override val displayText: String = "Txm Events Approved"
 }
 
 case object CodingOut extends FeatureSwitch {
