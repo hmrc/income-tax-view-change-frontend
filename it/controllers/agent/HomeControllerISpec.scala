@@ -192,7 +192,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       transactionId = Some("testTransactionId"),
                       items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
                     )
-                  )
+                  ),
+                  codingDetails = None
                 ))
               )
 
@@ -261,7 +262,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       transactionId = Some("testTransactionId"),
                       items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
                     )
-                  )
+                  ),
+                  codingDetails = None
                 ))
               )
 
@@ -333,7 +335,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       transactionId = Some("testTransactionId"),
                       items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
                     )
-                  )
+                  ),
+                  codingDetails = None
                 ))
               )
 
@@ -403,7 +406,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         transactionId = Some("testTransactionId"),
                         items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
                       )
-                    )
+                    ),
+                    codingDetails = None
                   ))
                 )
 
@@ -474,7 +478,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         transactionId = Some("testTransactionId"),
                         items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
                       )
-                    )
+                    ),
+                    codingDetails = None
                   ))
                 )
 
@@ -543,7 +548,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         transactionId = Some("testTransactionId"),
                         items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
                       )
-                    )
+                    ),
+                    codingDetails = None
                   ))
                 )
 
@@ -614,7 +620,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         transactionId = Some("testTransactionId"),
                         items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
                       )
-                    )
+                    ),
+                    codingDetails = None
                   ))
                 )
 
@@ -702,7 +709,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       transactionId = Some("testTransactionId2"),
                       items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString))))
                     )
-                  )
+                  ),
+                  codingDetails = None
                 ))
               )
 
@@ -789,7 +797,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       transactionId = Some("testTransactionId2"),
                       items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString))))
                     )
-                  )
+                  ),
+                  codingDetails = None
                 ))
               )
 

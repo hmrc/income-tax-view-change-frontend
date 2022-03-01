@@ -220,6 +220,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              codingDetails = None,
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
@@ -266,6 +267,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              codingDetails = None,
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
