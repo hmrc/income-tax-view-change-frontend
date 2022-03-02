@@ -33,12 +33,12 @@
 
     @p(){
         @messages("agent-error.note")
-        @link(link = appConfig.setUpAgentServicesAccountUrl, messageKey = "agent-error.link", ariaLabel= messages("agent-error.link").replaceAll(" " , "-") + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"), target = Some("_blank"), outerMessage = ".")
+        @link(link = appConfig.setUpAgentServicesAccountUrl, messageKey = "agent-error.link", target = Some("_blank"), outerMessage = ".")
     }
 
 
     <div>
-        @link(link = controllers.routes.SignOutController.signOut.url, messageKey = "base.sign-out", ariaLabel= messages("base-sign-out").replaceAll(" " , "-")
-,        classes = "govuk-button")
+        @link(link = controllers.routes.SignOutController.signOut.url, messageKey = "base.sign-out",
+        classes = "govuk-button")
     </div>
 }

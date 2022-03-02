@@ -60,7 +60,6 @@
 @saNoteParagraphContent(utr: String) = {
     @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
         link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-        ariaLabel= messages(getPrefix("sa-link")).replaceAll(" " , "-"),
         messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"),
         rel=Some("noreferrer noopener"), target=Some("_blank")).toString())
     )
@@ -115,7 +114,7 @@
         @p(){
             @getMessage("dunningLock.text", "")
             @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
-                id = Some("disagree-with-tax-appeal-link"), ariaLabel= messages(getPrefix("dunningLock.link")).replaceAll(" " , "-")+ messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"), rel=Some("noreferrer noopener"), target = Some("_blank"),
+                id = Some("disagree-with-tax-appeal-link"), rel=Some("noreferrer noopener"), target = Some("_blank"),
                 additionalOpenTabMessage = Some(".")
             )
         }
@@ -362,9 +361,9 @@
            @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence).url,
            messageKey = getPrefix("payNow"), classes = "govuk-button", role=Some("button"),
            id = Some("payment-button-link"),
-           ariaLabel =getMessage("pay-now-aria",
+          ariaLabel = Some(getMessage("pay-now-aria",
           (chargesList.getEarliestTaxYearAndAmountByDueDate.get._1 - 1).toString,
-          chargesList.getEarliestTaxYearAndAmountByDueDate.get._1.toString))
+          chargesList.getEarliestTaxYearAndAmountByDueDate.get._1.toString)))
        </div>
     }
 
@@ -373,7 +372,7 @@
       @p(id=Some("payments-made"))(Html(getMessage("payments-made")))
        <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
         <li>@messages("whatYouOwe.payments-made-bullet-1.1")
-            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id=Some("sa-tax-bill"),  messageKey = "whatYouOwe.payments-made-bullet-1.2", ariaLabel= messages("whatYouOwe.payments-made-bullet-1.2").replaceAll(" " , "-") + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"), target = Some("_blank"))
+            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id=Some("sa-tax-bill"),  messageKey = "whatYouOwe.payments-made-bullet-1.2", target = Some("_blank"))
              @messages("whatYouOwe.payments-made-bullet-1.3")</li>
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
      </ul>

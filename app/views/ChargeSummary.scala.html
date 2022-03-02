@@ -87,7 +87,7 @@
     }
     <ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
         <li>@messages("chargeSummary.payments-bullet1-1")
-            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2",ariaLabel= messages("chargeSummary.payments-bullet1-2").replaceAll(" " , "-") + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"),  target = Some("_blank"))
+            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2",  target = Some("_blank"))
             @messages("chargeSummary.payments-bullet1-3")
         </li>
         <li>@messages("chargeSummary.payments-bullet2")</li>
@@ -108,7 +108,6 @@
             link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
-            ariaLabel= messages("chargeSummary.codingOutInset-2").replaceAll(" " , "-"),
             messageKey = "chargeSummary.codingOutInset-2"
         )
         @messages("chargeSummary.codingOutInset-3")
@@ -123,7 +122,6 @@
             link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
-            ariaLabel= messages("chargeSummary.cancelledPayeInset-2").replaceAll(" " , "-"),
             messageKey = "chargeSummary.cancelledPayeInset-2",
             additionalOpenTabMessage = Some(".")
         )
@@ -147,8 +145,7 @@
                                 link=appConfig.taxAppealsUrl,
                                 rel=Some("noreferrer noopener"),
                                 target = Some("_blank"),
-                                messageKey = "chargeSummary.dunning.locks.banner.linkText",
-                                ariaLabel= messages("chargeSummary.dunning.locks.banner.linkText").replaceAll(" " , "-")
+                                messageKey = "chargeSummary.dunning.locks.banner.linkText"
 
                             )
                         } else {
@@ -158,8 +155,7 @@
                                 rel=Some("noreferrer noopener"),
                                 target = Some("_blank"),
                                 messageKey = "chargeSummary.dunning.locks.banner.linkText",
-                                additionalOpenTabMessage = Some("."),
-                                ariaLabel= messages("chargeSummary.dunning.locks.banner.linkText").replaceAll(" " , "-") + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-")
+                                additionalOpenTabMessage = Some(".")
 
                         )
                             @messages("chargeSummary.dunning.locks.banner.note", documentDetail.remainingToPay.toCurrencyString, dueDate.getOrElse(throw new MissingFieldException("Due Date")).toLongDate)
@@ -327,7 +323,7 @@
 
     @if(hasInterestLocks && hasAccruedInterest) {
         @p(id=Some("p-interest-locks-msg")){
-            @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText" , ariaLabel= messages("chargeSummary.interestLocks.linkText").replaceAll(" " , "-")
+            @link(link = whatYouOweUrl, messageKey = "chargeSummary.interestLocks.linkText"
 )
             @messages("chargeSummary.interestLocks.text")
         }

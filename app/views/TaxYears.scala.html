@@ -88,8 +88,7 @@
             @p(id = Some("oldSa-para")) {
                 @messages("taxYears.oldSa.content.text")
                 @link(link = appConfig.saViewLandPService(utrValue), messageKey = "taxYears.oldSa.content.link",
-                    id = Some("self-assessment-online-account-link"), ariaLabel= messages("taxYears.oldSa.content.link").replaceAll(" " , "-")
-                    + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"),
+                    id = Some("self-assessment-online-account-link"),
                    outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
             }
         }
@@ -101,8 +100,7 @@
             @link(link = appConfig.saForAgents,
 
                 messageKey = "taxYears.oldSa.agent.content.2",
-                id=Some("self-assessment-for-agents-link"), ariaLabel= messages("taxYears.oldSa.agent.content.2").replaceAll(" " , "-")
-                + messages("pagehelp.opensInNewTabText").replaceAll(" " , "-"),
+                id=Some("self-assessment-for-agents-link"),
                 outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
             @messages("taxYears.oldSa.agent.content.3")
         }
