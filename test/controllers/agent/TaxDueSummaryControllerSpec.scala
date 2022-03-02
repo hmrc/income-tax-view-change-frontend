@@ -37,10 +37,10 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   class Setup {
     val testYear: Int = 2020
-		val isAgent: Boolean = true
+    val isAgent: Boolean = true
 
     val controller: TaxDueSummaryController = new TaxDueSummaryController(
-			app.injector.instanceOf[TaxCalcBreakdown],
+      app.injector.instanceOf[TaxCalcBreakdown],
       appConfig = appConfig,
       authorisedFunctions = mockAuthService,
       calculationService = mockCalculationService,
@@ -60,44 +60,44 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
   }
 
   "showTaxDueSummary" when {
-		"given a tax year which can be found in ETMP" should {
-			"return Status OK (200) with HTML" in new Setup {
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockBothIncomeSources()
-				mockCalculationSuccessFullNew("XAIT00000000015", "AA111111A", testYear)
+    "given a tax year which can be found in ETMP" should {
+      "return Status OK (200) with HTML" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        mockCalculationSuccessFullNew("XAIT00000000015", "AA111111A", testYear)
 
-				lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
+        lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
 
-				status(result) shouldBe OK
-				contentType(result) shouldBe Some(HTML)
-			}
-		}
+        status(result) shouldBe OK
+        contentType(result) shouldBe Some(HTML)
+      }
+    }
 
-		"there was a problem retrieving income source details for the user" should {
-			"throw an internal server exception" in new Setup {
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockErrorIncomeSource()
-				setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(404, "Not Found"))
-				mockShowInternalServerError()
+    "there was a problem retrieving income source details for the user" should {
+      "throw an internal server exception" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockErrorIncomeSource()
+        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(404, "Not Found"))
+        mockShowInternalServerError()
 
-				val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient()).failed.futureValue
-				result shouldBe an[InternalServerException]
-				result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
-			}
-		}
+        val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient()).failed.futureValue
+        result shouldBe an[InternalServerException]
+        result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+      }
+    }
 
-		"there is a downstream error" should {
-			"return Status Internal Server Error (500)" in new Setup {
-				lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
-				setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-				mockBothIncomeSources()
-				setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(500, "Some Error"))
-				mockShowInternalServerError()
+    "there is a downstream error" should {
+      "return Status Internal Server Error (500)" in new Setup {
+        lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(500, "Some Error"))
+        mockShowInternalServerError()
 
-				setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
-				status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-			}
-		}
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
   }
 }

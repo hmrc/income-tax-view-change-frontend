@@ -69,7 +69,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
     "redirect the user to the payments page" when {
 
-      "a successful payments journey is started with audit events" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))){
+      "a successful payments journey is started with audit events" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -81,12 +81,10 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
     "return an internal server error" when {
 
 
-
       "an SA UTR is missing from the user" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
-
 
 
       "an error response is returned by the connector" in new SetupTestPaymentController(Future.successful(

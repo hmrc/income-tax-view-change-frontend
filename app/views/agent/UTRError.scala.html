@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@
     <ul class="govuk-list govuk-list--bullet">
         <li id = "list-bullet1">@messages("agent.utr_error.reason.bullet1")</li>
         <li>@Html(messages("agent.utr_error.reason.bullet2",
-            <a href="https://www.gov.uk/government/collections/making-tax-digital-for-income-tax" target="_blank" rel="noreferrer noopener">{messages("agent.utr_error.reason.bullet2_link")}</a>
+            <a href="https://www.gov.uk/government/collections/making-tax-digital-for-income-tax" rel="noreferrer noopener" target="_blank">{messages("agent.utr_error.reason.bullet2_link")} {messages("pagehelp.opensInNewTabText")}</a>
             ))
         </li>
     </ul>

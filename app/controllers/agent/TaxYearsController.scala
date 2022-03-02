@@ -39,14 +39,14 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-			getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) map { mtdItUser =>
-				Ok(taxYearsView(
-					taxYears = mtdItUser.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
-					backUrl = backUrl,
-					itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-					isAgent = true
-				))
-			}
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) map { mtdItUser =>
+        Ok(taxYearsView(
+          taxYears = mtdItUser.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+          backUrl = backUrl,
+          itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+          isAgent = true
+        ))
+      }
   }
 
   def backUrl: String = controllers.agent.routes.HomeController.show().url

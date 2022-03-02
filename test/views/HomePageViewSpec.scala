@@ -80,7 +80,7 @@ class HomePageViewSpec extends TestSupport {
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
       isAgent = isAgent
-    )(FakeRequest(),implicitly, user, implicitly)
+    )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
@@ -91,7 +91,7 @@ class HomePageViewSpec extends TestSupport {
 
   "home" should {
 
-    "provided with a btaNavPartial" should{
+    "provided with a btaNavPartial" should {
 
       "render the btaNavPartial" in new Setup {
         document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
@@ -199,7 +199,7 @@ class HomePageViewSpec extends TestSupport {
       }
       "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
         val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
-        link.map(_.attr("href")) should not be  Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
+        link.map(_.attr("href")) should not be Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
         link.map(_.text) should not be Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
       }
       "has a link to the tax years page" in new Setup {

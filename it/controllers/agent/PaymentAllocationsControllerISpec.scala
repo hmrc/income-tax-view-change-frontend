@@ -6,7 +6,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PaymentAllocationIntegrationTestConstants._
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
@@ -149,8 +149,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       }
     }
 
-    s"return $OK and display the Payment Allocations page and with TxmEventsApproved FS enabled" in {
-      enable(TxmEventsApproved)
+    s"return $OK and display the Payment Allocations page" in {
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
@@ -172,8 +171,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
     }
 
-    s"return $OK and display the Payment Allocations page and with TxmEventsApproved FS enabled and new LPI layout" in {
-      enable(TxmEventsApproved)
+    s"return $OK and display the Payment Allocations page and new LPI layout" in {
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 

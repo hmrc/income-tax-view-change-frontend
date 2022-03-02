@@ -67,39 +67,39 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     fullDocumentDetailWithDueDateModel)
 
   val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-      dueDate = Some(LocalDate.of(2021, 7, 31))),
-    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance"))))
+    dueDate = Some(LocalDate.of(2021, 7, 31))),
+    fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))))
 
   val payeChargeList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"),documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500)), codingOutEnabled = true))
+      documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500)), codingOutEnabled = true))
 
 
-  val  immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+  val immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
+      documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
     fullDocumentDetailWithDueDateModel.copy(
       documentDetail = fullDocumentDetailModel.copy(
         documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0)))
   )
 
-  val  rejectedByNpsPartWay: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+  val rejectedByNpsPartWay: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
+      documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
     fullDocumentDetailWithDueDateModel.copy(
       documentDetail = fullDocumentDetailModel.copy
-    (documentDescription = Some("TRM New Charge"),documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
+      (documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
   )
 
-  val  codingOutPartiallyCollected: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+  val codingOutPartiallyCollected: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"),documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
+      documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
     fullDocumentDetailWithDueDateModel.copy(
       documentDetail = fullDocumentDetailModel.copy(
         documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0))),
     fullDocumentDetailWithDueDateModel.copy(
       documentDetail = fullDocumentDetailModel.copy
-      (documentDescription = Some("TRM New Charge"),documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
+      (documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
   )
 
   val documentDetailWithDueDateMissingDueDate: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
@@ -249,7 +249,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
-        layoutContent.selectHead("p.govuk-body").text shouldBe taxYearOverviewMessages.calcDateInfo
+        layoutContent.selectHead("p#calc-date-info").text shouldBe taxYearOverviewMessages.calcDateInfo
       }
 
       "not have a paragraph explaining the calc date for a crystallised year" in new Setup(crystallisedView()) {
@@ -667,7 +667,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   "The TaxYearOverview view when missing mandatory fields" should {
     "throw a MissingFieldException" in {
-      val thrownException = intercept[MissingFieldException]{
+      val thrownException = intercept[MissingFieldException] {
         taxYearOverviewView(
           taxYear = testYear,
           overviewOpt = Some(completeOverview(false)),

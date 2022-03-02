@@ -19,5 +19,7 @@ package models.nextUpdates
 import java.time.LocalDate
 
 sealed trait NextUpdateStatus
+
 case class Overdue(dueDate: LocalDate) extends NextUpdateStatus
+
 case class Open(dueDate: LocalDate) extends NextUpdateStatus

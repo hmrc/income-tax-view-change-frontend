@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
@@ -46,19 +46,17 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
   def viewPaymentHistory(): Action[AnyContent] =
     Authenticated.async { implicit request =>
       implicit user =>
-				for {
-					mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
-					paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
-				} yield {
-					paymentHistoryResponse match {
-						case Right(payments) =>
-							if (isEnabled(TxmEventsApproved)) {
-								auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
-							}
-							Ok(paymentHistory(payments, backUrl, mtdItUser.saUtr, isAgent = true))
-						case Left(_) => itvcErrorHandler.showInternalServerError()
-					}
-				}
+        for {
+          mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
+          paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
+        } yield {
+          paymentHistoryResponse match {
+            case Right(payments) =>
+              auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
+              Ok(paymentHistory(payments, backUrl, mtdItUser.saUtr, isAgent = true))
+            case Left(_) => itvcErrorHandler.showInternalServerError()
+          }
+        }
     }
 
   def backUrl: String = controllers.agent.routes.HomeController.show().url

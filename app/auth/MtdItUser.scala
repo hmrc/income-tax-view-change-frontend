@@ -23,11 +23,17 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
   def mtditid: String
+
   def nino: String
+
   def userName: Option[Name]
+
   def saUtr: Option[String]
+
   def credId: Option[String]
+
   def userType: Option[String]
+
   def arn: Option[String]
 }
 

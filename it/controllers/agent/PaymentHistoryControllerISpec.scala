@@ -21,7 +21,7 @@ import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.featureswitch.{FeatureSwitching, PaymentHistory, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
@@ -103,9 +103,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   }
 
   s"return $OK with the enter client utr page" when {
-    "the TxmEventsApproved FS enabled" in {
+    s"return $OK" in {
       enable(PaymentHistory)
-      enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -124,28 +123,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
-    }
-    "the TxmEventsApproved FS disabled" in {
-      enable(PaymentHistory)
-      stubAuthorisedAgentUser(authorised = true)
-
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-        status = OK,
-        response = incomeSourceDetailsModel
-      )
-
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
-
-      disable(TxmEventsApproved)
-      val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
-
-      Then("The Payment History page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleAgent(paymentHistoryTitle)
-      )
-
-      verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
     }
   }
   "API#1171 IncomeSourceDetails Caching" when {

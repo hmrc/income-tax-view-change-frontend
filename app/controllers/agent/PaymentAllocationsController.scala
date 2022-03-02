@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.PaymentAllocationsResponseAuditModel
-import config.featureswitch.{FeatureSwitching, PaymentAllocation, TxmEventsApproved}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import models.core.Nino
@@ -52,9 +52,7 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           paymentAllocationsService.getPaymentAllocation(Nino(getClientNino(request)), documentNumber) map {
             case Right(viewModel: PaymentAllocationViewModel) =>
-              if (isEnabled(TxmEventsApproved)) {
                 auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(mtdItUser, viewModel))
-              }
               Ok(paymentAllocationView(viewModel, backUrl = backUrl, isAgent = true))
             case Left(PaymentAllocationError(Some(404))) =>
               Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)

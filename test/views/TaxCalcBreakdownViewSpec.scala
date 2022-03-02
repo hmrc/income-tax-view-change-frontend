@@ -838,7 +838,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
     }
 
-    "provided with message C22209" in  {
+    "provided with message C22209" in {
 
       lazy val view = taxCalcBreakdown(TaxDueSummaryViewModel(
         giftAidTax = Some(5000.99),

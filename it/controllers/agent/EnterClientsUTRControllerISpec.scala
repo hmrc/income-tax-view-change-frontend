@@ -57,15 +57,15 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
     s"return $OK with the enter client utr page" in {
-			stubAuthorisedAgentUser(authorised = true)
+      stubAuthorisedAgentUser(authorised = true)
 
-			val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
-			Then("The enter client's utr page is returned to the user")
-			result should have(
-				httpStatus(OK),
-				pageTitleAgent(clientUTRTitle)
-			)
+      Then("The enter client's utr page is returned to the user")
+      result should have(
+        httpStatus(OK),
+        pageTitleAgent(clientUTRTitle)
+      )
     }
   }
 

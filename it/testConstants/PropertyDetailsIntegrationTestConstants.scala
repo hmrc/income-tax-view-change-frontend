@@ -33,6 +33,7 @@ object PropertyDetailsIntegrationTestConstants {
   val propertyAccounringEndLocalDate = LocalDate.of(2017, 12, 31)
 
   def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
+
   def propertyAccounringEndLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 12, 31)
 
 

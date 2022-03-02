@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @this()
 
@@ -22,13 +22,14 @@
     messageKey: String,
     id: Option[String] = None,
     target: Option[String] = None,
-    ariaLabel: Option[String] = None,
+    ariaLabel: String,
     outerMessage: String = "",
     role: Option[String] = None,
-    rel: Option[String] = None
+    rel: Option[String] = None,
+    additionalOpenTabMessage: Option[String] = None
 )(implicit messages: Messages)
 
-<a href="@link" class="@classes" @id.map(id => s"id=$id") @target.map(target => s"target=$target")
+<a href="@link" class="@classes" @id.map(id => s"id=$id") rel="@rel.map(c=>s"$c")" @target.map(target => s"target=$target")
     @role.map(role => s"role=$role")
-    aria-label="@ariaLabel.map(c=>s"$c")  @rel.map(rel => s"rel=$rel")">@messages(messageKey)</a>@outerMessage
-
+    aria-label="@ariaLabel.map(c=>s"$c")">
+    @messages(messageKey)@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>@outerMessage

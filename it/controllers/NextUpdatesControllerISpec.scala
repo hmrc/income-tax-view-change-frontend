@@ -77,7 +77,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         Then("the page displays no obligation dates")
         res should have(
-          elementTextBySelector("p.govuk-body") (obligationsMessages.noUpdates)
+          elementTextBySelector("p.govuk-body")(obligationsMessages.noUpdates)
         )
       }
 

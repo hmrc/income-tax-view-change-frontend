@@ -57,7 +57,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
   lazy val agentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
   lazy val agentHomeUrl: String = controllers.agent.routes.HomeController.show().url
-  lazy val agentWhatYouOweUrl: String =controllers.routes.WhatYouOweController.showAgent().url
+  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
@@ -76,7 +76,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   private def getBackURL(referer: Option[String]): String = {
     referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
       case Some(true) => agentTaxYearsUrl
-      case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get=> agentWhatYouOweUrl
+      case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get => agentWhatYouOweUrl
       case _ => agentHomeUrl
     }
   }
@@ -130,7 +130,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
   private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
+      case financialDetails@FinancialDetailsModel(_, _, documentDetails, _) =>
         val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
         val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {

@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,25 @@
  * limitations under the License.
  *@
 
-
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatterImpl
 @import exceptions.MissingFieldException
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
-        paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p)
+        paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
+        govukInsetText: GovukInsetText)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
+
+@paymentAllocationInset = {
+    @p(){@messages("paymentAllocation.info")}
+}
 
 @mainTemplate(
     pageTitle = messages("paymentAllocation.heading"),
@@ -51,9 +56,7 @@ btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Mess
         </div>
     </dl>
 
-<div class="govuk-inset-text">
-    @p(){@messages("paymentAllocation.info")}
-</div>
+@govukInsetText(InsetText(content = HtmlContent(paymentAllocationInset)))
 
 <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 

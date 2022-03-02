@@ -36,7 +36,7 @@ class RenderServiceInfoHelperSpec extends ViewSpec {
         document.getElementById("service-info-user-name").text() shouldBe testUserName
       }
 
-      "have a link to BTA home" which  {
+      "have a link to BTA home" which {
 
         s"should have the text '${btaServiceMessages.btaHome}'" in new Test() {
           document.getElementById("service-info-home-link").text() shouldBe btaServiceMessages.btaHome
@@ -48,7 +48,7 @@ class RenderServiceInfoHelperSpec extends ViewSpec {
 
       }
 
-      "have a link to Manage Account" which  {
+      "have a link to Manage Account" which {
 
         s"should have the text '${btaServiceMessages.btaManageAccount}'" in new Test() {
           document.getElementById("service-info-manage-account-link").text() shouldBe btaServiceMessages.btaManageAccount

@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import testUtils.TestSupport
 import views.html.helpers.injected.RecruitmentBannerHelper
 
-class RecruitmentBannerHelperSpec extends TestSupport{
+class RecruitmentBannerHelperSpec extends TestSupport {
 
   lazy val recruitmentBannerHelper = app.injector.instanceOf[RecruitmentBannerHelper]
 

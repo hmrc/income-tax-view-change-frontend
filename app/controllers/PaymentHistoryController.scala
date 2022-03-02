@@ -56,15 +56,13 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       } else {
         paymentHistoryService.getPaymentHistory.map {
           case Right(payments) =>
-            if (isEnabled(TxmEventsApproved)) {
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
-            }
             Ok(paymentHistoryView(payments, backUrl = backUrl, user.saUtr, btaNavPartial = user.btaNavPartial))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
       }
   }
-  
+
   lazy val backUrl: String = controllers.routes.HomeController.home().url
 
 }

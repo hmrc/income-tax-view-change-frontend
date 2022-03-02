@@ -14,7 +14,7 @@ base.continue                                                   = Yn eich blaen
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Mae problem wedi codi
 agent.client_relationship_failure.info                          = Nid ydych wedi’ch awdurdodi i fwrw golwg dros wybodaeth y cleient hwn. {0} cyn i chi allu mewngofnodi i’r gwasanaeth hwn.
-agent.client_relationship_failure.info.link                     = Mae’n rhaid i’ch cleient eich awdurdodi fel ei asiant (yn agor tab newydd)
+agent.client_relationship_failure.info.link                     = Mae’n rhaid i’ch cleient eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR cleient gwahanol
 
 ## Agent - UTR Error
@@ -23,7 +23,7 @@ agent.utr_error.utr_wrong.part1                                 = Mae’n bosibl
 agent.utr_error.utr_wrong.part2                                 = , yn anghywir oherwydd:
 agent.utr_error.reason.bullet1                                  = eich bod wedi’i nodi’n anghywir
 agent.utr_error.reason.bullet2                                  = nid ydych chi na’ch cleient wedi cofrestru ar gyfer y cynllun {0} hyd yn hyn
-agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
+agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm
 agent.utr_error.go_back                                         = Ewch yn ôl a nodwch UTR gwahanol
 
 ## Agent Error Page ##
@@ -95,9 +95,9 @@ taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros eich blynyddoedd treth o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
-taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
+taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol
 taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
-taxYears.oldSa.agent.content.2								   = Cyfrif Hunanasesiad ar gyfer Asiantau (yn agor tab newydd)
+taxYears.oldSa.agent.content.2								   = Cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Overview Page New##
@@ -409,7 +409,7 @@ paymentDue.due                                                  = ddyledus
 whatYouOwe.heading                                              = Yr hyn sydd arnoch
 whatYouOwe.no-payments-due                                      = Nid oes gennych taliadau sy’n ddyledus.
 whatYouOwe.sa-note                                              = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
-whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
+whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 whatYouOwe.dropdown.info                                        = Beth yw’r mathau o daliadau?
 whatYouOwe.payment-days-note                                    = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
@@ -461,9 +461,9 @@ whatYouOwe.balancingCharge.interest.line1.text                  = Llog ar y bala
 whatYouOwe.over-due.interest-rate                               = Mae unrhyw log am dalu’n hwyr ar y {0}. Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
 whatYouOwe.over-due.interest-rate-1                             = Mae unrhyw log am dalu’n hwyr ar y {0}
 whatYouOwe.over-due.interest-rate-2                             = Mae’n bosibl bod y gyfradd wedi newid ers i’r llog gael ei godi am y tro cyntaf.
-whatYouOwe.over-due.interest-rate.link                          = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar (yn agor tab newydd)
+whatYouOwe.over-due.interest-rate.link                          = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar
 whatYouOwe.dunningLock.text                                     = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd oherwydd {0}
-whatYouOwe.dunningLock.link                                     = bod apêl ar y gweill yn erbyn penderfyniad treth (yn agor tab newydd).
+whatYouOwe.dunningLock.link                                     = bod apêl ar y gweill yn erbyn penderfyniad treth
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -471,7 +471,7 @@ chargeSummary.paymentOnAccount2.text                            = Taliad ar gyfr
 chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
-chargeSummary.codingOut.text                                    = PAYE Self Assessment
+chargeSummary.codingOut.text                                    = Balancing payment collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                  = Cancelled Self Assessment payment (through your PAYE tax code)
 chargeSummary.paymentAmount                                     = Swm y taliad
 chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
@@ -507,7 +507,7 @@ chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi 
 chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn
 chargeSummary.interestLocks.linkText                               = Bwrw golwg dros yr hyn sydd arnoch
 chargeSummary.dunning.locks.banner.title						   = Pwysig
-chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu (yn agor tab newydd).
+chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu
 chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r cyfanswm o {0} oherwydd efallai y codir llog arnoch os na chaiff ei dalu erbyn {1}.
 
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
@@ -546,19 +546,19 @@ chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’
 chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
 
-chargeSummary.codingOutHeader                                   = PAYE self assessment
-chargeSummary.codingOutMessage                                  = This is the remaining tax you owe for the {0} to {1} tax year.
-chargeSummary.codingOutRemainingToPay                           = Collected through your PAYE tax code for {0} to {1} tax year## Regimes
-chargeSummary.codingOutInset-1                                  = If this tax cannot be collectedregimes.UK = Y DU
-chargeSummary.codingOutInset-2                                  = through your PAYE tax code (opens in new tab)regimes.Scotland = Yr Alban
-chargeSummary.codingOutInset-3                                  = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.regimes.Wales = Cymru
-chargeSummary.codingOutPayHistoryAmount                         = Amount collected through your PAYE tax code for {0} to {1} tax year
-chargeSummary.check-paye-tax-code-1                             = Check if your## Timeout
-chargeSummary.check-paye-tax-code-2                             = PAYE tax codetimeoutDialog.minute                                            = munud
-chargeSummary.check-paye-tax-code-3                             = has changed for the {0} to {1} tax year.timeoutDialog.minutes                                           = munud
-chargeSummary.cancelledPayeInset-1                              = You have previously agreed to pay some of your Self Assessment billtimeoutDialog.minutes.two                                       = funud
-chargeSummary.cancelledPayeInset-2                              = through your PAYE tax code (opens in new tab).timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
-chargeSummary.cancelledPayeInset-3                              = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.timeoutDialog.seconds                                           = eiliad
+chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
+chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
+chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
+chargeSummary.codingOutInset-1                                     = If this tax cannot be collected
+chargeSummary.codingOutInset-2                                     = through your PAYE tax code (opens in new tab)
+chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties.
+chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
+chargeSummary.check-paye-tax-code-1                                = Check if your
+chargeSummary.check-paye-tax-code-2                                = PAYE tax code
+chargeSummary.check-paye-tax-code-3                                = has changed for the {0} to {1} tax year.
+chargeSummary.cancelledPayeInset-1                                 = You have previously agreed to pay some of your Self Assessment bill
+chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code (opens in new tab).
+chargeSummary.cancelledPayeInset-3                                 = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.
 
 ## Regimes
 regimes.UK = Y DU
@@ -643,6 +643,7 @@ language-switcher.nav                                           = Switcher iaith
 
 #technical helper
 getpagehelp.linkText                                            = Help gyda’r dudalen hon
+pagehelp.opensInNewTabText                                      = ' (yn agor tab newydd)'
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad a wnaed i CThEM

@@ -48,6 +48,7 @@ trait XssFilter {
       case Nil => sanitizedOuput
       case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
     }
+
     applyFilters(filters, input)
   }
 }

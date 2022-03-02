@@ -55,7 +55,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,  isAgent: Boolean = false)
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean = false)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -100,16 +100,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
           overDueUpdatesCount = latestDeadlineDate._2.size
           paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
         } yield {
-          if (isEnabled(TxmEventsApproved)) {
             auditingService.extendedAudit(HomeAudit(
               mtdItUser = user,
               paymentsDueMerged,
               latestDeadlineDate._1,
               overDuePaymentsCount,
-              overDueUpdatesCount
-            ))
-          }
-
+              overDueUpdatesCount))
           Ok(
             view(
               paymentsDueMerged,

@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UTRErrorController @Inject()(utrError: UTRError,
-                                    val authorisedFunctions: AuthorisedFunctions)
+                                   val authorisedFunctions: AuthorisedFunctions)
                                   (implicit mcc: MessagesControllerComponents,
                                    val appConfig: FrontendAppConfig,
                                    val itvcErrorHandler: AgentItvcErrorHandler,

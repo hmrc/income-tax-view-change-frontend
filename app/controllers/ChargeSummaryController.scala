@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -59,7 +59,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
         financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
           val payments = financialResponses.collect {
             case (_, model: FinancialDetailsModel) => model.filterPayments()
-          }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), List(), List()))((merged, next) => merged.mergeLists(next))
+          }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), None, List(), List()))((merged, next) => merged.mergeLists(next))
 
           val matchingYear = financialResponses.collect {
             case (year, response) if year == taxYear => response
@@ -133,7 +133,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
-    if (isEnabled(TxmEventsApproved)) {
+
       val documentDetailWithDueDate: DocumentDetailWithDueDate = financialDetailsModel.findDocumentDetailByIdWithDueDate(id).get
       auditingService.extendedAudit(ChargeSummaryAudit(
         mtdItUser = user,
@@ -142,10 +142,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocations,
         None,
-        isEnabled(TxmEventsR6),
         isLatePaymentCharge = isLatePaymentCharge
       ))
-    }
   }
 
   private def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {

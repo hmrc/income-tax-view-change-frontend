@@ -40,7 +40,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = singleBusinessIncomeWithCurrentYear,
-    btaNavPartial =  None,
+    btaNavPartial = None,
     saUtr = Some("1234567890"),
     credId = Some("credId"),
     userType = Some("Individual"),
@@ -144,19 +144,19 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         }
       }
 
-			"when both financial details return success and with balancing charges returned" should {
-				"return a success response back" in {
-					when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
-						.thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
-					when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-						.thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
+      "when both financial details return success and with balancing charges returned" should {
+        "return a success response back" in {
+          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
 
-					TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
+          TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-						overduePaymentList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates
-					)
-				}
-			}
+            overduePaymentList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates
+          )
+        }
+      }
 
       "when both financial details return success and with balancing charges returned with mixed outstanding charges" should {
         "return a success empty response back with both outstanding amount zero and no late payment interest" in {
@@ -190,9 +190,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
             overduePaymentList = List(DocumentDetailWithDueDate(
-              DocumentDetail(currentYear,"1040000124",Some("ITSA - POA 2"),Some("documentText"), Some(0),Some(12.34),LocalDate.of(2018, 3, 29), Some(10), Some(100),
-                Some("latePaymentInterestId"),Some(LocalDate.of(2018, 3, 29)),
-                Some(LocalDate.of(2018, 3, 29)),Some(10),Some(100),Some("paymentLotItem"),Some("paymentLot")),
+              DocumentDetail(currentYear, "1040000124", Some("ITSA - POA 2"), Some("documentText"), Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
+                Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
+                Some(LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot")),
               Some(LocalDate.now().minusDays(1)))))
         }
       }
@@ -220,14 +220,15 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              codingDetails = None,
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"),Some("type"),Some(100),Some(100),
-                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"),Some("type"),Some(100),Some(100),
-                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"),Some("type"),Some(100),Some(100),
-                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out")))))
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out")))))
               )
             ))))
 
@@ -266,14 +267,15 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              codingDetails = None,
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"),Some("type"),Some(100),Some(100),
-                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"),Some("type"),Some(100),Some(100),
-                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"),Some("type"),Some(100),Some(100),
-                  Some(100),Some(100),Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
               )
             ))))
 

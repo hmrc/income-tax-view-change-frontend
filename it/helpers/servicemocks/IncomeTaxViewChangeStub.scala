@@ -129,10 +129,10 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   //FinancialDetails Stubs
   def financialDetailsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
 
-	def getFinancialsByDocumentIdUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
+  def getFinancialsByDocumentIdUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
 
-	def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
-																				(status: Int, response: JsValue): StubMapping = {
+  def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
+                                        (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
   }
 
@@ -140,8 +140,8 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to))
   }
 
-	def stubGetFinancialsByDocumentId(nino: String, docNumber: String)(status: Int, response: JsValue): Unit =
-		WiremockHelper.stubGet(getFinancialsByDocumentIdUrl(nino, docNumber), status, response.toString())
+  def stubGetFinancialsByDocumentId(nino: String, docNumber: String)(status: Int, response: JsValue): Unit =
+    WiremockHelper.stubGet(getFinancialsByDocumentIdUrl(nino, docNumber), status, response.toString())
 
   //Payments Stubs
   def paymentsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
@@ -174,9 +174,9 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     s"/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
   }
 
-	def stubChargeHistoryResponse(mtdBsa: String, docNumber: String)(status: Int, response: JsValue): StubMapping = {
-		WiremockHelper.stubGet(getChargeHistoryUrl(mtdBsa, docNumber), status, response.toString())
-	}
+  def stubChargeHistoryResponse(mtdBsa: String, docNumber: String)(status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubGet(getChargeHistoryUrl(mtdBsa, docNumber), status, response.toString())
+  }
 
   //Payment Allocation Charges stubs
   def paymentAllocationChargesUrl(nino: String, paymentLot: String, paymentLotItem: String) = s"/income-tax-view-change/$nino/payment-allocations/$paymentLot/$paymentLotItem"

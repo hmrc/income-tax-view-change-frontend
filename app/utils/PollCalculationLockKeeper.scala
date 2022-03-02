@@ -26,18 +26,19 @@ trait PollCalculationLockKeeper {
   import scala.concurrent.{ExecutionContext, Future}
 
   def repo: LockRepository
+
   def lockId: String
 
   val forceLockReleaseAfter: Duration
 
   lazy val serverId: String = UUID.randomUUID().toString
 
-  def tryLock()(implicit ec : ExecutionContext): Future[Boolean] = {
+  def tryLock()(implicit ec: ExecutionContext): Future[Boolean] = {
     repo.lock(lockId, serverId, forceLockReleaseAfter)
-      .recoverWith { case ex => repo.releaseLock(lockId, serverId).flatMap(_ => Future.failed(ex))}
+      .recoverWith { case ex => repo.releaseLock(lockId, serverId).flatMap(_ => Future.failed(ex)) }
   }
 
-  def releaseLock(implicit ec : ExecutionContext): Future[Unit] = repo.releaseLock(lockId, serverId)
+  def releaseLock(implicit ec: ExecutionContext): Future[Unit] = repo.releaseLock(lockId, serverId)
 
   def isLocked: Future[Boolean] = repo.isLocked(lockId, serverId)
 

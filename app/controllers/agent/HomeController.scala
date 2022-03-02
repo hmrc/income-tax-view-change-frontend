@@ -92,7 +92,7 @@ class HomeController @Inject()(homeView: Home,
           mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true)
           latestDeadlineDate <- nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(implicitly, implicitly, mtdItUser)
           unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(mtdItUser, implicitly, implicitly)
-          _ = if(unpaidCharges.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]
+          _ = if (unpaidCharges.exists(fds => fds.isInstanceOf[FinancialDetailsErrorModel]
             && fds.asInstanceOf[FinancialDetailsErrorModel].code != NOT_FOUND))
             throw new InternalServerException("[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
           outstandingChargesModel <- getOutstandingChargesModel(mtdItUser)
@@ -102,7 +102,6 @@ class HomeController @Inject()(homeView: Home,
           overDueUpdatesCount = latestDeadlineDate._2.size
           paymentsDueMerged = (paymentsDue ::: getOutstandingChargesDueDate(outstandingChargesModel)).sortWith(_ isBefore _).headOption
         } yield {
-          if (isEnabled(TxmEventsApproved)) {
             auditingService.extendedAudit(HomeAudit(
               mtdItUser = mtdItUser,
               paymentsDueMerged,
@@ -110,8 +109,6 @@ class HomeController @Inject()(homeView: Home,
               overDuePaymentsCount,
               overDueUpdatesCount
             ))
-          }
-
           Ok(
             view(
               paymentsDueMerged,

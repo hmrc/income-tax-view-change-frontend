@@ -83,15 +83,15 @@ class ClientDetailsFailureControllerSpec extends TestSupport
       }
     }
 
-		"return OK and display the client relationship failure page" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-			mockClientRelationshipFailure(HtmlFormat.empty)
+    "return OK and display the client relationship failure page" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      mockClientRelationshipFailure(HtmlFormat.empty)
 
-			val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
+      val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
 
-			status(result) shouldBe OK
-			contentType(result) shouldBe Some(HTML)
-		}
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some(HTML)
+    }
   }
 
 }

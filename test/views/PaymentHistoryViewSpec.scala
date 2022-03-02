@@ -40,8 +40,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val title = s"$heading - Business Tax account - GOV.UK"
     val titleWhenAgentView = s"$heading - Your client’s Income Tax details - GOV.UK"
 
-    val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment service."
-
+    val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment online account (opens in new tab)."
     def button(year: Int): String = s"$year payments"
 
     val paymentToHmrc = "Payment made to HMRC"
@@ -51,7 +50,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val paymentHeadingDescription = "Description"
     val paymentHeadingAmount = "Amount"
     val partialH2Heading = "payments"
-    val saLink = "Self Assessment service"
+    val saLink = "Self Assessment online account (opens in new tab)"
   }
 
   val testPayments: List[Payment] = List(
@@ -64,7 +63,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments, "testBackURL", saUtr, isAgent = false)(FakeRequest(),implicitly)
+    paymentHistoryView(testPayments, "testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
   "The payments history view with payment response model" should {
@@ -82,7 +81,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"has a table of payment history" which {
-        s"has the table caption" in new PaymentHistorySetup(testPayments)  {
+        s"has the table caption" in new PaymentHistorySetup(testPayments) {
           layoutContent.selectHead("div").selectNth("div", 2).selectHead("table")
             .selectHead("caption").text.contains(PaymentHistoryMessages.partialH2Heading)
         }
@@ -105,9 +104,9 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "display payment history by year" in new PaymentHistorySetup(testPayments) {
         val orderedPayments: Map[Int, List[Payment]] = testPayments.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
-        for(((year, payments), index) <- orderedPayments.zipWithIndex) {
+        for (((year, payments), index) <- orderedPayments.zipWithIndex) {
           layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
-        val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
+          val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
           val tbody = sectionContent.selectHead("table > tbody")
           payments.zipWithIndex.foreach {
             case (payment, index) =>
@@ -124,7 +123,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   "The payments history view with an empty payment response model" should {
     "throw a MissingFieldException" in {
-      val thrownException = intercept[MissingFieldException]{
+      val thrownException = intercept[MissingFieldException] {
         paymentHistoryView(emptyPayments, "testBackURL", None, isAgent = false)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Date"
@@ -132,7 +131,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   class PaymentHistorySetupWhenAgentView(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments, "testBackURL", saUtr, isAgent = true)(FakeRequest(),implicitly)
+    paymentHistoryView(testPayments, "testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
   )
 
   "The payments history view with payment response model" should {

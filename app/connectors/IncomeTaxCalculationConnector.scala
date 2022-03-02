@@ -31,6 +31,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
   val baseUrl: String = config.incomeTaxCalculationService
 
   def getCalculationResponseUrl(nino: String): String = s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
+
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
@@ -62,8 +63,8 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
   }
 
   def getCalculationResponseByCalcId(mtditid: String, nino: String, calcId: String)
-                            (implicit headerCarrier: HeaderCarrier,
-                             ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
+                                    (implicit headerCarrier: HeaderCarrier,
+                                     ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
 
     http.GET[HttpResponse](getCalculationResponseByCalcIdUrl(nino, calcId))(httpReads,
       headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>

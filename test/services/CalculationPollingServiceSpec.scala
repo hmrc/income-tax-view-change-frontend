@@ -37,7 +37,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
   val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
 
-  def fakeServicesConfig(interval : Int, timeout: Int): ServicesConfig = new ServicesConfig(conf) {
+  def fakeServicesConfig(interval: Int, timeout: Int): ServicesConfig = new ServicesConfig(conf) {
     override def getInt(key: String): Int = key match {
       case "calculation-polling.interval" => interval
       case "calculation-polling.timeout" => timeout

@@ -17,7 +17,6 @@
 package controllers
 
 
-
 import testConstants.PaymentAllocationsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
@@ -38,7 +37,7 @@ import views.html.PaymentAllocation
 import scala.concurrent.Future
 
 class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching with TestSupport  {
+  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching with TestSupport {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

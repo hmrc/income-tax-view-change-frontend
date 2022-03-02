@@ -91,26 +91,26 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       }
     }
 
-		"the auth check fails to find a valid agent-client relationship" should {
-			"redirect to the Agent Client Relationship error page" in {
-				setupMockAgentAuthorisationException(InsufficientEnrolments())
+    "the auth check fails to find a valid agent-client relationship" should {
+      "redirect to the Agent Client Relationship error page" in {
+        setupMockAgentAuthorisationException(InsufficientEnrolments())
 
-				val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
+        val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
-				status(result) shouldBe SEE_OTHER
-				redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
-			}
-		}
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
+      }
+    }
 
-		"return OK and display confirm Client details page" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-			mockConfirmClient(HtmlFormat.empty)
+    "return OK and display confirm Client details page" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockConfirmClient(HtmlFormat.empty)
 
-			val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
+      val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
-			status(result) shouldBe OK
-			contentType(result) shouldBe Some(HTML)
-		}
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some(HTML)
+    }
   }
 
   "submit" when {
@@ -159,17 +159,17 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       }
     }
 
-		lazy val request = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
+    lazy val request = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
 
-		"redirect to Home page and add confirmedClient: true flag to session" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    "redirect to Home page and add confirmedClient: true flag to session" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-			val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
+      val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
-			status(result) shouldBe SEE_OTHER
-			redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
-			result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
-		}
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
+      result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
+    }
   }
 
 }

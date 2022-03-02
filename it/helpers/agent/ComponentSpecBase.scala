@@ -196,7 +196,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
 
-    def getChargeSummaryLatePayment(taxYear: String, id: String, additionalCookies: Map[String, String]) : WSResponse =
+    def getChargeSummaryLatePayment(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true", additionalCookies)
 
     def getPay(amountInPence: BigDecimal, additionalCookies: Map[String, String]): WSResponse =
@@ -226,7 +226,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
   }
 
-  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls:Int, callback: () => Unit): Unit = {
+  def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls: Int, callback: () => Unit): Unit = {
     stubAuthorisedAgentUser(authorised = true)
     Given("I wiremock stub a successful Income Source Details response with property only")
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -239,7 +239,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
     callback()
-    if(resetCacheAfterFirstCall) cache.removeAll()
+    if (resetCacheAfterFirstCall) cache.removeAll()
     callback()
     verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
   }

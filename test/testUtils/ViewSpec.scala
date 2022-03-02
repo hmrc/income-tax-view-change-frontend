@@ -55,6 +55,7 @@ trait ViewSpec extends TestSupport {
     val tableRow: String = "tr"
     val div: String = "div"
     val p: String = "p"
+
     def id(id: String): String = s"#$id"
   }
 

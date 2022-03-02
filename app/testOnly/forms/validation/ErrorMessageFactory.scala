@@ -32,13 +32,13 @@ object ErrorMessageFactory {
   }
 
   /**
-    * Designed for creating cross field validation error messages
-    *
-    * @param targetIds which fields this message is designated for
-    * @param errKey
-    * @param errArgs
-    * @return
-    */
+   * Designed for creating cross field validation error messages
+   *
+   * @param targetIds which fields this message is designated for
+   * @param errKey
+   * @param errArgs
+   * @return
+   */
   def error(targetIds: TargetIds, errKey: String, errArgs: String*): Invalid = {
     val fieldError = FieldError(errKey, errArgs)
     val summaryError = SummaryError(errKey, errArgs)
@@ -49,13 +49,13 @@ object ErrorMessageFactory {
     Invalid("", fieldError, summaryError)
 
   /**
-    * Designed for creating cross field validation error messages
-    *
-    * @param targetIds which fields this message is designated for
-    * @param fieldError
-    * @param summaryError
-    * @return
-    */
+   * Designed for creating cross field validation error messages
+   *
+   * @param targetIds which fields this message is designated for
+   * @param fieldError
+   * @param summaryError
+   * @return
+   */
   def error(targetIds: TargetIds, fieldError: FieldError, summaryError: SummaryError): Invalid =
     Invalid("", fieldError, summaryError, targetIds)
 

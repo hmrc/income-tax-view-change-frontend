@@ -28,50 +28,50 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   "Calling the TaxYearsController.viewTaxYears" when {
 
-      "isAuthorisedUser with an active enrolment and income source has retrieved successfully" when {
+    "isAuthorisedUser with an active enrolment and income source has retrieved successfully" when {
 
-        "no firstAccountingPeriodEndDate does not exists for both business and property" should {
+      "no firstAccountingPeriodEndDate does not exists for both business and property" should {
 
-          "return 500 Internal Server " in {
+        "return 500 Internal Server " in {
 
-            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-            When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
-            val res = IncomeTaxViewChangeFrontend.getTaxYears
+          When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
+          val res = IncomeTaxViewChangeFrontend.getTaxYears
 
-            verifyIncomeSourceDetailsCall(testMtditid)
+          verifyIncomeSourceDetailsCall(testMtditid)
 
-            res should have(
-              httpStatus(INTERNAL_SERVER_ERROR)
-            )
-          }
-        }
-
-        "income sources has firstAccountingPeriodEndDate and hence valid tax years" should {
-
-          "return 200 OK " in {
-
-            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
-
-            When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
-            val res = IncomeTaxViewChangeFrontend.getTaxYears
-
-            verifyIncomeSourceDetailsCall(testMtditid)
-
-            Then("The view should have the correct headings and all tax years display")
-            res should have(
-              httpStatus(OK),
-              pageTitleIndividual(taxYearsTitle),
-              nElementsWithClass("govuk-summary-list__row")(6),
-              elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
-                expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-              )
-            )
-          }
+          res should have(
+            httpStatus(INTERNAL_SERVER_ERROR)
+          )
         }
       }
+
+      "income sources has firstAccountingPeriodEndDate and hence valid tax years" should {
+
+        "return 200 OK " in {
+
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/tax-years")
+          val res = IncomeTaxViewChangeFrontend.getTaxYears
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+
+          Then("The view should have the correct headings and all tax years display")
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual(taxYearsTitle),
+            nElementsWithClass("govuk-summary-list__row")(6),
+            elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
+              expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+            )
+          )
+        }
+      }
+    }
   }
 
   unauthorisedTest("/tax-years")

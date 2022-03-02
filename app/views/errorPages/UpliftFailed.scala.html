@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,6 @@
 	</div>
 
 	<div>
-        @link(link = controllers.routes.SignOutController.signOut.url,  messageKey = "base.sign-out", classes = "govuk-button")
+        @link(link = controllers.routes.SignOutController.signOut.url,  messageKey = "base.sign-out", ariaLabel= messages("base.sign-out").replaceAll(" " , "-"), classes = "govuk-button")
 	</div>
 }

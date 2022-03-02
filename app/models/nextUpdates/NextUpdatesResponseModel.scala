@@ -51,8 +51,8 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallised")
 
-	def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
-		allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x,y) => x._1.isBefore(y._1))
+  def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
+    allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 }
 
 object ObligationsModel {

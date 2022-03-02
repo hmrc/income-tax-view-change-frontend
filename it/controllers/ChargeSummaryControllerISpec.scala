@@ -21,7 +21,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
-import config.featureswitch.{ChargeHistory, CodingOut, PaymentAllocation, TxmEventsApproved, TxmEventsR6}
+import config.featureswitch._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -40,7 +40,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
         lot = Some("lot"), lotItem = Some(lotItem), date = Some(date), transactionId = None)),
-      mainType = Some(mainType) , chargeType = Some(chargeType))
+      mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
     paymentsWithCharge("SA Balancing Charge", "ITSA NI", "2019-08-13", -10000.0, lotItem = "000001"),
@@ -51,13 +51,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14).toString, "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI",mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" should {
 
-    "load the page with right data for Payments Breakdown with TxmEventsR6 enabled" in {
+    "load the page with right data for Payments Breakdown" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -68,9 +68,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
 
-      Given("the TxmEvents feature switches are on")
-      enable(TxmEventsApproved)
-      enable(TxmEventsR6)
+      Given("the ChargeHistory feature switch is disabled")
       disable(ChargeHistory)
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
@@ -93,16 +91,15 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "ITSA- POA 1"),
-        paymentBreakdown = List(financialDetailModelPartial(chargeType = "ITSA England & NI", originalAmount =10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
+        paymentBreakdown = List(financialDetailModelPartial(chargeType = "ITSA England & NI", originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         None,
-        txmEventsR6 = true,
         isLatePaymentCharge = false
       ))
     }
 
-    "load the page with right audit events when TxmEvents and PaymentAllocations FS on and ChargeHistory FS off" in {
+    "load the page with right audit events when PaymentAllocations FS on and ChargeHistory FS off" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -113,9 +110,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(OK, testChargeHistoryJson(testMtditid, "1040000123", 2500))
 
-      Given("the TxmEvents PaymentAllocations and feature switch is on")
-      enable(TxmEventsApproved)
-      enable(TxmEventsR6)
+      Given("the PaymentAllocations feature switch is on and ChargeHistory is off")
       enable(PaymentAllocation)
       disable(ChargeHistory)
 
@@ -134,7 +129,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
         None,
-        txmEventsR6 = true,
         isLatePaymentCharge = false
       ))
 
@@ -142,11 +136,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual(balancingPaymentTitle),
-          elementTextBySelector("main h2")("Important Payment breakdown")
+        elementTextBySelector("main h2")("Important Payment breakdown")
       )
     }
 
-    "load the page with right audit events when TxmEvents PaymentAllocations and ChargeHistory FS enabled" in {
+    "load the page with right audit events when PaymentAllocations and ChargeHistory FS enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -157,9 +151,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(OK, testChargeHistoryJson(testMtditid, "1040000123", 2500))
 
-      Given("the TxmEvents PaymentAllocations and ChargeHistory feature switch is on")
-      enable(TxmEventsApproved)
-      enable(TxmEventsR6)
+      Given("the PaymentAllocations and ChargeHistory feature switch is on")
       enable(PaymentAllocation)
       enable(ChargeHistory)
 
@@ -178,7 +170,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
         None,
-        txmEventsR6 = true,
         isLatePaymentCharge = false
       ))
 
@@ -190,45 +181,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "load the page with right audit events when TxmEventsR6 FS disabled" in {
-      Given("I wiremock stub a successful Income Source Details response with property only")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-      And("I wiremock stub a single financial transaction response")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-
-      Given("the TxmEventsApproved feature switch is off")
-      disable(TxmEventsApproved)
-      disable(TxmEventsR6)
-      disable(ChargeHistory)
-
-      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000123")
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-
-      AuditStub.verifyAuditDoesNotContainsDetail(ChargeSummaryAudit(
-        MtdItUser(
-          testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
-        )(FakeRequest()),
-        docDateDetail("2018-02-14", "TRM New Charge"),
-        paymentBreakdown = paymentBreakdown,
-        chargeHistories = chargeHistories,
-        paymentAllocations = paymentAllocation,
-        None,
-        txmEventsR6 = true,
-        isLatePaymentCharge = false
-      ).detail)
-
-      Then("the result should have a HTTP status of OK (200) and load the correct page")
-      res should have(
-        httpStatus(OK),
-        pageTitleIndividual(balancingPaymentTitle),
-        elementTextBySelector("main h2")("Payment history")
-      )
-    }
-
     "load the page when the late payment interest flag is true and chargeHistory and paymentAllocation FS is enabled" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -237,9 +189,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
         123.45, 1.2, latePaymentInterestAmount = 54.32))
 
-      Given("the TxmEvents feature switch is on")
-      enable(TxmEventsApproved)
-      enable(TxmEventsR6)
+      Given("the PaymentAllocations and ChargeHistory feature switches are on")
       enable(ChargeHistory)
       enable(PaymentAllocation)
 
@@ -258,7 +208,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
         None,
-        txmEventsR6 = true,
         isLatePaymentCharge = true
       ))
 
@@ -278,8 +227,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
-      Given("the TxmEventsApproved feature switch is off")
-      disable(TxmEventsApproved)
       disable(ChargeHistory)
       enable(PaymentAllocation)
 
@@ -304,8 +251,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
-      Given("the TxmEventsApproved feature switch is off")
-      disable(TxmEventsApproved)
       disable(ChargeHistory)
       disable(PaymentAllocation)
 
@@ -342,8 +287,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           )),
         "financialDetails" -> Json.arr()))
 
-      Given("the TxmEventsApproved feature switch is off")
-      disable(TxmEventsApproved)
       disable(ChargeHistory)
       enable(PaymentAllocation)
 
@@ -387,7 +330,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
             "amountCodedOut" -> 2500.00
           )),
         "financialDetails" -> Json.arr()))
-
 
 
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "CODINGOUT01")

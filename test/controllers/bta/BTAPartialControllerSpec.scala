@@ -31,7 +31,7 @@ class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredic
     app.injector.instanceOf[BtaPartial],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate
-    )(
+  )(
     ec,
     app.injector.instanceOf[MessagesControllerComponents]
   )

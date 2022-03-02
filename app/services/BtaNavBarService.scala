@@ -26,14 +26,14 @@ class BtaNavBarService @Inject()()(implicit val appConfig: FrontendAppConfig) {
   def notificationBadgeCount(messageCount: Int): String = {
     messageCount match {
       case 0 => "0"
-      case count if count > 99  => "+99"
+      case count if count > 99 => "+99"
       case _ => s"${messageCount}"
     }
   }
 
   def formsNav(form: NavLinks)(implicit lang: Lang): ListLinks = {
     form.alerts match {
-      case Some(alert) if alert.equals(0)   => ListLinks("", "", showBoolean = Some(false))
+      case Some(alert) if alert.equals(0) => ListLinks("", "", showBoolean = Some(false))
       case Some(alert) if lang.code == "cy" => ListLinks(form.cy, form.url, Some(notificationBadgeCount(alert)))
       case Some(alert) => ListLinks(form.en, form.url, Some(notificationBadgeCount(alert)))
       case _ => ListLinks("", "", showBoolean = Some(false))
@@ -44,7 +44,7 @@ class BtaNavBarService @Inject()()(implicit val appConfig: FrontendAppConfig) {
     implicit val lang: Lang = messages.lang
     navLinks match {
       case Some(NavContent(home, account, message, help, forms)) =>
-        if(messages.lang == Lang("cy")){
+        if (messages.lang == Lang("cy")) {
           Seq(
             ListLinks(home.cy, appConfig.homePageUrl),
             ListLinks(account.cy, account.url),

@@ -24,19 +24,19 @@ case class Payments(payments: Seq[Payment]) extends PaymentsResponse
 
 case class PaymentsError(status: Int, error: String) extends PaymentsResponse
 
-case class Payment( reference: Option[String],
-                    amount: Option[BigDecimal],
-                    method: Option[String],
-                    lot: Option[String],
-                    lotItem: Option[String],
-                    date: Option[String],
-                    transactionId: Option[String])
+case class Payment(reference: Option[String],
+                   amount: Option[BigDecimal],
+                   method: Option[String],
+                   lot: Option[String],
+                   lotItem: Option[String],
+                   date: Option[String],
+                   transactionId: Option[String])
 
 object Payment {
   implicit val format: Format[Payment] = Json.format[Payment]
 }
 
-case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[String], chargeType: Option[String]){
+case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[String], chargeType: Option[String]) {
   def getPaymentAllocationTextInChargeSummary: Option[String] = {
     FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
       .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")

@@ -36,13 +36,13 @@ class CitizenDetailsConnector @Inject()(val http: HttpClient,
 
   private[connectors] lazy val getCitizenDetailsBySaUtrUrl: String => String = saUtr => s"${config.citizenDetailsUrl}/citizen-details/sautr/$saUtr"
 
-  def updatedHeaderCarrier(hc: HeaderCarrier): HeaderCarrier = if(config.hasEnabledTestOnlyRoutes) {
+  def updatedHeaderCarrier(hc: HeaderCarrier): HeaderCarrier = if (config.hasEnabledTestOnlyRoutes) {
     hc.copy(trueClientIp = Some("ITVC"))
   } else {
     hc
   }
 
-  def getCitizenDetailsBySaUtr(saUtr: String)(implicit headerCarrier: HeaderCarrier):Future[CitizenDetailsResponseModel] = {
+  def getCitizenDetailsBySaUtr(saUtr: String)(implicit headerCarrier: HeaderCarrier): Future[CitizenDetailsResponseModel] = {
 
     val url = getCitizenDetailsBySaUtrUrl(saUtr)
 
@@ -60,13 +60,13 @@ class CitizenDetailsConnector @Inject()(val http: HttpClient,
             valid => valid
           )
         case status =>
-          if(status >= 500) {
+          if (status >= 500) {
             Logger("application").error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             Logger("application").warn(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, body: ${response.body}")
           }
           CitizenDetailsErrorModel(response.status, response.body)
-        }
+      }
     } recover {
       case ex =>
         Logger("application").error(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - Unexpected future failed error, ${ex.getMessage}")

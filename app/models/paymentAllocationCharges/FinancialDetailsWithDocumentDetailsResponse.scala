@@ -24,9 +24,8 @@ import play.api.libs.functional.syntax._
 sealed trait FinancialDetailsWithDocumentDetailsResponse
 
 
-
 case class FinancialDetailsWithDocumentDetailsModel(documentDetails: List[DocumentDetail],
-																										financialDetails: List[FinancialDetail]) extends FinancialDetailsWithDocumentDetailsResponse {
+                                                    financialDetails: List[FinancialDetail]) extends FinancialDetailsWithDocumentDetailsResponse {
 
   val filteredDocumentDetails = documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
     .filter(_.paymentLotItem == financialDetails.head.items.get.head.paymentLotItem)

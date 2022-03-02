@@ -24,7 +24,7 @@ import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import testUtils.UnitSpec
 
-class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
+class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
 
   "The ChargesModel" should {
 
@@ -56,7 +56,9 @@ class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
     val unsupportedLock = Some("Disputed debt")
 
     def financialDetailsModelWithDunningLock: FinancialDetailsModel = financialDetailsModel(dunningLock = dunningLock)
+
     def financialDetailsModelWithUnsupportedLock: FinancialDetailsModel = financialDetailsModel(dunningLock = unsupportedLock)
+
     def financialDetailsModelWithoutDunningLock: FinancialDetailsModel = financialDetailsModel()
 
     "return true when there is a dunningLock against a charge" in {
@@ -93,7 +95,7 @@ class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
 
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1,2,3), List.empty, List(fd1, fd2))
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3), None, List.empty, List(fd1, fd2))
 
     "return the right due date" in {
       fdm.getDueDateFor(dd1).get.toString shouldBe "2017-02-28"
@@ -144,10 +146,44 @@ class FinancialDetailsResponseModelSpec  extends UnitSpec with Matchers {
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
 
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1,2,3), List(dd1, dd2), List(fd1, fd2, fd3, fd4))
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3), None, List(dd1, dd2), List(fd1, fd2, fd3, fd4))
 
     "return a list of due dates" in {
       fdm.getAllDueDates.map(_.toString) shouldBe List("2017-01-31", "2017-02-28")
+    }
+  }
+
+  "getDocumentDetailWithCodingDetails" should {
+    val documentDetail1 = DocumentDetail(taxYear = "2017",
+      transactionId = "transid1",
+      documentDescription = Some("ITSA- POA 1"),
+      documentText = Some("documentText"),
+      outstandingAmount = None,
+      originalAmount = None,
+      documentDate = LocalDate.parse("2018-03-21"))
+
+    val documentDetail2 = DocumentDetail(taxYear = "2022",
+      transactionId = "transid1",
+      documentDescription = Some("ITSA- POA 1"),
+      documentText = Some("documentText"),
+      outstandingAmount = None,
+      originalAmount = None,
+      documentDate = LocalDate.parse("2022-03-21"))
+
+    val codingDetailsList = List(CodingDetails("2018", BigDecimal("100.00"), "2019"), CodingDetails("2017", BigDecimal("100.00"), "2018"))
+
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3), Some(codingDetailsList), List(documentDetail1), List())
+    val fdmWithEmptyCodingDetail: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3), None, List(documentDetail1), List())
+
+    "return the right DocumentDetailWithCodingDetails model matching tax year" in {
+      fdm.getDocumentDetailWithCodingDetails(documentDetail1).get shouldBe DocumentDetailWithCodingDetails(
+        documentDetail1, CodingDetails("2017", BigDecimal("100.00"), "2018"))
+    }
+    "return None when no matching tax year record is found in coding details" in {
+      fdm.getDocumentDetailWithCodingDetails(documentDetail2) shouldBe None
+    }
+    "return None when coding out details is empty" in {
+      fdmWithEmptyCodingDetail.getDocumentDetailWithCodingDetails(documentDetail1) shouldBe None
     }
   }
 }

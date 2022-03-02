@@ -33,8 +33,8 @@ import testOnly.views.html.StubUsersView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class 	StubUsersController @Inject()(stubUsersView: StubUsersView)
-                                    (implicit val appConfig: FrontendAppConfig,
+class StubUsersController @Inject()(stubUsersView: StubUsersView)
+                                   (implicit val appConfig: FrontendAppConfig,
                                     override val config: Configuration,
                                     override val env: Environment,
                                     implicit val mcc: MessagesControllerComponents,
@@ -56,14 +56,16 @@ class 	StubUsersController @Inject()(stubUsersView: StubUsersView)
     )
   }
 
-  def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request => withJsonBody[UserModel](
-    json => desSimulatorConnector.stubUser(json).map(
-      response => response.status match {
-        case CREATED => Ok(s"The following USER was added to the stub: \n\n${Json.toJson(json)}")
-        case _ => InternalServerError(response.body)
-      }
+  def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    withJsonBody[UserModel](
+      json => desSimulatorConnector.stubUser(json).map(
+        response => response.status match {
+          case CREATED => Ok(s"The following USER was added to the stub: \n\n${Json.toJson(json)}")
+          case _ => InternalServerError(response.body)
+        }
+      )
     )
-  )}
+  }
 
   def view(form: Form[UserModel], result: Option[String] = None)(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
     stubUsersView(form, testOnly.controllers.routes.StubUsersController.submit(), result)

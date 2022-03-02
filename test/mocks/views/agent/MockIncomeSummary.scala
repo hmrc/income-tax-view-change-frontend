@@ -34,8 +34,8 @@ trait MockIncomeSummary extends BeforeAndAfterEach with MockitoSugar {
     reset(incomeBreakdown)
   }
 
-  def mockIncomeBreakdown(taxYear: Int, calcModel: IncomeBreakdownViewModel, backUrl: String, isAgent:Boolean)
-                            (response: Html): Unit = {
+  def mockIncomeBreakdown(taxYear: Int, calcModel: IncomeBreakdownViewModel, backUrl: String, isAgent: Boolean)
+                         (response: Html): Unit = {
     when(incomeBreakdown.apply(
       matches(calcModel),
       matches(taxYear),

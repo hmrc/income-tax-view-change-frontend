@@ -22,7 +22,7 @@ trait SessionCookieCrumbler {
 
       val key = "yNhI04vHs9<_HWbC`]20u`37=NGLGYY5:0Tg5?y`W<NoJnXWqmjcgZBec@rOxb^G".getBytes
 
-      if(cookieSigner.sign(map, key) != mac) {
+      if (cookieSigner.sign(map, key) != mac) {
         throw new RuntimeException("Cookie MAC didn't match content, this should never happen")
       }
       val Regex = """(.*)=(.*)""".r

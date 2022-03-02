@@ -30,11 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class SignOutController @Inject()(config: FrontendAppConfig,
                                   enrolmentsAuthService: FrontendAuthorisedFunctions,
                                   mcc: MessagesControllerComponents
-                                   ) extends FrontendController(mcc) {
+                                 ) extends FrontendController(mcc) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  val signOut:Action[AnyContent] = Action.async { implicit request =>
+  val signOut: Action[AnyContent] = Action.async { implicit request =>
     enrolmentsAuthService.authorised.retrieve(Retrievals.affinityGroup) {
       case Some(AffinityGroup.Agent) => Future.successful(s"${config.contactFormServiceIdentifier}A")
       case _ => Future.successful(config.contactFormServiceIdentifier)

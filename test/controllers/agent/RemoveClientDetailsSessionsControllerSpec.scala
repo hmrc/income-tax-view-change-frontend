@@ -65,25 +65,25 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
       }
     }
 
-		"remove client details session keys and redirect to the enter client UTR page" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    "remove client details session keys and redirect to the enter client UTR page" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-			val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient())
+      val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient())
 
-			val removedSessionKeys: List[String] =
-				List(
-					"SessionKeys.clientLastName",
-					"SessionKeys.clientFirstName",
-					"SessionKeys.clientNino",
-					"SessionKeys.clientUTR",
-					"SessionKeys.confirmedClient"
-				)
+      val removedSessionKeys: List[String] =
+        List(
+          "SessionKeys.clientLastName",
+          "SessionKeys.clientFirstName",
+          "SessionKeys.clientNino",
+          "SessionKeys.clientUTR",
+          "SessionKeys.confirmedClient"
+        )
 
-			removedSessionKeys.foreach(key => result.futureValue.header.headers.get(key) shouldBe None)
+      removedSessionKeys.foreach(key => result.futureValue.header.headers.get(key) shouldBe None)
 
-			status(result) shouldBe SEE_OTHER
-			redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
 
-		}
+    }
   }
 }

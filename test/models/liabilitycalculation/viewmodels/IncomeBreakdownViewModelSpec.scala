@@ -26,7 +26,7 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
   "IncomeBreakdownViewModel model" when {
     "create a minimal IncomeBreakdownViewModel when there is a minimal Calculation" in {
       IncomeBreakdownViewModel(Some(Calculation())) shouldBe Some(
-        IncomeBreakdownViewModel(None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None))
+        IncomeBreakdownViewModel(None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None))
     }
 
     "create a empty IncomeBreakdownViewModel when there is a no Calculation" in {

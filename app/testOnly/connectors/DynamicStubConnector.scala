@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
                                      val http: HttpClient
-                                    )(implicit ec: ExecutionContext)extends RawResponseReads {
+                                    )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def addSchema(schemaModel: SchemaModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/schema"

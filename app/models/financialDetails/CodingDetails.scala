@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package models.financialDetails
 
-@(msg: String, classes: String = "govuk-heading-m", optId: Option[String] = None)(implicit messages: Messages)
+import play.api.libs.json.{Format, Json}
 
-<h2 @optId.map(value => s"id=$value") class="@classes">@messages(msg)</h2>
+case class CodingDetails(taxYearReturn: String,
+                         amountCodedOut: BigDecimal,
+                         taxYearCoding: String)
+
+object CodingDetails {
+  implicit val format: Format[CodingDetails] = Json.format[CodingDetails]
+}

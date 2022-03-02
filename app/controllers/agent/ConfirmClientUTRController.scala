@@ -51,13 +51,12 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
     implicit user =>
       Future.successful(
         Redirect(routes.HomeController.show()).addingToSession(
-        SessionKeys.confirmedClient -> "true"
+          SessionKeys.confirmedClient -> "true"
         )
       )
   }
 
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
-
 
 
 }

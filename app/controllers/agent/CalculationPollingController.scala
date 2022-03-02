@@ -37,7 +37,7 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
                                              val itvcErrorHandler: AgentItvcErrorHandler,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching {
-  
+
   def calculationPoller(taxYear: Int, isFinalCalc: Boolean): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit agent =>
 

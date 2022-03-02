@@ -161,6 +161,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
     HavePropertyMatcher[WSResponse, String] { response =>
       val body: Element = Jsoup.parse(response.body).body()
       Then(s"the text of the element should be '$expectedValue'")
+
       def selectHead(element: Element, selector: String): Element = {
         element.select(selector).asScala.headOption match {
           case Some(element) => element

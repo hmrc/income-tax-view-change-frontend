@@ -35,7 +35,7 @@ class UTRErrorControllerSpec extends TestSupport
   with MockUTRError
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
-  with MockItvcErrorHandler{
+  with MockItvcErrorHandler {
 
   object TestUTRErrorController extends UTRErrorController(
     utrError,
@@ -72,7 +72,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the user does not have an agent reference number" should {
       "return Ok with technical difficulties" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment,  withClientPredicate = false)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
@@ -82,27 +82,27 @@ class UTRErrorControllerSpec extends TestSupport
       }
     }
 
-		"redirect to the Enter Client UTR page when there is no client UTR in session" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-			mockUTRError(HtmlFormat.empty)
+    "redirect to the Enter Client UTR page when there is no client UTR in session" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      mockUTRError(HtmlFormat.empty)
 
-			val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
+      val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
-			status(result) shouldBe SEE_OTHER
-			redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
-		}
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+    }
 
-		"return OK and display the UTR Error page" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-			mockUTRError(HtmlFormat.empty)
+    "return OK and display the UTR Error page" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      mockUTRError(HtmlFormat.empty)
 
-			val result = TestUTRErrorController.show()(fakeRequestWithClientUTR)
+      val result = TestUTRErrorController.show()(fakeRequestWithClientUTR)
 
-			status(result) shouldBe OK
-			contentType(result) shouldBe Some(HTML)
-			verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-			verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
-		}
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some(HTML)
+      verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+      verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+    }
   }
 
   "submit" when {
@@ -140,17 +140,17 @@ class UTRErrorControllerSpec extends TestSupport
       }
     }
 
-		"redirect to the Enter Client UTR page and remove the clientUTR from session" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+    "redirect to the Enter Client UTR page and remove the clientUTR from session" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
 
-			val result = TestUTRErrorController.submit()(fakeRequestWithClientUTR)
+      val result = TestUTRErrorController.submit()(fakeRequestWithClientUTR)
 
-			status(result) shouldBe SEE_OTHER
-			redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
-			result.futureValue.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
-			verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-			verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
-		}
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+      result.futureValue.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
+      verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+      verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+    }
   }
 
 }

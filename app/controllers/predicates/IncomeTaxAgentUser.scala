@@ -36,7 +36,7 @@ case class IncomeTaxAgentUser(enrolments: Enrolments,
   lazy val credId = credentials.map(credential => credential.providerId)
 
   private def getEnrolment(key: String): Option[String] = {
-    enrolments.enrolments.find( e => e.key == key && e.identifiers.nonEmpty ) map { enr: Enrolment => enr.identifiers.head.value }
+    enrolments.enrolments.find(e => e.key == key && e.identifiers.nonEmpty) map { enr: Enrolment => enr.identifiers.head.value }
   }
 
 }

@@ -18,7 +18,7 @@ package models.incomeSourceDetails
 
 import play.api.libs.json.{Format, Json}
 
-case class PropertiesRentedModel(uk:Option[Int], eea:Option[Int], nonEea:Option[Int], total:Option[Int])
+case class PropertiesRentedModel(uk: Option[Int], eea: Option[Int], nonEea: Option[Int], total: Option[Int])
 
 object PropertiesRentedModel {
   implicit val format: Format[PropertiesRentedModel] = Json.format[PropertiesRentedModel]

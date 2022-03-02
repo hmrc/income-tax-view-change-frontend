@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import java.time.LocalDate
 
@@ -121,7 +121,8 @@
                 }
 
                 @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
-                    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+                    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink", ariaLabel= messages("home.agent.changeClientLink").replaceAll(" " , "-")
+                )
                 }
 
                 @if(overDuePaymentsCount.getOrElse(0) > 0) {
@@ -185,7 +186,9 @@
             @p(classes = "govuk-!-margin-bottom-4"){
                 @link(
                     link = whatYouOweControllerURL,
-                    messageKey = "home.payments.view"
+                    messageKey = "home.payments.view",
+                    ariaLabel= messages("home.payments.view").replaceAll(" " , "-")
+
                 )
             }
 	}
@@ -212,7 +215,10 @@
             @p(classes = "govuk-!-margin-bottom-4"){
                 @link(
                     link = nextUpdatesControllerURL,
-                    messageKey = "home.updates.view"
+                    messageKey = "home.updates.view",
+                    ariaLabel= messages("home.updates.view").replaceAll(" " , "-")
+
+
                 )
             }
 	}
@@ -224,7 +230,9 @@
         @if(paymentHistoryEnabled) {
             @link(
                 link = paymentHistoryControllerURL,
-                messageKey = "home.paymentHistory.view"
+                messageKey = "home.paymentHistory.view",
+                ariaLabel= messages("home.paymentHistory.view").replaceAll(" " , "-")
+
             )
         }
     }
@@ -248,21 +256,27 @@
         @p(classes = "govuk-!-margin-bottom-4") {
             @link(
                 link = getReturnHref(currentTaxYear),
-                messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear"),
+                ariaLabel= messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear").replaceAll(" " , "-")
+
             )
         }
         @p(classes = "govuk-!-margin-bottom-4") {
             @if(ITSASubmissionIntegrationEnabled) {
                 @link(
                     link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
-                    messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                    messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear"),
+                    ariaLabel= messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear").replaceAll(" " , "-")
+
                 )
             }
         }
         @p(classes = "govuk-!-margin-bottom-1") {
             @link(
                 link = taxYearsControllerURL,
-                messageKey = "home.tax-years.view"
+                messageKey = "home.tax-years.view",
+                ariaLabel= messages("home.tax-years.view").replaceAll(" " , "-")
+
             )
         }
     }

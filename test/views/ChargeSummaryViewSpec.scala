@@ -30,7 +30,6 @@ import testUtils.ViewSpec
 import views.html.ChargeSummary
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.PaymentAllocationsTestConstants.documentDetail
-
 import java.time.LocalDate
 
 class ChargeSummaryViewSpec extends ViewSpec {
@@ -109,6 +108,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
     val codingOutHeader = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
     val codingOutInsetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
@@ -124,13 +124,16 @@ class ChargeSummaryViewSpec extends ViewSpec {
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
     def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
+
     val class2NicChargeCreated = "Class 2 National Insurance created"
     val cancelledSaPayeCreated = "Cancelled Self Assessment payment (through your PAYE tax code) created"
 
     def payeTaxCodeText(year: Int) = s"Check if your PAYE tax code has changed for the ${year - 1} to $year tax year."
+
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
     val cancelledPayeTaxCodeInsetText = "You have previously agreed to pay some of your Self Assessment bill through your PAYE tax code (opens in new tab). HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay."
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+
     def remainingTaxYouOwe(year: Int) = s"This is the remaining tax you owe for the ${year - 1} to $year tax year."
 
     val balancingChargeRequest = "Balancing payment reduced by taxpayer request"
@@ -195,7 +198,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None,None, Some("lotItem"), Some("lot"))),
+    codingDetails = None,
+    documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
   )
 
@@ -265,7 +269,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        checkPaymentProcessingInfo(document)
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
       }
 
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
@@ -441,8 +445,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.select("div#payment-link-2018").text() shouldBe msgs("paymentDue.payNow")
       }
 
-      "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        checkPaymentProcessingInfo(document)
+      "have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
@@ -696,7 +700,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   "The charge summary view when missing mandatory expected fields" should {
     "throw a MissingFieldException" in {
-      val thrownException = intercept[MissingFieldException]{
+      val thrownException = intercept[MissingFieldException] {
         chargeSummary(DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
           paymentBreakdown, List(), List(), payments, true, false, false, false, false)
       }
@@ -712,7 +716,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        checkPaymentProcessingInfo(document)
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {

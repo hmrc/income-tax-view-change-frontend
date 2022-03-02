@@ -25,35 +25,35 @@ object OutstandingChargesIntegrationTestConstants {
 
   val validOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
     s"""
-      |{
-      |  "outstandingCharges": [{
-      |         "chargeName": "BCD",
-      |         "relevantDueDate": "$dueDate",
-      |         "chargeAmount": 123456789012345.67,
-      |         "tieBreaker": 1234
-      |       },
-      |       {
-      |         "chargeName": "ACI",
-      |         "relevantDueDate": "$dueDate",
-      |         "chargeAmount": 12.67,
-      |         "tieBreaker": 1234
-      |       }
-      |  ]
-      |}
-      |""".stripMargin)
+       |{
+       |  "outstandingCharges": [{
+       |         "chargeName": "BCD",
+       |         "relevantDueDate": "$dueDate",
+       |         "chargeAmount": 123456789012345.67,
+       |         "tieBreaker": 1234
+       |       },
+       |       {
+       |         "chargeName": "ACI",
+       |         "relevantDueDate": "$dueDate",
+       |         "chargeAmount": 12.67,
+       |         "tieBreaker": 1234
+       |       }
+       |  ]
+       |}
+       |""".stripMargin)
 
   val validOutStandingChargeResponseJsonWithoutAciAndBcdCharges: JsValue = Json.parse(
     s"""
-      |{
-      |  "outstandingCharges": [{
-      |         "chargeName": "LATE",
-      |         "relevantDueDate": "$dueDate",
-      |         "chargeAmount": 123456789012345.67,
-      |         "tieBreaker": 1234
-      |       }
-      |  ]
-      |}
-      |""".stripMargin)
+       |{
+       |  "outstandingCharges": [{
+       |         "chargeName": "LATE",
+       |         "relevantDueDate": "$dueDate",
+       |         "chargeAmount": 123456789012345.67,
+       |         "tieBreaker": 1234
+       |       }
+       |  ]
+       |}
+       |""".stripMargin)
 
   val testOutstandingChargesErrorModelJson: JsValue = Json.obj(
     "code" -> 500,

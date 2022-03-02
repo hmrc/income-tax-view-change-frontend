@@ -111,7 +111,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val saLink = "Self Assessment online account (opens in new tab)"
     val saLinkAgent = "Self Assessment for Agents Account (opens in new tab)"
     val saNote = s"To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous $saLink."
-    val saNoteAgent = "To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your Self Assessment for Agents Account (opens in new tab). This will be a different Government Gateway ID and password to your Agent Services account."
+    val saNoteAgent = s"To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your $saLinkAgent. This will be a different Government Gateway ID and password to your Agent Services account."
   }
 
   // Home Page Messages
@@ -143,6 +143,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val paymentHistoryAndCreditView = "Payment history"
 
     def viewPaymentsLinkWithDateRange(taxYear: Int): String = s"View your current ${taxYear - 1} to ${taxYear} return"
+
     def viewUpdateAndSubmitLinkWithDateRange(taxYear: Int): String = s"Update and submit your ${taxYear - 1} to ${taxYear} return"
   }
 
@@ -154,7 +155,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Income"
 
-    val guidance= "You can see more details in your record-keeping software."
+    val guidance = "You can see more details in your record-keeping software."
     val incomeBreakdownHeader = "Income type"
     val incomeBreakdownHeaderAmount = "Amount"
     val employments = "Pay from all employments"
@@ -188,7 +189,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Allowances and deductions"
 
-    val guidance= "You can see more details in your record-keeping software."
+    val guidance = "You can see more details in your record-keeping software."
 
     val deductionBreakdownHeader = "Allowance or deduction type"
     val deductionBreakdownHeaderAmount = "Amount"
@@ -244,7 +245,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val guidance: String = "This calculation is based on your taxable income of £0.00"
     val cgtTypeTableHeader = "Capital Gains Tax type"
     val reductionTableHeader = "Reduction"
-    val amountTableHeader  = "Amount"
+    val amountTableHeader = "Amount"
     val ukRateTableHeader = "UK rates for England and Northern Ireland"
     val scotlandRateTableHead = "UK rates for Scotland"
     val rateBandTableHeader = "Rate band"
@@ -420,7 +421,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object AgentErrorMessages {
     val heading: String = "You can't use this service yet"
     val title: String = s"$heading - Your client’s Income Tax details - GOV.UK"
-    val setupAccountLink = "set up an agent services account"
+    val setupAccountLink = "set up an agent services account (opens in new tab)"
     val notAnAgentNote: String = s"To use this service, you need to $setupAccountLink."
     val signOutButton: String = "Sign out"
   }
@@ -569,7 +570,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val title = "What you owe - Business Tax account - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
-    val paymentsDue= "Payments Due"
+    val paymentsDue = "Payments Due"
     val saLink = "Self Assessment online account (opens in new tab)"
     val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
@@ -578,13 +579,14 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
     val paymentUnderReviewParaLink = "there is a current appeal against a tax decision (opens in new tab)."
     val paymentUnderReviewPara = s"One or more of your payments are currently under review because $paymentUnderReviewParaLink"
+
     def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
 
     val paymentType = "Payment type"
     val taxYearSummary = "Tax year summary"
     val amountDue = "Amount due"
 
-    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
     val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
     val paymentsMade = "Any payments you make:"
     val poa1Text = "Payment on account 1 of 2"
@@ -602,11 +604,11 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poaHeading = "Payment on account"
     val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
     val lpiHeading = "Late payment interest"
-    val lpiLine1   = "This is interest you owe for a late payment."
+    val lpiLine1 = "This is interest you owe for a late payment."
     val nic2Heading = "Class 2 National Insurance"
-    val nic2Line1   = "This is a payment specifically for your Class 2 National Insurance contributions."
+    val nic2Line1 = "This is a payment specifically for your Class 2 National Insurance contributions."
     val cancelledPAYEHeading = "Cancelled PAYE Self Assessment"
-    val cancelledPAYELine1   = "You have previously agreed to pay some of your self assessment tax through your PAYE tax code. HMRC has been unable to collect all of these payments from you, so this is the balancing payment you need to pay."
+    val cancelledPAYELine1 = "You have previously agreed to pay some of your self assessment tax through your PAYE tax code. HMRC has been unable to collect all of these payments from you, so this is the balancing payment you need to pay."
     val overduePayments = "Overdue payments"
     val overduePaymentsDue = "Overdue payments"
     val overdueTag = "OVERDUE"
@@ -629,6 +631,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val interestRatesPara = s"Any overdue payment interest is at the $interestRatesLink. The rate may have changed since the interest was first charged."
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+
     def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
 
 
@@ -661,7 +664,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2Text = "Payment on account 2 of 2"
     val latePoa1Text = "Late payment interest for payment on account 1 of 2"
     val latePoa2Text = "Late payment interest for payment on account 2 of 2"
-    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method you use"
+    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
     val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
     val remainingBalance = "Balancing payment"
     val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
@@ -673,9 +676,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poaHeading = "Payment on account"
     val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
     val lpiHeading = "Late payment interest"
-    val lpiLine1   = "This is interest you owe for a late payment."
+    val lpiLine1 = "This is interest you owe for a late payment."
     val overduePayments = "Overdue payments"
-    val paymentsDue= "Payments Due"
+    val paymentsDue = "Payments Due"
     val overduePaymentsDue = "Overdue payments"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
@@ -692,6 +695,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text ${taxYearForChargesText(currentYearMinusOne, currentYear)} $paymentUnderReview"
 
     def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+
     def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
 
     val dueDate = "Due date"

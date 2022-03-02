@@ -61,10 +61,10 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
       chargeHistory = chargeHistoryOpt.getOrElse(Nil),
       latePaymentInterestCharge = latePaymentInterestCharge,
       backUrl = backUrl(backLocation, taxYear),
-			paymentAllocations = paymentAllocations,
-			payments = payments,
-			paymentBreakdown = paymentBreakdown,
-			paymentAllocationEnabled = paymentAllocationEnabled,
+      paymentAllocations = paymentAllocations,
+      payments = payments,
+      paymentBreakdown = paymentBreakdown,
+      paymentAllocationEnabled = paymentAllocationEnabled,
       codingOutEnabled = codingOutEnabled,
       chargeHistoryEnabled = isEnabled(ChargeHistory),
       isAgent = true
@@ -76,13 +76,13 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { mtdItUser =>
           financialDetailsService.getAllFinancialDetails(mtdItUser, implicitly, implicitly).flatMap { financialResponses =>
-						val payments = financialResponses.collect {
-							case (_, model: FinancialDetailsModel) => model.filterPayments()
-						}.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00) ,List(), List()))((merged, next) => merged.mergeLists(next))
+            val payments = financialResponses.collect {
+              case (_, model: FinancialDetailsModel) => model.filterPayments()
+            }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), None, List(), List()))((merged, next) => merged.mergeLists(next))
 
-						val matchingYear = financialResponses.collect {
-							case (year, response) if year == taxYear => response
-						}
+            val matchingYear = financialResponses.collect {
+              case (year, response) if year == taxYear => response
+            }
 
             matchingYear.headOption match {
               case Some(financialDetailsModel: FinancialDetailsModel) if financialDetailsModel.documentDetails.exists(_.transactionId == chargeId) =>
@@ -126,7 +126,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         paymentAllocations = paymentAllocations,
         paymentBreakdown = paymentBreakdown,
         paymentAllocationEnabled = paymentAllocationEnabled,
-				payments = payments,
+        payments = payments,
         codingOutEnabled = codingOutEnabled))
     }
   }
@@ -135,7 +135,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_], incomeTaxAgentUser: IncomeTaxAgentUser): Unit = {
-    if (isEnabled(TxmEventsApproved)) {
       auditingService.extendedAudit(ChargeSummaryAudit(
         mtdItUser = user,
         docDateDetail = documentDetailWithDueDate,
@@ -143,10 +142,8 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocations,
         agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber,
-        isEnabled(TxmEventsR6),
         isLatePaymentCharge = isLatePaymentCharge
       ))
-    }
   }
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {

@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models._
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TxmEventsApproved}
+import config.featureswitch.FeatureSwitching
 import models.chargeHistory._
 import models.core.{NinoResponseSuccess, NinoResponse, NinoResponseError, Nino}
 import models.financialDetails._
@@ -153,8 +153,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
                 mtdItUser,
                 valid.businesses.flatMap(_.incomeSourceId),
                 valid.property.flatMap(_.incomeSourceId),
-                valid.yearOfMigration,
-                isEnabled(TxmEventsApproved)
+                valid.yearOfMigration
               ))
               valid
             }

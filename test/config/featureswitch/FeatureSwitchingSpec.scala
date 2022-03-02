@@ -33,10 +33,12 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
       trait FoldSetup {
         val aValue = 123987
         var hasBeenCalled = false
+
         def expectedBranch(): Int = {
           hasBeenCalled = true
           aValue
         }
+
         def unexpectedBranch(): Int = throw new IllegalStateException
       }
 

@@ -15,7 +15,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
     SessionKeys.clientFirstName -> "Test",
     SessionKeys.clientLastName -> "User",
     SessionKeys.clientUTR -> "1234567890",
-		SessionKeys.clientMTDID -> "XAIT000000000000"
+    SessionKeys.clientMTDID -> "XAIT000000000000"
   )
 
   s"GET ${controllers.agent.routes.ConfirmClientUTRController.show().url}" should {
@@ -62,15 +62,15 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
     }
 
     s"return $OK with the confirm client utr page" in {
-			stubAuthorisedAgentUser(authorised = true)
+      stubAuthorisedAgentUser(authorised = true)
 
-			val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetails)
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetails)
 
-			Then("The confirm client's utr page is returned to the user")
-			result should have(
-				httpStatus(OK),
-				pageTitleAgent(confirmClientDetails)
-			)
+      Then("The confirm client's utr page is returned to the user")
+      result should have(
+        httpStatus(OK),
+        pageTitleAgent(confirmClientDetails)
+      )
     }
   }
 
@@ -104,15 +104,15 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
     }
 
     s"redirect ($SEE_OTHER) to the next page" in {
-			stubAuthorisedAgentUser(authorised = true)
+      stubAuthorisedAgentUser(authorised = true)
 
-			val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetails)
+      val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetails)
 
-			Then("The user is redirected to the next page")
-			result should have(
-				httpStatus(SEE_OTHER),
-				redirectURI(controllers.agent.routes.HomeController.show().url)
-			)
+      Then("The user is redirected to the next page")
+      result should have(
+        httpStatus(SEE_OTHER),
+        redirectURI(controllers.agent.routes.HomeController.show().url)
+      )
     }
   }
 }

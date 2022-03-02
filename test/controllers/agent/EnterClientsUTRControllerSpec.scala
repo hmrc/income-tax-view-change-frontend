@@ -85,17 +85,17 @@ class EnterClientsUTRControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
       }
     }
-		"return Ok and display the page to the user without checking client relationship information" in {
-			setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-			mockEnterClientsUTR(HtmlFormat.empty)
+    "return Ok and display the page to the user without checking client relationship information" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+      mockEnterClientsUTR(HtmlFormat.empty)
 
-			val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
+      val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
-			status(result) shouldBe OK
-			contentType(result) shouldBe Some(HTML)
-			verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-			verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
-		}
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some(HTML)
+      verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+      verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+    }
 
   }
 
@@ -130,120 +130,120 @@ class EnterClientsUTRControllerSpec extends TestSupport
           contentType(result) shouldBe Some(HTML)
         }
       }
-			"redirect to the confirm client details page and add client details to session without checking the relationship" when {
-				"the utr entered is valid" in {
-					val validUTR: String = "1234567890"
+      "redirect to the confirm client details page and add client details to session without checking the relationship" when {
+        "the utr entered is valid" in {
+          val validUTR: String = "1234567890"
 
-					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-					mockClientDetails(validUTR)(
-						response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
-					)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
 
-					val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-						ClientsUTRForm.utr -> validUTR
-					))
+          val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
 
-					status(result) shouldBe SEE_OTHER
-					redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
 
-					result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
-					result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
-					result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
-					result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
-					result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-					verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-					verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
-				}
-				"the utr entered contains spaces and is valid" in {
-					val validUTR: String = "1234567890"
-					val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
+          result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+          result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+          result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+          result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+          result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+          verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+        }
+        "the utr entered contains spaces and is valid" in {
+          val validUTR: String = "1234567890"
+          val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
-					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-					mockClientDetails(validUTR)(
-						response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
-					)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
 
-					val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-						ClientsUTRForm.utr -> utrWithSpaces
-					))
+          val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> utrWithSpaces
+          ))
 
-					status(result) shouldBe SEE_OTHER
-					redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
 
-					result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
-					result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
-					result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
-					result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
-					result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-					verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-					verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
-				}
-			}
+          result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+          result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+          result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+          result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+          result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
+          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+          verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+        }
+      }
 
-			"return a bad request" when {
-				"the submitted utr is invalid" in {
-					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-					mockEnterClientsUTR(HtmlFormat.empty)
+      "return a bad request" when {
+        "the submitted utr is invalid" in {
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          mockEnterClientsUTR(HtmlFormat.empty)
 
-					val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-						ClientsUTRForm.utr -> "invalid"
-					))
+          val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> "invalid"
+          ))
 
-					status(result) shouldBe BAD_REQUEST
-					contentType(result) shouldBe Some(HTML)
-				}
-			}
+          status(result) shouldBe BAD_REQUEST
+          contentType(result) shouldBe Some(HTML)
+        }
+      }
 
-			"redirect to the UTR Error page" when {
-				"a client details not found error is returned from the client lookup" in {
-					val validUTR: String = "1234567890"
+      "redirect to the UTR Error page" when {
+        "a client details not found error is returned from the client lookup" in {
+          val validUTR: String = "1234567890"
 
-					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-					mockClientDetails(validUTR)(
-						response = Left(CitizenDetailsNotFound)
-					)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          mockClientDetails(validUTR)(
+            response = Left(CitizenDetailsNotFound)
+          )
 
-					val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-						ClientsUTRForm.utr -> validUTR
-					))
+          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
 
-					status(result) shouldBe SEE_OTHER
-					redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
-				}
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
+        }
 
-				"a business details not found error is returned from the client lookup" in {
-					val validUTR: String = "1234567890"
+        "a business details not found error is returned from the client lookup" in {
+          val validUTR: String = "1234567890"
 
-					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-					mockClientDetails(validUTR)(
-						response = Left(BusinessDetailsNotFound)
-					)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          mockClientDetails(validUTR)(
+            response = Left(BusinessDetailsNotFound)
+          )
 
-					val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-						ClientsUTRForm.utr -> validUTR
-					))
+          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
 
-					status(result) shouldBe SEE_OTHER
-					redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
-				}
-			}
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
+        }
+      }
 
-			"return an exception" when {
-				"an unexpected response is returned from the client lookup" in {
-					val validUTR: String = "1234567890"
+      "return an exception" when {
+        "an unexpected response is returned from the client lookup" in {
+          val validUTR: String = "1234567890"
 
-					setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-					mockClientDetails(validUTR)(
-						response = Left(UnexpectedResponse)
-					)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          mockClientDetails(validUTR)(
+            response = Left(UnexpectedResponse)
+          )
 
-					val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-						ClientsUTRForm.utr -> validUTR
-					))
-					result.failed.futureValue shouldBe an[InternalServerException]
-					result.failed.futureValue.getMessage shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
-				}
-			}
+          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
+          result.failed.futureValue shouldBe an[InternalServerException]
+          result.failed.futureValue.getMessage shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
+        }
+      }
     }
   }
 

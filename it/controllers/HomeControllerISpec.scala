@@ -17,7 +17,7 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{BtaNavBar, TxmEventsApproved}
+import config.featureswitch.BtaNavBar
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
 import helpers.servicemocks.BtaNavBarPartialConnectorStub.{testNavLinkJson, verifyBtaNavPartialResponse}
@@ -34,14 +34,13 @@ import testConstants.messages.HomeMessages._
 class HomeControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
-    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,  None,
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None,
     Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     "Authorised" should {
-      "render the home page with the payment due date with TxmEventsApproved FS enabled" in {
-        enable(TxmEventsApproved)
+      "render the home page with the payment due date" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -77,53 +76,6 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
 
         verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
-      }
-
-      "render the home page with the payment due date and Bta Nav Bar with TxmEventsApproved FS disabled" in {
-        disable(TxmEventsApproved)
-        enable(BtaNavBar)
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-        val currentObligations: ObligationsModel = ObligationsModel(Seq(
-          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
-          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
-          singleObligationOverdueModel(testPropertyId),
-          singleObligationCrystallisationModel
-        ))
-
-        And("I wiremock stub a successful Bta Nav Bar PartialConnector response")
-        BtaNavBarPartialConnectorStub.stubBtaNavPartialResponse()(OK, Json.parse(testNavLinkJson))
-
-        And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
-
-        And("I stub a successful financial details response")
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
-          testValidFinancialDetailsModelJson(3400.00, 2000.00))
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2018-04-06", "2019-04-05")(OK,
-          testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
-
-        When("I call GET /report-quarterly/income-and-expenses/view")
-        val res = IncomeTaxViewChangeFrontend.getHome
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyBtaNavPartialResponse
-        verifyNextUpdatesCall(testNino)
-        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(title),
-          elementTextByID("nav-bar-link-Home")("Home"),
-          elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
-          elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
-        )
-
-        verifyAuditDoesNotContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
