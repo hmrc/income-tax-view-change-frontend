@@ -31,10 +31,10 @@
 
 <a href="@link" class="@classes" @id.map(id => s"id=$id") rel="@rel.map(c=>s"$c")" @target.map(target => s"target=$target")
     @role.map(role => s"role=$role")
-    @if(ariaLabel == None) {
-        aria-label="@messages(messageKey).replaceAll(" ", "-")@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText").replaceAll(" ", "-")}">
+    @if(ariaLabel.isDefined) {
+            aria-label="@ariaLabel.map(label=>s"$label")">
     } else {
-            @ariaLabel.map(lbl => s"aria-label=$lbl")">
+       aria-label="@messages(messageKey).replaceAll(" ", "-")@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText").replaceAll(" ", "-")}">
     }
 
     @messages(messageKey)@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>@outerMessage
