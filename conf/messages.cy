@@ -106,7 +106,7 @@ tax-year-overview.heading-secondary                             = 6 Ebrill {0} i
 tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-overview.total-due                                     = Cyfanswm sy’n ddyledus
 tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
-tax-year-overview.tax-calculation                               = Cyfrifiad yn ystod y flwyddyn
+tax-year-overview.tax-calculation                               = Cyfrifiad
 tax-year-overview.payments.paymentUnderReview                   = Taliad dan adolygiad
 tax-year-overview.section                                       = Adran
 tax-year-overview.amount                                        = Swm
@@ -136,7 +136,7 @@ tax-year-overview.payments.no-payments                          = Dim taliadau�
 ## Tax Year Overview Page new ##
 tax-year-overview.tax-calculation.no-calc                       = Dim cyfrifiad eto
 tax-year-overview.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
-tax-year-overview.tax-calculation.date                       = Cyfrifiad yn ystod y flwyddyn 6 Ebrill {0} i 5 Ionawr {1}
+tax-year-overview.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
 
 
 ## Income Breakdown Page ##
