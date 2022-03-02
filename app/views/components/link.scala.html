@@ -34,7 +34,7 @@
     @if(ariaLabel == None) {
         aria-label="@messages(messageKey).replaceAll(" ", "-")@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText").replaceAll(" ", "-")}">
     } else {
-    aria-label="@ariaLabel.map(c=>s"$c")">
+            @ariaLabel.map(lbl => s"aria-label=$lbl")">
     }
 
     @messages(messageKey)@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>@outerMessage
