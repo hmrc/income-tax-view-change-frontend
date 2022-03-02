@@ -388,13 +388,13 @@
     }
  }
 
-@codingOutInsetContent(codedOutDocumentDetail: DocumentDetail) = {
+@codingOutInsetContent(codedOutDocumentDetail: DocumentDetailWithCodingDetails) = {
     @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
         @getMessage("codingOut-1a")
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">@codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("Amount Coded Out")).toCurrencyString</a>
+        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.documentDetail.taxYear.toInt, codedOutDocumentDetail.documentDetail.transactionId)">@codedOutDocumentDetail.codingDetails.amountCodedOut.toCurrency</a>
         @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
-            codedOutDocumentDetail.taxYear)</b>
+        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.documentDetail.taxYear.toInt - 1).toString(),
+            codedOutDocumentDetail.documentDetail.taxYear)</b>
         @getMessage("codingOut-3")
     }
 }
