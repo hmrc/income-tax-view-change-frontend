@@ -72,7 +72,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   val payeChargeList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500)), codingOutEnabled = true))
+      documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment")), codingOutEnabled = true))
 
 
   val immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
@@ -88,7 +88,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true),
     fullDocumentDetailWithDueDateModel.copy(
       documentDetail = fullDocumentDetailModel.copy
-      (documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
+      (documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true)
   )
 
   val codingOutPartiallyCollected: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
@@ -99,7 +99,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         documentDescription = Some("TRM New Charge"), interestOutstandingAmount = Some(0.0))),
     fullDocumentDetailWithDueDateModel.copy(
       documentDetail = fullDocumentDetailModel.copy
-      (documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"), amountCodedOut = Some(0)), codingOutEnabled = true)
+      (documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true)
   )
 
   val documentDetailWithDueDateMissingDueDate: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(

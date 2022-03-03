@@ -22,8 +22,7 @@ import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCu
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail}
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, CodingDetails, DocumentDetail, DocumentDetailWithCodingDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -205,22 +204,22 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-            amountCodedOut = Some(0))
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
           val dd2 = DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
             documentText = Some("Cancelled PAYE Self Assessment"), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-            amountCodedOut = Some(0))
-          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(999.99))
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"))
+          val cd1 = CodingDetails(taxYearReturn = "2021", amountCodedOut = 999.99, taxYearCoding = "2020")
+          val cd2 = CodingDetails(taxYearReturn = "2020", amountCodedOut = 99.99, taxYearCoding = "2019")
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              codingDetails = None,
+              codingDetails = Some(List(cd1, cd2)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
@@ -239,7 +238,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             dueInThirtyDaysList = List(),
             futurePayments = List(),
             outstandingChargesModel = None,
-            codedOutDocumentDetail = Some(dd3)
+            codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(dd3, cd1))
           )
         }
       }
@@ -252,22 +251,21 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-            amountCodedOut = Some(0))
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
           val dd2 = DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
             documentText = Some("Cancelled PAYE Self Assessment"), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-            amountCodedOut = Some(0))
-          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(999.99))
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"))
+          val cd1 = CodingDetails(taxYearReturn = "2021", amountCodedOut = 999.99, taxYearCoding = "2020")
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              codingDetails = None,
+              codingDetails = Some(List(cd1)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),

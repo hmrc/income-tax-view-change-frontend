@@ -22,7 +22,7 @@ import testConstants.MessagesLookUp.{AgentPaymentDue, WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, CodingDetails, DocumentDetail, DocumentDetailWithCodingDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.outstandingCharges.OutstandingChargesModel
 import org.jsoup.Jsoup
@@ -31,8 +31,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import views.html.WhatYouOwe
-import java.time.LocalDate
 
+import java.time.LocalDate
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -160,13 +160,14 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     dueInThirtyDaysList = List(),
     futurePayments = List(),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
-      documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(12.34),
-      originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
-      interestOutstandingAmount = None, interestRate = None,
-      latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-      interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-      amountCodedOut = Some(codingOutAmount)))
+    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(
+      DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+        documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(12.34),
+        originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+        interestOutstandingAmount = None, interestRate = None,
+        latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+        interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None),
+      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -175,13 +176,14 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
     dueInThirtyDaysList = List(),
     futurePayments = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
-      documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(12.34),
-      originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
-      interestOutstandingAmount = None, interestRate = None,
-      latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-      interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-      amountCodedOut = Some(codingOutAmount)))
+    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(
+      DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
+        documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(12.34),
+        originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+        interestOutstandingAmount = None, interestRate = None,
+        latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+        interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None),
+      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
   )
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
