@@ -707,7 +707,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a financial details response with coded out documents")
             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-              testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+              testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
+                LocalDate.now().plusYears(1).toString, 0 , LocalDate.now.minusYears(1).getYear.toString, 2000))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)

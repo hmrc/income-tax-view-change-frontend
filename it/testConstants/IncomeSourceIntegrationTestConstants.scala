@@ -422,8 +422,16 @@ object IncomeSourceIntegrationTestConstants {
 
   def testValidFinancialDetailsModelJsonCodingOut(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                   taxYear: String = "2018", dueDate: String = "2018-04-14",
-                                                  latePaymentInterestAmount: BigDecimal = 0): JsValue = Json.obj(
+                                                  latePaymentInterestAmount: BigDecimal = 0,
+                                                  payeSaTaxYear: String = "2018", amountCodedOut: BigDecimal = 0): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+    "codingDetails" -> Json.arr(
+      Json.obj(
+        "taxYearReturn" -> payeSaTaxYear,
+        "taxYearCoding" -> (payeSaTaxYear.toInt - 1).toString,
+        "amountCodedOut" -> amountCodedOut
+      )
+    ),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
@@ -432,18 +440,16 @@ object IncomeSourceIntegrationTestConstants {
         "documentText" -> "Class 2 National Insurance",
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
-        "documentDate" -> "2018-03-29",
-        "amountCodedOut" -> 0
+        "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> payeSaTaxYear,
         "transactionId" -> "1040000124",
         "documentDescription" -> "TRM New Charge",
         "documentText" -> "PAYE Self Assessment",
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
-        "documentDate" -> "2018-03-29",
-        "amountCodedOut" -> originalAmount
+        "documentDate" -> "2018-03-29"
       ),
       Json.obj(
         "taxYear" -> taxYear,
@@ -452,8 +458,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentText" -> "Cancelled PAYE Self Assessment",
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
-        "documentDate" -> "2018-03-29",
-        "amountCodedOut" -> 0
+        "documentDate" -> "2018-03-29"
       ),
       Json.obj(
         "taxYear" -> taxYear,
