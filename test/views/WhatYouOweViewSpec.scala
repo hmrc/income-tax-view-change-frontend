@@ -923,15 +923,4 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
   }
 
-
-  "The payments history view with an empty payment response model" should {
-    "throw a MissingFieldException" in {
-      val thrownException = intercept[MissingFieldException] {
-        whatYouOweView(whatYouOweDataCodingOutWithoutAmountCodingOut, false, LocalDate.now().getYear, "testBackURL",
-          Some("1234567890"), None, true, true, true)
-      }
-      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Amount Coded Out"
-    }
-  }
-
 }
