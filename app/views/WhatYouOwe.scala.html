@@ -360,10 +360,7 @@
       <div id="payment-button">
            @link(link = controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence).url,
            messageKey = getPrefix("payNow"), classes = "govuk-button", role=Some("button"),
-           id = Some("payment-button-link"),
-          ariaLabel = Some(getMessage("pay-now-aria",
-          (chargesList.getEarliestTaxYearAndAmountByDueDate.get._1 - 1).toString,
-          chargesList.getEarliestTaxYearAndAmountByDueDate.get._1.toString)))
+           id = Some("payment-button-link"))
        </div>
     }
 
