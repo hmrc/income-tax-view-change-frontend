@@ -45,7 +45,6 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
-    displayTotals: Boolean,
     isAgent: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
@@ -246,11 +245,8 @@
 
     } else {
         @user.incomeSources.yearOfMigration.map { yearOfMigration =>
-            @if(displayTotals) {
-                @if(currentTaxYear > yearOfMigration.toInt &&
-                        (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
-
-                }
+            @if(currentTaxYear > yearOfMigration.toInt &&
+                    (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
             }
         }
 

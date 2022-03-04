@@ -67,8 +67,6 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           btaNavPartial = user.btaNavPartial,
           dunningLock = whatYouOweChargesList.hasDunningLock,
           codingOutEnabled = codingOutEnabled,
-          // todo remove it since the feature switch is not needed
-          displayTotals = true,
           isAgent = isAgent)(user, user, messages)
         ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
     } recover {

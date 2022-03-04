@@ -46,8 +46,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               hasLpiWithDunningBlock: Boolean = false,
               dunningLock: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
-              codingOutEnabled: Boolean = true,
-              displayTotals: Boolean = true
+              codingOutEnabled: Boolean = true
              ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -62,7 +61,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, displayTotals)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {

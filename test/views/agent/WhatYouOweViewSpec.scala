@@ -44,7 +44,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
               currentTaxYear: Int = LocalDate.now().getYear,
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true,
-              displayTotals: Boolean = true,
               dunningLock: Boolean = false,
               hasLpiWithDunningBlock: Boolean = false) {
 
@@ -70,7 +69,6 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
-      displayTotals = displayTotals,
       isAgent = true)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
