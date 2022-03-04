@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, FeatureSwitching, WhatYouOweTotals}
+import config.featureswitch.{CodingOut, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -61,14 +61,14 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
 
         val codingOutEnabled = isEnabled(CodingOut)
-        val displayTotals = isEnabled(WhatYouOweTotals)
 
         Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
           currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
           dunningLock = whatYouOweChargesList.hasDunningLock,
           codingOutEnabled = codingOutEnabled,
-          displayTotals = displayTotals,
+          // todo remove it since the feature switch is not needed
+          displayTotals = true,
           isAgent = isAgent)(user, user, messages)
         ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
     } recover {
