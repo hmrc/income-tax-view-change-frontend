@@ -439,7 +439,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the Amount in the payments tab for PAYE Self Assessment" in new Setup(payeView(codingOutEnabled = true)) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(4)").text shouldBe "£2,500.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(4)").text shouldBe "£1,400.00"
       }
 
       "display the Due date in the Payments tab for Cancelled" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
