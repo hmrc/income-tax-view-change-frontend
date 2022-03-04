@@ -42,7 +42,7 @@
 }
 
 @viewReturnLink(year: Int) = {
-    <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="viewSummary-link-@year"
+    <a class="govuk-link" id="viewSummary-link-@year"
     href="@getReturnHref(year)">
         @messages("taxYears.viewSummary")
         <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
@@ -50,7 +50,7 @@
 }
 
 @updateReturnLink(year: Int) = {
-    <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="updateReturn-link-@year" href="@appConfig.submissionFrontendTaxYearsPage(year)">
+    <a class="govuk-link" id="updateReturn-link-@year" href="@appConfig.submissionFrontendTaxYearsPage(year)">
         @messages("taxYears.updateReturn")
         <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
     </a>

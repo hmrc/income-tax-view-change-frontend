@@ -131,10 +131,10 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testNavHtml: Option[Html] = Some(HtmlFormat.raw(
     "<html><head></head><body>  <nav id='secondary-nav' class='hmrc-account-menu'> " +
       "<ul class='hmrc-account-menu__main govuk-grid-column-full' style='padding: 0;'>" +
-      "<li> <a href='http://localhost:9081/report-quarterly/income-and-expenses/view' id='nav-bar-link-testEnHome' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnHome'> testEnHome </a> </li>" +
-      "<li> <a href='testUrl' id='nav-bar-link-testEnAccount' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnAccount'> testEnAccount </a> </li>" +
-      "<li> <a href='testUrl' id='nav-bar-link-testEnMessages' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnMessages'> testEnMessages </a> </li>" +
-      "<li> <a href='testUrl' id='nav-bar-link-testEnForm' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnForm'> testEnForm <span class='hmrc-notification-badge'>1</span> </a> </li>" +
-      "<li> <a href='testUrl' id='nav-bar-link-testEnHelp' class='hmrc-account-menu__link' data-journey-click='link - click:Service info:Business tax testEnHelp'> testEnHelp </a> </li>" +
+      "<li> <a href='http://localhost:9081/report-quarterly/income-and-expenses/view' id='nav-bar-link-testEnHome' class='hmrc-account-menu__link'> testEnHome </a> </li>" +
+      "<li> <a href='testUrl' id='nav-bar-link-testEnAccount' class='hmrc-account-menu__link'> testEnAccount </a> </li>" +
+      "<li> <a href='testUrl' id='nav-bar-link-testEnMessages' class='hmrc-account-menu__link'> testEnMessages </a> </li>" +
+      "<li> <a href='testUrl' id='nav-bar-link-testEnForm' class='hmrc-account-menu__link'> testEnForm <span class='hmrc-notification-badge'>1</span> </a> </li>" +
+      "<li> <a href='testUrl' id='nav-bar-link-testEnHelp' class='hmrc-account-menu__link'> testEnHelp </a> </li>" +
       "</ul>  </nav> </body></html>"))
 }
