@@ -52,7 +52,7 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
   val hasPropertyIncome: Boolean = property.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
 
-  val getCurrentTaxEndYear: Int = {
+  def getCurrentTaxEndYear: Int = {
     val currentDate = LocalDate.now
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1

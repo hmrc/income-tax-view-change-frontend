@@ -36,8 +36,7 @@ case class DocumentDetail(taxYear: String,
                           latePaymentInterestAmount: Option[BigDecimal] = None,
                           lpiWithDunningBlock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
-                          paymentLot: Option[String] = None,
-                          amountCodedOut: Option[BigDecimal] = None
+                          paymentLot: Option[String] = None
                          ) {
 
   def hasLpiWithDunningBlock: Boolean =
@@ -52,11 +51,6 @@ case class DocumentDetail(taxYear: String,
   }
 
   def latePaymentInterestAmountIsNotZero: Boolean = latePaymentInterestAmount match {
-    case Some(amount) if amount == 0 => false
-    case _ => true
-  }
-
-  def amountCodedOutIsNotZero: Boolean = amountCodedOut match {
     case Some(amount) if amount == 0 => false
     case _ => true
   }
@@ -123,8 +117,8 @@ case class DocumentDetail(taxYear: String,
     case _ => false
   }
 
-  def isPayeSelfAssessment: Boolean = (documentDescription, documentText, amountCodedOut) match {
-    case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some("PAYE Self Assessment"), Some(amountCodedOut)) if amountCodedOut > 0 => true
+  def isPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
+    case (Some("TRM New Charge") | Some("TRM Amend Charge"), Some("PAYE Self Assessment")) => true
     case _ => false
   }
 

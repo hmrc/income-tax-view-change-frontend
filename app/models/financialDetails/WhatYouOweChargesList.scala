@@ -16,7 +16,6 @@
 
 package models.financialDetails
 
-import exceptions.MissingFieldException
 import models.outstandingCharges.OutstandingChargesModel
 
 import java.time.LocalDate
@@ -25,18 +24,13 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
                                  dueInThirtyDaysList: List[DocumentDetailWithDueDate] = List(),
                                  futurePayments: List[DocumentDetailWithDueDate] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[DocumentDetail] = None) {
+                                 codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = None) {
 
   lazy val allCharges: List[DocumentDetailWithDueDate] = overduePaymentList ++ dueInThirtyDaysList ++ futurePayments
 
   def bcdChargeTypeDefinedAndGreaterThanZero: Boolean =
     if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
       && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0) true
-    else false
-
-  def codedOutDocumentDetailNonEmpty: Boolean =
-    if (codedOutDocumentDetail.isDefined && codedOutDocumentDetail.get.amountCodedOut.isDefined
-      && codedOutDocumentDetail.get.amountCodedOut.get > 0) true
     else false
 
   def isChargesListEmpty: Boolean = allCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero

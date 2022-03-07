@@ -43,17 +43,19 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
-    (financialDetailsService.getAllUnpaidFinancialDetails) flatMap {
+    financialDetailsService.getAllUnpaidFinancialDetails flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00))
-        val codedOutDocumentDetail: Option[DocumentDetail] = if (isEnabled(CodingOut))
+        val codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = if (isEnabled(CodingOut)) {
           financialDetailsModelList.flatMap(fdm =>
-            fdm.documentDetails.filter(_.isPayeSelfAssessment)
-          ).headOption else None
+            fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
+              && dd.taxYear.toInt == (mtdUser.incomeSources.getCurrentTaxEndYear - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
+          ).headOption
+        } else None
 
         val whatYouOweChargesList = WhatYouOweChargesList(balanceDetails = balanceDetails,
           overduePaymentList = getOverduePaymentsList(financialDetailsModelList).filter(!_.documentDetail.isPayeSelfAssessment),

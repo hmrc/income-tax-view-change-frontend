@@ -634,7 +634,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "display the coded out details" when {
-        val documentDetailCodingOut = documentDetailModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
+        val documentDetailCodingOut = documentDetailModel(transactionId = "CODINGOUT02",
           documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
         object CodingOutMessages {
@@ -659,7 +659,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "Scenario were Class2 NICs has been paid and only coding out information needs to be displayed" when {
-        val documentDetailCodingOut = documentDetailModel(amountCodedOut = Some(2500.00), transactionId = "CODINGOUT02",
+        val documentDetailCodingOut = documentDetailModel(transactionId = "CODINGOUT02",
           documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
         object CodingOutMessages {

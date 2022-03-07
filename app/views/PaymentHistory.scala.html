@@ -38,14 +38,14 @@ btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Mess
 @import implicitDateFormatter.longDate
 
 @groupedPayments = @{
-    payments.groupBy[Int]{payment => LocalDate.parse(payment.date.getOrElse(throw new MissingFieldException("Payment Date"))).getYear}.toList.sortBy(_._1).reverse
+    payments.groupBy[Int]{payment => LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear}.toList.sortBy(_._1).reverse
 }
 
 @getControllerHref(payment: Payment, isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.getOrElse(throw new MissingFieldException("Document ID")))
+        controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.getOrElse(throw MissingFieldException("Document ID")))
     } else {
-        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.getOrElse(throw new MissingFieldException("Document ID")))
+        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.getOrElse(throw MissingFieldException("Document ID")))
     }
 }
 
@@ -94,11 +94,11 @@ btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Mess
                         <tbody>
                         @for(payment <- yearPayments) {
                             <tr class = "govuk-table__row">
-                                <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw new MissingFieldException("Payment Date"))).toLongDate</td>
+                                <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
                                 <td class="govuk-table__cell">
                                     <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                                         @messages("paymentHistory.paymentToHmrc")
-                                        <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw new MissingFieldException("Document ID"))</span>
+                                        <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
                                     </a>
                                 </td>
                                 <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
