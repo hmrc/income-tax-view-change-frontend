@@ -33,7 +33,6 @@ object FeatureSwitch {
     ChargeHistory,
     PaymentAllocation,
     CodingOut,
-    WhatYouOweTotals,
     BtaNavBar,
     Class4UpliftEnabled
   )
@@ -76,11 +75,6 @@ case object PaymentAllocation extends FeatureSwitch {
 case object CodingOut extends FeatureSwitch {
   override val name: String = s"$prefix.enable-coding-out"
   override val displayText: String = "Coding Out"
-}
-
-case object WhatYouOweTotals extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-whatyouowe-totals"
-  override val displayText: String = "Display WhatYouOwe Totals"
 }
 
 case object BtaNavBar extends FeatureSwitch {
