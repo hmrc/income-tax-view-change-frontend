@@ -23,7 +23,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, CodingDetails, DocumentDetail, DocumentDetailWithCodingDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.outstandingCharges._
 import org.jsoup.Jsoup
@@ -32,8 +32,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.WhatYouOwe
-import java.time.LocalDate
 
+import java.time.LocalDate
 import play.api.test.FakeRequest
 import testConstants.MessagesLookUp.WhatYouOwe.{paymentDaysNote, paymentUnderReview}
 
@@ -170,10 +170,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-    amountCodedOut = Some(codingOutAmount))
-
-  val codedOutDocumentDetailWithoutAmountCodedOut: DocumentDetail = codedOutDocumentDetail.copy(amountCodedOut = None)
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
 
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
 
@@ -199,7 +196,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     dueInThirtyDaysList = List(),
     futurePayments = List(),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetail)
+    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetail,
+      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -208,10 +206,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     dueInThirtyDaysList = List(),
     futurePayments = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates.head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetail)
+    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetail,
+      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
   )
 
-  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOut.copy(codedOutDocumentDetail = Some(codedOutDocumentDetailWithoutAmountCodedOut))
+  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOut.copy(codedOutDocumentDetail = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
@@ -921,17 +920,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(whatYouOwe.saNote)
       pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
 
-    }
-  }
-
-
-  "The payments history view with an empty payment response model" should {
-    "throw a MissingFieldException" in {
-      val thrownException = intercept[MissingFieldException] {
-        whatYouOweView(whatYouOweDataCodingOutWithoutAmountCodingOut, false, LocalDate.now().getYear, "testBackURL",
-          Some("1234567890"), None, true, true, true)
-      }
-      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Amount Coded Out"
     }
   }
 

@@ -538,10 +538,14 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         enable(CodingOut)
         val financialDetailCodingOut = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+          codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 2500, taxYearCoding = "2020"))),
           documentDetails = List(
-            documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00), amountCodedOut = Some(0)).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")),
-            documentDetailModel(transactionId = "transid2", outstandingAmount = Some(0), amountCodedOut = Some(2500)).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment")),
-            documentDetailModel(transactionId = "transid3", outstandingAmount = Some(0), amountCodedOut = Some(0)).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some("Cancelled PAYE Self Assessment")),
+            documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00)).copy(
+              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")),
+            documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = Some(0)).copy(
+              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment")),
+            documentDetailModel(transactionId = "transid3", outstandingAmount = Some(0)).copy(
+              interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some("Cancelled PAYE Self Assessment")),
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -576,11 +580,19 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       "coding out is disabled" when {
         "class 2 nics exists" in {
           disable(CodingOut)
-          val ddNics = documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00), amountCodedOut = Some(0), latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))
-          val ddCodedOut = documentDetailModel(transactionId = "transid2", outstandingAmount = Some(2500.00), amountCodedOut = Some(2500), latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some("PAYE Self Assessment"))
-          val ddCancelledCodedOut = documentDetailModel(transactionId = "transid3", outstandingAmount = Some(2500.00), amountCodedOut = Some(0), latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"))
+          val ddNics = documentDetailModel(
+            transactionId = "transid1", outstandingAmount = Some(200.00), latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))
+          val ddCodedOut = documentDetailModel(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)), transactionId = "transid2", outstandingAmount = Some(2500.00),
+            latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"),
+            documentText = Some("PAYE Self Assessment"))
+          val ddCancelledCodedOut = documentDetailModel(
+            transactionId = "transid3", outstandingAmount = Some(2500.00), latePaymentInterestAmount = None).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"))
           val financialDetailCodingOut = getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            codingDetails = Some(List(CodingDetails(
+              taxYearReturn = getTaxEndYear(LocalDate.now.minusYears(1)).toString, amountCodedOut = 2500, taxYearCoding = getTaxEndYear(LocalDate.now).toString))),
             documentDetails = List(ddNics, ddCodedOut, ddCancelledCodedOut),
             financialDetails = List(
               fullFinancialDetailModel,

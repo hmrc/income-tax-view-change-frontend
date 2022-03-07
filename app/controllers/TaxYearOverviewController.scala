@@ -122,7 +122,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         val documentDetailsWithDueDatesCodingOutPaye: List[DocumentDetailWithDueDate] = {
-          docDetailsCodingOut.filter(dd => dd.isPayeSelfAssessment && dd.amountCodedOutIsNotZero).map(
+          docDetailsCodingOut.filter(dd => dd.isPayeSelfAssessment && dd.originalAmountIsNotZero).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }

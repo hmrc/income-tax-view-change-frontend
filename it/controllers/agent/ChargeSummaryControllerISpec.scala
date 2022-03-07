@@ -409,8 +409,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             outstandingAmount = Some(2500.00),
             originalAmount = Some(2500.00),
             documentDate = LocalDate.of(2018, 3, 29),
-            interestFromDate = Some(LocalDate.of(2018, 4, 14)),
-            amountCodedOut = Some(2500.00)
+            interestFromDate = Some(LocalDate.of(2018, 4, 14))
           )
         ),
         financialDetails = List(
@@ -424,7 +423,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               amount = Some(10000), clearingDate = Some("2019-08-13"))))
           )
         ),
-        codingDetails = None
+        codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 2500, taxYearCoding = "2020")))
       ))
     )
   }

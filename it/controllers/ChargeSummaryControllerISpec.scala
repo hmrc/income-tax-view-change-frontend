@@ -326,8 +326,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
             "documentText" -> "PAYE Self Assessment",
             "outstandingAmount" -> 2500.00,
             "originalAmount" -> 2500.00,
-            "documentDate" -> "2018-03-29",
-            "amountCodedOut" -> 2500.00
+            "documentDate" -> "2018-03-29"
           )),
         "financialDetails" -> Json.arr()))
 

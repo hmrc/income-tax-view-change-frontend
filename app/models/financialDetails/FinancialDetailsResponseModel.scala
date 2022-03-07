@@ -114,7 +114,8 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def getDocumentDetailWithCodingDetails(documentDetail: DocumentDetail): Option[DocumentDetailWithCodingDetails] = {
-    codingDetails.flatMap(_.find(_.taxYearReturn == documentDetail.taxYear)).map(DocumentDetailWithCodingDetails(documentDetail, _))
+    codingDetails.flatMap(_.find(cds =>
+      cds.taxYearReturn == documentDetail.taxYear && cds.amountCodedOut > 0)).map(DocumentDetailWithCodingDetails(documentDetail, _))
   }
 }
 
