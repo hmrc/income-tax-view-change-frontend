@@ -240,7 +240,7 @@
     btaNavPartial = btaNavPartial
 ) {
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
-    @if(chargesList.isChargesListEmpty && !chargesList.codedOutDocumentDetailNonEmpty) {
+    @if(chargesList.isChargesListEmpty && !chargesList.codedOutDocumentDetail.isDefined) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph
 

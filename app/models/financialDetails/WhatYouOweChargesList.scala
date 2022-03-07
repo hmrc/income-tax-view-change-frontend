@@ -33,8 +33,6 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, overduePaymentL
       && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0) true
     else false
 
-  def codedOutDocumentDetailNonEmpty: Boolean = codedOutDocumentDetail.fold(false)(_ => true)
-
   def isChargesListEmpty: Boolean = allCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
   def hasDunningLock: Boolean = allCharges.exists(charge => charge.dunningLock)
