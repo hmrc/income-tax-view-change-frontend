@@ -244,12 +244,6 @@
         @saNoteParagraph
 
     } else {
-        @user.incomeSources.yearOfMigration.map { yearOfMigration =>
-            @if(currentTaxYear > yearOfMigration.toInt &&
-                    (chargesList.balanceDetails.overDueAmount > 0 || chargesList.balanceDetails.balanceDueWithin30Days > 0 || chargesList.balanceDetails.totalBalance > 0)) {
-            }
-        }
-
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
             @h2(msg = getMessage("pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString), classes = "govuk-heading-l", optId=Some("pre-mtd-payments-heading"))
