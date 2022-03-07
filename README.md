@@ -18,7 +18,7 @@ This service is written in [Scala](http://www.scala-lang.org/) and [Play](http:/
 ## Run the application
 
 
-To start all Service Manager services from the latest RELEASE version instead of snapshot
+To start all Service Manager services from the latest RELEASE version instead of snapshot execute the following:
 
 ```
 sm --start ITVC_ALL --appendArgs '{"CITIZEN_DETAILS":["-Dmongodb.cid-sautr-cache.enabled=false"]}' -r
