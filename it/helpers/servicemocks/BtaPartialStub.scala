@@ -25,7 +25,6 @@ object BtaPartialStub extends ComponentSpecBase {
       s"""
          |    <a id="service-info-home-link"
          |       class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides"
-         |       data-journey-click="Header:Click:Home"
          |       href="/business-account">
          |      Business tax home
          |      </a>
@@ -39,14 +38,12 @@ object BtaPartialStub extends ComponentSpecBase {
          |    <li class="list__item soft--left">
          |      <a id="service-info-manage-account-link"
          |         href="/business-account/manage-account"
-         |        data-journey-click="Header:Click:ManageAccount">
          |        Manage account
          |      </a>
          |    </li>
          |    <li class="list__item soft--left">
          |      <a id="service-info-messages-link"
          |         href="/business-account/messages"
-         |        data-journey-click="Header:Click:Messages">
          |        Messages
          |      </a>
          |    </li>

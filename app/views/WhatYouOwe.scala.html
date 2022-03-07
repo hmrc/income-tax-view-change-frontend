@@ -194,7 +194,7 @@
 }
 
 @taxYearSummaryLink(year: Int, index:Int, id:String) = {
-<a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@year" id="@id-@index"
+<a class="govuk-link" id="@id-@index"
    href="@getReturnHref(year)">
     @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString)
     <span class="govuk-visually-hidden">@getMessage("taxYear")</span>

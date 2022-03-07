@@ -17,4 +17,4 @@
 @this()
 @(page: String)(implicit messages: Messages)
 
-<a id="back" class="link-back" data-journey-click="@{page}:ClickLink:BackToHome" href="@{controllers.routes.HomeController.home().url}">@messages("base.backToHome")</a>
+<a id="back" class="link-back" href="@{controllers.routes.HomeController.home().url}">@messages("base.backToHome")</a>

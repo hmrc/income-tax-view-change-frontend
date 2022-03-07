@@ -26,7 +26,7 @@
         @for( nav <- navLinks) {
         @if(nav.showBoolean.contains(false)){} else {
             <li>
-                <a href="@nav.url" id="nav-bar-link-@nav.message.replace(' ','-')" class="hmrc-account-menu__link" data-journey-click="link - click:Service info:Business tax @nav.message">
+                <a href="@nav.url" id="nav-bar-link-@nav.message.replace(' ','-')" class="hmrc-account-menu__link">
                     @nav.message
                     @nav.alerts match {
                         case Some(alert) if(alert != "0") => { @hmrcNotificationBadge(NotificationBadge(alert))}
