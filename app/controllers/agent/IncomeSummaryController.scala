@@ -33,7 +33,8 @@ import views.html.IncomeBreakdown
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class IncomeSummaryController @Inject()(incomeBreakdown: IncomeBreakdown,
+// todo remove when unification is done
+/*class IncomeSummaryController @Inject()(incomeBreakdown: IncomeBreakdown,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         calculationService: CalculationService,
                                         incomeSourceDetailsService: IncomeSourceDetailsService
@@ -70,4 +71,4 @@ class IncomeSummaryController @Inject()(incomeBreakdown: IncomeBreakdown,
 
   def backUrl(taxYear: Int): String = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url
 
-}
+}*/

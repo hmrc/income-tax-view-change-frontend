@@ -50,7 +50,7 @@ GET         /next-updates                                                 contro
 GET         /calculation/:taxYear/deductions                              controllers.agent.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
 
 #IncomeSummary
-GET         /calculation/:taxYear/income                                  controllers.agent.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+GET         /calculation/:taxYear/income                                  controllers.agent.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int)
 
 #Tax Due
 GET         /calculation/:taxYear/tax-due                                 controllers.agent.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
