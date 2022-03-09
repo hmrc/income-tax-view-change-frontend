@@ -257,6 +257,35 @@
         "capitalGainsTaxDue" : 5000.99,
         "capitalGainsOverpaid" : 5000.99
       }
+    },
+    "endOfYearEstimate": {
+      "incomeSource": [
+        {
+          "incomeSourceType": "01",
+          "incomeSourceName": "source1",
+          "taxableIncome": 12500
+        },
+        {
+          "incomeSourceType": "02",
+          "incomeSourceName": "source2",
+          "taxableIncome": 12500
+        }
+      ],
+      "totalEstimatedIncome": 12500,
+      "totalTaxableIncome": 12500,
+      "incomeTaxAmount": 5000.99,
+      "nic2": 5000.99,
+      "nic4": 5000.99,
+      "totalNicAmount": 5000.99,
+      "totalTaxDeductedBeforeCodingOut": 5000.99,
+      "saUnderpaymentsCodedOut": 5000.99,
+      "totalStudentLoansRepaymentAmount": 5000.99,
+      "totalAnnuityPaymentsTaxCharged": 5000.99,
+      "totalRoyaltyPaymentsTaxCharged": 5000.99,
+      "totalTaxDeducted": -99999999999.99,
+      "incomeTaxNicAmount": -99999999999.99,
+      "cgtAmount": 5000.99,
+      "incomeTaxNicAndCgtAmount": 5000.99
     }
   }
 }
