@@ -34,7 +34,7 @@
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear).url>@messages("tax-year-overview.income")</a>
                 } else {
                     <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
                 }
@@ -110,7 +110,7 @@
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear).url>@messages("tax-year-overview.income")</a>
 
                 } else {
                     <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
