@@ -235,6 +235,34 @@ object NewCalcBreakdownUnitTestConstants {
         totalIncomeTaxAndNicsDue = 5000.99,
         totalTaxDeducted = Some(50000.99)
       )),
+      endOfYearEstimate = Some(EndOfYearEstimate(
+        incomeSource = Some(List(
+          IncomeSource(
+            incomeSourceType = "01",
+            incomeSourceName = Some("source1"),
+            taxableIncome = 12500
+          ),
+          IncomeSource(
+            incomeSourceType = "02",
+            incomeSourceName = Some("source2"),
+            taxableIncome = 12500
+          ))),
+        totalEstimatedIncome = Some(12500),
+        totalTaxableIncome = Some(12500),
+        incomeTaxAmount = Some(5000.99),
+        nic2 = Some(5000.99),
+        nic4 = Some(5000.99),
+        totalNicAmount = Some(5000.99),
+        totalTaxDeductedBeforeCodingOut = Some(5000.99),
+        saUnderpaymentsCodedOut = Some(5000.99),
+        totalStudentLoansRepaymentAmount = Some(5000.99),
+        totalAnnuityPaymentsTaxCharged = Some(5000.99),
+        totalRoyaltyPaymentsTaxCharged = Some(5000.99),
+        totalTaxDeducted = Some(-99999999999.99),
+        incomeTaxNicAmount = Some(-99999999999.99),
+        cgtAmount = Some(5000.99),
+        incomeTaxNicAndCgtAmount = Some(5000.99)
+      )),
       taxDeductedAtSource = Some(TaxDeductedAtSource(
         ukLandAndProperty = Some(5000.99),
         bbsi = Some(5000.99),
