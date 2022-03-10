@@ -261,7 +261,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
-        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
 
 
       }
