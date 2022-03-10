@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
+import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
 import mocks.views.agent.MockIncomeSummary
@@ -29,12 +30,10 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{charset, contentType, _}
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
-import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testTaxYear}
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.InternalServerException
 import views.html.IncomeBreakdown
 
@@ -42,31 +41,14 @@ import scala.concurrent.Future
 
 class IncomeSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
-  with MockItvcErrorHandler with MockIncomeSummary with FeatureSwitching {
+  with MockItvcErrorHandler with MockIncomeSummary with MockFrontendAuthorisedFunctions with FeatureSwitching {
 
   val testYear: Int = 2020
   val isAgent: Boolean = true
 
-  /*class Setup {
-    val testYear: Int = 2020
-    val isAgent: Boolean = true
-
-    val controller: IncomeSummaryController = new IncomeSummaryController(
-      incomeBreakdown = incomeBreakdown,
-      authorisedFunctions = mockAuthService,
-      calculationService = mockCalculationService,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService
-    )(appConfig,
-      app.injector.instanceOf[LanguageUtils],
-      app.injector.instanceOf[MessagesControllerComponents],
-      app.injector.instanceOf[ExecutionContext],
-      mockItvcErrorHandler
-    )
-  }*/
-
   object TestIncomeSummaryController extends IncomeSummaryController(
     app.injector.instanceOf[IncomeBreakdown],
-    app.injector.instanceOf[AuthorisedFunctions],
+    mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
@@ -88,9 +70,8 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     super.beforeEach()
   }
 
-  "showIncomeSummary for Individual" when {
+  "showIncomeSummary" when {
 
-    //    lazy val resultAgent = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
     lazy val resultIndividual = TestIncomeSummaryController.showIncomeSummary(testTaxYear)(fakeRequestWithActiveSession)
     lazy val document = resultIndividual.toHtmlDocument
 
@@ -147,7 +128,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   }
 
-  "showIncomeSummary for Agent" when {
+  "showIncomeSummaryAgent" when {
     "given a tax year which can be found in ETMP" should {
       "return Status OK (200) with html content and right title" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

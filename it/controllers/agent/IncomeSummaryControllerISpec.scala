@@ -144,7 +144,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           body = liabilityCalculationModelSuccessFull
         )
 
-        When(s"I call GET ${routes.IncomeSummaryController.showIncomeSummary(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         res should have(
