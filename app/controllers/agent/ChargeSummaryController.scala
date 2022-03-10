@@ -121,7 +121,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     val codingOutEnabled = isEnabled(CodingOut)
 
     getChargeHistory(id, isLatePaymentCharge).map { chargeHistoryOpt =>
-      if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !codingOutEnabled) {
+      if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isClass2Nic.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)) {
 
         Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
       } else {
