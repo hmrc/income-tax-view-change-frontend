@@ -131,7 +131,7 @@
                     <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
                 }
                 </td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                <td class="govuk-table__cell govuk-table__cell--numeric" id="amount-due">@{
                     overview.deductions.toNegativeCurrency
                 }
                 </td>
