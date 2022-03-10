@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.mocks.MockAuditingService
 import config.AgentItvcErrorHandler
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
 import mocks.views.MockChargeSummary
@@ -146,6 +146,24 @@ class ChargeSummaryControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
           mockGetAllFinancialDetails(List((currentYear, currentFinancialDetails)))
+
+          mockSingleBusinessIncomeSource()
+
+          val result = chargeSummaryController.showChargeSummary(currentYear, id1040000124)
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/custom-not-found")
+
+        }
+      }
+      "the model contains CodingOut but FS is disabled" should {
+        "redirect to home page" in new Setup() {
+          disable(CodingOut)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          mockGetAllFinancialDetails(List((currentYear, testFinancialDetailsModelWithCodingOut())))
 
           mockSingleBusinessIncomeSource()
 

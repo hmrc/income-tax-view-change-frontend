@@ -18,7 +18,7 @@ package controllers
 
 import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -97,6 +97,17 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
       "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(2018)) {
         val result = controller.showChargeSummary(2018, "fakeId")(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+      }
+    }
+
+    "redirect a user back to the custom error page" when {
+
+      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOut()) {
+        disable(CodingOut)
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
