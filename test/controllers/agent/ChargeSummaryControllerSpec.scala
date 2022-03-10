@@ -157,8 +157,8 @@ class ChargeSummaryControllerSpec extends TestSupport
 
         }
       }
-      "the model contains CodingOut but FS is disabled" should {
-        "redirect to home page" in new Setup() {
+      "the model contains Class 2 Nics but FS is disabled" should {
+        "redirect to custom error page " in new Setup() {
           disable(CodingOut)
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -167,7 +167,43 @@ class ChargeSummaryControllerSpec extends TestSupport
 
           mockSingleBusinessIncomeSource()
 
-          val result = chargeSummaryController.showChargeSummary(currentYear, id1040000124)
+          val result = chargeSummaryController.showChargeSummary(currentYear, "CODINGOUT01")
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/custom-not-found")
+
+        }
+      }
+      "the model contains PAYE SA but FS is disabled" should {
+        "redirect to custom error page " in new Setup() {
+          disable(CodingOut)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          mockGetAllFinancialDetails(List((currentYear, testFinancialDetailsModelWithPayeSACodingOut())))
+
+          mockSingleBusinessIncomeSource()
+
+          val result = chargeSummaryController.showChargeSummary(currentYear, "CODINGOUT01")
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/custom-not-found")
+
+        }
+      }
+      "the model contains Cancelled PAYE but FS is disabled" should {
+        "redirect to custom error page " in new Setup() {
+          disable(CodingOut)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          mockGetAllFinancialDetails(List((currentYear, testFinancialDetailsModelWithCancelledPayeSa())))
+
+          mockSingleBusinessIncomeSource()
+
+          val result = chargeSummaryController.showChargeSummary(currentYear, "CODINGOUT01")
             .apply(fakeRequestConfirmedClient("AB123456C"))
 
           status(result) shouldBe SEE_OTHER
