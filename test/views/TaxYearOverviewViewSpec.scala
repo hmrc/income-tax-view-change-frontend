@@ -567,7 +567,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "display the income row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
         val incomeLink: Element = layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(1) a")
         incomeLink.text shouldBe taxYearOverviewMessages.income
-        incomeLink.attr("href") shouldBe controllers.agent.routes.IncomeSummaryController.showIncomeSummary(testYear).url
+        incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(testYear).url
         layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(false).income.toCurrencyString
       }
 
