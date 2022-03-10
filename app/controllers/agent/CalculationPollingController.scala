@@ -42,7 +42,7 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
     implicit agent =>
 
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-        controllers.agent.routes.FinalTaxCalculationController.show(taxYear)
+        controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
       } else {
         controllers.agent.routes.TaxYearOverviewController.show(taxYear)
       }
