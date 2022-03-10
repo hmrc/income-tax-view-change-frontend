@@ -79,6 +79,10 @@ GET         /language/:lang                                               contro
 #Payment history
 GET         /payments/history                                             controllers.PaymentHistoryController.viewPaymentHistory
 
+#InYear Tax
+GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show
+GET         /agents/tax-overview                                          controllers.InYearTaxCalculationController.showAgent
+
 #Final Tax URLs
 GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int)
 POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
