@@ -133,7 +133,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = false),
-        isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
         isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -184,7 +184,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("over-due-type-1")(expectedValue = true),
         isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
         isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
-        isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
         isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -241,7 +241,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
         isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
         isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
-        isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
         isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -376,7 +376,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("overdue-charge-interest-0")(expectedValue = true),
       isElementVisibleById("over-due-type-1")(expectedValue = true),
       isElementVisibleById("overdue-charge-interest-1")(expectedValue = true),
-      isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+      isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
       isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
       isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -423,7 +423,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("over-due-type-1")(expectedValue = true),
       isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
       isElementVisibleById("future-payments-heading")(expectedValue = false),
-      isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+      isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
       isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
       isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -733,7 +733,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("payments-due")(expectedValue = false),
           isElementVisibleById("future-payments-heading")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
-          isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+          isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
           isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
           isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -776,7 +776,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("payment-details-content-1")(expectedValue = true),
           isElementVisibleById("payments-due")(expectedValue = false),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
-          isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+          isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
           isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
           isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -851,7 +851,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = false),
         isElementVisibleById(s"no-payments-due")(expectedValue = false),
-        isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
         isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -889,7 +889,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = false),
         isElementVisibleById(s"no-payments-due")(expectedValue = false),
-        isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
+        isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
         isElementVisibleById(s"sa-tax-bill")(expectedValue = true)

@@ -260,6 +260,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
+
       }
 
       "display the paragraph about payments under review and bullet points when there is a dunningLock" in new Setup(
@@ -372,6 +376,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
       }
       "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
         whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
@@ -385,6 +391,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
       }
       s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
         whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
@@ -402,6 +410,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
       }
 
 
@@ -421,6 +431,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
       }
     }
 
@@ -492,6 +504,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
       }
 
       "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
@@ -640,6 +654,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
       }
 
       "only show interest for POA when there is no late Payment Interest" in new Setup(whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
@@ -710,6 +726,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
       }
 
       s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
@@ -851,6 +869,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
     }
   }
 
@@ -874,6 +894,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
     }
 
     "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
@@ -902,6 +924,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+
     }
   }
 
