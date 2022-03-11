@@ -19,7 +19,7 @@ package models.liabilitycalculation.viewmodels
 import models.liabilitycalculation.LiabilityCalculationResponse
 
 case class TaxYearOverviewViewModel(timestamp: String,
-                                    crystallised: Boolean,
+                                    crystallised: Option[Boolean],
                                     taxDue: BigDecimal,
                                     income: Int,
                                     deductions: BigDecimal,

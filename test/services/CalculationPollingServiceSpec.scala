@@ -31,7 +31,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
     messages = None,
-    metadata = Metadata("2019-02-15T09:35:15.094Z", false),
+    metadata = Metadata("2019-02-15T09:35:15.094Z", Some(false)),
     calculation = None)
 
   val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
