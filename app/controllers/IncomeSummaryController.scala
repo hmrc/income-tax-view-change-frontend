@@ -66,7 +66,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
         viewModel match {
-          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl, isAgent = false, btaNavPartial = user.btaNavPartial)(implicitly, messages))
+          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial)(implicitly, messages))
           case _ =>
             Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()
