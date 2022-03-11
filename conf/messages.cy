@@ -687,6 +687,19 @@ final-tax-overview.agent.inset.2                                 = wirio Ffurfle
 tax-year-overview.tax-due.finalCalc                             = Treth Incwm a chyfraniadau Yswiriant Gwladol
 tax-year-overview.taxable-income.finalCalc                      = Cyfanswm eich incwm trethadwy
 
+
+## InYear Tax Overview (Individual/Common Content)
+inYear-tax-overview.individual.heading                           = Trosolwg o’ch treth 6 Ebrill {0} i {1}
+inYear-tax-overview.caption                                      = 6 Ebrill {0} i 5 Ebrill {1}
+inYear-tax-overview.individual.inset                             = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
+InYear-tax-overview.tableHead                                    = Cyfrifiad treth yn ystod y flwyddyn
+InYear-tax-overview.goToTaxAccount                               = mynd i gyfrifo treth
+
+## InYear Tax Overview (Agent Content overrides)
+inYear-tax-overview.agent.heading                                = Trosolwg o dreth eich cleient 6 Ebrill {0} i {1}
+inYear-tax-overview.agent.inset                                  = Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
+
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw

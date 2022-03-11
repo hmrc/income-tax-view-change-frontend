@@ -18,7 +18,7 @@
 @import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 
 @this()
-@(overview: TaxYearOverviewViewModel, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean)(implicit messages: Messages)
+@(overview: TaxYearOverviewViewModel, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None)(implicit messages: Messages)
 
 @if(isFinalCalc){
 
@@ -99,7 +99,9 @@
 } else {
 
     <table class="govuk-table" id="income-deductions-table">
-        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-overview.tax-calculation")</caption>
+        <caption class="govuk-table__caption govuk-table__caption--l">
+            @if(caption.isDefined){@caption.get}else{messages("tax-year-overview.tax-calculation")}
+        </caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
