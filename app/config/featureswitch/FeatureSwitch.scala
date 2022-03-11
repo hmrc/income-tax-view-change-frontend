@@ -34,7 +34,8 @@ object FeatureSwitch {
     PaymentAllocation,
     CodingOut,
     BtaNavBar,
-    Class4UpliftEnabled
+    Class4UpliftEnabled,
+    ForecastCalculation
   )
 
   def apply(str: String): FeatureSwitch =
@@ -85,4 +86,9 @@ case object BtaNavBar extends FeatureSwitch {
 case object Class4UpliftEnabled extends FeatureSwitch {
   override val name = s"$prefix.class4-uplift-enabled"
   override val displayText = "Class4 Uplift Enabled"
+}
+
+case object ForecastCalculation extends FeatureSwitch {
+  override val name = s"$prefix.enable-forecast-calculation"
+  override val displayText = "Forecast Calculation"
 }
