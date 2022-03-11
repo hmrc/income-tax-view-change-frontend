@@ -344,6 +344,9 @@
 
         </div>
 
+          @if(!chargesList.isChargesListEmpty) {
+              @saNoteParagraph
+          }
 
 
     @if(utr.isDefined && !isAgent && chargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {

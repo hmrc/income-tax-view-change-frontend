@@ -338,6 +338,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+          pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
         }
 
         s"display ${whatYouOwe.paymentUnderReview} when there is a dunningLock against a single charge" in new Setup(
@@ -402,6 +404,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
       }
 
       "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
@@ -433,6 +437,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
       }
 
 
@@ -532,6 +538,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
           paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+          pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
         }
       }
 
@@ -549,6 +557,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
         paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
       }
     }
   }
@@ -599,6 +608,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
     }
   }
 
@@ -628,6 +639,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
     }
     s"have overdue table header and data with hyperlink and overdue tag and payment processing" in new Setup(whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None))) {
       val overdueTableHeader: Element = pageDocument.select("#payments-due-table thead tr").get(0)
@@ -664,6 +676,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
     }
 
     "have accruing interest displayed below each overdue POA" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
@@ -691,6 +705,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
     }
     s"payment processing bullet list exists when when interest is displayed" in new Setup(whatYouOweDataWithOverdueInterestData(List(None, None))) {
       pageDocument.getElementById("payments-made").text shouldBe AgentPaymentDue.paymentsMade
@@ -698,6 +714,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
     }
 
 
@@ -729,6 +747,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
     }
 
   }
@@ -756,6 +776,7 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
     }
 
 
@@ -784,6 +805,8 @@ class WhatYouOweViewSpec extends ViewSpec with FeatureSwitching with ImplicitDat
       paymentProcessingBullet.select("li").get(0).text shouldBe AgentPaymentDue.paymentprocessingbullet1
       paymentProcessingBullet.select("li").get(1).text shouldBe AgentPaymentDue.paymentprocessingbullet2
       pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe AgentPaymentDue.saNote
+
     }
   }
 

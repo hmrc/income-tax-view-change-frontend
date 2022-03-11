@@ -117,8 +117,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
             isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
             isElementVisibleById("payment-button")(expectedValue = true),
-            isElementVisibleById("sa-note-migrated")(expectedValue = false),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = false),
+            isElementVisibleById("sa-note-migrated")(expectedValue = true),
+            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
           )
@@ -174,8 +174,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("over-due-type-1")(expectedValue = true),
             isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
           )
@@ -231,8 +231,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("over-due-type-0")(expectedValue = true),
             isElementVisibleById("over-due-type-1")(expectedValue = false),
             isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
           )
@@ -632,8 +632,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payments-due")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
           )
@@ -679,8 +679,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payments-due")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
           )
@@ -727,8 +727,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payments-due")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById("coding-out-notice")(expectedValue = true),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
@@ -776,8 +776,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payments-due")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
-            isElementVisibleById(s"sa-note-migrated")(expectedValue = false),
-            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById("coding-out-notice")(expectedValue = false),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
