@@ -160,6 +160,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val taxDue: String = "£4.04"
     val calcDateInfo: String = "This calculation is only based on your completed updates for this tax year up to 5 January 2017. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
     val taxCalculation: String = s"6 April ${testYear - 1} to 5 January $testYear calculation"
+    val taxCalculationHeading: String = "Calculation"
     val taxCalculationTab: String = "Calculation"
     val taxCalculationNoData: String = "No calculation yet"
     val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
@@ -263,6 +264,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
+        layoutContent.selectHead(" #income-deductions-table caption").text shouldBe taxYearOverviewMessages.taxCalculationHeading
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
       }
 
