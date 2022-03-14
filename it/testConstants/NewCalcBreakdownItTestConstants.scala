@@ -29,8 +29,8 @@ object NewCalcBreakdownItTestConstants {
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
-      calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true),
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      crystallised = Some(true)),
     messages = None
   )
 
@@ -261,8 +261,8 @@ object NewCalcBreakdownItTestConstants {
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
       )))),
     metadata = Metadata(
-      calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      crystallised = Some(true))
   )
 
 }
