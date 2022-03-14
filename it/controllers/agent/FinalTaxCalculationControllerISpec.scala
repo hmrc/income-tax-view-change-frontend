@@ -35,7 +35,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
-  val url: String = s"http://localhost:$port" + controllers.agent.routes.FinalTaxCalculationController.show(taxYear).url
+  val url: String = s"http://localhost:$port" + controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
 
   def calculationStub(taxYearString: String = "2017-18"): Unit = {
     IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
@@ -160,7 +160,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     )
   )
 
-  s"calling GET ${controllers.agent.routes.FinalTaxCalculationController.show(taxYear)}" should {
+  s"calling GET ${controllers.routes.FinalTaxCalculationController.showAgent(taxYear)}" should {
     "display the page" which {
       lazy val result = {
         stubAuthorisedAgentUser(authorised = true)
@@ -454,7 +454,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     }
   }
 
-  s"calling POST ${controllers.agent.routes.FinalTaxCalculationController.submit(taxYear)}" should {
+  s"calling POST ${controllers.routes.FinalTaxCalculationController.agentSubmit(taxYear)}" should {
     "redirect to the confirmation page on income-tax-submission-frontend" which {
       lazy val result = {
         stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)
