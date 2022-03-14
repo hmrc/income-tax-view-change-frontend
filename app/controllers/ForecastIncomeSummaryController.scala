@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import auth.{FrontendAuthorisedFunctions, MtdItUser, MtdItUserBase, MtdItUserWithNino}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -58,27 +58,33 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
 
   val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
 
+  def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
+    val errorPrefix: String = s"[ForecastIncomeSummaryController]${if(isAgent) "[agent]" else ""}[showIncomeSummary[$taxYear]]"
+    Logger("application").error(s"$errorPrefix $message")
+    if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
+  }
+
   def handleRequest(mtditid: String, nino: String, taxYear: Int, btaNavPartial: Option[Html], isAgent: Boolean)
                    (implicit user: MtdItUserBase[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result]= {
-    val errorPrefix: String = s"[ForecastIncomeSummaryController]${if(isAgent) "[agent]" else ""}[showIncomeSummary[$taxYear]]"
 
-    calculationService.getLiabilityCalculationDetail(mtditid, nino, taxYear).map {
-      case liabilityCalc: LiabilityCalculationResponse =>
-        val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
-        viewModel match {
-          case Some(model) => Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear), isAgent,
-            btaNavPartial = btaNavPartial))
-          case _ =>
-            Logger("application").warn(s"$errorPrefix No income data could be retrieved. Not found")
-            if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
-        }
-      case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-        Logger("application").error(s"$errorPrefix No income data found.")
-        if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
-      case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"$errorPrefix No new calc income data error found. Downstream error")
-        if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
+    if (isDisabled(ForecastCalculation)) {
+      val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate(user) else itvcErrorHandler.notFoundTemplate(user)
+      Future.successful(NotFound(errorTemplate))
+    } else {
+      calculationService.getLiabilityCalculationDetail(mtditid, nino, taxYear).map {
+        case liabilityCalc: LiabilityCalculationResponse =>
+          val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
+          viewModel match {
+            case Some(model) => Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear), isAgent,
+              btaNavPartial = btaNavPartial))
+            case _ =>
+              onError(s"No income data could be retrieved. Not found", isAgent, taxYear)
+          }
+        case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+          onError(s"No income data found.", isAgent, taxYear)
+        case _: LiabilityCalculationError =>
+          onError(s"No new calc income data error found. Downstream error", isAgent, taxYear)
+      }
     }
   }
 
