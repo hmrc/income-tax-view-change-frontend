@@ -36,7 +36,7 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
 
-  val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel("2017-07-06T12:34:56.789Z", false, 2010.00, 199505, 500.00, 198500)
+  val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(Some("2017-07-06T12:34:56.789Z"), Some(false), 2010.00, 199505, 500.00, 198500)
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
     val dunningLock = if (hasDunningLock) Some("Stand over order") else None
