@@ -53,7 +53,7 @@
 
 @formCall = @{
     if(isAgent) {
-        controllers.agent.routes.FinalTaxCalculationController.submit(taxYear)
+        controllers.routes.FinalTaxCalculationController.agentSubmit(taxYear)
     } else {
         controllers.routes.FinalTaxCalculationController.submit(taxYear)
     }

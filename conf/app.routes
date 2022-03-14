@@ -20,6 +20,7 @@ GET         /calculation/:taxYear                                         contro
 
 #IncomeSummary
 GET         /calculation/:taxYear/income                                  controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+GET         /agents/calculation/:taxYear/income                            controllers.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int)
 
 #Tax Due
 GET         /calculation/:taxYear/tax-due                                 controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
@@ -87,6 +88,10 @@ GET         /agents/tax-overview                                          contro
 GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int)
 POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
+
+#Final Tax URLs - agents
+GET         /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.showAgent(taxYear: Int)
+POST        /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.agentSubmit(taxYear: Int)
 
 GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
 GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])

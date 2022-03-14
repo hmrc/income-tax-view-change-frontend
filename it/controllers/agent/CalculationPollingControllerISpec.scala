@@ -223,7 +223,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         }
 
         s"redirect to '${controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url}''" in {
-          result.header("Location").head shouldBe controllers.agent.routes.FinalTaxCalculationController.show(testTaxYear).url
+          result.header("Location").head shouldBe controllers.routes.FinalTaxCalculationController.showAgent(testTaxYear).url
         }
 
       }

@@ -208,6 +208,7 @@ deduction_breakdown.table.post_cessasation_trade_receipts              = Derbyne
 deduction_breakdown.table.trade_union_payments                         = Taliadau Undeb Llafur
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 deduction_breakdown.table.header.amount                                = Swm
+deduction_breakdown.table.header                                       = Math o lwfans neu ddidyniad
 
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth

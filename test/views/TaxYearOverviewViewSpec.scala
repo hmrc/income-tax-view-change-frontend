@@ -41,8 +41,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   import implicitDateFormatter._
 
-  def completeOverview(crystallised: Boolean): TaxYearOverviewViewModel = TaxYearOverviewViewModel(
-    timestamp = "2020-01-01T00:35:34.185Z",
+  def completeOverview(crystallised: Option[Boolean]): TaxYearOverviewViewModel = TaxYearOverviewViewModel(
+    timestamp = Some("2020-01-01T00:35:34.185Z"),
     income = 1,
     deductions = 2.02,
     totalTaxableIncome = 3,
@@ -120,31 +120,31 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(false)), documentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, Some(completeOverview(Some(false))), documentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def class2NicsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(false)), class2NicsChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = codingOutEnabled)
+    testYear, Some(completeOverview(Some(false))), class2NicsChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = codingOutEnabled)
 
   def estimateViewWithNoCalcData(isAgent: Boolean = false): Html = taxYearOverviewView(
     testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(false)), testDunningLockChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, Some(completeOverview(Some(false))), testDunningLockChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def crystallisedView(isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(true)), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, Some(completeOverview(Some(true))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def payeView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(false)), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(completeOverview(Some(false))), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(false)), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(completeOverview(Some(false))), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def rejectedByNpsPartWayView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(false)), rejectedByNpsPartWay, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(completeOverview(Some(false))), rejectedByNpsPartWay, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(false)), codingOutPartiallyCollected, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(completeOverview(Some(false))), codingOutPartiallyCollected, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -241,12 +241,12 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
       "display the estimate due for an ongoing tax year" in new Setup(estimateView()) {
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
-        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
+        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
       }
 
       "display the total due for a crystallised year" in new Setup(crystallisedView()) {
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.totalDue
-        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(true).taxDue.toCurrencyString
+        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(Some(true)).taxDue.toCurrencyString
       }
 
       "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
@@ -282,7 +282,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         val incomeLink: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
         incomeLink.text shouldBe taxYearOverviewMessages.income
         incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(false).income.toCurrencyString
+        layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
       }
 
       "when there is no calc data should display the correct heading in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
@@ -302,14 +302,14 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
       "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
         layoutContent.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(2)").text shouldBe completeOverview(false).totalTaxableIncome.toCurrencyString
+        layoutContent.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(2)").text shouldBe completeOverview(Some(false)).totalTaxableIncome.toCurrencyString
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
         val totalTaxDueLink: Element = layoutContent.selectHead("#taxdue-payments-table td:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
         totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
-        layoutContent.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
+        layoutContent.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
       }
 
       "display the table headings in the Payments tab" in new Setup(estimateView()) {
@@ -569,8 +569,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "display the income row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
         val incomeLink: Element = layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(1) a")
         incomeLink.text shouldBe taxYearOverviewMessages.income
-        incomeLink.attr("href") shouldBe controllers.agent.routes.IncomeSummaryController.showIncomeSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(false).income.toCurrencyString
+        incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(testYear).url
+        layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
@@ -584,7 +584,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         val totalTaxDueLink: Element = layoutContent.selectHead("#taxdue-payments-table td:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
         totalTaxDueLink.attr("href") shouldBe controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
-        layoutContent.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
+        layoutContent.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(isAgent = true)) {
@@ -672,7 +672,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       val thrownException = intercept[MissingFieldException] {
         taxYearOverviewView(
           taxYear = testYear,
-          overviewOpt = Some(completeOverview(false)),
+          overviewOpt = Some(completeOverview(Some(false))),
           charges = documentDetailWithDueDateMissingDueDate,
           obligations = testObligationsModel,
           backUrl = "testBackURL",
