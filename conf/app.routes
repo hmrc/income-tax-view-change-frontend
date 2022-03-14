@@ -20,6 +20,7 @@ GET         /calculation/:taxYear                                         contro
 
 #IncomeSummary
 GET         /calculation/:taxYear/income                                  controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+GET         /agents/calculation/:taxYear/income                            controllers.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int)
 
 #Tax Due
 GET         /calculation/:taxYear/tax-due                                 controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
