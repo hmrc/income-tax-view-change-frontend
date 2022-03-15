@@ -313,6 +313,25 @@ taxCal_breakdown.message.C22216                                 = Due to the lev
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
 
+## Forecast Tax Calc Summary ##
+forecast_taxCalc.heading                                        = Forecast tax calculation
+forecast_taxCalc.dates                                          = 6 April {0} to 5 April {1}
+forecast_taxCalc.totalEstimatedIncome                           = Total estimated income:
+forecast_taxCalc.totalTaxableIncome                             = Total taxable income of
+forecast_taxCalc.totalIncomeTax                                 = Total Income Tax:
+forecast_taxCalc.class4Nic                                      = Class 4 National Insurance:
+forecast_taxCalc.class2Nic                                      = Class 2 National Insurance:
+forecast_taxCalc.totalNics                                      = Total National Insurance contributions:
+forecast_taxCalc.totalDeductedBeforeCodingOut                   = Total tax deducted before Balancing payment collected through PAYE tax code:
+forecast_taxCalc.collectedThroughPAYE                           = Balancing payment collected through PAYE tax code:
+forecast_taxCalc.studentLoanRepayments                          = Student Loan repayments (including Post Graduate):
+forecast_taxCalc.annuityPayments                                = Tax due on annuity payments:
+forecast_taxCalc.royaltyPayments                                = Tax due on royalty payments:
+forecast_taxCalc.totalTaxDeducted                               = Total tax deducted:
+forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and National Insurance contributions due:
+forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
+forecast_taxCalc.incomeTaxNicsCgtDue                            = Income Tax, National Insurance contributions and Capital Gains Tax due:
+
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
 obligations.quarterly.to                                        = to

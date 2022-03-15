@@ -98,3 +98,7 @@ GET         /switch-to-english                                            contro
 
 #custom not found
 GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show
+
+#Forecast Tax Calc Summary
+GET         /calculation/:taxYear/tax-due/forecast                        controllers.ForecastTaxCalcSummaryController.show(taxYear: Int)
+GET         /agents/calculation/:taxYear/tax-due/forecast                 controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
