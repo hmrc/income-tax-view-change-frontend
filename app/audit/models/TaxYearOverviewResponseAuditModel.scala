@@ -35,7 +35,7 @@ case class TaxYearOverviewResponseAuditModel(mtdItUser: MtdItUser[_],
   override val auditType: String = "TaxYearOverviewResponse"
 
   private val taxYearOverviewJson = Json.obj() ++
-    ("calculationDate", taxYearOverviewViewModel.map(_.timestamp.toZonedDateTime.toLocalDate)) ++
+    ("calculationDate", taxYearOverviewViewModel.map(_.timestamp.map(_.toZonedDateTime.toLocalDate))) ++
     ("totalDue", taxYearOverviewViewModel.map(_.taxDue))
 
   private val calculationDetails: JsObject = Json.obj() ++
