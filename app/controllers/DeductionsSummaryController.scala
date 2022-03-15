@@ -65,7 +65,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
         auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
-        Ok(deductionBreakdownView(viewModel, taxYear, backUrl, btaNavPartial = user.btaNavPartial)(implicitly, messages))
+        Ok(deductionBreakdownView(viewModel, taxYear, backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         Logger("application").info(s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
         itvcErrorHandler.showInternalServerError()
@@ -99,23 +99,3 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 }
-
-/*def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
-    Authenticated.async { implicit request =>
-      implicit user =>
-        calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map {
-          case liabilityCalc: LiabilityCalculationResponse =>
-            val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
-            auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(getMtdItUserWithNino(), viewModel))
-            Ok(deductionBreakdownView(viewModel, taxYear, backUrl(taxYear), isAgent = true))
-          case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-            Logger("application").info(
-              s"[Agent][DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
-            itvcErrorHandler.showInternalServerError()
-          case _: LiabilityCalculationError =>
-            Logger("application").error(
-              s"[Agent][DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
-            itvcErrorHandler.showInternalServerError()
-        }
-    }
- */
