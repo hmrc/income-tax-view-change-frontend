@@ -18,9 +18,9 @@ package controllers
 
 import audit.AuditingService
 import audit.models._
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
+import config._
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
@@ -30,6 +30,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.CalculationService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.DeductionBreakdown
@@ -40,6 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
+                                            val authorisedFunctions: AuthorisedFunctions,
                                             val retrieveNino: NinoPredicate,
                                             val calculationService: CalculationService,
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
@@ -54,24 +56,22 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val languageUtils: LanguageUtils)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  //  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
-
   def handleRequest(backUrl: String,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
         auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
         Ok(deductionBreakdownView(viewModel, taxYear, backUrl, btaNavPartial = user.btaNavPartial)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-        Logger("application").info(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
+        Logger("application").info(s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+          s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }
@@ -89,17 +89,15 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
 
   def showDeductionsSummaryAgent(taxYear: Int): Action[AnyContent] = {
     Authenticated.async { implicit request =>
-      implicit user =>
+      implicit agent =>
         handleRequest(
           backUrl = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url,
           itcvErrorHandler = itvcErrorHandlerAgent,
           taxYear = taxYear,
           isAgent = true
-        )
+        )(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly, implicitly)
     }
   }
-
-//  def backUrl(taxYear: Int): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url
 }
 
 /*def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
