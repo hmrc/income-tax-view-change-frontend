@@ -168,16 +168,18 @@ income_breakdown.table.share_schemes                            = Cynlluniau cyf
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##
-forecast_income.heading                                        = Forecast income
+forecast_income.heading                                        = Incwm rhagolwg
 forecast_income.table.header                                   = Math o incwm
 forecast_income.table.header.amount                            = Swm
-forecast_income.dates                                          = 6 April {0} to 5 April {1}
+forecast_income.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
 forecast_income.total                                          = Cyfanswm incwm amcangyfrifedig
-forecast_income.source_types.01                                = Elw o hunangyflogaeth
+forecast_income.employment                                     = cyflogaeth
+forecast_income.self_employment                                = hunangyflogaeth
+forecast_income.source_types.01                                = Elw o {0}
 forecast_income.source_types.02                                = Elw o dir ac eiddo yn y DU
 forecast_income.source_types.03                                = Elw o lety gwyliau yn yr AEE
 forecast_income.source_types.04                                = Elw o lety gwyliau wedi’i ddodrefnu yn y DU
-forecast_income.source_types.05                                = Cyflog o bob cyflogaeth
+forecast_income.source_types.05                                = Cyflog o {0}
 forecast_income.source_types.06                                = Incwm o dramor
 forecast_income.source_types.07                                = Llog ar fenthyciad cymwys
 forecast_income.source_types.09                                = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
