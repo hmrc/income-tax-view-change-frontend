@@ -577,7 +577,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) td:nth-child(1) a")
         allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
         allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(testYear).url
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
