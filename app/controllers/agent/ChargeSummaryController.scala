@@ -121,13 +121,18 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     val codingOutEnabled = isEnabled(CodingOut)
 
     getChargeHistory(id, isLatePaymentCharge).map { chargeHistoryOpt =>
-      auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistoryOpt.getOrElse(List.empty), paymentAllocations, isLatePaymentCharge)
-      Ok(view(documentDetailWithDueDate, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
-        paymentAllocations = paymentAllocations,
-        paymentBreakdown = paymentBreakdown,
-        paymentAllocationEnabled = paymentAllocationEnabled,
-        payments = payments,
-        codingOutEnabled = codingOutEnabled))
+      if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isClass2Nic.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)) {
+        Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Coding Out is disabled and redirected to not found page")
+        Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+      } else {
+         auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistoryOpt.getOrElse(List.empty), paymentAllocations, isLatePaymentCharge)
+       Ok(view(documentDetailWithDueDate, chargeHistoryOpt, isLatePaymentCharge, backLocation, taxYear,
+         paymentAllocations = paymentAllocations,
+         paymentBreakdown = paymentBreakdown,
+         paymentAllocationEnabled = paymentAllocationEnabled,
+         payments = payments,
+         codingOutEnabled = codingOutEnabled))
+        }
     }
   }
 

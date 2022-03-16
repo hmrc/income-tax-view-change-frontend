@@ -18,7 +18,7 @@ package controllers
 
 import testConstants.FinancialDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -103,6 +103,17 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       }
     }
 
+    "redirect a user back to the custom error page" when {
+
+      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOut()) {
+        disable(CodingOut)
+        val result = controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+      }
+    }
+
     "load the page" when {
 
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
@@ -116,6 +127,31 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
         JsoupParse(result).toHtmlDocument.select("main h3").text() shouldBe paymentHistoryHeading
       }
+      "redirect a user back to the custom error page" when {
+        "PAYE SA exists but FS is disabled" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
+          disable(CodingOut)
+          val result = controller.showChargeSummary(2018, "CODINGOUT01")(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        }
+
+        "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOut()) {
+          disable(CodingOut)
+          val result = controller.showChargeSummary(2018, "CODINGOUT01")(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        }
+        "cancelled PAYE exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCancelledPayeSa()) {
+          disable(CodingOut)
+          val result = controller.showChargeSummary(2018, "CODINGOUT01")(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        }
+      }
+
 
       "provided with an id and the late payment interest flag enabled that matches a charge in the financial response" in new Setup(financialDetailsModel(2018, lpiWithDunningBlock = None)) {
         enable(ChargeHistory)
