@@ -22,7 +22,7 @@
 
 @if(isFinalCalc){
 
-    <table class="govuk-table" id="income-deductions-table">
+    <table class="govuk-table" id="income-deductions-contributions-table">
         <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-overview.tax-calculation")</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -68,37 +68,27 @@
                 }
                 </td>
             </tr>
-        </tbody>
-    </table>
-
-    <table id="taxdue-payments-table" class="govuk-table">
-        <caption class="govuk-table__caption govuk-table__caption--l govuk-visually-hidden">@messages("tax-year-overview.tax-calculation")</caption>
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-overview.amount")</th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-bold">
-                @if(isAgent){
+                    @if(isAgent){
                     <a class="govuk-link" href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url >@messages(s"tax-year-overview.tax-due.finalCalc")</a>
-                } else {
+                    } else {
                     <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
-                }
+                    }
                 </th>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold govuk-!-text-align-right">@{
                     overview.taxDue.toCurrencyString
-                }
+                    }
                 </td>
             </tr>
         </tbody>
     </table>
 
+
+
 } else {
 
-    <table class="govuk-table" id="income-deductions-table">
+    <table class="govuk-table" id="income-deductions-contributions-table">
         <caption class="govuk-table__caption govuk-table__caption--l">
             @if(caption.isDefined){@caption.get}else{@messages("tax-year-overview.tax-calculation")}
         </caption>
@@ -145,30 +135,20 @@
                 }
                 </td>
             </tr>
-        </tbody>
-    </table>
-    <table class="govuk-table" id="taxdue-payments-table">
-        <caption class="govuk-table__caption govuk-table__caption--l govuk-visually-hidden">@messages("tax-year-overview.tax-calculation")</caption>
-        <thead class="govuk-table__head govuk-visually-hidden">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-overview.amount")</th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell govuk-!-font-weight-bold">
-                @if(isAgent){
+                    @if(isAgent){
                     <a class="govuk-link" href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
-                } else {
+                    } else {
                     <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
-                }
+                    }
                 </td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold govuk-!-text-align-right">@{
                     overview.taxDue.toCurrencyString
-                }
+                    }
                 </td>
             </tr>
         </tbody>
     </table>
+
 }

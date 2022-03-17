@@ -55,17 +55,17 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
     val insetText = "#main-content > div > div > div > p.govuk-inset-text"
     val insetLinkText = "#main-content > div > div > div > p > a"
 
-    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > th > a"
-    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td"
+    val incomeRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > th > a"
+    val incomeRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td"
 
-    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > th > a"
-    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td"
+    val allowanceRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > th > a"
+    val allowanceRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td"
 
-    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > th"
-    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td"
+    val taxIsDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > th"
+    val taxIsDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td"
 
-    val contributionDueRowText = "#taxdue-payments-table > tbody > tr > th > a"
-    val contributionDueRowAmount = "#taxdue-payments-table > tbody > tr > td"
+    val contributionDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(4) > th > a"
+    val contributionDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(4) > td"
 
     val chargeInformationParagraph = "#main-content > div > div > div > p.govuk-body"
 
