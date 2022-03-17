@@ -264,25 +264,25 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
-        layoutContent.selectHead(" #income-deductions-table caption").text shouldBe taxYearOverviewMessages.taxCalculationHeading
+        layoutContent.selectHead(" #income-deductions-contributions-table caption").text shouldBe taxYearOverviewMessages.taxCalculationHeading
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
       }
 
       "display the section header in the Tax Calculation tab" in new Setup(estimateView()) {
-        val sectionHeader: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(1)")
+        val sectionHeader: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(1) th:nth-child(1)")
         sectionHeader.text shouldBe taxYearOverviewMessages.section
       }
 
       "display the amount header in the Tax Calculation tab" in new Setup(estimateView()) {
-        val amountHeader: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(1) th:nth-child(2)")
+        val amountHeader: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(1) th:nth-child(2)")
         amountHeader.text shouldBe taxYearOverviewMessages.amount
       }
 
       "display the income row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val incomeLink: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
+        val incomeLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(1) td:nth-child(1) a")
         incomeLink.text shouldBe taxYearOverviewMessages.income
         incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
       }
 
       "when there is no calc data should display the correct heading in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
@@ -294,22 +294,22 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
+        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) td:nth-child(1) a")
         allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
         allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
       }
 
       "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(3) td:nth-child(2)").text shouldBe completeOverview(Some(false)).totalTaxableIncome.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) td:nth-child(2)").text shouldBe completeOverview(Some(false)).totalTaxableIncome.toCurrencyString
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val totalTaxDueLink: Element = layoutContent.selectHead("#taxdue-payments-table td:nth-child(1) a")
+        val totalTaxDueLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(4) td:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
         totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
-        layoutContent.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
       }
 
       "display the table headings in the Payments tab" in new Setup(estimateView()) {
@@ -567,24 +567,24 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the income row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val incomeLink: Element = layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(1) a")
+        val incomeLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(1) a")
         incomeLink.text shouldBe taxYearOverviewMessages.income
         incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(testYear).url
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
+        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) td:nth-child(1) a")
         allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
         allowancesLink.attr("href") shouldBe controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val totalTaxDueLink: Element = layoutContent.selectHead("#taxdue-payments-table td:nth-child(1) a")
+        val totalTaxDueLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
         totalTaxDueLink.attr("href") shouldBe controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
-        layoutContent.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(isAgent = true)) {
