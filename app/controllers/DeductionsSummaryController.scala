@@ -98,4 +98,5 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
         )(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly, implicitly)
     }
   }
+
 }
