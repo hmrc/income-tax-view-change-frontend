@@ -31,9 +31,9 @@
         incomeSources.map(incomeSource => {
             val incomeText = incomeSource.incomeSourceType match {
                 case "01" => messages(s"forecast_income.source_types.${incomeSource.incomeSourceType}",
-                    incomeSource.incomeSourceName.getOrElse("Self-Employment"))
+                    incomeSource.incomeSourceName.getOrElse(messages("forecast_income.self_employment")))
                 case "05" => messages(s"forecast_income.source_types.${incomeSource.incomeSourceType}",
-                    incomeSource.incomeSourceName.getOrElse("Employment"))
+                    incomeSource.incomeSourceName.getOrElse(messages("forecast_income.employment")))
                 case _ => messages(s"forecast_income.source_types.${incomeSource.incomeSourceType}")
             }
             (<tr class="govuk-table__row">
