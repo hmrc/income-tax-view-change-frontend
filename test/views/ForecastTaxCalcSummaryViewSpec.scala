@@ -16,9 +16,9 @@
 
 package views
 
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.liabilitycalculation.EndOfYearEstimate
-import play.api.i18n.{Lang, MessagesApi}
+import org.jsoup.select.Elements
+import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNavHtml, testTaxYear}
 import testUtils.ViewSpec
@@ -28,8 +28,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
   val forecastTaxCalc = "Forecast tax calculation"
-  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val lang: Lang = Lang("GB")
 
   val endOfYearEstimateModel: EndOfYearEstimate = EndOfYearEstimate(
     incomeSource = None,
@@ -50,15 +48,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
     incomeTaxNicAndCgtAmount = Some(150)
   )
 
-  def getStringFromMessage(message: String): String =
-    messagesLookUp(s"forecast_taxCalc.$message")
-
-  def getMessageAndValue(message: String, value: Option[BigDecimal]): String =
-    s"${getStringFromMessage(message)} ${value.get.toCurrencyString}"
-
-  def getMessageAndValueInt(message: String, value: Option[Int]): String =
-    s"${getStringFromMessage(message)} ${BigDecimal(value.get).toCurrencyString}"
-
   lazy val forecastTaxCalcView: ForecastTaxCalcSummary = app.injector.instanceOf[ForecastTaxCalcSummary]
 
   val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = testNavHtml)
@@ -72,39 +61,43 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
     "provided with a full endOfYearEstimateModel" should {
       "have the correct title" in new Setup(view) {
-        document.title() shouldBe msgs("titlePattern.serviceName.govUk", msgs("forecast_taxCalc.heading"))
-        document.title() shouldBe messagesLookUp("titlePattern.serviceName.govUk", messagesLookUp("forecast_taxCalc.heading"))
+        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
       }
 
       "have the correct heading" in new Setup(view) {
-        val pageSubHeading: String = messagesLookUp("forecast_taxCalc.dates", s"${testTaxYear - 1}", s"$testTaxYear")
-        val pageHeading: String = s"$pageSubHeading ${messagesLookUp("forecast_taxCalc.heading")}"
+        val pageSubHeading: String = messages("forecast_taxCalc.dates", s"${testTaxYear - 1}", s"$testTaxYear")
+        val pageHeading: String = s"$pageSubHeading ${messages("forecast_taxCalc.heading")}"
         layoutContent.hasPageHeading(pageHeading)
       }
 
-      s"display '${getStringFromMessage("totalEstimatedIncome")}' with its correct value" in new Setup(view) {
-        layoutContent.select("#main-content p:nth-child(2)").text shouldBe
-        getMessageAndValueInt("totalEstimatedIncome", endOfYearEstimateModel.totalEstimatedIncome)
-      }
+      "have the correct data item names and values" which {
+        val expectedDataItems = Table(
+          ("p:nth-child", "dataItem", "Amount"),
+          (2, messages("forecast_taxCalc.totalEstimatedIncome"), "£10.00"),
+          (3, messages("forecast_taxCalc.totalTaxableIncome"), "£20.00"),
+          (4, messages("forecast_taxCalc.totalIncomeTax"), "£30.00"),
+          (6, messages("forecast_taxCalc.class4Nic"), "£50.00"),
+          (7, messages("forecast_taxCalc.class2Nic"), "£40.00"),
+          (8, messages("forecast_taxCalc.totalNics"), "£60.00"),
+          (10, messages("forecast_taxCalc.totalDeductedBeforeCodingOut"), "£70.00"),
+          (11, messages("forecast_taxCalc.collectedThroughPAYE"), "£80.00"),
+          (12, messages("forecast_taxCalc.studentLoanRepayments"), "£90.00"),
+          (13, messages("forecast_taxCalc.annuityPayments"), "£100.00"),
+          (14, messages("forecast_taxCalc.royaltyPayments"), "£110.00"),
+          (16, messages("forecast_taxCalc.totalTaxDeducted"), "£120.00"),
+          (17, messages("forecast_taxCalc.incomeTaxAndNicsDue"), "£130.00"),
+          (18, messages("forecast_taxCalc.capitalGainsTax"), "£140.00"),
+          (19, messages("forecast_taxCalc.incomeTaxNicsCgtDue"), "£150.00")
+        )
 
-      s"display '${getStringFromMessage("totalTaxableIncome")}' with its correct value" in new Setup(view) {
-        layoutContent.select("#main-content p:nth-child(3)").text shouldBe
-          getMessageAndValueInt("totalTaxableIncome", endOfYearEstimateModel.totalTaxableIncome)
-      }
+        forAll(expectedDataItems) { (paraNo: Int, dataItem: String, formattedAmount: String) =>
 
-      s"display '${getStringFromMessage("totalIncomeTax")}' with its correct value" in new Setup(view) {
-        layoutContent.select("#main-content p:nth-child(4)").text shouldBe
-          getMessageAndValue("totalIncomeTax", endOfYearEstimateModel.incomeTaxAmount)
-      }
-
-      s"display '${getStringFromMessage("class4Nic")}' with its correct value" in new Setup(view) {
-        layoutContent.select("#main-content p:nth-child(5)").text shouldBe
-          getMessageAndValue("class4Nic", endOfYearEstimateModel.nic4)
-      }
-
-      s"display '${getStringFromMessage("class2Nic")}' with its correct value" in new Setup(view) {
-        layoutContent.select("#main-content p:nth-child(6)").text shouldBe
-          getMessageAndValue("class2Nic", endOfYearEstimateModel.nic2)
+          s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(view) {
+            val para: Elements = layoutContent.select(s"#main-content p:nth-child($paraNo)")
+            para.text shouldBe s"$dataItem $formattedAmount"
+          }
+        }
       }
     }
   }
