@@ -70,6 +70,21 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockFro
     )
   }
 
+/*
+  trait Setup {
+    val controller = new controllers.NextUpdatesController(
+      nextUpdates,
+      mockIncomeSourceDetailsService,
+      mockNextUpdatesService,
+      app.injector.instanceOf[FrontendAppConfig],
+      mockAuthService
+    )(languageUtils,
+      app.injector.instanceOf[MessagesControllerComponents],
+      app.injector.instanceOf[ExecutionContext],
+      mockItvcErrorHandler)
+
+  }
+*/
   val isAgent: Boolean = true
   val date: LocalDate = LocalDate.now
 
@@ -142,7 +157,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockFro
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestConfirmedClient())
 
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }

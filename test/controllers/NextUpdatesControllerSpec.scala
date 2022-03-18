@@ -22,10 +22,11 @@ import testConstants.BaseTestConstants
 import testConstants.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
+import mocks.auth.MockFrontendAuthorisedFunctions
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
-import mocks.services.MockNextUpdatesService
+import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.MockItvcErrorHandler
 import mocks.views.agent.MockNextUpdates
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
@@ -45,7 +46,8 @@ import views.html.{NextUpdates, NoNextUpdates}
 import scala.concurrent.{ExecutionContext, Future}
 
 class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
-  with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler {
+  with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockFrontendAuthorisedFunctions
+  with MockIncomeSourceDetailsService {
 
   trait Setup {
     val controller = new controllers.NextUpdatesController(
@@ -55,13 +57,14 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicateNoCache,
-      app.injector.instanceOf[services.IncomeSourceDetailsService],
+      mockIncomeSourceDetailsService, //app.injector.instanceOf[services.IncomeSourceDetailsService],
       app.injector.instanceOf[AuditingService],
       mockNextUpdatesService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[BtaNavBarPredicate],
       appConfig,
-      app.injector.instanceOf[FrontendAuthorisedFunctions],
+      mockAuthService,
+//      app.injector.instanceOf[FrontendAuthorisedFunctions],
     )(
       app.injector.instanceOf[MessagesControllerComponents],
       mockItvcErrorHandler,
@@ -339,6 +342,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     "the user has all correct details" should {
       "return Status OK (200) when we have obligations" in new Setup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockSingleBusinessIncomeSourceWithDeadlines
         mockSingleBusinessIncomeSource()
         mockObligations
         mockNextUpdates(obligationsModel, controllers.agent.routes.HomeController.show().url, true)(HtmlFormat.empty)
@@ -352,6 +356,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockNoObligations
+        mockNoIncomeSourcesWithDeadlines
         mockShowInternalServerError()
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestConfirmedClient())
