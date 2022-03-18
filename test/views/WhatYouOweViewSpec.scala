@@ -171,6 +171,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
     interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
 
+  val codedOutDocumentDetailPayeSA: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+    documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(0.00),
+    originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+    interestOutstandingAmount = None, interestRate = None,
+    latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -221,6 +228,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
+
+  val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(0.00, 0.00, 0.00),
+    overduePaymentList = List(),
+    dueInThirtyDaysList = List(),
+    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetailPayeSA,
+      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+  )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00))
 
@@ -903,6 +918,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       pageDocument.getElementById("coding-out-summary-link") shouldBe null
+    }
+    "show only PAYE SA, SA note and payment bullet points" in new Setup(whatYouOweDataWithPayeSA, codingOutEnabled = true) {
+      pageDocument.title() shouldBe whatYouOwe.title
+      pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
+      pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
+      pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+      pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+      pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+      paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+      paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
     }
   }
 
