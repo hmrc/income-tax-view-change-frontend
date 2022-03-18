@@ -126,6 +126,7 @@ tax-year-overview.tax-calculation                                   = Calculatio
 tax-year-overview.tax-calculation.no-calc                           = No calculation yet
 tax-year-overview.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.
 tax-year-overview.payments                                          = Payments
+tax-year-overview.forecast                                          = Forecast
 tax-year-overview.updates                                           = Updates
 tax-year-overview.income                                            = Income
 tax-year-overview.deductions                                        = Allowances and deductions

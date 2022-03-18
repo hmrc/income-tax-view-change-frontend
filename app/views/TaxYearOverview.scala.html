@@ -33,7 +33,8 @@
         h2: h2,
         h3: h3,
         p: p,
-        govukInsetText: GovukInsetText
+        govukInsetText: GovukInsetText,
+        govukTable : GovukTable
 )
 
 @(taxYear: Int, overviewOpt: Option[TaxYearOverviewViewModel], charges: List[DocumentDetailWithDueDate],
@@ -178,6 +179,41 @@
     }
 }
 
+@forecastContent = {
+    @h2(msg = messages("tax-year-overview.forecast"), classes = "govuk-heading-l")
+    @govukTable(Table(
+        rows = Seq(
+            Seq(
+                TableRow(
+                content = Text("First 6 weeks")
+                ),
+                TableRow(
+                content = Text("£109.80 per week")
+                )
+            ),
+            Seq(
+                TableRow(
+                content = Text("Next 33 weeks")
+                ),
+                TableRow(
+                content = Text("£109.80 per week")
+                )
+            )
+
+        ),
+        head = Some(Seq(
+        HeadCell(
+        content = Text("Section")
+        ),
+        HeadCell(
+        content = Text("Amount")
+        )
+        )),
+        caption = Some("Forecast amount"),
+        captionClasses = "govuk-table__caption--m",
+        firstCellIsHeader = true
+        ))
+}
 
 @mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = user.btaNavPartial) {
     <h1 class="govuk-heading-xl" id="heading">
@@ -231,6 +267,11 @@
                 </a>
             </li>
             <li class="govuk-tabs__list-item" role="presentation">
+                <a class="govuk-tabs__tab" href="#forecast" id="tab_forecast" role="tab" aria-controls="forecast" aria-selected="false">
+                    @messages("tax-year-overview.forecast")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item" role="presentation">
                 <a class="govuk-tabs__tab" href="#payments" id="tab_payments" role="tab" aria-controls="payments" aria-selected="false">
                 @messages("tax-year-overview.payments")
                 </a>
@@ -243,6 +284,9 @@
         </ul>
         <div class="govuk-tabs__panel" id="taxCalculation" role="tabpanel" aria-labelledby="tab_taxCalculation">
         @taxCalculationContent
+        </div>
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="forecast" role="tabpanel" aria-labelledby="tab_forecast">
+            @forecastContent
         </div>
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="payments" role="tabpanel" aria-labelledby="tab_payments">
         @paymentsContent
