@@ -16,35 +16,20 @@
 
 package controllers.agent
 
-import java.time.LocalDate
-
-import testConstants.BaseIntegrationTestConstants._
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.{AccountingPeriodModel, PaymentJourneyModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseIntegrationTestConstants._
+
+import java.time.LocalDate
 
 class PaymentControllerISpec extends ComponentSpecBase {
 
   val url: String = "/pay-api/mtd-income-tax/sa/journey/start"
 
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
-
-  val clientDetails: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   val submissionJson: JsValue = Json.parse(
     s"""
@@ -81,7 +66,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubPayApiResponse(url, 201, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
 
-        val res = IncomeTaxViewChangeFrontend.getPay(10000, clientDetails)
+        val res = IncomeTaxViewChangeFrontend.getPay(10000, clientDetailsWithConfirmation)
 
 
         res.status shouldBe 303
@@ -112,7 +97,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubPayApiResponse(url, 500, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
 
 
-        val res = IncomeTaxViewChangeFrontend.getPay(10000, clientDetails)
+        val res = IncomeTaxViewChangeFrontend.getPay(10000, clientDetailsWithConfirmation)
 
 
         res.status shouldBe 500

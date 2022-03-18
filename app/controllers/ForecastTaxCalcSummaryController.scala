@@ -16,17 +16,16 @@
 
 package controllers
 
-import audit.AuditingService
-import auth.{FrontendAuthorisedFunctions, MtdItUserBase, MtdItUserWithNino}
+import auth.{FrontendAuthorisedFunctions, MtdItUserWithNino}
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,10 +40,7 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
                                                  val checkSessionTimeout: SessionTimeoutPredicate,
                                                  val authenticate: AuthenticationPredicate,
                                                  val retrieveNino: NinoPredicate,
-                                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                  val calculationService: CalculationService,
-                                                 val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                                 val auditingService: AuditingService,
                                                  val retrieveBtaNavBar: BtaNavFromNinoPredicate,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -59,15 +55,15 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
   val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
 
   def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
-    val errorPrefix: String = s"[ForecastTaxCalcSummaryController]${if(isAgent)"[Agent]" else ""}[showForecastTaxCalcSummary[$taxYear]]"
+    val errorPrefix: String = s"[ForecastTaxCalcSummaryController]${if (isAgent) "[Agent]" else ""}[showForecastTaxCalcSummary[$taxYear]]"
     Logger("application").error(s"$errorPrefix $message")
     if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
   }
 
   def handleRequest(mtditid: String, nino: String, taxYear: Int, btaNavPartial: Option[Html], isAgent: Boolean)
-                   (implicit user: MtdItUserBase[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                   (implicit request: Request[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isDisabled(ForecastCalculation)) {
-      val errorTemplate = if(isAgent) itvcErrorHandlerAgent.notFoundTemplate(user) else itvcErrorHandler.notFoundTemplate(user)
+      val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
       Future.successful(NotFound(errorTemplate))
     } else {
       calculationService.getLiabilityCalculationDetail(mtditid, nino, taxYear).map {
@@ -95,12 +91,10 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
     Authenticated.async {
       implicit request =>
         implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
-          handleRequest(getClientMtditid, getClientNino, taxYear, mtdItUser.btaNavPartial, isAgent = true)
-        }
+          handleRequest(getClientMtditid, getClientNino, taxYear, None, isAgent = true)
     }
 
   def backUrl(isAgent: Boolean, taxYear: Int): String =
-    if(isAgent) controllers.agent.routes.TaxYearOverviewController.show(taxYear).url
+    if (isAgent) controllers.agent.routes.TaxYearOverviewController.show(taxYear).url
     else controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url
 }

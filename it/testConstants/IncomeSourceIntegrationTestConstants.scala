@@ -17,10 +17,11 @@
 package testConstants
 
 import BusinessDetailsIntegrationTestConstants._
-import PaymentHistoryTestConstraints.{getCurrentTaxYearEnd, oldBusiness1}
+import PaymentHistoryTestConstraints.oldBusiness1
 import PropertyDetailsIntegrationTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
 
 object IncomeSourceIntegrationTestConstants {
 

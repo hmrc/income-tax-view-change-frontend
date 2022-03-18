@@ -17,7 +17,6 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
@@ -36,29 +35,6 @@ import testConstants.messages.IncomeSummaryMessages.{incomeSummaryAgentHeading, 
 import java.time.LocalDate
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  val clientDetailsWithoutConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid
-  )
-
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
-
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())

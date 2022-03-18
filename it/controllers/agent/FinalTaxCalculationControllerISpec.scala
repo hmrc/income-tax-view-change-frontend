@@ -16,7 +16,6 @@
 
 package controllers.agent
 
-import controllers.agent.utils.SessionKeys
 import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
@@ -26,7 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 import java.time.LocalDate
@@ -125,22 +124,9 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
   val testArn: String = "1"
 
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
 
-  lazy val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
 
   lazy val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
