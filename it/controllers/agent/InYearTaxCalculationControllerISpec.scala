@@ -16,7 +16,6 @@
 
 package controllers.agent
 
-import controllers.agent.utils.SessionKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuthStub.mockImplicitDateFormatter.{longDate, toTaxYearEndDate}
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
@@ -32,7 +31,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
@@ -80,15 +79,6 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       body = LiabilityCalculationError(NOT_FOUND, "not found")
     )
   }
-
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
 

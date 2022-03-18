@@ -15,9 +15,6 @@
  */
 package controllers.agent
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
-import testConstants.IncomeSourceIntegrationTestConstants._
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
@@ -25,7 +22,10 @@ import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import testConstants.messages.AgentMessages.{agentError, clientUTRErrorTitle, clientUTRTitle}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.AgentMessages.{clientUTRErrorTitle, clientUTRTitle}
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 

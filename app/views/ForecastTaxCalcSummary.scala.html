@@ -1,0 +1,75 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitCurrencyFormatter._
+@import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+
+@this(mainTemplate: unifiedLayout,
+    p: p
+)
+
+@(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+
+@dataItem(message: String, value: Option[BigDecimal], bold: Boolean = false) = {
+    @if(value.isDefined){
+        @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
+            @{messages(s"forecast_taxCalc.$message")}
+            <strong class="bold no-wrap">@{value.get.toCurrency}</strong>
+        </p>
+    }
+}
+
+@mainTemplate(pageTitle = messages("forecast_taxCalc.heading"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial) {
+
+    <h1 class="govuk-heading-xl">
+        <span class="govuk-caption-xl">@messages("forecast_taxCalc.dates", s"${taxYear - 1}", s"$taxYear")</span>
+        @messages("forecast_taxCalc.heading")
+    </h1>
+
+    @dataItem("totalEstimatedIncome", endOfYearEstimateModel.totalEstimatedIncome.map(tei => BigDecimal(tei)))
+    @dataItem("totalTaxableIncome", endOfYearEstimateModel.totalTaxableIncome.map(tti => BigDecimal(tti)))
+    @dataItem("totalIncomeTax", endOfYearEstimateModel.incomeTaxAmount)
+
+    @if(endOfYearEstimateModel.totalEstimatedIncome.isDefined || endOfYearEstimateModel.totalTaxableIncome.isDefined ||
+    endOfYearEstimateModel.incomeTaxAmount.isDefined) {
+        <hr style="margin-bottom: 30px">
+    }
+    @dataItem("class4Nic", endOfYearEstimateModel.nic4)
+    @dataItem("class2Nic", endOfYearEstimateModel.nic2)
+    @dataItem("totalNics", endOfYearEstimateModel.totalNicAmount, bold = true)
+
+    @if(endOfYearEstimateModel.nic4.isDefined || endOfYearEstimateModel.nic2.isDefined || endOfYearEstimateModel.totalNicAmount.isDefined) {
+        <hr style="margin-bottom: 30px">
+    }
+    @dataItem("totalDeductedBeforeCodingOut", endOfYearEstimateModel.totalTaxDeductedBeforeCodingOut)
+    @dataItem("collectedThroughPAYE", endOfYearEstimateModel.saUnderpaymentsCodedOut)
+    @dataItem("studentLoanRepayments", endOfYearEstimateModel.totalStudentLoansRepaymentAmount)
+    @dataItem("annuityPayments", endOfYearEstimateModel.totalAnnuityPaymentsTaxCharged)
+    @dataItem("royaltyPayments", endOfYearEstimateModel.totalRoyaltyPaymentsTaxCharged)
+
+    @if(endOfYearEstimateModel.totalTaxDeductedBeforeCodingOut.isDefined || endOfYearEstimateModel.saUnderpaymentsCodedOut.isDefined ||
+    endOfYearEstimateModel.totalStudentLoansRepaymentAmount.isDefined || endOfYearEstimateModel.totalAnnuityPaymentsTaxCharged.isDefined ||
+    endOfYearEstimateModel.totalRoyaltyPaymentsTaxCharged.isDefined) {
+        <hr style="margin-bottom: 30px">
+    }
+    @dataItem("totalTaxDeducted", endOfYearEstimateModel.totalTaxDeducted, bold = true)
+    @dataItem("incomeTaxAndNicsDue", endOfYearEstimateModel.incomeTaxNicAmount, bold = true)
+    @dataItem("capitalGainsTax", endOfYearEstimateModel.cgtAmount)
+    @dataItem("incomeTaxNicsCgtDue", endOfYearEstimateModel.incomeTaxNicAndCgtAmount, bold = true)
+
+}

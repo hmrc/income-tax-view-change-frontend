@@ -315,6 +315,25 @@ taxCal_breakdown.table.cgt.overpaid                             = Treth Enillion
 taxCal_breakdown.table.payeUnderpaymentsCodedOut                = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
 taxCal_breakdown.table.saUnderpaymentsCodedOut                  = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
 
+## Forecast Tax Calc Summary ##
+forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth
+forecast_taxCalc.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
+forecast_taxCalc.totalEstimatedIncome                           = Cyfanswm incwm amcangyfrifedig:
+forecast_taxCalc.totalTaxableIncome                             = Cyfanswm eich incwm trethadwy
+forecast_taxCalc.totalIncomeTax                                 = Swm y Dreth Incwm:
+forecast_taxCalc.class4Nic                                      = Yswiriant Gwladol Dosbarth 4:
+forecast_taxCalc.class2Nic                                      = Yswiriant Gwladol Dosbarth 2:
+forecast_taxCalc.totalNics                                      = Cyfanswm yr Yswiriant Gwladol:
+forecast_taxCalc.totalDeductedBeforeCodingOut                   = Total tax deducted before Balancing payment collected through PAYE tax code:
+forecast_taxCalc.collectedThroughPAYE                           = Taliad mantoli a gesglir drwy’r cod treth TWE:
+forecast_taxCalc.studentLoanRepayments                          = Cyfanswm yr ad-daliadau benthyciad myfyriwr:
+forecast_taxCalc.annuityPayments                                = Treth sy’n ddyledus ar daliadau Blwydd-daliadau:
+forecast_taxCalc.royaltyPayments                                = Treth sy’n ddyledus ar freindaliadau:
+forecast_taxCalc.totalTaxDeducted                               = Cyfanswm y dreth a ddidynnwyd:
+forecast_taxCalc.incomeTaxAndNicsDue                            = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus:
+forecast_taxCalc.capitalGainsTax                                = Treth Enillion Cyfalaf:
+forecast_taxCalc.incomeTaxNicsCgtDue                            = Treth Incwm, Yswiriant Gwladol a Threth Enillion Cyfalaf sy’n ddyledus:
+
 
 ## NextUpdates Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau

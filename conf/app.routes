@@ -103,3 +103,7 @@ GET         /custom-not-found                                             contro
 #Forecast income summary
 GET         /calculation/:taxYear/income/forecast                         controllers.ForecastIncomeSummaryController.show(taxYear: Int)
 GET         /agents/calculation/:taxYear/income/forecast                  controllers.ForecastIncomeSummaryController.showAgent(taxYear: Int)
+
+#Forecast Tax Calc Summary
+GET         /calculation/:taxYear/tax-due/forecast                        controllers.ForecastTaxCalcSummaryController.show(taxYear: Int)
+GET         /agents/calculation/:taxYear/tax-due/forecast                 controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
