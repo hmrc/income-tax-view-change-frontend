@@ -129,7 +129,7 @@ class PaymentAllocationsControllerSpec extends TestSupport with MockPaymentAlloc
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestConfirmedClient())
 
-        status(result) shouldBe NOT_FOUND
+        status(result) shouldBe SEE_OTHER
       }
     }
 
