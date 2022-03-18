@@ -36,7 +36,7 @@
                     incomeSource.incomeSourceName.getOrElse("Employment"))
                 case _ => messages(s"forecast_income.source_types.${incomeSource.incomeSourceType}")
             }
-            (<tr id="income-source-type-@{incomeSource.incomeSourceType}" class="govuk-table__row">
+            (<tr class="govuk-table__row">
                 <td class="govuk-table__cell">{incomeText}</td>
                 <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">{BigDecimal(incomeSource.taxableIncome).toCurrencyString}</td>
             </tr>)
