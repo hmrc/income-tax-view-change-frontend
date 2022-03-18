@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -45,6 +47,7 @@ class InYearTaxCalculationController @Inject()(
                                                retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                calcService: CalculationService,
+                                               auditingService: AuditingService,
                                                itvcErrorHandler: ItvcErrorHandler,
                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -66,8 +69,21 @@ class InYearTaxCalculationController @Inject()(
     else currentDate.getYear
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
+        
+        val taxCalc: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calculationResponse)
+        
+        val auditModel = ViewInYearTaxEstimateAuditModel(
+          user.nino,
+          user.mtditid,
+          if(isAgent) "agent" else "individual",
+          taxYear,
+          ViewInYearTaxEstimateAuditBody(taxCalc)
+        )
+        
+        auditingService.audit(auditModel)
+        
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(TaxYearOverviewViewModel(calculationResponse), taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
+        Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
         Logger("application").info("[InYearTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()

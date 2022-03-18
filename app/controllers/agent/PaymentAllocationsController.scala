@@ -59,7 +59,7 @@ class PaymentAllocationsController @Inject()(paymentAllocationView: PaymentAlloc
             case _ => itvcErrorHandler.showInternalServerError()
           }
         }
-      } else Future.failed(new NotFoundException("[PaymentAllocationsController] - PaymentAllocation is disabled"))
+      } else Future.successful(Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url))
   }
 
 }

@@ -167,6 +167,34 @@ income_breakdown.table.gains_insurance                          = Enillion ar bo
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
+## Forecast Income Summary Page ##
+forecast_income.heading                                        = Incwm rhagolwg
+forecast_income.table.header                                   = Math o incwm
+forecast_income.table.header.amount                            = Swm
+forecast_income.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
+forecast_income.total                                          = Cyfanswm incwm amcangyfrifedig
+forecast_income.employment                                     = cyflogaeth
+forecast_income.self_employment                                = hunangyflogaeth
+forecast_income.source_types.01                                = Elw o {0}
+forecast_income.source_types.02                                = Elw o dir ac eiddo yn y DU
+forecast_income.source_types.03                                = Elw o lety gwyliau yn yr AEE
+forecast_income.source_types.04                                = Elw o lety gwyliau wedi’i ddodrefnu yn y DU
+forecast_income.source_types.05                                = Cyflog o {0}
+forecast_income.source_types.06                                = Incwm o dramor
+forecast_income.source_types.07                                = Llog ar fenthyciad cymwys
+forecast_income.source_types.09                                = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
+forecast_income.source_types.10                                = Difidendau o gwmnïau yn y DU
+forecast_income.source_types.11                                = Incwm o fudd-daliadau’r Wladwriaeth
+forecast_income.source_types.12                                = Enillion ar bolisïau yswiriant bywyd
+forecast_income.source_types.13                                = Cynlluniau cyfranddaliadau
+forecast_income.source_types.15                                = Elw o eiddo tramor
+forecast_income.source_types.16                                = Llog o dramor
+forecast_income.source_types.17                                = Difidendau eraill
+forecast_income.source_types.18                                = Gwarantau’r DU
+forecast_income.source_types.19                                = Incwm arall
+forecast_income.source_types.20                                = Pensiynau tramor
+forecast_income.source_types.98                                = Rhodd Cymorth a Rhoi Trwy’r Gyflogres
+
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
@@ -182,6 +210,7 @@ deduction_breakdown.table.post_cessasation_trade_receipts              = Derbyne
 deduction_breakdown.table.trade_union_payments                         = Taliadau Undeb Llafur
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 deduction_breakdown.table.header.amount                                = Swm
+deduction_breakdown.table.header                                       = Math o lwfans neu ddidyniad
 
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth

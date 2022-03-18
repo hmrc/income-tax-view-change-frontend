@@ -562,6 +562,24 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def testFinancialDetailsModelWithPayeSACodingOut(): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+      codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 0, taxYearCoding = "2020"))),
+      documentDetails = List(
+        DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
+          documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(12.34),
+          originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+          interestOutstandingAmount = None, interestRate = None,
+          latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+          interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+      ),
+      financialDetails = List(
+        FinancialDetail("2021", Some("SA Balancing Charge"), Some("CODINGOUT01"), Some("transactionDate"), Some("type"), Some(100), Some(100),
+          Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"))))),
+      )
+    )
+
   def testFinancialDetailsModelWithCancelledPayeSa(): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),

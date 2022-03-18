@@ -120,8 +120,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
 
         result should have(
-          httpStatus(NOT_FOUND),
-          pageTitleAgent(titleNotFound)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
         )
       }
     }

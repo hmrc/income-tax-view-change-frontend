@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.mocks.MockAuditingService
 import config.AgentItvcErrorHandler
-import config.featureswitch.{ChargeHistory, FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService}
 import mocks.views.MockChargeSummary
@@ -150,6 +150,60 @@ class ChargeSummaryControllerSpec extends TestSupport
           mockSingleBusinessIncomeSource()
 
           val result = chargeSummaryController.showChargeSummary(currentYear, id1040000124)
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/custom-not-found")
+
+        }
+      }
+      "the model contains Class 2 Nics but FS is disabled" should {
+        "redirect to custom error page " in new Setup() {
+          disable(CodingOut)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          mockGetAllFinancialDetails(List((currentYear, testFinancialDetailsModelWithCodingOut())))
+
+          mockSingleBusinessIncomeSource()
+
+          val result = chargeSummaryController.showChargeSummary(currentYear, "CODINGOUT01")
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/custom-not-found")
+
+        }
+      }
+      "the model contains PAYE SA but FS is disabled" should {
+        "redirect to custom error page " in new Setup() {
+          disable(CodingOut)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          mockGetAllFinancialDetails(List((currentYear, testFinancialDetailsModelWithPayeSACodingOut())))
+
+          mockSingleBusinessIncomeSource()
+
+          val result = chargeSummaryController.showChargeSummary(currentYear, "CODINGOUT01")
+            .apply(fakeRequestConfirmedClient("AB123456C"))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/custom-not-found")
+
+        }
+      }
+      "the model contains Cancelled PAYE but FS is disabled" should {
+        "redirect to custom error page " in new Setup() {
+          disable(CodingOut)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          mockGetAllFinancialDetails(List((currentYear, testFinancialDetailsModelWithCancelledPayeSa())))
+
+          mockSingleBusinessIncomeSource()
+
+          val result = chargeSummaryController.showChargeSummary(currentYear, "CODINGOUT01")
             .apply(fakeRequestConfirmedClient("AB123456C"))
 
           status(result) shouldBe SEE_OTHER

@@ -18,29 +18,36 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
-import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{BtaNavFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
+import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockCalculationService
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testTaxYear}
 import testUtils.TestSupport
 
+import scala.concurrent.Future
+
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with FeatureSwitching with MockAuditingService {
+  with MockAuthenticationPredicate with FeatureSwitching with MockAuditingService with MockItvcErrorHandler {
+
+  val testYear: Int = 2020
 
   object TestDeductionsSummaryController extends DeductionsSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
+    mockAuthService,
     app.injector.instanceOf[NinoPredicate],
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     mockAuditingService,
     app.injector.instanceOf[views.html.DeductionBreakdown],
     app.injector.instanceOf[BtaNavFromNinoPredicate],
-    app.injector.instanceOf[ItvcErrorHandler]
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[AgentItvcErrorHandler]
   )(
     appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
@@ -87,6 +94,42 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         mockCalculationNotFoundNew(testMtditid)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+    }
+  }
+
+  "showDeductionsSummaryAgent" when {
+    "render the Allowances and Deductions page with full calc data" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockCalculationSuccessFullNew(taxYear = testYear)
+
+      val result: Future[Result] = TestDeductionsSummaryController.showDeductionsSummaryAgent(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
+      val document = result.toHtmlDocument
+
+      status(result) shouldBe Status.OK
+      document.title() shouldBe "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+      document.getElementById("total-value").text() shouldBe "£17,500.99"
+    }
+
+    "render the Allowances and Deductions page with no calc data" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockCalculationSuccessMinimalNew(taxYear = testYear)
+
+      val result: Future[Result] = TestDeductionsSummaryController.showDeductionsSummaryAgent(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
+      val document = result.toHtmlDocument
+
+      status(result) shouldBe Status.OK
+      document.title() shouldBe "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+      document.getElementById("total-value").text() shouldBe "£0.00"
+    }
+
+    "render error page when NOT_FOUND is returned from calc" in {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      mockCalculationNotFoundNew(year = testYear)
+      mockShowInternalServerError()
+
+      val result: Future[Result] = TestDeductionsSummaryController.showDeductionsSummaryAgent(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }
 }

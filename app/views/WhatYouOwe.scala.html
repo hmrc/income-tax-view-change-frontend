@@ -339,7 +339,9 @@
                     <div id="coding-out-wrapper">
                         @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codedOutDocumentDetail))))
                     <div>
-                }
+                } @if(chargesList.isChargesListEmpty) {
+                        @saNoteParagraph
+                        }
             }
 
         </div>

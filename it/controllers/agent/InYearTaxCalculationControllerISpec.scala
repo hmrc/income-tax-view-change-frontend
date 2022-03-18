@@ -106,14 +106,14 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val insetText = "#main-content > div > div > div > p"
 
-    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
-    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td.govuk-table__cell.govuk-table__cell--numeric"
+    val incomeRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
+    val incomeRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td.govuk-table__cell.govuk-table__cell--numeric"
 
-    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
-    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td.govuk-table__cell.govuk-table__cell--numeric"
+    val allowanceRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
+    val allowanceRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td.govuk-table__cell.govuk-table__cell--numeric"
 
-    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
-    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td.govuk-table__cell.govuk-table__cell--numeric"
+    val taxIsDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
+    val taxIsDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td.govuk-table__cell.govuk-table__cell--numeric"
 
     val continueButton = "#continue-button"
   }

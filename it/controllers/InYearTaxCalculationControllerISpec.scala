@@ -18,7 +18,7 @@ package controllers
 
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuthStub.mockImplicitDateFormatter.{longDate, toTaxYearEndDate}
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.liabilitycalculation.LiabilityCalculationError
 import org.jsoup.Jsoup
@@ -85,14 +85,14 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val insetText = "#main-content > div > div > div > p"
 
-    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
-    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td.govuk-table__cell.govuk-table__cell--numeric"
+    val incomeRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
+    val incomeRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td.govuk-table__cell.govuk-table__cell--numeric"
 
-    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
-    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td.govuk-table__cell.govuk-table__cell--numeric"
+    val allowanceRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
+    val allowanceRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td.govuk-table__cell.govuk-table__cell--numeric"
 
-    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
-    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td.govuk-table__cell.govuk-table__cell--numeric"
+    val taxIsDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
+    val taxIsDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td.govuk-table__cell.govuk-table__cell--numeric"
 
     val continueButton = "#continue-button"
   }
@@ -157,6 +157,11 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
       lazy val document: Document = Jsoup.parse(result.body)
 
+      "have made an audit request" in {
+        result
+        AuditStub.verifyAudit()
+      }
+      
       "have a status of OK (200)" in {
         result.status shouldBe OK
       }
@@ -248,6 +253,11 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
       lazy val document: Document = Jsoup.parse(result.body)
 
+      "have made an audit request" in {
+        result
+        AuditStub.verifyAudit()
+      }
+
       "have a status of OK (200)" in {
         result.status shouldBe OK
       }
@@ -324,6 +334,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
         }
       }
     }
+    
     "show an error page" when {
       "there is no calc data model" which {
         lazy val result = {
