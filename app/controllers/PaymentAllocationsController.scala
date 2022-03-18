@@ -91,7 +91,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         if (isEnabled(PaymentAllocation)) {
           getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
             handleRequest(
-              controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+              controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
               itcvErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
               redirectUrl = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url,
