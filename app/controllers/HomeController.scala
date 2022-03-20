@@ -17,21 +17,24 @@
 package controllers
 
 import java.time.LocalDate
-
 import audit.AuditingService
 import audit.models.HomeAudit
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.featureswitch._
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+
 import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{FinancialDetailsService, NextUpdatesService, WhatYouOweService}
+import services.{FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.CurrentDateProvider
 
@@ -41,10 +44,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class HomeController @Inject()(val homeView: views.html.Home,
                                val checkSessionTimeout: SessionTimeoutPredicate,
                                val authenticate: AuthenticationPredicate,
+                               val authorisedFunctions: AuthorisedFunctions,
                                val retrieveNino: NinoPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                val nextUpdatesService: NextUpdatesService,
                                val itvcErrorHandler: ItvcErrorHandler,
+                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
                                val currentDateProvider: CurrentDateProvider,
                                val whatYouOweService: WhatYouOweService,
@@ -52,7 +58,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                mcc: MessagesControllerComponents,
-                               val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                               val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
                    overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean = false)
@@ -71,8 +77,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
     )
   }
 
-  val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
+  def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int)
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
       nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
 
@@ -113,7 +119,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
               Some(overDuePaymentsCount),
               Some(overDueUpdatesCount),
               dunningLockExistsValue.isDefined,
-              user.incomeSources.getCurrentTaxEndYear
+              incomeSourceCurrentTaxYear,
+              isAgent = isAgent
             )
           )
         }
@@ -123,5 +130,28 @@ class HomeController @Inject()(val homeView: views.html.Home,
           Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
           itvcErrorHandler.showInternalServerError()
       }
+  }
+
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleShowRequest(
+        itvcErrorHandler = itvcErrorHandler,
+        isAgent = false,
+        user.incomeSources.getCurrentTaxEndYear
+      )
+  }
+
+  def showAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit agent =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+          implicit mtdItUser =>
+            handleShowRequest(
+              itvcErrorHandler = itvcErrorHandlerAgent,
+              isAgent = true,
+              mtdItUser.incomeSources.getCurrentTaxEndYear
+            )
+        }
   }
 }

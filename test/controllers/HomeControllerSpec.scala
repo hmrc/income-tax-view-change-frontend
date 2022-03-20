@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails._
@@ -32,8 +32,8 @@ import play.api.test.Helpers._
 import services.{FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import testConstants.MessagesLookUp
 import utils.CurrentDateProvider
-import java.time.{LocalDate, Month}
 
+import java.time.{LocalDate, Month}
 import scala.concurrent.Future
 
 class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with BeforeAndAfterEach {
@@ -60,10 +60,13 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       app.injector.instanceOf[views.html.Home],
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
+      mockAuthService,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       NextUpdatesService,
       app.injector.instanceOf[ItvcErrorHandler],
+      app.injector.instanceOf[AgentItvcErrorHandler],
+      mockIncomeSourceDetailsService,
       financialDetailsService,
       currentDateProvider,
       whatYouOweService,
@@ -93,7 +96,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
-        val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -109,7 +112,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
 
-        val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -146,7 +149,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
-        val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -192,7 +195,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
-        val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -210,7 +213,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
-          val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+          val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -227,7 +230,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
-          val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+          val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -250,7 +253,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
-          val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+          val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -275,7 +278,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
-        val result: Future[Result] = controller.home(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
