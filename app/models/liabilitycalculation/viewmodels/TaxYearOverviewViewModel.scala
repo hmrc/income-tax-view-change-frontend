@@ -23,7 +23,9 @@ case class TaxYearOverviewViewModel(timestamp: Option[String],
                                     taxDue: BigDecimal,
                                     income: Int,
                                     deductions: BigDecimal,
-                                    totalTaxableIncome: Int)
+                                    totalTaxableIncome: Int,
+                                    forecastIncome: Option[Int],
+                                    forecastIncomeTaxAndNics: Option[BigDecimal])
 
 object TaxYearOverviewViewModel {
   def apply(calc: LiabilityCalculationResponse): TaxYearOverviewViewModel = {
@@ -33,7 +35,9 @@ object TaxYearOverviewViewModel {
       taxDue = calc.calculation.flatMap(c => c.taxCalculation.map(_.totalIncomeTaxAndNicsDue)).getOrElse(0.00),
       income = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalIncomeReceivedFromAllSources)).getOrElse(0),
       deductions = calc.calculation.flatMap(c => c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesDeductionsReliefs)).getOrElse(0.00),
-      totalTaxableIncome = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0)
+      totalTaxableIncome = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0),
+      forecastIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalEstimatedIncome)),
+      forecastIncomeTaxAndNics = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
     )
   }
 }

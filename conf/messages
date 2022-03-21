@@ -155,6 +155,7 @@ tax-year-overview.payments.class2Nic.text                           = Class 2 Na
 tax-year-overview.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
 tax-year-overview.na                                                = N/A
 tax-year-overview.paye-tax-code                                     = PAYE tax code
+tax-year-overview.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
 
 
 

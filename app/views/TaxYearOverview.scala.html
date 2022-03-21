@@ -33,6 +33,7 @@
         h2: h2,
         h3: h3,
         p: p,
+        link: link,
         govukInsetText: GovukInsetText,
         govukTable : GovukTable
 )
@@ -72,6 +73,14 @@
         controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
     } else {
         controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
+    }
+}
+
+@getForecastSummaryHref(taxYear: Int, isAgent: Boolean) = @{
+    if(isAgent){
+        controllers.routes.ForecastIncomeSummaryController.showAgent(taxYear).url
+    } else {
+        controllers.routes.ForecastIncomeSummaryController.show(taxYear).url
     }
 }
 
@@ -184,35 +193,26 @@
     @govukTable(Table(
         rows = Seq(
             Seq(
-                TableRow(
-                content = Text("First 6 weeks")
-                ),
-                TableRow(
-                content = Text("£109.80 per week")
-                )
+                TableRow(content = HtmlContent(link(link=getForecastSummaryHref(taxYear, isAgent), messageKey="tax-year-overview.income"))),
+                TableRow(content = Text(overviewOpt.map(overview => overview.forecastIncome).getOrElse("0").toString), format = Some("numeric")),
             ),
             Seq(
-                TableRow(
-                content = Text("Next 33 weeks")
-                ),
-                TableRow(
-                content = Text("£109.80 per week")
-                )
+                TableRow(content = Text(messages("tax-year-overview.taxable-income"))),
+                TableRow(content = Text(overviewOpt.map(overview => overview.forecastIncome).getOrElse("0").toString), format = Some("numeric"))
+            ),
+            Seq(
+                TableRow(content = HtmlContent(link(link=getForecastSummaryHref(taxYear, isAgent), messageKey="tax-year-overview.tax-due"))),
+                TableRow(content = Text(overviewOpt.map(overview => overview.forecastIncomeTaxAndNics).getOrElse("0").toString), format = Some("numeric"))
             )
-
         ),
         head = Some(Seq(
-        HeadCell(
-        content = Text("Section")
-        ),
-        HeadCell(
-        content = Text("Amount")
-        )
+            HeadCell(content = Text("Section")),
+            HeadCell(content = Text("Amount"), format = Some("numeric"))
         )),
         caption = Some("Forecast amount"),
-        captionClasses = "govuk-table__caption--m",
-        firstCellIsHeader = true
-        ))
+        captionClasses = "govuk-table__caption--m"
+    ))
+    @govukInsetText(InsetText(content = Text(messages("tax-year-overview.forecast_tab.insetText", taxYear.toString))))
 }
 
 @mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = user.btaNavPartial) {
