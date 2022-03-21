@@ -138,7 +138,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(0.00, 2.00, 2.00),
-            futurePayments = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates
+            chargesList = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates()
           )
         }
       }
@@ -152,7 +152,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-            overduePaymentList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates
+            chargesList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates()
           )
         }
       }
@@ -188,11 +188,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-            overduePaymentList = List(DocumentDetailWithDueDate(
+            chargesList = List(DocumentDetailWithDueDate(
               DocumentDetail(currentYear, "1040000124", Some("ITSA - POA 2"), Some("documentText"), Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
                 Some(LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot")),
-              Some(LocalDate.now().minusDays(1)))))
+              Some(LocalDate.of(2018, 3, 29)), true)))
         }
       }
 
@@ -233,10 +233,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
-              DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")))),
-            dueInThirtyDaysList = List(),
-            futurePayments = List(),
+            chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")), codingOutEnabled = true),
+              DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")), codingOutEnabled = true)),
             outstandingChargesModel = None,
             codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(dd3, cd1))
           )
@@ -279,10 +277,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-            overduePaymentList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
+            chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
               DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")))),
-            dueInThirtyDaysList = List(),
-            futurePayments = List(),
             outstandingChargesModel = None,
             codedOutDocumentDetail = None
           )

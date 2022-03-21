@@ -97,25 +97,27 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
     chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
       case Right(chargeHistory) =>
-                if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isClass2Nic.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)) {
-                  Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Coding Out is disabled and redirected to not found page")
-                  Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
-                } else {
-                        auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
-                        Ok(chargeSummaryView(
-                          documentDetailWithDueDate = documentDetailWithDueDate,
-                          backUrl = backUrl(backLocation, taxYear),
-                          paymentBreakdown = paymentBreakdown,
-                          chargeHistory = chargeHistory,
-                          paymentAllocations = paymentAllocations,
-                          payments = payments,
-                          chargeHistoryEnabled = isEnabled(ChargeHistory),
-                          paymentAllocationEnabled = paymentAllocationEnabled,
-                          latePaymentInterestCharge = isLatePaymentCharge,
-                          codingOutEnabled = isEnabled(CodingOut),
-                          btaNavPartial = user.btaNavPartial
-                        ))
-                }
+        if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)
+          || documentDetailWithDueDate.documentDetail.isClass2Nic.equals(true) && !isEnabled(CodingOut)
+          || documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)) {
+          Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Coding Out is disabled and redirected to not found page")
+          Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        } else {
+          auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
+          Ok(chargeSummaryView(
+            documentDetailWithDueDate = documentDetailWithDueDate,
+            backUrl = backUrl(backLocation, taxYear),
+            paymentBreakdown = paymentBreakdown,
+            chargeHistory = chargeHistory,
+            paymentAllocations = paymentAllocations,
+            payments = payments,
+            chargeHistoryEnabled = isEnabled(ChargeHistory),
+            paymentAllocationEnabled = paymentAllocationEnabled,
+            latePaymentInterestCharge = isLatePaymentCharge,
+            codingOutEnabled = isEnabled(CodingOut),
+            btaNavPartial = user.btaNavPartial
+          ))
+        }
       case _ =>
         Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
         itvcErrorHandler.showInternalServerError()
@@ -134,21 +136,20 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
     }
   }
 
-  private def auditChargeSummary(id: String, financialDetailsModel: FinancialDetailsModel,
+  private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
 
-      val documentDetailWithDueDate: DocumentDetailWithDueDate = financialDetailsModel.findDocumentDetailByIdWithDueDate(id).get
-      auditingService.extendedAudit(ChargeSummaryAudit(
-        mtdItUser = user,
-        docDateDetail = documentDetailWithDueDate,
-        paymentBreakdown = paymentBreakdown,
-        chargeHistories = chargeHistories,
-        paymentAllocations = paymentAllocations,
-        None,
-        isLatePaymentCharge = isLatePaymentCharge
-      ))
+    auditingService.extendedAudit(ChargeSummaryAudit(
+      mtdItUser = user,
+      docDateDetail = documentDetailWithDueDate,
+      paymentBreakdown = paymentBreakdown,
+      chargeHistories = chargeHistories,
+      paymentAllocations = paymentAllocations,
+      None,
+      isLatePaymentCharge = isLatePaymentCharge
+    ))
   }
 
   private def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
