@@ -106,7 +106,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
@@ -140,7 +140,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -179,7 +179,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
@@ -204,7 +204,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,

@@ -487,7 +487,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         "has only a Gift Aid line with the correct heading and table" in new Setup(viewAdChGiftAid) {
           pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
-          println("giftaid row:" + row)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.GiftAid
           row.select("td").last().text() shouldBe "£5,000.00"
         }

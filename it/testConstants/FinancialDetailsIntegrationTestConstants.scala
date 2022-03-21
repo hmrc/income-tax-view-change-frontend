@@ -154,15 +154,17 @@ object FinancialDetailsIntegrationTestConstants {
                                 paymentLotItem: Option[String],
                                 paymentId: Option[String],
                                 outstandingAmount: List[Option[BigDecimal]],
-                                taxYear: String): FinancialDetailsModel =
+                                taxYear: String,
+                                latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
+                               ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
       None,
       documentDetails = List(
         DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
-          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot")),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(0), Some(100), Some("paymentLotItem"), Some("paymentLot")),
         DocumentDetail(taxYear, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), Some(12.34), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId2"),
-          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"))
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(1), Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
@@ -276,7 +278,8 @@ object FinancialDetailsIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem"),
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(2000), Some(2000)),
-    taxYear = LocalDate.now().getYear.toString
+    taxYear = LocalDate.now().getYear.toString,
+    latePaymentInterestAmount = List(None, None)
   )
 
   def financialDetailsOverdueData(dunningLock: List[String] = noDunningLock, interestLock: List[String] = noInterestLock): FinancialDetailsModel = testFinancialDetailsModel(
@@ -389,59 +392,67 @@ object FinancialDetailsIntegrationTestConstants {
 
   val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
+    chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021","1040000123",
+      Some("TRM New Charge"),None,Some(2000),Some(2000), LocalDate.parse("2018-03-29"), Some(80),None,None,Some(LocalDate.parse("2018-03-29")),
+      Some(LocalDate.parse("2018-03-29")),Some(100),None,None,None),Some(LocalDate.parse("2018-03-29")),true,false,false),
+      DocumentDetailWithDueDate(DocumentDetail("2021","1040000124",Some("ITSA- POA 1"),None,Some(2000),Some(2000),LocalDate.parse("2018-03-29"),
+        None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2022-03-21")),false,false,false),
+      DocumentDetailWithDueDate(DocumentDetail("2021","1040000125",Some("ITSA - POA 2"),None,Some(2000),Some(2000),LocalDate.parse("2018-03-29"),
+        None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2022-03-21")),false,false,false))
+  ,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
+    chargesList = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
   val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates,
+    chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataFullData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates,
+    chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataFullDataWithoutOutstandingCharges(overduePaymentsDunningLocks: List[String] = noDunningLock): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = financialDetailsOverdueData(overduePaymentsDunningLocks).getAllDocumentDetailsWithDueDates
+    chargesList = financialDetailsOverdueData(overduePaymentsDunningLocks).getAllDocumentDetailsWithDueDates()
   )
 
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates(1)),
-    dueInThirtyDaysList = List(),
-    futurePayments = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates.head),
+    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1))
+      ++ List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    overduePaymentList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates(1)),
-    dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
-    futurePayments = List(),
+    chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(1))
+      ++ List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweWithAZeroOutstandingAmount: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    dueInThirtyDaysList = List(financialDetailsDueIn30DaysWithAZeroOutstandingAmount.getAllDocumentDetailsWithDueDates.head),
+    chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021","transId1",Some("ITSA- POA 1"),None,Some(1000),Some(3400),
+      LocalDate.parse("2018-03-29"),None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2018-02-14")),false,false,false),
+      DocumentDetailWithDueDate(DocumentDetail("2021","transId2",Some("ITSA- POA 1"),None,Some(100),Some(1000),LocalDate.parse("2018-03-29"),
+        None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2022-03-22")),false,false,false)),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     outstandingChargesModel = Some(outstandingChargesOverdueData))
 
-  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00), List.empty, List.empty, List.empty)
+  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00), List.empty)
 
   val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
     outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))

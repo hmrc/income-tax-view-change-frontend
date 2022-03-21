@@ -50,9 +50,10 @@ case class DocumentDetail(taxYear: String,
     case _ => true
   }
 
-  def latePaymentInterestAmountIsNotZero: Boolean = latePaymentInterestAmount match {
-    case Some(amount) if amount == 0 => false
-    case _ => true
+  def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
+    case Some(amount) if amount <= 0 => false
+    case Some(_) => true
+    case _ => false
   }
 
   def isPaid: Boolean = outstandingAmount match {
@@ -85,13 +86,18 @@ case class DocumentDetail(taxYear: String,
     else outstandingAmount.getOrElse(originalAmount.get)
   }
 
+  def remainingToPayByChargeOrLpi: BigDecimal = {
+    if (isLatePaymentInterest) interestRemainingToPay
+    else remainingToPay
+  }
+
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (latePaymentInterestAmount.isDefined) interestRemainingToPay > 0
+    if (isLatePaymentInterest) interestRemainingToPay > 0
     else remainingToPay > 0
   }
 
@@ -146,7 +152,6 @@ case class DocumentDetail(taxYear: String,
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false, codingOutEnabled: Boolean = false) {
   val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
-  val currentDueDate: Option[LocalDate] = if (documentDetail.latePaymentInterestAmount.isDefined) documentDetail.interestEndDate else dueDate
 }
 
 object DocumentDetail {
