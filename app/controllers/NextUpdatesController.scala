@@ -26,12 +26,11 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicateNoCache, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates.ObligationsModel
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.{NextUpdates, NoNextUpdates}
 
 @Singleton
@@ -66,8 +65,6 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   val getNextUpdatesAgent: Action[AnyContent] = Authenticated.async { implicit request =>
 
     implicit user =>
-      println(s"${implicitly[HeaderCarrier]}")
-//      println(s"${implicitly[MtdItUser[AnyContentAsText]}")
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
         mtdItUser =>
           nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {

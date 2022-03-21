@@ -23,7 +23,7 @@ import testConstants.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMe
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import mocks.auth.MockFrontendAuthorisedFunctions
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{ItvcErrorHandler}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
@@ -43,13 +43,13 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgent
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.{NextUpdates, NoNextUpdates}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Future}
 
 class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsService {
 
-  trait Setup {
+  trait AgentTestsSetup {
     val controller = new controllers.NextUpdatesController(
       app.injector.instanceOf[NoNextUpdates],
       app.injector.instanceOf[NextUpdates],
@@ -57,14 +57,13 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicateNoCache,
-      mockIncomeSourceDetailsService, //app.injector.instanceOf[services.IncomeSourceDetailsService],
+      mockIncomeSourceDetailsService,
       app.injector.instanceOf[AuditingService],
       mockNextUpdatesService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[BtaNavBarPredicate],
       appConfig,
       mockAuthService,
-//      app.injector.instanceOf[FrontendAuthorisedFunctions],
     )(
       app.injector.instanceOf[MessagesControllerComponents],
       mockItvcErrorHandler,
@@ -110,6 +109,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     when(NextUpdatesService.getNextUpdates(matches(true))(any(), any()))
       .thenReturn(Future.successful(ObligationsModel(Seq())))
   }
+
   /* INDIVIDUAL **/
   "The NextUpdatesController.getNextUpdates function" when {
 
@@ -308,7 +308,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   "The NextUpdatesController.getNextUpdatesAgent function" when {
 
     "the user is not authenticated" should {
-      "redirect them to sign in" in new Setup {
+      "redirect them to sign in" in new AgentTestsSetup {
         setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestWithActiveSession)
@@ -318,7 +318,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       }
     }
     "the user has timed out" should {
-      "redirect to the session timeout page" in new Setup {
+      "redirect to the session timeout page" in new AgentTestsSetup {
         setupMockAgentAuthorisationException(exception = BearerTokenExpired())
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestWithClientDetails)
@@ -328,7 +328,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       }
     }
     "the user does not have an agent reference number" should {
-      "return Ok with technical difficulties" in new Setup {
+      "return Ok with technical difficulties" in new AgentTestsSetup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
@@ -340,7 +340,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     }
 
     "the user has all correct details" should {
-      "return Status OK (200) when we have obligations" in new Setup {
+      "return Status OK (200) when we have obligations" in new AgentTestsSetup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSourceWithDeadlines
         mockSingleBusinessIncomeSource()
@@ -352,7 +352,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some(HTML)
       }
-      "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in new Setup {
+      "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in new AgentTestsSetup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockNoObligations
@@ -365,5 +365,4 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       }
     }
   }
-
 }
