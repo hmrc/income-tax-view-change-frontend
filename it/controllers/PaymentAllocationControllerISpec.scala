@@ -68,10 +68,10 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
-        Then(s"A not found page is returned to the user")
+        Then(s"The custom not found page is returned to the user")
         result should have(
-          httpStatus(NOT_FOUND),
-          pageTitleIndividual(titleNotFound)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         )
       }
     }

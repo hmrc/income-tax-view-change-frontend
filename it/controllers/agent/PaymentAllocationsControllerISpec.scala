@@ -84,7 +84,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
   )
 
 
-  s"GET ${controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(docNumber).url}" should {
+  s"GET ${controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(docNumber).url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
