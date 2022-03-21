@@ -17,14 +17,15 @@
 package controllers
 
 
+import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockPaymentAllocationsService
+import mocks.services.{MockIncomeSourceDetailsService, MockPaymentAllocationsService}
 import mocks.views.agent.MockPaymentAllocationView
 import models.core.Nino
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
@@ -34,7 +35,6 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.PaymentAllocationsService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.TestSupport
@@ -45,7 +45,8 @@ import scala.concurrent.Future
 
 class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching with MockFrontendAuthorisedFunctions
-  with MockItvcErrorHandler with MockPaymentAllocationsService with MockPaymentAllocationView with TestSupport {
+  with MockItvcErrorHandler with MockPaymentAllocationsService with MockPaymentAllocationView
+  with MockIncomeSourceDetailsService with MockAuditingService with TestSupport {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -59,8 +60,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
   trait Setup {
     val docNumber = "docNumber1"
 
-    val paymentAllocation: PaymentAllocationsService = mock[PaymentAllocationsService]
-
     val controller = new PaymentAllocationsController(
       app.injector.instanceOf[PaymentAllocation],
       app.injector.instanceOf[SessionTimeoutPredicate],
@@ -71,13 +70,12 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       mockIncomeSourceDetailsService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
-      paymentAllocation,
+      mockPaymentAllocationsService,
       app.injector.instanceOf[BtaNavBarPredicate],
       mockAuditingService
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
-      app.injector.instanceOf[FrontendAppConfig])
-
+      appConfig)
   }
 
   "The PaymentAllocationsControllerSpec.viewPaymentAllocation function" should {
@@ -87,7 +85,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Successfully retrieving a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
+        when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
@@ -98,7 +96,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Successfully retrieving a user's lpi payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
+        when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
@@ -109,7 +107,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       "Failing to retrieve a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
+        when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(Left(PaymentAllocationError())))
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
@@ -119,15 +117,15 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
     }
 
     "behave appropriately when the feature switch is off" when {
-      "trying to access payments allocation " in new Setup {
+      "trying to access payments allocation" in new Setup {
         disable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
-        when(paymentAllocation.getPaymentAllocation(Nino(any()), any())(any(), any()))
+        when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
           .thenReturn(Future.successful(successfulResponse))
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
-        status(result) shouldBe Status.NOT_FOUND
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
 
@@ -217,12 +215,11 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
 
-        status(result) shouldBe NOT_FOUND
+        status(result) shouldBe SEE_OTHER
       }
     }
 
-    // todo needs to be fixed
-   /* "the PaymentAllocation feature switch is enabled" should {
+    "the PaymentAllocation feature switch is enabled" should {
       "Successfully retrieve a user's payment allocation and display the page" in new Setup {
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -231,8 +228,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
-          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
-          isAgent = true
+          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
@@ -248,8 +244,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModelLpi,
-          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
-          isAgent = true
+          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
@@ -270,6 +265,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
-*/
+
   }
 }

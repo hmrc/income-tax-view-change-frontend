@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
 import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.PaymentAllocation
 
 import javax.inject.{Inject, Singleton}
@@ -53,22 +53,24 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val ec: ExecutionContext,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
+  private val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
+  private val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
+
   def handleRequest(backUrl: String,
-                    itcvErrorHandler: ShowInternalServerError,
+                    itvcErrorHandler: ShowInternalServerError,
                     documentNumber: String,
                     redirectUrl: String,
                     isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    if (isEnabled(PaymentAllocation)) {
-      paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
-        case Right(paymentAllocations) =>
-          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
-        case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
-          Redirect(redirectUrl)
-        case _ => itvcErrorHandler.showInternalServerError()
-      }
-    } else Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
+
+    paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
+      case Right(paymentAllocations) =>
+        auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
+      case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
+        Redirect(redirectUrl)
+      case _ => itvcErrorHandler.showInternalServerError()
+    }
   }
 
   def viewPaymentAllocation(documentNumber: String): Action[AnyContent] =
@@ -77,27 +79,28 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         if (isEnabled(PaymentAllocation)) {
           handleRequest(
             controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
-            itcvErrorHandler = itvcErrorHandler,
+            itvcErrorHandler = itvcErrorHandler,
             documentNumber = documentNumber,
-            redirectUrl = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url,
+            redirectUrl = redirectUrlIndividual,
             isAgent = false
           )
-        } else Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
+        } else Future.successful(Redirect(redirectUrlIndividual))
     }
 
-  def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] =
+  def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit agent =>
         if (isEnabled(PaymentAllocation)) {
           getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
             handleRequest(
               controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
-              itcvErrorHandler = itvcErrorHandlerAgent,
+              itvcErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
-              redirectUrl = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url,
+              redirectUrl = redirectUrlAgent,
               isAgent = true
-            )(mtdItUser, implicitly, implicitly, implicitly)
+            )
           }
-        } else Future.failed(new NotFoundException("[PaymentAllocationsController] - PaymentAllocation is disabled"))
+        } else Future.successful(Redirect(redirectUrlAgent))
     }
+  }
 }
