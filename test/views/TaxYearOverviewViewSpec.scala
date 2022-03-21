@@ -576,14 +576,14 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
         val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) td:nth-child(1) a")
         allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
-        allowancesLink.attr("href") shouldBe controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
+        allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(testYear).url
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
         val totalTaxDueLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
-        totalTaxDueLink.attr("href") shouldBe controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
+        totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(testYear).url
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
       }
 

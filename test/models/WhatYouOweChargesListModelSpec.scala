@@ -30,17 +30,17 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
   def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    dueInThirtyDaysList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates,
-    futurePayments = financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates,
-    overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates,
+    chargesList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates()
+      ++ financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates()
+      ++ financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingCharges)
   )
 
   def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-    dueInThirtyDaysList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates,
-    futurePayments = financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates,
-    overduePaymentList = financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates
+    chargesList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates()
+      ++ financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates()
+      ++ financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates()
   )
 
 

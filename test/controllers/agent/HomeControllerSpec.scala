@@ -81,6 +81,7 @@ class HomeControllerSpec extends TestSupport
     val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.false")
     val expectedOverDuePaymentsText = "OVERDUE 31 January 2019"
+    val expectedOverDuePaymentsTextForLpi = "OVERDUE 15 June 2018"
     val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
@@ -179,7 +180,7 @@ class HomeControllerSpec extends TestSupport
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe MessagesLookUp.HomePage.agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 15 May 2021"
+            document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 15 June 2018"
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
           }
           "display the home page with right details and without dunning lock warning and one overdue payment from CESA" in new Setup {
@@ -189,7 +190,7 @@ class HomeControllerSpec extends TestSupport
             when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
+              .thenReturn(Future.successful(List()))
             setupMockGetWhatYouOweChargesListWithOne()
 
             val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
@@ -239,15 +240,15 @@ class HomeControllerSpec extends TestSupport
             document.select("#payments-tile p:nth-child(2)").text shouldBe "3 OVERDUE PAYMENTS"
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
           }
-          "display the home page with right details and with dunning lock warning and one overdue payments from CESA" in new Setup {
+          "display the home page with right details and with dunning lock warning and one overdue payments" in new Setup {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order"), dueDateValue = None))))
-            setupMockGetWhatYouOweChargesListWithOne()
+              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
+            setupMockGetWhatYouOweChargesListEmpty()
 
             val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
@@ -255,18 +256,18 @@ class HomeControllerSpec extends TestSupport
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe MessagesLookUp.HomePage.agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+            document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsTextForLpi
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
           }
-          "display the home page with right details and without dunning lock warning and one overdue payments from CESA" in new Setup {
+          "display the home page with right details and without dunning lock warning and one overdue payments" in new Setup {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None, dueDateValue = None))))
-            setupMockGetWhatYouOweChargesListWithOne()
+              .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None))))
+            setupMockGetWhatYouOweChargesListEmpty()
 
             val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
@@ -274,7 +275,7 @@ class HomeControllerSpec extends TestSupport
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe MessagesLookUp.HomePage.agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+            document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsTextForLpi
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
           }
         }

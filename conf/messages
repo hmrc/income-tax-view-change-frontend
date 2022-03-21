@@ -186,6 +186,35 @@ income_breakdown.table.share_schemes                            = Share schemes
 income_breakdown.total                                          = Total income received
 income_breakdown.details                                        = You can see more details in your record-keeping software.
 
+## Forecast Income Summary Page ##
+forecast_income.heading                                        = Forecast income
+forecast_income.table.header                                   = Income type
+forecast_income.table.header.amount                            = Amount
+forecast_income.dates                                          = 6 April {0} to 5 April {1}
+forecast_income.total                                          = Total forecast income
+forecast_income.employment                                     = Employment
+forecast_income.self_employment                                = Self Employment
+forecast_income.source_types.01                                = Profit from {0}
+forecast_income.source_types.02                                = Profit from UK land and property
+forecast_income.source_types.03                                = Profit from EEA holiday property lettings
+forecast_income.source_types.04                                = Profit from UK furnished holiday lettings
+forecast_income.source_types.05                                = Pay from {0}
+forecast_income.source_types.06                                = Overseas income
+forecast_income.source_types.07                                = Dividends from overseas companies
+forecast_income.source_types.09                                = Interest from UK banks, building societies and securities
+forecast_income.source_types.10                                = Dividends from UK companies
+forecast_income.source_types.11                                = State benefit income
+forecast_income.source_types.12                                = Gains on life insurance policies
+forecast_income.source_types.13                                = Share schemes
+forecast_income.source_types.15                                = Profit from overseas property
+forecast_income.source_types.16                                = Interest from overseas
+forecast_income.source_types.17                                = Other Dividends
+forecast_income.source_types.18                                = UK Securities
+forecast_income.source_types.19                                = Other Income
+forecast_income.source_types.20                                = Overseas pension
+forecast_income.source_types.98                                = Gift Aid and Payroll Giving
+
+
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Allowances and deductions
 deduction_breakdown.table.header                                       = Allowance or deduction type
@@ -312,6 +341,25 @@ taxCal_breakdown.message.C22215                                 = Due to the lev
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
+
+## Forecast Tax Calc Summary ##
+forecast_taxCalc.heading                                        = Forecast tax calculation
+forecast_taxCalc.dates                                          = 6 April {0} to 5 April {1}
+forecast_taxCalc.totalEstimatedIncome                           = Total estimated income:
+forecast_taxCalc.totalTaxableIncome                             = Total taxable income of
+forecast_taxCalc.totalIncomeTax                                 = Total Income Tax:
+forecast_taxCalc.class4Nic                                      = Class 4 National Insurance:
+forecast_taxCalc.class2Nic                                      = Class 2 National Insurance:
+forecast_taxCalc.totalNics                                      = Total National Insurance contributions:
+forecast_taxCalc.totalDeductedBeforeCodingOut                   = Total tax deducted before Balancing payment collected through PAYE tax code:
+forecast_taxCalc.collectedThroughPAYE                           = Balancing payment collected through PAYE tax code:
+forecast_taxCalc.studentLoanRepayments                          = Student Loan repayments (including Post Graduate):
+forecast_taxCalc.annuityPayments                                = Tax due on annuity payments:
+forecast_taxCalc.royaltyPayments                                = Tax due on royalty payments:
+forecast_taxCalc.totalTaxDeducted                               = Total tax deducted:
+forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and National Insurance contributions due:
+forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
+forecast_taxCalc.incomeTaxNicsCgtDue                            = Income Tax, National Insurance contributions and Capital Gains Tax due:
 
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines

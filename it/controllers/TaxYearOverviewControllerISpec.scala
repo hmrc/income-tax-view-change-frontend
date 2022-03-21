@@ -486,7 +486,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates,
+          )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
           allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
       }
 

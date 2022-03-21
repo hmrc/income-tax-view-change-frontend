@@ -167,6 +167,34 @@ income_breakdown.table.gains_insurance                          = Enillion ar bo
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
+## Forecast Income Summary Page ##
+forecast_income.heading                                        = Incwm rhagolwg
+forecast_income.table.header                                   = Math o incwm
+forecast_income.table.header.amount                            = Swm
+forecast_income.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
+forecast_income.total                                          = Cyfanswm incwm amcangyfrifedig
+forecast_income.employment                                     = cyflogaeth
+forecast_income.self_employment                                = hunangyflogaeth
+forecast_income.source_types.01                                = Elw o {0}
+forecast_income.source_types.02                                = Elw o dir ac eiddo yn y DU
+forecast_income.source_types.03                                = Elw o lety gwyliau yn yr AEE
+forecast_income.source_types.04                                = Elw o lety gwyliau wedi’i ddodrefnu yn y DU
+forecast_income.source_types.05                                = Cyflog o {0}
+forecast_income.source_types.06                                = Incwm o dramor
+forecast_income.source_types.07                                = Llog ar fenthyciad cymwys
+forecast_income.source_types.09                                = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
+forecast_income.source_types.10                                = Difidendau o gwmnïau yn y DU
+forecast_income.source_types.11                                = Incwm o fudd-daliadau’r Wladwriaeth
+forecast_income.source_types.12                                = Enillion ar bolisïau yswiriant bywyd
+forecast_income.source_types.13                                = Cynlluniau cyfranddaliadau
+forecast_income.source_types.15                                = Elw o eiddo tramor
+forecast_income.source_types.16                                = Llog o dramor
+forecast_income.source_types.17                                = Difidendau eraill
+forecast_income.source_types.18                                = Gwarantau’r DU
+forecast_income.source_types.19                                = Incwm arall
+forecast_income.source_types.20                                = Pensiynau tramor
+forecast_income.source_types.98                                = Rhodd Cymorth a Rhoi Trwy’r Gyflogres
+
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
@@ -286,6 +314,25 @@ taxCal_breakdown.table.cgt.due                                  = Treth Enillion
 taxCal_breakdown.table.cgt.overpaid                             = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
 taxCal_breakdown.table.payeUnderpaymentsCodedOut                = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
 taxCal_breakdown.table.saUnderpaymentsCodedOut                  = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
+
+## Forecast Tax Calc Summary ##
+forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth
+forecast_taxCalc.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
+forecast_taxCalc.totalEstimatedIncome                           = Cyfanswm incwm amcangyfrifedig:
+forecast_taxCalc.totalTaxableIncome                             = Cyfanswm eich incwm trethadwy
+forecast_taxCalc.totalIncomeTax                                 = Swm y Dreth Incwm:
+forecast_taxCalc.class4Nic                                      = Yswiriant Gwladol Dosbarth 4:
+forecast_taxCalc.class2Nic                                      = Yswiriant Gwladol Dosbarth 2:
+forecast_taxCalc.totalNics                                      = Cyfanswm yr Yswiriant Gwladol:
+forecast_taxCalc.totalDeductedBeforeCodingOut                   = Total tax deducted before Balancing payment collected through PAYE tax code:
+forecast_taxCalc.collectedThroughPAYE                           = Taliad mantoli a gesglir drwy’r cod treth TWE:
+forecast_taxCalc.studentLoanRepayments                          = Cyfanswm yr ad-daliadau benthyciad myfyriwr:
+forecast_taxCalc.annuityPayments                                = Treth sy’n ddyledus ar daliadau Blwydd-daliadau:
+forecast_taxCalc.royaltyPayments                                = Treth sy’n ddyledus ar freindaliadau:
+forecast_taxCalc.totalTaxDeducted                               = Cyfanswm y dreth a ddidynnwyd:
+forecast_taxCalc.incomeTaxAndNicsDue                            = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus:
+forecast_taxCalc.capitalGainsTax                                = Treth Enillion Cyfalaf:
+forecast_taxCalc.incomeTaxNicsCgtDue                            = Treth Incwm, Yswiriant Gwladol a Threth Enillion Cyfalaf sy’n ddyledus:
 
 
 ## NextUpdates Page ##

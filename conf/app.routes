@@ -25,8 +25,12 @@ GET         /agents/calculation/:taxYear/income                           contro
 #Tax Due
 GET         /calculation/:taxYear/tax-due                                 controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
 
+#Agents Tax Due
+GET         /agents/calculation/:taxYear/tax-due                          controllers.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear: Int)
+
 #Deductions Summary
 GET         /calculation/:taxYear/deductions                              controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
+GET         /agents/calculation/:taxYear/deductions                       controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int)
 
 #TaxYears
 GET         /tax-years                                                    controllers.TaxYearsController.viewTaxYears
@@ -99,3 +103,11 @@ GET         /switch-to-english                                            contro
 
 #custom not found
 GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show
+
+#Forecast income summary
+GET         /calculation/:taxYear/income/forecast                         controllers.ForecastIncomeSummaryController.show(taxYear: Int)
+GET         /agents/calculation/:taxYear/income/forecast                  controllers.ForecastIncomeSummaryController.showAgent(taxYear: Int)
+
+#Forecast Tax Calc Summary
+GET         /calculation/:taxYear/tax-due/forecast                        controllers.ForecastTaxCalcSummaryController.show(taxYear: Int)
+GET         /agents/calculation/:taxYear/tax-due/forecast                 controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)

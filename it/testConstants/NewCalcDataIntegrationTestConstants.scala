@@ -24,7 +24,6 @@ object NewCalcDataIntegrationTestConstants {
     Json.fromJson[LiabilityCalculationResponse](Json.parse(json)) match {
       case JsSuccess(value, path) => value
       case _ =>
-        println("oculd not parse the json: " + json)
         throw new Exception("invalid json, parse error")
     }
   }

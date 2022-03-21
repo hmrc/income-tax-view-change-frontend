@@ -16,20 +16,18 @@
 
 package controllers
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import com.github.tomakehurst.wiremock.client.WireMock
 import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail}
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.Payment
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitching {

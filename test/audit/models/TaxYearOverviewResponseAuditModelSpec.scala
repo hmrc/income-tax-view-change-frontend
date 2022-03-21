@@ -26,7 +26,6 @@ import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.taxYear
-import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -39,8 +38,9 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
   val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(Some("2017-07-06T12:34:56.789Z"), Some(false), 2010.00, 199505, 500.00, 198500)
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
-    val dunningLock = if (hasDunningLock) Some("Stand over order") else None
-    financialDetailsModel(taxYear = 2020, dunningLock = dunningLock).getAllDocumentDetailsWithDueDates
+    List(DocumentDetailWithDueDate(DocumentDetail("2020", "1040000123", Some("ITSA- POA 1"), Some("documentText"), Some(1400.0), Some(1400.0), LocalDate.parse("2018-03-29"),
+      Some(80), Some(100), None, Some(LocalDate.parse("2018-03-29")), Some(LocalDate.parse("2018-06-15")),
+      Some(100), Some(100), None, None), Some(LocalDate.parse("2019-05-15")), true, hasDunningLock))
   }
 
 

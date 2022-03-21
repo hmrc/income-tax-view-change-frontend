@@ -64,9 +64,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
 
   lazy val messagesLookUp = new MessagesLookUp.Calculation(testTaxYear)
 
-  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
-    dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true),
-    fullDocumentDetailWithDueDateModel)
+  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel, fullDocumentDetailWithDueDateModel.copy(
+    dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true))
   val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
   val class2NicsChargesList: List[DocumentDetailWithDueDate] = List(documentDetailClass2Nic)
   val payeChargesList: List[DocumentDetailWithDueDate] = List(documentDetailPaye)

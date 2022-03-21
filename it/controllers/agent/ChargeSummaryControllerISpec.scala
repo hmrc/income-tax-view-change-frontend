@@ -16,14 +16,11 @@
 
 package controllers.agent
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
-import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuthStub.titleTechError
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
@@ -31,22 +28,16 @@ import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import java.time.LocalDate
-
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
+import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages.{lpiPoa1, poa1Title, saPayment}
+
+import java.time.LocalDate
 
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  val clientDetails: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
     PaymentsWithChargeType(
@@ -66,12 +57,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
-
-  val currentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
+  
 
   val currentYear: Int = LocalDate.now().getYear
   val testArn: String = "1"
@@ -90,7 +76,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        "2018", "1040000124", clientDetails
+        "2018", "1040000124", clientDetailsWithConfirmation
       )
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
@@ -112,7 +98,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -120,7 +106,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
@@ -146,7 +132,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -154,7 +140,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -178,7 +164,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -193,7 +179,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
@@ -210,7 +196,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment(
-        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -218,7 +204,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
           None, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
-        docDateDetailWithInterest(LocalDate.now().toString, "ITSA- POA 1"),
+        docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -234,10 +220,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
 
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      val header = s"Tax year 6 April ${currentTaxYearEnd.getYear - 1} to 5 April ${currentTaxYearEnd.getYear} Balancing payment collected through PAYE tax code"
+      val header = s"Tax year 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear} Balancing payment collected through PAYE tax code"
       val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-      val summaryMessage = s"This is the remaining tax you owe for the ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year."
-      val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${currentTaxYearEnd.getYear - 1} to ${currentTaxYearEnd.getYear} tax year £2,500.00"
+      val summaryMessage = s"This is the remaining tax you owe for the ${getCurrentTaxYearEnd.getYear - 1} to ${getCurrentTaxYearEnd.getYear} tax year."
+      val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${getCurrentTaxYearEnd.getYear - 1} to ${getCurrentTaxYearEnd.getYear} tax year £2,500.00"
 
       Given("the CodingOut feature switch is enabled")
       enable(CodingOut)
@@ -247,7 +233,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccessForCodingOut
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        currentTaxYearEnd.getYear.toString, "CODINGOUT01", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "CODINGOUT01", clientDetailsWithConfirmation
       )
 
       verifyIncomeSourceDetailsCall(testMtditid)
@@ -279,7 +265,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           |""".stripMargin))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -304,7 +290,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           |""".stripMargin))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        currentTaxYearEnd.getYear.toString, "testId", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -330,7 +316,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             |""".stripMargin))
 
         val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-          currentTaxYearEnd.getYear.toString, "testId", clientDetails
+          getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
         )
 
         result should have(
@@ -346,15 +332,15 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
                                              chargeType2: Option[String] = Some("ITSA NI"), isLatePaymentInterest: Boolean = false): Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
-      from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
-      to = currentTaxYearEnd.toString
+      from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+      to = getCurrentTaxYearEnd.toString
     )(
       status = OK,
       response = Json.toJson(FinancialDetailsModel(
         balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
         documentDetails = List(
           DocumentDetail(
-            taxYear = currentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = "testId",
             documentDescription = Some("ITSA- POA 1"),
             documentText = Some("documentText"),
@@ -369,7 +355,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         ),
         financialDetails = List(
           FinancialDetail(
-            taxYear = currentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("testId"),
             mainType = Some("SA Payment on Account 1"),
             chargeType = chargeType1,
@@ -378,7 +364,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               amount = Some(10000), clearingDate = Some("2019-08-13"), dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal"))))
           ),
           FinancialDetail(
-            taxYear = currentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("testId"),
             mainType = Some("SA Payment on Account 2"),
             chargeType = chargeType2,
@@ -395,14 +381,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   private def stubGetFinancialDetailsSuccessForCodingOut: Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
-      from = currentTaxYearEnd.minusYears(1).plusDays(1).toString,
-      to = currentTaxYearEnd.toString)(
+      from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+      to = getCurrentTaxYearEnd.toString)(
       status = OK,
       response = Json.toJson(FinancialDetailsModel(
         balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
         documentDetails = List(
           DocumentDetail(
-            taxYear = currentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = "CODINGOUT01",
             documentDescription = Some("TRM New Charge"),
             documentText = Some("PAYE Self Assessment"),
@@ -414,7 +400,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         ),
         financialDetails = List(
           FinancialDetail(
-            taxYear = currentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CODINGOUT01"),
             mainType = Some("SA Payment on Account 1"),
             chargeType = Some("ITSA NI"),
@@ -435,7 +421,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "regimeType" -> "ITSA",
       "chargeHistoryDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> currentTaxYearEnd.getYear.toString,
+          "taxYear" -> getCurrentTaxYearEnd.getYear.toString,
           "documentId" -> "testId",
           "documentDate" -> "2018-03-29",
           "documentDescription" -> "ITSA- POA 1",
@@ -449,7 +435,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getChargeSummary(
-          currentTaxYearEnd.getYear.toString, "testId", clientDetails
+          getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
         ))
     }
   }

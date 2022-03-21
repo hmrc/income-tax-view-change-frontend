@@ -2,21 +2,15 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
+import testConstants.BaseIntegrationTestConstants.clientDetailsWithoutConfirmation
 import testConstants.messages.AgentMessages.confirmClientDetails
 
 class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  val clientDetails = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientMTDID -> "XAIT000000000000"
-  )
 
   s"GET ${controllers.agent.routes.ConfirmClientUTRController.show().url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
@@ -64,7 +58,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
     s"return $OK with the confirm client utr page" in {
       stubAuthorisedAgentUser(authorised = true)
 
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetails)
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
 
       Then("The confirm client's utr page is returned to the user")
       result should have(
@@ -106,7 +100,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
     s"redirect ($SEE_OTHER) to the next page" in {
       stubAuthorisedAgentUser(authorised = true)
 
-      val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetails)
+      val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetailsWithoutConfirmation)
 
       Then("The user is redirected to the next page")
       result should have(

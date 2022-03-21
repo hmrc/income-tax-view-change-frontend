@@ -17,10 +17,11 @@
 package testConstants
 
 import BusinessDetailsIntegrationTestConstants._
-import PaymentHistoryTestConstraints.{getCurrentTaxYearEnd, oldBusiness1}
+import PaymentHistoryTestConstraints.oldBusiness1
 import PropertyDetailsIntegrationTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
 
 object IncomeSourceIntegrationTestConstants {
 
@@ -158,7 +159,9 @@ object IncomeSourceIntegrationTestConstants {
 
   def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
-                                         interestLocks: List[String] = noInterestLock): JsValue = Json.obj(
+                                         interestLocks: List[String] = noInterestLock,
+                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100)
+                                        ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
@@ -174,7 +177,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100.0,
+        "latePaymentInterestAmount" -> latePaymentInterestAmount,
         "interestOutstandingAmount" -> 80.0
       ),
       Json.obj(
@@ -258,7 +261,7 @@ object IncomeSourceIntegrationTestConstants {
 
   def testValidFinancialDetailsModelJsonAccruingInterest(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                          taxYear: String = "2018", dueDate: String = "2018-04-14",
-                                                         latePaymentInterestAmount: BigDecimal = 0): JsValue = Json.obj(
+                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(0)): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
     "documentDetails" -> Json.arr(
       Json.obj(
@@ -551,7 +554,8 @@ object IncomeSourceIntegrationTestConstants {
 
   def testAuditFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
                                          dueDate: String = "2018-04-14", dunningLock: List[String] = noDunningLock,
-                                         interestLocks: List[String] = noInterestLock, totalAmount: BigDecimal = 100): JsValue = Json.obj(
+                                         interestLocks: List[String] = noInterestLock, totalAmount: BigDecimal = 100,
+                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100.0)): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
@@ -567,7 +571,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29",
         "interestFromDate" -> "2018-04-14",
         "interestEndDate" -> "2019-01-01",
-        "latePaymentInterestAmount" -> 100.0,
+        "latePaymentInterestAmount" -> latePaymentInterestAmount,
         "interestOutstandingAmount" -> 80.0
       ),
       Json.obj(

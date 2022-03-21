@@ -4,35 +4,24 @@ package controllers.agent
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching}
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
-import testConstants.PaymentDueTestConstraints.getCurrentTaxYearEnd
+import testConstants.messages.WhatYouOweMessages.whatYouOwePageTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
+
 import java.time.LocalDate
 
-import testConstants.messages.WhatYouOweMessages.whatYouOwePageTitle
-
 class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  val clientDetails: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   val testArn: String = "1"
 
@@ -85,7 +74,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
         Then("The user is redirected to")
         result should have(
@@ -113,7 +102,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days).detail)
 
@@ -129,8 +118,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = true),
-        isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
-        isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
+        isElementVisibleById("due-0")(expectedValue = true),
+        isElementVisibleById("due-1")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -156,13 +145,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == currentTaxYearEnd.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -179,10 +168,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = true),
-        isElementVisibleById("over-due-type-0")(expectedValue = true),
-        isElementVisibleById("over-due-type-1")(expectedValue = true),
-        isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
-        isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+        isElementVisibleById("due-0")(expectedValue = true),
+        isElementVisibleById("due-1")(expectedValue = true),
+        isElementVisibleById("charge-interest-0")(expectedValue = false),
+        isElementVisibleById("charge-interest-1")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
@@ -202,7 +191,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val mixedJson = Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId1"),
           documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId2"),
           documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, "ITSA - POA 2", transactionId = "transId3")
         ),
@@ -219,7 +208,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(
         OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount).detail)
 
@@ -235,11 +224,11 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = true),
-        isElementVisibleById("over-due-type-0")(expectedValue = true),
-        isElementVisibleById("over-due-type-1")(expectedValue = false),
-        isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
-        isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
-        isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
+        isElementVisibleById("due-0")(expectedValue = true),
+        isElementVisibleById("due-1")(expectedValue = true),
+        isElementVisibleById("charge-interest-0")(expectedValue = false),
+        isElementVisibleById("charge-interest-1")(expectedValue = false),
+        isElementVisibleById("due-2")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
@@ -265,7 +254,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(
         INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
@@ -293,7 +282,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(
         OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
@@ -322,7 +311,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(
         INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
@@ -351,7 +340,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
     When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
-    val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+    val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
     AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
@@ -371,10 +360,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("payment-details-content-0")(expectedValue = true),
       isElementVisibleById("payment-details-content-1")(expectedValue = true),
       isElementVisibleById("payments-due")(expectedValue = true),
-      isElementVisibleById("over-due-type-0")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-0")(expectedValue = true),
-      isElementVisibleById("over-due-type-1")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-1")(expectedValue = true),
+      isElementVisibleById("due-0")(expectedValue = true),
+      isElementVisibleById("charge-interest-0")(expectedValue = true),
+      isElementVisibleById("due-1")(expectedValue = true),
+      isElementVisibleById("charge-interest-1")(expectedValue = true),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
       isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
@@ -391,13 +380,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     And("I wiremock stub a multiple financial details response")
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, 55.50))
+      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, Some(55.50)))
     IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
       "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 
     When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
-    val res = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+    val res = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
     AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
@@ -417,10 +406,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("payment-details-content-0")(expectedValue = true),
       isElementVisibleById("payment-details-content-1")(expectedValue = true),
       isElementVisibleById("payments-due")(expectedValue = true),
-      isElementVisibleById("over-due-type-0")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
-      isElementVisibleById("over-due-type-1")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+      isElementVisibleById("due-0")(expectedValue = true),
+      isElementVisibleById("charge-interest-0")(expectedValue = false),
+      isElementVisibleById("due-1")(expectedValue = true),
+      isElementVisibleById("charge-interest-1")(expectedValue = false),
       isElementVisibleById("future-payments-heading")(expectedValue = false),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -446,13 +435,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -484,13 +473,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -501,8 +490,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
 
-        elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
-        elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")("")
       )
     }
 
@@ -523,13 +512,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -539,8 +528,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         httpStatus(OK),
         pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-        elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
-        elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
       )
     }
   }
@@ -559,7 +548,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList).detail)
 
@@ -601,7 +590,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList).detail)
 
@@ -657,7 +646,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList).detail)
 
@@ -710,7 +699,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly).detail)
 
@@ -754,7 +743,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, previousTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+        val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
@@ -773,7 +762,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
           isElementVisibleById("payment-details-content-0")(expectedValue = true),
           isElementVisibleById("payment-details-content-1")(expectedValue = true),
-          isElementVisibleById("payments-due")(expectedValue = false),
+          isElementVisibleById("payments-due")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -800,7 +789,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
       When("I call GET /report-quarterly/income-and-expenses/view/agents/payments-owed")
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
@@ -831,7 +820,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -848,7 +837,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
-        isElementVisibleById("payments-due")(expectedValue = false),
+        isElementVisibleById("payments-due")(expectedValue = true),
         isElementVisibleById(s"no-payments-due")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -869,7 +858,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -886,7 +875,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
-        isElementVisibleById("payments-due")(expectedValue = false),
+        isElementVisibleById("payments-due")(expectedValue = true),
         isElementVisibleById(s"no-payments-due")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -899,7 +888,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails))
+        () => IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation))
     }
   }
 }
