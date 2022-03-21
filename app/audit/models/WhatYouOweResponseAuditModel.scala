@@ -24,17 +24,13 @@ import play.api.libs.json._
 import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
-                                        chargesList: WhatYouOweChargesList) extends ExtendedAuditModel {
+                                        whatYouOweChargesList: WhatYouOweChargesList) extends ExtendedAuditModel {
 
   override val transactionName: String = "what-you-owe-response"
   override val auditType: String = "WhatYouOweResponse"
 
   private val docDetailsListJson: List[JsObject] =
-    chargesList.allCharges.map(documentDetails) ++
-      chargesList.overduePaymentList
-        .filter(_.documentDetail.latePaymentInterestAmount.isDefined)
-        .map(latePaymentInterestDetails) ++
-      chargesList.outstandingChargesModel.map(outstandingChargeDetails)
+    whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = userAuditDetails(user) ++
     balanceDetailsJson ++
@@ -45,9 +41,9 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     def onlyIfPositive(amount: BigDecimal): Option[BigDecimal] = Some(amount).filter(_ > 0)
 
     lazy val fields: JsObject = Json.obj() ++
-      ("balanceDueWithin30Days", onlyIfPositive(chargesList.balanceDetails.balanceDueWithin30Days)) ++
-      ("overDueAmount", onlyIfPositive(chargesList.balanceDetails.overDueAmount)) ++
-      ("totalBalance", onlyIfPositive(chargesList.balanceDetails.totalBalance))
+      ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
+      ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
+      ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance))
 
     val currentTaxYear = user.incomeSources.getCurrentTaxEndYear
     val secondOrMoreYearOfMigration = user.incomeSources.yearOfMigration.exists(currentTaxYear > _.toInt)
@@ -56,11 +52,15 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     else Json.obj()
   }
 
+  private def remainingToPay(documentDetail: DocumentDetail): BigDecimal = {
+    if(documentDetail.isLatePaymentInterest) documentDetail.interestRemainingToPay else documentDetail.remainingToPay
+  }
+
   private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(
     "chargeUnderReview" -> docDateDetail.dunningLock,
-    "outstandingAmount" -> docDateDetail.documentDetail.remainingToPay
+    "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
   ) ++
-    ("chargeType", getChargeType(docDateDetail.documentDetail)) ++
+    ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
     ("dueDate", docDateDetail.dueDate) ++
     accruingInterestJson(docDateDetail.documentDetail)
 
@@ -75,13 +75,6 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
       Json.obj()
     }
   }
-
-  private def latePaymentInterestDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(
-    "chargeUnderReview" -> docDateDetail.dunningLock,
-    "outstandingAmount" -> docDateDetail.documentDetail.interestRemainingToPay
-  ) ++
-    ("chargeType", getChargeType(docDateDetail.documentDetail, latePaymentCharge = true)) ++
-    ("dueDate", docDateDetail.documentDetail.interestEndDate)
 
   private def outstandingChargeDetails(outstandingCharge: OutstandingChargesModel) = Json.obj(
     "chargeType" -> "Remaining balance"

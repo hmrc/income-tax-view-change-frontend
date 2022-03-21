@@ -114,8 +114,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
             isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById("payments-due")(expectedValue = true),
-            isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
-            isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
+            isElementVisibleById("due-0")(expectedValue = true),
+            isElementVisibleById("due-1")(expectedValue = true),
             isElementVisibleById("payment-button")(expectedValue = true),
             isElementVisibleById("sa-note-migrated")(expectedValue = true),
             isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
@@ -148,7 +148,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -169,10 +169,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
             isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById("payments-due")(expectedValue = true),
-            isElementVisibleById("over-due-type-0")(expectedValue = true),
-            isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
-            isElementVisibleById("over-due-type-1")(expectedValue = true),
-            isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+            isElementVisibleById("due-0")(expectedValue = true),
+            isElementVisibleById("charge-interest-0")(expectedValue = false),
+            isElementVisibleById("due-1")(expectedValue = true),
+            isElementVisibleById("charge-interest-1")(expectedValue = false),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
             isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -228,9 +228,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
             isElementVisibleById("payment-details-content-1")(expectedValue = true),
             isElementVisibleById("payments-due")(expectedValue = true),
-            isElementVisibleById("over-due-type-0")(expectedValue = true),
-            isElementVisibleById("over-due-type-1")(expectedValue = false),
-            isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
+            isElementVisibleById("due-0")(expectedValue = true),
+            isElementVisibleById("due-1")(expectedValue = true),
+            isElementVisibleById("due-2")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
             isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
@@ -260,7 +260,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -299,7 +299,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -338,7 +338,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-              overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+              chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
           AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -676,7 +676,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
             isElementVisibleById("payment-details-content-1")(expectedValue = true),
-            isElementVisibleById("payments-due")(expectedValue = false),
+            isElementVisibleById("payments-due")(expectedValue = true),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -724,7 +724,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
             isElementVisibleById("payment-details-content-1")(expectedValue = true),
-            isElementVisibleById("payments-due")(expectedValue = false),
+            isElementVisibleById("payments-due")(expectedValue = true),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -773,7 +773,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
             isElementVisibleById("payment-details-content-1")(expectedValue = true),
-            isElementVisibleById("payments-due")(expectedValue = false),
+            isElementVisibleById("payments-due")(expectedValue = true),
             isElementVisibleById(s"payment-button")(expectedValue = true),
             isElementVisibleById(s"no-payments-due")(expectedValue = false),
             isElementVisibleById(s"sa-note-migrated")(expectedValue = true),

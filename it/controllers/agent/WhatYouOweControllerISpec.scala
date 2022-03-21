@@ -118,8 +118,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = true),
-        isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
-        isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
+        isElementVisibleById("due-0")(expectedValue = true),
+        isElementVisibleById("due-1")(expectedValue = true),
         isElementVisibleById("future-payments-heading")(expectedValue = false),
         isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
@@ -151,7 +151,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == currentTaxYearEnd.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -168,10 +168,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = true),
-        isElementVisibleById("over-due-type-0")(expectedValue = true),
-        isElementVisibleById("over-due-type-1")(expectedValue = true),
-        isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
-        isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+        isElementVisibleById("due-0")(expectedValue = true),
+        isElementVisibleById("due-1")(expectedValue = true),
+        isElementVisibleById("charge-interest-0")(expectedValue = false),
+        isElementVisibleById("charge-interest-1")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
@@ -191,7 +191,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val mixedJson = Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
+          documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId1"),
           documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId2"),
           documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, "ITSA - POA 2", transactionId = "transId3")
         ),
@@ -224,11 +224,11 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
         isElementVisibleById("payments-due")(expectedValue = true),
-        isElementVisibleById("over-due-type-0")(expectedValue = true),
-        isElementVisibleById("over-due-type-1")(expectedValue = false),
-        isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
-        isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
-        isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
+        isElementVisibleById("due-0")(expectedValue = true),
+        isElementVisibleById("due-1")(expectedValue = true),
+        isElementVisibleById("charge-interest-0")(expectedValue = false),
+        isElementVisibleById("charge-interest-1")(expectedValue = false),
+        isElementVisibleById("due-2")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
         isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
@@ -360,10 +360,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("payment-details-content-0")(expectedValue = true),
       isElementVisibleById("payment-details-content-1")(expectedValue = true),
       isElementVisibleById("payments-due")(expectedValue = true),
-      isElementVisibleById("over-due-type-0")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-0")(expectedValue = true),
-      isElementVisibleById("over-due-type-1")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-1")(expectedValue = true),
+      isElementVisibleById("due-0")(expectedValue = true),
+      isElementVisibleById("charge-interest-0")(expectedValue = true),
+      isElementVisibleById("due-1")(expectedValue = true),
+      isElementVisibleById("charge-interest-1")(expectedValue = true),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
       isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
@@ -380,7 +380,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     And("I wiremock stub a multiple financial details response")
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, 55.50))
+      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, Some(55.50)))
     IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
       "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -406,10 +406,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       isElementVisibleById("payment-details-content-0")(expectedValue = true),
       isElementVisibleById("payment-details-content-1")(expectedValue = true),
       isElementVisibleById("payments-due")(expectedValue = true),
-      isElementVisibleById("over-due-type-0")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-0")(expectedValue = false),
-      isElementVisibleById("over-due-type-1")(expectedValue = true),
-      isElementVisibleById("overdue-charge-interest-1")(expectedValue = false),
+      isElementVisibleById("due-0")(expectedValue = true),
+      isElementVisibleById("charge-interest-0")(expectedValue = false),
+      isElementVisibleById("due-1")(expectedValue = true),
+      isElementVisibleById("charge-interest-1")(expectedValue = false),
       isElementVisibleById("future-payments-heading")(expectedValue = false),
       isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
       isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -441,7 +441,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -479,7 +479,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -490,8 +490,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
 
-        elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
-        elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("")
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")("")
       )
     }
 
@@ -518,7 +518,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
-          overduePaymentList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates
+          chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
         )
       }
       AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList))
@@ -528,8 +528,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         httpStatus(OK),
         pageTitleAgent(whatYouOwePageTitle),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-        elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
-        elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
       )
     }
   }
@@ -762,7 +762,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
           isElementVisibleById("payment-details-content-0")(expectedValue = true),
           isElementVisibleById("payment-details-content-1")(expectedValue = true),
-          isElementVisibleById("payments-due")(expectedValue = false),
+          isElementVisibleById("payments-due")(expectedValue = true),
           isElementVisibleById(s"no-payments-due")(expectedValue = false),
           isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
           isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -837,7 +837,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
-        isElementVisibleById("payments-due")(expectedValue = false),
+        isElementVisibleById("payments-due")(expectedValue = true),
         isElementVisibleById(s"no-payments-due")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
@@ -875,7 +875,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
         isElementVisibleById("payment-details-content-1")(expectedValue = true),
-        isElementVisibleById("payments-due")(expectedValue = false),
+        isElementVisibleById("payments-due")(expectedValue = true),
         isElementVisibleById(s"no-payments-due")(expectedValue = false),
         isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
         isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),

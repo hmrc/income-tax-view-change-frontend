@@ -53,7 +53,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       userType = userType,
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
-    chargesList = chargesList
+    whatYouOweChargesList = chargesList
   )
 
   "The WhatYouOweResponseAuditModel" should {
@@ -80,9 +80,9 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
         ),
         "charges" -> Json.arr(
           Json.obj(
-            "chargeType" -> "Payment on account 1 of 2",
-            "dueDate" -> dueDateOverdue.head.get,
-            "outstandingAmount" -> 50,
+            "chargeType" -> "Late payment interest for payment on account 1 of 2",
+            "dueDate" -> Some(LocalDate.parse("2019-06-25")),
+            "outstandingAmount" -> 42.5,
             "chargeUnderReview" -> true
           ),
           Json.obj(
@@ -99,19 +99,21 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "chargeType" -> "Payment on account 2 of 2",
             "dueDate" -> dueDateIsSoon,
             "outstandingAmount" -> 100,
+            "accruingInterest" -> 100,
+            "interestRate" -> "100%",
+            "interestFromDate" -> "2018-03-29",
+            "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false
           ),
           Json.obj(
             "chargeType" -> "Payment on account 1 of 2",
             "dueDate" -> dueDateInFuture,
             "outstandingAmount" -> 125,
+            "accruingInterest" -> 100,
+            "interestRate" -> "100%",
+            "interestFromDate" -> "2018-03-29",
+            "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false
-          ),
-          Json.obj(
-            "chargeType" -> "Late payment interest for payment on account 1 of 2",
-            "dueDate" -> "2019-06-25",
-            "outstandingAmount" -> 42.5,
-            "chargeUnderReview" -> true
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",

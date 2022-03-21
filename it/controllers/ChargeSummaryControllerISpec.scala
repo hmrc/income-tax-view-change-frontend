@@ -105,7 +105,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
-        dunningLock = oneDunningLock, interestLocks = twoInterestLocks))
+        dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None))
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(OK, testChargeHistoryJson(testMtditid, "1040000123", 2500))
@@ -146,7 +146,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
-        dunningLock = oneDunningLock, interestLocks = twoInterestLocks))
+        dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None))
 
       And("I wiremock stub a charge history response")
       IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000123")(OK, testChargeHistoryJson(testMtditid, "1040000123", 2500))
@@ -187,7 +187,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       And("I wiremock stub a single financial transaction response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
-        123.45, 1.2, latePaymentInterestAmount = 54.32))
+        123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
 
       Given("the PaymentAllocations and ChargeHistory feature switches are on")
       enable(ChargeHistory)
