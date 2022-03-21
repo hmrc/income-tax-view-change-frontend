@@ -73,11 +73,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   class AgentSetup(charges: WhatYouOweChargesList,
-              currentTaxYear: Int = LocalDate.now().getYear,
-              migrationYear: Int = LocalDate.now().getYear - 1,
-              codingOutEnabled: Boolean = true,
-              dunningLock: Boolean = false,
-              hasLpiWithDunningBlock: Boolean = false) {
+                   currentTaxYear: Int = LocalDate.now().getYear,
+                   migrationYear: Int = LocalDate.now().getYear - 1,
+                   codingOutEnabled: Boolean = true,
+                   dunningLock: Boolean = false,
+                   hasLpiWithDunningBlock: Boolean = false) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       mtditid = "XAIT00000000015",
@@ -254,8 +254,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00),
-    overduePaymentList = List(),
-    dueInThirtyDaysList = List(),
+    chargesList = List(),
     codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetailPayeSA,
       CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
   )
@@ -953,27 +952,26 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 
-    "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
-      pageDocument.getElementById("coding-out-notice") shouldBe null
-      pageDocument.getElementById("over-due-type-0") should not be null
-      pageDocument.getElementById("over-due-type-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
-      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-      pageDocument.getElementById("coding-out-summary-link") shouldBe null
-    }
-    "show only PAYE SA, SA note and payment bullet points" in new Setup(whatYouOweDataWithPayeSA, codingOutEnabled = true) {
-      pageDocument.title() shouldBe whatYouOwe.title
-      pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
-      pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
-      pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
-      pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
-      pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
-      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-      paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
-      paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
-      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-    }
-  }
+      "have a cancelled paye self assessment entry" in new Setup(whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+        pageDocument.getElementById("coding-out-notice") shouldBe null
+        pageDocument.getElementById("due-0") should not be null
+        pageDocument.getElementById("due-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+        pageDocument.getElementById("coding-out-summary-link") shouldBe null
       }
+      "show only PAYE SA, SA note and payment bullet points" in new Setup(whatYouOweDataWithPayeSA, codingOutEnabled = true) {
+        pageDocument.title() shouldBe whatYouOwe.title
+        pageDocument.selectFirst("h1").text shouldBe whatYouOwe.heading
+        pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+        pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
+        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+        paymentProcessingBullet.select("li").get(0).text shouldBe whatYouOwe.paymentprocessingbullet1
+        paymentProcessingBullet.select("li").get(1).text shouldBe whatYouOwe.paymentprocessingbullet2
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      }
+
       "should have payment processing bullets" in new Setup(whatYouOweDataWithCodingOut, codingOutEnabled = false) {
 
         pageDocument.getElementById("payments-made").text shouldBe whatYouOwe.paymentsMade
@@ -1006,7 +1004,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   "agent" when {
     "The What you owe view with financial details model" when {
-      s"have the title '${AgentPaymentDue.title}'" in new AgentSetup(whatYouOweDataWithDataDueIn30Days()) {
+      s"have the title '${
+        AgentPaymentDue.title
+      }'" in new AgentSetup(whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
         pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
           LocalDate.now().getYear, "1040000124").url
