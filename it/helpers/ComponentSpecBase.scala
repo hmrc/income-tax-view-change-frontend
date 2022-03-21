@@ -164,7 +164,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income")
 
+    def getForecastIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income/forecast")
+
     def getTaxDueSummary(year: String): WSResponse = get(s"/calculation/$year/tax-due")
+
+    def getForecastTaxCalcSummary(year: String): WSResponse = get(s"/calculation/$year/tax-due/forecast")
 
     def getDeductionsSummary(year: String): WSResponse = get(s"/calculation/$year/deductions")
 
@@ -196,7 +200,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
         isAuthorisedUser(false)
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/$uri")
+        When(s"I call GET /report-quarterly/income-and-expenses/view$uri")
         val res = IncomeTaxViewChangeFrontend.get(uri)
 
         Then("the http response for an unauthorised user is returned")

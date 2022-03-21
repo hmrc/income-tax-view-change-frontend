@@ -19,7 +19,6 @@ package controllers.agent
 import audit.models.AllowanceAndDeductionsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
@@ -30,7 +29,6 @@ import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants._
-import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import testConstants.messages.DeductionsSummaryMessages.deductionsSummaryTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -38,14 +36,6 @@ import java.time.LocalDate
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  val clientDetails: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
@@ -81,7 +71,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       )
 
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/$testYear/income")
-      val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear, clientDetails)
+      val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear, clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid, 0)
       IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "idOne", 1)
