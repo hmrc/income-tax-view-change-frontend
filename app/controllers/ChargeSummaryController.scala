@@ -97,20 +97,25 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
     chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
       case Right(chargeHistory) =>
-        auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
-        Ok(chargeSummaryView(
-          documentDetailWithDueDate = documentDetailWithDueDate,
-          backUrl = backUrl(backLocation, taxYear),
-          paymentBreakdown = paymentBreakdown,
-          chargeHistory = chargeHistory,
-          paymentAllocations = paymentAllocations,
-          payments = payments,
-          chargeHistoryEnabled = isEnabled(ChargeHistory),
-          paymentAllocationEnabled = paymentAllocationEnabled,
-          latePaymentInterestCharge = isLatePaymentCharge,
-          codingOutEnabled = isEnabled(CodingOut),
-          btaNavPartial = user.btaNavPartial
-        ))
+                if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isClass2Nic.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)) {
+                  Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Coding Out is disabled and redirected to not found page")
+                  Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+                } else {
+                        auditChargeSummary(id, chargeDetails, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
+                        Ok(chargeSummaryView(
+                          documentDetailWithDueDate = documentDetailWithDueDate,
+                          backUrl = backUrl(backLocation, taxYear),
+                          paymentBreakdown = paymentBreakdown,
+                          chargeHistory = chargeHistory,
+                          paymentAllocations = paymentAllocations,
+                          payments = payments,
+                          chargeHistoryEnabled = isEnabled(ChargeHistory),
+                          paymentAllocationEnabled = paymentAllocationEnabled,
+                          latePaymentInterestCharge = isLatePaymentCharge,
+                          codingOutEnabled = isEnabled(CodingOut),
+                          btaNavPartial = user.btaNavPartial
+                        ))
+                }
       case _ =>
         Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
         itvcErrorHandler.showInternalServerError()

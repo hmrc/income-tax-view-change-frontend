@@ -20,59 +20,83 @@ import audit.AuditingService
 import audit.models._
 import auth.MtdItUserWithNino
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config._
+import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation._
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.Logger
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.CalculationService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.DeductionBreakdown
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
+                                            val authorisedFunctions: AuthorisedFunctions,
                                             val retrieveNino: NinoPredicate,
                                             val calculationService: CalculationService,
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
                                             val retrieveBtaNavBar: BtaNavFromNinoPredicate,
-                                            val itvcErrorHandler: ItvcErrorHandler)
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,
-                                            mcc: MessagesControllerComponents,
-                                            val executionContext: ExecutionContext,
+                                            implicit override val mcc: MessagesControllerComponents,
+                                            val ec: ExecutionContext,
                                             val languageUtils: LanguageUtils)
-  extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
-
-
-  def showDeductionsSummary(taxYear: Int): Action[AnyContent] = {
-
-    action.async {
-      implicit user =>
-        calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
-          case liabilityCalc: LiabilityCalculationResponse =>
-            val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
-            auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
-            Ok(deductionBreakdownView(viewModel, taxYear, backUrl(taxYear), btaNavPartial = user.btaNavPartial))
-          case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-            Logger("application").info(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
-            itvcErrorHandler.showInternalServerError()
-          case _: LiabilityCalculationError =>
-            Logger("application").error(
-              s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
-            itvcErrorHandler.showInternalServerError()
-        }
+  def handleRequest(backUrl: String,
+                    itcvErrorHandler: ShowInternalServerError,
+                    taxYear: Int,
+                    isAgent: Boolean)
+                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+    calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
+      case liabilityCalc: LiabilityCalculationResponse =>
+        val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
+        auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
+        Ok(deductionBreakdownView(viewModel, taxYear, backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
+      case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+        Logger("application").info(s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
+        itvcErrorHandler.showInternalServerError()
+      case _: LiabilityCalculationError =>
+        Logger("application").error(
+          s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No new calc deductions data error found. Downstream error")
+        itvcErrorHandler.showInternalServerError()
     }
   }
 
-  def backUrl(taxYear: Int): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url
+  def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleRequest(
+          backUrl = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url,
+          itcvErrorHandler = itvcErrorHandler,
+          taxYear = taxYear,
+          isAgent = false
+        )
+    }
+
+  def showDeductionsSummaryAgent(taxYear: Int): Action[AnyContent] = {
+    Authenticated.async { implicit request =>
+      implicit agent =>
+        handleRequest(
+          backUrl = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url,
+          itcvErrorHandler = itvcErrorHandlerAgent,
+          taxYear = taxYear,
+          isAgent = true
+        )(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly, implicitly)
+    }
+  }
+
 }

@@ -44,7 +44,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")
         val res = IncomeTaxViewChangeFrontend.getIncomeSummary(testYear)
 
-        verifyIncomeSourceDetailsCall(testMtditid, 0)
+        verifyIncomeSourceDetailsCall(testMtditid, 1)
         IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
         res should have(

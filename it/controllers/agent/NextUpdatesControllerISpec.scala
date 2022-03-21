@@ -15,13 +15,9 @@
  */
 package controllers.agent
 
-import java.time.LocalDate
-
-import testConstants.BaseIntegrationTestConstants._
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -32,33 +28,13 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.messages.NextUpdatesMessages.nextUpdatesTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
+import java.time.LocalDate
+
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  val clientDetailsWithoutConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid
-  )
-
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
-
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
 
   val incomeSourceDetails: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,

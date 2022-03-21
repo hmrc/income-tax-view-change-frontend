@@ -64,6 +64,6 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
             Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
           case _ => itvcErrorHandler.showInternalServerError()
         }
-      } else Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
+      } else Future.successful(Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url))
   }
 }

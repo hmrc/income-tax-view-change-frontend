@@ -1,19 +1,12 @@
 package testConstants
 
 import java.time.LocalDate
-
-import BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfEmploymentId}
+import BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testSelfEmploymentId}
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 
 
 object PaymentHistoryTestConstraints {
-
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
 
   val b1CessationDate = LocalDate.of(2017, 12, 31)
   val b1CessationReason = "It really, really was a bad idea"

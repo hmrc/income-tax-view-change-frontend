@@ -33,8 +33,8 @@ object NewCalcBreakdownUnitTestConstants {
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
-      calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      crystallised = Some(true))
   )
 
   val liabilityCalculationModelDeductionsMinimal2 = LiabilityCalculationResponse(
@@ -44,8 +44,8 @@ object NewCalcBreakdownUnitTestConstants {
     messages = None,
     calculation = None,
     metadata = Metadata(
-      calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      crystallised = Some(true))
   )
 
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
@@ -275,8 +275,8 @@ object NewCalcBreakdownUnitTestConstants {
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
       )))),
     metadata = Metadata(
-      calculationTimestamp = "2019-02-15T09:35:15.094Z",
-      crystallised = true)
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      crystallised = Some(true))
   )
 
 

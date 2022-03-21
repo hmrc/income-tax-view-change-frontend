@@ -46,18 +46,8 @@ GET         /payments/history                                             contro
 #Next updates
 #GET         /next-updates                                                 controllers.agent.NextUpdatesController.getNextUpdates
 
-#Deductions Summary
-GET         /calculation/:taxYear/deductions                              controllers.agent.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
-
-#IncomeSummary
-GET         /calculation/:taxYear/income                                  controllers.agent.IncomeSummaryController.showIncomeSummary(taxYear: Int)
-
 #Tax Due
 GET         /calculation/:taxYear/tax-due                                 controllers.agent.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
-
-#Final Tax URLs
-GET         /:taxYear/final-tax-overview                                  controllers.agent.FinalTaxCalculationController.show(taxYear: Int)
-POST        /:taxYear/final-tax-overview                                  controllers.agent.FinalTaxCalculationController.submit(taxYear: Int)
 
 #Final Tax Calculation
 GET         /:taxYear/final-tax-overview/calculate                        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)

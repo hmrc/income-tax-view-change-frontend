@@ -16,25 +16,23 @@
 
 package controllers.agent
 
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.featureswitch.{FeatureSwitching, PaymentHistory}
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.financialDetails.Payment
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
 import play.api.test.FakeRequest
-import uk.gov.hmrc.auth.core.retrieve.Name
-import java.time.LocalDate
-
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
+import uk.gov.hmrc.auth.core.retrieve.Name
+
+import java.time.LocalDate
 
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -43,15 +41,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     super.beforeEach()
     WireMock.reset()
   }
-
-  val clientDetails: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   val paymentsFull: Seq[Payment] = Seq(
     Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01"))
@@ -92,7 +81,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
 
-        val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
+        val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
 
         Then("The user is redirected to")
         result should have(
@@ -114,7 +103,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
       IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
 
-      val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
+      val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
 
       Then("The Payment History page is returned to the user")
       result should have(
@@ -128,7 +117,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails))
+        () => IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation))
     }
   }
 }

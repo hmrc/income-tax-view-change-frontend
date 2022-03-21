@@ -117,7 +117,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
 
-        status(result) shouldBe Status.NOT_FOUND
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
 

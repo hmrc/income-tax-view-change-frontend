@@ -16,48 +16,55 @@
 
 package controllers
 
-import auth.MtdItUser
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName}
 import controllers.predicates._
 import forms.utils.SessionKeys
+import forms.utils.SessionKeys.summaryData
+import javax.inject.Inject
 import models.finalTaxCalculation.TaxReturnRequestModel
 import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.CalculationService
+import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.FinalTaxCalculationView
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinalTaxCalculationController @Inject()(
-                                               implicit val cc: MessagesControllerComponents,
-                                               val executionContext: ExecutionContext,
-                                               view: FinalTaxCalculationView,
-                                               checkSessionTimeout: SessionTimeoutPredicate,
-                                               authenticate: AuthenticationPredicate,
-                                               retrieveNino: NinoPredicate,
-                                               retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               calcService: CalculationService,
-                                               itvcErrorHandler: ItvcErrorHandler,
-                                               val retrieveBtaNavBar: BtaNavBarPredicate,
-                                               val appConfig: FrontendAppConfig
-                                             ) extends FrontendController(cc) with FeatureSwitching with I18nSupport {
+class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControllerComponents,
+                                              val ec: ExecutionContext,
+                                              view: FinalTaxCalculationView,
+                                              checkSessionTimeout: SessionTimeoutPredicate,
+                                              authenticate: AuthenticationPredicate,
+                                              retrieveNino: NinoPredicate,
+                                              retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                              calcService: CalculationService,
+                                              itvcErrorHandler: ItvcErrorHandler,
+                                              val authorisedFunctions: FrontendAuthorisedFunctions,
+                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                              val retrieveBtaNavBar: BtaNavBarPredicate,
+                                              implicit val appConfig: FrontendAppConfig
+                                             ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen
     retrieveIncomeSources andThen retrieveBtaNavBar
 
 
-  def show(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
+  def handleShowRequest(taxYear: Int,
+                        itvcErrorHandler: ShowInternalServerError,
+                        isAgent: Boolean)
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(TaxYearOverviewViewModel(calculationResponse), taxYear, isAgent = false, backUrl))
+        Ok(view(TaxYearOverviewViewModel(calculationResponse), taxYear, isAgent = isAgent, backUrl))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
         Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
@@ -67,6 +74,30 @@ class FinalTaxCalculationController @Inject()(
     }
   }
 
+
+  def show(taxYear: Int): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleShowRequest(
+        itvcErrorHandler = itvcErrorHandler,
+        isAgent = false,
+        taxYear = taxYear
+      )
+  }
+
+  def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit agent =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+          implicit mtdItUser =>
+            handleShowRequest(
+              itvcErrorHandler = itvcErrorHandlerAgent,
+              isAgent = true,
+              taxYear = taxYear
+            )
+        }
+  }
+
   def submit(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
@@ -74,6 +105,47 @@ class FinalTaxCalculationController @Inject()(
 
     finalDeclarationSubmit(taxYear, fullNameOptional)
 
+  }
+
+  def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
+    implicit agent =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
+        val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
+        agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
+      }
+  }
+
+
+  private def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
+                                         (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+    calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
+      case calcResponse: LiabilityCalculationResponse =>
+        val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calcResponse)
+        user.saUtr match {
+          case Some(saUtr) =>
+            val submissionOverview = TaxReturnRequestModel(
+              fullName,
+              calcOverview.taxDue,
+              saUtr,
+              calcOverview.income,
+              calcOverview.deductions,
+              calcOverview.totalTaxableIncome
+            )
+
+            Redirect(appConfig.submissionFrontendFinalDeclarationUrl(taxYear)).addingToSession(
+              summaryData -> submissionOverview.asJsonString
+            )
+          case _ =>
+            Logger("application").error("[Agent][FinalTaxCalculationController][submit] Name or UTR missing.")
+            itvcErrorHandler.showInternalServerError()
+        }
+      case calcError: LiabilityCalculationError if calcError.status == NOT_FOUND =>
+        Logger("application").info("[Agent][FinalTaxCalculationController][submit] No calculation data returned from downstream.")
+        itvcErrorHandler.showInternalServerError()
+      case _ =>
+        Logger("application").error("[Agent][FinalTaxCalculationController][submit] Unexpected error has occurred while retrieving calculation data.")
+        itvcErrorHandler.showInternalServerError()
+    }
   }
 
   private def finalDeclarationSubmit(taxYear: Int, fullNameOptional: Option[String])

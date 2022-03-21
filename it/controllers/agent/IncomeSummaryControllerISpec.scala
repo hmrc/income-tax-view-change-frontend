@@ -17,7 +17,6 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
@@ -36,29 +35,6 @@ import testConstants.messages.IncomeSummaryMessages.{incomeSummaryAgentHeading, 
 import java.time.LocalDate
 
 class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
-  val clientDetailsWithoutConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid
-  )
-
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
-
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -81,12 +57,12 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )
   )
 
-  "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
+  "Calling the IncomeSummaryController.showIncomeSummaryAgent(taxYear)" when {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)()
 
         Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
         result should have(
@@ -99,7 +75,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)()
 
         Then(s"Technical difficulties are shown with status OK")
         result should have(
@@ -112,7 +88,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "the agent does not have client details in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)()
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -122,7 +98,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       "the agent has client details in session but no confirmation flag" in {
         stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -144,8 +120,8 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           body = liabilityCalculationModelSuccessFull
         )
 
-        When(s"I call GET ${routes.IncomeSummaryController.showIncomeSummary(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        When(s"I call GET ${controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(getCurrentTaxYearEnd.getYear).url}")
+        val res = IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         res should have(
           httpStatus(OK),
@@ -159,7 +135,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getIncomeSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
+        () => IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
     }
   }
 }

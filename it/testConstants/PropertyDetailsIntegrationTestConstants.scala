@@ -16,14 +16,12 @@
 
 package testConstants
 
-import java.time.LocalDate
-
-import BaseIntegrationTestConstants.testPropertyIncomeId
-import PaymentHistoryTestConstraints.getCurrentTaxYearEnd
-import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testPropertyIncomeId}
+
+import java.time.LocalDate
 
 object PropertyDetailsIntegrationTestConstants {
 

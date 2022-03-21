@@ -21,12 +21,14 @@ GET         /calculation/:taxYear                                         contro
 
 #IncomeSummary
 GET         /calculation/:taxYear/income                                  controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+GET         /agents/calculation/:taxYear/income                            controllers.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int)
 
 #Tax Due
 GET         /calculation/:taxYear/tax-due                                 controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
 
 #Deductions Summary
 GET         /calculation/:taxYear/deductions                              controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
+GET         /agents/calculation/:taxYear/deductions                       controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int)
 
 #TaxYears
 GET         /tax-years                                                    controllers.TaxYearsController.viewTaxYears
@@ -80,13 +82,29 @@ GET         /language/:lang                                               contro
 #Payment history
 GET         /payments/history                                             controllers.PaymentHistoryController.viewPaymentHistory
 
+#InYear Tax
+GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show
+GET         /agents/tax-overview                                          controllers.InYearTaxCalculationController.showAgent
+
 #Final Tax URLs
 GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int)
 POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
+
+#Final Tax URLs - agents
+GET         /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.showAgent(taxYear: Int)
+POST        /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.agentSubmit(taxYear: Int)
 
 GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
 GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
 
 #custom not found
 GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show
+
+#Forecast income summary
+GET         /calculation/:taxYear/income/forecast                         controllers.ForecastIncomeSummaryController.show(taxYear: Int)
+GET         /agents/calculation/:taxYear/income/forecast                  controllers.ForecastIncomeSummaryController.showAgent(taxYear: Int)
+
+#Forecast Tax Calc Summary
+GET         /calculation/:taxYear/tax-due/forecast                        controllers.ForecastTaxCalcSummaryController.show(taxYear: Int)
+GET         /agents/calculation/:taxYear/tax-due/forecast                 controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)

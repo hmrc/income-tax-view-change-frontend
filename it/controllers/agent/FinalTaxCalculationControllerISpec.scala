@@ -16,7 +16,6 @@
 
 package controllers.agent
 
-import controllers.agent.utils.SessionKeys
 import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
@@ -26,7 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 import java.time.LocalDate
@@ -35,7 +34,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
-  val url: String = s"http://localhost:$port" + controllers.agent.routes.FinalTaxCalculationController.show(taxYear).url
+  val url: String = s"http://localhost:$port" + controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
 
   def calculationStub(taxYearString: String = "2017-18"): Unit = {
     IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
@@ -58,17 +57,17 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     val insetText = "#main-content > div > div > div > p.govuk-inset-text"
     val insetLinkText = "#main-content > div > div > div > p.govuk-inset-text > a"
 
-    val incomeRowText = "#income-deductions-table > tbody > tr:nth-child(1) > th > a"
-    val incomeRowAmount = "#income-deductions-table > tbody > tr:nth-child(1) > td"
+    val incomeRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > th > a"
+    val incomeRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td"
 
-    val allowanceRowText = "#income-deductions-table > tbody > tr:nth-child(2) > th > a"
-    val allowanceRowAmount = "#income-deductions-table > tbody > tr:nth-child(2) > td"
+    val allowanceRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > th > a"
+    val allowanceRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td"
 
-    val taxIsDueRowText = "#income-deductions-table > tbody > tr:nth-child(3) > th"
-    val taxIsDueRowAmount = "#income-deductions-table > tbody > tr:nth-child(3) > td"
+    val taxIsDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > th"
+    val taxIsDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td"
 
-    val contributionDueRowText = "#taxdue-payments-table > tbody > tr > th > a"
-    val contributionDueRowAmount = "#taxdue-payments-table > tbody > tr > td"
+    val contributionDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(4) > th > a"
+    val contributionDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(4) > td"
 
     val chargeInformationParagraph = "#main-content > div > div > div > p.govuk-body"
 
@@ -125,22 +124,9 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
   val testArn: String = "1"
 
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
 
   lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
 
-  lazy val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
 
   lazy val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
@@ -160,7 +146,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     )
   )
 
-  s"calling GET ${controllers.agent.routes.FinalTaxCalculationController.show(taxYear)}" should {
+  s"calling GET ${controllers.routes.FinalTaxCalculationController.showAgent(taxYear)}" should {
     "display the page" which {
       lazy val result = {
         stubAuthorisedAgentUser(authorised = true)
@@ -454,7 +440,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     }
   }
 
-  s"calling POST ${controllers.agent.routes.FinalTaxCalculationController.submit(taxYear)}" should {
+  s"calling POST ${controllers.routes.FinalTaxCalculationController.agentSubmit(taxYear)}" should {
     "redirect to the confirmation page on income-tax-submission-frontend" which {
       lazy val result = {
         stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtditid)

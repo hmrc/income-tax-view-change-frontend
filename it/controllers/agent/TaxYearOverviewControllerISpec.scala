@@ -18,7 +18,6 @@ package controllers.agent
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
@@ -44,26 +43,6 @@ import java.time.LocalDate
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  val clientDetailsWithoutConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid
-  )
-  val clientDetailsWithConfirmation: Map[String, String] = Map(
-    SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true"
-  )
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
-  }
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
@@ -318,10 +297,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           pageTitleAgent(taxYearOverviewTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
@@ -393,10 +372,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           pageTitleAgent(taxYearOverviewTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
@@ -514,10 +493,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           pageTitleAgent(taxYearOverviewTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
           elementTextBySelectorList("#payments", "p")("No payments currently due."),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
@@ -578,10 +557,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           pageTitleAgent(taxYearOverviewTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#taxdue-payments-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(LocalDate.of(2021, 6, 24).toLongDateShort),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Paid"),
