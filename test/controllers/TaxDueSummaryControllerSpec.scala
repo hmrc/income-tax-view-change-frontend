@@ -38,8 +38,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
   MockIncomeSourceDetailsService with MockItvcErrorHandler with MockFrontendAuthorisedFunctions with FeatureSwitching {
 
   val testYear: Int = 2020
-  val isAgent: Boolean = true
-
 
   object TestTaxDueSummaryController extends TaxDueSummaryController(
     mockAuthService,
