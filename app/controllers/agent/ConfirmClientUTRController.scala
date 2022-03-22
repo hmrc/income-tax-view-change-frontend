@@ -50,7 +50,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
   def submit: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       Future.successful(
-        Redirect(routes.HomeController.show()).addingToSession(
+        Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(
           SessionKeys.confirmedClient -> "true"
         )
       )

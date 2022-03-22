@@ -80,7 +80,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   private def auditNextUpdates[A](user: MtdItUser[A])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates().url))
 
-  lazy val backUrl: String = controllers.routes.HomeController.home().url
+  lazy val backUrl: String = controllers.routes.HomeController.show().url
 
 
 }

@@ -19,8 +19,6 @@ GET         /utr-problem                                                  contro
 POST        /utr-problem                                                  controllers.agent.UTRErrorController.submit
 
 #Home Controller
-GET         /income-tax-account                                           controllers.agent.HomeController.show
-GET         /                                                             controllers.agent.HomeController.show
 GET         /remove-client-sessions                                       controllers.agent.RemoveClientDetailsSessionsController.show
 
 

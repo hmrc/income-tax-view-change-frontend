@@ -38,7 +38,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
         httpStatus(SEE_OTHER),
-        redirectURI(controllers.routes.HomeController.home().url)
+        redirectURI(controllers.routes.HomeController.show().url)
       )
     }
   }
@@ -60,7 +60,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
         httpStatus(SEE_OTHER),
-        redirectURI(controllers.routes.HomeController.home().url)
+        redirectURI(controllers.routes.HomeController.show().url)
       )
     }
   }

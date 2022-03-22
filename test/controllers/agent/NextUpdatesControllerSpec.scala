@@ -111,7 +111,7 @@ class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedF
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockObligations
-        mockAgentNextUpdates(obligationsModel, controllers.agent.routes.HomeController.show().url, isAgent)(HtmlFormat.empty)
+        mockAgentNextUpdates(obligationsModel, controllers.routes.HomeController.showAgent().url, isAgent)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.getNextUpdates()(fakeRequestConfirmedClient())
 

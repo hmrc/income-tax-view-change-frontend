@@ -86,7 +86,5 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.SEE_OTHER
       }
     }
-
-
   }
 }

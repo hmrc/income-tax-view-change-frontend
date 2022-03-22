@@ -62,6 +62,6 @@ class NextUpdatesController @Inject()(agentNextUpdates: views.html.NextUpdates,
       }
   }
 
-  lazy val backUrl: String = controllers.agent.routes.HomeController.show().url
+  lazy val backUrl: String = controllers.routes.HomeController.showAgent().url
 
 }

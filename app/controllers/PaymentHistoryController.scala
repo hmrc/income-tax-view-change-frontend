@@ -63,7 +63,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       }
   }
 
-  lazy val backUrl: String = controllers.routes.HomeController.home().url
+  lazy val backUrl: String = controllers.routes.HomeController.show().url
 
 }
 

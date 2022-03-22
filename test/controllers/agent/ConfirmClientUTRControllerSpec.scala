@@ -167,7 +167,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
+      redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
       result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
     }
   }

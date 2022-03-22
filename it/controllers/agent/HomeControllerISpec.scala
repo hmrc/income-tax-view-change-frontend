@@ -67,7 +67,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
   )(FakeRequest())
 
 
-  s"GET ${routes.HomeController.show().url}" should {
+  s"GET ${controllers.routes.HomeController.showAgent().url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
@@ -118,7 +118,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
     }
   }
 
-  s"GET ${routes.HomeController.show().url}" when {
+  s"GET ${controllers.routes.HomeController.show().url}" when {
     "retrieving the client's income sources was successful" when {
       "retrieving the client's obligations was successful" when {
         "retrieving the client's charges was successful" should {
@@ -527,7 +527,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitleIndividual(titleTechError)
+            pageTitleAgent(titleInternalServer)
           )
 
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -548,7 +548,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError)
+          pageTitleAgent(titleInternalServer)
         )
       }
     }

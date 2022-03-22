@@ -41,7 +41,7 @@ class CustomNotFoundErrorViewSpec extends ViewSpec {
 
     s"have a link in to the homepage" in new Setup(customNotFoundErrorView) {
       layoutContent.select(Selectors.link).first().text shouldBe pageMessages.homepageLinkText
-      layoutContent.select(Selectors.link).first().attr("href") shouldBe controllers.routes.HomeController.home().url
+      layoutContent.select(Selectors.link).first().attr("href") shouldBe controllers.routes.HomeController.show().url
     }
   }
 }
