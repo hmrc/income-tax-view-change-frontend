@@ -689,8 +689,6 @@ class ChargeSummaryViewSpec extends ViewSpec {
           document.select("#coding-out-notice-link").attr("href") shouldBe ""
           document.select("a.govuk-button").size() shouldBe 1
           document.select(".govuk-table tbody tr").size() shouldBe 1
-
-
         }
       }
 
@@ -752,7 +750,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
         chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = List(
           paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0)), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
-        document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
+        document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
       }
     }
   }
