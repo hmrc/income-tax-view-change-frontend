@@ -53,8 +53,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val ec: ExecutionContext,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
-  private val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
+  private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
+  private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
