@@ -396,9 +396,9 @@ object FinancialDetailsIntegrationTestConstants {
       Some("TRM New Charge"),None,Some(2000),Some(2000), LocalDate.parse("2018-03-29"), Some(80),None,None,Some(LocalDate.parse("2018-03-29")),
       Some(LocalDate.parse("2018-03-29")),Some(100),None,None,None),Some(LocalDate.parse("2018-03-29")),true,false,false),
       DocumentDetailWithDueDate(DocumentDetail("2021","1040000124",Some("ITSA- POA 1"),None,Some(2000),Some(2000),LocalDate.parse("2018-03-29"),
-        None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2022-03-21")),false,false,false),
+        None,None,None,None,None,None,None,None,None),Some(LocalDate.now()),false,false,false),
       DocumentDetailWithDueDate(DocumentDetail("2021","1040000125",Some("ITSA - POA 2"),None,Some(2000),Some(2000),LocalDate.parse("2018-03-29"),
-        None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2022-03-21")),false,false,false))
+        None,None,None,None,None,None,None,None,None),Some(LocalDate.now()),false,false,false))
   ,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
@@ -445,7 +445,7 @@ object FinancialDetailsIntegrationTestConstants {
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021","transId1",Some("ITSA- POA 1"),None,Some(1000),Some(3400),
       LocalDate.parse("2018-03-29"),None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2018-02-14")),false,false,false),
       DocumentDetailWithDueDate(DocumentDetail("2021","transId2",Some("ITSA- POA 1"),None,Some(100),Some(1000),LocalDate.parse("2018-03-29"),
-        None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2022-03-22")),false,false,false)),
+        None,None,None,None,None,None,None,None,None),Some(LocalDate.now().plusDays(1)),false,false,false)),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
