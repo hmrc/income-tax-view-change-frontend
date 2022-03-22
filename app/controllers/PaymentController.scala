@@ -66,7 +66,7 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
       handleHandoff(user.mtditid, user.nino, user.saUtr, user.credId, user.userType, paymentAmountInPence, isAgent = false)
   }
 
-  val agentPaymentHandOff: Long => Action[AnyContent] = paymentAmountInPence => Authenticated.async {
+  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => Authenticated.async {
     implicit request =>
       implicit user =>
         handleHandoff(getClientMtditid, Some(getClientNino), getClientUtr, user.credId, Some("Agent"), paymentAmountInPence, isAgent = true)
