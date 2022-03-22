@@ -42,7 +42,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
     val mockPayApiConnector: PayApiConnector = mock[PayApiConnector]
 
-    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId.toString), ArgumentMatchers.eq(BigDecimal(10000)))
+    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId), ArgumentMatchers.eq(BigDecimal(10000)), ArgumentMatchers.eq(false))
     (ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
 
     val testController = new PaymentController()(

@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.InitiatePayNowAuditModel
 import auth.FrontendAuthorisedFunctions
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import connectors.agent.PayApiConnector
+import connectors.agent.AgentPayApiConnector
 import controllers.agent.predicates.ClientConfirmedController
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.Logger
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentController @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                  payApiConnector: PayApiConnector,
+                                  payApiConnector: AgentPayApiConnector,
                                   val auditingService: AuditingService,
                                   val authorisedFunctions: FrontendAuthorisedFunctions
                                  )(implicit val appConfig: FrontendAppConfig,

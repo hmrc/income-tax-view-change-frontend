@@ -20,7 +20,7 @@ import testConstants.BaseTestConstants._
 import testConstants.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
-import connectors.agent.PayApiConnector
+import connectors.PayApiConnector
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
@@ -45,7 +45,7 @@ class PaymentControllerSpec extends TestSupport
 
     val mockPayApiConnector: PayApiConnector = mock[PayApiConnector]
 
-    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId.toString), ArgumentMatchers.eq(BigDecimal(10000)))
+    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId.toString), ArgumentMatchers.eq(BigDecimal(10000)), ArgumentMatchers.eq(true))
     (ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
 
     val testController = new PaymentController(

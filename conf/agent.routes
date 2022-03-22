@@ -28,8 +28,6 @@ GET         /remove-client-sessions                                       contro
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
 
-#Payment
-GET         /payment                                                      controllers.agent.PaymentController.paymentHandoff(amountInPence: Long)
 
 #Payment Allocation
 GET         /charges/payments-made                                        controllers.agent.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)

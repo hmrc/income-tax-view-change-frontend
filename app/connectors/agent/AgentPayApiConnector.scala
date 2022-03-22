@@ -30,9 +30,9 @@ import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayApiConnector @Inject()(val http: HttpClient,
-                                val auditingService: AuditingService,
-                                val config: FrontendAppConfig)(implicit ec: ExecutionContext) {
+class AgentPayApiConnector @Inject()(val http: HttpClient,
+                                     val auditingService: AuditingService,
+                                     val config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
   val url: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 
