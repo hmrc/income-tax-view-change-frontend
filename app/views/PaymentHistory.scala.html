@@ -43,7 +43,7 @@ btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Mess
 
 @getControllerHref(payment: Payment, isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.agent.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.getOrElse(throw MissingFieldException("Document ID")))
+        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(payment.transactionId.getOrElse(throw MissingFieldException("Document ID")))
     } else {
         controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.getOrElse(throw MissingFieldException("Document ID")))
     }
