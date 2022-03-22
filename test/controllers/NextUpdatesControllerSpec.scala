@@ -345,7 +345,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         mockSingleBusinessIncomeSourceWithDeadlines
         mockSingleBusinessIncomeSource()
         mockObligations
-        mockNextUpdates(obligationsModel, controllers.agent.routes.HomeController.show().url, true)(HtmlFormat.empty)
+        mockNextUpdates(obligationsModel, controllers.routes.HomeController.showAgent().url, true)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestConfirmedClient())
 
