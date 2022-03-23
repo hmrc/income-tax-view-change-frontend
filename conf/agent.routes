@@ -38,9 +38,6 @@ GET         /tax-years                                                    contro
 #Payment history
 GET         /payments/history                                             controllers.agent.PaymentHistoryController.viewPaymentHistory
 
-#Next updates
-GET         /next-updates                                                 controllers.agent.NextUpdatesController.getNextUpdates
-
 #Final Tax Calculation
 GET         /:taxYear/final-tax-overview/calculate                        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
 
