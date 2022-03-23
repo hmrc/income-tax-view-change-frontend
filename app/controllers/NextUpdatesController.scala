@@ -24,9 +24,9 @@ import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicateNoCache, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates.ObligationsModel
 import services.{IncomeSourceDetailsService, NextUpdatesService}
@@ -56,58 +56,45 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
     andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar).async {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
-        renderViewNextUpdates
+        for {
+          nextUpdates <- nextUpdatesService.getNextUpdates().map {
+            case obligations: ObligationsModel => obligations
+            case _ => ObligationsModel(Nil)
+          }
+        } yield {
+          if (nextUpdates.obligations.nonEmpty) {
+            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.home().url, isAgent = false)(user))
+          } else {
+            itvcErrorHandler.showInternalServerError
+          }
+        }
       } else {
         Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.home().url)))
       }
   }
 
   val getNextUpdatesAgent: Action[AnyContent] = Authenticated.async { implicit request =>
-
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
         mtdItUser =>
           nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
-            case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty => Ok(view(nextUpdates,
-              controllers.agent.routes.HomeController.show().url, isAgent = true)(mtdItUser))
+            case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>
+              Ok(view(nextUpdates, controllers.agent.routes.HomeController.show().url, isAgent = true)(mtdItUser))
             case _ => agentItvcErrorHandler.showInternalServerError()
           }
-
       }
-
   }
 
   private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean)
                   (implicit user: MtdItUser[_]): Html = {
-    nextUpdatesView(
-      currentObligations = obligationsModel,
-      backUrl = backUrl,
-      isAgent = isAgent
-    )
+    auditNextUpdates(user, isAgent)
+    nextUpdatesView(currentObligations = obligationsModel, backUrl = backUrl, isAgent = isAgent)
   }
 
-
-  private def renderViewNextUpdates[A](implicit user: MtdItUser[A]): Future[Result] = {
-    auditNextUpdates(user)
-    for {
-      nextUpdates <- getObligations()
-    } yield {
-      if (nextUpdates.obligations.nonEmpty) {
-        Ok(nextUpdatesView(nextUpdates, backUrl = controllers.routes.HomeController.home().url))
-      } else {
-        itvcErrorHandler.showInternalServerError
-      }
+  private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
+    if (isAgent) {
+      auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdatesAgent().url))
+    } else {
+      auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates().url))
     }
-  }
-
-  private def getObligations[A](previous: Boolean = false)
-                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsModel] =
-    nextUpdatesService.getNextUpdates(previous).map {
-      case obligations: ObligationsModel => obligations
-      case _ => ObligationsModel(Nil)
-    }
-
-  private def auditNextUpdates[A](user: MtdItUser[A])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
-    auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates().url))
-
 }
