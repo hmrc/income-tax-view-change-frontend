@@ -56,7 +56,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       mockPayApiConnector,
-      app.injector.instanceOf[AuditingService],
+      mockAuditingService,
       mockAuthService
     )(
       appConfig,
