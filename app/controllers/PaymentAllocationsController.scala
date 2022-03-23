@@ -20,50 +20,87 @@ import audit.AuditingService
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
-import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates._
 import models.core.Nino
 import models.paymentAllocationCharges.PaymentAllocationError
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
-import services.PaymentAllocationsService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.mvc.Http
+import services.{IncomeSourceDetailsService, PaymentAllocationsService}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.PaymentAllocation
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentAllocation,
                                              val checkSessionTimeout: SessionTimeoutPredicate,
                                              val authenticate: AuthenticationPredicate,
+                                             val authorisedFunctions: AuthorisedFunctions,
                                              val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              itvcErrorHandler: ItvcErrorHandler,
+                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              paymentAllocations: PaymentAllocationsService,
                                              val retrieveBtaNavBar: BtaNavBarPredicate,
                                              auditingService: AuditingService)
-                                            (implicit mcc: MessagesControllerComponents,
-                                             ec: ExecutionContext,
-                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                            (implicit override val mcc: MessagesControllerComponents,
+                                             val ec: ExecutionContext,
+                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
+  private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
+  private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar)
+  def handleRequest(backUrl: String,
+                    itvcErrorHandler: ShowInternalServerError,
+                    documentNumber: String,
+                    redirectUrl: String,
+                    isAgent: Boolean)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-  lazy val backUrl: String = controllers.routes.PaymentHistoryController.viewPaymentHistory().url
+    paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
+      case Right(paymentAllocations) =>
+        auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
+      case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
+        Redirect(redirectUrl)
+      case _ => itvcErrorHandler.showInternalServerError()
+    }
+  }
 
-  def viewPaymentAllocation(documentNumber: String): Action[AnyContent] = action.async {
-    implicit user =>
-      if (isEnabled(PaymentAllocation)) {
-        paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
-          case Right(paymentAllocations) =>
-              auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial))
-          case Left(PaymentAllocationError(Some(404))) =>
-            Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
-          case _ => itvcErrorHandler.showInternalServerError()
-        }
-      } else Future.successful(Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url))
+  def viewPaymentAllocation(documentNumber: String): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        if (isEnabled(PaymentAllocation)) {
+          handleRequest(
+            controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+            itvcErrorHandler = itvcErrorHandler,
+            documentNumber = documentNumber,
+            redirectUrl = redirectUrlIndividual,
+            isAgent = false
+          )
+        } else Future.successful(Redirect(redirectUrlIndividual))
+    }
+
+  def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
+    Authenticated.async { implicit request =>
+      implicit agent =>
+        if (isEnabled(PaymentAllocation)) {
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+            handleRequest(
+              controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
+              itvcErrorHandler = itvcErrorHandlerAgent,
+              documentNumber = documentNumber,
+              redirectUrl = redirectUrlAgent,
+              isAgent = true
+            )
+          }
+        } else Future.successful(Redirect(redirectUrlAgent))
+    }
   }
 }
