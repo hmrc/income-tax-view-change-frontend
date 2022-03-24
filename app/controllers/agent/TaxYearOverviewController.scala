@@ -19,7 +19,7 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -59,6 +59,12 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   lazy val agentHomeUrl: String = controllers.agent.routes.HomeController.show().url
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
+  val getCurrentTaxYearEnd: Int = {
+    val currentDate: LocalDate = LocalDate.now
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+  }
+
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
@@ -81,6 +87,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     }
   }
 
+  private def showForecast(modelOpt: Option[TaxYearOverviewViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
+    val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
+    val isCurrentTaxYear = taxYear == currentTaxYear
+    val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined && modelOpt.flatMap(_.forecastIncomeTaxAndNics).isDefined
+    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && isCurrentTaxYear && forecastDataPresent
+  }
+
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                    taxYear: Int,
@@ -98,12 +111,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
         Ok(taxYearOverview(
           taxYear = taxYear,
-          overviewOpt = Some(taxYearOverviewViewModel),
+          modelOpt = Some(taxYearOverviewViewModel),
           charges = documentDetailsWithDueDates,
           obligations = obligations,
           codingOutEnabled = isEnabled(CodingOut),
           backUrl = backUrl,
-          isAgent = true
+          isAgent = true,
+          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, getCurrentTaxYearEnd)
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
@@ -114,12 +128,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
         Ok(taxYearOverview(
           taxYear = taxYear,
-          overviewOpt = None,
+          modelOpt = None,
           charges = documentDetailsWithDueDates,
           obligations = obligations,
           codingOutEnabled = isEnabled(CodingOut),
           backUrl = backUrl,
-          isAgent = true
+          isAgent = true,
+          showForecastData = false
         ))
       case _: LiabilityCalculationError =>
         Logger("application").error(

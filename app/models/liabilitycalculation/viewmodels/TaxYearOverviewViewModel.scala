@@ -24,8 +24,8 @@ case class TaxYearOverviewViewModel(timestamp: Option[String],
                                     income: Int,
                                     deductions: BigDecimal,
                                     totalTaxableIncome: Int,
-                                    forecastIncome: Option[Int],
-                                    forecastIncomeTaxAndNics: Option[BigDecimal])
+                                    forecastIncome: Option[Int] = None,
+                                    forecastIncomeTaxAndNics: Option[BigDecimal] = None)
 
 object TaxYearOverviewViewModel {
   def apply(calc: LiabilityCalculationResponse): TaxYearOverviewViewModel = {
