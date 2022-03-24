@@ -53,7 +53,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
-  def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
+  def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, origin: Option[String]): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial).async {
       implicit user =>
         financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
@@ -67,7 +67,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
           matchingYear.headOption match {
             case Some(success: FinancialDetailsModel) if success.documentDetails.exists(_.transactionId == id) =>
-              doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments)
+              doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments, origin)
             case Some(_: FinancialDetailsModel) =>
               Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
               Future.successful(Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url))
@@ -78,7 +78,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
         }
     }
 
-  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel)
+  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel, origin: Option[String])
                                  (implicit user: MtdItUser[_]): Future[Result] = {
     val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
@@ -106,7 +106,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
           Ok(chargeSummaryView(
             documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = backUrl(backLocation, taxYear),
+            backUrl = backUrl(backLocation, taxYear, origin),
             paymentBreakdown = paymentBreakdown,
             chargeHistory = chargeHistory,
             paymentAllocations = paymentAllocations,
@@ -152,9 +152,9 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
     ))
   }
 
-  private def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
-    case Some("taxYearOverview") => controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url + "#payments"
-    case Some("whatYouOwe") => controllers.routes.WhatYouOweController.show().url
+  private def backUrl(backLocation: Option[String], taxYear: Int, origin: Option[String]): String = backLocation match {
+    case Some("taxYearOverview") => controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url + "#payments"
+    case Some("whatYouOwe") => controllers.routes.WhatYouOweController.show(origin).url
     case _ => controllers.routes.HomeController.home().url
   }
 }

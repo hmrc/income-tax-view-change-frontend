@@ -81,11 +81,11 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     }
   }
 
-  def showIncomeSummary(taxYear: Int): Action[AnyContent] = {
+  def showIncomeSummary(taxYear: Int, origin: Option[String]): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url,
+          backUrl = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false

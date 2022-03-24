@@ -76,11 +76,11 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def showDeductionsSummary(taxYear: Int): Action[AnyContent] =
+  def showDeductionsSummary(taxYear: Int, origin: Option[String]): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url,
+          backUrl = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false

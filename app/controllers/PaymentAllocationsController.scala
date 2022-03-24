@@ -73,12 +73,12 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     }
   }
 
-  def viewPaymentAllocation(documentNumber: String): Action[AnyContent] =
+  def viewPaymentAllocation(documentNumber: String, origin: Option[String]): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         if (isEnabled(PaymentAllocation)) {
           handleRequest(
-            controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+            controllers.routes.PaymentHistoryController.viewPaymentHistory(origin).url,
             itvcErrorHandler = itvcErrorHandler,
             documentNumber = documentNumber,
             redirectUrl = redirectUrlIndividual,

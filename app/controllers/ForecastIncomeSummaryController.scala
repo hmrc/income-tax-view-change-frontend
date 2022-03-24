@@ -65,7 +65,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
     if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
   }
 
-  def handleRequest(mtditid: String, nino: String, taxYear: Int, btaNavPartial: Option[Html], isAgent: Boolean)
+  def handleRequest(mtditid: String, nino: String, taxYear: Int, btaNavPartial: Option[Html], isAgent: Boolean, origin: Option[String] = None)
                    (implicit request: Request[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     if (isDisabled(ForecastCalculation)) {
@@ -76,7 +76,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
         case liabilityCalc: LiabilityCalculationResponse =>
           val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
           viewModel match {
-            case Some(model) => Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear), isAgent,
+            case Some(model) => Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear, origin), isAgent,
               btaNavPartial = btaNavPartial))
             case _ =>
               onError(s"No income data could be retrieved. Not found", isAgent, taxYear)
@@ -89,10 +89,10 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
     }
   }
 
-  def show(taxYear: Int): Action[AnyContent] =
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] =
     action.async {
       implicit user =>
-        handleRequest(user.mtditid, user.nino, taxYear, user.btaNavPartial, isAgent = false)
+        handleRequest(user.mtditid, user.nino, taxYear, user.btaNavPartial, isAgent = false, origin)
     }
 
   def showAgent(taxYear: Int): Action[AnyContent] =
@@ -102,6 +102,6 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
           handleRequest(getClientMtditid, getClientNino, taxYear, None, isAgent = true)
     }
 
-  def backUrl(taxYear: Int): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear).url
+  def backUrl(taxYear: Int, origin: Option[String]): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url
 
 }

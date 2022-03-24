@@ -75,7 +75,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  def show(taxYear: Int): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(
@@ -98,7 +98,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
         }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
+  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async { implicit user =>
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }

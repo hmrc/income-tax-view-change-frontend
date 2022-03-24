@@ -52,7 +52,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  val getNextUpdates: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def getNextUpdates(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar).async {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {

@@ -49,7 +49,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
   def action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar)
 
-  val viewPaymentHistory: Action[AnyContent] = action.async {
+  def viewPaymentHistory(origin: Option[String]): Action[AnyContent] = action.async {
     implicit user =>
       if (!isEnabled(PaymentHistory)) {
         Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))

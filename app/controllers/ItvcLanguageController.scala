@@ -47,12 +47,12 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
     } else switchToLanguage(lang)(request)
   }
 
-  def switchToEnglish(fragment: Option[String]): Action[AnyContent] = Action.async {
+  def switchToEnglish(fragment: Option[String], origin: Option[String]): Action[AnyContent] = Action.async {
     request: Request[AnyContent] =>
       switchLang(fragment, "en")(request)
   }
 
-  def switchToWelsh(fragment: Option[String]): Action[AnyContent] = Action.async {
+  def switchToWelsh(fragment: Option[String], origin: Option[String]): Action[AnyContent] = Action.async {
     request: Request[AnyContent] =>
       switchLang(fragment, "cy")(request)
   }
