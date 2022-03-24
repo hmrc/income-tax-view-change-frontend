@@ -24,6 +24,7 @@ import controllers.agent.utils
 import implicits.ImplicitDateFormatterImpl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -52,6 +53,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     new Equality[Html] {
       def areEqual(a: Html, b: Any): Boolean = {
         Jsoup.parse(a.toString()).text() == Jsoup.parse(b.toString()).text()
+      }
+    }
+
+  implicit val elementsEq =
+    new Equality[Elements] {
+      def areEqual(a: Elements, b: Any): Boolean = {
+        Jsoup.parse(a.toString).text() == Jsoup.parse(b.toString()).text()
       }
     }
 

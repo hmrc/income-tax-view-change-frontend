@@ -25,6 +25,7 @@ import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
+import testConstants.BaseTestConstants.taxYear
 import testConstants.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
@@ -242,9 +243,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
-        Html(document.select(".forecast_table tbody tr").toString()) should equal ("""
+        document.select(".forecast_table tbody tr") should equal ("""
             <tr class="govuk-table__row">
-             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast" class="govuk-link govuk-body" aria-label="Income"> Income</a> </td>
+             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast"
+              class="govuk-link govuk-body" aria-label="Income"> Income</a> </td>
              <td class="govuk-table__cell govuk-table__cell--numeric">£12,500.00</td>
             </tr>
             <tr class="govuk-table__row">
@@ -252,10 +254,15 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
              <td class="govuk-table__cell govuk-table__cell--numeric">£12,500.00</td>
             </tr>
             <tr class="govuk-table__row">
-             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast" class="govuk-link govuk-!-font-weight-bold" aria-label="Income-Tax-and-National-Insurance-contributions-due"> Income Tax and National Insurance contributions due</a> </td>
+             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast"
+              class="govuk-link govuk-!-font-weight-bold" aria-label="Income-Tax-and-National-Insurance-contributions-due">
+               Income Tax and National Insurance contributions due</a> </td>
              <td class="govuk-table__cell govuk-table__cell--numeric"><span class="govuk-!-font-weight-bold">£5,000.99</span></td>
             </tr>
         """)
+
+        document.select("#inset_forecast") should equal (
+          """<div id="inset_forecast" class="govuk-inset-text">""" + messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString) + "</div>")
       }
 
       "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {

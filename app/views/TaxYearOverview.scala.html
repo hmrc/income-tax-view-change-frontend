@@ -190,7 +190,7 @@
 
 @forecastContent = {
     @forecastContentTable
-    @govukInsetText(InsetText(content = Text(messages("tax-year-overview.forecast_tab.insetText", taxYear.toString))))
+    @govukInsetText(InsetText(content = Text(messages("tax-year-overview.forecast_tab.insetText", taxYear.toString)), id=Some("inset_forecast")))
 }
 
 @forecastContentTable = @{
