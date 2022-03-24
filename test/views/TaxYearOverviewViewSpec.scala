@@ -235,15 +235,32 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   "taxYearOverview" when {
     "the user is an individual" should {
-      "forecastCalculation feature switch enabled" should {
-        "display forecastdata when forecast data present" in new Setup(forecastCalcView()) {
-          document.title shouldBe taxYearOverviewMessages.title
-          document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
-        }
-        "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {
-          document.title shouldBe taxYearOverviewMessages.title
-          document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
-        }
+      "display forecastdata when forecast data present" in new Setup(forecastCalcView()) {
+        document.title shouldBe taxYearOverviewMessages.title
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-overview.forecast"))
+
+        document.getOptionalSelector("#forecast").isDefined shouldBe true
+        document.getOptionalSelector(".forecast_table").isDefined shouldBe true
+        Html(document.select(".forecast_table tbody tr").toString()) should equal ("""
+            <tr class="govuk-table__row">
+             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast" class="govuk-link govuk-body" aria-label="Income"> Income</a> </td>
+             <td class="govuk-table__cell govuk-table__cell--numeric">£12,500.00</td>
+            </tr>
+            <tr class="govuk-table__row">
+             <td class="govuk-table__cell">Total income on which tax is due</td>
+             <td class="govuk-table__cell govuk-table__cell--numeric">£12,500.00</td>
+            </tr>
+            <tr class="govuk-table__row">
+             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast" class="govuk-link govuk-!-font-weight-bold" aria-label="Income-Tax-and-National-Insurance-contributions-due"> Income Tax and National Insurance contributions due</a> </td>
+             <td class="govuk-table__cell govuk-table__cell--numeric"><span class="govuk-!-font-weight-bold">£5,000.99</span></td>
+            </tr>
+        """)
+      }
+
+      "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {
+        document.title shouldBe taxYearOverviewMessages.title
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
       }
 
       "have the correct title" in new Setup(estimateView()) {

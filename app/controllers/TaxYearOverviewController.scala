@@ -59,9 +59,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
 
   val getCurrentTaxYearEnd: Int = {
-    if (isEnabled(ForecastCalculation)) {
-      // do something
-    }
     val currentDate: LocalDate = LocalDate.now
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
