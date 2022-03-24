@@ -49,5 +49,5 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       }
   }
 
-  def backUrl: String = controllers.agent.routes.HomeController.show().url
+  def backUrl: String = controllers.routes.HomeController.showAgent().url
 }

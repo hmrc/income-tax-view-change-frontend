@@ -97,7 +97,7 @@ class TaxYearsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockNoIncomeSources()
 
-        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
+        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent().url)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
@@ -109,7 +109,7 @@ class TaxYearsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
 
-        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.agent.routes.HomeController.show().url)(HtmlFormat.empty)
+        mockTaxYears(years = List(2022, 2021, 2020, 2019, 2018), controllers.routes.HomeController.showAgent().url)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 

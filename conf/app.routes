@@ -10,7 +10,9 @@ GET         /assets/*file                                                 contro
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
 #Home Controller
-GET         /                                                             controllers.HomeController.home
+GET         /                                                             controllers.HomeController.show
+GET         /agents/income-tax-account                                    controllers.HomeController.showAgent
+GET         /agents                                                       controllers.HomeController.showAgent
 
 #NextUpdates
 GET         /next-updates                                                  controllers.NextUpdatesController.getNextUpdates

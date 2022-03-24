@@ -59,7 +59,7 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
         }
     }
 
-  def backUrl: String = controllers.agent.routes.HomeController.show().url
+  def backUrl: String = controllers.routes.HomeController.showAgent().url
 
 
 }
