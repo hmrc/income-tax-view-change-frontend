@@ -266,6 +266,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "the user has charges and access viewer before 30 days of due date" should {
 
         "have the Balancing Payment title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days()) {
+          println(Console.BLUE + pageDocument)
 
           pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
             (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
