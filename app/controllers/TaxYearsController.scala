@@ -42,10 +42,10 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears)
   def viewTaxYears(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen btaNavBarPredicate).async {
     implicit user =>
-      Future.successful(Ok(taxYearsView(taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse, backUrl = backUrl,
-        utr = user.saUtr, itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration), btaNavPartial = user.btaNavPartial)))
+      Future.successful(Ok(taxYearsView(taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse, backUrl = backUrl(origin),
+        utr = user.saUtr, itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration), btaNavPartial = user.btaNavPartial, origin = origin)))
   }
 
-  lazy val backUrl: String = controllers.routes.HomeController.home().url
+  def backUrl(origin: Option[String]): String = controllers.routes.HomeController.home(origin).url
 
 }

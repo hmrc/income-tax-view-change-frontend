@@ -59,7 +59,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
   def handleShowRequest(taxYear: Int,
                         itvcErrorHandler: ShowInternalServerError,
-                        isAgent: Boolean)
+                        isAgent: Boolean,
+                        origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
@@ -81,7 +82,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
-        taxYear = taxYear
+        taxYear = taxYear,
+        origin = origin
       )
   }
 

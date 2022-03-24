@@ -55,7 +55,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean = false)
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean = false,
+                   origin : Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -67,11 +68,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
-      isAgent = isAgent
+      isAgent = isAgent,
+      origin = origin
     )
   }
 
-  val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def home(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
 
       nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>

@@ -60,7 +60,7 @@ class InYearTaxCalculationController @Inject()(
 
 
 
-  def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String)
+  def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val taxYear = if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear.toString))){
@@ -100,7 +100,8 @@ class InYearTaxCalculationController @Inject()(
       handleRequest(
         isAgent = false,
         currentDate,
-        currentDate.toLongDate
+        currentDate.toLongDate,
+        origin = origin
       )
   }
 

@@ -54,7 +54,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
-                    isAgent: Boolean)
+                    isAgent: Boolean,
+                    origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList().map {
       whatYouOweChargesList =>
@@ -67,7 +68,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           btaNavPartial = user.btaNavPartial,
           dunningLock = whatYouOweChargesList.hasDunningLock,
           codingOutEnabled = codingOutEnabled,
-          isAgent = isAgent)(user, user, messages)
+          isAgent = isAgent,
+          origin = origin)(user, user, messages)
         ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
     } recover {
       case ex: Exception =>
@@ -81,9 +83,10 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.home().url,
+        backUrl = controllers.routes.HomeController.home(origin).url,
         itvcErrorHandler = itvcErrorHandler,
-        isAgent = false
+        isAgent = false,
+        origin = origin
       )
   }
 

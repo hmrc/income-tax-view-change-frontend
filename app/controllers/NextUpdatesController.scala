@@ -63,13 +63,13 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
           }
         } yield {
           if (nextUpdates.obligations.nonEmpty) {
-            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.home().url, isAgent = false)(user))
+            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.home(origin).url, isAgent = false, origin = origin)(user))
           } else {
             itvcErrorHandler.showInternalServerError
           }
         }
       } else {
-        Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.home().url)))
+        Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.home(origin).url)))
       }
   }
 
@@ -85,16 +85,16 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
       }
   }
 
-  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean)
+  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
-    auditNextUpdates(user, isAgent)
-    nextUpdatesView(currentObligations = obligationsModel, backUrl = backUrl, isAgent = isAgent)
+    auditNextUpdates(user, isAgent, origin)
+    nextUpdatesView(currentObligations = obligationsModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
   }
 
-  private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
+  private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     if (isAgent) {
       auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdatesAgent().url))
     } else {
-      auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates().url))
+      auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates(origin).url))
     }
 }

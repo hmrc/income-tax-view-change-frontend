@@ -40,14 +40,14 @@ class PaymentController @Inject()(implicit val config: FrontendAppConfig,
 
   val action = checkSessionTimeout andThen authenticate
 
-  def paymentHandoff(origin: Option[String]): Long => Action[AnyContent] = paymentAmountInPence => action.async {
+  def paymentHandoff(amountInPence: Long , origin: Option[String]): Action[AnyContent] = action.async {
     implicit user =>
       auditingService.extendedAudit(
         InitiatePayNowAuditModel(user.mtditid, user.nino, user.saUtr, user.credId, user.userType)
       )
       user.saUtr match {
         case Some(utr) =>
-          payApiConnector.startPaymentJourney(utr, paymentAmountInPence).map {
+          payApiConnector.startPaymentJourney(utr, amountInPence).map {
             case model: PaymentJourneyModel => Redirect(model.nextUrl)
             case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
           }

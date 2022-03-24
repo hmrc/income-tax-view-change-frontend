@@ -30,8 +30,8 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
                                        appConfig: FrontendAppConfig,
                                        languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
 
-
-  override def fallbackURL: String = controllers.routes.HomeController.home().url
+//Todo check what should be the origin value
+  override def fallbackURL: String = controllers.routes.HomeController.home(None).url
 
   val english: Lang = Lang("en")
   val welsh: Lang = Lang("cy")
@@ -47,12 +47,12 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
     } else switchToLanguage(lang)(request)
   }
 
-  def switchToEnglish(fragment: Option[String], origin: Option[String]): Action[AnyContent] = Action.async {
+  def switchToEnglish(fragment: Option[String]): Action[AnyContent] = Action.async {
     request: Request[AnyContent] =>
       switchLang(fragment, "en")(request)
   }
 
-  def switchToWelsh(fragment: Option[String], origin: Option[String]): Action[AnyContent] = Action.async {
+  def switchToWelsh(fragment: Option[String]): Action[AnyContent] = Action.async {
     request: Request[AnyContent] =>
       switchLang(fragment, "cy")(request)
   }
