@@ -128,11 +128,11 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
         val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isNotCodingOutDocumentDetail).filter(_.originalAmountIsNotZero).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
-          docDetailsNoPayments.filter(_.latePaymentInterestAmount.isDefined).filter(_.latePaymentInterestAmountIsNotZero).map(
+          docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
@@ -199,6 +199,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   lazy val whatYouOweUrl: String = controllers.routes.WhatYouOweController.show().url
 
 
-  lazy val homeUrl: String = controllers.routes.HomeController.home().url
+  lazy val homeUrl: String = controllers.routes.HomeController.show().url
 }
 

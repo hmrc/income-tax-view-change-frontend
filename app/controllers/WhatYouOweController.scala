@@ -62,7 +62,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
         val codingOutEnabled = isEnabled(CodingOut)
 
-        Ok(whatYouOwe(chargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
+        Ok(whatYouOwe(whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
           currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
           dunningLock = whatYouOweChargesList.hasDunningLock,
@@ -81,7 +81,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.home().url,
+        backUrl = controllers.routes.HomeController.show().url,
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false
       )
@@ -93,7 +93,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              backUrl = controllers.agent.routes.HomeController.show().url,
+              backUrl = controllers.routes.HomeController.showAgent().url,
               itvcErrorHandler = itvcErrorHandlerAgent,
               isAgent = true
             )

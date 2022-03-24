@@ -39,8 +39,8 @@ class BackToHomeHelperSpec extends TestSupport {
       backToHomeLink.hasClass("link-back") shouldBe true
     }
 
-    s"Have the correct href to '${controllers.routes.HomeController.home().url}'" in {
-      backToHomeLink.attr("href") shouldBe controllers.routes.HomeController.home().url
+    s"Have the correct href to '${controllers.routes.HomeController.show().url}'" in {
+      backToHomeLink.attr("href") shouldBe controllers.routes.HomeController.show().url
     }
   }
 }

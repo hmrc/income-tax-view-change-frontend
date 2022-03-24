@@ -26,16 +26,16 @@ import views.html.NextUpdates
 trait MockNextUpdates extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>
 
-  val agentNextUpdates: NextUpdates = mock[NextUpdates]
+  val nextUpdatesObj: NextUpdates = mock[NextUpdates]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(agentNextUpdates)
+    reset(nextUpdatesObj)
   }
 
-  def mockAgentNextUpdates(currentObligations: models.nextUpdates.ObligationsModel, backUrl: String, isAgent: Boolean)
-                          (response: Html): Unit = {
-    when(agentNextUpdates.apply(
+  def mockNextUpdates(currentObligations: models.nextUpdates.ObligationsModel, backUrl: String, isAgent: Boolean)
+                     (response: Html): Unit = {
+    when(nextUpdatesObj.apply(
       matches(currentObligations),
       matches(backUrl),
       matches(isAgent)

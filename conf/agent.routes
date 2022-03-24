@@ -19,8 +19,6 @@ GET         /utr-problem                                                  contro
 POST        /utr-problem                                                  controllers.agent.UTRErrorController.submit
 
 #Home Controller
-GET         /income-tax-account                                           controllers.agent.HomeController.show
-GET         /                                                             controllers.agent.HomeController.show
 GET         /remove-client-sessions                                       controllers.agent.RemoveClientDetailsSessionsController.show
 
 
@@ -31,9 +29,6 @@ GET         /tax-years/:taxYear/charge                                    contro
 #Payment
 GET         /payment                                                      controllers.agent.PaymentController.paymentHandoff(amountInPence: Long)
 
-#Payment Allocation
-GET         /charges/payments-made                                        controllers.agent.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
-
 # Tax Year Overview
 GET         /calculation/:taxYear                                         controllers.agent.TaxYearOverviewController.show(taxYear: Int)
 
@@ -42,12 +37,6 @@ GET         /tax-years                                                    contro
 
 #Payment history
 GET         /payments/history                                             controllers.agent.PaymentHistoryController.viewPaymentHistory
-
-#Next updates
-GET         /next-updates                                                 controllers.agent.NextUpdatesController.getNextUpdates
-
-#Tax Due
-GET         /calculation/:taxYear/tax-due                                 controllers.agent.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
 
 #Final Tax Calculation
 GET         /:taxYear/final-tax-overview/calculate                        controllers.agent.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)

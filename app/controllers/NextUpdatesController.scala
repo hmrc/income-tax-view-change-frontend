@@ -16,20 +16,22 @@
 
 package controllers
 
-import audit.AuditingService
-import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
-import auth.MtdItUser
-import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicateNoCache, NinoPredicate, SessionTimeoutPredicate}
-import javax.inject.{Inject, Singleton}
-import models.nextUpdates.ObligationsModel
+import scala.concurrent.{ExecutionContext, Future}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.NextUpdatesService
+import play.twirl.api.Html
+import audit.AuditingService
+import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NinoPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
+import models.nextUpdates.ObligationsModel
+import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{NextUpdates, NoNextUpdates}
-
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
@@ -38,49 +40,61 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       authenticate: AuthenticationPredicate,
                                       retrieveNino: NinoPredicate,
                                       retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
+                                      incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       val retrieveBtaNavBar: BtaNavBarPredicate,
-                                      val appConfig: FrontendAppConfig)
+                                      val appConfig: FrontendAppConfig,
+                                      val authorisedFunctions: FrontendAuthorisedFunctions)
                                      (implicit mcc: MessagesControllerComponents,
-                                      val executionContext: ExecutionContext)
-  extends BaseController with I18nSupport {
+                                      implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
+                                      val ec: ExecutionContext)
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   val getNextUpdates: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar).async {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
-        renderViewNextUpdates
+        for {
+          nextUpdates <- nextUpdatesService.getNextUpdates().map {
+            case obligations: ObligationsModel => obligations
+            case _ => ObligationsModel(Nil)
+          }
+        } yield {
+          if (nextUpdates.obligations.nonEmpty) {
+            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.show().url, isAgent = false)(user))
+          } else {
+            itvcErrorHandler.showInternalServerError
+          }
+        }
       } else {
-        Future.successful(Ok(NoNextUpdatesView(backUrl = backUrl)))
+        Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show().url)))
       }
   }
 
-  private def renderViewNextUpdates[A](implicit user: MtdItUser[A]): Future[Result] = {
-    auditNextUpdates(user)
-    for {
-      nextUpdates <- getObligations()
-    } yield {
-      if (nextUpdates.obligations.nonEmpty) {
-        Ok(nextUpdatesView(nextUpdates, backUrl = backUrl))
-      } else {
-        itvcErrorHandler.showInternalServerError
+  val getNextUpdatesAgent: Action[AnyContent] = Authenticated.async { implicit request =>
+    implicit user =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
+        mtdItUser =>
+          nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
+            case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>
+              Ok(view(nextUpdates, controllers.routes.HomeController.showAgent().url, isAgent = true)(mtdItUser))
+            case _ => agentItvcErrorHandler.showInternalServerError()
+          }
       }
-    }
   }
 
-  private def getObligations[A](previous: Boolean = false)
-                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsModel] =
-    nextUpdatesService.getNextUpdates(previous).map {
-      case obligations: ObligationsModel => obligations
-      case _ => ObligationsModel(Nil)
+  private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean)
+                  (implicit user: MtdItUser[_]): Html = {
+    auditNextUpdates(user, isAgent)
+    nextUpdatesView(currentObligations = obligationsModel, backUrl = backUrl, isAgent = isAgent)
+  }
+
+  private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
+    if (isAgent) {
+      auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdatesAgent().url))
+    } else {
+      auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates().url))
     }
-
-  private def auditNextUpdates[A](user: MtdItUser[A])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
-    auditingService.audit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.getNextUpdates().url))
-
-  lazy val backUrl: String = controllers.routes.HomeController.home().url
-
-
 }

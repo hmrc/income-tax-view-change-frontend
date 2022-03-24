@@ -29,10 +29,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def getDueDateFor(documentDetail: DocumentDetail): Option[LocalDate] = {
-    financialDetails.find { fd =>
-      fd.transactionId.contains(documentDetail.transactionId) &&
-        fd.taxYear == documentDetail.taxYear
-    } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
+    if (documentDetail.isLatePaymentInterest) {
+      documentDetail.interestEndDate
+    } else {
+      financialDetails.find { fd =>
+        fd.transactionId.contains(documentDetail.transactionId) &&
+          fd.taxYear == documentDetail.taxYear
+      } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
+    }
   }
 
   def getAllDueDates: List[LocalDate] = {
@@ -54,6 +58,13 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear.toInt == taxYear)
 
+  def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
+    financialDetails.find { fd =>
+      fd.transactionId.contains(documentDetail.transactionId) &&
+        fd.taxYear == documentDetail.taxYear
+    } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
+  }
+
   def findDocumentDetailForYearWithDueDate(taxYear: Int): Option[DocumentDetailWithDueDate] = {
     findDocumentDetailForTaxYear(taxYear)
       .map(documentDetail => DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail)))
@@ -65,9 +76,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         documentDetail, getDueDateFor(documentDetail), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
-  def getAllDocumentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
+  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
-      DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail), dunningLock = dunningLockExists(documentDetail.transactionId)))
+      DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail),
+        documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId), codingOutEnabled))
   }
 
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)

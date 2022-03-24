@@ -70,7 +70,7 @@
 
     @nextUpdatesControllerURL = @{
         if(isAgent) {
-            controllers.agent.routes.NextUpdatesController.getNextUpdates.url
+            controllers.routes.NextUpdatesController.getNextUpdatesAgent.url
         } else {
             controllers.routes.NextUpdatesController.getNextUpdates().url
         }

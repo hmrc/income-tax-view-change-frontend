@@ -105,7 +105,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       Then("The user is redirected to the next page")
       result should have(
         httpStatus(SEE_OTHER),
-        redirectURI(controllers.agent.routes.HomeController.show().url)
+        redirectURI(controllers.routes.HomeController.showAgent().url)
       )
     }
   }

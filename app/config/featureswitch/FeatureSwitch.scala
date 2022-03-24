@@ -79,8 +79,8 @@ case object CodingOut extends FeatureSwitch {
 }
 
 case object BtaNavBar extends FeatureSwitch {
-  override val name = s"$prefix.enable-bta-nav-bar"
-  override val displayText = "BTA Nav Bar"
+  override val name = s"$prefix.enable-nav-bar"
+  override val displayText = "Nav Bar"
 }
 
 case object Class4UpliftEnabled extends FeatureSwitch {

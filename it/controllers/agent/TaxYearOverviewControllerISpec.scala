@@ -325,7 +325,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
         )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates,
+        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
           allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
@@ -400,7 +400,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
         )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates,
+        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
           allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
@@ -580,7 +580,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
         )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates,
+        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
           currentObligationsSuccess, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }

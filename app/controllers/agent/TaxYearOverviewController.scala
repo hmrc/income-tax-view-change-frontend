@@ -56,7 +56,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   lazy val agentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
-  lazy val agentHomeUrl: String = controllers.agent.routes.HomeController.show().url
+  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
   val getCurrentTaxYearEnd: Int = {
@@ -150,11 +150,11 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
         val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isNotCodingOutDocumentDetail).filter(_.originalAmountIsNotZero).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
-          docDetailsNoPayments.filter(_.latePaymentInterestAmount.isDefined).filter(_.latePaymentInterestAmountIsNotZero).map(
+          docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
