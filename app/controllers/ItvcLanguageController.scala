@@ -30,8 +30,7 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
                                        appConfig: FrontendAppConfig,
                                        languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
 
-//Todo check what should be the origin value
-  override def fallbackURL: String = controllers.routes.HomeController.home(None).url
+  override def fallbackURL: String = controllers.routes.HomeController.home().url
 
   val english: Lang = Lang("en")
   val welsh: Lang = Lang("cy")

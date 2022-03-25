@@ -173,7 +173,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
       }
   }
 
-  def renderTaxYearOverviewPage(taxYear: Int, origin: Option[String]): Action[AnyContent] = {
+  def renderTaxYearOverviewPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
     if (taxYear.toString.matches("[0-9]{4}")) {
       showTaxYearOverview(taxYear, origin)
     } else {

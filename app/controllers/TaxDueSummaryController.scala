@@ -82,7 +82,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
   }
 
 
-  def showTaxDueSummary(taxYear: Int, origin: Option[String]): Action[AnyContent] = {
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(

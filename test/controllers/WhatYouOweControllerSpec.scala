@@ -91,7 +91,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-        val result = controller.show(fakeRequestWithActiveSession)
+        val result = controller.show()(fakeRequestWithActiveSession)
         val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
@@ -109,7 +109,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-        val result = controller.show(fakeRequestWithActiveSession)
+        val result = controller.show()(fakeRequestWithActiveSession)
         val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
@@ -127,7 +127,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-        val result = controller.show(fakeRequestWithActiveSession)
+        val result = controller.show()(fakeRequestWithActiveSession)
         val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR

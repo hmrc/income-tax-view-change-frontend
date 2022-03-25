@@ -40,6 +40,7 @@ trait MockPaymentAllocationView extends BeforeAndAfterEach with MockitoSugar {
       matches(viewModel),
       matches(backUrl),
       matches(isAgent),
+      any(),
       any()
     )(any(), any()))
       .thenReturn(response)

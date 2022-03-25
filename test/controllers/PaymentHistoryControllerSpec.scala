@@ -74,7 +74,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
 
-        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
+        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
       }
@@ -87,7 +87,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
 
-        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
+        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -97,7 +97,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
         mockErrorIncomeSource()
-        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
+        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -106,7 +106,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     "User fails to be authorised" should {
       "redirect the user to the login page" in new Setup {
         setupMockAuthorisationException()
-        val result = controller.viewPaymentHistory(fakeRequestWithActiveSession)
+        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
 

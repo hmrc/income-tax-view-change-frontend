@@ -89,7 +89,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
     }
   }
 
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] =
+  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
     action.async {
       implicit user =>
         handleRequest(user.mtditid, user.nino, taxYear, user.btaNavPartial, isAgent = false, origin)

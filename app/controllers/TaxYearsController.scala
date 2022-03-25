@@ -39,7 +39,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears)
                                    val itvcErrorHandler: ItvcErrorHandler
                                   ) extends BaseController with I18nSupport with FeatureSwitching {
 
-  def viewTaxYears(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def viewTaxYears(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen btaNavBarPredicate).async {
     implicit user =>
       Future.successful(Ok(taxYearsView(taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse, backUrl = backUrl(origin),

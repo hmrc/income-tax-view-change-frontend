@@ -81,7 +81,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     }
   }
 
-  def showIncomeSummary(taxYear: Int, origin: Option[String]): Action[AnyContent] = {
+  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(

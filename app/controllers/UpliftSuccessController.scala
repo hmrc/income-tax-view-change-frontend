@@ -36,7 +36,6 @@ class UpliftSuccessController @Inject()(implicit val appConfig: FrontendAppConfi
   val success: Action[AnyContent] = (authenticate andThen retrieveNino).async {
     implicit user =>
       auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
-      // todo what origin value should be here
-      Future.successful(Redirect(controllers.routes.HomeController.home(None).url))
+      Future.successful(Redirect(controllers.routes.HomeController.home().url))
   }
 }

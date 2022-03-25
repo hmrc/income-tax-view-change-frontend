@@ -42,7 +42,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
 
   val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
-  def calculationPoller(taxYear: Int, isFinalCalc: Boolean, origin: Option[String]): Action[AnyContent] = action.async {
+  def calculationPoller(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
 
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {

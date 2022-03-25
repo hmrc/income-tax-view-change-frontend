@@ -53,7 +53,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
-  def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, origin: Option[String]): Action[AnyContent] =
+  def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial).async {
       implicit user =>
         financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>

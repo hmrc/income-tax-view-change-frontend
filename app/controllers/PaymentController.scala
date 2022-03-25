@@ -40,7 +40,7 @@ class PaymentController @Inject()(implicit val config: FrontendAppConfig,
 
   val action = checkSessionTimeout andThen authenticate
 
-  def paymentHandoff(amountInPence: Long , origin: Option[String]): Action[AnyContent] = action.async {
+  def paymentHandoff(amountInPence: Long , origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
       auditingService.extendedAudit(
         InitiatePayNowAuditModel(user.mtditid, user.nino, user.saUtr, user.credId, user.userType)

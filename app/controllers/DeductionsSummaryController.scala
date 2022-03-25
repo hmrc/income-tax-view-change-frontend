@@ -76,7 +76,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def showDeductionsSummary(taxYear: Int, origin: Option[String]): Action[AnyContent] =
+  def showDeductionsSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(

@@ -74,7 +74,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     }
   }
 
-  def viewPaymentAllocation(documentNumber: String, origin: Option[String]): Action[AnyContent] =
+  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         if (isEnabled(PaymentAllocation)) {
