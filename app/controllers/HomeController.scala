@@ -79,7 +79,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     )
   }
 
-  def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int)
+  def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
       nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
@@ -134,13 +134,14 @@ class HomeController @Inject()(val homeView: views.html.Home,
       }
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
-        user.incomeSources.getCurrentTaxEndYear
+        user.incomeSources.getCurrentTaxEndYear,
+        origin = origin
       )
   }
 
