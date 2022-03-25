@@ -56,7 +56,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   lazy val agentTaxYearsUrl: String = controllers.agent.routes.TaxYearsController.show().url
-  lazy val agentHomeUrl: String = controllers.agent.routes.HomeController.show().url
+  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>

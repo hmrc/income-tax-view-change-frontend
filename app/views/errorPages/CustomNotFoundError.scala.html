@@ -25,9 +25,9 @@ link: link
 )
 
 @(isAgent: Boolean = false)(implicit request : Request[_], messages: Messages)
-@* TODO check what value should be for the origin *@
+
 @homeUrl = @{
-    if(isAgent) controllers.agent.routes.HomeController.show().url else controllers.routes.HomeController.home(None).url
+    if(isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
 }
 
 @mainTemplate(pageTitle = messages("error.custom.heading"), isAgent = isAgent) {

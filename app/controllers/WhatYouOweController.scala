@@ -83,7 +83,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.home(origin).url,
+        backUrl = controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
         origin = origin
@@ -96,7 +96,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              backUrl = controllers.agent.routes.HomeController.show().url,
+              backUrl = controllers.routes.HomeController.showAgent().url,
               itvcErrorHandler = itvcErrorHandlerAgent,
               isAgent = true
             )

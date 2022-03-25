@@ -63,13 +63,13 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
           }
         } yield {
           if (nextUpdates.obligations.nonEmpty) {
-            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.home(origin).url, isAgent = false, origin = origin)(user))
+            Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.show(origin).url, isAgent = false, origin = origin)(user))
           } else {
             itvcErrorHandler.showInternalServerError
           }
         }
       } else {
-        Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.home(origin).url)))
+        Future.successful(Ok(NoNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
       }
   }
 
@@ -79,7 +79,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
         mtdItUser =>
           nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
             case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>
-              Ok(view(nextUpdates, controllers.agent.routes.HomeController.show().url, isAgent = true)(mtdItUser))
+              Ok(view(nextUpdates, controllers.routes.HomeController.showAgent().url, isAgent = true)(mtdItUser))
             case _ => agentItvcErrorHandler.showInternalServerError()
           }
       }

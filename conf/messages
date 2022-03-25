@@ -760,7 +760,6 @@ tax-year-overview.tax-due.finalCalc                             = Income Tax and
 inYear-tax-overview.individual.heading                           = Your tax overview 6 April {0} to {1}
 inYear-tax-overview.caption                                      = 6 April {0} to 5 April {1}
 inYear-tax-overview.individual.inset                             = This calculation is only based on your completed updates for this tax year up to {0}. It is not your final tax bill for the year. It is a year to date calculation based on the information that has been entered so far.
-InYear-tax-overview.tableHead                                    = In year tax calculation
 InYear-tax-overview.goToTaxAccount                               = Go to Income Tax Account
 
 ## InYear Tax Overview (Agent Content overrides)

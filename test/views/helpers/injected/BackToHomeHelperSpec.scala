@@ -36,8 +36,8 @@ class BackToHomeHelperSpec extends ViewSpec {
       document.backToHome.hasClass("link-back") shouldBe true
     }
 
-    s"Have the correct href to '${controllers.routes.HomeController.home().url}'" in new Test {
-      document.backToHome.attr("href") shouldBe controllers.routes.HomeController.home().url
+    s"Have the correct href to '${controllers.routes.HomeController.show().url}'" in new Test {
+      document.backToHome.attr("href") shouldBe controllers.routes.HomeController.show().url
     }
   }
 

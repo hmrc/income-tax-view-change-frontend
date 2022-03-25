@@ -187,6 +187,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
   def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
 
 
-  def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.home(origin).url
+  lazy val homeUrl: String = controllers.routes.HomeController.show(origin).url
 }
 

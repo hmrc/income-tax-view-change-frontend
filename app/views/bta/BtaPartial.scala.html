@@ -35,6 +35,6 @@
 
     @p(id=Some("it-quarterly-reporting-p2"))(Html(messages("bta_partial.p2")))
 
-    @button(id=Some("it-quarterly-reporting-home-button"), href={appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.home(None).url}, text=messages("bta_partial.home_button"))
+    @button(id=Some("it-quarterly-reporting-home-button"), href={appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.show.url}, text=messages("bta_partial.home_button"))
 
 </section>

@@ -16,5 +16,5 @@
 
 @this()
 @(page: String)(implicit messages: Messages)
-@* TODO check what value should be for the origin *@
-<a id="back" class="link-back" href="@{controllers.routes.HomeController.home(None).url}">@messages("base.backToHome")</a>
+
+<a id="back" class="link-back" href="@{controllers.routes.HomeController.show().url}">@messages("base.backToHome")</a>

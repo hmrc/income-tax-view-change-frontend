@@ -58,7 +58,7 @@
 
 @siteHeader = @{
     val serviceName = if (isAgent) Some(messages("agent.base.service_name")) else Some(messages("base.service_name"))
-    val serviceUrl = if (isAgent) controllers.agent.routes.HomeController.show().url else appConfig.businessTaxAccount
+    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else appConfig.businessTaxAccount
 
     hmrcHeader(HmrcHeaderArgs(
         homepageUrl = "https://www.gov.uk",

@@ -740,7 +740,6 @@ tax-year-overview.taxable-income.finalCalc                      = Cyfanswm eich 
 inYear-tax-overview.individual.heading                           = Trosolwg o’ch treth 6 Ebrill {0} i {1}
 inYear-tax-overview.caption                                      = 6 Ebrill {0} i 5 Ebrill {1}
 inYear-tax-overview.individual.inset                             = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
-InYear-tax-overview.tableHead                                    = Cyfrifiad treth yn ystod y flwyddyn
 InYear-tax-overview.goToTaxAccount                               = mynd i gyfrifo treth
 
 ## InYear Tax Overview (Agent Content overrides)

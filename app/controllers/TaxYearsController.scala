@@ -46,6 +46,6 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears)
         utr = user.saUtr, itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration), btaNavPartial = user.btaNavPartial, origin = origin)))
   }
 
-  def backUrl(origin: Option[String]): String = controllers.routes.HomeController.home(origin).url
+  lazy val backUrl: String = controllers.routes.HomeController.show(origin).url
 
 }

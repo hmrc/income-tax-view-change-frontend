@@ -35,7 +35,7 @@ abstract class BaseController @Inject()(implicit mcc: MessagesControllerComponen
     }
   }
 
-  def redirectToHome: Result = Redirect(controllers.routes.HomeController.home())
+  def redirectToHome: Result = Redirect(controllers.routes.HomeController.show())
 
   def fRedirectToHome: Future[Result] = Future.successful(redirectToHome)
 }

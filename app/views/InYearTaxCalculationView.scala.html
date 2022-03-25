@@ -56,7 +56,7 @@
 }
 
 @formCall = @{
-    controllers.routes.HomeController.home(origin)
+    controllers.routes.HomeController.show(origin)
 }
     
 @layout(
@@ -71,7 +71,7 @@
         @insetContent
     }
 
-    @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent, Some(messages("InYear-tax-overview.tableHead")))
+    @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 
     @form(formCall) {
         @continueButton(Some(messages("InYear-tax-overview.goToTaxAccount")))
