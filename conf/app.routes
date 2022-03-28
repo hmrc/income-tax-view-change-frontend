@@ -82,7 +82,6 @@ GET         /partial                                                      contro
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
 
-## TODO check if it's used
 #Language Controller
 GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
 
