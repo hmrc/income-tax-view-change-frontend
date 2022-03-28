@@ -16,36 +16,68 @@
 
 package controllers
 
+import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import views.html.TaxYears
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates._
 import javax.inject.Inject
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.TaxYears
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearsController @Inject()(taxYearsView: TaxYears)
+class TaxYearsController @Inject()(taxYearsView: TaxYears,
+                                   val authorisedFunctions: AuthorisedFunctions,
+                                   incomeSourceDetailsService: IncomeSourceDetailsService)
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
-                                   implicit val executionContext: ExecutionContext,
+                                   implicit val ec: ExecutionContext,
+                                   val itvcErrorHandler: AgentItvcErrorHandler,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
-                                   val btaNavBarPredicate: BtaNavBarPredicate,
+                                   val retrieveBtaNavBar: BtaNavBarPredicate,
                                    val authenticate: AuthenticationPredicate,
                                    val retrieveNino: NinoPredicate,
                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                   val itvcErrorHandler: ItvcErrorHandler
-                                  ) extends BaseController with I18nSupport with FeatureSwitching {
+                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
+                                  ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen btaNavBarPredicate).async {
-    implicit user =>
-      Future.successful(Ok(taxYearsView(taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse, backUrl = backUrl,
-        utr = user.saUtr, itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration), btaNavPartial = user.btaNavPartial)))
+  def handleRequest(backUrl: String,
+                    isAgent: Boolean)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+
+    Future.successful(Ok(taxYearsView(
+      taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+      backUrl,
+      isAgent = isAgent,
+      utr = user.saUtr,
+      itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+      btaNavPartial = user.btaNavPartial)))
   }
 
-  lazy val backUrl: String = controllers.routes.HomeController.show().url
+  def showTaxYears: Action[AnyContent] = {
+    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleRequest(
+          backUrl = controllers.routes.HomeController.show().url,
+          isAgent = false
+        )
+    }
+  }
 
+  def showAgentTaxYears: Action[AnyContent] = {
+    Authenticated.async { implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+          handleRequest(
+            backUrl = controllers.routes.HomeController.showAgent().url,
+            isAgent = true
+          )
+        }
+    }
+  }
 }

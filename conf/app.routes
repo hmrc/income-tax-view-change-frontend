@@ -15,7 +15,7 @@ GET         /agents/income-tax-account                                    contro
 GET         /agents                                                       controllers.HomeController.showAgent
 
 #NextUpdates
-GET         /next-updates                                                  controllers.NextUpdatesController.getNextUpdates
+GET         /next-updates                                                 controllers.NextUpdatesController.getNextUpdates
 GET         /agents/next-updates                                          controllers.NextUpdatesController.getNextUpdatesAgent
 
 #Calculation
@@ -36,7 +36,8 @@ GET         /calculation/:taxYear/deductions                              contro
 GET         /agents/calculation/:taxYear/deductions                       controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int)
 
 #TaxYears
-GET         /tax-years                                                    controllers.TaxYearsController.viewTaxYears
+GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears
+GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears
 
 #Payment
 GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long)
