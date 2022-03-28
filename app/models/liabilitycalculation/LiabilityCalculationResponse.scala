@@ -38,7 +38,74 @@ object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
 }
 
-case class Metadata(calculationTimestamp: Option[String], crystallised: Option[Boolean] = Some(false))
+/**
+ * "calculationReason": {
+                "description": "The reason why the calculation was triggered. ",
+                "type": "string",
+                "enum": [
+                  "customerRequest",
+                  "class2NICEvent",
+                  "newLossEvent",
+                  "updatedLossEvent",
+                  "newClaimEvent",
+                  "updatedClaimEvent",
+                  "newAnnualAdjustmentEvent",
+                  "updatedAnnualAdjustmentEvent",
+                  "unattendedCalculation"
+                ],
+                "example": "customerRequest"
+              }
+ */
+
+// TODO should we model enum as ADT ?
+/*sealed trait CalculationReasonType {
+  val name : String
+ /* val nameValue: String = {
+    val cName = this.getClass.getSimpleName
+    s"${cName.head.toLower}${cName.tail}"
+  }*/
+}
+
+object CalculationReasonType {
+  case object CustomerRequest extends CalculationReasonType {
+    override val name: String = "customerRequest"
+  }
+
+  case object Class2NICEvent extends CalculationReasonType {
+    override val name: String = "class2NICEvent"
+  }
+
+  case object NewLossEvent extends CalculationReasonType {
+    override val name: String = "newLossEvent"
+  }
+
+  case object UpdatedLossEvent extends CalculationReasonType {
+    override val name: String = "updatedLossEvent"
+  }
+
+  case object NewClaimEvent extends CalculationReasonType {
+    override val name: String = "newClaimEvent"
+  }
+
+  case object UpdatedClaimEvent extends CalculationReasonType {
+    override val name: String = "updatedClaimEvent"
+  }
+
+  case object NewAnnualAdjustmentEvent extends CalculationReasonType {
+    override val name: String = "newAnnualAdjustmentEvent"
+  }
+
+  case object UpdatedAnnualAdjustmentEvent extends CalculationReasonType {
+    override val name: String = "updatedAnnualAdjustmentEvent"
+  }
+
+  case object UnattendedCalculation extends CalculationReasonType {
+    override val name: String = "unattendedCalculation"
+  }
+
+}*/
+
+case class Metadata(calculationTimestamp: Option[String], crystallised: Option[Boolean] = Some(false), calculationReason: Option[String])
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]
