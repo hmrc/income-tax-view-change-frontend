@@ -18,42 +18,57 @@ package controllers
 
 import audit.AuditingService
 import audit.models.InitiatePayNowAuditModel
-import config.FrontendAppConfig
+import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import connectors.PayApiConnector
+import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
-import javax.inject.{Inject, Singleton}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentController @Inject()(implicit val config: FrontendAppConfig,
-                                  mcc: MessagesControllerComponents,
-                                  implicit val executionContext: ExecutionContext,
-                                  val checkSessionTimeout: SessionTimeoutPredicate,
+class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                   val authenticate: AuthenticationPredicate,
                                   payApiConnector: PayApiConnector,
-                                  val auditingService: AuditingService
-                                 ) extends BaseController {
+                                  val auditingService: AuditingService,
+                                  val authorisedFunctions: FrontendAuthorisedFunctions
+                                 )(implicit val appConfig: FrontendAppConfig,
+                                   mcc: MessagesControllerComponents,
+                                   implicit val ec: ExecutionContext,
+                                   val itvcErrorHandler: AgentItvcErrorHandler) extends ClientConfirmedController {
 
-  val action = checkSessionTimeout andThen authenticate
+  val action: ActionBuilder[MtdItUserOptionNino, AnyContent] = checkSessionTimeout andThen authenticate
 
-  def paymentHandoff(amountInPence: Long , origin: Option[String] = None): Action[AnyContent] = action.async {
+  def handleHandoff(mtditid: String, nino: Option[String], saUtr: Option[String], credId: Option[String],
+                    userType: Option[String], paymentAmountInPence: Long, isAgent: Boolean)
+                   (implicit request: Request[_], ec: ExecutionContext): Future[Result] = {
+    auditingService.extendedAudit(
+      InitiatePayNowAuditModel(mtditid, nino, saUtr, credId, userType)
+    )
+    saUtr match {
+      case Some(utr) =>
+        payApiConnector.startPaymentJourney(utr, paymentAmountInPence, isAgent).map {
+          case model: PaymentJourneyModel => Redirect(model.nextUrl)
+          case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
+        }
+      case _ =>
+        Logger("application").error("Failed to start payments journey due to missing UTR")
+        Future.failed(new Exception("Failed to start payments journey due to missing UTR"))
+    }
+  }
+
+  val paymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => action.async {
     implicit user =>
-      auditingService.extendedAudit(
-        InitiatePayNowAuditModel(user.mtditid, user.nino, user.saUtr, user.credId, user.userType)
-      )
-      user.saUtr match {
-        case Some(utr) =>
-          payApiConnector.startPaymentJourney(utr, amountInPence).map {
-            case model: PaymentJourneyModel => Redirect(model.nextUrl)
-            case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
-          }
-        case _ =>
-          Logger("application").error("Failed to start payments journey due to missing UTR")
-          Future.failed(new Exception("Failed to start payments journey due to missing UTR"))
-      }
+      handleHandoff(user.mtditid, user.nino, user.saUtr, user.credId, user.userType, paymentAmountInPence, isAgent = false)
+  }
+
+  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => Authenticated.async {
+    implicit request =>
+      implicit user =>
+        handleHandoff(getClientMtditid, Some(getClientNino), getClientUtr, user.credId, Some("Agent"), paymentAmountInPence, isAgent = true)
   }
 }
