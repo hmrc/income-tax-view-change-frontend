@@ -35,15 +35,17 @@ class PayApiConnector @Inject()(val http: HttpClient,
 
   val url: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 
-  def startPaymentJourney(saUtr: String, amountInPence: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
+  def startPaymentJourney(saUtr: String, amountInPence: BigDecimal, isAgent: Boolean)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
+
+    val paymentRedirectUrl: String = if (isAgent) config.agentPaymentRedirectUrl else config.paymentRedirectUrl
 
     val body = Json.parse(
       s"""
          |{
          | "utr": "$saUtr",
          | "amountInPence": $amountInPence,
-         | "returnUrl": "${config.paymentRedirectUrl}",
-         | "backUrl": "${config.paymentRedirectUrl}"
+         | "returnUrl": "$paymentRedirectUrl",
+         | "backUrl": "$paymentRedirectUrl"
          |}
       """.stripMargin
     )
