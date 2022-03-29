@@ -183,7 +183,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     }
   }
 
-  def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.viewTaxYears(origin).url
+  def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
   def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
 
 

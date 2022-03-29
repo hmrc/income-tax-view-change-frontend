@@ -36,7 +36,8 @@ GET         /calculation/:taxYear/deductions                              contro
 GET         /agents/calculation/:taxYear/deductions                       controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int)
 
 #TaxYears
-GET         /tax-years                                                    controllers.TaxYearsController.viewTaxYears(origin: Option[String] ?= None)
+GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears(origin: Option[String] ?= None)
+GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears
 
 #Payment
 GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long, origin: Option[String] ?= None)

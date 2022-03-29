@@ -79,9 +79,9 @@
 
     @taxYearsControllerURL = @{
         if(isAgent) {
-            controllers.agent.routes.TaxYearsController.show().url
+            controllers.routes.TaxYearsController.showAgentTaxYears().url
         } else {
-            controllers.routes.TaxYearsController.viewTaxYears(origin).url
+            controllers.routes.TaxYearsController.showTaxYears(origin).url
         }
     }
 
