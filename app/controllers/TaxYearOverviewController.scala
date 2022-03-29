@@ -180,7 +180,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     }
   }
 
-  lazy val taxYearsUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
+  lazy val taxYearsUrl: String = controllers.routes.TaxYearsController.showTaxYears().url
   lazy val whatYouOweUrl: String = controllers.routes.WhatYouOweController.show().url
 
 
