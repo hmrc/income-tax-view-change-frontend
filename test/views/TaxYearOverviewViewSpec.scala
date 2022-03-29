@@ -23,6 +23,7 @@ import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.BaseTestConstants.taxYear
@@ -243,26 +244,17 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
-        document.select(".forecast_table tbody tr") should equal ("""
-            <tr class="govuk-table__row">
-             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast"
-              class="govuk-link govuk-body" aria-label="Income"> Income</a> </td>
-             <td class="govuk-table__cell govuk-table__cell--numeric">£12,500.00</td>
-            </tr>
-            <tr class="govuk-table__row">
-             <td class="govuk-table__cell">Total income on which tax is due</td>
-             <td class="govuk-table__cell govuk-table__cell--numeric">£12,500.00</td>
-            </tr>
-            <tr class="govuk-table__row">
-             <td class="govuk-table__cell"> <a href="/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast"
-              class="govuk-link govuk-!-font-weight-bold" aria-label="Income-Tax-and-National-Insurance-contributions-due">
-               Income Tax and National Insurance contributions due</a> </td>
-             <td class="govuk-table__cell govuk-table__cell--numeric"><span class="govuk-!-font-weight-bold">£5,000.99</span></td>
-            </tr>
-        """)
 
-        document.select("#inset_forecast") should equal (
-          """<div id="inset_forecast" class="govuk-inset-text">""" + messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString) + "</div>")
+        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast"
+        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due/forecast"
+
+        document.select(".forecast_table tbody tr").size() shouldBe 3
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
+        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString)
       }
 
       "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {
@@ -610,6 +602,31 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       }
     }
     "the user is an agent" should {
+
+      "display forecastdata when forecast data present" in new Setup(forecastCalcView(isAgent = true)) {
+        document.title shouldBe taxYearOverviewMessages.agentTitle
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-overview.forecast"))
+
+        document.getOptionalSelector("#forecast").isDefined shouldBe true
+        document.getOptionalSelector(".forecast_table").isDefined shouldBe true
+
+        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/income/forecast"
+        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due/forecast"
+
+        document.select(".forecast_table tbody tr").size() shouldBe 3
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
+        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString)
+      }
+
+      "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView(isAgent = true)) {
+        document.title shouldBe taxYearOverviewMessages.agentTitle
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
+      }
 
       "have the correct title" in new Setup(estimateView(isAgent = true)) {
         document.title shouldBe taxYearOverviewMessages.agentTitle

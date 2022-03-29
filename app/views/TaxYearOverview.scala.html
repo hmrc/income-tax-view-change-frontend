@@ -84,6 +84,14 @@
     }
 }
 
+@getForecastTaxDueHref(taxYear: Int, isAgent: Boolean) = @{
+    if(isAgent){
+        controllers.routes.ForecastTaxCalcSummaryController.showAgent(taxYear).url
+    } else {
+        controllers.routes.ForecastTaxCalcSummaryController.show(taxYear).url
+    }
+}
+
 @paymentsContent = {
 @h2(msg = messages("tax-year-overview.payments"), classes = "govuk-heading-l")
 @if(charges.isEmpty){
@@ -208,7 +216,7 @@
                 TableRow(content = Text(forecastIncome), format = Some("numeric"))
             ),
             Seq(
-                TableRow(content = HtmlContent(link(link = getForecastSummaryHref(taxYear, isAgent),
+                TableRow(content = HtmlContent(link(link = getForecastTaxDueHref(taxYear, isAgent),
                     classes = "govuk-link govuk-!-font-weight-bold", messageKey = "tax-year-overview.tax-due"))),
                 TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastIncomeAndNics</span>"),
                     format = Some("numeric"))

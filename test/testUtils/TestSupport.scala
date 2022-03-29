@@ -56,13 +56,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       }
     }
 
-  implicit val elementsEq =
-    new Equality[Elements] {
-      def areEqual(a: Elements, b: Any): Boolean = {
-        Jsoup.parse(a.toString).text() == Jsoup.parse(b.toString()).text()
-      }
-    }
-
   implicit val timeout: PatienceConfig = PatienceConfig(5.seconds)
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
