@@ -216,7 +216,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to the tax years page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
-          link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.TaxYearsController.show().url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears().url)
           link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
         }
       }

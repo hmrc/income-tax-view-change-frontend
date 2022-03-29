@@ -107,7 +107,7 @@ class NextUpdatesViewSpec extends TestSupport {
 
     s"have the information ${obligationsMessages.info}" in new Setup(obligationsModel) {
       pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
-      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
+      pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
     }
 
     s"have the correct TradeName" in new Setup(obligationsModel) {
