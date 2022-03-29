@@ -20,16 +20,23 @@ import models.liabilitycalculation.LiabilityCalculationResponse
 
 case class TaxYearOverviewViewModel(timestamp: Option[String],
                                     crystallised: Option[Boolean],
+                                    unattendedCalc: Boolean,
                                     taxDue: BigDecimal,
                                     income: Int,
                                     deductions: BigDecimal,
                                     totalTaxableIncome: Int)
 
 object TaxYearOverviewViewModel {
+  def isUnattendedCalc(calculationReason: Option[String]): Boolean = calculationReason match {
+    case Some("unattendedCalculation") => true
+    case _ => false
+  }
+
   def apply(calc: LiabilityCalculationResponse): TaxYearOverviewViewModel = {
     TaxYearOverviewViewModel(
       timestamp = calc.metadata.calculationTimestamp,
       crystallised = calc.metadata.crystallised,
+      unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = calc.calculation.flatMap(c => c.taxCalculation.map(_.totalIncomeTaxAndNicsDue)).getOrElse(0.00),
       income = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalIncomeReceivedFromAllSources)).getOrElse(0),
       deductions = calc.calculation.flatMap(c => c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesDeductionsReliefs)).getOrElse(0.00),
