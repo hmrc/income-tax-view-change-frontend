@@ -60,25 +60,26 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                     itvcErrorHandler: ShowInternalServerError,
                     documentNumber: String,
                     redirectUrl: String,
-                    isAgent: Boolean)
+                    isAgent: Boolean,
+                    origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations) =>
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
+        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)
       case _ => itvcErrorHandler.showInternalServerError()
     }
   }
 
-  def viewPaymentAllocation(documentNumber: String): Action[AnyContent] =
+  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         if (isEnabled(PaymentAllocation)) {
           handleRequest(
-            controllers.routes.PaymentHistoryController.viewPaymentHistory().url,
+            controllers.routes.PaymentHistoryController.viewPaymentHistory(origin).url,
             itvcErrorHandler = itvcErrorHandler,
             documentNumber = documentNumber,
             redirectUrl = redirectUrlIndividual,

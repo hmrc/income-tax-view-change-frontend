@@ -38,7 +38,8 @@ trait MockNextUpdates extends BeforeAndAfterEach with MockitoSugar {
     when(nextUpdatesObj.apply(
       matches(currentObligations),
       matches(backUrl),
-      matches(isAgent)
+      matches(isAgent),
+      any()
     )(any(), any(), any()))
       .thenReturn(response)
   }

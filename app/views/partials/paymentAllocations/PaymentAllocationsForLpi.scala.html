@@ -19,7 +19,7 @@
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel,isAgent: Boolean)(implicit messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel,isAgent: Boolean, origin: Option[String] = None)(implicit messages: Messages)
 
 
 @paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiAllocationDetails =>
@@ -30,7 +30,7 @@
                     <a class="govuk-link" style="display:block" href="@{controllers.agent.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
                     @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
                 } else {
-                    <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
+                    <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true, origin)}" class="govuk-link">
                     @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
                 }
                 <span class="govuk-visually-hidden"> @lpiAllocationDetails.documentDetail.taxYear</span>

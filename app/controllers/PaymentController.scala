@@ -44,7 +44,8 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
   val action: ActionBuilder[MtdItUserOptionNino, AnyContent] = checkSessionTimeout andThen authenticate
 
   def handleHandoff(mtditid: String, nino: Option[String], saUtr: Option[String], credId: Option[String],
-                    userType: Option[String], paymentAmountInPence: Long, isAgent: Boolean)
+                    userType: Option[String], paymentAmountInPence: Long, isAgent: Boolean,
+                    origin: Option[String] = None)
                    (implicit request: Request[_], ec: ExecutionContext): Future[Result] = {
     auditingService.extendedAudit(
       InitiatePayNowAuditModel(mtditid, nino, saUtr, credId, userType)
@@ -61,9 +62,9 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
     }
   }
 
-  val paymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => action.async {
+  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
-      handleHandoff(user.mtditid, user.nino, user.saUtr, user.credId, user.userType, paymentAmountInPence, isAgent = false)
+      handleHandoff(user.mtditid, user.nino, user.saUtr, user.credId, user.userType, amountInPence, isAgent = false, origin = origin)
   }
 
   val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => Authenticated.async {

@@ -47,7 +47,8 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                   ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,
-                    isAgent: Boolean)
+                    isAgent: Boolean,
+                    origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     Future.successful(Ok(taxYearsView(
@@ -56,15 +57,17 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       isAgent = isAgent,
       utr = user.saUtr,
       itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      btaNavPartial = user.btaNavPartial)))
+      btaNavPartial = user.btaNavPartial,
+      origin = origin)))
   }
 
-  def showTaxYears: Action[AnyContent] = {
+  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.show().url,
-          isAgent = false
+          backUrl = controllers.routes.HomeController.show(origin).url,
+          isAgent = false,
+          origin = origin
         )
     }
   }

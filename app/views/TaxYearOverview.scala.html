@@ -37,7 +37,8 @@
 )
 
 @(taxYear: Int, overviewOpt: Option[TaxYearOverviewViewModel], charges: List[DocumentDetailWithDueDate],
-        obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean
+        obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean,
+        origin: Option[String] = None
         )(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
@@ -70,7 +71,7 @@
     if(isAgent){
         controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
     } else {
-        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
+        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge, origin).url
     }
 }
 

@@ -45,7 +45,8 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
-    isAgent: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    isAgent: Boolean = false,
+        origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getPrefix(key: String) = @{
@@ -143,7 +144,7 @@
         controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
             documentDetail.transactionId, isLatePaymentInterest)
     } else controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
-        documentDetail.transactionId, isLatePaymentInterest)
+        documentDetail.transactionId, isLatePaymentInterest, origin)
     paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
         linkSuffix: String)
 }
@@ -179,7 +180,7 @@
    if (isAgent) {
        controllers.agent.routes.TaxYearOverviewController.show(year).url
                 } else {
-      controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url
+      controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year, origin).url
     }
 }
 
@@ -337,7 +338,7 @@
 
     @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
       <div id="payment-button">
-           @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence).url,
+           @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
            messageKey = getPrefix("payNow"), classes = "govuk-button", role=Some("button"),
            id = Some("payment-button-link"))
        </div>
@@ -360,7 +361,7 @@
     if (isAgent) {
         controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false)
     } else {
-        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false)
+        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false, origin = origin)
     }
  }
 

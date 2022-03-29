@@ -73,7 +73,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
 
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
-          lazy val result = TestTaxYearsController.showTaxYears(fakeRequestWithActiveSession)
+          lazy val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -84,7 +84,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
         "return an OK (200)" in {
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          lazy val result = TestTaxYearsController.showTaxYears(fakeRequestWithActiveSession)
+          lazy val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
         }
@@ -97,7 +97,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
       "return redirect SEE_OTHER (303)" in {
 
         setupMockAuthorisationException()
-        val result = TestTaxYearsController.showTaxYears(fakeRequestWithActiveSession)
+        val result = TestTaxYearsController.showTaxYears()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }

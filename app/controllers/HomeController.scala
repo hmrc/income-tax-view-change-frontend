@@ -61,7 +61,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean = false)
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean = false,
+                   origin : Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -73,11 +74,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
-      isAgent = isAgent
+      isAgent = isAgent,
+      origin = origin
     )
   }
 
-  def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int)
+  def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
       nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
@@ -132,13 +134,14 @@ class HomeController @Inject()(val homeView: views.html.Home,
       }
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
-        user.incomeSources.getCurrentTaxEndYear
+        user.incomeSources.getCurrentTaxEndYear,
+        origin = origin
       )
   }
 

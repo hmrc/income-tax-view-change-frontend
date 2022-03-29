@@ -59,7 +59,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
   def handleShowRequest(taxYear: Int,
                         itvcErrorHandler: ShowInternalServerError,
-                        isAgent: Boolean)
+                        isAgent: Boolean,
+                        origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
@@ -75,13 +76,14 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  def show(taxYear: Int): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
-        taxYear = taxYear
+        taxYear = taxYear,
+        origin = origin
       )
   }
 
@@ -98,7 +100,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
         }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = action.async { implicit user =>
+  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async { implicit user =>
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }
