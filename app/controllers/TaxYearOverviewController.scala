@@ -30,7 +30,7 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
+import services.{CalculationService, FinancialDetailsService, NextUpdatesService, DateService}
 import views.html.TaxYearOverview
 
 import java.net.URI
@@ -49,7 +49,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           retrieveNino: NinoPredicate,
                                           nextUpdatesService: NextUpdatesService,
                                           val retrieveBtaNavBar: BtaNavBarPredicate,
-                                          val auditingService: AuditingService)
+                                          val auditingService: AuditingService,
+                                          dateService: DateService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val executionContext: ExecutionContext)
@@ -57,12 +58,6 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
-
-  val getCurrentTaxYearEnd: Int = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
-    else currentDate.getYear + 1
-  }
 
   private def showForecast(modelOpt: Option[TaxYearOverviewViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
     val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
@@ -94,7 +89,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, getCurrentTaxYearEnd)
+          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate))
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(

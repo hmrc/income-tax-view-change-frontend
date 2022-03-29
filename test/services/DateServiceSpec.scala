@@ -16,55 +16,31 @@
 
 package services
 
-import config.featureswitch.FeatureSwitching
-import mocks.connectors.MockIncomeTaxCalculationConnector
-import models.liabilitycalculation._
-import play.api.http.Status
-import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationConnector with FeatureSwitching {
+import java.time.LocalDate
 
-  val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
-    inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", class2VoluntaryContributions = None
-    )),
-    messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false)),
-    calculation = None)
+class DateServiceSpec extends TestSupport {
 
-  val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
-  val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
+  object TestDateService extends DateService()
+  object MockedTestDateService extends DateService() {
+    override def getCurrentDate: LocalDate = LocalDate.parse("2018-03-29")
+  }
+  "The DateService.getCurrentDate method" should {
+    "return the current date" in {
+      TestDateService.getCurrentDate should equal(LocalDate.now)
+    }
+    "return the mocked current date" in {
+      MockedTestDateService.getCurrentDate should equal(LocalDate.parse("2018-03-29"))
+    }
+  }
 
-
-  object TestCalculationService extends CalculationService(mockIncomeTaxCalculationConnector)
-
-  "The CalculationService.getCalculationDetail method" when {
-
-    "when the  Calculation Data api feature switch is enabled" should {
-      "successful response is returned from the IncomeTaxCalculationConnector" should {
-
-        "return a LiabilityCalculationModel" in {
-          mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationSuccessResponse)
-
-          TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationSuccessResponse
-
-        }
-        "NOT_FOUND response is returned from the IncomeTaxCalculationConnector" should {
-          "return a LiabilityCalculationError" in {
-            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNotFoundResponse)
-
-            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationNotFoundResponse
-          }
-        }
-        "error response is returned from the IncomeTaxCalculationConnector" should {
-          "return a LiabilityCalculationError" in {
-            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationErrorResponse)
-
-            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationErrorResponse
-          }
-        }
-      }
+  "The DateService.getCurrentTaxYearEnd method" should {
+    "return the current year if the current date is before april 6" in {
+      TestDateService.getCurrentTaxYearEnd(LocalDate.parse("2018-03-29")) shouldBe 2018
+    }
+    "return the next year if current date is on or after april 6" in {
+      TestDateService.getCurrentTaxYearEnd(LocalDate.parse("2018-04-06")) shouldBe 2019
     }
   }
 }

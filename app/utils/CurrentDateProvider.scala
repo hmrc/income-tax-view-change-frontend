@@ -23,4 +23,9 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class CurrentDateProvider @Inject()() {
   def getCurrentDate(): LocalDate = LocalDate.now()
+
+  def getCurrentTaxYearEnd(currentDate: LocalDate): Int = {
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+  }
 }

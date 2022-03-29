@@ -31,7 +31,7 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
+import services.{CalculationService, DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxYearOverview
@@ -47,7 +47,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                           financialDetailsService: FinancialDetailsService,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
                                           nextUpdatesService: NextUpdatesService,
-                                          auditingService: AuditingService
+                                          auditingService: AuditingService,
+                                          dateService: DateService
                                          )(implicit val appConfig: FrontendAppConfig,
                                            val languageUtils: LanguageUtils,
                                            mcc: MessagesControllerComponents,
@@ -117,7 +118,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
           codingOutEnabled = isEnabled(CodingOut),
           backUrl = backUrl,
           isAgent = true,
-          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, getCurrentTaxYearEnd)
+          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate))
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(

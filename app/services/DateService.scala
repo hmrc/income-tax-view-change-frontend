@@ -16,25 +16,18 @@
 
 package services
 
-import connectors.IncomeTaxCalculationConnector
-import models.liabilitycalculation.LiabilityCalculationResponseModel
-import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
-
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalculationConnector)(implicit ec: ExecutionContext) {
+class DateService @Inject()() {
 
-  def getLatestCalculation(mtditid: String, nino: String, calcId: String)
-                          (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    Logger("application").debug(s"[CalculationService][getLatestCalculation] - Requesting calc data from the backend by calc id: $calcId")
-    incomeTaxCalculationConnector.getCalculationResponseByCalcId(mtditid, nino, calcId)
+  def getCurrentDate: LocalDate = {
+    LocalDate.now()
   }
 
-  def getLiabilityCalculationDetail(mtditid: String, nino: String, taxYear: Int)
-                                   (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString)
+  def getCurrentTaxYearEnd(currentDate: LocalDate): Int = {
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
   }
 }

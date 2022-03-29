@@ -279,6 +279,12 @@ object NewCalcBreakdownUnitTestConstants {
       crystallised = Some(true))
   )
 
+  val liabilityCalculationModelSuccessFullNotCrystallised = liabilityCalculationModelSuccessFull.copy(metadata =
+    Metadata(
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      crystallised = Some(false))
+  )
+
 
   val taxDueSummaryViewModelStandard = TaxDueSummaryViewModel(
     taxRegime = "Uk",

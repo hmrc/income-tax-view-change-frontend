@@ -18,7 +18,7 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
@@ -30,10 +30,11 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.{documentDetailClass2Nic, documentDetailPaye, financialDetails, fullDocumentDetailWithDueDateModel}
 import testConstants.MessagesLookUp
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
 import testUtils.TestSupport
 import views.html.TaxYearOverview
 
@@ -46,6 +47,11 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
 
   val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
 
+  object mockDateService extends DateService() {
+    override def getCurrentDate: LocalDate = LocalDate.parse("2018-03-29")
+    override def getCurrentTaxYearEnd(currentDate: LocalDate): Int = 2018
+  }
+
   object TestTaxYearOverviewController extends TaxYearOverviewController(
     taxYearOverviewView,
     MockAuthenticationPredicate,
@@ -57,7 +63,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
     app.injector.instanceOf[BtaNavBarPredicate],
-    mockAuditingService
+    mockAuditingService,
+    mockDateService
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
@@ -75,6 +82,63 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockCalculationServ
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
 
   "The TaxYearOverview.renderTaxYearOverviewPage(year) action" when {
+    def runForecastTest(crystallised: Boolean, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
+                        shouldShowForecastData: Boolean): Unit = {
+      if (forecastCalcFeatureSwitchEnabled)
+        enable(ForecastCalculation)
+      else disable(ForecastCalculation)
+      mockSingleBusinessIncomeSource()
+      if (crystallised) {
+        mockCalculationSuccessFullNew(testMtditid, taxYear = taxYear)
+      } else mockCalculationSuccessFullNotCrystallised(testMtditid, taxYear = taxYear)
+      mockFinancialDetailsSuccess(taxYear = taxYear)
+      mockgetNextUpdates(fromDate = LocalDate.of(taxYear - 1, 4, 6),
+        toDate = LocalDate.of(taxYear, 4, 5))(
+        response = testObligtionsModel
+      )
+
+      val calcModel = if (crystallised) liabilityCalculationModelSuccessFull else liabilityCalculationModelSuccessFullNotCrystallised
+      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calcModel)
+      val expectedContent: String = taxYearOverviewView(
+        taxYear,
+        Some(calcOverview),
+        testChargesList,
+        testObligtionsModel,
+        taxYearsBackLink,
+        codingOutEnabled = true,
+        showForecastData = shouldShowForecastData
+      ).toString
+
+      val result = TestTaxYearOverviewController.renderTaxYearOverviewPage(taxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+      status(result) shouldBe Status.OK
+      contentAsString(result) shouldBe expectedContent
+      contentType(result) shouldBe Some("text/html")
+    }
+
+    "ForecastCalculation feature switch is enabled" should {
+      "show the Forecast tab before crystallisation" in {
+        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
+      }
+      "NOT show the Forecast tab after crystallisation" in {
+        runForecastTest(crystallised = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = false)
+      }
+    }
+    "ForecastCalculation feature switch is disabled" should {
+      "NOT show the Forecast tab before crystallisation" in {
+        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
+      }
+    }
+    "tax year is current year" should {
+      "show the Forecast tab" in {
+        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, taxYear = 2018, shouldShowForecastData = true)
+      }
+    }
+    "tax year is NOT current year" should {
+      "NOT show the Forecast tab" in {
+        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, taxYear = 2017, shouldShowForecastData = false)
+      }
+    }
     "all calls are returned correctly" should {
       "show the Tax Year Overview Page" in {
         mockSingleBusinessIncomeSource()
