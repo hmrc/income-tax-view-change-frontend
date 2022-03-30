@@ -30,14 +30,15 @@
     utr: Option[String] = None,
     itsaSubmissionIntegrationEnabled: Boolean,
     isAgent: Boolean = false,
-    btaNavPartial: Option[Html] = None
+    btaNavPartial: Option[Html] = None,
+        origin: Option[String] = None
 )(implicit request: Request[_], messages: Messages)
 
 @getReturnHref(year: Int) = @{
     if (isAgent) {
         controllers.agent.routes.TaxYearOverviewController.show(year).url
     } else {
-        controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url
+        controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year, origin).url
     }
 }
 

@@ -42,13 +42,13 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
 
   val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
-  def calculationPoller(taxYear: Int, isFinalCalc: Boolean): Action[AnyContent] = action.async {
+  def calculationPoller(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
 
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-        controllers.routes.FinalTaxCalculationController.show(taxYear)
+        controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
       } else {
-        controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear)
+        controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin)
       }
 
       (user.session.get(SessionKeys.calculationId), user.nino, user.mtditid) match {

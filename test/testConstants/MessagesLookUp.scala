@@ -570,7 +570,6 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val title = "What you owe - Business Tax account - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
-    val paymentsDue = "Payments Due"
     val saLink = "Self Assessment online account (opens in new tab)"
     val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
@@ -580,7 +579,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val paymentUnderReviewParaLink = "there is a current appeal against a tax decision (opens in new tab)."
     val paymentUnderReviewPara = s"One or more of your payments are currently under review because $paymentUnderReviewParaLink"
 
-    def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
+    def preMtdPayments(from: String, to: String) = s"$from to $to"
 
     val paymentType = "Payment type"
     val taxYearSummary = "Tax year summary"
@@ -594,6 +593,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val poa2Text = "Payment on account 2 of 2"
     val latePoa2Text = "Late payment interest for payment on account 2 of 2"
     val remainingBalance = "Balancing payment"
+    val preMTDRemainingBalance = "Balancing payment (Pre-Making Tax Digital)"
     val lateRemainingBalance = "Late payment interest for Balancing payment"
     val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
     val interestOnRemainingBalance = "Interest on Balancing payment"

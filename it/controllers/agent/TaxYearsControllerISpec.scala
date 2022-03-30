@@ -75,7 +75,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     )
   )
 
-  s"GET ${routes.TaxYearsController.show().url}" should {
+  s"GET ${controllers.routes.TaxYearsController.showAgentTaxYears().url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
@@ -126,7 +126,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     }
   }
 
-  s"GET ${routes.TaxYearsController.show().url}" should {
+  s"GET ${controllers.routes.TaxYearsController.showAgentTaxYears().url}" should {
     "return the tax years page" when {
       "all calls were successful and has accounting period end date" in {
         enable(ITSASubmissionIntegration)

@@ -26,7 +26,6 @@ object LiabilityCalculationError {
   implicit val format: OFormat[LiabilityCalculationError] = Json.format[LiabilityCalculationError]
 }
 
-
 case class LiabilityCalculationResponse(
                                          inputs: Inputs,
                                          metadata: Metadata,
