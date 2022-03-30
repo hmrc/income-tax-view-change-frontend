@@ -223,10 +223,10 @@
             )
         ),
         head = Some(Seq(
-            HeadCell(content = Text("Section")),
-            HeadCell(content = Text("Amount"), format = Some("numeric"))
+            HeadCell(content = Text(messages("tax-year-overview.section"))),
+            HeadCell(content = Text(messages("tax-year-overview.amount")), format = Some("numeric"))
         )),
-        caption = Some("Forecast"),
+        caption = Some(messages("tax-year-overview.forecast")),
         captionClasses = "govuk-table__caption--l",
         classes = "forecast_table"
     ))
@@ -269,9 +269,9 @@
                 </dd>
             </div>
             @if(showForecastData) {
-                <div class="govuk-summary-list__row">
+                <div id="forecast_total" class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        @messages("tax-year-overview.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")
+                        @messages("tax-year-overview.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
                     </dt>
 
                     <dd class="govuk-summary-list__value">

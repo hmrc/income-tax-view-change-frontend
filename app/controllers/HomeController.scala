@@ -19,7 +19,7 @@ package controllers
 import java.time.LocalDate
 import audit.AuditingService
 import audit.models.HomeAudit
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.{MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
@@ -32,11 +32,9 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
+import services.{FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService, DateService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.CurrentDateProvider
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,7 +50,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
-                               val currentDateProvider: CurrentDateProvider,
+                               val dateService: DateService,
                                val whatYouOweService: WhatYouOweService,
                                val retrieveBtaNavBar: BtaNavBarPredicate,
                                auditingService: AuditingService)
@@ -102,7 +100,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(LocalDate.parse(relevantDate))
             case _ => Nil
           }
-          overDuePaymentsCount = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate())) + outstandingChargesModel.length
+          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
           overDueUpdatesCount = latestDeadlineDate._2.size
           paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
         } yield {
