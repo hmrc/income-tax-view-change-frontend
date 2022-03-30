@@ -46,7 +46,8 @@
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
   	currentTaxYear: Int,
-    isAgent: Boolean)(
+    isAgent: Boolean,
+        origin: Option[String] = None)(
   	implicit request: Request[_],
 	messages: Messages,
   	user: auth.MtdItUser[_],
@@ -56,7 +57,7 @@
     @whatYouOweControllerURL = @{
         if(isAgent) { controllers.routes.WhatYouOweController.showAgent().url
         } else {
-            controllers.routes.WhatYouOweController.show().url
+            controllers.routes.WhatYouOweController.show(origin).url
         }
     }
 
@@ -72,15 +73,15 @@
         if(isAgent) {
             controllers.routes.NextUpdatesController.getNextUpdatesAgent.url
         } else {
-            controllers.routes.NextUpdatesController.getNextUpdates().url
+            controllers.routes.NextUpdatesController.getNextUpdates(origin).url
         }
     }
 
     @taxYearsControllerURL = @{
         if(isAgent) {
-            controllers.agent.routes.TaxYearsController.show().url
+            controllers.routes.TaxYearsController.showAgentTaxYears().url
         } else {
-            controllers.routes.TaxYearsController.viewTaxYears().url
+            controllers.routes.TaxYearsController.showTaxYears(origin).url
         }
     }
 
@@ -88,7 +89,7 @@
         if(isAgent) {
             controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
         } else {
-            controllers.routes.PaymentHistoryController.viewPaymentHistory().url
+            controllers.routes.PaymentHistoryController.viewPaymentHistory(origin).url
         }
     }
 
@@ -280,7 +281,7 @@
         if (isAgent) {
             controllers.agent.routes.TaxYearOverviewController.show(year).url
         } else {
-            controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year).url
+            controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year, origin).url
         }
     }
 

@@ -71,7 +71,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                    taxYear: Int,
                    obligations: ObligationsModel,
                    codingOutEnabled: Boolean,
-                   backUrl: String
+                   backUrl: String,
+                   origin: Option[String]
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
@@ -89,7 +90,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate))
+          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)),
+          origin = origin
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
@@ -105,7 +107,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = false
+          showForecastData = false,
+          origin = origin
         ))
       case _: LiabilityCalculationError =>
         Logger("application").error(
@@ -156,15 +159,15 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     )
   }
 
-  private def getBackURL(referer: Option[String]): String = {
-    referer.map(URI.create(_).getPath.equals(taxYearsUrl)) match {
-      case Some(true) => taxYearsUrl
-      case Some(false) if referer.map(URI.create(_).getPath.equals(whatYouOweUrl)).get => whatYouOweUrl
-      case _ => homeUrl
+  private def getBackURL(referer: Option[String], origin: Option[String]): String = {
+    referer.map(URI.create(_).getPath.equals(taxYearsUrl(origin))) match {
+      case Some(true) => taxYearsUrl(origin)
+      case Some(false) if referer.map(URI.create(_).getPath.equals(whatYouOweUrl(origin))).get => whatYouOweUrl(origin)
+      case _ => homeUrl(origin)
     }
   }
 
-  private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
+  private def showTaxYearOverview(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async {
     implicit user =>
       withTaxYearFinancials(taxYear) { charges =>
         withObligationsModel(taxYear) flatMap {
@@ -172,7 +175,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
             val codingOutEnabled = isEnabled(CodingOut)
             calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map { liabilityCalcResponse =>
               view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
-                backUrl = getBackURL(user.headers.get(REFERER)))
+                backUrl = getBackURL(user.headers.get(REFERER), origin), origin = origin)
                 .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
             }
           case _ => Future.successful(itvcErrorHandler.showInternalServerError())
@@ -180,9 +183,9 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
       }
   }
 
-  def renderTaxYearOverviewPage(taxYear: Int): Action[AnyContent] = {
+  def renderTaxYearOverviewPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
     if (taxYear.toString.matches("[0-9]{4}")) {
-      showTaxYearOverview(taxYear)
+      showTaxYearOverview(taxYear, origin)
     } else {
       action.async { implicit request =>
         Future.successful(itvcErrorHandler.showInternalServerError())
@@ -190,10 +193,10 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
     }
   }
 
-  lazy val taxYearsUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
-  lazy val whatYouOweUrl: String = controllers.routes.WhatYouOweController.show().url
+  def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+  def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
 
 
-  lazy val homeUrl: String = controllers.routes.HomeController.show().url
+  def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 }
 

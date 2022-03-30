@@ -34,7 +34,8 @@ object NewCalcBreakdownUnitTestConstants {
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true))
+      crystallised = Some(true),
+      calculationReason = Some("customerRequest"))
   )
 
   val liabilityCalculationModelDeductionsMinimal2 = LiabilityCalculationResponse(
@@ -45,7 +46,8 @@ object NewCalcBreakdownUnitTestConstants {
     calculation = None,
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true))
+      crystallised = Some(true),
+      calculationReason = Some("customerRequest"))
   )
 
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
@@ -276,7 +278,8 @@ object NewCalcBreakdownUnitTestConstants {
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true))
+      crystallised = Some(true),
+      calculationReason = Some("customerRequest"))
   )
 
   val liabilityCalculationModelSuccessFullNotCrystallised = liabilityCalculationModelSuccessFull.copy(metadata =

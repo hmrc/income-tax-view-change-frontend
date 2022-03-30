@@ -27,7 +27,7 @@
         govukInsetText: GovukInsetText)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, isAgent: Boolean = false,
-btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @paymentAllocationInset = {

@@ -124,7 +124,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val insetTextFull = s"This calculation is only based on your client’s completed updates for this tax year up to $timeStampEN. It is not their final tax bill for the year. It is a year to date calculation based on the information that has been entered so far."
 
-    val tableTitle = "In year tax calculation"
+    val tableTitle = "Calculation"
 
     val incomeText = "Income"
     val incomeAmount = "£12,500.00"
@@ -148,7 +148,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val insetTextFull = s"Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at $timeStampCY yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma."
 
-    val tableTitle = "Cyfrifiad treth yn ystod y flwyddyn"
+    val tableTitle = "Cyfrifiad"
 
     val incomeText = "Incwm"
     val incomeAmount = "£12,500.00"

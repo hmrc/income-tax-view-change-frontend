@@ -33,7 +33,7 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
 
   object TestPayApiConnector extends PayApiConnector(mockHttpGet, mockAuditingService, appConfig)
 
-  "Calling .startPaymentJourney" should {
+  "Calling .startPaymentJourney as an individual user" should {
     val testUrl = "http://localhost:9057/pay-api/mtd-income-tax/sa/journey/start"
     val testBody = Json.parse(
       """
@@ -50,7 +50,7 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
 
       "a 201 response is received with valid json" in {
         setupMockHttpPost(testUrl, testBody)(successResponse)
-        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000).futureValue
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = false).futureValue
         result shouldBe PaymentJourneyModel("journeyId", "http://www.redirect-url.com")
       }
     }
@@ -59,13 +59,51 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
 
       "a non 200 response is received" in {
         setupMockHttpPost(testUrl, testBody)(badResponse)
-        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000).futureValue
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = false).futureValue
         result shouldBe PaymentJourneyErrorResponse(400, "Error Message")
       }
 
       "a 201 response with invalid json is received" in {
         setupMockHttpPost(testUrl, testBody)(successResponseBadJson)
-        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000).futureValue
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = false).futureValue
+        result shouldBe PaymentJourneyErrorResponse(201, "Invalid Json")
+      }
+    }
+  }
+
+  "Calling .startPaymentJourney as an Agent user" should {
+    val testUrl = "http://localhost:9057/pay-api/mtd-income-tax/sa/journey/start"
+    val testBody = Json.parse(
+      """
+        |{
+        | "utr": "saUtr",
+        | "amountInPence": 10000,
+        | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed",
+        | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed"
+        |}
+      """.stripMargin
+    )
+
+    "return a PaymentJourneyModel" when {
+
+      "a 201 response is received with valid json" in {
+        setupMockHttpPost(testUrl, testBody)(successResponse)
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = true).futureValue
+        result shouldBe PaymentJourneyModel("journeyId", "http://www.redirect-url.com")
+      }
+    }
+
+    "return a PaymentErrorResponse" when {
+
+      "a non 200 response is received" in {
+        setupMockHttpPost(testUrl, testBody)(badResponse)
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = true).futureValue
+        result shouldBe PaymentJourneyErrorResponse(400, "Error Message")
+      }
+
+      "a 201 response with invalid json is received" in {
+        setupMockHttpPost(testUrl, testBody)(successResponseBadJson)
+        val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000, isAgent = true).futureValue
         result shouldBe PaymentJourneyErrorResponse(201, "Invalid Json")
       }
     }
