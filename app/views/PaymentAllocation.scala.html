@@ -21,7 +21,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails.DocumentDetail
 
 
 @this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
@@ -37,19 +37,20 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-   pageTitle = messages(if (CutOverCreditsEnabled) "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading"),
+   pageTitle = messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial
 ) {
 
- @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails) {
+
+ @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
           @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
  } else {
           @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
  }
 
-  @if(saUtr.isDefined && CutOverCreditsEnabled) {
+  @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
     @p(){
        @messages("paymentAllocation.sa.info")
        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
