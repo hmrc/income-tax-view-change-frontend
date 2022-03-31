@@ -59,7 +59,7 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessFull)
 
   def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear): Unit =
-    setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal)
+    setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal())
 
   def mockCalculationErrorNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(500, "Internal server error"))
