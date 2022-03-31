@@ -32,7 +32,7 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUser
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.bta.BtaNavBar
+import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future
 

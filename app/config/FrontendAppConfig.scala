@@ -22,7 +22,6 @@ import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import models.PersonalTaxAccount
 import models.navBar.{BusinessTaxAccount, PersonalTaxAccount, TaxAccountType}
 
 @Singleton

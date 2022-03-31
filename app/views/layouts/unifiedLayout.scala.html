@@ -99,7 +99,6 @@
             href = appConfig.accountHomeUrl(taxAccountType.get),
             active = true
         ),
-        signOut = SignOut(appConfig.accountSignOutUrl(taxAccountType.get)),
         language = if(messages.lang.code == "cy") Cy else En
     ).withUrlsFromConfig())
 }

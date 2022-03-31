@@ -28,7 +28,7 @@ import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testUtils.TestSupport
-import views.html.bta.BtaNavBar
+import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future
 

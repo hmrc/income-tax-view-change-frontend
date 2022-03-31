@@ -64,8 +64,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BtaNavFromNinoPredicate @Inject()(btaNavBarController: BtaNavBarController,
-                                        val itvcErrorHandler: ItvcErrorHandler,
-                                       taxAccountType: TaxAccountType)
+                                        val itvcErrorHandler: ItvcErrorHandler)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val executionContext: ExecutionContext) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with FeatureSwitching {
 

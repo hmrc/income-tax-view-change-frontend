@@ -29,7 +29,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
-import views.html.bta.BtaNavBar
+import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future
 

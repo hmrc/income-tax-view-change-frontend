@@ -26,7 +26,7 @@ import play.twirl.api.Html
 import services.BtaNavBarService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.bta.BtaNavBar
+import views.html.navBar.BtaNavBar
 
 import scala.concurrent.{ExecutionContext, Future}
 
