@@ -18,7 +18,7 @@ package testConstants
 
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.FrontendAppConfig
-import models.btaNavBar.{ListLinks, NavContent, NavLinks}
+import models.navBar.{ListLinks, NavContent, NavLinks}
 import models.core.Nino
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status

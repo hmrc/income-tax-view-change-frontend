@@ -3,7 +3,7 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import helpers.WiremockHelper
-import models.btaNavBar.NavContent
+import models.navBar.NavContent
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.testNavLinks

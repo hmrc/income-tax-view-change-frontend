@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import models.btaNavBar.NavContent
+import models.navBar.NavContent
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReadsInstances}
 

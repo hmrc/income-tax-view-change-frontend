@@ -22,6 +22,9 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 @import views.html.layouts.common.Scripts
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.hmrcfrontend.config.AccountMenuConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichAccountMenu
+@import models.navBar.{TaxAccountType, BusinessTaxAccount, PersonalTaxAccount}
 
 
 @this(
@@ -31,6 +34,7 @@
     govukBackLink: GovukBackLink,
     govukLayout: GovukLayout,
     hmrcHeader:  HmrcHeader,
+    hmrcAccountMenu: HmrcAccountMenu,
     phaseBanner: components.phaseBanner,
     footerLinks: HmrcStandardFooter,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
@@ -39,7 +43,7 @@
     languageSelection: components.languageSelection,
     mainContentLayout: mainContentLayout,
     scripts: Scripts
-)
+)(implicit accountMenuConfig: AccountMenuConfig)
 
 @(pageTitle: String,
     scriptsBlock: Option[Html] = None,
@@ -52,7 +56,8 @@
     isAgent: Boolean = false,
     itsaTaxYear: Option[Int] = None,
     form: Option[Form[_]] = None,
-    btaNavPartial: Option[Html] = None
+    btaNavPartial: Option[Html] = None,
+    taxAccountType: Option[TaxAccountType] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
@@ -88,9 +93,23 @@
     }
 }
 
+@accountMenu = {
+    @hmrcAccountMenu(AccountMenu(
+        accountHome = AccountHome(
+            href = appConfig.accountHomeUrl(taxAccountType.get),
+            active = true
+        ),
+        signOut = SignOut(appConfig.accountSignOutUrl(taxAccountType.get)),
+        language = if(messages.lang.code == "cy") Cy else En
+    ).withUrlsFromConfig())
+}
+
 @beforeContentBlock = {
     @phaseBanner("beta")
     @hmrcBanner(Banner(CurrentLanguage()))
+    @if(taxAccountType.isDefined) {
+        @accountMenu
+    }
     @{btaNavPartial.getOrElse(())}
     <div class="nav-bar-wrapper">
         @languageSelection()

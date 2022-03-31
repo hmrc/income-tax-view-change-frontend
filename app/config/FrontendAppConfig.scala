@@ -22,6 +22,8 @@ import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import models.PersonalTaxAccount
+import models.navBar.{BusinessTaxAccount, PersonalTaxAccount, TaxAccountType}
 
 @Singleton
 class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
@@ -144,6 +146,13 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   // Disagree with a tax decision
   lazy val taxAppealsUrl: String = servicesConfig.getString("tax-appeals.url")
+
+  //Choosing a Tax Account
+  def accountHomeUrl(taxAccountType: TaxAccountType): String = taxAccountType match {
+    case PersonalTaxAccount => servicesConfig.getString("personal-account-home-url")
+    case BusinessTaxAccount => servicesConfig.getString("business-account-home-url")
+    case _ => servicesConfig.getString("personal-account-home-url")
+  }
 
   //Translation
   def languageMap: Map[String, Lang] = Map(

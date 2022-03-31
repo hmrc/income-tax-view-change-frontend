@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.btaNavBar
+package models.navBar
 
 import auth.MtdItUser
 import play.api.libs.json.Json

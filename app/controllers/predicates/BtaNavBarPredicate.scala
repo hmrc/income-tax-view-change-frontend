@@ -33,7 +33,7 @@
 package controllers.predicates
 
 import auth.MtdItUser
-import config.featureswitch.{BtaNavBar, FeatureSwitching}
+import config.featureswitch.{NavBar, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import javax.inject.{Inject, Singleton}
@@ -54,7 +54,7 @@ class BtaNavBarPredicate @Inject()(btaNavBarController: BtaNavBarController,
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(HeaderNames.COOKIE)))
 
-    if (isDisabled(BtaNavBar)) {
+    if (isDisabled(NavBar)) {
       Future.successful(Right(request))
     } else {
       btaNavBarController.btaNavBarPartial(request) map {

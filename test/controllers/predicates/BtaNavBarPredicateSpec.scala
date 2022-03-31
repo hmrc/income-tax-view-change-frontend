@@ -18,7 +18,7 @@ package controllers.predicates
 
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
-import config.featureswitch.{BtaNavBar, FeatureSwitching}
+import config.featureswitch.{NavBar, FeatureSwitching}
 import controllers.bta.BtaNavBarController
 import mocks.services.MockAsyncCacheApi
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +54,7 @@ class BtaNavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Fea
       "Return a valid response from the Bta Nav Bar Controller which" should {
 
         "return the expected MtdItUser with a batPartial" in {
-          enable(BtaNavBar)
+          enable(NavBar)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
 
           val result = BtaNavBarPredicate.refine(successResponse)
@@ -65,7 +65,7 @@ class BtaNavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Fea
 
       "return an invalid response from the Bta Nav Bar Controller which" should {
         "Return Status of 500 (ISE)" in {
-          enable(BtaNavBar)
+          enable(NavBar)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
           when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
 
@@ -77,7 +77,7 @@ class BtaNavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Fea
 
     "The Bta Nav Bar is disabled" should {
       "Always return a valid response from the Bta Nav Bar Controller without a bta Nav partial" in {
-        disable(BtaNavBar)
+        disable(NavBar)
         when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
 
         when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))

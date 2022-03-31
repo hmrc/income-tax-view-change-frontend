@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.btaNavBar.{NavContent, NavLinks}
+import models.navBar.{NavContent, NavLinks}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach

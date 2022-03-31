@@ -16,7 +16,7 @@
 
 package services
 
-import models.btaNavBar._
+import models.navBar._
 import org.scalatest.Matchers
 import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures

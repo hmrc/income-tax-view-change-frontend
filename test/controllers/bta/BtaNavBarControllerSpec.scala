@@ -20,7 +20,7 @@ package controllers.bta
 import auth.{MtdItUser, MtdItUserWithNino}
 import connectors.BtaNavBarPartialConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.btaNavBar._
+import models.navBar._
 import org.mockito.ArgumentMatchers.{any, contains}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures

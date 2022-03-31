@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.navBar
 
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat

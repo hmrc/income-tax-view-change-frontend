@@ -20,7 +20,7 @@ import controllers.agent.utils.SessionKeys
 import play.api.http.Status
 
 import java.time.LocalDate
-import models.btaNavBar.{NavContent, NavLinks}
+import models.navBar.{NavContent, NavLinks}
 
 object BaseIntegrationTestConstants {
 
