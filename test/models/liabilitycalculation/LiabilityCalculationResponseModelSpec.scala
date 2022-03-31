@@ -33,7 +33,8 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-          crystallised = Some(true))
+          crystallised = Some(true),
+          calculationReason = Some("customerRequest"))
       )
       val expectedJson =
         s"""
@@ -41,7 +42,8 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec {
            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
            |  "metadata" : {
            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-           |    "crystallised" : true
+           |    "crystallised" : true,
+           |    "calculationReason" : "customerRequest"
            |  }
            |}
            |""".stripMargin.trim

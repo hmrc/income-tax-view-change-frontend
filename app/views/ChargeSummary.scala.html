@@ -38,7 +38,8 @@
 )
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
-    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None
+    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
+        origin: Option[String] = None
     )(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -56,7 +57,7 @@
 
 @whatYouOweUrl = @{
     if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
-    else controllers.routes.WhatYouOweController.show().url
+    else controllers.routes.WhatYouOweController.show(origin).url
 }
 
 @hasDunningLocks = @{ paymentBreakdown.exists(_.dunningLockExists) }
@@ -334,7 +335,7 @@
 
     @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
         <div id="payment-link-@{taxYearTo}">
-            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)"
+            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)"
                aria-label='@messages("paymentDue.pay-now-aria", taxYearFrom, taxYearTo)'>@messages("paymentDue.payNow")</a>
         </div>
         @paymentProcessingInfo
@@ -409,7 +410,7 @@
                                 @if(isAgent) {
                                     <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
                                 } else {
-                                    <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                                    <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId, origin)}">
                                 }
                                     @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
                                     <span class="govuk-visually-hidden"> @taxYearTo</span>

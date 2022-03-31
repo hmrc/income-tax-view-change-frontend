@@ -54,7 +54,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
-                    isAgent: Boolean)
+                    isAgent: Boolean,
+                    origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList().map {
       whatYouOweChargesList =>
@@ -67,7 +68,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           btaNavPartial = user.btaNavPartial,
           dunningLock = whatYouOweChargesList.hasDunningLock,
           codingOutEnabled = codingOutEnabled,
-          isAgent = isAgent)(user, user, messages)
+          isAgent = isAgent,
+          origin = origin)(user, user, messages)
         ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
     } recover {
       case ex: Exception =>
@@ -77,13 +79,14 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     }
   }
 
-  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.show().url,
+        backUrl = controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
-        isAgent = false
+        isAgent = false,
+        origin = origin
       )
   }
 

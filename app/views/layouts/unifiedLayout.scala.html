@@ -57,6 +57,7 @@
     itsaTaxYear: Option[Int] = None,
     form: Option[Form[_]] = None,
     btaNavPartial: Option[Html] = None,
+    origin: Option[String] = None,
     taxAccountType: Option[TaxAccountType] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 

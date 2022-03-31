@@ -10,48 +10,49 @@ GET         /assets/*file                                                 contro
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
 #Home Controller
-GET         /                                                             controllers.HomeController.show
+GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/income-tax-account                                    controllers.HomeController.showAgent
 GET         /agents                                                       controllers.HomeController.showAgent
 
 #NextUpdates
-GET         /next-updates                                                  controllers.NextUpdatesController.getNextUpdates
+GET         /next-updates                                                 controllers.NextUpdatesController.getNextUpdates(origin: Option[String] ?= None)
 GET         /agents/next-updates                                          controllers.NextUpdatesController.getNextUpdatesAgent
 
 #Calculation
-GET         /calculation/:taxYear                                         controllers.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear: Int)
+GET         /calculation/:taxYear                                         controllers.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear: Int, origin: Option[String] ?= None)
 
 #IncomeSummary
-GET         /calculation/:taxYear/income                                  controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+GET         /calculation/:taxYear/income                                  controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/income                           controllers.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int)
 
 #Tax Due
-GET         /calculation/:taxYear/tax-due                                 controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
+GET         /calculation/:taxYear/tax-due                                 controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int, origin: Option[String] ?= None)
 
 #Agents Tax Due
 GET         /agents/calculation/:taxYear/tax-due                          controllers.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear: Int)
 
 #Deductions Summary
-GET         /calculation/:taxYear/deductions                              controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
+GET         /calculation/:taxYear/deductions                              controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/deductions                       controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int)
 
 #TaxYears
-GET         /tax-years                                                    controllers.TaxYearsController.viewTaxYears
+GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears(origin: Option[String] ?= None)
+GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears
 
 #Payment
-GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long)
+GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long, origin: Option[String] ?= None)
 GET         /agents/payment                                               controllers.PaymentController.agentPaymentHandoff(amountInPence: Long)
 
 #Payment Allocation
-GET         /charges/payments-made                                        controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String)
+GET         /charges/payments-made                                        controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String, origin: Option[String] ?= None)
 GET         /agents/charges/payments-made                                 controllers.PaymentAllocationsController.viewPaymentAllocationAgent(documentNumber: String)
 
 #WhatYouOwe
-GET         /payments-owed                                                controllers.WhatYouOweController.show
+GET         /payments-owed                                                controllers.WhatYouOweController.show(origin: Option[String] ?= None)
 GET         /agents/payments-owed                                         controllers.WhatYouOweController.showAgent
 
 #Charge summary
-GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
+GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false, origin: Option[String] ?= None )
 
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show
@@ -81,22 +82,22 @@ GET         /uplift-success                                               contro
 GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial
 
 #CalculationId details poller
-GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false)
+GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
 
 #Language Controller
 GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
 
 #Payment history
-GET         /payments/history                                             controllers.PaymentHistoryController.viewPaymentHistory
+GET         /payments/history                                             controllers.PaymentHistoryController.viewPaymentHistory(origin: Option[String] ?= None)
 
 #InYear Tax
-GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show
+GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show(origin: Option[String] ?= None)
 GET         /agents/tax-overview                                          controllers.InYearTaxCalculationController.showAgent
 
 #Final Tax URLs
-GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int)
-POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
-GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true)
+GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int, origin: Option[String] ?= None)
+POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int, origin: Option[String] ?= None)
+GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 
 #Final Tax URLs - agents
 GET         /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.showAgent(taxYear: Int)
@@ -109,9 +110,9 @@ GET         /switch-to-english                                            contro
 GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show
 
 #Forecast income summary
-GET         /calculation/:taxYear/income/forecast                         controllers.ForecastIncomeSummaryController.show(taxYear: Int)
+GET         /calculation/:taxYear/income/forecast                         controllers.ForecastIncomeSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/income/forecast                  controllers.ForecastIncomeSummaryController.showAgent(taxYear: Int)
 
 #Forecast Tax Calc Summary
-GET         /calculation/:taxYear/tax-due/forecast                        controllers.ForecastTaxCalcSummaryController.show(taxYear: Int)
+GET         /calculation/:taxYear/tax-due/forecast                        controllers.ForecastTaxCalcSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/tax-due/forecast                 controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
