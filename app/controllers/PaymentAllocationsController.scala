@@ -67,7 +67,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations) =>
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
+        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl,user.saUtr, CutOverCreditsEnabled=isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)
       case _ => itvcErrorHandler.showInternalServerError()
@@ -83,7 +83,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
             itvcErrorHandler = itvcErrorHandler,
             documentNumber = documentNumber,
             redirectUrl = redirectUrlIndividual,
-            isAgent = false
+            isAgent = false,
           )
         } else Future.successful(Redirect(redirectUrlIndividual))
     }
@@ -98,7 +98,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
               itvcErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
               redirectUrl = redirectUrlAgent,
-              isAgent = true
+              isAgent = true,
             )
           }
         } else Future.successful(Redirect(redirectUrlAgent))

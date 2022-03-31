@@ -21,12 +21,14 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.financialDetails.DocumentDetailWithDueDate
+
 
 @this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
         paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
-        govukInsetText: GovukInsetText)
+        govukInsetText: GovukInsetText, link: link, appConfig: config.FrontendAppConfig)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, isAgent: Boolean = false,
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String], CutOverCreditsEnabled: Boolean, isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
@@ -35,14 +37,25 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-    pageTitle = messages("paymentAllocation.heading"),
+   pageTitle = messages("paymentAllocation.earlyTaxYear.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial
 ) {
 
-@h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
+ @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails) {
+          @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
+ } else {
+          @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
+ }
 
+  @if(saUtr.isDefined && CutOverCreditsEnabled) {
+    @p(){
+       @messages("paymentAllocation.sa.info")
+       @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
+        outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
+    }
+  }
 
     <dl class="govuk-summary-list" id="payment-allocation-charge-table">
             <div class="govuk-summary-list__row">
