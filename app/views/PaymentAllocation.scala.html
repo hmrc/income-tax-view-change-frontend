@@ -37,7 +37,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-   pageTitle = messages("paymentAllocation.earlyTaxYear.heading"),
+   pageTitle = messages(if (CutOverCreditsEnabled) "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial
@@ -56,6 +56,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
     }
   }
+
 
     <dl class="govuk-summary-list" id="payment-allocation-charge-table">
             <div class="govuk-summary-list__row">

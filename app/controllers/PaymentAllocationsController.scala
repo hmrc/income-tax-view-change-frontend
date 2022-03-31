@@ -83,7 +83,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
             itvcErrorHandler = itvcErrorHandler,
             documentNumber = documentNumber,
             redirectUrl = redirectUrlIndividual,
-            isAgent = false,
+            isAgent = false
           )
         } else Future.successful(Redirect(redirectUrlIndividual))
     }
@@ -98,7 +98,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
               itvcErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
               redirectUrl = redirectUrlAgent,
-              isAgent = true,
+              isAgent = true
             )
           }
         } else Future.successful(Redirect(redirectUrlAgent))
