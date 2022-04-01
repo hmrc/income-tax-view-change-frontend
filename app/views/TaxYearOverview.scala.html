@@ -33,18 +33,20 @@
         h2: h2,
         h3: h3,
         p: p,
-        govukInsetText: GovukInsetText
+        link: link,
+        govukInsetText: GovukInsetText,
+        govukTable : GovukTable
 )
 
-@(taxYear: Int, overviewOpt: Option[TaxYearOverviewViewModel], charges: List[DocumentDetailWithDueDate],
+@(taxYear: Int, modelOpt: Option[TaxYearOverviewViewModel], charges: List[DocumentDetailWithDueDate],
         obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean,
-        origin: Option[String] = None
+        showForecastData: Boolean = false, origin: Option[String] = None
         )(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
 @taxCalculationContent = @{
-    overviewOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
+    modelOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
 }
 
 @taxCalculationNotPresent = {
@@ -52,8 +54,8 @@
     @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-overview.tax-calculation.no-calc.note")))
 }
 
-@taxCalculationOverview(overview: TaxYearOverviewViewModel) = {
-    @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
+@taxCalculationOverview(model: TaxYearOverviewViewModel) = {
+    @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
 }
 
 @paymentsTableHead(headId: String) = {
@@ -72,6 +74,22 @@
         controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
     } else {
         controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge, origin).url
+    }
+}
+
+@getForecastSummaryHref(taxYear: Int, isAgent: Boolean) = @{
+    if(isAgent){
+        controllers.routes.ForecastIncomeSummaryController.showAgent(taxYear).url
+    } else {
+        controllers.routes.ForecastIncomeSummaryController.show(taxYear).url
+    }
+}
+
+@getForecastTaxDueHref(taxYear: Int, isAgent: Boolean) = @{
+    if(isAgent){
+        controllers.routes.ForecastTaxCalcSummaryController.showAgent(taxYear).url
+    } else {
+        controllers.routes.ForecastTaxCalcSummaryController.show(taxYear).url
     }
 }
 
@@ -179,29 +197,64 @@
     }
 }
 
+@forecastContent = {
+    @forecastContentTable
+    @govukInsetText(InsetText(content = Text(messages("tax-year-overview.forecast_tab.insetText", taxYear.toString)), id=Some("inset_forecast")))
+}
+
+@forecastContentTable = @{
+    val forecastIncome = modelOpt.flatMap(model => model.forecastIncome).getOrElse(0).toCurrencyString
+    val forecastIncomeAndNics = modelOpt.flatMap(model => model.forecastIncomeTaxAndNics).getOrElse(BigDecimal(0)).toCurrencyString
+    govukTable(Table(
+        rows = Seq(
+            Seq(
+                TableRow(content = HtmlContent(link(link=getForecastSummaryHref(taxYear, isAgent),
+                    messageKey="tax-year-overview.income"))),
+                TableRow(content = Text(forecastIncome), format = Some("numeric")),
+            ),
+            Seq(
+                TableRow(content = Text(messages("tax-year-overview.taxable-income"))),
+                TableRow(content = Text(forecastIncome), format = Some("numeric"))
+            ),
+            Seq(
+                TableRow(content = HtmlContent(link(link = getForecastTaxDueHref(taxYear, isAgent),
+                    classes = "govuk-link govuk-!-font-weight-bold", messageKey = "tax-year-overview.tax-due"))),
+                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastIncomeAndNics</span>"),
+                    format = Some("numeric"))
+            )
+        ),
+        head = Some(Seq(
+            HeadCell(content = Text(messages("tax-year-overview.section"))),
+            HeadCell(content = Text(messages("tax-year-overview.amount")), format = Some("numeric"))
+        )),
+        caption = Some(messages("tax-year-overview.forecast")),
+        captionClasses = "govuk-table__caption--l",
+        classes = "forecast_table"
+    ))
+}
 
 @mainTemplate(pageTitle = messages("tax-year-overview.heading"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = user.btaNavPartial) {
     <h1 class="govuk-heading-xl" id="heading">
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")
     </h1>
-    @overviewOpt.map { overview =>
+    @modelOpt.map { model =>
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     @messages("tax-year-overview.calculation-date")
                 </dt>
                 <dd class="govuk-summary-list__value">
-                <p id="calculation-date">
-                    <span>@{
-                        overview.timestamp.map(_.toZonedDateTime.toLocalDate.toLongDate)
-                    }</span>
-                </p>
+                    <p id="calculation-date">
+                        <span>@{
+                            model.timestamp.map(_.toZonedDateTime.toLocalDate.toLongDate)
+                        }</span>
+                    </p>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                @if(overview.crystallised.contains(true)) {
+                @if(model.crystallised.contains(true)) {
                     @messages("tax-year-overview.total-due")
                 } else {
                     @{
@@ -212,12 +265,23 @@
 
                 <dd class="govuk-summary-list__value">
                 @{
-                    overview.taxDue.toCurrencyString
+                    model.taxDue.toCurrencyString
                 }
                 </dd>
             </div>
+            @if(showForecastData) {
+                <div id="forecast_total" class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @messages("tax-year-overview.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
+                    </dt>
+
+                    <dd class="govuk-summary-list__value">
+                        @model.forecastIncomeTaxAndNics.get.toCurrencyString
+                    </dd>
+                </div>
+            }
         </dl>
-        @if(!overview.crystallised.contains(true)) {
+        @if(!model.crystallised.contains(true)) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)))
             )))
@@ -231,6 +295,13 @@
                 @messages("tax-year-overview.tax-calculation")
                 </a>
             </li>
+            @if(showForecastData) {
+                <li class="govuk-tabs__list-item" role="presentation">
+                    <a class="govuk-tabs__tab" href="#forecast" id="tab_forecast" role="tab" aria-controls="forecast" aria-selected="false">
+                        @messages("tax-year-overview.forecast")
+                    </a>
+                </li>
+            }
             <li class="govuk-tabs__list-item" role="presentation">
                 <a class="govuk-tabs__tab" href="#payments" id="tab_payments" role="tab" aria-controls="payments" aria-selected="false">
                 @messages("tax-year-overview.payments")
@@ -245,6 +316,11 @@
         <div class="govuk-tabs__panel" id="taxCalculation" role="tabpanel" aria-labelledby="tab_taxCalculation">
         @taxCalculationContent
         </div>
+        @if(showForecastData) {
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="forecast" role="tabpanel" aria-labelledby="tab_forecast">
+                @forecastContent
+            </div>
+        }
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="payments" role="tabpanel" aria-labelledby="tab_payments">
         @paymentsContent
         </div>

@@ -16,15 +16,17 @@
 
 package views
 
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
+import testConstants.BaseTestConstants.taxYear
 import testConstants.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
@@ -41,14 +43,16 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   import implicitDateFormatter._
 
-  def completeOverview(crystallised: Option[Boolean], unattendedCalc: Boolean = false): TaxYearOverviewViewModel = TaxYearOverviewViewModel(
+  def modelComplete(crystallised: Option[Boolean], unattendedCalc: Boolean = false): TaxYearOverviewViewModel = TaxYearOverviewViewModel(
     timestamp = Some("2020-01-01T00:35:34.185Z"),
     income = 1,
     deductions = 2.02,
     totalTaxableIncome = 3,
     taxDue = 4.04,
     crystallised = crystallised,
-    unattendedCalc = unattendedCalc
+    unattendedCalc = unattendedCalc,
+    forecastIncome = Some(12500),
+    forecastIncomeTaxAndNics = Some(5000.99)
   )
 
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
@@ -121,35 +125,47 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false))), documentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, Some(modelComplete(Some(false))), documentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def class2NicsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false))), class2NicsChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = codingOutEnabled)
+    testYear, Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = codingOutEnabled)
 
   def estimateViewWithNoCalcData(isAgent: Boolean = false): Html = taxYearOverviewView(
     testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false), unattendedCalc)), testChargesList, testObligationsModel, "testBackUrl", isAgent, codingOutEnabled = false
+    testYear, Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, "testBackUrl", isAgent, codingOutEnabled = false
   )
 
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false))), testDunningLockChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def crystallisedView(isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(true))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+    testYear, Some(modelComplete(Some(true))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
   def payeView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false))), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false))), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def rejectedByNpsPartWayView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false))), rejectedByNpsPartWay, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(modelComplete(Some(false))), rejectedByNpsPartWay, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def codingOutPartiallyCollectedView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearOverviewView(
-    testYear, Some(completeOverview(Some(false))), codingOutPartiallyCollected, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+    testYear, Some(modelComplete(Some(false))), codingOutPartiallyCollected, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+
+  def forecastCalcView(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearOverviewView(
+    testYear, Some(modelComplete(Some(false))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
+    showForecastData = true)
+
+  def forecastCalcViewCrystalised(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearOverviewView(
+    testYear, Some(modelComplete(Some(true))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
+    showForecastData = true)
+
+  def noForecastDataView(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearOverviewView(
+    testYear, Some(modelComplete(Some(false))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
+    showForecastData = false)
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -227,6 +243,31 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   "taxYearOverview" when {
     "the user is an individual" should {
+      "display forecastdata when forecast data present" in new Setup(forecastCalcView()) {
+        document.title shouldBe taxYearOverviewMessages.title
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-overview.forecast"))
+
+        document.getOptionalSelector("#forecast").isDefined shouldBe true
+        document.getOptionalSelector(".forecast_table").isDefined shouldBe true
+
+        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast"
+        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due/forecast"
+
+        document.select(".forecast_table tbody tr").size() shouldBe 3
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
+        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString)
+      }
+
+      "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {
+        document.title shouldBe taxYearOverviewMessages.title
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
+      }
+
       "have the correct title" in new Setup(estimateView()) {
         document.title shouldBe taxYearOverviewMessages.title
       }
@@ -247,12 +288,12 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
       "display the estimate due for an ongoing tax year" in new Setup(estimateView()) {
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
-        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
+        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe modelComplete(Some(false)).taxDue.toCurrencyString
       }
 
       "display the total due for a crystallised year" in new Setup(crystallisedView()) {
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.totalDue
-        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(Some(true)).taxDue.toCurrencyString
+        layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe modelComplete(Some(true)).taxDue.toCurrencyString
       }
 
       "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
@@ -296,7 +337,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         val incomeLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(1) td:nth-child(1) a")
         incomeLink.text shouldBe taxYearOverviewMessages.income
         incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe modelComplete(Some(false)).income.toCurrencyString
       }
 
       "when there is no calc data should display the correct heading in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
@@ -316,14 +357,14 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
       "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) td:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) td:nth-child(2)").text shouldBe completeOverview(Some(false)).totalTaxableIncome.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) td:nth-child(2)").text shouldBe modelComplete(Some(false)).totalTaxableIncome.toCurrencyString
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
         val totalTaxDueLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(4) td:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
         totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe modelComplete(Some(false)).taxDue.toCurrencyString
       }
 
       "display the table headings in the Payments tab" in new Setup(estimateView()) {
@@ -576,6 +617,31 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     }
     "the user is an agent" should {
 
+      "display forecastdata when forecast data present" in new Setup(forecastCalcView(isAgent = true)) {
+        document.title shouldBe taxYearOverviewMessages.agentTitle
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-overview.forecast"))
+
+        document.getOptionalSelector("#forecast").isDefined shouldBe true
+        document.getOptionalSelector(".forecast_table").isDefined shouldBe true
+
+        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/income/forecast"
+        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due/forecast"
+
+        document.select(".forecast_table tbody tr").size() shouldBe 3
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
+        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString)
+      }
+
+      "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView(isAgent = true)) {
+        document.title shouldBe taxYearOverviewMessages.agentTitle
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
+      }
+
       "have the correct title" in new Setup(estimateView(isAgent = true)) {
         document.title shouldBe taxYearOverviewMessages.agentTitle
       }
@@ -584,7 +650,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         val incomeLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(1) a")
         incomeLink.text shouldBe taxYearOverviewMessages.income
         incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(testYear).url
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe completeOverview(Some(false)).income.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe modelComplete(Some(false)).income.toCurrencyString
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
@@ -597,8 +663,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
         val totalTaxDueLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
+
         totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(testYear).url
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe completeOverview(Some(false)).taxDue.toCurrencyString
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe modelComplete(Some(false)).taxDue.toCurrencyString
+
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(isAgent = true)) {
@@ -686,7 +754,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       val thrownException = intercept[MissingFieldException] {
         taxYearOverviewView(
           taxYear = testYear,
-          overviewOpt = Some(completeOverview(Some(false))),
+          modelOpt = Some(modelComplete(Some(false))),
           charges = documentDetailWithDueDateMissingDueDate,
           obligations = testObligationsModel,
           backUrl = "testBackURL",

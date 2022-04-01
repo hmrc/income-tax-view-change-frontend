@@ -16,36 +16,46 @@
 
 package models.liabilitycalculation.viewmodels
 
-import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessFull}
+import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
+import models.liabilitycalculation.{Message, Messages, ReliefsClaimed}
+import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
 class TaxYearOverviewViewModelSpec extends UnitSpec {
 
-  "TaxYearOverviewViewModel" should {
-    "create a minimal TaxYearOverviewViewModel when there is a minimal calculation response" in {
+  "TaxYearOverviewViewModel model" when {
+    "create a minimal TaxYearOverviewViewModel when there is a minimal Calculation response" in {
       TaxYearOverviewViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
         TaxYearOverviewViewModel(
-          timestamp = None,
-          crystallised = None,
+          timestamp = Some("2019-02-15T09:35:15.094Z"),
+          crystallised = Some(true),
           unattendedCalc = false,
-          taxDue = 0.0,
+          taxDue = 0,
           income = 0,
-          deductions = 0.0,
-          totalTaxableIncome = 0
+          deductions = 0,
+          totalTaxableIncome = 0,
+          forecastIncome = None,
+          forecastIncomeTaxAndNics = None
         )
     }
 
-    "create a full TaxYearOverviewViewModel when there is a full calculation response" in {
-      TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull) shouldBe
-        TaxYearOverviewViewModel(
+    "successful successModelFull" should {
+
+      "create a full TaxYearOverviewViewModel when there is a full Calculation" in {
+        val expectedTaxYearOverviewViewModel = TaxYearOverviewViewModel(
           timestamp = Some("2019-02-15T09:35:15.094Z"),
           crystallised = Some(true),
           unattendedCalc = false,
           taxDue = 5000.99,
           income = 12500,
           deductions = 17500.99,
-          totalTaxableIncome = 12500
+          totalTaxableIncome = 12500,
+          forecastIncome = Some(12500),
+          forecastIncomeTaxAndNics = Some(5000.99)
         )
+
+        TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull) shouldBe expectedTaxYearOverviewViewModel
+      }
     }
 
     "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
@@ -61,5 +71,4 @@ class TaxYearOverviewViewModelSpec extends UnitSpec {
         )
     }
   }
-
 }

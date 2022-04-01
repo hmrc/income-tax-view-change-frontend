@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
 import testConstants.messages.TaxYearOverviewMessages
 import testConstants.messages.TaxYearOverviewMessages.taxYearOverviewTitle
 
@@ -321,6 +321,83 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   )(FakeRequest())
 
   s"GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}" when {
+    "ForecastCalculation feature" should {
+      def testForecast(featureSwitchEnabled: Boolean): Unit = {
+        Given("ForecastCalculation feature switch is set")
+        if (featureSwitchEnabled) enable(ForecastCalculation) else disable(ForecastCalculation)
+
+        And("Income Source Details is stubbed")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+        And(s"A non crystallised calculation for $calculationTaxYear is returned")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+          status = OK,
+          body = liabilityCalculationModelSuccessFullNotCrystallised
+        )
+
+        And("A financial transaction call returns a success")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(financialDetailsSuccess)
+        )
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )
+
+        And("The expected result is returned")
+        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
+        val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Total income on which tax is due £12,500.00 Income " +
+          "Tax and National Insurance contributions due £5,000.99" else ""
+        val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-overview.forecast") else ""
+        val forecastTotal = if (featureSwitchEnabled) "6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
+          " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " forecast amount £5,000.99" else ""
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual(taxYearOverviewTitle),
+          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
+          elementTextBySelector("#calculation-date")("15 February 2019"),
+          elementTextBySelector("#forecast_total")(forecastTotal),
+          elementTextBySelector("#tab_forecast")(forecastTabHeader),
+          elementTextBySelector(".forecast_table")(tableText)
+        )
+      }
+
+      "should show the forecast calculation tab when feature switch is enabled" in {
+        testForecast(featureSwitchEnabled = true)
+      }
+      "should NOT show the forecast calculation tab when feature switch is disabled" in {
+        testForecast(featureSwitchEnabled = false)
+      }
+    }
+
     "Tax years overview page" should {
       "should show the updated Tax Year Overview page" in {
         Given("Business details returns a successful response back")

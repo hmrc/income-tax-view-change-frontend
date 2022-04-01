@@ -17,7 +17,6 @@
 package helpers
 
 import java.time.LocalDate
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
@@ -30,9 +29,11 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -51,6 +52,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
+  val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  implicit val lang: Lang = Lang("GB")
+  val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
 
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)

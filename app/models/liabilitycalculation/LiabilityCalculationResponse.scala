@@ -37,7 +37,7 @@ object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
 }
 
-case class Metadata(calculationTimestamp: Option[String], crystallised: Option[Boolean] = Some(false), calculationReason: Option[String])
+case class Metadata(calculationTimestamp: Option[String], crystallised: Option[Boolean] = Some(false), calculationReason: Option[String] = None)
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]

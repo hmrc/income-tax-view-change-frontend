@@ -31,15 +31,14 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.{FinancialDetailsService, NextUpdatesService, WhatYouOweService}
+import services.{DateService, FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testConstants.MessagesLookUp
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
-import utils.CurrentDateProvider
-import java.time.{LocalDate, Month}
 
+import java.time.{LocalDate, Month}
 import audit.mocks.MockAuditingService
 import mocks.auth.MockFrontendAuthorisedFunctions
 import play.api.i18n.Lang
@@ -67,10 +66,9 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     )
 
   trait Setup {
-    val mockCurrentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
+    val mockDateService: DateService = mock[DateService]
     val NextUpdatesService: NextUpdatesService = mock[NextUpdatesService]
     val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
-    val currentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
     val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
 
     val controller = new HomeController(
@@ -85,7 +83,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       app.injector.instanceOf[AgentItvcErrorHandler],
       mockIncomeSourceDetailsService,
       financialDetailsService,
-      mockCurrentDateProvider,
+      mockDateService,
       whatYouOweService,
       app.injector.instanceOf[BtaNavBarPredicate],
       mockAuditingService)(
@@ -93,7 +91,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig]
     )
-    when(mockCurrentDateProvider.getCurrentDate()) thenReturn LocalDate.now()
+    when(mockDateService.getCurrentDate) thenReturn LocalDate.now()
 
     val overdueWarningMessageDunningLockTrue: String =
       "You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
@@ -104,12 +102,13 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
   //new setup for agent
   implicit val lang: Lang = Lang("en-US")
-  val mockCurrentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
+  val mockDateService: DateService = mock[DateService]
   val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
   val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.true")
   val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.false")
   val expectedOverDuePaymentsText = "OVERDUE 31 January 2019"
+
 
   object TestHomeController extends HomeController(
     app.injector.instanceOf[views.html.Home],
@@ -123,7 +122,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     app.injector.instanceOf[AgentItvcErrorHandler],
     mockIncomeSourceDetailsService,
     mockFinancialDetailsService,
-    mockCurrentDateProvider,
+    mockDateService,
     mockWhatYouOweService,
     app.injector.instanceOf[BtaNavBarPredicate],
     mockAuditingService)(
@@ -131,6 +130,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     app.injector.instanceOf[MessagesControllerComponents],
     app.injector.instanceOf[FrontendAppConfig]
   )
+  when(mockDateService.getCurrentDate) thenReturn LocalDate.now()
 
 
   "navigating to the home page" should {
@@ -395,7 +395,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         "return an internal server exception" in new Setup {
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+          when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
           mockSingleBusinessIncomeSource()
           when(mockNextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
           setupMockGetWhatYouOweChargesListEmpty()
@@ -411,7 +411,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "return an internal server exception" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
@@ -427,7 +427,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             mockSingleBusinessIncomeSource()
-            when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(dueDateValue = Some(LocalDate.of(2021, 5, 15).toString)))))
@@ -446,7 +446,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             mockSingleBusinessIncomeSource()
-            when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
@@ -463,7 +463,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and with dunning lock warning and two overdue payments" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -482,7 +482,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -502,7 +502,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and with dunning lock warning and one overdue payments from CESA" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -521,7 +521,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and without dunning lock warning and one overdue payments from CESA" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockCurrentDateProvider.getCurrentDate()).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
