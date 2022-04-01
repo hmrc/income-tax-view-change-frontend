@@ -23,9 +23,9 @@ import models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDedu
 
 object NewCalcBreakdownUnitTestConstants {
 
-  val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
+  val liabilityCalculationModelError: LiabilityCalculationError = LiabilityCalculationError(432, "someerrorhere")
 
-  val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
+  def liabilityCalculationModelDeductionsMinimal(calculationReason: Option[String] = None): LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
@@ -33,21 +33,9 @@ object NewCalcBreakdownUnitTestConstants {
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
-      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
-  )
-
-  val liabilityCalculationModelDeductionsMinimal2 = LiabilityCalculationResponse(
-    inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", class2VoluntaryContributions = None
-    )),
-    messages = None,
-    calculation = None,
-    metadata = Metadata(
-      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationTimestamp = None,
+      crystallised = None,
+      calculationReason = calculationReason)
   )
 
   val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(

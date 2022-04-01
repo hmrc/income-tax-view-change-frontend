@@ -35,7 +35,14 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
 
-  val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(Some("2017-07-06T12:34:56.789Z"), Some(false), 2010.00, 199505, 500.00, 198500)
+  val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(
+    timestamp = Some("2017-07-06T12:34:56.789Z"),
+    crystallised = Some(false),
+    unattendedCalc = false,
+    taxDue = 2010.00,
+    income = 199505,
+    deductions = 500.00,
+    totalTaxableIncome = 198500)
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
     List(DocumentDetailWithDueDate(DocumentDetail("2020", "1040000123", Some("ITSA- POA 1"), Some("documentText"), Some(1400.0), Some(1400.0), LocalDate.parse("2018-03-29"),

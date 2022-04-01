@@ -25,13 +25,14 @@ class TaxYearOverviewViewModelSpec extends UnitSpec {
 
   "TaxYearOverviewViewModel model" when {
     "create a minimal TaxYearOverviewViewModel when there is a minimal Calculation response" in {
-      TaxYearOverviewViewModel(liabilityCalculationModelDeductionsMinimal) shouldBe
+      TaxYearOverviewViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
         TaxYearOverviewViewModel(
-          timestamp = Some("2019-02-15T09:35:15.094Z"),
-          crystallised = Some(true),
-          taxDue = 0,
+          timestamp = None,
+          crystallised = None,
+          unattendedCalc = false,
+          taxDue = 0.0,
           income = 0,
-          deductions = 0,
+          deductions = 0.0,
           totalTaxableIncome = 0,
           forecastIncome = None,
           forecastIncomeTaxAndNics = None
@@ -44,6 +45,7 @@ class TaxYearOverviewViewModelSpec extends UnitSpec {
         val expectedTaxYearOverviewViewModel = TaxYearOverviewViewModel(
           timestamp = Some("2019-02-15T09:35:15.094Z"),
           crystallised = Some(true),
+          unattendedCalc = false,
           taxDue = 5000.99,
           income = 12500,
           deductions = 17500.99,
@@ -54,6 +56,19 @@ class TaxYearOverviewViewModelSpec extends UnitSpec {
 
         TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull) shouldBe expectedTaxYearOverviewViewModel
       }
+    }
+
+    "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
+      TaxYearOverviewViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
+        TaxYearOverviewViewModel(
+          timestamp = None,
+          crystallised = None,
+          unattendedCalc = true,
+          taxDue = 0.0,
+          income = 0,
+          deductions = 0.0,
+          totalTaxableIncome = 0
+        )
     }
   }
 }
