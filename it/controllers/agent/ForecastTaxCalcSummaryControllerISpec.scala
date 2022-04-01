@@ -104,7 +104,8 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleAgent("Forecast tax calculation"),
-          elementTextBySelector("h1")("6 April 2021 to 5 April 2022 Forecast tax calculation")
+          elementTextBySelector("h1")("6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
+            " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " Forecast tax calculation")
         )
       }
     }

@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
-import testConstants.messages.IncomeSummaryMessages.{incomeSummaryAgentHeading, incomeSummaryTitle}
+import testConstants.messages.IncomeSummaryMessages.{incomeSummaryTitle}
 
 import java.time.LocalDate
 
@@ -123,6 +123,8 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         When(s"I call GET ${controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
+        val incomeSummaryAgentHeading = "6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
+          " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " Income"
         res should have(
           httpStatus(OK),
           pageTitleAgent(incomeSummaryTitle),
