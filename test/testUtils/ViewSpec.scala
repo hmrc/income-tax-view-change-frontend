@@ -19,6 +19,7 @@ package testUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import org.scalactic.Equality
 import org.scalatest.{Assertion, Succeeded}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Call

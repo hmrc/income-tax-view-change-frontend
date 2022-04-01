@@ -111,6 +111,7 @@ tax-year-overview.payments.paymentUnderReview                   = Taliad dan ado
 tax-year-overview.section                                       = Adran
 tax-year-overview.amount                                        = Swm
 tax-year-overview.payments                                      = Taliadau
+tax-year-overview.forecast                                      = Rhagolwg
 tax-year-overview.updates                                       = Diweddariadau
 tax-year-overview.income                                        = Incwm
 tax-year-overview.deductions                                    = Lwfansau a didyniadau
@@ -132,6 +133,8 @@ tax-year-overview.payments.unpaid                               = Na thalwyd
 tax-year-overview.payments.part-paid                            = Talwyd yn rhannol
 tax-year-overview.payments.overdue                              = Yn hwyr
 tax-year-overview.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
+tax-year-overview.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
+tax-year-overview.forecast_total_title                          = 6 Ebrill {0} i 5 Ebrill {1} rhagolwg swm
 
 ## Tax Year Overview Page new ##
 tax-year-overview.tax-calculation.no-calc                       = Dim cyfrifiad eto

@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearOverviewResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
@@ -30,7 +30,7 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
+import services.{CalculationService, FinancialDetailsService, NextUpdatesService, DateService}
 import views.html.TaxYearOverview
 
 import java.net.URI
@@ -49,7 +49,8 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           retrieveNino: NinoPredicate,
                                           nextUpdatesService: NextUpdatesService,
                                           val retrieveBtaNavBar: BtaNavBarPredicate,
-                                          val auditingService: AuditingService)
+                                          val auditingService: AuditingService,
+                                          dateService: DateService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val executionContext: ExecutionContext)
@@ -57,6 +58,13 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
+
+  private def showForecast(modelOpt: Option[TaxYearOverviewViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
+    val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
+    val isCurrentTaxYear = taxYear == currentTaxYear
+    val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined && modelOpt.flatMap(_.forecastIncomeTaxAndNics).isDefined
+    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && isCurrentTaxYear && forecastDataPresent
+  }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
@@ -77,11 +85,12 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
         Ok(taxYearOverviewView(
           taxYear = taxYear,
-          overviewOpt = Some(taxYearOverviewViewModel),
+          modelOpt = Some(taxYearOverviewViewModel),
           charges = documentDetailsWithDueDates,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
+          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)),
           origin = origin
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
@@ -93,11 +102,12 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
 
         Ok(taxYearOverviewView(
           taxYear = taxYear,
-          overviewOpt = None,
+          modelOpt = None,
           charges = documentDetailsWithDueDates,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
+          showForecastData = false,
           origin = origin
         ))
       case _: LiabilityCalculationError =>

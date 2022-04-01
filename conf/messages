@@ -126,6 +126,7 @@ tax-year-overview.tax-calculation                                   = Calculatio
 tax-year-overview.tax-calculation.no-calc                           = No calculation yet
 tax-year-overview.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.
 tax-year-overview.payments                                          = Payments
+tax-year-overview.forecast                                          = Forecast
 tax-year-overview.updates                                           = Updates
 tax-year-overview.income                                            = Income
 tax-year-overview.deductions                                        = Allowances and deductions
@@ -154,7 +155,8 @@ tax-year-overview.payments.class2Nic.text                           = Class 2 Na
 tax-year-overview.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
 tax-year-overview.na                                                = N/A
 tax-year-overview.paye-tax-code                                     = PAYE tax code
-
+tax-year-overview.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
+tax-year-overview.forecast_total_title                              = 6 April {0} to 5 April {1} forecast amount
 
 
 ## Income Breakdown Page ##
