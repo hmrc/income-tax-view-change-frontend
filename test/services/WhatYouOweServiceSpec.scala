@@ -16,17 +16,17 @@
 
 package services
 
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.FinancialDetailsTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{BalanceDetails, CodingDetails, DocumentDetail, DocumentDetailWithCodingDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
+import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -49,7 +49,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
   val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
 
-  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector)
+  object mockDateService extends DateService() {
+    override def getCurrentDate: LocalDate = LocalDate.parse("2022-04-01")
+    override def getCurrentTaxYearEnd(currentDate: LocalDate): Int = 2022
+  }
+
+  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector, mockDateService)
 
   "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
