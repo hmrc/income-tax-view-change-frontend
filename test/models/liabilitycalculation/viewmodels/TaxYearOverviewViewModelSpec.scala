@@ -27,12 +27,12 @@ class TaxYearOverviewViewModelSpec extends UnitSpec {
     "create a minimal TaxYearOverviewViewModel when there is a minimal Calculation response" in {
       TaxYearOverviewViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
         TaxYearOverviewViewModel(
-          timestamp = Some("2019-02-15T09:35:15.094Z"),
-          crystallised = Some(true),
+          timestamp = None,
+          crystallised = None,
           unattendedCalc = false,
-          taxDue = 0,
+          taxDue = 0.0,
           income = 0,
-          deductions = 0,
+          deductions = 0.0,
           totalTaxableIncome = 0,
           forecastIncome = None,
           forecastIncomeTaxAndNics = None
