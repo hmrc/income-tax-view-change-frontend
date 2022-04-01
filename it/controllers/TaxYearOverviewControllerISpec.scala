@@ -371,8 +371,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Total income on which tax is due £12,500.00 Income " +
           "Tax and National Insurance contributions due £5,000.99" else ""
@@ -449,8 +449,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
@@ -470,10 +470,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
         )
       }
 
@@ -526,8 +526,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
         res should have(
           httpStatus(OK),
@@ -554,10 +554,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr 2022"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr 2022")
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
         )
 
         AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
@@ -617,9 +617,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-
         res should have(
           httpStatus(OK),
           pageTitleIndividual(taxYearOverviewTitle),
@@ -678,9 +675,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-
         res should have(
           httpStatus(OK),
           pageTitleIndividual(taxYearOverviewTitle),
@@ -742,9 +736,6 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
 
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(2021, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(2022, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-
         res should have(
           httpStatus(OK),
           pageTitleIndividual(taxYearOverviewTitle),
