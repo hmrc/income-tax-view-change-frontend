@@ -30,7 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
-                                  val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+                                  val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                  dateService: DateService)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -53,7 +54,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = if (isEnabled(CodingOut)) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear.toInt == (mtdUser.incomeSources.getCurrentTaxEndYear - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
+              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd(dateService.getCurrentDate) - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
           ).headOption
         } else None
 
@@ -62,7 +63,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
-        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }
