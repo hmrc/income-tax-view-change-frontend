@@ -390,13 +390,16 @@ object FinancialDetailsTestConstants {
   def documentDetailWithDueDateModel(taxYear: Int = 2018,
                                      documentDescription: Option[String] = Some("ITSA- POA 1"),
                                      documentText: Option[String] = Some("documentText"),
-                                     outstandingAmount: Option[BigDecimal] = Some(1400.00),
+                                       outstandingAmount: Option[BigDecimal] = Some(1400.00),
                                      originalAmount: Option[BigDecimal] = Some(1400.00),
                                      transactionId: String = id1040000123,
                                      latePaymentInterestAmount: Option[BigDecimal] = Some(100),
                                      paymentLot: Option[String] = Some("paymentLot"),
+                                     paymentLotItem: Option[String] = None,
                                      dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetailWithDueDate =
-    DocumentDetailWithDueDate(documentDetailModel(taxYear = taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount, originalAmount = originalAmount, documentText = documentText, transactionId = transactionId, paymentLot = paymentLot, latePaymentInterestAmount = latePaymentInterestAmount), dueDate)
+    DocumentDetailWithDueDate(documentDetailModel(taxYear = taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount,
+      originalAmount = originalAmount, documentText = documentText, transactionId = transactionId, paymentLot = paymentLot, paymentLotItem = paymentLotItem,
+      latePaymentInterestAmount = latePaymentInterestAmount), dueDate)
 
   val balanceDetails: BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
@@ -885,5 +888,12 @@ object FinancialDetailsTestConstants {
         outstandingAmount = Some(125),
         taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
+  )
+
+
+
+  val whatYouOweCreditDocumentDetailList = List(
+    documentDetailModel(outstandingAmount = Some(BigDecimal(-100.00)), paymentLotItem = None, paymentLot = None),
+    documentDetailModel(outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
   )
 }

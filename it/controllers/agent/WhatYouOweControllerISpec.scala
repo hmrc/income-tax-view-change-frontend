@@ -336,7 +336,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
     verifyIncomeSourceDetailsCall(testMtditid)
-    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
     IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -379,7 +379,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
     verifyIncomeSourceDetailsCall(testMtditid)
-    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
     IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -680,7 +680,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05", 2)
         IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -721,7 +721,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05", 2)
         IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, previousTaxYearEnd.toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -764,7 +764,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       AuditStub.verifyAuditDoesNotContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataFullDataWithoutOutstandingCharges()).detail)
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
       IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, twoPreviousTaxYearEnd.toString)
 
       Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -793,7 +793,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
       IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
       Then("the result should have a HTTP status of OK (200) and the payments due page with coding out in future payments")
@@ -828,7 +828,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
       IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
       Then("the result should have a HTTP status of OK (200) and the payments due page with no coding out in future payments")

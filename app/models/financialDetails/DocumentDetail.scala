@@ -42,8 +42,9 @@ case class DocumentDetail(taxYear: String,
   def credit: Option[BigDecimal] = outstandingAmount match {
     case None => None
     case _ if(paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case Some(_) if(outstandingAmount.get > 0.00) => None
-    case Some(credit) => Some(credit)
+    case Some(_) if(outstandingAmount.get == 0) => None
+    case Some(_) if(outstandingAmount.get > 0) => None
+    case Some(credit) => Some(credit * -1)
   }
 
   def hasLpiWithDunningBlock: Boolean =

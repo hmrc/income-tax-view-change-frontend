@@ -19,11 +19,12 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, CutOverCredits, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
+import models.financialDetails.FinancialDetailsResponseModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -57,20 +58,27 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    whatYouOweService.getWhatYouOweChargesList().map {
+    whatYouOweService.getWhatYouOweChargesList() flatMap {
       whatYouOweChargesList =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
 
         val codingOutEnabled = isEnabled(CodingOut)
 
-        Ok(whatYouOwe(whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
+        whatYouOweService.getCreditCharges(). map {
+          creditCharges =>
+
+        Ok(whatYouOwe(
+          creditCharges,
+          whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
           currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
           dunningLock = whatYouOweChargesList.hasDunningLock,
           codingOutEnabled = codingOutEnabled,
           isAgent = isAgent,
+          cutOverCreditsEnabled = isEnabled(CutOverCredits),
           origin = origin)(user, user, messages)
         ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
+    }
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
