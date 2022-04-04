@@ -25,10 +25,11 @@ import java.time.LocalDate
 
 object PropertyDetailsIntegrationTestConstants {
 
-  val propertyAccountingStart = "2017-01-01"
-  val propertyAccountingStartLocalDate = LocalDate.of(2017, 1, 1)
-  val propertyAccountingEnd = "2017-12-31"
-  val propertyAccounringEndLocalDate = LocalDate.of(2017, 12, 31)
+  val startYear = getCurrentTaxYearEnd.getYear - 5
+  val propertyAccountingStart = startYear.toString + "-01-01"
+  val propertyAccountingStartLocalDate = LocalDate.of(startYear, 1, 1)
+  val propertyAccountingEnd = startYear.toString + "-12-31"
+  val propertyAccounringEndLocalDate = LocalDate.of(startYear, 12, 31)
 
   def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
 

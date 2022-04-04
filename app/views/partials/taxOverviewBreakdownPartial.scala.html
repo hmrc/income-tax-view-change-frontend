@@ -16,8 +16,9 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this()
+@this(govukWarningText : GovukWarningText)
 @(overview: TaxYearOverviewViewModel, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None, origin: Option[String] = None)(implicit messages: Messages)
 
 @if(isFinalCalc){
@@ -87,6 +88,11 @@
 
 
 } else {
+    @if(overview.unattendedCalc){
+        @govukWarningText(WarningText(
+            content = Text(messages("tax-year-overview.tax-calculation.unattended-calc"))
+        ))
+    }
 
     <table class="govuk-table" id="income-deductions-contributions-table">
         <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-overview.tax-calculation")</caption>

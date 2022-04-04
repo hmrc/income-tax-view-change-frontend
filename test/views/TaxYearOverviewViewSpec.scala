@@ -43,13 +43,14 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   import implicitDateFormatter._
 
-  def modelComplete(crystallised: Option[Boolean]): TaxYearOverviewViewModel = TaxYearOverviewViewModel(
+  def modelComplete(crystallised: Option[Boolean], unattendedCalc: Boolean = false): TaxYearOverviewViewModel = TaxYearOverviewViewModel(
     timestamp = Some("2020-01-01T00:35:34.185Z"),
     income = 1,
     deductions = 2.02,
     totalTaxableIncome = 3,
     taxDue = 4.04,
     crystallised = crystallised,
+    unattendedCalc = unattendedCalc,
     forecastIncome = Some(12500),
     forecastIncomeTaxAndNics = Some(5000.99)
   )
@@ -132,6 +133,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   def estimateViewWithNoCalcData(isAgent: Boolean = false): Html = taxYearOverviewView(
     testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
+  def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearOverviewView(
+    testYear, Some(modelComplete(Some(false), unattendedCalc)), testChargesList, testObligationsModel, "testBackUrl", isAgent, codingOutEnabled = false
+  )
+
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearOverviewView(
     testYear, Some(modelComplete(Some(false))), testDunningLockChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
 
@@ -179,6 +184,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val taxCalculationHeading: String = "Calculation"
     val taxCalculationTab: String = "Calculation"
     val taxCalculationNoData: String = "No calculation yet"
+    val unattendedCalcPara: String = "! We have updated the calculation for you. You can see more details in your record-keeping software."
     val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
     val payments: String = "Payments"
     val updates: String = "Updates"
@@ -307,6 +313,14 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
         layoutContent.selectHead(" #income-deductions-contributions-table caption").text shouldBe taxYearOverviewMessages.taxCalculationHeading
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxYearOverviewMessages.taxCalculation
+      }
+
+      "show the unattended calculation info when an unattended calc is returned" in new Setup(unattendedCalcView(unattendedCalc = true)) {
+        layoutContent.selectHead(".govuk-warning-text").text shouldBe taxYearOverviewMessages.unattendedCalcPara
+      }
+
+      "not show the unattended calculation info when the calc returned isn't unattended" in new Setup(unattendedCalcView(unattendedCalc = false)) {
+        layoutContent.getOptionalSelector(".govuk-warning-text") shouldBe None
       }
 
       "display the section header in the Tax Calculation tab" in new Setup(estimateView()) {

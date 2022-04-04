@@ -62,7 +62,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
         userType = userType,
         arn = arn
       )(FakeRequest()),
-      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal),
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal()),
       taxYear = testTaxYear
     )
 
