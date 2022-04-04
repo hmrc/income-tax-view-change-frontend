@@ -48,10 +48,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
   val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+  val currentYearAsInt: Int = LocalDate.now.getYear
 
   object mockDateService extends DateService() {
-    override def getCurrentDate: LocalDate = LocalDate.parse(s"${LocalDate.now.getYear.toString}-04-01")
-    override def getCurrentTaxYearEnd(currentDate: LocalDate): Int = 2022
+    override def getCurrentDate: LocalDate = LocalDate.parse(s"${currentYearAsInt.toString}-04-01")
+    override def getCurrentTaxYearEnd(currentDate: LocalDate): Int = currentYearAsInt
   }
 
   object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector, mockDateService)
