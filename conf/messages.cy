@@ -140,7 +140,7 @@ tax-year-overview.forecast_total_title                          = 6 Ebrill {0} i
 tax-year-overview.tax-calculation.no-calc                       = Dim cyfrifiad eto
 tax-year-overview.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
 tax-year-overview.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
-tax-year-overview.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion
+tax-year-overview.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 
 
 
