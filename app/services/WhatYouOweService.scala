@@ -43,6 +43,16 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       documentDescription == "TRM Amend Charge"
   }
 
+  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]]= {
+    financialDetailsService.getAllCreditFinancialDetails.map {
+      case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
+        throw new Exception("[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details")
+      case financialDetails: List[FinancialDetailsResponseModel] =>
+        val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
+        financialDetailsModelList.flatMap(_.documentDetails)
+    }
+  }
+
   def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     financialDetailsService.getAllUnpaidFinancialDetails flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>

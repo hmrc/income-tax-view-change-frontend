@@ -91,6 +91,9 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
         val result = controller.show()(fakeRequestWithActiveSession)
         val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
 
@@ -108,6 +111,9 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
 
         val result = controller.show()(fakeRequestWithActiveSession)
         val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
@@ -145,5 +151,4 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     }
 
   }
-
 }

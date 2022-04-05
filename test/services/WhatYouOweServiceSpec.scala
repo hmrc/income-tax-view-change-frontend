@@ -293,4 +293,38 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
     }
   }
+
+  "WhatYouOweService.getCreditCharges method" should {
+    "return a list of credit charges" when {
+      "a successful response is received in all tax year calls" in {
+        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(FinancialDetailsModel(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            codingDetails = None,
+            documentDetails = whatYouOweCreditDocumentDetailList,
+            financialDetails = List(
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+            )
+          ))))
+
+        TestWhatYouOweService.getCreditCharges()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweCreditDocumentDetailList
+      }
+    }
+    "handle an error" when {
+      "the financial service has returned an error in all tax year calls" in {
+        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(FinancialDetailsErrorModel(500, "INTERNAL_SERVER ERROR"))))
+
+        val result = TestWhatYouOweService.getCreditCharges()(headerCarrier, mtdItUser).failed.futureValue
+
+        result shouldBe an[Exception]
+        result.getMessage shouldBe "[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details"
+      }
+    }
+  }
 }
