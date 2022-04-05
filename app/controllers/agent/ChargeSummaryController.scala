@@ -154,7 +154,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   }
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
-    case Some("taxYearOverview") => controllers.agent.routes.TaxYearOverviewController.show(taxYear).url + "#payments"
+    case Some("taxYearSummary") => controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
     case Some("whatYouOwe") => controllers.routes.WhatYouOweController.showAgent().url
     case _ => controllers.routes.HomeController.showAgent().url
   }

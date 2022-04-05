@@ -16,7 +16,7 @@
 
 package controllers
 
-import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import helpers.ComponentSpecBase
@@ -24,7 +24,7 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -32,13 +32,13 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
-import testConstants.messages.TaxYearOverviewMessages
-import testConstants.messages.TaxYearOverviewMessages.taxYearOverviewTitle
+import testConstants.messages.TaxYearSummaryMessages
+import testConstants.messages.TaxYearSummaryMessages.taxYearSummaryTitle
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
@@ -320,7 +320,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
-  s"GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}" when {
+  s"GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}" when {
     "ForecastCalculation feature" should {
       def testForecast(featureSwitchEnabled: Boolean): Unit = {
         Given("ForecastCalculation feature switch is set")
@@ -359,7 +359,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -373,7 +373,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("The expected result is returned")
         val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Total income on which tax is due £12,500.00 Income " +
           "Tax and National Insurance contributions due £5,000.99" else ""
         val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-overview.forecast") else ""
@@ -381,7 +381,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " forecast amount £5,000.99" else ""
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#forecast_total")(forecastTotal),
@@ -434,7 +434,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -451,10 +451,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("The expected result is returned")
         val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
@@ -511,7 +511,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -528,10 +528,10 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("The expected result is returned")
         val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
@@ -560,11 +560,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
         )
 
-        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull))))
       }
 
 
@@ -604,7 +604,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -619,7 +619,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Balancing payment"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance")
 
@@ -662,7 +662,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -677,7 +677,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
 
@@ -721,7 +721,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(getCurrentTaxYearEnd.getYear).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -738,7 +738,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Balancing payment"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Class 2 National Insurance"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Cancelled Self Assessment payment (through your PAYE tax code)")
@@ -781,7 +781,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = currentObligationsSuccess
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
@@ -798,14 +798,14 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("Page is displayed with no payments due")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelector("#payments p")("No payments currently due.")
         )
 
-        AuditStub.verifyAuditEvent(TaxYearOverviewResponseAuditModel(
+        AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
             None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), emptyPaymentsList, allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
+          )(FakeRequest()), emptyPaymentsList, allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull))))
       }
 
       "financial details service returns an error" in {
@@ -821,7 +821,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("A financial transaction call fails")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -879,7 +879,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           ))
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -889,13 +889,13 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("The expected result with right headers are returned")
         val fromDate = LocalDate.of(2017, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val toDate = LocalDate.of(2018, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearOverviewMessages.heading
+        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearOverviewTitle),
+          pageTitleIndividual(taxYearSummaryTitle),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
-          elementTextByID("no-calc-data-header")(TaxYearOverviewMessages.headingNoCalcData),
-          elementTextByID("no-calc-data-note")(TaxYearOverviewMessages.noCalcDataNote)
+          elementTextByID("no-calc-data-header")(TaxYearSummaryMessages.headingNoCalcData),
+          elementTextByID("no-calc-data-note")(TaxYearSummaryMessages.noCalcDataNote)
         )
       }
 
@@ -944,7 +944,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           ))
         )
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -980,7 +980,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5))
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -1008,7 +1008,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         And("current obligations call failed")
         IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
-        When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -1052,7 +1052,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       And("A calculation call for 2017-18 fails")
       IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, "2018")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Error"))
 
-      When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+      When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
       val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
       Then("I check all calls expected were made")
@@ -1075,7 +1075,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       And("A financial transaction call fails")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
-      When(s"I call GET ${controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url}")
+      When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
       val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
       Then("I check all calls expected were made")

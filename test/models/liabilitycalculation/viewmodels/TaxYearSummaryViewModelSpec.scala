@@ -16,17 +16,15 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
-import models.liabilitycalculation.{Message, Messages, ReliefsClaimed}
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
-class TaxYearOverviewViewModelSpec extends UnitSpec {
+class TaxYearSummaryViewModelSpec extends UnitSpec {
 
-  "TaxYearOverviewViewModel model" when {
-    "create a minimal TaxYearOverviewViewModel when there is a minimal Calculation response" in {
-      TaxYearOverviewViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
-        TaxYearOverviewViewModel(
+  "TaxYearSummaryViewModel model" when {
+    "create a minimal TaxYearSummaryViewModel when there is a minimal Calculation response" in {
+      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
+        TaxYearSummaryViewModel(
           timestamp = None,
           crystallised = None,
           unattendedCalc = false,
@@ -41,8 +39,8 @@ class TaxYearOverviewViewModelSpec extends UnitSpec {
 
     "successful successModelFull" should {
 
-      "create a full TaxYearOverviewViewModel when there is a full Calculation" in {
-        val expectedTaxYearOverviewViewModel = TaxYearOverviewViewModel(
+      "create a full TaxYearSummaryViewModel when there is a full Calculation" in {
+        val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
           timestamp = Some("2019-02-15T09:35:15.094Z"),
           crystallised = Some(true),
           unattendedCalc = false,
@@ -54,13 +52,13 @@ class TaxYearOverviewViewModelSpec extends UnitSpec {
           forecastIncomeTaxAndNics = Some(5000.99)
         )
 
-        TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull) shouldBe expectedTaxYearOverviewViewModel
+        TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull) shouldBe expectedTaxYearSummaryViewModel
       }
     }
 
     "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
-      TaxYearOverviewViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
-        TaxYearOverviewViewModel(
+      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
+        TaxYearSummaryViewModel(
           timestamp = None,
           crystallised = None,
           unattendedCalc = true,

@@ -15,11 +15,11 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter._
-@import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(govukWarningText : GovukWarningText)
-@(overview: TaxYearOverviewViewModel, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None, origin: Option[String] = None)(implicit messages: Messages)
+@(overview: TaxYearSummaryViewModel, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None, origin: Option[String] = None)(implicit messages: Messages)
 
 @if(isFinalCalc){
 

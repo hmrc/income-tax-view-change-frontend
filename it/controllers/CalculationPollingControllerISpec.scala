@@ -53,7 +53,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         And("The expected result is returned")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
+          redirectURI(routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url)
         )
 
         mongoDbConnection.repo.findById("idOne").futureValue shouldBe None
@@ -118,7 +118,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         And("The expected result is returned")
         res.futureValue should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearInt).url)
+          redirectURI(routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url)
         )
 
         Then("I check all calls expected were made")

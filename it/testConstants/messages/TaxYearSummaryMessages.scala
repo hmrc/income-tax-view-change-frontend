@@ -16,9 +16,9 @@
 
 package testConstants.messages
 
-object TaxYearOverviewMessages {
+object TaxYearSummaryMessages {
 
-  val taxYearOverviewTitle: String = "Tax year summary"
+  val taxYearSummaryTitle: String = "Tax year summary"
   val heading: String = "Tax year summary"
   val headingNoCalcData: String = "No calculation yet"
   val noCalcDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."

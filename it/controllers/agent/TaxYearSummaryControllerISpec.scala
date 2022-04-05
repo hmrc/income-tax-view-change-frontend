@@ -15,7 +15,7 @@
  */
 package controllers.agent
 
-import audit.models.{NextUpdatesResponseAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
@@ -27,7 +27,7 @@ import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
@@ -36,12 +36,12 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
-import testConstants.messages.TaxYearOverviewMessages.taxYearOverviewTitle
+import testConstants.messages.TaxYearSummaryMessages.taxYearSummaryTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
@@ -202,12 +202,12 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     None, Some("1234567890"), None, Some("Agent"), arn = Some("1")
   )(FakeRequest())
 
-  s"[IT-AGENT-TEST-1] GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
+  s"[IT-AGENT-TEST-1] GET ${routes.TaxYearSummaryController.show(getCurrentTaxYearEnd.getYear).url}" should {
     s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       " [IT-AGENT-TEST-1.1.1] the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)()
 
         Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
         result should have(
@@ -220,7 +220,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       " [IT-AGENT-TEST-1.2.1] the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)()
 
         Then(s"Technical difficulties are shown with status OK")
         result should have(
@@ -233,7 +233,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       " [IT-AGENT-TEST-1.3.1] the agent does not have client details in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)()
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)()
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -243,7 +243,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
       " [IT-AGENT-TEST-1.3.2] the agent has client details in session but no confirmation flag" in {
         stubAuthorisedAgentUser(authorised = true)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithoutConfirmation)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -253,7 +253,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     }
   }
 
-  s"[IT-AGENT-TEST-2] GET ${routes.TaxYearOverviewController.show(getCurrentTaxYearEnd.getYear).url}" should {
+  s"[IT-AGENT-TEST-2] GET ${routes.TaxYearSummaryController.show(getCurrentTaxYearEnd.getYear).url}" should {
     " [IT-AGENT-TEST-2.1] return the tax year overview page" when {
       " [IT-AGENT-TEST-2.1.1] all calls were successful and returned data" in {
         stubAuthorisedAgentUser(authorised = true)
@@ -290,11 +290,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = previousObligationsSuccess
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(taxYearOverviewTitle),
+          pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -325,8 +325,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
         )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -365,11 +365,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = previousObligationsSuccess
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(taxYearOverviewTitle),
+          pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -400,8 +400,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
         )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -440,11 +440,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = previousObligationsSuccess
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(taxYearOverviewTitle),
+          pageTitleAgent(taxYearSummaryTitle),
           elementTextByID("no-calc-data-header")("No calculation yet"),
           elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
         )
@@ -486,11 +486,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           deadlines = previousObligationsSuccess
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(taxYearOverviewTitle),
+          pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -550,11 +550,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           toDate = getCurrentTaxYearEnd
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(taxYearOverviewTitle),
+          pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
@@ -580,8 +580,8 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
         )
 
-        verifyAuditEvent(TaxYearOverviewResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          currentObligationsSuccess, Some(TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull))))
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
+          currentObligationsSuccess, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
@@ -594,7 +594,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = incomeSourceDetailsSuccess
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -615,7 +615,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           body = LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error")
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -639,7 +639,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           response = Json.obj()
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -668,7 +668,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           nino = testNino
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -704,7 +704,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           toDate = getCurrentTaxYearEnd
         )
 
-        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -719,7 +719,7 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be DISABLED" in {
       testIncomeSourceDetailsCaching(false, 2,
-        () => IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
+        () => IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
     }
   }
 }

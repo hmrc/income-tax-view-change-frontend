@@ -701,7 +701,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val dueDate = "Due date"
   }
 
-  object TaxYearOverview {
+  object TaxYearSummary {
     def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
 
     def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"

@@ -22,7 +22,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -36,12 +36,12 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.TaxYearOverview
+import views.html.TaxYearSummary
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
+class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
   with FeatureSwitching with MockCalculationService with MockIncomeSourceDetailsService
   with MockNextUpdatesService with MockItvcErrorHandler with MockAuditingService {
 
@@ -50,7 +50,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
     override def getCurrentDate: LocalDate = LocalDate.parse("2020-03-29")
     override def getCurrentTaxYearEnd(currentDate: LocalDate): Int = 2020
   }
-  val taxYearOverviewView: TaxYearOverview = app.injector.instanceOf[TaxYearOverview]
+  val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
   val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true),
@@ -62,8 +62,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/agents/tax-years"
 
-  val controller: TaxYearOverviewController = new TaxYearOverviewController(
-    taxYearOverview = taxYearOverviewView,
+  val controller: TaxYearSummaryController = new TaxYearSummaryController(
+    taxYearSummary = taxYearSummaryView,
     authorisedFunctions = mockAuthService,
     calculationService = mockCalculationService,
     financialDetailsService = mockFinancialDetailsService,
@@ -96,8 +96,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
       )
 
       val calcModel = if (crystallised) liabilityCalculationModelSuccessFull else liabilityCalculationModelSuccessFullNotCrystallised
-      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calcModel)
-      val expectedContent: String = taxYearOverviewView(
+      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calcModel)
+      val expectedContent: String = taxYearSummaryView(
         taxYear,
         Some(calcOverview),
         testChargesList,
@@ -275,8 +275,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
         ObligationsModel(Nil)
       )
 
-      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-      val expectedContent: String = taxYearOverviewView(
+      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearSummaryView(
         testYear,
         Some(calcOverview),
         class2NicsChargesList,
@@ -305,8 +305,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
         ObligationsModel(Nil)
       )
 
-      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-      val expectedContent: String = taxYearOverviewView(
+      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearSummaryView(
         testYear,
         Some(calcOverview),
         payeChargesList,
@@ -337,8 +337,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
         ObligationsModel(Nil)
       )
 
-      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-      val expectedContent: String = taxYearOverviewView(
+      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearSummaryView(
         testYear,
         Some(calcOverview),
         testEmptyChargesList,
@@ -367,8 +367,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
         ObligationsModel(Nil)
       )
 
-      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-      val expectedContent: String = taxYearOverviewView(
+      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearSummaryView(
         testYear,
         Some(calcOverview),
         testEmptyChargesList,
@@ -399,8 +399,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
         ObligationsModel(Nil)
       )
 
-      val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalculationModelSuccessFull)
-      val expectedContent: String = taxYearOverviewView(
+      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+      val expectedContent: String = taxYearSummaryView(
         testYear,
         Some(calcOverview),
         class2NicsChargesList,
