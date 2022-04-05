@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import testUtils.TestSupport
-import views.html.bta.BtaPartial
+import views.html.navBar.BtaPartial
 
 class BtaPartialViewSpec extends TestSupport {
 

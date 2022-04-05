@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUser
 import config.ItvcErrorHandler
 import config.featureswitch.{FeatureSwitching, NavBarFs}
 import controllers.bta.BtaNavBarController
@@ -29,8 +29,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
-import views.html.bta.BtaNavBar
-import views.html.navBar.BtaNavBar
+import views.html.navBar.{BtaNavBar, PtaPartial}
 
 import scala.concurrent.Future
 
@@ -38,8 +37,9 @@ class NavBarEnumFsPredicateSpec extends TestSupport with MockAsyncCacheApi with 
 
   val mockBtaNavBarController = mock[BtaNavBarController]
   val mockItvcErrorHandler = mock[ItvcErrorHandler]
+  val mockPtaNavBar = mock[PtaPartial]
 
-  object NavBarPredicate extends NavBarPredicate(mockBtaNavBarController, mockItvcErrorHandler)(appConfig, ec)
+  object NavBarPredicate extends NavBarPredicate(mockBtaNavBarController, mockPtaNavBar, mockItvcErrorHandler)(appConfig, ec, messagesApi)
 
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 

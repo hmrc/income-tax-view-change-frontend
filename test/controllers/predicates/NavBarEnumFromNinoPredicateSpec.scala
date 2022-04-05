@@ -28,8 +28,7 @@ import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testUtils.TestSupport
-import views.html.bta.BtaNavBar
-import views.html.navBar.BtaNavBar
+import views.html.navBar.{BtaNavBar, PtaPartial}
 
 import scala.concurrent.Future
 
@@ -37,8 +36,10 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
 
   val mockBtaNavBarController = mock[BtaNavBarController]
   val mockItvcErrorHandler = mock[ItvcErrorHandler]
+  val mockPtaPartial = mock[PtaPartial]
 
-  object NavBarFromNinoPredicate extends NavBarFromNinoPredicate(mockBtaNavBarController, mockItvcErrorHandler)(appConfig, ec)
+  object NavBarFromNinoPredicate extends NavBarFromNinoPredicate(mockBtaNavBarController, mockPtaPartial,
+    mockItvcErrorHandler)(appConfig, ec, messagesApi)
 
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
@@ -53,7 +54,7 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
     "The Bta Nav Bar is enabled" should {
       "Return a valid response from the Bta Nav Bar Controller which" should {
 
-        "return the expected MtdItUserWithNino with a batPartial" in {
+        "return the expected MtdItUserWithNino with a btaPartial" in {
           enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
 

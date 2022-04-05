@@ -21,12 +21,14 @@ import controllers.bta.BtaNavBarController
 import controllers.predicates.NavBarPredicate
 import mocks.services.MockAsyncCacheApi
 import testUtils.TestSupport
+import views.html.navBar.PtaPartial
 
 trait MockNavBarEnumFsPredicate extends TestSupport with MockAsyncCacheApi {
 
   val mockBtaNavBarController: BtaNavBarController = mock[BtaNavBarController]
+  val mockPtaPartial: PtaPartial = mock[PtaPartial]
 
   object MockNavBarPredicate extends NavBarPredicate(
-    mockBtaNavBarController, app.injector.instanceOf[ItvcErrorHandler])(
-    appConfig, ec)
+    mockBtaNavBarController, mockPtaPartial, app.injector.instanceOf[ItvcErrorHandler])(
+    appConfig, ec, messagesApi)
 }

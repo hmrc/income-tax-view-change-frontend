@@ -27,7 +27,7 @@ class BaseControllerSpec extends TestSupport with MockAuthenticationPredicate {
 
   object TestBaseController extends BaseController()(
     app.injector.instanceOf[MessagesControllerComponents]) {
-    override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+    override implicit val executionContext: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   }
 
   "The BaseController.hc() method" when {
