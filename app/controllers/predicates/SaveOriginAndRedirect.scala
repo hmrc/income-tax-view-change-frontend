@@ -19,34 +19,32 @@ package controllers.predicates
 import auth.MtdItUserBase
 import config.featureswitch.FeatureSwitching
 import forms.utils.SessionKeys
-import models.NavBarEnum
+import models.OriginEnum
 import play.api.i18n.I18nSupport
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
 import scala.concurrent.Future
 
-trait NavBar extends I18nSupport with FeatureSwitching {
+trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
 
   def redirectToHome: Result = Redirect(controllers.routes.HomeController.show())
 
-  lazy val origin: String = "origin"
-
   def saveOriginAndReturnToHomeWithoutQueryParams[A](request: MtdItUserBase[A], navBarFsDisabled: Boolean = true): Future[Result] = {
-    val originStringOpt: Option[String] = request.getQueryString(origin)
+    val originStringOpt: Option[String] = request.getQueryString(SessionKeys.origin)
     val redirectToOriginalCall: Result = Redirect(request.path)
 
     if (navBarFsDisabled) {
       Future.successful(redirectToOriginalCall)
     } else {
       originStringOpt.fold[Future[Result]](ifEmpty = Future.successful(redirectToOriginalCall))(originString =>
-        (NavBarEnum(originString), request.session.get(SessionKeys.origin)) match {
-          case (Some(navBar), Some(sessionOrigin)) if navBar.toString != sessionOrigin =>
+        (OriginEnum(originString), request.session.get(SessionKeys.origin)) match {
+          case (Some(originStringEnum), Some(sessionOrigin)) if originStringEnum.toString != sessionOrigin =>
             Future.successful(
-              redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", navBar.toString))(request)
+              redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", originStringEnum.toString))(request)
             )
-          case (Some(navBar), None) =>
-            Future.successful(redirectToOriginalCall.addingToSession(("origin", navBar.toString))(request))
+          case (Some(originStringEnum), None) =>
+            Future.successful(redirectToOriginalCall.addingToSession(("origin", originStringEnum.toString))(request))
           case _ => Future.successful(redirectToOriginalCall)
         }
       )

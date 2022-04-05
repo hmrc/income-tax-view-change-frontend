@@ -16,9 +16,9 @@
 
 package models
 
-object NavBarEnum extends Enumeration {
-  type NavBarValue = Value
+object OriginEnum extends Enumeration {
+  type OriginValue = Value
   val BTA, PTA = Value
 
-  def apply(origin: String): Option[NavBarValue] = values.find(origin.toUpperCase == _.toString)
+  def apply(origin: String): Option[OriginValue] = values.find(origin.toUpperCase == _.toString)
 }

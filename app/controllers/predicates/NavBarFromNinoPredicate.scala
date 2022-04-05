@@ -53,8 +53,8 @@ import config.featureswitch.NavBarFs
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
-import models.NavBarEnum
-import models.NavBarEnum.{BTA, PTA}
+import models.OriginEnum
+import models.OriginEnum.{BTA, PTA}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -72,7 +72,7 @@ class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarContro
                                         val itvcErrorHandler: ItvcErrorHandler)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val executionContext: ExecutionContext,
-                                        val messagesApi: MessagesApi) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with NavBar {
+                                        val messagesApi: MessagesApi) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with SaveOriginAndRedirect {
 
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -81,31 +81,31 @@ class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarContro
     if (isDisabled(NavBarFs)) {
       Future.successful(Right(request))
     } else {
-      request.getQueryString(origin).fold[Future[Either[Result, MtdItUserWithNino[A]]]](
-        ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
+      request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUserWithNino[A]]]](
+        ifEmpty = retrieveOriginFromSessionAndHandleNavBar(request))(_ => {
         saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs)).map(Left(_))
       })
     }
   }
 
-  def retrieveCacheAndHandleNavBar[A](request: MtdItUserWithNino[A])
+  private def retrieveOriginFromSessionAndHandleNavBar[A](request: MtdItUserWithNino[A])
                                      (implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
     request.session.get(SessionKeys.origin) match {
-      case Some(origin) if NavBarEnum(origin) == Some(PTA) =>
+      case Some(origin) if OriginEnum(origin) == Some(PTA) =>
         Future.successful(Right(returnMtdItUserWithNinoAndNavbar(request, ptaPartial()(request, request.messages, appConfig))))
-      case Some(origin) if NavBarEnum(origin) == Some(BTA) =>
+      case Some(origin) if OriginEnum(origin) == Some(BTA) =>
         handleBtaNavBar(request)
       case _ =>
         Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))
     }
   }
 
-  def returnMtdItUserWithNinoAndNavbar[A](request: MtdItUserWithNino[A], partial: Html): MtdItUserWithNino[A] = {
+  private def returnMtdItUserWithNinoAndNavbar[A](request: MtdItUserWithNino[A], partial: Html): MtdItUserWithNino[A] = {
     MtdItUserWithNino[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, btaNavPartial = Some(partial),
       saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request)
   }
 
-  def handleBtaNavBar[A](request: MtdItUserWithNino[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
+  private def handleBtaNavBar[A](request: MtdItUserWithNino[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
     btaNavBarController.btaNavBarPartial(request) map {
       case Some(partial) => Right(returnMtdItUserWithNinoAndNavbar(request, partial))
       case _ => Left(itvcErrorHandler.showInternalServerError()(request))

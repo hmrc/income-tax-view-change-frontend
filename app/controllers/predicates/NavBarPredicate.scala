@@ -21,8 +21,8 @@ import config.featureswitch.NavBarFs
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
-import models.NavBarEnum
-import models.NavBarEnum.{BTA, PTA}
+import models.OriginEnum
+import models.OriginEnum.{BTA, PTA}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -41,7 +41,7 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
                                (implicit val appConfig: FrontendAppConfig,
                                 val executionContext: ExecutionContext,
                                 val messagesApi: MessagesApi
-                               ) extends ActionRefiner[MtdItUser, MtdItUser] with NavBar {
+                               ) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
 
@@ -51,7 +51,7 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
     if (isDisabled(NavBarFs)) {
       Future.successful(Right(request))
     } else {
-      request.getQueryString(origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
+      request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
         saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs)).map(Left(_))
       })
     }
@@ -59,9 +59,9 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
     request.session.get(SessionKeys.origin) match {
-      case Some(origin) if NavBarEnum(origin) == Some(PTA) =>
+      case Some(origin) if OriginEnum(origin) == Some(PTA) =>
         Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))
-      case Some(origin) if NavBarEnum(origin) == Some(BTA) =>
+      case Some(origin) if OriginEnum(origin) == Some(BTA) =>
         handleBtaNavBar(request)
       case _ =>
         Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))
