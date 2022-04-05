@@ -106,7 +106,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
     "the user is authorised with an active enrolment" should {
 
-      "redirect the user to the tax year overview page" which {
+      "redirect the user to the tax year summary page" which {
         lazy val result = {
           stubAuthorisedAgentUser(authorised = true)
           calculationStub()
@@ -203,7 +203,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
     "the user is authorised with an active enrolment" should {
 
-      "redirect the user to the tax year overview page" which {
+      "redirect the user to the tax year summary page" which {
         lazy val result = {
           stubAuthorisedAgentUser(authorised = true)
           calculationStub()

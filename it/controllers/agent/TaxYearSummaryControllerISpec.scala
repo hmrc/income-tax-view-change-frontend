@@ -254,7 +254,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   }
 
   s"[IT-AGENT-TEST-2] GET ${routes.TaxYearSummaryController.show(getCurrentTaxYearEnd.getYear).url}" should {
-    " [IT-AGENT-TEST-2.1] return the tax year overview page" when {
+    " [IT-AGENT-TEST-2.1] return the tax year summary page" when {
       " [IT-AGENT-TEST-2.1.1] all calls were successful and returned data" in {
         stubAuthorisedAgentUser(authorised = true)
 
@@ -332,7 +332,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
       }
 
-      " [IT-AGENT-TEST-2.1.2] should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
+      " [IT-AGENT-TEST-2.1.2] should show Tax Year Summary page with payments with and without dunning locks in the payments tab" in {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,

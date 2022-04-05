@@ -24,20 +24,20 @@
 @if(isFinalCalc){
 
     <table class="govuk-table" id="income-deductions-contributions-table">
-        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-overview.tax-calculation")</caption>
+        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-overview.amount")</th>
+                <th scope="col" class="govuk-table__header">@messages("tax-year-summary.section")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-summary.amount")</th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear).url>@messages("tax-year-overview.income")</a>
+                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear).url>@messages("tax-year-summary.income")</a>
                 } else {
-                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin).url>@messages("tax-year-overview.income")</a>
+                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin).url>@messages("tax-year-summary.income")</a>
                 }
                 </th>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@{
@@ -49,9 +49,9 @@
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear).url>@messages("tax-year-overview.deductions")</a>
+                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear).url>@messages("tax-year-summary.deductions")</a>
                 } else {
-                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin).url>@messages("tax-year-overview.deductions")</a>
+                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin).url>@messages("tax-year-summary.deductions")</a>
                 }
                 </th>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@{
@@ -62,7 +62,7 @@
 
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-bold">
-                @messages(s"tax-year-overview.taxable-income.finalCalc")
+                @messages(s"tax-year-summary.taxable-income.finalCalc")
                 </th>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold govuk-!-text-align-right">@{
                     overview.totalTaxableIncome.toCurrencyString
@@ -72,9 +72,9 @@
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-bold">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear).url >@messages(s"tax-year-overview.tax-due.finalCalc")</a>
+                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear).url >@messages(s"tax-year-summary.tax-due.finalCalc")</a>
                 } else {
-                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin).url>@messages(s"tax-year-overview.tax-due.finalCalc")</a>
+                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin).url>@messages(s"tax-year-summary.tax-due.finalCalc")</a>
                     }
                 </th>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold govuk-!-text-align-right">@{
@@ -90,26 +90,26 @@
 } else {
     @if(overview.unattendedCalc){
         @govukWarningText(WarningText(
-            content = Text(messages("tax-year-overview.tax-calculation.unattended-calc"))
+            content = Text(messages("tax-year-summary.tax-calculation.unattended-calc"))
         ))
     }
 
     <table class="govuk-table" id="income-deductions-contributions-table">
-        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-overview.tax-calculation")</caption>
+        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("tax-year-overview.section")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-overview.amount")</th>
+                <th scope="col" class="govuk-table__header">@messages("tax-year-summary.section")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("tax-year-summary.amount")</th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear).url>@messages("tax-year-overview.income")</a>
+                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear).url>@messages("tax-year-summary.income")</a>
 
                 } else {
-                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin).url>@messages("tax-year-overview.income")</a>
+                    <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin).url>@messages("tax-year-summary.income")</a>
                 }
                 </td>
                 </td>
@@ -121,10 +121,10 @@
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear).url>@messages("tax-year-overview.deductions")</a>
+                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear).url>@messages("tax-year-summary.deductions")</a>
 
                 } else {
-                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin).url>@messages("tax-year-overview.deductions")</a>
+                    <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin).url>@messages("tax-year-summary.deductions")</a>
                 }
                 </td>
                 <td class="govuk-table__cell govuk-table__cell--numeric" id="amount-due">@{
@@ -133,7 +133,7 @@
                 </td>
             </tr>
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-!-font-weight-bold">@messages(s"tax-year-overview.taxable-income")</td>
+                <td class="govuk-table__cell govuk-!-font-weight-bold">@messages(s"tax-year-summary.taxable-income")</td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold">@{
                     overview.totalTaxableIncome.toCurrencyString
                 }
@@ -142,9 +142,9 @@
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell govuk-!-font-weight-bold">
                 @if(isAgent){
-                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear).url>@messages(s"tax-year-overview.tax-due")</a>
+                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear).url>@messages(s"tax-year-summary.tax-due")</a>
                 } else {
-                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin).url>@messages(s"tax-year-overview.tax-due")</a>
+                    <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin).url>@messages(s"tax-year-summary.tax-due")</a>
                     }
                 </td>
                 <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold govuk-!-text-align-right">@{

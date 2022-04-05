@@ -81,7 +81,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel)))
 
         Logger("application").info(
-          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year overview page with Calc data")
+          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with Calc data")
 
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -98,7 +98,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           mtdItUser, documentDetailsWithDueDates, obligations, None))
 
         Logger("application").info(
-          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year overview page with No Calc data")
+          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with No Calc data")
 
         Ok(taxYearSummaryView(
           taxYear = taxYear,

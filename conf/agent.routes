@@ -27,7 +27,7 @@ GET         /remove-client-sessions                                       contro
 GET         /tax-years/:taxYear/charge                                    controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
 
 
-# Tax Year Overview
+# Tax Year Summary
 GET         /calculation/:taxYear                                         controllers.agent.TaxYearSummaryController.show(taxYear: Int)
 
 #Payment history

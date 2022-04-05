@@ -229,7 +229,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
     }
   }
   "no calculation data was returned" should {
-    "show the tax year overview page" in {
+    "show the tax year summary page" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
       mockBothIncomeSources()
       mockCalculationNotFoundNew(nino = "AA111111A", year = testYear)
@@ -245,7 +245,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
   }
 
   "all calls to retrieve data were successful" should {
-    "show the tax year overview page" in {
+    "show the tax year summary page" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
       mockBothIncomeSources()
       mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYear)
@@ -386,7 +386,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
   }
 
   "all calls to retrieve data were successful and Referer was a Home page" should {
-    "show the Tax Year Overview Page and back link should be to the Home page" in {
+    "show the Tax Year Summary Page and back link should be to the Home page" in {
       enable(CodingOut)
 
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

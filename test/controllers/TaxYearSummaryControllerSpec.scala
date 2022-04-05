@@ -140,7 +140,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
     }
     "all calls are returned correctly" should {
-      "show the Tax Year Overview Page" in {
+      "show the Tax Year Summary Page" in {
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessFullNew(testMtditid)
         mockFinancialDetailsSuccess()
@@ -169,7 +169,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     }
 
     "all calls are returned correctly and Referer was a Home page" should {
-      "show the Tax Year Overview Page and back link should be to the Home page" in {
+      "show the Tax Year Summary Page and back link should be to the Home page" in {
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessFullNew(testMtditid)
         mockFinancialDetailsSuccess()
@@ -326,7 +326,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     }
 
     s"getFinancialDetails returns a $NOT_FOUND" should {
-      "show the Tax Year Overview Page" in {
+      "show the Tax Year Summary Page" in {
         mockSingleBusinessIncomeSource()
         mockCalculationSuccessFullNew(testMtditid)
         mockFinancialDetailsNotFound()
@@ -405,7 +405,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
 
       "the calculation returned from the calculation service was not found" should {
-        "show tax year overview page with expected content" in {
+        "show tax year summary page with expected content" in {
           mockSingleBusinessIncomeSource()
           mockCalculationNotFoundNew(testMtditid)
           mockFinancialDetailsSuccess()

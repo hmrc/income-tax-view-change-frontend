@@ -704,7 +704,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object TaxYearSummary {
     def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
 
-    def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
+    def heading(firstYear: Int, secondYear: Int): String = s"Tax year summary 6 April $firstYear to 5 April $secondYear"
 
     def status(status: String) = s"Tax year status: $status"
 

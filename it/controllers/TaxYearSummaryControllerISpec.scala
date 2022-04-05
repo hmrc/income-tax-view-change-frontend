@@ -376,7 +376,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Total income on which tax is due £12,500.00 Income " +
           "Tax and National Insurance contributions due £5,000.99" else ""
-        val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-overview.forecast") else ""
+        val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-summary.forecast") else ""
         val forecastTotal = if (featureSwitchEnabled) "6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
           " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " forecast amount £5,000.99" else ""
         res should have(
@@ -399,7 +399,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
 
     "Tax years overview page" should {
-      "should show the updated Tax Year Overview page" in {
+      "should show the updated Tax Year summary page" in {
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
@@ -477,7 +477,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       }
 
-      "should show Tax Year Overview page with payments with and without dunning locks in the payments tab" in {
+      "should show Tax Year Summary page with payments with and without dunning locks in the payments tab" in {
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 

@@ -247,7 +247,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display forecastdata when forecast data present" in new Setup(forecastCalcView()) {
         document.title shouldBe taxYearSummaryMessages.title
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
-        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-overview.forecast"))
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
 
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
@@ -261,7 +261,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
-        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString)
+        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
 
       "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {
@@ -625,7 +625,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display forecastdata when forecast data present" in new Setup(forecastCalcView(isAgent = true)) {
         document.title shouldBe taxYearSummaryMessages.agentTitle
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
-        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-overview.forecast"))
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
 
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
@@ -639,7 +639,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
-        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-overview.forecast_tab.insetText", testYear.toString)
+        document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
 
       "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView(isAgent = true)) {
