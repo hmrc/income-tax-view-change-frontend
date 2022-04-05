@@ -37,6 +37,17 @@ object PaymentAllocationsTestConstants {
     paymentLotItem = Some("paymentLotItem")
   )
 
+  val documentDetailNoPayment: DocumentDetail = DocumentDetail(
+    taxYear = "2018",
+    transactionId = "id",
+    documentDescription = Some("documentDescription"),
+    documentText = Some("documentText"),
+    originalAmount = Some(-300.00),
+    outstandingAmount = Some(-200.00),
+    documentDate = LocalDate.of(2018, 3, 29)
+  )
+
+
   val documentDetail2: DocumentDetail = DocumentDetail(
     taxYear = "2019",
     transactionId = "id2",
@@ -88,6 +99,43 @@ object PaymentAllocationsTestConstants {
         paymentLot = Some("paymentLot2"),
         paymentLotItem = None,
         paymentId = None
+      )))
+  )
+
+  val financialDetailNoPayment: FinancialDetail = FinancialDetail(
+    taxYear = "2018",
+    transactionId = Some("transactionId"),
+    transactionDate = Some("2018-03-29"),
+    `type` = Some("type"),
+    totalAmount = Some(BigDecimal("1000.00")),
+    originalAmount = Some(BigDecimal(500.00)),
+    outstandingAmount = Some(BigDecimal("500.00")),
+    clearedAmount = Some(BigDecimal(500.00)),
+    chargeType = Some("NIC4 Wales"),
+    mainType = Some("SA Payment on Account 1"),
+    items = Some(Seq(
+      SubItem(
+        subItemId = Some("1"),
+        amount = Some(BigDecimal("100.00")),
+        clearingDate = Some("2021-01-31"),
+        clearingReason = None,
+        outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+        paymentReference = Some("paymentReference"),
+        paymentAmount = Some(BigDecimal("2000.00")),
+        dueDate = Some("2021-01-31"),
+        paymentMethod = Some("paymentMethod"),
+        paymentId = None
+      ),
+      SubItem(
+        subItemId = Some("2"),
+        amount = Some(BigDecimal("200.00")),
+        clearingDate = None,
+        clearingReason = None,
+        outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
+        paymentReference = None,
+        paymentAmount = Some(BigDecimal("3000.00")),
+        dueDate = Some("2021-01-31"),
+        paymentMethod = Some("paymentMethod2")
       )))
   )
 
@@ -180,9 +228,21 @@ object PaymentAllocationsTestConstants {
   )
 
   val paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
+  val paymentAllocationChargesModelNoPayment: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetailNoPayment), List(financialDetailNoPayment))
 
 
   val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+    Seq(
+      AllocationDetailWithClearingDate(
+        Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some("2021-01-31")),
+      AllocationDetailWithClearingDate(
+        Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some("2021-01-31")
+      )
+    ))
+
+  val paymentAllocationViewModelNoPayment: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModelNoPayment,
     Seq(
       AllocationDetailWithClearingDate(
         Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),

@@ -21,11 +21,10 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.financialDetails.DocumentDetail
 
 
 @this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
-        paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
+        paymentAllocationsForLpi: PaymentAllocationsForLpi, paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
         govukInsetText: GovukInsetText, link: link, appConfig: config.FrontendAppConfig)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String], CutOverCreditsEnabled: Boolean, isAgent: Boolean = false,
@@ -51,10 +50,10 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
  }
 
   @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-    @p(){
+    @p(id=Some("sa-note-migrated")){
        @messages("paymentAllocation.sa.info")
        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-        outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
+        outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank"))
     }
   }
 
@@ -90,5 +89,6 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
        } else {
            @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
        }
+       @paymentAllocationsCreditAmount(paymentAllocations, CutOverCreditsEnabled)
    </table>
 }
