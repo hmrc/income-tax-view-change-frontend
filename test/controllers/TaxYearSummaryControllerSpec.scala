@@ -19,7 +19,7 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
@@ -62,7 +62,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     MockIncomeSourceDetailsPredicateNoCache,
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
-    app.injector.instanceOf[BtaNavBarPredicate],
+    app.injector.instanceOf[NavBarPredicate],
     mockAuditingService,
     mockDateService
   )(appConfig,

@@ -22,7 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
@@ -46,7 +46,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         itvcErrorHandler: ItvcErrorHandler,
                                         incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                         chargeSummaryView: ChargeSummary,
-                                        retrievebtaNavPartial: BtaNavBarPredicate)
+                                        retrievebtaNavPartial: NavBarPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,

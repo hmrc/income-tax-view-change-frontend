@@ -22,7 +22,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{CodingOut, CutOverCredits, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import models.financialDetails.FinancialDetailsResponseModel
 import play.api.Logger
@@ -43,7 +43,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                     val retrieveBtaNavBar: BtaNavBarPredicate,
+                                     val retrieveBtaNavBar: NavBarPredicate,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val auditingService: AuditingService,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,

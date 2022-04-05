@@ -1,6 +1,7 @@
 ## Base ##
 base.back                                                       = Yn ôl
 base.service_name                                               = Cyfrif Treth Busnes
+base.service_name.pta                                           = Cyfrif treth personol
 base.service_name.itsa                                          = Diweddaru a chyflwyno Ffurflen Dreth Incwm
 base.phase                                                      = BETA
 base.sign-out                                                   = Allgofnodi

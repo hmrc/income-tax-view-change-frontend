@@ -13,7 +13,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-class BtaNavBarConnectorISpec extends WordSpec with ComponentSpecBase with Injecting {
+class NavBarEnumFsConnectorISpec extends WordSpec with ComponentSpecBase with Injecting {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
   val timeout: PatienceConfig = PatienceConfig(5.seconds)

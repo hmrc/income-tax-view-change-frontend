@@ -18,7 +18,7 @@ package controllers
 
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import config.featureswitch.FeatureSwitching
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -57,7 +57,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     ec,
     mockItvcErrorHandler,
     app.injector.instanceOf[SessionTimeoutPredicate],
-    app.injector.instanceOf[BtaNavBarPredicate],
+    app.injector.instanceOf[NavBarPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,

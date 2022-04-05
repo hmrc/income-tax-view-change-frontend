@@ -20,7 +20,7 @@ import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{BtaNavFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
@@ -49,7 +49,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
-    app.injector.instanceOf[BtaNavFromNinoPredicate],
+    app.injector.instanceOf[NavBarFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     mockAuthService,

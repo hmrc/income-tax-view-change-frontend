@@ -1,6 +1,7 @@
 ## Base ##
 base.back                                                       = Back
 base.service_name                                               = Business tax account
+base.service_name.pta                                           = Personal tax account
 base.service_name.itsa                                          = Update and submit an Income Tax Return
 base.phase                                                      = BETA
 base.sign-out                                                   = Sign out

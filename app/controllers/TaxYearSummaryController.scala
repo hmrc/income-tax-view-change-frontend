@@ -40,18 +40,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
-                                         authenticate: AuthenticationPredicate,
-                                         calculationService: CalculationService,
-                                         checkSessionTimeout: SessionTimeoutPredicate,
-                                         financialDetailsService: FinancialDetailsService,
-                                         itvcErrorHandler: ItvcErrorHandler,
-                                         retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
-                                         retrieveNino: NinoPredicate,
-                                         nextUpdatesService: NextUpdatesService,
-                                         val retrieveBtaNavBar: BtaNavBarPredicate,
-                                         val auditingService: AuditingService,
-                                         dateService: DateService)
-                                        (implicit val appConfig: FrontendAppConfig,
+                                          authenticate: AuthenticationPredicate,
+                                          calculationService: CalculationService,
+                                          checkSessionTimeout: SessionTimeoutPredicate,
+                                          financialDetailsService: FinancialDetailsService,
+                                          itvcErrorHandler: ItvcErrorHandler,
+                                          retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
+                                          retrieveNino: NinoPredicate,
+                                          nextUpdatesService: NextUpdatesService,
+                                          val retrieveBtaNavBar: NavBarPredicate,
+                                          val auditingService: AuditingService,
+                                          dateService: DateService)
+                                         (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
@@ -199,4 +199,3 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
   def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 }
-

@@ -23,7 +23,7 @@ import auth.{MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 
 import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -52,7 +52,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val financialDetailsService: FinancialDetailsService,
                                val dateService: DateService,
                                val whatYouOweService: WhatYouOweService,
-                               val retrieveBtaNavBar: BtaNavBarPredicate,
+                               val retrieveBtaNavBar: NavBarPredicate,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                mcc: MessagesControllerComponents,

@@ -39,49 +39,48 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class InYearTaxCalculationController @Inject()(
-                                               val executionContext: ExecutionContext,
-                                               view: InYearTaxCalculationView,
-                                               checkSessionTimeout: SessionTimeoutPredicate,
-                                               authenticate: AuthenticationPredicate,
-                                               retrieveNino: NinoPredicate,
-                                               retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               calcService: CalculationService,
-                                               auditingService: AuditingService,
-                                               itvcErrorHandler: ItvcErrorHandler,
-                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                               val authorisedFunctions: FrontendAuthorisedFunctions,
-                                               val languageUtils: LanguageUtils,
-                                               val retrieveBtaNavBar: BtaNavBarPredicate,
-                                               implicit val appConfig: FrontendAppConfig,
-                                               implicit override val mcc: MessagesControllerComponents,
-                                               implicit val ec: ExecutionContext
-                                              ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter{
-
+                                                val executionContext: ExecutionContext,
+                                                view: InYearTaxCalculationView,
+                                                checkSessionTimeout: SessionTimeoutPredicate,
+                                                authenticate: AuthenticationPredicate,
+                                                retrieveNino: NinoPredicate,
+                                                retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                calcService: CalculationService,
+                                                auditingService: AuditingService,
+                                                itvcErrorHandler: ItvcErrorHandler,
+                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                val languageUtils: LanguageUtils,
+                                                val retrieveBtaNavBar: NavBarPredicate,
+                                                implicit val appConfig: FrontendAppConfig,
+                                                implicit override val mcc: MessagesControllerComponents,
+                                                implicit val ec: ExecutionContext
+                                              ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
 
   def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    val taxYear = if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear.toString))){
+    val taxYear = if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear.toString))) {
       currentDate.getYear + 1
     }
     else currentDate.getYear
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
-        
+
         val taxCalc: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calculationResponse)
-        
+
         val auditModel = ViewInYearTaxEstimateAuditModel(
           user.nino,
           user.mtditid,
-          if(isAgent) "agent" else "individual",
+          if (isAgent) "agent" else "individual",
           taxYear,
           ViewInYearTaxEstimateAuditBody(taxCalc)
         )
-        
+
         auditingService.audit(auditModel)
-        
+
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>

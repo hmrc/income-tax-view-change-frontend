@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package mocks.controllers.predicates
+package models
 
-import config.ItvcErrorHandler
-import controllers.bta.BtaNavBarController
-import controllers.predicates.BtaNavBarPredicate
-import mocks.services.MockAsyncCacheApi
-import testUtils.TestSupport
+object OriginEnum extends Enumeration {
+  type OriginValue = Value
+  val BTA, PTA = Value
 
-trait MockBtaNavBarPredicate extends TestSupport with MockAsyncCacheApi {
-
-  val mockBtaNavBarController: BtaNavBarController = mock[BtaNavBarController]
-
-  object MockBtaNavBarPredicate extends BtaNavBarPredicate(
-    mockBtaNavBarController, app.injector.instanceOf[ItvcErrorHandler])(
-    appConfig, ec)
+  def apply(origin: String): Option[OriginValue] = values.find(origin.toUpperCase == _.toString)
 }

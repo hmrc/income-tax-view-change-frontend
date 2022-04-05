@@ -23,4 +23,6 @@ object SessionKeys {
   val chargeSummaryBackPage: String = "chargeSummaryBackPage"
 
   val summaryData: String = "summaryData"
+
+  val origin: String = "origin"
 }

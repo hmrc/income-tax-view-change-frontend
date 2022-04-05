@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -51,7 +51,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     app.injector.instanceOf[AgentItvcErrorHandler],
     app.injector.instanceOf[TaxCalcBreakdown],
     mockAuditingService,
-    app.injector.instanceOf[BtaNavBarPredicate]
+    app.injector.instanceOf[NavBarPredicate]
   )(appConfig,
     languageUtils,
     app.injector.instanceOf[MessagesControllerComponents],

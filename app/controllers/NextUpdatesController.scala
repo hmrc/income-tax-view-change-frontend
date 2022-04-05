@@ -26,7 +26,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates.ObligationsModel
 import services.{IncomeSourceDetailsService, NextUpdatesService}
@@ -44,7 +44,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
-                                      val retrieveBtaNavBar: BtaNavBarPredicate,
+                                      val retrieveBtaNavBar: NavBarPredicate,
                                       val appConfig: FrontendAppConfig,
                                       val authorisedFunctions: FrontendAuthorisedFunctions)
                                      (implicit mcc: MessagesControllerComponents,
