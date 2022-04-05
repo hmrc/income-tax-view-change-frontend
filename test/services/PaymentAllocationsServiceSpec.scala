@@ -42,7 +42,6 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
       }
         "paymentLot and LotItem is missing" in {
           setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModelNoPayment)
-          setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
           setupGetPaymentAllocationCharges(testNino, "1040000872")(paymentAllocationChargesModelNoPayment)
           setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModelNoPayment)
 
