@@ -33,7 +33,7 @@ import views.html.navBar.{BtaNavBar, PtaPartial}
 
 import scala.concurrent.Future
 
-class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
+class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
 
   val mockBtaNavBarController = mock[BtaNavBarController]
   val mockItvcErrorHandler = mock[ItvcErrorHandler]
@@ -45,13 +45,16 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
   lazy val userWithNinoAndWithoutOrigin: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
-  def userWithNinoAndOrigin(origin: String): MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin(origin))
+  lazy val userWithNinoAndOriginBta: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("bta"))
+
+  lazy val userWithNinoAndOriginPta: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+    Some(Html("")), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("pta"))
 
   lazy val noAddedPartial: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("BTA"))
 
   "The NavBarFromNinoPredicate" when {
 
@@ -62,8 +65,8 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
           enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
 
-          val result = NavBarFromNinoPredicate.refine(userWithNinoAndOrigin("bta"))
-          result.futureValue.right.get shouldBe userWithNinoAndOrigin("bta")
+          val result = NavBarFromNinoPredicate.refine(userWithNinoAndOriginBta)
+          result.futureValue.right.get shouldBe userWithNinoAndOriginBta
         }
 
       }
@@ -71,10 +74,10 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
       "Return a valid response when origin pta is present in session" should {
         "return the expected MtdItUserWithNino with a ptaPartial" in {
           enable(NavBarFs)
-          when(mockPtaPartial.render(any(), any(), any())).thenReturn(Html(""))
+          when(mockPtaPartial.apply()(any(), any(), any())).thenReturn(Html(""))
 
-          val result = NavBarFromNinoPredicate.refine(userWithNinoAndOrigin("pta"))
-          result.futureValue.right.get shouldBe userWithNinoAndOrigin("pta")
+          val result = NavBarFromNinoPredicate.refine(userWithNinoAndOriginPta)
+          result.futureValue.right.get shouldBe userWithNinoAndOriginPta
         }
       }
 
@@ -82,19 +85,14 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
 
         "return the expected Redirect with a tax account router" in {
           enable(NavBarFs)
-          when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
-          when(mockPtaPartial.render(any(), any(), any())).thenReturn(Html(""))
 
           val result = NavBarFromNinoPredicate.refine(userWithNinoAndWithoutOrigin)
           status(Future.successful(result.futureValue.left.get)) shouldBe Status.SEE_OTHER
-          redirectLocation(Future.successful(result.futureValue.left.get)) shouldBe "taxaccount"
-
+          redirectLocation(Future.successful(result.futureValue.left.get)).get shouldBe "http://localhost:9280/account"
         }
-
       }
 
       "return an invalid response from the Bta Nav Bar Controller which" should {
-
         "Return Status of 500 (ISE)" in {
           enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
@@ -106,14 +104,12 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
       }
     }
 
-    "The Bta Nav Bar is disabled" should {
-      "Always return a valid response from the Bta Nav Bar Controller without a bta Nav partial" in {
+    "The Nav Bar Fs is disabled" should {
+      "Always return to origin call with nav bar partial content" in {
         disable(NavBarFs)
-        when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
 
-        when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
-        val result = NavBarFromNinoPredicate.refine(noAddedPartial)
-        result.futureValue.right.get shouldBe noAddedPartial
+        val result = NavBarFromNinoPredicate.refine(userWithNinoAndWithoutOrigin)
+        result.futureValue.right.get shouldBe userWithNinoAndWithoutOrigin
       }
     }
   }

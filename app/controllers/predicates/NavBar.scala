@@ -42,8 +42,9 @@ trait NavBar extends I18nSupport with FeatureSwitching {
       originStringOpt.fold[Future[Result]](ifEmpty = Future.successful(redirectToOriginalCall))(originString =>
         (NavBarEnum(originString), request.session.get(SessionKeys.origin)) match {
           case (Some(navBar), Some(sessionOrigin)) if navBar.toString != sessionOrigin =>
-              Future.successful(
-                redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", navBar.toString))(request))
+            Future.successful(
+              redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", navBar.toString))(request)
+            )
           case (Some(navBar), None) =>
             Future.successful(redirectToOriginalCall.addingToSession(("origin", navBar.toString))(request))
           case _ => Future.successful(redirectToOriginalCall)
