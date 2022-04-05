@@ -56,6 +56,11 @@
 
 @taxCalculationOverview(model: TaxYearOverviewViewModel) = {
     @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
+    @if(!model.crystallised.contains(true)) {
+        @govukInsetText(InsetText(content = HtmlContent(
+            p(id=Some("calc-estimate-info"))(content = Html(messages("tax-year-overview.calc-estimate-info")))
+        )))
+    }
 }
 
 @paymentsTableHead(headId: String) = {
@@ -238,7 +243,14 @@
         <span class="govuk-caption-xl">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-overview.heading")
     </h1>
+
+
     @modelOpt.map { model =>
+        @if(!model.crystallised.contains(true)) {
+            @govukInsetText(InsetText(content = HtmlContent(
+                p(id=Some("calc-date-info"))(content = Html(messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)))
+            )))
+        }
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
@@ -281,11 +293,6 @@
                 </div>
             }
         </dl>
-        @if(!model.crystallised.contains(true)) {
-            @govukInsetText(InsetText(content = HtmlContent(
-                p(id=Some("calc-date-info"))(content = Html(messages("tax-year-overview.calc-from-last-time", (taxYear - 1).toString)))
-            )))
-        }
     }
     <div class="govuk-tabs govuk-tabs-upper-padding" data-module="govuk-tabs">
         @h2(msg = messages("tax-year-overview.contents"), classes = "govuk-tabs__title")

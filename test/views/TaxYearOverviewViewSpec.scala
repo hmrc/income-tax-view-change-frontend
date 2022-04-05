@@ -170,16 +170,17 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object taxYearOverviewMessages {
-    val title: String = "Tax year overview - Business Tax account - GOV.UK"
-    val agentTitle: String = "Tax year overview - Your client’s Income Tax details - GOV.UK"
-    val heading: String = "Tax year overview"
+    val title: String = "Tax year summary - Business Tax account - GOV.UK"
+    val agentTitle: String = "Tax year summary - Your client’s Income Tax details - GOV.UK"
+    val heading: String = "Tax year summary"
     val secondaryHeading: String = s"6 April ${testYear - 1} to 5 April $testYear"
     val calculationDate: String = "Calculation date"
     val calcDate: String = "1 January 2020"
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
     val totalDue: String = "Total Due"
     val taxDue: String = "£4.04"
-    val calcDateInfo: String = "This calculation is only based on your completed updates for this tax year up to 5 January 2017. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far."
+    val calcDateInfo: String = "This is only based on figures we’ve already received to 5 January 2017. It’s not your final tax bill."
+    val calcEstimateInfo: String = "This is a year to date estimate based on figures we’ve already received."
     val taxCalculation: String = s"6 April ${testYear - 1} to 5 January $testYear calculation"
     val taxCalculationHeading: String = "Calculation"
     val taxCalculationTab: String = "Calculation"
@@ -298,6 +299,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
       "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
         layoutContent.selectHead("p#calc-date-info").text shouldBe taxYearOverviewMessages.calcDateInfo
+      }
+
+      "have a paragraph explaining that the calc date is an estimate" in new Setup(estimateView()) {
+        layoutContent.selectHead("p#calc-estimate-info").text shouldBe taxYearOverviewMessages.calcEstimateInfo
       }
 
       "not have a paragraph explaining the calc date for a crystallised year" in new Setup(crystallisedView()) {

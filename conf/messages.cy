@@ -101,11 +101,12 @@ taxYears.oldSa.agent.content.2								   = Cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Overview Page New##
-tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth
+tax-year-overview.heading                                       = Crynodeb o’r flwyddyn dreth
 tax-year-overview.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-overview.total-due                                     = Cyfanswm sy’n ddyledus
-tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
+tax-year-overview.calc-from-last-time                           = Mae hyn yn seiliedig yn unig ar y ffigurau rydym wedi’u derbyn hyd at 5 Ionawr {0}. Nid dyma’ch bil treth terfynol.
+tax-year-overview.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-overview.tax-calculation                               = Cyfrifiad
 tax-year-overview.payments.paymentUnderReview                   = Taliad dan adolygiad
 tax-year-overview.section                                       = Adran

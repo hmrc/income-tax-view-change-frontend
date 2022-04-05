@@ -115,10 +115,11 @@ taxYears.oldSa.agent.content.2								   = Self Assessment for Agents Account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your Agent Services account.
 
 ## Tax Year Overview ##
-tax-year-overview.heading                                           = Tax year overview
+tax-year-overview.heading                                           = Tax year summary
 tax-year-overview.heading-secondary                                 = 6 April {0} to 5 April {1}
 tax-year-overview.calculation-date                                  = Calculation date
-tax-year-overview.calc-from-last-time                               = This calculation is only based on your completed updates for this tax year up to 5 January {0}. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far.
+tax-year-overview.calc-from-last-time                               = This is only based on figures we’ve already received to 5 January {0}. It’s not your final tax bill.
+tax-year-overview.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
 tax-year-overview.total-due                                         = Total Due
 tax-year-overview.contents                                          = Contents
 tax-year-overview.tax-calculation.date                              = 6 April {0} to 5 January {1} calculation
@@ -404,25 +405,9 @@ not_enrolled.sign-up.1                                          = You need to
 not_enrolled.sign-up.2                                          = sign up for quarterly reporting
 not_enrolled.sign-up.3                                          = before you can view this page.
 
-## Breadcrumbs ##
-breadcrumb.landmark-label                                       = breadcrumbs
-breadcrumb-bta                                                  = Business tax account
-breadcrumb-it                                                   = Income Tax account
-breadcrumb-tax-years                                            = Tax years
-breadcrumb-obligations                                          = Report deadlines
-breadcrumb-updates                                              = Updates
-breadcrumb-payments-due                                         = Payments due
-breadcrumb-tax-year-overview                                    = 6 April {0} to 5 April {1}
-breadcrumb-income                                               = Income
-breadcrumb-deductions                                           = Allowances and deductions
-breadcrumb-tax-calc                                             = Tax calculation
-breadcrumb-what-you-owe                                         = What you owe
-breadcrumb-payment-history                                      = Payment history
-
 ## Standard Error Page ##
 standardError.heading                                           = Sorry, there is a problem with the service
 standardError.message                                           = Try again later.
-
 
 ## Custom Error Page ##
 error.custom.heading                                          = There is a problem
