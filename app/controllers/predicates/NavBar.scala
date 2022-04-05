@@ -34,19 +34,19 @@ trait NavBar extends I18nSupport with FeatureSwitching {
 
   def saveOriginAndReturnToHomeWithoutQueryParams[A](request: MtdItUserBase[A], navBarFsDisabled: Boolean = true): Future[Result] = {
     val originStringOpt: Option[String] = request.getQueryString(origin)
-    val redirectToOriginalCall: Future[Result] = Future.successful(Redirect(request.path))
+    val redirectToOriginalCall: Result = Redirect(request.path)
 
     if (navBarFsDisabled) {
-      redirectToOriginalCall
+      Future.successful(redirectToOriginalCall)
     } else {
-      originStringOpt.fold[Future[Result]](ifEmpty = redirectToOriginalCall)(originString =>
+      originStringOpt.fold[Future[Result]](ifEmpty = Future.successful(redirectToOriginalCall))(originString =>
         (NavBarEnum(originString), request.session.get(SessionKeys.origin)) match {
           case (Some(navBar), Some(sessionOrigin)) if navBar.toString != sessionOrigin =>
               Future.successful(
-                redirectToHome.removingFromSession("origin")(request).addingToSession(("origin", navBar.toString))(request))
+                redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", navBar.toString))(request))
           case (Some(navBar), None) =>
-            Future.successful(redirectToHome.addingToSession(("origin", navBar.toString))(request))
-          case _ => redirectToOriginalCall
+            Future.successful(redirectToOriginalCall.addingToSession(("origin", navBar.toString))(request))
+          case _ => Future.successful(redirectToOriginalCall)
         }
       )
     }

@@ -56,32 +56,31 @@ class InYearTaxCalculationController @Inject()(
                                                 implicit val appConfig: FrontendAppConfig,
                                                 implicit override val mcc: MessagesControllerComponents,
                                                 implicit val ec: ExecutionContext
-                                              ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter{
-
+                                              ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
 
   def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    val taxYear = if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear.toString))){
+    val taxYear = if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear.toString))) {
       currentDate.getYear + 1
     }
     else currentDate.getYear
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
-        
+
         val taxCalc: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calculationResponse)
-        
+
         val auditModel = ViewInYearTaxEstimateAuditModel(
           user.nino,
           user.mtditid,
-          if(isAgent) "agent" else "individual",
+          if (isAgent) "agent" else "individual",
           taxYear,
           ViewInYearTaxEstimateAuditBody(taxCalc)
         )
-        
+
         auditingService.audit(auditModel)
-        
+
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>

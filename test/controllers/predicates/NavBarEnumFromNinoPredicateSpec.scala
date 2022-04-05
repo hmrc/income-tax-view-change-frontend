@@ -25,7 +25,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.twirl.api.Html
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testUtils.TestSupport
 import views.html.navBar.{BtaNavBar, PtaPartial}
@@ -43,23 +44,51 @@ class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi
 
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
-  lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+  lazy val userWithNinoAndWithoutOrigin: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
     Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+
+  def userWithNinoAndOrigin(origin: String): MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin(origin))
 
   lazy val noAddedPartial: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
     None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
-  "The BtaNavBarPredicate" when {
+  "The NavBarFromNinoPredicate" when {
 
-    "The Bta Nav Bar is enabled" should {
+    "The Nav Bar is enabled" should {
       "Return a valid response from the Bta Nav Bar Controller which" should {
 
-        "return the expected MtdItUserWithNino with a btaPartial" in {
+        "return the expected MtdItUserWithNino with a btaPartial when origin bta is present in session" in {
           enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
 
-          val result = NavBarFromNinoPredicate.refine(userWithNino)
-          result.futureValue.right.get shouldBe userWithNino
+          val result = NavBarFromNinoPredicate.refine(userWithNinoAndOrigin("bta"))
+          result.futureValue.right.get shouldBe userWithNinoAndOrigin("bta")
+        }
+
+      }
+
+      "Return a valid response when origin pta is present in session" should {
+        "return the expected MtdItUserWithNino with a ptaPartial" in {
+          enable(NavBarFs)
+          when(mockPtaPartial.render(any(), any(), any())).thenReturn(Html(""))
+
+          val result = NavBarFromNinoPredicate.refine(userWithNinoAndOrigin("pta"))
+          result.futureValue.right.get shouldBe userWithNinoAndOrigin("pta")
+        }
+      }
+
+      "Return a redirect to TaxAccountRouter when origin is not present in session which" should {
+
+        "return the expected Redirect with a tax account router" in {
+          enable(NavBarFs)
+          when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
+          when(mockPtaPartial.render(any(), any(), any())).thenReturn(Html(""))
+
+          val result = NavBarFromNinoPredicate.refine(userWithNinoAndWithoutOrigin)
+          status(Future.successful(result.futureValue.left.get)) shouldBe Status.SEE_OTHER
+          redirectLocation(Future.successful(result.futureValue.left.get)) shouldBe "taxaccount"
+
         }
 
       }
