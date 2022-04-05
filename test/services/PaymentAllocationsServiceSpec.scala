@@ -40,7 +40,18 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
 
         result shouldBe Right(paymentAllocationViewModel)
       }
+        "paymentLot and LotItem is missing" in {
+          setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModelNoPayment)
+          setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
+          setupGetPaymentAllocationCharges(testNino, "1040000872")(paymentAllocationChargesModelNoPayment)
+          setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModelNoPayment)
+
+          val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
+
+          result shouldBe Right(paymentAllocationViewModelNoPayment)
+        }
     }
+
 
     "return successful payment allocation details for LPI" when {
       "all fields are present" in {

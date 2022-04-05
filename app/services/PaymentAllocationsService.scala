@@ -39,6 +39,8 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
 
     incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(nino, documentNumber) flatMap {
+      case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel if documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.isEmpty && documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.isEmpty =>
+        Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, Seq.empty)))
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel =>
         incomeTaxViewChangeConnector.getPaymentAllocations(nino,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.get,
