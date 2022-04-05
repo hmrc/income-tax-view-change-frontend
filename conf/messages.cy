@@ -100,47 +100,48 @@ taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth e
 taxYears.oldSa.agent.content.2								   = Cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
-## Tax Year Overview Page New##
-tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth
-tax-year-overview.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
-tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad
-tax-year-overview.total-due                                     = Cyfanswm sy’n ddyledus
-tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at 5 Ionawr {0} yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn – mae’n amcangyfrif ar gyfer y flwyddyn hyd yn hyn yn seiliedig ar yr wybodaeth rydych wedi’i nodi hyd yma.
-tax-year-overview.tax-calculation                               = Cyfrifiad
-tax-year-overview.payments.paymentUnderReview                   = Taliad dan adolygiad
-tax-year-overview.section                                       = Adran
-tax-year-overview.amount                                        = Swm
-tax-year-overview.payments                                      = Taliadau
-tax-year-overview.forecast                                      = Rhagolwg
-tax-year-overview.updates                                       = Diweddariadau
-tax-year-overview.income                                        = Incwm
-tax-year-overview.deductions                                    = Lwfansau a didyniadau
-tax-year-overview.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
-tax-year-overview.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
-tax-year-overview.payments.payment-type                         = Math o daliad
-tax-year-overview.payments.due-date                             = Dyddiad dyledus
-tax-year-overview.payments.status                               = Statws
-tax-year-overview.payments.amount                               = Swm
-tax-year-overview.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
-tax-year-overview.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
-tax-year-overview.payments.balancingCharge.text                 = Taliad mantoli
-tax-year-overview.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
-tax-year-overview.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
-tax-year-overview.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
-tax-year-overview.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
-tax-year-overview.payments.paid                                 = Talwyd
-tax-year-overview.payments.unpaid                               = Na thalwyd
-tax-year-overview.payments.part-paid                            = Talwyd yn rhannol
-tax-year-overview.payments.overdue                              = Yn hwyr
-tax-year-overview.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
-tax-year-overview.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
-tax-year-overview.forecast_total_title                          = 6 Ebrill {0} i 5 Ebrill {1} rhagolwg swm
+## Tax Year Summary Page New##
+tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
+tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
+tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
+tax-year-summary.total-due                                     = Cyfanswm sy’n ddyledus
+tax-year-summary.calc-from-last-time                           = Mae hyn yn seiliedig yn unig ar y ffigurau rydym wedi’u derbyn hyd at 5 Ionawr {0}. Nid dyma’ch bil treth terfynol.
+tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
+tax-year-summary.tax-calculation                               = Cyfrifiad
+tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
+tax-year-summary.section                                       = Adran
+tax-year-summary.amount                                        = Swm
+tax-year-summary.payments                                      = Taliadau
+tax-year-summary.forecast                                      = Rhagolwg
+tax-year-summary.updates                                       = Diweddariadau
+tax-year-summary.income                                        = Incwm
+tax-year-summary.deductions                                    = Lwfansau a didyniadau
+tax-year-summary.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
+tax-year-summary.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
+tax-year-summary.payments.payment-type                         = Math o daliad
+tax-year-summary.payments.due-date                             = Dyddiad dyledus
+tax-year-summary.payments.status                               = Statws
+tax-year-summary.payments.amount                               = Swm
+tax-year-summary.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
+tax-year-summary.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
+tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
+tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
+tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
+tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
+tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
+tax-year-summary.payments.paid                                 = Talwyd
+tax-year-summary.payments.unpaid                               = Na thalwyd
+tax-year-summary.payments.part-paid                            = Talwyd yn rhannol
+tax-year-summary.payments.overdue                              = Yn hwyr
+tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
+tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
+tax-year-summary.forecast_total_title                          = 6 Ebrill {0} i 5 Ebrill {1} rhagolwg swm
 
-## Tax Year Overview Page new ##
-tax-year-overview.tax-calculation.no-calc                       = Dim cyfrifiad eto
-tax-year-overview.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
-tax-year-overview.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
-tax-year-overview.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+## Tax Year Summary Page new ##
+tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
+tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
+tax-year-summary.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
+tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 
 
 
@@ -738,8 +739,8 @@ final-tax-overview.agent.heading                                 = Trosolwg tret
 final-tax-overview.agent.chargeInfo.p                            = Gall y swm sydd angen i’ch cleient ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar ei gyfrif, er enghraifft, llog taliad hwyr.
 final-tax-overview.agent.inset.2                                 = wirio Ffurflen Dreth Incwm eich cleient.
 
-tax-year-overview.tax-due.finalCalc                             = Treth Incwm a chyfraniadau Yswiriant Gwladol
-tax-year-overview.taxable-income.finalCalc                      = Cyfanswm eich incwm trethadwy
+tax-year-summary.tax-due.finalCalc                             = Treth Incwm a chyfraniadau Yswiriant Gwladol
+tax-year-summary.taxable-income.finalCalc                      = Cyfanswm eich incwm trethadwy
 
 
 ## InYear Tax Overview (Individual/Common Content)

@@ -26,7 +26,7 @@ import forms.utils.SessionKeys
 import forms.utils.SessionKeys.summaryData
 import javax.inject.Inject
 import models.finalTaxCalculation.TaxReturnRequestModel
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -65,7 +65,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
-        Ok(view(TaxYearOverviewViewModel(calculationResponse), taxYear, isAgent = isAgent, backUrl))
+        Ok(view(TaxYearSummaryViewModel(calculationResponse), taxYear, isAgent = isAgent, backUrl))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
         Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
@@ -122,7 +122,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                          (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
-        val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calcResponse)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calcResponse)
         user.saUtr match {
           case Some(saUtr) =>
             val submissionOverview = TaxReturnRequestModel(
@@ -154,7 +154,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                     (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
-        val calcOverview: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calcResponse)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calcResponse)
         (fullNameOptional, user.saUtr) match {
           case (Some(fullName), Some(saUtr)) =>
             val submissionOverview = TaxReturnRequestModel(

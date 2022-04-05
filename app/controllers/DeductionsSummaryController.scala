@@ -80,7 +80,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url,
+          backUrl = controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false
@@ -91,7 +91,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     Authenticated.async { implicit request =>
       implicit agent =>
         handleRequest(
-          backUrl = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url,
+          backUrl = controllers.agent.routes.TaxYearSummaryController.show(taxYear).url,
           itcvErrorHandler = itvcErrorHandlerAgent,
           taxYear = taxYear,
           isAgent = true
