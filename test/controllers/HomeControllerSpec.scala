@@ -17,7 +17,7 @@
 package controllers
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService, MockWhatYouOweService}
@@ -85,7 +85,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       financialDetailsService,
       mockDateService,
       whatYouOweService,
-      app.injector.instanceOf[BtaNavBarPredicate],
+      app.injector.instanceOf[NavBarPredicate],
       mockAuditingService)(
       ec,
       app.injector.instanceOf[MessagesControllerComponents],
@@ -124,7 +124,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     mockFinancialDetailsService,
     mockDateService,
     mockWhatYouOweService,
-    app.injector.instanceOf[BtaNavBarPredicate],
+    app.injector.instanceOf[NavBarPredicate],
     mockAuditingService)(
     ec,
     app.injector.instanceOf[MessagesControllerComponents],

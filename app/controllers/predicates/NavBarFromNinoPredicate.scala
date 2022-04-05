@@ -49,37 +49,66 @@
 package controllers.predicates
 
 import auth.MtdItUserWithNino
-import config.featureswitch.{BtaNavBar, FeatureSwitching}
+import config.featureswitch.NavBarFs
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.bta.BtaNavBarController
-import javax.inject.{Inject, Singleton}
-import play.api.http.HeaderNames
+import forms.utils.SessionKeys
+import models.NavBarEnum
+import models.NavBarEnum.{BTA, PTA}
+import play.api.i18n.MessagesApi
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import views.html.navBar.PtaPartial
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BtaNavFromNinoPredicate @Inject()(btaNavBarController: BtaNavBarController,
+class NavBarFromNinoPredicate @Inject()(val btaNavBarController: BtaNavBarController,
+                                        val ptaPartial: PtaPartial,
                                         val itvcErrorHandler: ItvcErrorHandler)
                                        (implicit val appConfig: FrontendAppConfig,
-                                        val executionContext: ExecutionContext) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with FeatureSwitching {
+                                        val executionContext: ExecutionContext,
+                                        val messagesApi: MessagesApi) extends ActionRefiner[MtdItUserWithNino, MtdItUserWithNino] with NavBar {
 
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(HeaderNames.COOKIE)))
+    implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
 
-    if (isDisabled(BtaNavBar)) {
+    if (isDisabled(NavBarFs)) {
       Future.successful(Right(request))
     } else {
-      btaNavBarController.btaNavBarPartial(request) map {
-        case Some(partial) =>
-          Right(MtdItUserWithNino[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, btaNavPartial = Some(partial),
-            saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request))
+      request.getQueryString(origin).fold[Future[Either[Result, MtdItUserWithNino[A]]]](
+        ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
+        saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs)).map(Left(_))
+      })
+    }
+  }
 
-        case _ => Left(itvcErrorHandler.showInternalServerError()(request))
-      }
+  def retrieveCacheAndHandleNavBar[A](request: MtdItUserWithNino[A])
+                                     (implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
+    request.session.get(SessionKeys.origin) match {
+      case Some(origin) if NavBarEnum(origin) == Some(PTA) =>
+        Future.successful(Right(returnMtdItUserWithNinoAndNavbar(request, ptaPartial()(request, request.messages, appConfig))))
+      case Some(origin) if NavBarEnum(origin) == Some(BTA) =>
+        handleBtaNavBar(request)
+      case _ =>
+        Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))
+    }
+  }
+
+  def returnMtdItUserWithNinoAndNavbar[A](request: MtdItUserWithNino[A], partial: Html): MtdItUserWithNino[A] = {
+    MtdItUserWithNino[A](mtditid = request.mtditid, nino = request.nino, userName = request.userName, btaNavPartial = Some(partial),
+      saUtr = request.saUtr, credId = request.credId, userType = request.userType, arn = request.arn)(request)
+  }
+
+  def handleBtaNavBar[A](request: MtdItUserWithNino[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUserWithNino[A]]] = {
+    btaNavBarController.btaNavBarPartial(request) map {
+      case Some(partial) => Right(returnMtdItUserWithNinoAndNavbar(request, partial))
+      case _ => Left(itvcErrorHandler.showInternalServerError()(request))
     }
   }
 

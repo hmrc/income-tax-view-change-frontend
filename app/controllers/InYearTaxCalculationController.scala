@@ -39,23 +39,23 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class InYearTaxCalculationController @Inject()(
-                                               val executionContext: ExecutionContext,
-                                               view: InYearTaxCalculationView,
-                                               checkSessionTimeout: SessionTimeoutPredicate,
-                                               authenticate: AuthenticationPredicate,
-                                               retrieveNino: NinoPredicate,
-                                               retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               calcService: CalculationService,
-                                               auditingService: AuditingService,
-                                               itvcErrorHandler: ItvcErrorHandler,
-                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                               val authorisedFunctions: FrontendAuthorisedFunctions,
-                                               val languageUtils: LanguageUtils,
-                                               val retrieveBtaNavBar: BtaNavBarPredicate,
-                                               implicit val appConfig: FrontendAppConfig,
-                                               implicit override val mcc: MessagesControllerComponents,
-                                               implicit val ec: ExecutionContext
+                                                val executionContext: ExecutionContext,
+                                                view: InYearTaxCalculationView,
+                                                checkSessionTimeout: SessionTimeoutPredicate,
+                                                authenticate: AuthenticationPredicate,
+                                                retrieveNino: NinoPredicate,
+                                                retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                calcService: CalculationService,
+                                                auditingService: AuditingService,
+                                                itvcErrorHandler: ItvcErrorHandler,
+                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                val languageUtils: LanguageUtils,
+                                                val retrieveBtaNavBar: NavBarPredicate,
+                                                implicit val appConfig: FrontendAppConfig,
+                                                implicit override val mcc: MessagesControllerComponents,
+                                                implicit val ec: ExecutionContext
                                               ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter{
 
 

@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.Payment
@@ -57,7 +57,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       mockAuditingService,
-      app.injector.instanceOf[BtaNavBarPredicate],
+      app.injector.instanceOf[NavBarPredicate],
       app.injector.instanceOf[ItvcErrorHandler],
       paymentHistoryService
     )(app.injector.instanceOf[MessagesControllerComponents],

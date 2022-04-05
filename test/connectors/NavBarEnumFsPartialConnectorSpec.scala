@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class BtaNavBarPartialConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
+class NavBarEnumFsPartialConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
 
   val mockHttpGet: HttpClient = mock[HttpClient]
   val frontendAppConfig = mock[FrontendAppConfig]

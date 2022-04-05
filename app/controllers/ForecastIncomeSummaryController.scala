@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import auth.{FrontendAuthorisedFunctions, MtdItUser, MtdItUserBase, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.predicates.ClientConfirmedController
@@ -25,7 +25,7 @@ import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, IncomeSourceDetailsService}
@@ -46,7 +46,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
                                                 val calculationService: CalculationService,
                                                 val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                                 val auditingService: AuditingService,
-                                                val retrieveBtaNavBar: BtaNavFromNinoPredicate,
+                                                val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                 val itvcErrorHandler: ItvcErrorHandler,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val authorisedFunctions: AuthorisedFunctions)

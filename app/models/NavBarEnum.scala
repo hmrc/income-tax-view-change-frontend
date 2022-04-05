@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package forms.utils
+package models
 
-object SessionKeys {
+object NavBarEnum extends Enumeration {
+  type NavBarValue = Value
+  val BTA, PTA = Value
 
-  val calculationId: String = "calculationId"
-
-  val chargeSummaryBackPage: String = "chargeSummaryBackPage"
-
-  val summaryData: String = "summaryData"
-
-  val origin: String = "origin"
+  def apply(origin: String): Option[NavBarValue] = values.find(origin.toUpperCase == _.toString)
 }

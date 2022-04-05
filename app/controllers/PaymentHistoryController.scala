@@ -21,7 +21,7 @@ import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.PaymentHistoryService
@@ -38,7 +38,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val retrieveNino: NinoPredicate,
                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                          auditingService: AuditingService,
-                                         retrieveBtaNavBar: BtaNavBarPredicate,
+                                         retrieveBtaNavBar: NavBarPredicate,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService)
                                         (implicit mcc: MessagesControllerComponents,

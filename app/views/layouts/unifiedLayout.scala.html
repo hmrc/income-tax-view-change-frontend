@@ -53,12 +53,16 @@
     itsaTaxYear: Option[Int] = None,
     form: Option[Form[_]] = None,
     btaNavPartial: Option[Html] = None,
-        origin: Option[String] = None
+    origin: Option[String] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
-    val serviceName = if (isAgent) Some(messages("agent.base.service_name")) else Some(messages("base.service_name"))
-    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else appConfig.businessTaxAccount
+    val serviceName = if (isAgent) Some(messages("agent.base.service_name"))
+        else if(request.session.get("origin") == Some("PTA")) Some(messages("base.service_name.pta"))
+        else Some(messages("base.service_name"))
+    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
+        else if(request.session.get("origin") == Some("PTA")) appConfig.personalTaxAccount
+        else appConfig.businessTaxAccount
 
     hmrcHeader(HmrcHeaderArgs(
         homepageUrl = "https://www.gov.uk",

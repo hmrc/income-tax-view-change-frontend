@@ -48,7 +48,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                                         val calculationService: CalculationService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                         val auditingService: AuditingService,
-                                        val retrieveBtaNavBar: BtaNavBarPredicate,
+                                        val retrieveBtaNavBar: NavBarPredicate,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                        (implicit val ec: ExecutionContext,

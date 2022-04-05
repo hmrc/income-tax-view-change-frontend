@@ -18,7 +18,7 @@ package controllers
 
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
-import controllers.predicates.{BtaNavFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
@@ -39,7 +39,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     mockCalculationService,
-    app.injector.instanceOf[BtaNavFromNinoPredicate],
+    app.injector.instanceOf[NavBarFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     mockAuthService

@@ -41,7 +41,7 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
                                                  val authenticate: AuthenticationPredicate,
                                                  val retrieveNino: NinoPredicate,
                                                  val calculationService: CalculationService,
-                                                 val retrieveBtaNavBar: BtaNavFromNinoPredicate,
+                                                 val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val authorisedFunctions: FrontendAuthorisedFunctions)

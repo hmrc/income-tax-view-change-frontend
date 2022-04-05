@@ -47,7 +47,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              paymentAllocations: PaymentAllocationsService,
-                                             val retrieveBtaNavBar: BtaNavBarPredicate,
+                                             val retrieveBtaNavBar: NavBarPredicate,
                                              auditingService: AuditingService)
                                             (implicit override val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext,

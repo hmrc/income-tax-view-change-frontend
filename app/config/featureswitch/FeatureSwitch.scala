@@ -33,7 +33,7 @@ object FeatureSwitch {
     ChargeHistory,
     PaymentAllocation,
     CodingOut,
-    BtaNavBar,
+    NavBarFs,
     Class4UpliftEnabled,
     ForecastCalculation,
     CutOverCredits
@@ -79,7 +79,7 @@ case object CodingOut extends FeatureSwitch {
   override val displayText: String = "Coding Out"
 }
 
-case object BtaNavBar extends FeatureSwitch {
+case object NavBarFs extends FeatureSwitch {
   override val name = s"$prefix.enable-nav-bar"
   override val displayText = "Nav Bar"
 }

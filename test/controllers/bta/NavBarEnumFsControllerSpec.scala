@@ -36,7 +36,7 @@ import views.html.bta.BtaNavBar
 
 import scala.concurrent.Future
 
-class BtaNavBarControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
   with UnitSpec with TestSupport with MockitoSugar with ScalaFutures {
 
   val mockNavBarService: BtaNavBarService = mock[BtaNavBarService]

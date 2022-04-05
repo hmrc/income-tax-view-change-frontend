@@ -48,7 +48,7 @@ class TaxYearOverviewController @Inject()(taxYearOverviewView: TaxYearOverview,
                                           retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                           retrieveNino: NinoPredicate,
                                           nextUpdatesService: NextUpdatesService,
-                                          val retrieveBtaNavBar: BtaNavBarPredicate,
+                                          val retrieveBtaNavBar: NavBarPredicate,
                                           val auditingService: AuditingService,
                                           dateService: DateService)
                                          (implicit val appConfig: FrontendAppConfig,

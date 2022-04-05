@@ -50,7 +50,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val taxCalcBreakdown: TaxCalcBreakdown,
                                         val auditingService: AuditingService,
-                                        val retrieveBtaNavBar: BtaNavBarPredicate)
+                                        val retrieveBtaNavBar: NavBarPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,

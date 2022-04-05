@@ -22,7 +22,7 @@ import testConstants.BaseTestConstants.testListLink
 import testUtils.TestSupport
 import views.html.bta.BtaNavBar
 
-class BtaNavBarViewSpec extends TestSupport {
+class NavBarEnumFsViewSpec extends TestSupport {
 
   val btaNavBarView = app.injector.instanceOf[BtaNavBar]
   lazy val page: HtmlFormat.Appendable = btaNavBarView(testListLink)(implicitly)

@@ -24,7 +24,7 @@ import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import mocks.auth.MockFrontendAuthorisedFunctions
 import config.{ItvcErrorHandler}
-import controllers.predicates.{BtaNavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.MockItvcErrorHandler
@@ -61,7 +61,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       app.injector.instanceOf[AuditingService],
       mockNextUpdatesService,
       app.injector.instanceOf[ItvcErrorHandler],
-      app.injector.instanceOf[BtaNavBarPredicate],
+      app.injector.instanceOf[NavBarPredicate],
       appConfig,
       mockAuthService,
     )(
@@ -82,7 +82,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     app.injector.instanceOf[AuditingService],
     mockNextUpdatesService,
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[BtaNavBarPredicate],
+    app.injector.instanceOf[NavBarPredicate],
     appConfig,
     app.injector.instanceOf[FrontendAuthorisedFunctions],
   )(

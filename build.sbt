@@ -14,7 +14,7 @@ val bootstrapPlayVersion      = "5.20.0"
 val govTemplateVersion        = "5.75.0-play-28"
 val playPartialsVersion       = "8.2.0-play-28"
 val playUiVersion             = "9.8.0-play-28"
-val playFrontendHMRCVersion   = "1.17.0-play-28"
+val playFrontendHMRCVersion   = "1.31.0-play-28"
 val playLanguageVersion       = "5.1.0-play-28"
 val catsVersion               = "0.9.0"
 

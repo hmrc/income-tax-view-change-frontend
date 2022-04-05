@@ -49,7 +49,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               val authorisedFunctions: FrontendAuthorisedFunctions,
                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                              val retrieveBtaNavBar: BtaNavBarPredicate,
+                                              val retrieveBtaNavBar: NavBarPredicate,
                                               implicit val appConfig: FrontendAppConfig
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 

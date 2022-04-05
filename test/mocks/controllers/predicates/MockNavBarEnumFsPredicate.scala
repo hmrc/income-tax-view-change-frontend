@@ -18,15 +18,15 @@ package mocks.controllers.predicates
 
 import config.ItvcErrorHandler
 import controllers.bta.BtaNavBarController
-import controllers.predicates.BtaNavBarPredicate
+import controllers.predicates.NavBarPredicate
 import mocks.services.MockAsyncCacheApi
 import testUtils.TestSupport
 
-trait MockBtaNavBarPredicate extends TestSupport with MockAsyncCacheApi {
+trait MockNavBarEnumFsPredicate extends TestSupport with MockAsyncCacheApi {
 
   val mockBtaNavBarController: BtaNavBarController = mock[BtaNavBarController]
 
-  object MockBtaNavBarPredicate extends BtaNavBarPredicate(
+  object MockNavBarPredicate extends NavBarPredicate(
     mockBtaNavBarController, app.injector.instanceOf[ItvcErrorHandler])(
     appConfig, ec)
 }

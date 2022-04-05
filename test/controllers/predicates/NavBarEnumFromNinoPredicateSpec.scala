@@ -16,9 +16,9 @@
 
 package controllers.predicates
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.ItvcErrorHandler
-import config.featureswitch.{BtaNavBar, FeatureSwitching}
+import config.featureswitch.{FeatureSwitching, NavBarFs}
 import controllers.bta.BtaNavBarController
 import mocks.services.MockAsyncCacheApi
 import org.mockito.ArgumentMatchers.any
@@ -27,25 +27,25 @@ import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import views.html.bta.BtaNavBar
+import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future
 
-class BtaNavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
+class NavBarEnumFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
 
   val mockBtaNavBarController = mock[BtaNavBarController]
   val mockItvcErrorHandler = mock[ItvcErrorHandler]
 
-  object BtaNavBarPredicate extends BtaNavBarPredicate(mockBtaNavBarController, mockItvcErrorHandler)(appConfig, ec)
+  object NavBarFromNinoPredicate extends NavBarFromNinoPredicate(mockBtaNavBarController, mockItvcErrorHandler)(appConfig, ec)
 
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
-  lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
+  lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
     Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
-  lazy val noAddedPartial: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
+  lazy val noAddedPartial: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
     None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
   "The BtaNavBarPredicate" when {
@@ -53,23 +53,24 @@ class BtaNavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Fea
     "The Bta Nav Bar is enabled" should {
       "Return a valid response from the Bta Nav Bar Controller which" should {
 
-        "return the expected MtdItUser with a batPartial" in {
-          enable(BtaNavBar)
+        "return the expected MtdItUserWithNino with a batPartial" in {
+          enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
 
-          val result = BtaNavBarPredicate.refine(successResponse)
-          result.futureValue.right.get shouldBe successResponse
+          val result = NavBarFromNinoPredicate.refine(userWithNino)
+          result.futureValue.right.get shouldBe userWithNino
         }
 
       }
 
       "return an invalid response from the Bta Nav Bar Controller which" should {
+
         "Return Status of 500 (ISE)" in {
-          enable(BtaNavBar)
+          enable(NavBarFs)
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
           when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
 
-          val result = BtaNavBarPredicate.refine(noAddedPartial)
+          val result = NavBarFromNinoPredicate.refine(noAddedPartial)
           status(Future.successful(result.futureValue.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -77,13 +78,14 @@ class BtaNavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Fea
 
     "The Bta Nav Bar is disabled" should {
       "Always return a valid response from the Bta Nav Bar Controller without a bta Nav partial" in {
-        disable(BtaNavBar)
+        disable(NavBarFs)
         when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(None))
 
         when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
-        val result = BtaNavBarPredicate.refine(noAddedPartial)
+        val result = NavBarFromNinoPredicate.refine(noAddedPartial)
         result.futureValue.right.get shouldBe noAddedPartial
       }
     }
   }
+
 }
