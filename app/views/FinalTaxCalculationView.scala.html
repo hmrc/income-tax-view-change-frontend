@@ -16,16 +16,16 @@
 
 @import uk.gov.hmrc.govukfrontend.views.Aliases._
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import views.html.partials.taxOverviewBreakdownPartial
+@import views.html.partials.taxYearSummaryBreakdownPartial
 @import views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.FrontendAppConfig
 @import views.html.components._
 @import views.html.layouts.layout
-@import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 
 @this(layout: layout,
-      breakdownPartial: taxOverviewBreakdownPartial,
+      breakdownPartial: taxYearSummaryBreakdownPartial,
       inset: GovukInsetText,
       form: FormWithCSRF,
       continueButton: ContinueButton,
@@ -34,7 +34,7 @@
       govukInsetText : GovukInsetText
 )
 
-@(overview: TaxYearOverviewViewModel, taxYear: Int, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None,
+@(overview: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None,
         origin: Option[String] = None)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
 
 @headingText = @{

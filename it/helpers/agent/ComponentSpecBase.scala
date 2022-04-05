@@ -172,7 +172,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getPaymentsDue(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/payments-owed", additionalCookies)
 
-    def getTaxYearOverview(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+    def getTaxYearSummary(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession(s"/agents/calculation/$taxYear", additionalCookies)
 
     def getIncomeSummaryAgent(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =

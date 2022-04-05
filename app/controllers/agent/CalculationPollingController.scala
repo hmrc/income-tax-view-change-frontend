@@ -44,7 +44,7 @@ class CalculationPollingController @Inject()(pollCalculationService: Calculation
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
         controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
       } else {
-        controllers.agent.routes.TaxYearOverviewController.show(taxYear)
+        controllers.agent.routes.TaxYearSummaryController.show(taxYear)
       }
 
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>

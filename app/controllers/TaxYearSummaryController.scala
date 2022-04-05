@@ -14,81 +14,52 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package controllers
 
 import audit.AuditingService
-import audit.models.TaxYearOverviewResponseAuditModel
+import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys
-import implicits.ImplicitDateFormatter
+import config.{FrontendAppConfig, ItvcErrorHandler}
+import controllers.predicates._
+import forms.utils.SessionKeys
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.TaxYearOverview
+import services.{CalculationService, FinancialDetailsService, NextUpdatesService, DateService}
+import views.html.TaxYearSummary
 
 import java.net.URI
 import java.time.LocalDate
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
-                                          val authorisedFunctions: AuthorisedFunctions,
+@Singleton
+class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
+                                          authenticate: AuthenticationPredicate,
                                           calculationService: CalculationService,
+                                          checkSessionTimeout: SessionTimeoutPredicate,
                                           financialDetailsService: FinancialDetailsService,
-                                          incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          itvcErrorHandler: ItvcErrorHandler,
+                                          retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
+                                          retrieveNino: NinoPredicate,
                                           nextUpdatesService: NextUpdatesService,
-                                          auditingService: AuditingService,
-                                          dateService: DateService
-                                         )(implicit val appConfig: FrontendAppConfig,
-                                           val languageUtils: LanguageUtils,
-                                           mcc: MessagesControllerComponents,
-                                           implicit val ec: ExecutionContext,
-                                           val itvcErrorHandler: AgentItvcErrorHandler)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                          val retrieveBtaNavBar: NavBarPredicate,
+                                          val auditingService: AuditingService,
+                                          dateService: DateService)
+                                         (implicit val appConfig: FrontendAppConfig,
+                                          mcc: MessagesControllerComponents,
+                                          val executionContext: ExecutionContext)
+  extends BaseController with FeatureSwitching with I18nSupport {
 
-  lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
-  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
-  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
+    retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
 
-  val getCurrentTaxYearEnd: Int = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
-    else currentDate.getYear + 1
-  }
-
-  def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit user =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
-        withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
-          withObligationsModel(taxYear) { obligations =>
-            calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map { liabilityCalcResponse =>
-              view(liabilityCalcResponse, documentDetailsWithDueDates, taxYear, obligations, getBackURL(request.headers.get(REFERER)))
-                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request)
-            }
-          }
-        }
-      }
-  }
-
-  private def getBackURL(referer: Option[String]): String = {
-    referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
-      case Some(true) => agentTaxYearsUrl
-      case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get => agentWhatYouOweUrl
-      case _ => agentHomeUrl
-    }
-  }
-
-  private def showForecast(modelOpt: Option[TaxYearOverviewViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
+  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
     val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
     val isCurrentTaxYear = taxYear == currentTaxYear
     val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined && modelOpt.flatMap(_.forecastIncomeTaxAndNics).isDefined
@@ -99,52 +70,56 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                    taxYear: Int,
                    obligations: ObligationsModel,
-                   backUrl: String
+                   codingOutEnabled: Boolean,
+                   backUrl: String,
+                   origin: Option[String]
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
-        val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalc)
-        auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearOverviewViewModel)))
+        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalc)
+        auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
+          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel)))
 
         Logger("application").info(
-          s"[Agent][TaxYearOverviewController][view][$taxYear]] Rendered Tax year overview page with Calc data")
+          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with Calc data")
 
-        Ok(taxYearOverview(
+        Ok(taxYearSummaryView(
           taxYear = taxYear,
-          modelOpt = Some(taxYearOverviewViewModel),
+          modelOpt = Some(taxYearSummaryViewModel),
           charges = documentDetailsWithDueDates,
           obligations = obligations,
-          codingOutEnabled = isEnabled(CodingOut),
+          codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          isAgent = true,
-          showForecastData = showForecast(Some(taxYearOverviewViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate))
+          showForecastData = showForecast(Some(taxYearSummaryViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)),
+          origin = origin
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-        auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
+        auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, documentDetailsWithDueDates, obligations, None))
 
         Logger("application").info(
-          s"[Agent][TaxYearOverviewController][view][$taxYear]] Rendered Tax year overview page with No Calc data")
+          s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with No Calc data")
 
-        Ok(taxYearOverview(
+        Ok(taxYearSummaryView(
           taxYear = taxYear,
           modelOpt = None,
           charges = documentDetailsWithDueDates,
           obligations = obligations,
-          codingOutEnabled = isEnabled(CodingOut),
+          codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          isAgent = true,
-          showForecastData = false
+          showForecastData = false,
+          origin = origin
         ))
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          s"[Agent][TaxYearOverviewController][view][$taxYear]] No new calc deductions data error found. Downstream error")
+          s"[TaxYearSummaryController][view][$taxYear]] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }
 
-  private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])
+                                   (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, _, documentDetails, _) =>
         val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
@@ -172,21 +147,55 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ =>
-        Logger("application").error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
 
-  private def withObligationsModel(taxYear: Int)(f: ObligationsModel => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  private def withObligationsModel(taxYear: Int)(implicit user: MtdItUser[AnyContent]) = {
     nextUpdatesService.getNextUpdates(
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
-    ) flatMap {
-      case obligationsModel: ObligationsModel => f(obligationsModel)
-      case _ =>
-        Logger("application").error(s"[TaxYearOverviewController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
-        Future.successful(itvcErrorHandler.showInternalServerError())
+    )
+  }
+
+  private def getBackURL(referer: Option[String], origin: Option[String]): String = {
+    referer.map(URI.create(_).getPath.equals(taxYearsUrl(origin))) match {
+      case Some(true) => taxYearsUrl(origin)
+      case Some(false) if referer.map(URI.create(_).getPath.equals(whatYouOweUrl(origin))).get => whatYouOweUrl(origin)
+      case _ => homeUrl(origin)
     }
   }
 
+  private def showTaxYearSummary(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async {
+    implicit user =>
+      withTaxYearFinancials(taxYear) { charges =>
+        withObligationsModel(taxYear) flatMap {
+          case obligationsModel: ObligationsModel =>
+            val codingOutEnabled = isEnabled(CodingOut)
+            calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map { liabilityCalcResponse =>
+              view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
+                backUrl = getBackURL(user.headers.get(REFERER), origin), origin = origin)
+                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearSummary")
+            }
+          case _ => Future.successful(itvcErrorHandler.showInternalServerError())
+        }
+      }
+  }
+
+  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
+    if (taxYear.toString.matches("[0-9]{4}")) {
+      showTaxYearSummary(taxYear, origin)
+    } else {
+      action.async { implicit request =>
+        Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+    }
+  }
+
+  def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+  def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
+
+
+  def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 }

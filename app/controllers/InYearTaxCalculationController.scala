@@ -24,7 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -69,7 +69,7 @@ class InYearTaxCalculationController @Inject()(
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
 
-        val taxCalc: TaxYearOverviewViewModel = TaxYearOverviewViewModel(calculationResponse)
+        val taxCalc: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calculationResponse)
 
         val auditModel = ViewInYearTaxEstimateAuditModel(
           user.nino,

@@ -358,17 +358,17 @@ class ChargeSummaryControllerSpec extends TestSupport
       }
     }
 
-    "the user comes from tax overview page payment tab" should {
+    "the user comes from tax summary page payment tab" should {
       "return payment tab url string result" in new Setup() {
 
-        val result: String = chargeSummaryController.backUrl(backLocation = Some("taxYearOverview"), currentYear)
+        val result: String = chargeSummaryController.backUrl(backLocation = Some("taxYearSummary"), currentYear)
 
         result shouldBe s"/report-quarterly/income-and-expenses/view/agents/calculation/$currentYear#payments"
 
       }
     }
 
-    "the user comes is not from tax overview payment tab and is not from what you owe page" should {
+    "the user comes is not from tax summary payment tab and is not from what you owe page" should {
       "return agent home page url string result" in new Setup() {
 
         val result: String = chargeSummaryController.backUrl(backLocation = Some("_"), currentYear)

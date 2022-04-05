@@ -123,12 +123,12 @@ class TaxYearsViewSpec extends ViewSpec {
         "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testTaxYear), true) {
 
           document.getElementById(s"viewSummary-link-$testTaxYear").attr("href") shouldBe
-            controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testTaxYear).url
+            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
           document.getElementById(s"viewSummary-link-$testTaxYear").text() shouldBe
             s"${taxYears.viewSummary} ${taxYears.taxYear((testTaxYear - 1).toString, testTaxYear.toString)}"
 
           document.getElementById(s"viewSummary-link-$testYearPlusOne").attr("href") shouldBe
-            controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(testYearPlusOne).url
+            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearPlusOne).url
           document.getElementById(s"viewSummary-link-$testYearPlusOne").text() shouldBe
             s"${taxYears.viewSummary} ${taxYears.taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
         }
@@ -159,7 +159,7 @@ class TaxYearsViewSpec extends ViewSpec {
   "agent" when {
     "display the agent view return link" in new Setup(List(testYearPlusOne), true, isAgent = true) {
       document.getElementById(s"viewSummary-link-$testYearPlusOne").attr("href") shouldBe
-        controllers.agent.routes.TaxYearOverviewController.show(testYearPlusOne).url
+        controllers.agent.routes.TaxYearSummaryController.show(testYearPlusOne).url
     }
     "the paragraph explaining about previous Self Assessments" in new Setup(List(testYearPlusOne), isAgent = true) {
       layoutContent.select("#oldSa-para-agent").text shouldBe taxYears.saNoteAgent

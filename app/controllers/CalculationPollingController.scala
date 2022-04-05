@@ -48,7 +48,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
         controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
       } else {
-        controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin)
+        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin)
       }
 
       (user.session.get(SessionKeys.calculationId), user.nino, user.mtditid) match {

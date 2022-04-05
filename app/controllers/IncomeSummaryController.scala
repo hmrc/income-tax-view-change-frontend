@@ -85,7 +85,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url,
+          backUrl = controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false
@@ -98,7 +98,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           handleRequest(
-            backUrl = controllers.agent.routes.TaxYearOverviewController.show(taxYear).url,
+            backUrl = controllers.agent.routes.TaxYearSummaryController.show(taxYear).url,
             itcvErrorHandler = itvcErrorHandlerAgent,
             taxYear = taxYear,
             isAgent = true
