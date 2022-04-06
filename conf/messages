@@ -693,6 +693,8 @@ paymentHistory.table.header.amount                              = Amount
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
+paymentAllocation.sa.info                                          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
+paymentAllocation.earlyTaxYear.heading                          = Payment from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
 paymentAllocation.info                                          = Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years.
@@ -702,6 +704,7 @@ paymentAllocation.tableHead.allocated-date                      = Date allocated
 paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
+paymentAllocation.moneyOnAccount                                = Money in your account
 paymentAllocation.na                                            = N/A
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2
