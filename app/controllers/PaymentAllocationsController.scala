@@ -64,6 +64,17 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
+
+    if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)){
+
+      Logger("application").warn(s"[PaymentAllocationsController][handleRequest] Coding Out is disabled and redirected to not found page")
+      Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+    } else {
+      auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+      Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
+    }
+
+
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations) =>
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
@@ -72,6 +83,11 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         Redirect(redirectUrl)
       case _ => itvcErrorHandler.showInternalServerError()
     }
+
+
+
+
+
   }
 
   def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
