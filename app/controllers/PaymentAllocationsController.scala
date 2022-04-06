@@ -25,6 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.core.Nino
 import models.paymentAllocationCharges.PaymentAllocationError
+import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
@@ -65,29 +66,19 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
 
-    if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)){
-
-      Logger("application").warn(s"[PaymentAllocationsController][handleRequest] Coding Out is disabled and redirected to not found page")
-      Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
-    } else {
-      auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-      Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
-    }
-
-
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations) =>
-        auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
+        if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)){
+          Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
+          Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        } else {
+          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
+        }
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)
       case _ => itvcErrorHandler.showInternalServerError()
     }
-
-
-
-
-
   }
 
   def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
