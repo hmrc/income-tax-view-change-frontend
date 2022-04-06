@@ -228,7 +228,8 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
-          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, isAgent = true
+//          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, isAgent = true
+          controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, saUtr= None, CutOverCreditsEnabled = false, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
