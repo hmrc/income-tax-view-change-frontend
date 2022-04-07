@@ -36,6 +36,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.messages.TaxYearSummaryMessages
 import testConstants.messages.TaxYearSummaryMessages.taxYearSummaryTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -445,8 +446,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         result should have(
           httpStatus(OK),
           pageTitleAgent(taxYearSummaryTitle),
-          elementTextByID("no-calc-data-header")("No calculation yet"),
-          elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
+          elementTextByID("no-calc-data-header")(TaxYearSummaryMessages.headingNoCalcData),
+          elementTextByID("no-calc-data-note")(TaxYearSummaryMessages.noCalcDataNote)
         )
 
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)

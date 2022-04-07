@@ -21,7 +21,7 @@ object TaxYearSummaryMessages {
   val taxYearSummaryTitle: String = "Tax year summary"
   val heading: String = "Tax year summary"
   val headingNoCalcData: String = "No calculation yet"
-  val noCalcDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
+  val noCalcDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update."
 
   def titleOld(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
 
