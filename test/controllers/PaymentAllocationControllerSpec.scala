@@ -18,7 +18,7 @@ package controllers
 
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation, CutOverCredits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
@@ -264,7 +264,25 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
-    }
 
+      "PaymentAllocation FS enabled and CutOverCredit FS disabled" should {
+        "Successfully retrieve a user's payment allocation with credit and redirect to not found page" in new Setup {
+          enable(PaymentAllocation)
+          disable(CutOverCredits)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          mockSingleBusinessIncomeSource()
+          setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModel)
+
+          mockPaymentAllocationView(
+            paymentAllocationViewModel,
+            controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, saUtr = None,
+            CutOverCreditsEnabled = false, isAgent = true
+          )(HtmlFormat.empty)
+
+          val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
+          status(result) shouldBe SEE_OTHER
+        }
+      }
+    }
   }
 }

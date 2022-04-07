@@ -74,7 +74,6 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         } else {
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-//          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
           Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr, CutOverCreditsEnabled=isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
         }
 
