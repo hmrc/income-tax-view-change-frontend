@@ -59,11 +59,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
 
-  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
+  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel]) : Boolean = {
     val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
-    val isCurrentTaxYear = taxYear == currentTaxYear
     val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined && modelOpt.flatMap(_.forecastIncomeTaxAndNics).isDefined
-    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && isCurrentTaxYear && forecastDataPresent
+    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && forecastDataPresent
   }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
@@ -90,7 +89,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = showForecast(Some(taxYearSummaryViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)),
+          showForecastData = showForecast(Some(taxYearSummaryViewModel)),
           origin = origin
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>

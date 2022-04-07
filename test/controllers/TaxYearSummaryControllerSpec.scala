@@ -129,16 +129,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
       }
     }
-    "tax year is current year" should {
-      "show the Forecast tab" in {
-        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, taxYear = 2018, shouldShowForecastData = true)
-      }
-    }
-    "tax year is NOT current year" should {
-      "NOT show the Forecast tab" in {
-        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, taxYear = 2017, shouldShowForecastData = false)
-      }
-    }
     "all calls are returned correctly" should {
       "show the Tax Year Summary Page" in {
         mockSingleBusinessIncomeSource()
