@@ -21,9 +21,7 @@ import helpers.servicemocks._
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.PropertyDetailsIntegrationTestConstants.propertyAccountingStartLocalDate
 import testConstants.messages.MyTaxYearsMessages.taxYearsTitle
-import testConstants.messages.{MyTaxYearsMessages => messages}
 
 class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -62,11 +60,10 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
           verifyIncomeSourceDetailsCall(testMtditid)
 
           Then("The view should have the correct headings and all tax years display")
-          val expectedYearsShown = getCurrentTaxYearEnd.getYear - propertyAccountingStartLocalDate.getYear + 1
           res should have(
             httpStatus(OK),
             pageTitleIndividual(taxYearsTitle),
-            nElementsWithClass("govuk-summary-list__row")(expectedYearsShown),
+            nElementsWithClass("govuk-summary-list__row")(6),
             elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
               expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
             )
