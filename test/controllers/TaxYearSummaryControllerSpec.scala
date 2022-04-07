@@ -30,7 +30,6 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.{documentDetailClass2Nic, documentDetailPaye, financialDetails, fullDocumentDetailWithDueDateModel}
 import testConstants.MessagesLookUp
@@ -47,11 +46,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
-  object mockDateService extends DateService() {
-    override def getCurrentDate: LocalDate = LocalDate.parse("2018-03-29")
-    override def getCurrentTaxYearEnd(currentDate: LocalDate): Int = 2018
-  }
-
   object TestTaxYearSummaryController$ extends TaxYearSummaryController(
     taxYearSummaryView,
     MockAuthenticationPredicate,
@@ -63,8 +57,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
     app.injector.instanceOf[NavBarPredicate],
-    mockAuditingService,
-    mockDateService
+    mockAuditingService
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
