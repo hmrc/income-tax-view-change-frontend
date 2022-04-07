@@ -29,7 +29,7 @@ class BackLinkWithFallbackSpec extends ViewSpec {
 
     "generate a back link" which {
       "has the correct javascript link" in new Test {
-        document.select("script").text() contains """<a id="back" style="cursor:pointer" class="govuk-back-link" onclick="history.back()">Back</a>"""
+        document.select("script").text() contains """<a id="back" class="govuk-back-link" href="javascript:history.back()">Back</a>"""
       }
       "has the correct noscript fallback url" in new Test {
         document.select("noscript").text() contains "href=\"testUrl\""
