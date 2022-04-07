@@ -30,10 +30,22 @@ case class Payment(reference: Option[String],
                    lot: Option[String],
                    lotItem: Option[String],
                    date: Option[String],
-                   transactionId: Option[String])
+                   transactionId: Option[String]) {
+
+  def credit: Option[BigDecimal] = amount match {
+    case None => None
+    case _ if(lotItem.isDefined && lot.isDefined) => None
+    case Some(_) if(amount.get > 0.00) => None
+    case Some(credit) => Some(credit)
+  }
+
+}
+
+
 
 object Payment {
   implicit val format: Format[Payment] = Json.format[Payment]
+
 }
 
 case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[String], chargeType: Option[String]) {

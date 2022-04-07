@@ -28,6 +28,7 @@ import services.PaymentHistoryService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.PaymentHistory
 import javax.inject.{Inject, Singleton}
+import models.paymentAllocationCharges.PaymentAllocationViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,9 +47,9 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
+
   def action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar)
-
   def viewPaymentHistory(origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
       if (!isEnabled(PaymentHistory)) {
@@ -57,7 +58,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
         paymentHistoryService.getPaymentHistory.map {
           case Right(payments) =>
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
-            Ok(paymentHistoryView(payments, backUrl = backUrl(origin), user.saUtr, btaNavPartial = user.btaNavPartial, origin = origin))
+            Ok(paymentHistoryView(payments,CutOverCreditsEnabled=isEnabled(CutOverCredits), backUrl = backUrl(origin), user.saUtr, btaNavPartial = user.btaNavPartial, origin = origin))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
       }
