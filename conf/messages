@@ -263,7 +263,7 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
-taxCal_breakdown.table.uplift                                       = 1.25% uplift in National Insurance contributions funds NHS, health and social care
+taxCal_breakdown.table.uplift                                       = 1.25 percentage point uplift in National Insurance contribution funds, NHS, health and social care
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
 taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
