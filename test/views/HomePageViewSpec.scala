@@ -76,7 +76,6 @@ class HomePageViewSpec extends TestSupport {
       overDueUpdatesCount = overDueUpdatesCount,
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      paymentHistoryEnabled = paymentHistoryEnabled,
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
       isAgent = isAgent

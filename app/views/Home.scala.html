@@ -42,12 +42,11 @@
 	overDuePaymentsCount: Option[Int],
 	overDueUpdatesCount: Option[Int],
   	utr: Option[String],
-	paymentHistoryEnabled: Boolean,
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
   	currentTaxYear: Int,
     isAgent: Boolean,
-        origin: Option[String] = None)(
+    origin: Option[String] = None)(
   	implicit request: Request[_],
 	messages: Messages,
   	user: auth.MtdItUser[_],
@@ -226,13 +225,11 @@
 @paymentHistoryTile = {
 @home_tile("payment-history-tile", messages("home.paymentHistory.heading")) {
     @p(classes = "govuk-!-margin-bottom-4") {
-        @if(paymentHistoryEnabled) {
             @link(
                 link = paymentHistoryControllerURL,
                 messageKey = "home.paymentHistory.view"
 
             )
-        }
     }
 }
 }

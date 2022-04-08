@@ -19,7 +19,6 @@ package controllers.agent
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -42,7 +41,6 @@ class PaymentHistoryControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsService
   with ImplicitDateFormatter
-  with FeatureSwitching
   with MockItvcErrorHandler
   with MockAuditingService {
 
