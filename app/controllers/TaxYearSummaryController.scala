@@ -30,7 +30,7 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, FinancialDetailsService, NextUpdatesService, DateService}
+import services.{CalculationService, FinancialDetailsService, NextUpdatesService}
 import views.html.TaxYearSummary
 
 import java.net.URI
@@ -40,30 +40,28 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
-                                          authenticate: AuthenticationPredicate,
-                                          calculationService: CalculationService,
-                                          checkSessionTimeout: SessionTimeoutPredicate,
-                                          financialDetailsService: FinancialDetailsService,
-                                          itvcErrorHandler: ItvcErrorHandler,
-                                          retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
-                                          retrieveNino: NinoPredicate,
-                                          nextUpdatesService: NextUpdatesService,
-                                          val retrieveBtaNavBar: NavBarPredicate,
-                                          val auditingService: AuditingService,
-                                          dateService: DateService)
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val executionContext: ExecutionContext)
+                                         authenticate: AuthenticationPredicate,
+                                         calculationService: CalculationService,
+                                         checkSessionTimeout: SessionTimeoutPredicate,
+                                         financialDetailsService: FinancialDetailsService,
+                                         itvcErrorHandler: ItvcErrorHandler,
+                                         retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
+                                         retrieveNino: NinoPredicate,
+                                         nextUpdatesService: NextUpdatesService,
+                                         val retrieveBtaNavBar: NavBarPredicate,
+                                         val auditingService: AuditingService)
+                                        (implicit val appConfig: FrontendAppConfig,
+                                         mcc: MessagesControllerComponents,
+                                         val executionContext: ExecutionContext)
   extends BaseController with FeatureSwitching with I18nSupport {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
 
-  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
+  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel]): Boolean = {
     val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
-    val isCurrentTaxYear = taxYear == currentTaxYear
     val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined && modelOpt.flatMap(_.forecastIncomeTaxAndNics).isDefined
-    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && isCurrentTaxYear && forecastDataPresent
+    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && forecastDataPresent
   }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
@@ -90,7 +88,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = showForecast(Some(taxYearSummaryViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)),
+          showForecastData = showForecast(Some(taxYearSummaryViewModel)),
           origin = origin
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
@@ -194,6 +192,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   }
 
   def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+
   def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
 
 
