@@ -61,7 +61,7 @@
         containerClasses = "govuk-width-container",
         language = CurrentLanguage(),
         signOutHref = Some(controllers.routes.SignOutController.signOut.url),
-        userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl))
+        userResearchBanner =  {if(itsaTaxYear.isDefined) None else Some(UserResearchBanner(url = appConfig.enterSurveyUrl))}
     ))
 }
 
