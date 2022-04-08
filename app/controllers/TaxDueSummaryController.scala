@@ -59,7 +59,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
                                         implicit val ec: ExecutionContext
                                        ) extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
 
-  def handleRequest(origin: Option[String],
+  def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean
