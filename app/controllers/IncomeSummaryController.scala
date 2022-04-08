@@ -32,6 +32,7 @@ import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.TaxCalcFallBackBackLink
 import views.html.IncomeBreakdown
 
 import javax.inject.{Inject, Singleton}
@@ -55,9 +56,11 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                                         val languageUtils: LanguageUtils,
                                         val appConfig: FrontendAppConfig,
                                         implicit override val mcc: MessagesControllerComponents)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
 
-  def handleRequest(backUrl: String,
+
+
+  def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean)
@@ -65,8 +68,10 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
+        val fallbackBackUrl = getFallbackUrl(isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         viewModel match {
-          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial)(implicitly, messages))
+          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent,
+            btaNavPartial = user.btaNavPartial)(implicitly, messages))
           case _ =>
             Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()
@@ -85,7 +90,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url,
+          origin = origin,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false
@@ -98,7 +103,6 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           handleRequest(
-            backUrl = controllers.agent.routes.TaxYearSummaryController.show(taxYear).url,
             itcvErrorHandler = itvcErrorHandlerAgent,
             taxYear = taxYear,
             isAgent = true

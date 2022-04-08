@@ -33,6 +33,7 @@ import services.CalculationService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.TaxCalcFallBackBackLink
 import views.html.DeductionBreakdown
 
 import javax.inject.{Inject, Singleton}
@@ -54,9 +55,9 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             implicit override val mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
                                             val languageUtils: LanguageUtils)
-  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
 
-  def handleRequest(backUrl: String,
+  def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean)
@@ -65,7 +66,8 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
         auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
-        Ok(deductionBreakdownView(viewModel, taxYear, backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
+        val fallbackBackUrl = getFallbackUrl(isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+        Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         Logger("application").info(s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")
         itvcErrorHandler.showInternalServerError()
@@ -80,7 +82,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url,
+          origin = origin,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false
@@ -91,7 +93,6 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     Authenticated.async { implicit request =>
       implicit agent =>
         handleRequest(
-          backUrl = controllers.agent.routes.TaxYearSummaryController.show(taxYear).url,
           itcvErrorHandler = itvcErrorHandlerAgent,
           taxYear = taxYear,
           isAgent = true
