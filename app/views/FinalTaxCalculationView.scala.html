@@ -30,7 +30,7 @@
       form: FormWithCSRF,
       continueButton: ContinueButton,
       p: p,
-      h1Caption: h1_caption,
+      h1Caption: h1_itsa,
       govukInsetText : GovukInsetText
 )
 
@@ -49,7 +49,7 @@
 }
 
 @insetContent = {
-    @messages("final-tax-overview.inset.1") <a href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear)}>@messages(s"final-tax-overview.${if(isAgent) "agent" else "individual"}.inset.2")</a>
+    @messages("final-tax-overview.inset.1") <a class="govuk-link" href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear)}>@messages(s"final-tax-overview.${if(isAgent) "agent" else "individual"}.inset.2")</a>
 }
 
 @formCall = @{

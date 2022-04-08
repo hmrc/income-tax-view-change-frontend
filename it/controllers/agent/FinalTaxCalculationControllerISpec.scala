@@ -51,7 +51,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   }
 
   object Selectors {
-    val caption = "h1 > span"
+    val caption = "#main-content > div > div > div > header > p"
     val title = "h1"
 
     val insetText = "#main-content > div > div > div > p.govuk-inset-text"
