@@ -90,6 +90,10 @@ class IncomeBreakdownViewSpec extends ViewSpec {
         document title() shouldBe IncomeBreakdown.title
       }
 
+      "have a fallback backlink" in new Setup(view) {
+        document hasFallbackBacklink()
+      }
+
       "have the correct heading" in new Setup(view) {
         layoutContent hasPageHeading IncomeBreakdown.heading(taxYear)
         layoutContent.h1.select(".govuk-caption-xl").text() shouldBe IncomeBreakdown.subHeading(taxYear)
