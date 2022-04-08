@@ -208,7 +208,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object TaxCalcBreakdown {
     val title = "Tax calculation - Business Tax account - GOV.UK"
     val agentTitle = "Tax calculation - Your client’s Income Tax details - GOV.UK"
-    val upliftMessage = "1.25% uplift in National Insurance contributions funds NHS, health and social care"
+    val upliftMessage = "1.25 percentage point uplift in National Insurance contribution funds, NHS, health and social care"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
 
@@ -701,10 +701,10 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val dueDate = "Due date"
   }
 
-  object TaxYearOverview {
+  object TaxYearSummary {
     def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
 
-    def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
+    def heading(firstYear: Int, secondYear: Int): String = s"Tax year summary 6 April $firstYear to 5 April $secondYear"
 
     def status(status: String) = s"Tax year status: $status"
 

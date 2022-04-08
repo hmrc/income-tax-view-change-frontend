@@ -41,7 +41,7 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
                                                  val authenticate: AuthenticationPredicate,
                                                  val retrieveNino: NinoPredicate,
                                                  val calculationService: CalculationService,
-                                                 val retrieveBtaNavBar: BtaNavFromNinoPredicate,
+                                                 val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val authorisedFunctions: FrontendAuthorisedFunctions)
@@ -95,6 +95,6 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
     }
 
   def backUrl(isAgent: Boolean, taxYear: Int, origin: Option[String]): String =
-    if (isAgent) controllers.agent.routes.TaxYearOverviewController.show(taxYear).url
-    else controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url
+    if (isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url
+    else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
 }

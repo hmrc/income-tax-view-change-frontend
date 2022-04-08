@@ -20,9 +20,9 @@ import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testListLink
 import testUtils.TestSupport
-import views.html.bta.BtaNavBar
+import views.html.navBar.BtaNavBar
 
-class BtaNavBarViewSpec extends TestSupport {
+class NavBarEnumFsViewSpec extends TestSupport {
 
   val btaNavBarView = app.injector.instanceOf[BtaNavBar]
   lazy val page: HtmlFormat.Appendable = btaNavBarView(testListLink)(implicitly)

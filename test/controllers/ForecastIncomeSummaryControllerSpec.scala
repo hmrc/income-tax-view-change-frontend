@@ -20,21 +20,25 @@ import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{BtaNavFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
+import models.liabilitycalculation.EndOfYearEstimate
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testMtditidAgent, testTaxYear}
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
 import testUtils.TestSupport
 import views.html.ForecastIncomeSummary
 
 class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculationService with MockFrontendAuthorisedFunctions
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+
+  val forecastIncomeView: ForecastIncomeSummary = app.injector.instanceOf[ForecastIncomeSummary]
 
   object TestIncomeSummaryController extends ForecastIncomeSummaryController(
     app.injector.instanceOf[ForecastIncomeSummary],
@@ -45,7 +49,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
-    app.injector.instanceOf[BtaNavFromNinoPredicate],
+    app.injector.instanceOf[NavBarFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     mockAuthService,
@@ -90,6 +94,15 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
+        val backlink = "/report-quarterly/income-and-expenses/view/calculation/2018"
+        val endOfYearEstimateModel = liabilityCalculationModelSuccessFull.calculation.get.endOfYearEstimate.get
+        val expectedContent: String = forecastIncomeView(
+          endOfYearEstimateModel = endOfYearEstimateModel,
+          taxYear = testTaxYear,
+          backUrl = backlink,
+          isAgent = false,
+          btaNavPartial = None
+        ).toString
 
         "return Status OK (200)" in {
           enable(ForecastCalculation)
@@ -104,6 +117,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
 
         "render the IncomeBreakdown page" in {
           document.title() shouldBe "Forecast income - Business Tax account - GOV.UK"
+          contentAsString(result) shouldBe expectedContent
         }
       }
       "given a tax year which can not be found in ETMP" should {
@@ -173,6 +187,15 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
+        val backlink = "/report-quarterly/income-and-expenses/view/agents/calculation/2018"
+        val endOfYearEstimateModel = liabilityCalculationModelSuccessFull.calculation.get.endOfYearEstimate.get
+        val expectedContent: String = forecastIncomeView(
+          endOfYearEstimateModel = endOfYearEstimateModel,
+          taxYear = testTaxYear,
+          backUrl = backlink,
+          isAgent = true,
+          btaNavPartial = None
+        ).toString
 
         "return Status OK (200)" in {
           enable(ForecastCalculation)
@@ -188,6 +211,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
 
         "render the IncomeBreakdown page" in {
           document.title() shouldBe "Forecast income - Your client’s Income Tax details - GOV.UK"
+          contentAsString(result) shouldBe expectedContent
         }
       }
 

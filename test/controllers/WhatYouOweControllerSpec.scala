@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcH
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockBtaNavBarPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockNavBarEnumFsPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
@@ -36,7 +36,7 @@ import views.html.WhatYouOwe
 
 import scala.concurrent.Future
 
-class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockBtaNavBarPredicate
+class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
   with MockFrontendAuthorisedFunctions {
 
   trait Setup {
@@ -52,7 +52,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
-      MockBtaNavBarPredicate,
+      MockNavBarPredicate,
       mockAuthService,
       mockAuditingService,
       mockIncomeSourceDetailsService,
@@ -91,6 +91,9 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
         val result = controller.show()(fakeRequestWithActiveSession)
         val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
 
@@ -108,6 +111,9 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
 
         val result = controller.show()(fakeRequestWithActiveSession)
         val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
@@ -145,5 +151,4 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     }
 
   }
-
 }

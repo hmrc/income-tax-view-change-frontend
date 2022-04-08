@@ -21,7 +21,7 @@ import controllers.predicates._
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import views.html.bta.BtaPartial
+import views.html.navBar.BtaPartial
 
 import scala.concurrent.ExecutionContext
 

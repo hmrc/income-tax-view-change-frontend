@@ -150,7 +150,7 @@ class DocumentDetailSpec extends UnitSpec {
       "produce a credit value" when {
         "there is an outstanding amount, it is negative and there is no payment Id or lot item" in {
           fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(-10.00)), paymentLot = None,
-            paymentLotItem = None).credit shouldBe Some(BigDecimal(-10.00))
+            paymentLotItem = None).credit shouldBe Some(BigDecimal(10.00))
         }
       }
 

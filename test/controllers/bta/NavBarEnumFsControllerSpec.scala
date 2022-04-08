@@ -32,11 +32,11 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUser
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.bta.BtaNavBar
+import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future
 
-class BtaNavBarControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
   with UnitSpec with TestSupport with MockitoSugar with ScalaFutures {
 
   val mockNavBarService: BtaNavBarService = mock[BtaNavBarService]

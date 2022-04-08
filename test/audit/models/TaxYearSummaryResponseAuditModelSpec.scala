@@ -20,7 +20,7 @@ import auth.MtdItUser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
@@ -30,12 +30,19 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatchers {
+class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatchers {
 
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
 
-  val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(Some("2017-07-06T12:34:56.789Z"), Some(false), 2010.00, 199505, 500.00, 198500)
+  val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+    timestamp = Some("2017-07-06T12:34:56.789Z"),
+    crystallised = Some(false),
+    unattendedCalc = false,
+    taxDue = 2010.00,
+    income = 199505,
+    deductions = 500.00,
+    totalTaxableIncome = 198500)
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
     List(DocumentDetailWithDueDate(DocumentDetail("2020", "1040000123", Some("ITSA- POA 1"), Some("documentText"), Some(1400.0), Some(1400.0), LocalDate.parse("2018-03-29"),
@@ -90,8 +97,8 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
 
   def taxYearOverviewResponseAuditFull(userType: Option[String] = Some("Agent"),
                                        agentReferenceNumber: Option[String],
-                                       paymentHasADunningLock: Boolean = false): TaxYearOverviewResponseAuditModel =
-    TaxYearOverviewResponseAuditModel(
+                                       paymentHasADunningLock: Boolean = false): TaxYearSummaryResponseAuditModel =
+    TaxYearSummaryResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = "mtditid",
         nino = "nino",
@@ -105,7 +112,7 @@ class TaxYearOverviewResponseAuditModelSpec extends WordSpecLike with MustMatche
       )(FakeRequest()),
       payments = payments(paymentHasADunningLock),
       updates = updates,
-      taxYearOverviewViewModel = Some(taxYearOverviewViewModel)
+      taxYearSummaryViewModel = Some(taxYearSummaryViewModel)
     )
 
   "TaxYearOverviewResponseAuditModel(mtdItUser, agentReferenceNumber, calculation, payments, updates)" should {

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import java.time.LocalDate
+object OriginEnum extends Enumeration {
+  type OriginValue = Value
+  val BTA, PTA = Value
 
-import javax.inject.{Inject, Singleton}
-
-@Singleton
-class CurrentDateProvider @Inject()() {
-  def getCurrentDate(): LocalDate = LocalDate.now()
+  def apply(origin: String): Option[OriginValue] = values.find(origin.toUpperCase == _.toString)
 }

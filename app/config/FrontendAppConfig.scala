@@ -17,11 +17,12 @@
 package config
 
 import com.google.inject.Inject
-import javax.inject.Singleton
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.Singleton
 
 @Singleton
 class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
@@ -94,6 +95,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Business Tax Account
   lazy val btaService: String = servicesConfig.baseUrl("business-account")
   lazy val businessTaxAccount: String = servicesConfig.getString("business-tax-account.url")
+  lazy val personalTaxAccount: String = servicesConfig.getString("personal-tax-account.url")
   lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
   lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
   lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
@@ -144,6 +146,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   // Disagree with a tax decision
   lazy val taxAppealsUrl: String = servicesConfig.getString("tax-appeals.url")
+
+  //Tax account router url
+  lazy val taxAccountRouterUrl: String = servicesConfig.getString("tax-account-router.url")
 
   //Translation
   def languageMap: Map[String, Lang] = Map(

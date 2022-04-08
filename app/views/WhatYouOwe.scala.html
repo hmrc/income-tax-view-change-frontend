@@ -37,7 +37,8 @@
     govukInsetText : GovukInsetText
 )
 
-@(whatYouOweChargesList: WhatYouOweChargesList,
+@(creditCharges: List[DocumentDetail],
+    whatYouOweChargesList: WhatYouOweChargesList,
     hasLpiWithDunningBlock: Boolean,
     currentTaxYear: Int,
     backUrl: String,
@@ -45,6 +46,7 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
+    cutOverCreditsEnabled: Boolean,
     isAgent: Boolean = false,
         origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
@@ -178,9 +180,9 @@
 
 @getReturnHref(year: Int) = @{
    if (isAgent) {
-       controllers.agent.routes.TaxYearOverviewController.show(year).url
+       controllers.agent.routes.TaxYearSummaryController.show(year).url
                 } else {
-      controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(year, origin).url
+      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
     }
 }
 
@@ -335,6 +337,11 @@
               @saNoteParagraph
           }
 
+          @if(cutOverCreditsEnabled) {
+           @creditCharges.map { documentDetails =>
+            @documentDetails.credit.map { credit => @p()(Html(getMessage("credit-overpaid",credit.toCurrencyString)))}
+             }
+           }
 
     @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
       <div id="payment-button">

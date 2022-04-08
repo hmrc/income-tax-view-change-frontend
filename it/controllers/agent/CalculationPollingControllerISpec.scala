@@ -106,7 +106,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
     "the user is authorised with an active enrolment" should {
 
-      "redirect the user to the tax year overview page" which {
+      "redirect the user to the tax year summary page" which {
         lazy val result = {
           stubAuthorisedAgentUser(authorised = true)
           calculationStub()
@@ -125,8 +125,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           result.status shouldBe SEE_OTHER
         }
 
-        s"redirect to '${controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url}''" in {
-          result.header("Location").head shouldBe controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url
+        s"redirect to '${controllers.agent.routes.TaxYearSummaryController.show(testTaxYear).url}''" in {
+          result.header("Location").head shouldBe controllers.agent.routes.TaxYearSummaryController.show(testTaxYear).url
         }
 
       }
@@ -203,7 +203,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
     "the user is authorised with an active enrolment" should {
 
-      "redirect the user to the tax year overview page" which {
+      "redirect the user to the tax year summary page" which {
         lazy val result = {
           stubAuthorisedAgentUser(authorised = true)
           calculationStub()
@@ -222,7 +222,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           result.status shouldBe SEE_OTHER
         }
 
-        s"redirect to '${controllers.agent.routes.TaxYearOverviewController.show(testTaxYear).url}''" in {
+        s"redirect to '${controllers.agent.routes.TaxYearSummaryController.show(testTaxYear).url}''" in {
           result.header("Location").head shouldBe controllers.routes.FinalTaxCalculationController.showAgent(testTaxYear).url
         }
 

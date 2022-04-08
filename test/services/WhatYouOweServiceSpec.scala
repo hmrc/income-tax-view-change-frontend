@@ -16,17 +16,17 @@
 
 package services
 
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.FinancialDetailsTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{BalanceDetails, CodingDetails, DocumentDetail, DocumentDetailWithCodingDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
+import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -48,8 +48,14 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
   val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+  val currentYearAsInt: Int = LocalDate.now.getYear
 
-  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector)
+  object mockDateService extends DateService() {
+    override def getCurrentDate: LocalDate = LocalDate.parse(s"${currentYearAsInt.toString}-04-01")
+    override def getCurrentTaxYearEnd(currentDate: LocalDate): Int = currentYearAsInt
+  }
+
+  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector, mockDateService)
 
   "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
@@ -285,6 +291,40 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         }
       }
 
+    }
+  }
+
+  "WhatYouOweService.getCreditCharges method" should {
+    "return a list of credit charges" when {
+      "a successful response is received in all tax year calls" in {
+        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(FinancialDetailsModel(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            codingDetails = None,
+            documentDetails = whatYouOweCreditDocumentDetailList,
+            financialDetails = List(
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+            )
+          ))))
+
+        TestWhatYouOweService.getCreditCharges()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweCreditDocumentDetailList
+      }
+    }
+    "handle an error" when {
+      "the financial service has returned an error in all tax year calls" in {
+        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(FinancialDetailsErrorModel(500, "INTERNAL_SERVER ERROR"))))
+
+        val result = TestWhatYouOweService.getCreditCharges()(headerCarrier, mtdItUser).failed.futureValue
+
+        result shouldBe an[Exception]
+        result.getMessage shouldBe "[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details"
+      }
     }
   }
 }

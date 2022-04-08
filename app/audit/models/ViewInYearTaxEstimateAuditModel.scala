@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import play.api.libs.json.{Json, OWrites}
 
 case class ViewInYearTaxEstimateAuditModel(
@@ -49,7 +49,7 @@ case class ViewInYearTaxEstimateAuditBody(
 object ViewInYearTaxEstimateAuditBody {
   implicit val writes: OWrites[ViewInYearTaxEstimateAuditBody] = Json.writes[ViewInYearTaxEstimateAuditBody]
   
-  def apply(taxCalc: TaxYearOverviewViewModel): ViewInYearTaxEstimateAuditBody = {
+  def apply(taxCalc: TaxYearSummaryViewModel): ViewInYearTaxEstimateAuditBody = {
     new ViewInYearTaxEstimateAuditBody(
       taxCalc.income,
       taxCalc.deductions,

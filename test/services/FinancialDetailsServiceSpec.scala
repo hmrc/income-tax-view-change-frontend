@@ -19,7 +19,7 @@ package services
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching}
 import mocks.connectors.MockIncomeTaxViewChangeConnector

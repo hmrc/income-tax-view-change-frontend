@@ -30,7 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
-                                  val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+                                  val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                  dateService: DateService)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -40,6 +41,16 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       documentDescription == "ITSA - POA 2" ||
       documentDescription == "TRM New Charge" ||
       documentDescription == "TRM Amend Charge"
+  }
+
+  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]]= {
+    financialDetailsService.getAllCreditFinancialDetails.map {
+      case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
+        throw new Exception("[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details")
+      case financialDetails: List[FinancialDetailsResponseModel] =>
+        val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
+        financialDetailsModelList.flatMap(_.documentDetails)
+    }
   }
 
   def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
@@ -53,7 +64,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = if (isEnabled(CodingOut)) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear.toInt == (mtdUser.incomeSources.getCurrentTaxEndYear - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
+              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd(dateService.getCurrentDate) - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
           ).headOption
         } else None
 
@@ -62,7 +73,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
-        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, mtdUser.incomeSources.getCurrentTaxEndYear).map {
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }

@@ -17,37 +17,38 @@
 package controllers.agent
 
 import audit.AuditingService
-import audit.models.TaxYearOverviewResponseAuditModel
+import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.liabilitycalculation.viewmodels.TaxYearOverviewViewModel
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
+import services.{CalculationService, DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.TaxYearOverview
+import views.html.TaxYearSummary
 
 import java.net.URI
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
-                                          val authorisedFunctions: AuthorisedFunctions,
-                                          calculationService: CalculationService,
-                                          financialDetailsService: FinancialDetailsService,
-                                          incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          nextUpdatesService: NextUpdatesService,
-                                          auditingService: AuditingService
+class TaxYearSummaryController @Inject()(taxYearSummary: TaxYearSummary,
+                                         val authorisedFunctions: AuthorisedFunctions,
+                                         calculationService: CalculationService,
+                                         financialDetailsService: FinancialDetailsService,
+                                         incomeSourceDetailsService: IncomeSourceDetailsService,
+                                         nextUpdatesService: NextUpdatesService,
+                                         auditingService: AuditingService,
+                                         dateService: DateService
                                          )(implicit val appConfig: FrontendAppConfig,
                                            val languageUtils: LanguageUtils,
                                            mcc: MessagesControllerComponents,
@@ -59,6 +60,12 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
+  val getCurrentTaxYearEnd: Int = {
+    val currentDate: LocalDate = LocalDate.now
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+  }
+
   def show(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
@@ -66,7 +73,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
           withObligationsModel(taxYear) { obligations =>
             calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map { liabilityCalcResponse =>
               view(liabilityCalcResponse, documentDetailsWithDueDates, taxYear, obligations, getBackURL(request.headers.get(REFERER)))
-                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request)
+                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearSummary")(request)
             }
           }
         }
@@ -81,6 +88,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     }
   }
 
+  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel], taxYear: Int, currentTaxYear: Int) : Boolean = {
+    val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
+    val isCurrentTaxYear = taxYear == currentTaxYear
+    val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined && modelOpt.flatMap(_.forecastIncomeTaxAndNics).isDefined
+    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && isCurrentTaxYear && forecastDataPresent
+  }
+
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                    taxYear: Int,
@@ -89,41 +103,43 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
-        val taxYearOverviewViewModel: TaxYearOverviewViewModel = TaxYearOverviewViewModel(liabilityCalc)
-        auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearOverviewViewModel)))
+        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalc)
+        auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
+          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel)))
 
         Logger("application").info(
-          s"[Agent][TaxYearOverviewController][view][$taxYear]] Rendered Tax year overview page with Calc data")
+          s"[Agent][TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with Calc data")
 
-        Ok(taxYearOverview(
+        Ok(taxYearSummary(
           taxYear = taxYear,
-          overviewOpt = Some(taxYearOverviewViewModel),
+          modelOpt = Some(taxYearSummaryViewModel),
           charges = documentDetailsWithDueDates,
           obligations = obligations,
           codingOutEnabled = isEnabled(CodingOut),
           backUrl = backUrl,
-          isAgent = true
+          isAgent = true,
+          showForecastData = showForecast(Some(taxYearSummaryViewModel), taxYear, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate))
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
-        auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(
+        auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, documentDetailsWithDueDates, obligations, None))
 
         Logger("application").info(
-          s"[Agent][TaxYearOverviewController][view][$taxYear]] Rendered Tax year overview page with No Calc data")
+          s"[Agent][TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with No Calc data")
 
-        Ok(taxYearOverview(
+        Ok(taxYearSummary(
           taxYear = taxYear,
-          overviewOpt = None,
+          modelOpt = None,
           charges = documentDetailsWithDueDates,
           obligations = obligations,
           codingOutEnabled = isEnabled(CodingOut),
           backUrl = backUrl,
-          isAgent = true
+          isAgent = true,
+          showForecastData = false
         ))
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          s"[Agent][TaxYearOverviewController][view][$taxYear]] No new calc deductions data error found. Downstream error")
+          s"[Agent][TaxYearSummaryController][view][$taxYear]] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }
@@ -156,7 +172,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ =>
-        Logger("application").error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
@@ -168,7 +184,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     ) flatMap {
       case obligationsModel: ObligationsModel => f(obligationsModel)
       case _ =>
-        Logger("application").error(s"[TaxYearOverviewController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
+        Logger("application").error(s"[TaxYearSummaryController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }

@@ -1,6 +1,7 @@
 ## Base ##
 base.back                                                       = Back
 base.service_name                                               = Business tax account
+base.service_name.pta                                           = Personal tax account
 base.service_name.itsa                                          = Update and submit an Income Tax Return
 base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
@@ -114,47 +115,51 @@ taxYears.oldSa.agent.content.1								   = To view your client’s tax years fro
 taxYears.oldSa.agent.content.2								   = Self Assessment for Agents Account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your Agent Services account.
 
-## Tax Year Overview ##
-tax-year-overview.heading                                           = Tax year overview
-tax-year-overview.heading-secondary                                 = 6 April {0} to 5 April {1}
-tax-year-overview.calculation-date                                  = Calculation date
-tax-year-overview.calc-from-last-time                               = This calculation is only based on your completed updates for this tax year up to 5 January {0}. It is not your final tax bill for the year and is a year to date estimate based on the information you have entered so far.
-tax-year-overview.total-due                                         = Total Due
-tax-year-overview.contents                                          = Contents
-tax-year-overview.tax-calculation.date                              = 6 April {0} to 5 January {1} calculation
-tax-year-overview.tax-calculation                                   = Calculation
-tax-year-overview.tax-calculation.no-calc                           = No calculation yet
-tax-year-overview.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.
-tax-year-overview.payments                                          = Payments
-tax-year-overview.updates                                           = Updates
-tax-year-overview.income                                            = Income
-tax-year-overview.deductions                                        = Allowances and deductions
-tax-year-overview.taxable-income                                    = Total income on which tax is due
-tax-year-overview.tax-due                                           = Income Tax and National Insurance contributions due
-tax-year-overview.payments.payment-type                             = Payment type
-tax-year-overview.payments.due-date                                 = Due date
-tax-year-overview.payments.status                                   = Status
-tax-year-overview.payments.amount                                   = Amount
-tax-year-overview.payments.paymentOnAccount1.text                   = Payment on account 1 of 2
-tax-year-overview.payments.paymentOnAccount2.text                   = Payment on account 2 of 2
-tax-year-overview.payments.balancingCharge.text                     = Balancing payment
-tax-year-overview.payments.lpi.paymentOnAccount1.text               = Late payment interest for payment on account 1 of 2
-tax-year-overview.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
-tax-year-overview.payments.lpi.balancingCharge.text                 = Late payment interest for Balancing payment
-tax-year-overview.payments.cancelledPayeSelfAssessment.text         = Cancelled Self Assessment payment (through your PAYE tax code)
-tax-year-overview.payments.paid                                     = Paid
-tax-year-overview.payments.unpaid                                   = Unpaid
-tax-year-overview.payments.part-paid                                = Part paid
-tax-year-overview.payments.overdue                                  = Overdue
-tax-year-overview.payments.no-payments                              = No payments currently due.
-tax-year-overview.payments.paymentUnderReview                       = Payment under review
-tax-year-overview.section                                           = Section
-tax-year-overview.amount                                            = Amount
-tax-year-overview.payments.class2Nic.text                           = Class 2 National Insurance
-tax-year-overview.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
-tax-year-overview.na                                                = N/A
-tax-year-overview.paye-tax-code                                     = PAYE tax code
-
+## Tax Year Summary ##
+tax-year-summary.heading                                           = Tax year summary
+tax-year-summary.heading-secondary                                 = 6 April {0} to 5 April {1}
+tax-year-summary.calculation-date                                  = Calculation date
+tax-year-summary.calc-from-last-time                               = This is only based on figures we’ve already received to 5 January {0}. It’s not your final tax bill.
+tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
+tax-year-summary.total-due                                         = Total Due
+tax-year-summary.contents                                          = Contents
+tax-year-summary.tax-calculation.date                              = 6 April {0} to 5 January {1} calculation
+tax-year-summary.tax-calculation                                   = Calculation
+tax-year-summary.tax-calculation.no-calc                           = No calculation yet
+tax-year-summary.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.
+tax-year-summary.tax-calculation.unattended-calc                   = We have updated the calculation for you. You can see more details in your record-keeping software.
+tax-year-summary.payments                                          = Payments
+tax-year-summary.forecast                                          = Forecast
+tax-year-summary.updates                                           = Updates
+tax-year-summary.income                                            = Income
+tax-year-summary.deductions                                        = Allowances and deductions
+tax-year-summary.taxable-income                                    = Total income on which tax is due
+tax-year-summary.tax-due                                           = Income Tax and National Insurance contributions due
+tax-year-summary.payments.payment-type                             = Payment type
+tax-year-summary.payments.due-date                                 = Due date
+tax-year-summary.payments.status                                   = Status
+tax-year-summary.payments.amount                                   = Amount
+tax-year-summary.payments.paymentOnAccount1.text                   = Payment on account 1 of 2
+tax-year-summary.payments.paymentOnAccount2.text                   = Payment on account 2 of 2
+tax-year-summary.payments.balancingCharge.text                     = Balancing payment
+tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest for payment on account 1 of 2
+tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
+tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest for Balancing payment
+tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled Self Assessment payment (through your PAYE tax code)
+tax-year-summary.payments.paid                                     = Paid
+tax-year-summary.payments.unpaid                                   = Unpaid
+tax-year-summary.payments.part-paid                                = Part paid
+tax-year-summary.payments.overdue                                  = Overdue
+tax-year-summary.payments.no-payments                              = No payments currently due.
+tax-year-summary.payments.paymentUnderReview                       = Payment under review
+tax-year-summary.section                                           = Section
+tax-year-summary.amount                                            = Amount
+tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
+tax-year-summary.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
+tax-year-summary.na                                                = N/A
+tax-year-summary.paye-tax-code                                     = PAYE tax code
+tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
+tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast amount
 
 
 ## Income Breakdown Page ##
@@ -258,7 +263,7 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
-taxCal_breakdown.table.uplift                                       = 1.25% uplift in National Insurance contributions funds NHS, health and social care
+taxCal_breakdown.table.uplift                                       = 1.25 percentage point uplift in National Insurance contribution funds, NHS, health and social care
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
 taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
@@ -401,25 +406,9 @@ not_enrolled.sign-up.1                                          = You need to
 not_enrolled.sign-up.2                                          = sign up for quarterly reporting
 not_enrolled.sign-up.3                                          = before you can view this page.
 
-## Breadcrumbs ##
-breadcrumb.landmark-label                                       = breadcrumbs
-breadcrumb-bta                                                  = Business tax account
-breadcrumb-it                                                   = Income Tax account
-breadcrumb-tax-years                                            = Tax years
-breadcrumb-obligations                                          = Report deadlines
-breadcrumb-updates                                              = Updates
-breadcrumb-payments-due                                         = Payments due
-breadcrumb-tax-year-overview                                    = 6 April {0} to 5 April {1}
-breadcrumb-income                                               = Income
-breadcrumb-deductions                                           = Allowances and deductions
-breadcrumb-tax-calc                                             = Tax calculation
-breadcrumb-what-you-owe                                         = What you owe
-breadcrumb-payment-history                                      = Payment history
-
 ## Standard Error Page ##
 standardError.heading                                           = Sorry, there is a problem with the service
 standardError.message                                           = Try again later.
-
 
 ## Custom Error Page ##
 error.custom.heading                                          = There is a problem
@@ -568,6 +557,7 @@ whatYouOwe.codingOut-2                                             = {0} to {1} 
 whatYouOwe.codingOut-3                                             = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
 whatYouOwe.class2Nic.text                                          = Class 2 National Insurance
 whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled Self Assessment payment (through your PAYE tax code)
+whatYouOwe.credit-overpaid                                         = You have {0} in your account. We’ll use this to pay the amount due on the next due date.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
@@ -757,8 +747,8 @@ final-tax-overview.agent.heading                                = Your client’
 final-tax-overview.agent.chargeInfo.p                           = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
 final-tax-overview.agent.inset.2                                = check your client’s Income Tax Return.
 
-tax-year-overview.taxable-income.finalCalc                      = Total taxable income
-tax-year-overview.tax-due.finalCalc                             = Income Tax and National Insurance contributions
+tax-year-summary.taxable-income.finalCalc                      = Total taxable income
+tax-year-summary.tax-due.finalCalc                             = Income Tax and National Insurance contributions
 
 ## InYear Tax Overview (Individual/Common Content)
 inYear-tax-overview.individual.heading                           = Your tax overview 6 April {0} to {1}

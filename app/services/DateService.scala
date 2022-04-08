@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package mocks.controllers.predicates
+package services
 
-import config.ItvcErrorHandler
-import controllers.bta.BtaNavBarController
-import controllers.predicates.BtaNavBarPredicate
-import mocks.services.MockAsyncCacheApi
-import testUtils.TestSupport
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 
-trait MockBtaNavBarPredicate extends TestSupport with MockAsyncCacheApi {
+@Singleton
+class DateService @Inject()() {
 
-  val mockBtaNavBarController: BtaNavBarController = mock[BtaNavBarController]
+  def getCurrentDate: LocalDate = {
+    LocalDate.now()
+  }
 
-  object MockBtaNavBarPredicate extends BtaNavBarPredicate(
-    mockBtaNavBarController, app.injector.instanceOf[ItvcErrorHandler])(
-    appConfig, ec)
+  def getCurrentTaxYearEnd(currentDate: LocalDate): Int = {
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+  }
 }

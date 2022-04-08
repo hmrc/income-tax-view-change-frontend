@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import auth.{FrontendAuthorisedFunctions, MtdItUser, MtdItUserBase, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.predicates.ClientConfirmedController
@@ -25,7 +25,7 @@ import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, IncomeSourceDetailsService}
@@ -46,7 +46,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
                                                 val calculationService: CalculationService,
                                                 val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                                 val auditingService: AuditingService,
-                                                val retrieveBtaNavBar: BtaNavFromNinoPredicate,
+                                                val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                 val itvcErrorHandler: ItvcErrorHandler,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val authorisedFunctions: AuthorisedFunctions)
@@ -76,7 +76,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
         case liabilityCalc: LiabilityCalculationResponse =>
           val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
           viewModel match {
-            case Some(model) => Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear, origin), isAgent,
+            case Some(model) => Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear, origin, isAgent), isAgent,
               btaNavPartial = btaNavPartial))
             case _ =>
               onError(s"No income data could be retrieved. Not found", isAgent, taxYear)
@@ -102,6 +102,8 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
           handleRequest(getClientMtditid, getClientNino, taxYear, None, isAgent = true)
     }
 
-  def backUrl(taxYear: Int, origin: Option[String]): String = controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url
+  def backUrl(taxYear: Int, origin: Option[String], isAgent: Boolean): String =
+    if (isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url
+    else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
 
 }

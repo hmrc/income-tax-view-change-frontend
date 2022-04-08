@@ -22,7 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.predicates.{AuthenticationPredicate, BtaNavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
@@ -46,7 +46,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         itvcErrorHandler: ItvcErrorHandler,
                                         incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                         chargeSummaryView: ChargeSummary,
-                                        retrievebtaNavPartial: BtaNavBarPredicate)
+                                        retrievebtaNavPartial: NavBarPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
@@ -97,9 +97,9 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
 
     chargeHistoryResponse(isLatePaymentCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, id).map {
       case Right(chargeHistory) =>
-        if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)
-          || documentDetailWithDueDate.documentDetail.isClass2Nic.equals(true) && !isEnabled(CodingOut)
-          || documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)) {
+        if (isDisabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
+          documentDetailWithDueDate.documentDetail.isClass2Nic ||
+          documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Coding Out is disabled and redirected to not found page")
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         } else {
@@ -153,7 +153,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   private def backUrl(backLocation: Option[String], taxYear: Int, origin: Option[String]): String = backLocation match {
-    case Some("taxYearOverview") => controllers.routes.TaxYearOverviewController.renderTaxYearOverviewPage(taxYear, origin).url + "#payments"
+    case Some("taxYearSummary") => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
     case Some("whatYouOwe") => controllers.routes.WhatYouOweController.show(origin).url
     case _ => controllers.routes.HomeController.show(origin).url
   }

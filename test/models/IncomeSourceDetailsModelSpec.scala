@@ -16,12 +16,15 @@
 
 package models
 
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
 import testUtils.UnitSpec
+
+import java.time.{LocalDate, Month}
 
 class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
@@ -90,9 +93,16 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
     }
     "the sanitise method" should {
       "remove all unnecessary fields" in {
-        val expected = "IncomeSourceDetailsModel(XIAT0000000000A,Some(2021),List(BusinessDetailsModel(None,None,None,None)," +
-          " BusinessDetailsModel(None,None,None,Some(2021-04-05))),Some(PropertyDetailsModel(None,None,None)))"
-        preSanitised.sanitise.toString shouldBe expected
+        val expected = IncomeSourceDetailsModel(
+          "XIAT0000000000A",
+          Some((LocalDate.now.getYear - 1).toString),
+          List(
+            BusinessDetailsModel(None, None, None, None),
+            BusinessDetailsModel(None, None, None, Some(LocalDate.of(getCurrentTaxEndYear(LocalDate.now) - 1, Month.APRIL, 5)))
+          ),
+          Some(PropertyDetailsModel(None, None, None))
+        )
+        preSanitised.sanitise shouldBe expected
       }
     }
   }

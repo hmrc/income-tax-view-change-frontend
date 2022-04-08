@@ -121,7 +121,9 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
     val codingOutEnabled = isEnabled(CodingOut)
 
     getChargeHistory(id, isLatePaymentCharge).map { chargeHistoryOpt =>
-      if (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isClass2Nic.equals(true) && !isEnabled(CodingOut) || documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment.equals(true) && !isEnabled(CodingOut)) {
+      if (isDisabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
+        documentDetailWithDueDate.documentDetail.isClass2Nic ||
+        documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
         Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Coding Out is disabled and redirected to not found page")
         Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
       } else {
@@ -152,7 +154,7 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
   }
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
-    case Some("taxYearOverview") => controllers.agent.routes.TaxYearOverviewController.show(taxYear).url + "#payments"
+    case Some("taxYearSummary") => controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
     case Some("whatYouOwe") => controllers.routes.WhatYouOweController.showAgent().url
     case _ => controllers.routes.HomeController.showAgent().url
   }
