@@ -18,7 +18,6 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
@@ -41,7 +40,7 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
                                          mcc: MessagesControllerComponents,
                                          implicit val ec: ExecutionContext,
                                          val itvcErrorHandler: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with I18nSupport {
 
   def viewPaymentHistory(): Action[AnyContent] =
     Authenticated.async { implicit request =>
