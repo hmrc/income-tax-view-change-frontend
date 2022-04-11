@@ -109,15 +109,15 @@
         <tbody>
         @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.getOrElse(throw MissingFieldException("Due Date"))).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
+                <th scope="row" class="govuk-table__header">
                     @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                         <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                     }
                 <div>
                     @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                        <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                        <a class="govuk-link govuk-!-font-weight-regular"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
                     } else {
-                        <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
+                        <a class="govuk-link govuk-!-font-weight-regular"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
                     }
                 </div>
                     @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
