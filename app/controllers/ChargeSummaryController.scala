@@ -18,67 +18,91 @@ package controllers
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import auth.MtdItUser
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates._
 import forms.utils.SessionKeys
-import javax.inject.Inject
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, PaymentsWithChargeType}
+import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.FinancialDetailsService
+import play.api.mvc._
+import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.ChargeSummary
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
-                                        checkSessionTimeout: SessionTimeoutPredicate,
-                                        retrieveNino: NinoPredicate,
-                                        retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                        financialDetailsService: FinancialDetailsService,
-                                        auditingService: AuditingService,
-                                        itvcErrorHandler: ItvcErrorHandler,
-                                        incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                        chargeSummaryView: ChargeSummary,
-                                        retrievebtaNavPartial: NavBarPredicate)
+class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
+                                        val checkSessionTimeout: SessionTimeoutPredicate,
+                                        val retrieveNino: NinoPredicate,
+                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                        val financialDetailsService: FinancialDetailsService,
+                                        val auditingService: AuditingService,
+                                        val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                        val chargeSummaryView: ChargeSummary,
+                                        val retrievebtaNavPartial: NavBarPredicate,
+                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                        val authorisedFunctions: FrontendAuthorisedFunctions)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
-                                        val executionContext: ExecutionContext)
-  extends BaseController with FeatureSwitching with I18nSupport {
+                                        val ec: ExecutionContext,
+                                        val itvcErrorHandler: AgentItvcErrorHandler)
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def showChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial).async {
+  val action: ActionBuilder[MtdItUser, AnyContent] =
+    checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial
+
+  def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
+      val payments = financialResponses.collect {
+        case (_, model: FinancialDetailsModel) => model.filterPayments()
+      }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), None, List(), List()))((merged, next) => merged.mergeLists(next))
+
+      val matchingYear = financialResponses.collect {
+        case (year, response) if year == taxYear => response
+      }
+
+      matchingYear.headOption match {
+        case Some(success: FinancialDetailsModel) if success.documentDetails.exists(_.transactionId == id) =>
+          doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments, isAgent, origin)
+        case Some(_: FinancialDetailsModel) =>
+          Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
+          Future.successful(Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url))
+        case _ =>
+          Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
+          Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+    }
+  }
+
+  def show(taxYear: Int, id: String, isLatePaymentCharge: Boolean, origin: Option[String] = None): Action[AnyContent] =
+    action.async {
       implicit user =>
-        financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
-          val payments = financialResponses.collect {
-            case (_, model: FinancialDetailsModel) => model.filterPayments()
-          }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00), None, List(), List()))((merged, next) => merged.mergeLists(next))
-
-          val matchingYear = financialResponses.collect {
-            case (year, response) if year == taxYear => response
-          }
-
-          matchingYear.headOption match {
-            case Some(success: FinancialDetailsModel) if success.documentDetails.exists(_.transactionId == id) =>
-              doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments, origin)
-            case Some(_: FinancialDetailsModel) =>
-              Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
-              Future.successful(Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url))
-            case _ =>
-              Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
-        }
+        handleRequest(taxYear, id, isLatePaymentCharge, isAgent = false, origin)
     }
 
-  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean, chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel, origin: Option[String])
+  def showAgent(taxYear: Int, id: String, isLatePaymentCharge: Boolean, origin: Option[String] = None): Action[AnyContent] =
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+            implicit mtdItUser =>
+            handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true, origin)
+          }
+    }
+
+
+  private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
+                                  chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
+                                  isAgent: Boolean, origin: Option[String])
                                  (implicit user: MtdItUser[_]): Future[Result] = {
     val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
@@ -106,7 +130,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
           Ok(chargeSummaryView(
             documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = backUrl(backLocation, taxYear, origin),
+            backUrl = backUrl(backLocation, taxYear, origin, isAgent),
             paymentBreakdown = paymentBreakdown,
             chargeHistory = chargeHistory,
             paymentAllocations = paymentAllocations,
@@ -115,7 +139,8 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
             paymentAllocationEnabled = paymentAllocationEnabled,
             latePaymentInterestCharge = isLatePaymentCharge,
             codingOutEnabled = isEnabled(CodingOut),
-            btaNavPartial = user.btaNavPartial
+            btaNavPartial = user.btaNavPartial,
+            isAgent = isAgent
           ))
         }
       case _ =>
@@ -147,14 +172,16 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
       paymentBreakdown = paymentBreakdown,
       chargeHistories = chargeHistories,
       paymentAllocations = paymentAllocations,
-      None,
       isLatePaymentCharge = isLatePaymentCharge
     ))
   }
 
-  private def backUrl(backLocation: Option[String], taxYear: Int, origin: Option[String]): String = backLocation match {
-    case Some("taxYearSummary") => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case Some("whatYouOwe") => controllers.routes.WhatYouOweController.show(origin).url
-    case _ => controllers.routes.HomeController.show(origin).url
+  private def backUrl(backLocation: Option[String], taxYear: Int, origin: Option[String], isAgent: Boolean): String = backLocation match {
+    case Some("taxYearSummary") => if(isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
+      else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
+    case Some("whatYouOwe") => if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
+      else controllers.routes.WhatYouOweController.show(origin).url
+    case _ => if(isAgent) controllers.routes.HomeController.showAgent().url
+      else controllers.routes.HomeController.show(origin).url
   }
 }

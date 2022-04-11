@@ -148,7 +148,6 @@ class ChargeSummaryController @Inject()(chargeSummaryView: ChargeSummary,
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocations,
-        agentReferenceNumber = incomeTaxAgentUser.agentReferenceNumber,
         isLatePaymentCharge = isLatePaymentCharge
       ))
   }

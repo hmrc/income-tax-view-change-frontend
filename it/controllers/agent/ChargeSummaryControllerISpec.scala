@@ -110,7 +110,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
-        agentReferenceNumber = Some("1"),
         isLatePaymentCharge = false
       ))
 
@@ -144,7 +143,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        agentReferenceNumber = Some("1"),
         isLatePaymentCharge = false
       ))
 
@@ -183,7 +181,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
-        agentReferenceNumber = Some("1"),
         isLatePaymentCharge = false
       ))
     }
@@ -208,7 +205,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        agentReferenceNumber = Some("1"),
         isLatePaymentCharge = true
       ))
 
