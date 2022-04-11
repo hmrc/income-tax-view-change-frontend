@@ -20,7 +20,7 @@ import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.titleTechError
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
@@ -317,7 +317,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError)
+          pageTitleAgent(titleInternalServer)
         )
       }
     }

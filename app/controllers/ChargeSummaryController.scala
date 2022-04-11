@@ -44,6 +44,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                         val financialDetailsService: FinancialDetailsService,
                                         val auditingService: AuditingService,
+                                        val itvcErrorHandler: ItvcErrorHandler,
                                         val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                         val chargeSummaryView: ChargeSummary,
                                         val retrievebtaNavPartial: NavBarPredicate,
@@ -53,11 +54,23 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
-                                        val itvcErrorHandler: AgentItvcErrorHandler)
+                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   val action: ActionBuilder[MtdItUser, AnyContent] =
     checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial
+
+  def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
+    val errorPrefix: String = s"[ForecastTaxCalcSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
+    Logger("application").error(s"$errorPrefix $message")
+    if(showInternalServerError) {
+      if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
+      else itvcErrorHandler.showInternalServerError()
+    } else {
+      if(isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+      else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+    }
+  }
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
@@ -74,11 +87,9 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case Some(success: FinancialDetailsModel) if success.documentDetails.exists(_.transactionId == id) =>
           doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments, isAgent, origin)
         case Some(_: FinancialDetailsModel) =>
-          Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
-          Future.successful(Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url))
+          Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
         case _ =>
-          Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from financial transactions")
-          Future.successful(itvcErrorHandler.showInternalServerError())
+          Future.successful(onError("Invalid response from financial transactions", isAgent, showInternalServerError = true))
       }
     }
   }
@@ -124,8 +135,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         if (isDisabled(CodingOut) && (documentDetailWithDueDate.documentDetail.isPayeSelfAssessment ||
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
-          Logger("application").warn(s"[ChargeSummaryController][showChargeSummary] Coding Out is disabled and redirected to not found page")
-          Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+          onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
           Ok(chargeSummaryView(
@@ -144,8 +154,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           ))
         }
       case _ =>
-        Logger("application").warn("[ChargeSummaryController][showChargeSummary] Invalid response from charge history")
-        itvcErrorHandler.showInternalServerError()
+        onError("Invalid response from charge history", isAgent, showInternalServerError = true)
     }
   }
 
