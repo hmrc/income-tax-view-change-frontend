@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
@@ -37,11 +36,10 @@ import views.html.PaymentHistory
 import scala.concurrent.Future
 
 class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(PaymentHistory)
   }
 
   val testPayments: List[Payment] = List(

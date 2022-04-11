@@ -52,16 +52,12 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     andThen retrieveIncomeSources andThen retrieveBtaNavBar)
   def viewPaymentHistory(origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
-      if (!isEnabled(PaymentHistory)) {
-        Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
-      } else {
         paymentHistoryService.getPaymentHistory.map {
           case Right(payments) =>
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
             Ok(paymentHistoryView(payments,CutOverCreditsEnabled=isEnabled(CutOverCredits), backUrl = backUrl(origin), user.saUtr, btaNavPartial = user.btaNavPartial, origin = origin))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
-      }
   }
 
   def backUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
