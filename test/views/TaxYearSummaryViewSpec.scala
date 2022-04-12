@@ -186,7 +186,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val taxCalculationTab: String = "Calculation"
     val taxCalculationNoData: String = "No calculation yet"
     val unattendedCalcPara: String = "! We have updated the calculation for you. You can see more details in your record-keeping software."
-    val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
+    val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update."
     val payments: String = "Payments"
     val updates: String = "Updates"
     val income: String = "Income"
