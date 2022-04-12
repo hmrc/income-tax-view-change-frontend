@@ -460,14 +460,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
@@ -537,20 +535,17 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(4)")("£1,000.00"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
 
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Payment on account 2 of 2"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("Part paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(4)")("£2,000.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")("Overdue Payment on account 2 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£2,000.00"),
 
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Late payment interest for payment on account 1 of 2 Payment under review"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("24 Jun 2021"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(3)")("Paid"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(4)")("£100.00"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "th")("Late payment interest for payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("24 Jun 2021"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£100.00"),
 
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
@@ -620,8 +615,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         res should have(
           httpStatus(OK),
           pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Balancing payment"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance")
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")("Balancing payment"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")("Overdue Class 2 National Insurance")
 
         )
       }
@@ -678,8 +673,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         res should have(
           httpStatus(OK),
           pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Class 2 National Insurance"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Class 2 National Insurance"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
 
 
         )
@@ -739,9 +734,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         res should have(
           httpStatus(OK),
           pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Overdue Balancing payment"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Class 2 National Insurance"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(1)")("Cancelled Self Assessment payment (through your PAYE tax code)")
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Balancing payment"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")("Class 2 National Insurance"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "a")("Cancelled Self Assessment payment (through your PAYE tax code)")
 
 
         )
