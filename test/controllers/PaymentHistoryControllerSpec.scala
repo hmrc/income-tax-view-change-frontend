@@ -21,6 +21,8 @@ import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPre
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.Payment
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
+import models.paymentAllocations.AllocationDetail
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -28,6 +30,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
+import testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModel
 import views.html.PaymentHistory
 
 import scala.concurrent.Future
@@ -45,7 +48,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
   )
 
   trait Setup {
-
     val paymentHistoryService: PaymentHistoryService = mock[PaymentHistoryService]
 
     val controller = new PaymentHistoryController(

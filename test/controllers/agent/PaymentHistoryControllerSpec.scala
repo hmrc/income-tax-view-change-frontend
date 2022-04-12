@@ -24,6 +24,8 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.MockIncomeSourceDetailsService
 import models.financialDetails.Payment
+import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
+import models.paymentAllocations.AllocationDetail
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -31,6 +33,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
+import testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModel
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -50,7 +53,6 @@ class PaymentHistoryControllerSpec extends TestSupport
   )
 
   trait Setup {
-
     val paymentHistoryService: PaymentHistoryService = mock[PaymentHistoryService]
 
     val controller = new PaymentHistoryController(

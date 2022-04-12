@@ -18,6 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
+import config.featureswitch.{CutOverCredits, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import play.api.i18n.I18nSupport
@@ -26,8 +27,10 @@ import services.{IncomeSourceDetailsService, PaymentHistoryService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.PaymentHistory
-
 import javax.inject.Inject
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel}
+import models.paymentAllocationCharges.PaymentAllocationViewModel
+
 import scala.concurrent.ExecutionContext
 
 class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
@@ -40,7 +43,7 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
                                          mcc: MessagesControllerComponents,
                                          implicit val ec: ExecutionContext,
                                          val itvcErrorHandler: AgentItvcErrorHandler)
-  extends ClientConfirmedController with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def viewPaymentHistory(): Action[AnyContent] =
     Authenticated.async { implicit request =>
@@ -52,7 +55,7 @@ class PaymentHistoryController @Inject()(paymentHistory: PaymentHistory,
           paymentHistoryResponse match {
             case Right(payments) =>
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
-              Ok(paymentHistory(payments, backUrl, mtdItUser.saUtr, isAgent = true))
+              Ok(paymentHistory(payments, CutOverCreditsEnabled=isEnabled(CutOverCredits), backUrl, mtdItUser.saUtr, isAgent = true))
             case Left(_) => itvcErrorHandler.showInternalServerError()
           }
         }
