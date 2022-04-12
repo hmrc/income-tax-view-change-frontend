@@ -121,7 +121,6 @@ tax-year-summary.taxable-income                                = Cyfanswm yr inc
 tax-year-summary.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
 tax-year-summary.payments.payment-type                         = Math o daliad
 tax-year-summary.payments.due-date                             = Dyddiad dyledus
-tax-year-summary.payments.status                               = Statws
 tax-year-summary.payments.amount                               = Swm
 tax-year-summary.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
 tax-year-summary.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
@@ -130,9 +129,6 @@ tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
-tax-year-summary.payments.paid                                 = Talwyd
-tax-year-summary.payments.unpaid                               = Na thalwyd
-tax-year-summary.payments.part-paid                            = Talwyd yn rhannol
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
@@ -140,7 +136,7 @@ tax-year-summary.forecast_total_title                          = 6 Ebrill {0} i 
 
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
-tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
+tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
 tax-year-summary.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
 tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 

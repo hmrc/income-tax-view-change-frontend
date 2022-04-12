@@ -22,11 +22,12 @@
 @import views.html.partials.paymentAllocations._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
-        paymentAllocationsForLpi: PaymentAllocationsForLpi, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
-        govukInsetText: GovukInsetText)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, isAgent: Boolean = false,
+@this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+        paymentAllocationsForLpi: PaymentAllocationsForLpi, paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
+        govukInsetText: GovukInsetText, link: link, appConfig: config.FrontendAppConfig)
+
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String], CutOverCreditsEnabled: Boolean, isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
@@ -35,13 +36,26 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-    pageTitle = messages("paymentAllocation.heading"),
+   pageTitle = messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial
 ) {
 
-@h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
+
+ @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+          @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
+ } else {
+          @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
+ }
+
+  @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @p(id=Some("sa-note-migrated")){
+       @messages("paymentAllocation.sa.info")
+       @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
+        outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank"))
+    }
+  }
 
 
     <dl class="govuk-summary-list" id="payment-allocation-charge-table">
@@ -75,5 +89,6 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
        } else {
            @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
        }
+       @paymentAllocationsCreditAmount(paymentAllocations, CutOverCreditsEnabled)
    </table>
 }

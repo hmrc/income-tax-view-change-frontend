@@ -727,6 +727,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object PaymentAllocation {
     val title = "Payment made to HMRC - Business Tax account - GOV.UK"
     val heading = "Payment made to HMRC"
+    val headingEarlier = "Payment from an earlier tax year"
+    val saLink = "Self Assessment online account (opens in new tab)"
+    val saNote = s"This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous $saLink."
     val backLink = "Back"
     val date = "31 January 2021"
     val amount = "£300.00"
@@ -741,6 +744,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val tableDataAmountLpi = "£300.00"
     val creditOnAccount = "Credit on account"
     val creditOnAccountAmount = "£200.00"
+    val moneyOnAccount = "Money in your account"
+    val moneyOnAccountDate = "N/A"
+    val moneyOnAccountAmount = "£200.00"
     val allocationsTableHeading = "Payment allocations"
     val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
     val allocationsTableCaption = "Payment allocations"

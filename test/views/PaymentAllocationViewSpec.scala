@@ -54,9 +54,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
-    paymentAllocationView(viewModel, backUrl)) {
+    paymentAllocationView(viewModel, backUrl, saUtr= None, CutOverCreditsEnabled = false)) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
+
+  class PaymentAllocationSetupTrue(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr= Some("1234567890"), CutOverCreditsEnabled = true)) {
+    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  }
+
 
   "Payment Allocation Page for non LPI" should {
     "check that the first section information is present" when {
@@ -113,6 +119,21 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
         document.getElementById("credit-on-account") shouldBe null
       }
+      "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in new PaymentAllocationSetupTrue(paymentAllocationViewModelNoPayment) {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.headingEarlier
+        document.getElementById("sa-note-migrated").text shouldBe paymentAllocationMessages.saNote
+        val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
+        moneyOnAccountData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
+        moneyOnAccountData.get(1).text() shouldBe paymentAllocationMessages.moneyOnAccountDate
+        moneyOnAccountData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
+      }
+      
+      "should not have money on account details when cutOverCredit FS enabled with payment items" in new PaymentAllocationSetupTrue() {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+        document.getElementById("sa-note-migrated") shouldBe null
+        document.getElementById("money-on-account") shouldBe null
+
+      }
     }
   }
   "Payment Allocation Page for LPI" should {
@@ -153,6 +174,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocationLpi
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocatedLpi
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmountLpi
+
+      }
+      "has no money on account data when cutOverCredit switch is enabled" in new PaymentAllocationSetupTrue(paymentAllocationViewModelLpi) {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+        document.getElementById("sa-note-migrated") shouldBe null
+        document.getElementById("money-on-account") shouldBe null
 
       }
     }
@@ -322,7 +349,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "The payments allocation view has NO payment allocation amount" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl)
+          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
       }
@@ -331,7 +358,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl)
+          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Clearing Date"
       }

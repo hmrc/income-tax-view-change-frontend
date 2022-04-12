@@ -68,11 +68,11 @@
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header" id="paymentTypeHeading">@messages("tax-year-summary.payments.payment-type")</th>
             <th scope="col" class="govuk-table__header" id="paymentDueDateHeading">@messages("tax-year-summary.payments.due-date")</th>
-            <th scope="col" class="govuk-table__header" id="paymentStatusHeading">@messages("tax-year-summary.payments.status")</th>
-            <th scope="col" class="govuk-table__header" id="paymentAmountHeading">@messages("tax-year-summary.payments.amount")</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric" id="paymentAmountHeading">@messages("tax-year-summary.payments.amount")</th>
         </tr>
     </thead>
 }
+
 
 @getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate, isLatePaymentCharge: Boolean = false) = @{
     if(isAgent){
@@ -109,15 +109,15 @@
         <tbody>
         @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.getOrElse(throw MissingFieldException("Due Date"))).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
+                <th scope="row" class="govuk-table__header">
                     @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                         <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                     }
                 <div>
                     @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                        <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                        <a class="govuk-link govuk-!-font-weight-regular"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
                     } else {
-                        <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
+                        <a class="govuk-link govuk-!-font-weight-regular"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
                     }
                 </div>
                     @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
@@ -127,18 +127,15 @@
                     @documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.map { latePaymentInterestAmount =>
                         @documentDetailWithDueDate.dueDate.map { dueDate =>
                             <td class="govuk-table__cell">@dueDate.toLongDateShort</td>
-                            <td class="govuk-table__cell">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getInterestPaidStatus}")</td>
-                            <td class="govuk-table__cell">@latePaymentInterestAmount.toCurrencyString</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@latePaymentInterestAmount.toCurrencyString</td>
                         }
                     }
                 } else if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment) {
                         <td class="govuk-table__cell">@messages("tax-year-summary.na")</td>
-                        <td class="govuk-table__cell">@messages("tax-year-summary.paye-tax-code")</td>
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                 } else {
                         <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort</td>
-                        <td class="govuk-table__cell">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                 }
             </tr>
         }
