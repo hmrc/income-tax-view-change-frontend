@@ -203,14 +203,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("poa1_8", "2019-04-06", POA1, "NIC4-NI", 6543.21) -> "2019-08-30")) {
 
         val expectedLinkUrls = Seq(
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa1_1").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa1_2").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_3").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_4").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_5").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_6").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_7").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2020, "poa1_8").url
+          controllers.routes.ChargeSummaryController.show(2018, "poa1_1").url,
+          controllers.routes.ChargeSummaryController.show(2018, "poa1_2").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_3").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_4").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_5").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_6").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_7").url,
+          controllers.routes.ChargeSummaryController.show(2020, "poa1_8").url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -243,14 +243,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("poa2_8", "2019-04-06", POA2, "NIC4-NI", 6543.21) -> "2019-08-30")) {
 
         val expectedLinkUrls = Seq(
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa2_1").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa2_2").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_3").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_4").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_5").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_6").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_7").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2020, "poa2_8").url
+          controllers.routes.ChargeSummaryController.show(2018, "poa2_1").url,
+          controllers.routes.ChargeSummaryController.show(2018, "poa2_2").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_3").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_4").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_5").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_6").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_7").url,
+          controllers.routes.ChargeSummaryController.show(2020, "poa2_8").url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -281,12 +281,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, "Voluntary NIC2-NI", 7654.32) -> "2019-08-29")) {
 
         val expectedLinkUrls = Seq(
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "bcd_1").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "bcd_2").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "bcd_3").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "bcd_4").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "bcd_5").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2020, "bcd_6").url
+          controllers.routes.ChargeSummaryController.show(2018, "bcd_1").url,
+          controllers.routes.ChargeSummaryController.show(2018, "bcd_2").url,
+          controllers.routes.ChargeSummaryController.show(2019, "bcd_3").url,
+          controllers.routes.ChargeSummaryController.show(2019, "bcd_4").url,
+          controllers.routes.ChargeSummaryController.show(2019, "bcd_5").url,
+          controllers.routes.ChargeSummaryController.show(2020, "bcd_6").url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading

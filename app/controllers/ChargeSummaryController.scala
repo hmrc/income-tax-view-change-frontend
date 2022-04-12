@@ -94,19 +94,19 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     }
   }
 
-  def show(taxYear: Int, id: String, isLatePaymentCharge: Boolean, origin: Option[String] = None): Action[AnyContent] =
+  def show(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
     action.async {
       implicit user =>
         handleRequest(taxYear, id, isLatePaymentCharge, isAgent = false, origin)
     }
 
-  def showAgent(taxYear: Int, id: String, isLatePaymentCharge: Boolean, origin: Option[String] = None): Action[AnyContent] =
+  def showAgent(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
     Authenticated.async {
       implicit request =>
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
             implicit mtdItUser =>
-            handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true, origin)
+            handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
           }
     }
 
