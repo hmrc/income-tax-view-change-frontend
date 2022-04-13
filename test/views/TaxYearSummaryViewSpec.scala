@@ -167,6 +167,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     testYear, Some(modelComplete(Some(false))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
     showForecastData = false)
 
+  def forecastWithNoCalcData(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled, showForecastData = true)
+
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object taxYearSummaryMessages {
@@ -185,6 +188,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val taxCalculationHeading: String = "Calculation"
     val taxCalculationTab: String = "Calculation"
     val taxCalculationNoData: String = "No calculation yet"
+    val forecastNoData: String = "No forecast yet"
+    val forecastNoDataNote: String = "You will be able to see your forecast for the whole year once you have sent an update."
     val unattendedCalcPara: String = "! We have updated the calculation for you. You can see more details in your record-keeping software."
     val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
     val payments: String = "Payments"
@@ -351,6 +356,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "when there is no calc data should display the correct notes in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
         layoutContent.selectHead("#taxCalculation > p").text shouldBe taxYearSummaryMessages.taxCalculationNoDataNote
+      }
+
+      "when there is no calc data should display the correct heading in the Forecast tab" in new Setup(forecastWithNoCalcData()) {
+        layoutContent.getElementById("no-forecast-data-header").text shouldBe taxYearSummaryMessages.forecastNoData
+      }
+
+      "when there is no calc data should display the correct notes in the Forecast tab" in new Setup(forecastWithNoCalcData()) {
+        layoutContent.getElementById("no-forecast-data-note").text shouldBe taxYearSummaryMessages.forecastNoDataNote
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
@@ -645,6 +658,15 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView(isAgent = true)) {
         document.title shouldBe taxYearSummaryMessages.agentTitle
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
+      }
+
+      "display No forecastdata yet when calcData returns NOT_FOUND" in new Setup(forecastWithNoCalcData(isAgent = true)) {
+        document.title shouldBe taxYearSummaryMessages.agentTitle
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
+
+        document.select(".forecast_table h2").text.contains(messagesLookUp("forecast_taxCalc.noForecast.heading"))
+        document.select(".forecast_table p").text.contains(messagesLookUp("forecast_taxCalc.noForecast.text"))
       }
 
       "have the correct title" in new Setup(estimateView(isAgent = true)) {

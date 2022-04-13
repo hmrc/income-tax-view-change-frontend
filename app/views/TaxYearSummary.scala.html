@@ -202,9 +202,19 @@
     }
 }
 
+@noForcastContent = {
+    @h2(msg = messages("forecast_taxCalc.noForecast.heading"), classes = "govuk-heading-l", optId=Some("no-forecast-data-header"))
+    @p(id=Some("no-forecast-data-note"))(Html(messages("forecast_taxCalc.noForecast.text")))
+}
+
 @forecastContent = {
-    @forecastContentTable
-    @govukInsetText(InsetText(content = Text(messages("tax-year-summary.forecast_tab.insetText", taxYear.toString)), id=Some("inset_forecast")))
+
+    @if(modelOpt.isEmpty){
+        @noForcastContent
+    } else {
+        @forecastContentTable
+        @govukInsetText(InsetText(content = Text(messages("tax-year-summary.forecast_tab.insetText", taxYear.toString)), id=Some("inset_forecast")))
+    }
 }
 
 @forecastContentTable = @{
@@ -281,7 +291,7 @@
                 }
                 </dd>
             </div>
-            @if(showForecastData) {
+            @if(showForecastData && modelOpt.isDefined) {
                 <div id="forecast_total" class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")

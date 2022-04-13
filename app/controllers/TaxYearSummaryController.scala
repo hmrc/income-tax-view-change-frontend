@@ -105,7 +105,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = false,
+          showForecastData = true,
           origin = origin
         ))
       case _: LiabilityCalculationError =>
