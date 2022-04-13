@@ -179,7 +179,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
     val totalDue: String = "Total Due"
     val taxDue: String = "£4.04"
-    val calcDateInfo: String = "This is only based on figures we’ve already received to 5 January 2017. It’s not your final tax bill."
+    val calcDateInfo: String = s"This is only based on figures we’ve already received to $calcDate. It’s not your final tax bill."
     val calcEstimateInfo: String = "This is a year to date estimate based on figures we’ve already received."
     val taxCalculation: String = s"6 April ${testYear - 1} to 5 January $testYear calculation"
     val taxCalculationHeading: String = "Calculation"
