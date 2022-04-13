@@ -337,6 +337,8 @@ forecast_taxCalc.incomeTaxAndNicsDue                            = Treth Incwm a 
 forecast_taxCalc.capitalGainsTax                                = Treth Enillion Cyfalaf:
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Treth Incwm, Yswiriant Gwladol a Threth Enillion Cyfalaf sy’n ddyledus:
 
+forecast_taxCalc.noForecast.heading                             = Dim rhagolwg eto
+forecast_taxCalc.noForecast.text                                = Byddwch yn gallu gweld eich rhagolwg ar gyfer y flwyddyn gyfan unwaith y byddwch wedi anfon diweddariad.
 
 ## NextUpdates Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
