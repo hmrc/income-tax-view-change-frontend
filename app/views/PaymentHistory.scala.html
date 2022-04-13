@@ -96,26 +96,31 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                         </thead>
                         <tbody>
                         @for(payment <- yearPayments) {
+                          @if(CutOverCreditsEnabled && payment.credit.isDefined){
                             <tr class = "govuk-table__row">
-                                <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
-                                @if(CutOverCreditsEnabled && payment.credit.isDefined){
-                                <td class="govuk-table__cell" id="paymentFromEarlierYear">
-                                    <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                                        @messages("paymentHistory.paymentFromEarlierYear")
-                                        <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
-                                    </a>
-                                </td>
-                                } else {
-                                <td class="govuk-table__cell">
-                                    <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                                        @messages("paymentHistory.paymentToHmrc")
-                                        <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
-                                    </a>
-                                </td>
-                                }
-                                <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
+                              <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+                              <td class="govuk-table__cell" id="paymentFromEarlierYear">
+                                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
+                                    @messages("paymentHistory.paymentFromEarlierYear")
+                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                                </a>
+                              </td>
+                              <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
                             </tr>
-                        }
+                          } else if(!payment.credit.isDefined){
+                           <tr class = "govuk-table__row">
+                             <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+
+                             <td class="govuk-table__cell">
+                                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
+                                    @messages("paymentHistory.paymentToHmrc")
+                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                                </a>
+                             </td>
+
+                             <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
+                           </tr>
+                        } }
                         </tbody>
                     </table>
                 </div>
