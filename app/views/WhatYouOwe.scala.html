@@ -143,9 +143,9 @@
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = documentDetail.taxYear
     val linkHref = if(isAgent) {
-        controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
+        controllers.routes.ChargeSummaryController.showAgent(taxYear.toInt,
             documentDetail.transactionId, isLatePaymentInterest)
-    } else controllers.routes.ChargeSummaryController.showChargeSummary(taxYear.toInt,
+    } else controllers.routes.ChargeSummaryController.show(taxYear.toInt,
         documentDetail.transactionId, isLatePaymentInterest, origin)
     paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
         linkSuffix: String)
@@ -366,9 +366,9 @@
 
  @getCodingOutHref(taxYear: Int, transactionId: String) = @{
     if (isAgent) {
-        controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false)
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, transactionId, false)
     } else {
-        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, transactionId, false, origin = origin)
+        controllers.routes.ChargeSummaryController.show(taxYear, transactionId, false, origin = origin)
     }
  }
 

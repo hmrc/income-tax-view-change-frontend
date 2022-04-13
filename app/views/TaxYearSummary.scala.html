@@ -76,9 +76,9 @@
 
 @getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate, isLatePaymentCharge: Boolean = false) = @{
     if(isAgent){
-        controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
     } else {
-        controllers.routes.ChargeSummaryController.showChargeSummary(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge, origin).url
+        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge, origin).url
     }
 }
 
