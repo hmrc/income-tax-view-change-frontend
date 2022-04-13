@@ -23,6 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -83,6 +84,7 @@ class InYearTaxCalculationController @Inject()(
 
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
+          .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
         Logger("application").info("[InYearTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()

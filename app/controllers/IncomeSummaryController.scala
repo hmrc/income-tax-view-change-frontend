@@ -18,10 +18,11 @@ package controllers
 
 import audit.AuditingService
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
 import config._
+import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -68,7 +69,8 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
-        val fallbackBackUrl = getFallbackUrl(isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
+          liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         viewModel match {
           case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent,
             btaNavPartial = user.btaNavPartial)(implicitly, messages))

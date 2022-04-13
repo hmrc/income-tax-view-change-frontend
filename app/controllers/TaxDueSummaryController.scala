@@ -23,9 +23,8 @@ import config.featureswitch.{Class4UpliftEnabled, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
-
-import javax.inject.{Inject, Singleton}
 import models.liabilitycalculation.viewmodels._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
@@ -38,6 +37,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import utils.TaxCalcFallBackBackLink
 import views.html.TaxCalcBreakdown
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -70,7 +70,8 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = TaxDueSummaryViewModel(liabilityCalc)
         auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
-        val fallbackBackUrl = getFallbackUrl(isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
+          isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial,
           isEnabled(Class4UpliftEnabled)))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>

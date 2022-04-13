@@ -23,6 +23,7 @@ import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
+import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
@@ -73,7 +74,8 @@ class TaxYearSummaryController @Inject()(taxYearSummary: TaxYearSummary,
           withObligationsModel(taxYear) { obligations =>
             calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map { liabilityCalcResponse =>
               view(liabilityCalcResponse, documentDetailsWithDueDates, taxYear, obligations, getBackURL(request.headers.get(REFERER)))
-                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearSummary")(request)
+                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearSummary")
+                .addingToSession(calcPagesBackPage -> "ITVC")(request)
             }
           }
         }

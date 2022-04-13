@@ -19,10 +19,11 @@ package controllers
 import audit.AuditingService
 import audit.models._
 import auth.MtdItUserWithNino
-import config.featureswitch.FeatureSwitching
 import config._
+import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation._
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
@@ -66,7 +67,8 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
         auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
-        val fallbackBackUrl = getFallbackUrl(isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
+          liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         Logger("application").info(s"${if (isAgent) "[Agent]"}[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data found.")

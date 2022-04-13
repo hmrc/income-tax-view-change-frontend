@@ -23,6 +23,7 @@ import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import forms.utils.SessionKeys
+import forms.utils.SessionKeys.calcPagesBackPage
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
@@ -175,6 +176,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
               view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
                 backUrl = getBackURL(user.headers.get(REFERER), origin), origin = origin)
                 .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearSummary")
+                .addingToSession(calcPagesBackPage -> "ITVC")
             }
           case _ => Future.successful(itvcErrorHandler.showInternalServerError())
         }
