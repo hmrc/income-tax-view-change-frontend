@@ -32,8 +32,9 @@ import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.PaymentAllocation
-
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -66,8 +67,15 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
 
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations) =>
-        auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-        Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr, CutOverCreditsEnabled=isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
+
+        if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)){
+          Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
+          Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        } else {
+          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
+        }
+
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)
       case _ => itvcErrorHandler.showInternalServerError()
