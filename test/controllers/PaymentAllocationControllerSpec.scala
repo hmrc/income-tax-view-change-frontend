@@ -271,10 +271,10 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
           disable(CutOverCredits)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockSingleBusinessIncomeSource()
-          setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModel)
+          setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModelNoPayment)
 
           mockPaymentAllocationView(
-            paymentAllocationViewModel,
+            paymentAllocationViewModelNoPayment,
             controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, saUtr = None,
             CutOverCreditsEnabled = false, isAgent = true
           )(HtmlFormat.empty)
