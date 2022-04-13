@@ -363,6 +363,9 @@ forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and
 forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Income Tax, National Insurance contributions and Capital Gains Tax due:
 
+forecast_taxCalc.noForecast.heading                             = No forecast yet
+forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
+
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
 obligations.quarterly.to                                        = to
@@ -408,9 +411,9 @@ standardError.heading                                           = Sorry, there i
 standardError.message                                           = Try again later.
 
 ## Custom Error Page ##
-error.custom.heading                                          = There is a problem
-error.custom.message                                          = The page you’re trying to view has changed
-error.custom.link                                             = Return to Making Tax Digital for Income Tax
+error.custom.heading                                            = There is a problem
+error.custom.message                                            = The page you’re trying to view has changed
+error.custom.link                                               = Return to Making Tax Digital for Income Tax
 
 ## Beta Banner ##
 betaBanner.beta                                                 = BETA
@@ -494,7 +497,7 @@ whatYouOwe.payments-made                                           = Any payment
 whatYouOwe.payments-made-bullet-1.1                                = may take up to 5 working days to process, depending on what
 whatYouOwe.payments-made-bullet-1.2                                = payment method
 whatYouOwe.payments-made-bullet-1.3                                = you use
-whatYouOwe.payments-made-bullet-2                                = must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late
+whatYouOwe.payments-made-bullet-2                                  = must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late
 whatYouOwe.sa-note                                                 = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
 whatYouOwe.sa-link                                                 = Self Assessment online account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
