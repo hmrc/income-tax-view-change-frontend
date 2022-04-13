@@ -23,31 +23,51 @@ class TaxCalcFallBackBackLinkSpec extends TestSupport with TaxCalcFallBackBackLi
   private trait Test
 
   "The getFallbackUrl function" when {
-
-    "user is NOT an agent and calc is crystallised" should {
-      "provide the correct url" in new Test {
-        val expectedURL = "/report-quarterly/income-and-expenses/view/2022/final-tax-overview?origin=PTA"
-        getFallbackUrl(isAgent = false, isCrystallised = true, taxYear = 2022, origin = Some("PTA")) shouldBe expectedURL
+    "the user has come from a submission page" when {
+      "user is NOT an agent and calc is crystallised" should {
+        "provide the correct url" in new Test {
+          val expectedURL = "/report-quarterly/income-and-expenses/view/2022/final-tax-overview?origin=PTA"
+          getFallbackUrl(calcPageBackLink = Some("submission"), isAgent = false,
+            isCrystallised = true, taxYear = 2022, origin = Some("PTA")) shouldBe expectedURL
+        }
+      }
+      "user IS an agent and calc is crystallised" should {
+        "provide the correct url" in new Test {
+          val expectedURL = "/report-quarterly/income-and-expenses/view/agents/2022/final-tax-overview"
+          getFallbackUrl(calcPageBackLink = Some("submission"), isAgent = true,
+            isCrystallised = true, taxYear = 2022, origin = None) shouldBe expectedURL
+        }
+      }
+      "user is NOT an agent and calc is NOT crystallised" should {
+        "provide the correct url" in new Test {
+          val expectedURL = "/report-quarterly/income-and-expenses/view/tax-overview?origin=PTA"
+          getFallbackUrl(calcPageBackLink = Some("submission"), isAgent = false,
+            isCrystallised = false, taxYear = 2022, origin = Some("PTA")) shouldBe expectedURL
+        }
+      }
+      "user IS an agent and calc is NOT crystallised" should {
+        "provide the correct url" in new Test {
+          val expectedURL = "/report-quarterly/income-and-expenses/view/agents/tax-overview"
+          getFallbackUrl(calcPageBackLink = Some("submission"), isAgent = true, isCrystallised = false,
+            taxYear = 2022, origin = None) shouldBe expectedURL
+        }
       }
     }
-    "user IS an agent and calc is crystallised" should {
-      "provide the correct url" in new Test {
-        val expectedURL = "/report-quarterly/income-and-expenses/view/agents/2022/final-tax-overview"
-        getFallbackUrl(isAgent = true, isCrystallised = true, taxYear = 2022, origin = None) shouldBe expectedURL
+    "the user has come from a ITVC page" when {
+      "user is NOT an agent" should {
+        "provide the correct url" in new Test {
+          val expectedURL = "/report-quarterly/income-and-expenses/view/calculation/2022?origin=PTA"
+          getFallbackUrl(calcPageBackLink = Some("ITVC"), isAgent = false,
+            isCrystallised = true, taxYear = 2022, origin = Some("PTA")) shouldBe expectedURL
+        }
+      }
+      "user IS an agent" should {
+        "provide the correct url" in new Test {
+          val expectedURL = "/report-quarterly/income-and-expenses/view/agents/calculation/2022"
+          getFallbackUrl(calcPageBackLink = Some("ITVC"), isAgent = true,
+            isCrystallised = true, taxYear = 2022, origin = None) shouldBe expectedURL
+        }
       }
     }
-    "user is NOT an agent and calc is NOT crystallised" should {
-      "provide the correct url" in new Test {
-        val expectedURL = "/report-quarterly/income-and-expenses/view/calculation/2022?origin=PTA"
-        getFallbackUrl(isAgent = false, isCrystallised = false, taxYear = 2022, origin = Some("PTA")) shouldBe expectedURL
-      }
-    }
-    "user IS an agent and calc is NOT crystallised" should {
-      "provide the correct url" in new Test {
-        val expectedURL = "/report-quarterly/income-and-expenses/view/agents/calculation/2022"
-        getFallbackUrl(isAgent = true, isCrystallised = false, taxYear = 2022, origin = None) shouldBe expectedURL
-      }
-    }
-
   }
 }

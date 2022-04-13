@@ -148,6 +148,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
         result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -177,6 +178,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
         result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -335,6 +337,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
         result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -412,6 +415,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           Jsoup.parse(contentAsString(result)).text() shouldBe expectedContent
           contentType(result) shouldBe Some("text/html")
           result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
+          result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
         }
       }
 
