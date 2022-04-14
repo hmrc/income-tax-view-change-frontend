@@ -27,10 +27,10 @@
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-0">
                 @if(isAgent){
-                    <a class="govuk-link" style="display:block" href="@{controllers.agent.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
+                    <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showAgent(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
                     @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
                 } else {
-                    <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showChargeSummary(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true, origin)}" class="govuk-link">
+                    <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.show(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true, origin)}" class="govuk-link">
                     @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
                 }
                 <span class="govuk-visually-hidden"> @lpiAllocationDetails.documentDetail.taxYear</span>

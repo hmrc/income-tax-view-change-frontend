@@ -21,10 +21,6 @@ POST        /utr-problem                                                  contro
 #Home Controller
 GET         /remove-client-sessions                                       controllers.agent.RemoveClientDetailsSessionsController.show
 
-#Charge summary
-GET         /tax-years/:taxYear/charge                                    controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
-
-
 # Tax Year Summary
 GET         /calculation/:taxYear                                         controllers.agent.TaxYearSummaryController.show(taxYear: Int)
 

@@ -26,9 +26,9 @@
 
 @paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate, isAgent: Boolean) = @{
     if(isAgent){
-        controllers.agent.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+        controllers.routes.ChargeSummaryController.showAgent(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
     } else {
-        controllers.routes.ChargeSummaryController.showChargeSummary(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+        controllers.routes.ChargeSummaryController.show(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
     }
 }
 

@@ -121,7 +121,6 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     paymentBreakdown = if (!isLateInterestCharge) paymentBreakdowns else List.empty,
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
     paymentAllocations = paymentAllocation,
-    agentReferenceNumber = Some("agentReferenceNumber"),
     isLatePaymentCharge = isLateInterestCharge
   )
 
@@ -141,7 +140,6 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     paymentBreakdown = List.empty,
     chargeHistories = List.empty,
     paymentAllocations = List.empty,
-    agentReferenceNumber = None,
     isLatePaymentCharge = false
   )
 
