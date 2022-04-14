@@ -119,14 +119,14 @@ taxYears.oldSa.agent.content.3								   = This will be a different Government G
 tax-year-summary.heading                                           = Tax year summary
 tax-year-summary.heading-secondary                                 = 6 April {0} to 5 April {1}
 tax-year-summary.calculation-date                                  = Calculation date
-tax-year-summary.calc-from-last-time                               = This is only based on figures we’ve already received to 5 January {0}. It’s not your final tax bill.
+tax-year-summary.calc-from-last-time                               = This is only based on figures we’ve already received to {0}. It’s not your final tax bill.
 tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
 tax-year-summary.total-due                                         = Total Due
 tax-year-summary.contents                                          = Contents
 tax-year-summary.tax-calculation.date                              = 6 April {0} to 5 January {1} calculation
 tax-year-summary.tax-calculation                                   = Calculation
 tax-year-summary.tax-calculation.no-calc                           = No calculation yet
-tax-year-summary.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.
+tax-year-summary.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update.
 tax-year-summary.tax-calculation.unattended-calc                   = We have updated the calculation for you. You can see more details in your record-keeping software.
 tax-year-summary.payments                                          = Payments
 tax-year-summary.forecast                                          = Forecast
@@ -137,7 +137,6 @@ tax-year-summary.taxable-income                                    = Total incom
 tax-year-summary.tax-due                                           = Income Tax and National Insurance contributions due
 tax-year-summary.payments.payment-type                             = Payment type
 tax-year-summary.payments.due-date                                 = Due date
-tax-year-summary.payments.status                                   = Status
 tax-year-summary.payments.amount                                   = Amount
 tax-year-summary.payments.paymentOnAccount1.text                   = Payment on account 1 of 2
 tax-year-summary.payments.paymentOnAccount2.text                   = Payment on account 2 of 2
@@ -146,9 +145,7 @@ tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late paymen
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
 tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest for Balancing payment
 tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled Self Assessment payment (through your PAYE tax code)
-tax-year-summary.payments.paid                                     = Paid
-tax-year-summary.payments.unpaid                                   = Unpaid
-tax-year-summary.payments.part-paid                                = Part paid
+
 tax-year-summary.payments.overdue                                  = Overdue
 tax-year-summary.payments.no-payments                              = No payments currently due.
 tax-year-summary.payments.paymentUnderReview                       = Payment under review
@@ -366,6 +363,9 @@ forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and
 forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Income Tax, National Insurance contributions and Capital Gains Tax due:
 
+forecast_taxCalc.noForecast.heading                             = No forecast yet
+forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
+
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
 obligations.quarterly.to                                        = to
@@ -411,9 +411,9 @@ standardError.heading                                           = Sorry, there i
 standardError.message                                           = Try again later.
 
 ## Custom Error Page ##
-error.custom.heading                                          = There is a problem
-error.custom.message                                          = The page you’re trying to view has changed
-error.custom.link                                             = Return to Making Tax Digital for Income Tax
+error.custom.heading                                            = There is a problem
+error.custom.message                                            = The page you’re trying to view has changed
+error.custom.link                                               = Return to Making Tax Digital for Income Tax
 
 ## Beta Banner ##
 betaBanner.beta                                                 = BETA
@@ -497,7 +497,7 @@ whatYouOwe.payments-made                                           = Any payment
 whatYouOwe.payments-made-bullet-1.1                                = may take up to 5 working days to process, depending on what
 whatYouOwe.payments-made-bullet-1.2                                = payment method
 whatYouOwe.payments-made-bullet-1.3                                = you use
-whatYouOwe.payments-made-bullet-2                                = must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late
+whatYouOwe.payments-made-bullet-2                                  = must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late
 whatYouOwe.sa-note                                                 = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
 whatYouOwe.sa-link                                                 = Self Assessment online account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
@@ -686,6 +686,7 @@ paymentHistory.info                                             = If you cannot 
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
+paymentHistory.paymentFromEarlierYear                           = Payment from an earlier tax year
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.table.header.date                                = Date
 paymentHistory.table.header.description                         = Description
@@ -693,6 +694,8 @@ paymentHistory.table.header.amount                              = Amount
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
+paymentAllocation.sa.info                                          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
+paymentAllocation.earlyTaxYear.heading                          = Payment from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
 paymentAllocation.info                                          = Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years.
@@ -702,6 +705,7 @@ paymentAllocation.tableHead.allocated-date                      = Date allocated
 paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
+paymentAllocation.moneyOnAccount                                = Money in your account
 paymentAllocation.na                                            = N/A
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Income Tax for payment on account 1 of 2

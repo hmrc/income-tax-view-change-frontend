@@ -94,7 +94,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         paymentBreakdown = List(financialDetailModelPartial(chargeType = "ITSA England & NI", originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
-        None,
         isLatePaymentCharge = false
       ))
     }
@@ -128,7 +127,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        None,
         isLatePaymentCharge = false
       ))
 
@@ -169,7 +167,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
-        None,
         isLatePaymentCharge = false
       ))
 
@@ -207,7 +204,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        None,
         isLatePaymentCharge = true
       ))
 

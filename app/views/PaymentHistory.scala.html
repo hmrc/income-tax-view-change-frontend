@@ -20,6 +20,9 @@
 @import implicits.ImplicitDateFormatter
 @import implicits.ImplicitDateFormatterImpl
 @import exceptions.MissingFieldException
+@import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails.FinancialDetailsModel
+@import models.financialDetails._
 
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
@@ -33,7 +36,7 @@
       link: link
 )
 
-@(payments: List[Payment], backUrl: String, saUtr: Option[String], isAgent: Boolean = false ,
+@(payments: List[Payment], CutOverCreditsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
@@ -95,12 +98,21 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                         @for(payment <- yearPayments) {
                             <tr class = "govuk-table__row">
                                 <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+                                @if(CutOverCreditsEnabled && payment.credit.isDefined){
+                                <td class="govuk-table__cell" id="paymentFromEarlierYear">
+                                    <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
+                                        @messages("paymentHistory.paymentFromEarlierYear")
+                                        <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                                    </a>
+                                </td>
+                                } else {
                                 <td class="govuk-table__cell">
                                     <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                                         @messages("paymentHistory.paymentToHmrc")
                                         <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
                                     </a>
                                 </td>
+                                }
                                 <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
                             </tr>
                         }

@@ -167,6 +167,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     testYear, Some(modelComplete(Some(false))), testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
     showForecastData = false)
 
+  def forecastWithNoCalcData(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled, showForecastData = true)
+
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object taxYearSummaryMessages {
@@ -179,14 +182,16 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
     val totalDue: String = "Total Due"
     val taxDue: String = "£4.04"
-    val calcDateInfo: String = "This is only based on figures we’ve already received to 5 January 2017. It’s not your final tax bill."
+    val calcDateInfo: String = s"This is only based on figures we’ve already received to $calcDate. It’s not your final tax bill."
     val calcEstimateInfo: String = "This is a year to date estimate based on figures we’ve already received."
     val taxCalculation: String = s"6 April ${testYear - 1} to 5 January $testYear calculation"
     val taxCalculationHeading: String = "Calculation"
     val taxCalculationTab: String = "Calculation"
     val taxCalculationNoData: String = "No calculation yet"
+    val forecastNoData: String = "No forecast yet"
+    val forecastNoDataNote: String = "You will be able to see your forecast for the whole year once you have sent an update."
     val unattendedCalcPara: String = "! We have updated the calculation for you. You can see more details in your record-keeping software."
-    val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
+    val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update."
     val payments: String = "Payments"
     val updates: String = "Updates"
     val income: String = "Income"
@@ -196,7 +201,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val incomeTaxNationalInsuranceDue: String = "Income Tax and National Insurance contributions due"
     val paymentType: String = "Payment type"
     val dueDate: String = "Due date"
-    val status: String = "Status"
     val amount: String = "Amount"
     val paymentOnAccount1: String = "Payment on account 1 of 2"
     val paymentOnAccount2: String = "Payment on account 2 of 2"
@@ -353,6 +357,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#taxCalculation > p").text shouldBe taxYearSummaryMessages.taxCalculationNoDataNote
       }
 
+      "when there is no calc data should display the correct heading in the Forecast tab" in new Setup(forecastWithNoCalcData()) {
+        layoutContent.getElementById("no-forecast-data-header").text shouldBe taxYearSummaryMessages.forecastNoData
+      }
+
+      "when there is no calc data should display the correct notes in the Forecast tab" in new Setup(forecastWithNoCalcData()) {
+        layoutContent.getElementById("no-forecast-data-note").text shouldBe taxYearSummaryMessages.forecastNoDataNote
+      }
+
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
         val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) td:nth-child(1) a")
         allowancesLink.text shouldBe taxYearSummaryMessages.allowancesAndDeductions
@@ -375,26 +387,22 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display the table headings in the Payments tab" in new Setup(estimateView()) {
         layoutContent.selectHead("#paymentTypeHeading").text shouldBe taxYearSummaryMessages.paymentType
         layoutContent.selectHead("#paymentDueDateHeading").text shouldBe taxYearSummaryMessages.dueDate
-        layoutContent.selectHead("#paymentStatusHeading").text shouldBe taxYearSummaryMessages.status
         layoutContent.selectHead("#paymentAmountHeading").text shouldBe taxYearSummaryMessages.amount
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.paymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the Due date in the Payments tab" in new Setup(estimateView()) {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 May 2019"
       }
 
-      "display the Status in the payments tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe taxYearSummaryMessages.unpaid
-      }
 
       "display the Amount in the payments tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(4)").text shouldBe "£1,400.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe "£1,400.00"
       }
 
       "display no payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
@@ -404,14 +412,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
-        val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) div:nth-child(3)")
+        val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) div:nth-child(3)")
         paymentType.text shouldBe taxYearSummaryMessages.paymentUnderReview
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.lpiPaymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
@@ -419,18 +427,15 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 Jun 2019"
       }
 
-      "display the Status in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearSummaryMessages.partPaid
-      }
 
       "display the Amount in the payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(4)").text shouldBe "£100.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe "£100.00"
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) a")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.lpiPaymentOnAccount2
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
@@ -438,18 +443,15 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Jul 2019"
       }
 
-      "display the Status in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe taxYearSummaryMessages.unpaid
-      }
 
       "display the Amount in the payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(4)").text shouldBe "£80.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(3)").text shouldBe "£80.00"
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(4) a")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.lpiRemainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
@@ -457,38 +459,35 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(2)").text shouldBe "15 Aug 2019"
       }
 
-      "display the Status in the payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe taxYearSummaryMessages.paid
-      }
 
       "display the Amount in the payments tab for late payment interest p" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(4)").text shouldBe "£100.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(4) td:nth-child(3)").text shouldBe "£100.00"
       }
 
       "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Balancing payment" in new Setup(multipleDunningLockView()) {
-        layoutContent.selectHead("#payments-table tbody tr:nth-child(1) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearSummaryMessages.paymentUnderReview
-        layoutContent.selectHead("#payments-table tbody tr:nth-child(3) td:nth-child(1) div:nth-child(3)").text shouldBe taxYearSummaryMessages.paymentUnderReview
+        layoutContent.selectHead("#payments-table tbody tr:nth-child(1) div:nth-child(3)").text shouldBe taxYearSummaryMessages.paymentUnderReview
+        layoutContent.selectHead("#payments-table tbody tr:nth-child(3) div:nth-child(3)").text shouldBe taxYearSummaryMessages.paymentUnderReview
         layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)")
       }
 
       "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(class2NicsView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the Balancing payment payment link on the payments table when coding out is disabled" in new Setup(class2NicsView(codingOutEnabled = false)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the PAYE Self Assessment link on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.payeSA
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
@@ -496,12 +495,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe taxYearSummaryMessages.na
       }
 
-      s"display the Status in the payments tab for PAYE Self Assessment as ${taxYearSummaryMessages.payeTaxCode}" in new Setup(payeView(codingOutEnabled = true)) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe taxYearSummaryMessages.payeTaxCode
-      }
-
       "display the Amount in the payments tab for PAYE Self Assessment" in new Setup(payeView(codingOutEnabled = true)) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(4)").text shouldBe "£1,400.00"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(3)").text shouldBe "£1,400.00"
       }
 
       "display the Due date in the Payments tab for Cancelled" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
@@ -511,56 +506,56 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.cancelledPaye
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.cancelledPaye
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the Balancing payment on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = false)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
@@ -647,6 +642,15 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
       }
 
+      "display No forecastdata yet when calcData returns NOT_FOUND" in new Setup(forecastWithNoCalcData(isAgent = true)) {
+        document.title shouldBe taxYearSummaryMessages.agentTitle
+        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
+        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
+
+        document.select(".forecast_table h2").text.contains(messagesLookUp("forecast_taxCalc.noForecast.heading"))
+        document.select(".forecast_table p").text.contains(messagesLookUp("forecast_taxCalc.noForecast.text"))
+      }
+
       "have the correct title" in new Setup(estimateView(isAgent = true)) {
         document.title shouldBe taxYearSummaryMessages.agentTitle
       }
@@ -675,15 +679,15 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.paymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView(isAgent = true)) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.lpiPaymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
@@ -691,63 +695,63 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         class2NicsView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the PAYE Self Assessment link on the payments table when coding out is enabled" in new Setup(payeView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.payeSA
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.cancelledPaye
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.class2Nic
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(codingOutEnabled = true, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
         paymentTypeLink.text shouldBe taxYearSummaryMessages.cancelledPaye
-        paymentTypeLink.attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
       }
 

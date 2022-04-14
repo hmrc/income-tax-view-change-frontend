@@ -401,7 +401,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "have Data for due within 30 days" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
 
-          pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000124").url
           pageDocument.getElementById("due-0-overdue") shouldBe null
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -409,7 +409,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
         "have data with POA2 with hyperlink and no overdue" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
 
-          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000125").url
           pageDocument.getElementById("due-1-overdue") shouldBe null
         }
@@ -552,7 +552,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
-            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
               LocalDate.now().getYear, "1040000124", latePaymentCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe whatYouOwe.overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -585,7 +585,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
-            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
               LocalDate.now().getYear, "1040000124", latePaymentCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe whatYouOwe.overdueTag
             pageDocument.getElementById("LpiDunningBlock").text shouldBe "Payment under review"
@@ -614,7 +614,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
-            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
               LocalDate.now().getYear, "1040000124", latePaymentCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe whatYouOwe.overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -643,7 +643,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000124").url
           pageDocument.getElementById("due-0-overdue").text shouldBe whatYouOwe.overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -673,7 +673,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000124").url
           pageDocument.getElementById("due-0-overdue").text shouldBe whatYouOwe.overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -691,7 +691,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.poa2Text + s" $currentYear"
           overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
-          pageDocument.getElementById("due-1-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          pageDocument.getElementById("due-1-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000125").url
           pageDocument.getElementById("due-1-overdue").text shouldBe whatYouOwe.overdueTag
         }
@@ -807,13 +807,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
           dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
-          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000125").url
           pageDocument.getElementById("due-0-overdue").text shouldBe whatYouOwe.overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             LocalDate.now().getYear).url
 
-          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000123").url
           pageDocument.getElementById("due-1-overdue") shouldBe null
           pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -874,13 +874,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe whatYouOwe.taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
-        pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           LocalDate.now().getYear, "1040000125").url
         pageDocument.getElementById("due-0-overdue").text shouldBe whatYouOwe.overdueTag
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
           LocalDate.now().getYear).url
 
-        pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           LocalDate.now().getYear, "1040000123").url
         pageDocument.getElementById("due-1-overdue") shouldBe null
         pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -1030,7 +1030,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         AgentPaymentDue.title
       }'" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.title() shouldBe AgentPaymentDue.title
-        pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
+        pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearSummaryController.show(
           LocalDate.now().getYear).url

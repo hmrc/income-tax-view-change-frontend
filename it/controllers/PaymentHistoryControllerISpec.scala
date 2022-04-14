@@ -18,7 +18,6 @@ package controllers
 
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -30,11 +29,10 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
 
-class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(PaymentHistory)
   }
 
   val paymentsFull: Seq[Payment] = Seq(
@@ -74,24 +72,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
   }
 
-  s"return $NOT_FOUND" when {
-    "the payment history feature switch is disabled" in {
-      disable(PaymentHistory)
-      isAuthorisedUser(authorised = true)
-      stubUserDetails()
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentsFull)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
-
-      Then(s"A not found page is returned to the user")
-      result should have(
-        httpStatus(NOT_FOUND),
-        pageTitleIndividual(titleNotFound)
-      )
-    }
-  }
 
   s"return $OK with the payment history page" when {
     "the payment history feature switch is enabled" in {

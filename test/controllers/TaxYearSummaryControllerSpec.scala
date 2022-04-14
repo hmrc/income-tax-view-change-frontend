@@ -406,7 +406,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
             testChargesList,
             testObligtionsModel,
             taxYearsBackLink,
-            codingOutEnabled = true
+            codingOutEnabled = true,
+            showForecastData = true
           ).toString()).text()
 
           val result = TestTaxYearSummaryController$.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))

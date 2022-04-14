@@ -54,9 +54,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
-    paymentAllocationView(viewModel, backUrl)) {
+    paymentAllocationView(viewModel, backUrl, saUtr= None, CutOverCreditsEnabled = false)) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
+
+  class PaymentAllocationSetupTrue(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr= Some("1234567890"), CutOverCreditsEnabled = true)) {
+    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  }
+
 
   "Payment Allocation Page for non LPI" should {
     "check that the first section information is present" when {
@@ -113,6 +119,21 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
         document.getElementById("credit-on-account") shouldBe null
       }
+      "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in new PaymentAllocationSetupTrue(paymentAllocationViewModelNoPayment) {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.headingEarlier
+        document.getElementById("sa-note-migrated").text shouldBe paymentAllocationMessages.saNote
+        val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
+        moneyOnAccountData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
+        moneyOnAccountData.get(1).text() shouldBe paymentAllocationMessages.moneyOnAccountDate
+        moneyOnAccountData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
+      }
+      
+      "should not have money on account details when cutOverCredit FS enabled with payment items" in new PaymentAllocationSetupTrue() {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+        document.getElementById("sa-note-migrated") shouldBe null
+        document.getElementById("money-on-account") shouldBe null
+
+      }
     }
   }
   "Payment Allocation Page for LPI" should {
@@ -153,6 +174,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocationLpi
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocatedLpi
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmountLpi
+
+      }
+      "has no money on account data when cutOverCredit switch is enabled" in new PaymentAllocationSetupTrue(paymentAllocationViewModelLpi) {
+        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+        document.getElementById("sa-note-migrated") shouldBe null
+        document.getElementById("money-on-account") shouldBe null
 
       }
     }
@@ -203,14 +230,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("poa1_8", "2019-04-06", POA1, "NIC4-NI", 6543.21) -> "2019-08-30")) {
 
         val expectedLinkUrls = Seq(
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa1_1").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa1_2").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_3").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_4").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_5").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_6").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa1_7").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2020, "poa1_8").url
+          controllers.routes.ChargeSummaryController.show(2018, "poa1_1").url,
+          controllers.routes.ChargeSummaryController.show(2018, "poa1_2").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_3").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_4").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_5").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_6").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa1_7").url,
+          controllers.routes.ChargeSummaryController.show(2020, "poa1_8").url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -243,14 +270,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("poa2_8", "2019-04-06", POA2, "NIC4-NI", 6543.21) -> "2019-08-30")) {
 
         val expectedLinkUrls = Seq(
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa2_1").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "poa2_2").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_3").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_4").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_5").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_6").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "poa2_7").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2020, "poa2_8").url
+          controllers.routes.ChargeSummaryController.show(2018, "poa2_1").url,
+          controllers.routes.ChargeSummaryController.show(2018, "poa2_2").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_3").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_4").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_5").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_6").url,
+          controllers.routes.ChargeSummaryController.show(2019, "poa2_7").url,
+          controllers.routes.ChargeSummaryController.show(2020, "poa2_8").url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -281,12 +308,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, "Voluntary NIC2-NI", 7654.32) -> "2019-08-29")) {
 
         val expectedLinkUrls = Seq(
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "bcd_1").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2018, "bcd_2").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "bcd_3").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "bcd_4").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2019, "bcd_5").url,
-          controllers.routes.ChargeSummaryController.showChargeSummary(2020, "bcd_6").url
+          controllers.routes.ChargeSummaryController.show(2018, "bcd_1").url,
+          controllers.routes.ChargeSummaryController.show(2018, "bcd_2").url,
+          controllers.routes.ChargeSummaryController.show(2019, "bcd_3").url,
+          controllers.routes.ChargeSummaryController.show(2019, "bcd_4").url,
+          controllers.routes.ChargeSummaryController.show(2019, "bcd_5").url,
+          controllers.routes.ChargeSummaryController.show(2020, "bcd_6").url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -322,7 +349,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "The payments allocation view has NO payment allocation amount" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl)
+          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
       }
@@ -331,7 +358,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl)
+          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Clearing Date"
       }

@@ -52,7 +52,8 @@ GET         /payments-owed                                                contro
 GET         /agents/payments-owed                                         controllers.WhatYouOweController.showAgent
 
 #Charge summary
-GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false, origin: Option[String] ?= None )
+GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false, origin: Option[String] ?= None)
+GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false)
 
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show
