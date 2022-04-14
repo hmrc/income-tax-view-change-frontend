@@ -89,7 +89,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
       implicit user =>
         if (isEnabled(PaymentAllocation)) {
           handleRequest(
-            controllers.routes.PaymentHistoryController.viewPaymentHistory(origin).url,
+            controllers.routes.PaymentHistoryController.show(origin).url,
             itvcErrorHandler = itvcErrorHandler,
             documentNumber = documentNumber,
             redirectUrl = redirectUrlIndividual,
@@ -104,7 +104,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         if (isEnabled(PaymentAllocation)) {
           getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
             handleRequest(
-              controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url,
+              controllers.routes.PaymentHistoryController.showAgent().url,
               itvcErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
               redirectUrl = redirectUrlAgent,

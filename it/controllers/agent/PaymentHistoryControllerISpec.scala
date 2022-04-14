@@ -68,7 +68,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     None, Some("1234567890"), None, Some("Agent"), Some(testArn)
   )(FakeRequest())
 
-  s"GET ${controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url}" should {
+  s"GET ${controllers.routes.PaymentHistoryController.showAgent().url}" should {
     s"SEE_OTHER to " when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)

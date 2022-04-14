@@ -225,7 +225,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to the payment history page" in new Setup {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
         }
       }

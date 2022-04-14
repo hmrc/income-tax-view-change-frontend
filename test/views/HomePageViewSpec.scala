@@ -214,7 +214,7 @@ class HomePageViewSpec extends TestSupport {
       }
       "has a link to the payment and refund history page" in new Setup {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.viewPaymentHistory().url)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
         link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
       }
     }

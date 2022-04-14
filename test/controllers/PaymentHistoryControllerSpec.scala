@@ -19,24 +19,24 @@ package controllers
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
+import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.Payment
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
-import models.paymentAllocations.AllocationDetail
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
-import testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModel
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import uk.gov.hmrc.http.InternalServerException
 import views.html.PaymentHistory
 
 import scala.concurrent.Future
 
 class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
+  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with MockItvcErrorHandler {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -56,10 +56,13 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
+      mockIncomeSourceDetailsService,
+      mockAuthService,
       mockAuditingService,
       app.injector.instanceOf[NavBarPredicate],
       app.injector.instanceOf[ItvcErrorHandler],
-      paymentHistoryService
+      mockItvcErrorHandler,
+      paymentHistoryService,
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig])
@@ -74,7 +77,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
 
-        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
       }
@@ -87,7 +90,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
 
-        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -97,7 +100,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
         mockErrorIncomeSource()
-        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -106,12 +109,64 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     "User fails to be authorised" should {
       "redirect the user to the login page" in new Setup {
         setupMockAuthorisationException()
-        val result = controller.viewPaymentHistory()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
 
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
       }
+    }
+  }
+
+
+  "The PaymentHistoryControllerSpec showAgent function" when {
+
+    "obtaining a users payments - right" should {
+      "send the user to the paymentsHistory page with data" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        mockSingleBusinessIncomeSource()
+        when(paymentHistoryService.getPaymentHistory(any(), any()))
+          .thenReturn(Future.successful(Right(testPayments)))
+
+        val result = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+      }
+
+    }
+
+    "Failing to retrieve a user's payments - left" should {
+      "send the user to the internal service error page" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockErrorIncomeSource()
+        when(paymentHistoryService.getPaymentHistory(any(), any()))
+          .thenReturn(Future.successful(Left(PaymentHistoryError)))
+
+        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+        result.failed.futureValue shouldBe an[InternalServerException]
+
+      }
+
+    }
+
+    "Failing to retrieve income sources" should {
+      "send the user to internal server error page" in new Setup {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockErrorIncomeSource()
+
+        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+        result.failed.futureValue shouldBe an[InternalServerException]
+      }
+    }
+
+    "User fails to be authorised" in new Setup {
+      setupMockAgentAuthorisationException(withClientPredicate = false)
+
+      val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.SEE_OTHER
+
     }
   }
 
