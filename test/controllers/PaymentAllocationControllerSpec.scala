@@ -275,7 +275,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
           mockPaymentAllocationView(
             paymentAllocationViewModelNoPayment,
-            controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url, saUtr = None,
+            controllers.routes.PaymentHistoryController.showAgent().url, saUtr = None,
             CutOverCreditsEnabled = false, isAgent = true
           )(HtmlFormat.empty)
 
