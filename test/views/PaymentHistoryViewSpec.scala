@@ -155,6 +155,13 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         }
       }
 
+      "display no earlier payment history with FS off" in new PaymentHistorySetup(paymentsnotFull) {
+        document.title() shouldBe PaymentHistoryMessages.title
+        layoutContent.selectHead("h1").text shouldBe PaymentHistoryMessages.heading
+        layoutContent.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
+        layoutContent.getElementById("paymentFromEarlierYear") shouldBe null
+
+      }
     }
   }
 
