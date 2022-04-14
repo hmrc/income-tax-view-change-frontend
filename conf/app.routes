@@ -88,7 +88,9 @@ GET         /calculation/:taxYear/submitted                               contro
 GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
 
 #Payment history
-GET         /payments/history                                             controllers.PaymentHistoryController.viewPaymentHistory(origin: Option[String] ?= None)
+GET         /payments/history                                             controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
+GET         /agents/payments/history                                      controllers.PaymentHistoryController.showAgent
+
 
 #InYear Tax
 GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show(origin: Option[String] ?= None)

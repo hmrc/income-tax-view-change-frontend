@@ -19,13 +19,16 @@ package controllers
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch._
-import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import config.featureswitch.{CutOverCredits, FeatureSwitching}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates._
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
-import services.PaymentHistoryService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{IncomeSourceDetailsService, PaymentHistoryService}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.PaymentHistory
 import javax.inject.{Inject, Singleton}
 import models.paymentAllocationCharges.PaymentAllocationViewModel
@@ -38,29 +41,55 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val authenticate: AuthenticationPredicate,
                                          val retrieveNino: NinoPredicate,
                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                         val authorisedFunctions: AuthorisedFunctions,
                                          auditingService: AuditingService,
                                          retrieveBtaNavBar: NavBarPredicate,
                                          itvcErrorHandler: ItvcErrorHandler,
+                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService)
                                         (implicit mcc: MessagesControllerComponents,
-                                         ec: ExecutionContext,
-                                         val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                         implicit val ec: ExecutionContext,
+                                         implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
+  def handleRequest(backUrl: String,
+                    origin: Option[String] = None,
+                    isAgent: Boolean,
+                    itvcErrorHandler: ShowInternalServerError)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    paymentHistoryService.getPaymentHistory.map {
+      case Right(payments) =>
+        auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
+        Ok(paymentHistoryView(payments, CutOverCreditsEnabled=isEnabled(CutOverCredits),backUrl, user.saUtr, btaNavPartial = user.btaNavPartial, isAgent = isAgent))
+      case Left(_) => itvcErrorHandler.showInternalServerError()
+    }
 
-
-  def action: ActionBuilder[MtdItUser, AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar)
-  def viewPaymentHistory(origin: Option[String] = None): Action[AnyContent] = action.async {
-    implicit user =>
-        paymentHistoryService.getPaymentHistory.map {
-          case Right(payments) =>
-              auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
-            Ok(paymentHistoryView(payments,CutOverCreditsEnabled=isEnabled(CutOverCredits), backUrl = backUrl(origin), user.saUtr, btaNavPartial = user.btaNavPartial, origin = origin))
-          case Left(_) => itvcErrorHandler.showInternalServerError()
-        }
   }
 
-  def backUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
+  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        itvcErrorHandler = itvcErrorHandler,
+        isAgent = false,
+        origin = origin,
+        backUrl = controllers.routes.HomeController.show(origin).url
+      )
+  }
+
+  def showAgent(): Action[AnyContent] = {
+    Authenticated.async { implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+          handleRequest(
+            itvcErrorHandler = itvcErrorHandlerAgent,
+            isAgent = true,
+            backUrl = controllers.routes.HomeController.showAgent().url
+          )
+        }
+    }
+  }
+
 
 }
 

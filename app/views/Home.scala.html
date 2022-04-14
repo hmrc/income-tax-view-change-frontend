@@ -86,9 +86,9 @@
 
     @paymentHistoryControllerURL = @{
         if(isAgent) {
-            controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url
+            controllers.routes.PaymentHistoryController.showAgent().url
         } else {
-            controllers.routes.PaymentHistoryController.viewPaymentHistory(origin).url
+            controllers.routes.PaymentHistoryController.show(origin).url
         }
     }
 

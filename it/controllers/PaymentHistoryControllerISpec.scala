@@ -52,7 +52,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
-  s"GET ${controllers.routes.PaymentHistoryController.viewPaymentHistory().url}" should {
+  s"GET ${controllers.routes.PaymentHistoryController.show().url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         isAuthorisedUser(authorised = false)

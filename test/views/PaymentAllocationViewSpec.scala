@@ -43,7 +43,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   lazy val paymentAllocationView = app.injector.instanceOf[PaymentAllocation]
 
-  lazy val backUrl: String = controllers.routes.PaymentHistoryController.viewPaymentHistory().url
+  lazy val backUrl: String = controllers.routes.PaymentHistoryController.show().url
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
@@ -196,7 +196,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "have a back link" in new PaymentAllocationSetup {
       document.backLink.text shouldBe paymentAllocationMessages.backLink
-      document.hasBackLinkTo(controllers.routes.PaymentHistoryController.viewPaymentHistory().url)
+      document.hasBackLinkTo(controllers.routes.PaymentHistoryController.show().url)
     }
 
     "have Payment allocations table" when {
