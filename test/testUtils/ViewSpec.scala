@@ -148,6 +148,11 @@ trait ViewSpec extends TestSupport {
       link.attr("target") shouldBe "_blank"
     }
 
+    def hasFallbackBacklink(): Assertion = {
+      element.select("script#js-backlink").size() shouldBe 1
+      element.select("noscript#backlink-fallback").size() shouldBe 1
+    }
+
     def hasCorrectHref(href: String): Assertion = {
       val link = element.link
       link.attr("href") shouldBe href

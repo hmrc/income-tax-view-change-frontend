@@ -23,7 +23,8 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName}
 import controllers.predicates._
 import forms.utils.SessionKeys
-import forms.utils.SessionKeys.summaryData
+import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
+
 import javax.inject.Inject
 import models.finalTaxCalculation.TaxReturnRequestModel
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
@@ -66,6 +67,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       case calculationResponse: LiabilityCalculationResponse =>
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         Ok(view(TaxYearSummaryViewModel(calculationResponse), taxYear, isAgent = isAgent, backUrl))
+          .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
         Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()

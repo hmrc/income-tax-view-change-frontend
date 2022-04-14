@@ -24,5 +24,7 @@ object SessionKeys {
 
   val summaryData: String = "summaryData"
 
+  val calcPagesBackPage: String = "calcPagesBackPage"
+
   val origin: String = "origin"
 }

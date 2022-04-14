@@ -281,6 +281,10 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         document title() shouldBe expectedPageTitle
       }
 
+      "have a fallback backlink" in new Setup(view) {
+        document hasFallbackBacklink()
+      }
+
       "have the correct heading" in new Setup(view) {
         pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear)
         pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear)

@@ -51,6 +51,10 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         document title() shouldBe DeductionBreakdown.title
       }
 
+      "have a fallback backlink" in new Setup(view) {
+        document hasFallbackBacklink()
+      }
+
       "have the correct heading" in new Setup(view) {
         layoutContent hasPageHeading DeductionBreakdown.heading(taxYear)
         layoutContent.h1.select(".govuk-caption-xl").text() shouldBe DeductionBreakdown.subHeading(taxYear)

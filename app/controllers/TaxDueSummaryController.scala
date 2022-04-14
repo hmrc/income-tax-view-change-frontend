@@ -23,8 +23,8 @@ import config.featureswitch.{Class4UpliftEnabled, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
-import javax.inject.{Inject, Singleton}
 import models.liabilitycalculation.viewmodels._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
@@ -34,8 +34,10 @@ import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.TaxCalcFallBackBackLink
 import views.html.TaxCalcBreakdown
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -55,13 +57,12 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
                                         implicit val ec: ExecutionContext
-                                       ) extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+                                       ) extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
 
-  def handleRequest(backUrl: String,
+  def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean
-
                    )
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
@@ -69,7 +70,10 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = TaxDueSummaryViewModel(liabilityCalc)
         auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
-        Ok(taxCalcBreakdown(viewModel, taxYear, backUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial, isEnabled(Class4UpliftEnabled)))
+        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
+          isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+        Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial,
+          isEnabled(Class4UpliftEnabled)))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
         Logger("application").info("[TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
@@ -86,7 +90,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url,
+          origin = origin,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false
@@ -99,7 +103,6 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           handleRequest(
-            backUrl = controllers.agent.routes.TaxYearSummaryController.show(taxYear).url,
             itcvErrorHandler = itvcErrorHandlerAgent,
             taxYear = taxYear,
             isAgent = true
