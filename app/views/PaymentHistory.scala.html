@@ -120,7 +120,8 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
                              <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
                            </tr>
-                        } }
+                          }
+                        }
                         </tbody>
                     </table>
                 </div>
