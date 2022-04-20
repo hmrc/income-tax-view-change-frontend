@@ -20,8 +20,6 @@ object SessionKeys {
 
   val calculationId: String = "calculationId"
 
-  val chargeSummaryBackPage: String = "chargeSummaryBackPage"
-
   val summaryData: String = "summaryData"
 
   val gatewayPage: String = "gatewayPage"

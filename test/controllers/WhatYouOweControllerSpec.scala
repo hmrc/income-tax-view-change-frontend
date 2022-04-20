@@ -16,22 +16,23 @@
 
 package controllers
 
-import testConstants.BaseTestConstants
-import testConstants.FinancialDetailsTestConstants._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
+import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockNavBarEnumFsPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import services.WhatYouOweService
+import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.FinancialDetailsTestConstants._
 import views.html.WhatYouOwe
 
 import scala.concurrent.Future
@@ -94,13 +95,13 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
 
-        val result = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
         status(resultAgent) shouldBe Status.OK
-        resultAgent.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
 
       }
 
@@ -115,13 +116,13 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
 
-        val result = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
         status(resultAgent) shouldBe Status.OK
-        resultAgent.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("whatYouOwe")
+        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
 
       }
 
@@ -133,8 +134,8 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-        val result = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         status(resultAgent) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -143,7 +144,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       "User fails to be authorised" in new Setup {
         setupMockAgentAuthorisationException(withClientPredicate = false)
 
-        val result = controller.showAgent()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
 

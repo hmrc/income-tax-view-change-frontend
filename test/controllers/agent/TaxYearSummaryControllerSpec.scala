@@ -18,6 +18,7 @@ package controllers.agent
 
 import audit.mocks.MockAuditingService
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
+import forms.utils.SessionKeys.gatewayPage
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
@@ -241,6 +242,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -258,6 +260,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -290,6 +293,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
 
     "include Paye in the charges list when Paye is present" in {
@@ -320,6 +324,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -352,6 +357,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
 
     "not include Paye in the charges list when Paye is present" in {
@@ -382,6 +388,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -414,6 +421,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 }
