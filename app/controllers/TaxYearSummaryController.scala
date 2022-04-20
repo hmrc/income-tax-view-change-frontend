@@ -22,8 +22,7 @@ import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.calcPagesBackPage
+import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
@@ -175,7 +174,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map { liabilityCalcResponse =>
               view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
                 backUrl = getBackURL(user.headers.get(REFERER), origin), origin = origin)
-                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearSummary")
+                .addingToSession(gatewayPage -> "taxYearSummary")
                 .addingToSession(calcPagesBackPage -> "ITVC")
             }
           case _ => Future.successful(itvcErrorHandler.showInternalServerError())
