@@ -20,7 +20,7 @@ import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys
+import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
@@ -147,8 +147,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -177,8 +177,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -336,8 +336,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -415,8 +415,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           status(result) shouldBe Status.OK
           Jsoup.parse(contentAsString(result)).text() shouldBe expectedContent
           contentType(result) shouldBe Some("text/html")
-          result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-          result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+          result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+          result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
         }
       }
 

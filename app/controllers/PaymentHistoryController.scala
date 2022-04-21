@@ -23,16 +23,15 @@ import config.featureswitch.{CutOverCredits, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import javax.inject.{Inject, Singleton}
+import forms.utils.SessionKeys.gatewayPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, PaymentHistoryService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.PaymentHistory
-import javax.inject.{Inject, Singleton}
-import models.paymentAllocationCharges.PaymentAllocationViewModel
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -60,7 +59,8 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     paymentHistoryService.getPaymentHistory.map {
       case Right(payments) =>
         auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
-        Ok(paymentHistoryView(payments, CutOverCreditsEnabled=isEnabled(CutOverCredits),backUrl, user.saUtr, btaNavPartial = user.btaNavPartial, isAgent = isAgent))
+        Ok(paymentHistoryView(payments, CutOverCreditsEnabled=isEnabled(CutOverCredits),backUrl, user.saUtr,
+          btaNavPartial = user.btaNavPartial, isAgent = isAgent)).addingToSession(gatewayPage -> "paymentHistory")
       case Left(_) => itvcErrorHandler.showInternalServerError()
     }
 

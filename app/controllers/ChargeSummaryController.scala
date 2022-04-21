@@ -24,7 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.utils.SessionKeys
+import forms.utils.SessionKeys.gatewayPage
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails._
 import play.api.Logger
@@ -115,7 +115,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                   chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String])
                                  (implicit user: MtdItUser[_]): Future[Result] = {
-    val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
+    val backLocation = user.session.get(gatewayPage)
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
     val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
 
