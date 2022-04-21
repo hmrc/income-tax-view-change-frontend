@@ -56,7 +56,8 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     pageTitle = messages("paymentHistory.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true
 ) {
 
 
