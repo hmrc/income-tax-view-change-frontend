@@ -18,6 +18,7 @@ package controllers
 
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -80,6 +81,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
+        result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
       }
 
     }
@@ -132,6 +134,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         val result = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
+        result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
       }
 
     }
