@@ -72,6 +72,10 @@
 
 @taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
 @taxYearTo = @{documentDetail.taxYear}
+@pageTitle = @{
+    if (latePaymentInterestCharge) messages(s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}")
+    else messages(s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
+}
 
 @checkPayeCodePara = {
     @p(id = Some("check-paye-para")){
@@ -130,7 +134,8 @@
     }
 }
 
-@mainTemplate(pageTitle = messages(if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}" else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial) {
+@mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true) {
 
     @if(hasDunningLocks || documentDetail.hasLpiWithDunningBlock) {
         <div id="dunningLocksBanner" class="govuk-!-margin-top-8 govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">

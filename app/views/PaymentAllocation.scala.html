@@ -34,14 +34,18 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 @paymentAllocationInset = {
     @p(){@messages("paymentAllocation.info")}
 }
+@pageTitle = @{
+    messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
+        "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading")
+}
 
 @mainTemplate(
-   pageTitle = messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading"),
+   pageTitle = pageTitle,
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true
 ) {
-
 
  @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
           @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
