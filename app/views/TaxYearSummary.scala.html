@@ -246,7 +246,7 @@
 }
 
 @mainTemplate(pageTitle = messages("tax-year-summary.heading"), backUrl = Some(backUrl), isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial, useFallbackBackLink = true) {
+    btaNavPartial = user.btaNavPartial) {
     <h1 class="govuk-heading-xl" id="heading">
         <span class="govuk-caption-xl">@messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-summary.heading")
