@@ -22,8 +22,7 @@ import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys
-import forms.utils.SessionKeys.calcPagesBackPage
+import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
@@ -32,7 +31,7 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CalculationService, DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
+import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxYearSummary
@@ -74,7 +73,7 @@ class TaxYearSummaryController @Inject()(taxYearSummary: TaxYearSummary,
           withObligationsModel(taxYear) { obligations =>
             calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map { liabilityCalcResponse =>
               view(liabilityCalcResponse, documentDetailsWithDueDates, taxYear, obligations, getBackURL(request.headers.get(REFERER)))
-                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearSummary")
+                .addingToSession(gatewayPage -> "taxYearSummary")
                 .addingToSession(calcPagesBackPage -> "ITVC")(request)
             }
           }
@@ -137,7 +136,7 @@ class TaxYearSummaryController @Inject()(taxYearSummary: TaxYearSummary,
           codingOutEnabled = isEnabled(CodingOut),
           backUrl = backUrl,
           isAgent = true,
-          showForecastData = true
+          showForecastData = isEnabled(ForecastCalculation)
         ))
       case _: LiabilityCalculationError =>
         Logger("application").error(

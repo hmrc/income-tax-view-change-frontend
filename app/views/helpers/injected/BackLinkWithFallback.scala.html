@@ -18,8 +18,8 @@
 @(href: String)(implicit messages: Messages)
 
 <script id="js-backlink">
-    document.write('<a id="back" class="govuk-back-link" href="javascript:history.back()">@messages("base.back")</a>')
+    document.write('<a id="back-js" class="govuk-back-link" href="javascript:history.back()">@messages("base.back")</a>')
 </script>
 <noscript id="backlink-fallback">
-    <a id="back" class="govuk-back-link" href="@href">@messages("base.back")</a>
+    <a id="back-fallback" class="govuk-back-link" href="@href">@messages("base.back")</a>
 </noscript>

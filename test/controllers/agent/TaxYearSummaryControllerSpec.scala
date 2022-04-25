@@ -18,6 +18,7 @@ package controllers.agent
 
 import audit.mocks.MockAuditingService
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
+import forms.utils.SessionKeys.gatewayPage
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService}
@@ -79,7 +80,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
   )
 
   "forecast calculation tests" when {
-    def runForecastTest(crystallised: Boolean, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testYear,
+    def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testYear,
                         shouldShowForecastData: Boolean): Unit = {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
       if (forecastCalcFeatureSwitchEnabled)
@@ -88,6 +89,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
       mockSingleBusinessIncomeSource()
       if (crystallised) {
         mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = taxYear)
+      } else if(calcDataNotFound) {
+        mockCalculationNotFoundNew(nino = "AA111111A", year = taxYear)
       } else mockCalculationSuccessFullNotCrystallised(nino = "AA111111A", taxYear = taxYear)
       setupMockGetFinancialDetailsWithTaxYearAndNino(taxYear, "AA111111A")(financialDetailsModel(taxYear))
       mockgetNextUpdates(fromDate = LocalDate.of(taxYear - 1, 4, 6),
@@ -96,10 +99,10 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
       )
 
       val calcModel = if (crystallised) liabilityCalculationModelSuccessFull else liabilityCalculationModelSuccessFullNotCrystallised
-      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calcModel)
+      val calcOverview: Option[TaxYearSummaryViewModel] = if(calcDataNotFound) None else Some(TaxYearSummaryViewModel(calcModel))
       val expectedContent: String = taxYearSummaryView(
         taxYear,
-        Some(calcOverview),
+        calcOverview,
         testChargesList,
         testObligationsModel,
         homeBackLink,
@@ -122,10 +125,16 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
       "NOT show the Forecast tab after crystallisation" in {
         runForecastTest(crystallised = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = false)
       }
+      "show the Forecast tab when no calc data is returned" in {
+        runForecastTest(crystallised = false, calcDataNotFound = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
+      }
     }
     "ForecastCalculation feature switch is disabled" should {
       "NOT show the Forecast tab before crystallisation" in {
         runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
+      }
+      "NOT show the Forecast tab when no calc data is returned" in {
+        runForecastTest(crystallised = false, calcDataNotFound = true, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
       }
     }
     "tax year is current year" should {
@@ -241,6 +250,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -258,6 +268,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(HTML)
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -290,6 +301,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
 
     "include Paye in the charges list when Paye is present" in {
@@ -320,6 +332,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -352,6 +365,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
 
     "not include Paye in the charges list when Paye is present" in {
@@ -382,6 +396,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 
@@ -414,6 +429,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockFrontendAuthoris
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe expectedContent
+      result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
     }
   }
 }

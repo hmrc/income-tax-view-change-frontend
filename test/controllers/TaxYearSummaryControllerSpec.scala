@@ -20,7 +20,7 @@ import audit.mocks.MockAuditingService
 import config.ItvcErrorHandler
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys
+import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
@@ -75,7 +75,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
 
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
-    def runForecastTest(crystallised: Boolean, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
+    def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
                         shouldShowForecastData: Boolean): Unit = {
       if (forecastCalcFeatureSwitchEnabled)
         enable(ForecastCalculation)
@@ -83,6 +83,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       mockSingleBusinessIncomeSource()
       if (crystallised) {
         mockCalculationSuccessFullNew(testMtditid, taxYear = taxYear)
+      } else if(calcDataNotFound) {
+        mockCalculationNotFoundNew(testMtditid, year = taxYear)
       } else mockCalculationSuccessFullNotCrystallised(testMtditid, taxYear = taxYear)
       mockFinancialDetailsSuccess(taxYear = taxYear)
       mockgetNextUpdates(fromDate = LocalDate.of(taxYear - 1, 4, 6),
@@ -91,10 +93,10 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       )
 
       val calcModel = if (crystallised) liabilityCalculationModelSuccessFull else liabilityCalculationModelSuccessFullNotCrystallised
-      val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calcModel)
+      val calcOverview: Option[TaxYearSummaryViewModel] = if(calcDataNotFound) None else Some(TaxYearSummaryViewModel(calcModel))
       val expectedContent: String = taxYearSummaryView(
         taxYear,
-        Some(calcOverview),
+        calcOverview,
         testChargesList,
         testObligtionsModel,
         taxYearsBackLink,
@@ -116,10 +118,16 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "NOT show the Forecast tab after crystallisation" in {
         runForecastTest(crystallised = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = false)
       }
+      "show the Forecast tab when no calc data is returned" in {
+        runForecastTest(crystallised = false, calcDataNotFound = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
+      }
     }
     "ForecastCalculation feature switch is disabled" should {
       "NOT show the Forecast tab before crystallisation" in {
         runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
+      }
+      "NOT show the Forecast tab when no calc data is returned" in {
+        runForecastTest(crystallised = false, calcDataNotFound = true, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
       }
     }
     "all calls are returned correctly" should {
@@ -147,8 +155,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -177,8 +185,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -336,8 +344,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
-        result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-        result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
@@ -392,6 +400,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
       "the calculation returned from the calculation service was not found" should {
         "show tax year summary page with expected content" in {
+          enable(ForecastCalculation)
           mockSingleBusinessIncomeSource()
           mockCalculationNotFoundNew(testMtditid)
           mockFinancialDetailsSuccess()
@@ -415,8 +424,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           status(result) shouldBe Status.OK
           Jsoup.parse(contentAsString(result)).text() shouldBe expectedContent
           contentType(result) shouldBe Some("text/html")
-          result.futureValue.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearSummary")
-          result.futureValue.session.get(SessionKeys.calcPagesBackPage) shouldBe Some("ITVC")
+          result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+          result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
         }
       }
 

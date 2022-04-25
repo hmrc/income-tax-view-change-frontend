@@ -20,11 +20,10 @@ import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{CodingOut, CutOverCredits, FeatureSwitching}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter, ShowInternalServerError}
+import config._
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys
-import models.financialDetails.FinancialDetailsResponseModel
+import controllers.predicates._
+import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -77,7 +76,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           isAgent = isAgent,
           cutOverCreditsEnabled = isEnabled(CutOverCredits),
           origin = origin)(user, user, messages)
-        ).addingToSession(SessionKeys.chargeSummaryBackPage -> "whatYouOwe")
+        ).addingToSession(gatewayPage -> "whatYouOwe")
     }
     } recover {
       case ex: Exception =>
