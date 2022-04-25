@@ -304,7 +304,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val lpiFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
     codingDetails = None,
     documentDetails = List(lpiParentChargeDocumentDetail),
     financialDetails = List(financialDetail)
