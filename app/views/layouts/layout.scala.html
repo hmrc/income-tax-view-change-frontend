@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 @import views.html.layouts.common.Scripts
 @import config.FrontendAppConfig
+@import views.html.helpers.injected.BackLinkWithFallback
 
 
 @this(
@@ -36,6 +37,7 @@
         hmrcTimeoutDialog: HmrcTimeoutDialog,
         hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
         backLink: components.back_link,
+        backLinkFallback: BackLinkWithFallback,
         languageSelection: components.languageSelection,
         mainContentLayout: mainContentLayout,
         scripts: Scripts
@@ -50,7 +52,8 @@
         signOutLink: Boolean = true,
         timeout: Boolean = true,
         itsaTaxYear: Option[Int] = None,
-        btaNavPartial: Option[Html] = None
+        btaNavPartial: Option[Html] = None,
+        useFallbackBackLink: Boolean = false
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = {
@@ -90,7 +93,7 @@
     @{btaNavPartial.getOrElse(())}
         <div class="nav-bar-wrapper">
             @languageSelection()
-            @backUrl.map(backLink(_))
+            @backUrl.map(backLinkFallback(_))
         </div>
 }
 
