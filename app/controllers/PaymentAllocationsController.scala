@@ -23,8 +23,11 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
+import forms.utils.SessionKeys.gatewayPage
+import implicits.ImplicitDateFormatterImpl
 import models.core.Nino
-import models.paymentAllocationCharges.PaymentAllocationError
+import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
@@ -32,6 +35,7 @@ import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.PaymentAllocation
+
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 
@@ -52,30 +56,33 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              auditingService: AuditingService)
                                             (implicit override val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext,
+                                             val implicitDateFormatter: ImplicitDateFormatterImpl,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
 
 
-  def handleRequest(backUrl: String,
-                    itvcErrorHandler: ShowInternalServerError,
+  def handleRequest(itvcErrorHandler: ShowInternalServerError,
                     documentNumber: String,
                     redirectUrl: String,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-
+    val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
-      case Right(paymentAllocations) =>
-
-        if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)){
+      case Right(paymentAllocations: PaymentAllocationViewModel) =>
+        val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.map(_.getTaxYear))
+        val backUrl = getBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
+        if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
           Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         } else {
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr, CutOverCreditsEnabled=isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial, isAgent = isAgent, origin = origin)(implicitly, messages))
+          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
+            CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
+            isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage)(implicitly, messages))
         }
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
@@ -89,11 +96,11 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
       implicit user =>
         if (isEnabled(PaymentAllocation)) {
           handleRequest(
-            controllers.routes.PaymentHistoryController.show(origin).url,
             itvcErrorHandler = itvcErrorHandler,
             documentNumber = documentNumber,
             redirectUrl = redirectUrlIndividual,
-            isAgent = false
+            isAgent = false,
+            origin = origin
           )
         } else Future.successful(Redirect(redirectUrlIndividual))
     }
@@ -104,7 +111,6 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         if (isEnabled(PaymentAllocation)) {
           getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
             handleRequest(
-              controllers.routes.PaymentHistoryController.showAgent().url,
               itvcErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
               redirectUrl = redirectUrlAgent,
@@ -113,5 +119,23 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           }
         } else Future.successful(Redirect(redirectUrlAgent))
     }
+  }
+
+  private def getBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String = (gatewayPageOpt, taxYearOpt) match {
+    case (Some(TaxYearSummaryPage), Some(taxYear)) =>
+      if (isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
+      else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
+    case (Some(TaxYearSummaryPage), None) =>
+      if (isAgent) controllers.routes.HomeController.showAgent().url
+      else controllers.routes.HomeController.show(origin).url
+    case (Some(WhatYouOwePage), _) =>
+      if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
+      else controllers.routes.WhatYouOweController.show(origin).url
+    case (Some(PaymentHistoryPage), _) =>
+      if (isAgent) controllers.routes.PaymentHistoryController.showAgent().url
+      else controllers.routes.PaymentHistoryController.show(origin).url
+    case _ =>
+      if (isAgent) controllers.routes.HomeController.showAgent().url
+      else controllers.routes.HomeController.show(origin).url
   }
 }
