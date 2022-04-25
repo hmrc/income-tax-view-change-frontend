@@ -27,6 +27,7 @@
 @import java.time.LocalDate
 @import models.chargeHistory.ChargeHistoryModel
 @import models.financialDetails.FinancialDetailsModel
+@import enums.GatewayPage._
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,7 +40,7 @@
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
     chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-        origin: Option[String] = None
+        origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None
     )(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -135,7 +136,7 @@
 }
 
 @mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
-    useFallbackBackLink = true) {
+    useFallbackBackLink = true, gatewayPage = gatewayPage) {
 
     @if(hasDunningLocks || documentDetail.hasLpiWithDunningBlock) {
         <div id="dunningLocksBanner" class="govuk-!-margin-top-8 govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">

@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import forms.utils.SessionKeys.gatewayPage
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails._
@@ -115,7 +116,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                   chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String])
                                  (implicit user: MtdItUser[_]): Future[Result] = {
-    val backLocation = user.session.get(gatewayPage)
+    val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
     val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
 
@@ -140,7 +141,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
           Ok(chargeSummaryView(
             documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = backUrl(backLocation, taxYear, origin, isAgent),
+            backUrl = backUrl(sessionGatewayPage, taxYear, origin, isAgent),
+            gatewayPage = sessionGatewayPage,
             paymentBreakdown = paymentBreakdown,
             chargeHistory = chargeHistory,
             paymentAllocations = paymentAllocations,
@@ -185,11 +187,13 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     ))
   }
 
-  private def backUrl(backLocation: Option[String], taxYear: Int, origin: Option[String], isAgent: Boolean): String = backLocation match {
-    case Some("taxYearSummary") => if(isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
+  private def backUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String = gatewayPageOpt match {
+    case Some(TaxYearSummaryPage) => if(isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
       else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case Some("whatYouOwe") => if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
+    case Some(WhatYouOwePage) => if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
       else controllers.routes.WhatYouOweController.show(origin).url
+    case Some(PaymentHistoryPage) => if(isAgent) controllers.routes.PaymentHistoryController.showAgent().url
+      else controllers.routes.PaymentHistoryController.show(origin).url
     case _ => if(isAgent) controllers.routes.HomeController.showAgent().url
       else controllers.routes.HomeController.show(origin).url
   }

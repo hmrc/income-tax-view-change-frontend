@@ -13,6 +13,12 @@ base.error_summary.heading                                      = There is a pro
 base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
 
+# Fallback Back Links
+back.whatYouOwe = Back to what you owe
+back.paymentHistory = Back to payment history
+back.taxYearSummary = Back to tax year summary
+back.nomatch = Back
+
 # Agent Base
 agent.base.service_name                                         = Your client’s Income Tax details
 agent.title_pattern.service_name.govuk                          = {0} - Your client’s Income Tax details - GOV.UK

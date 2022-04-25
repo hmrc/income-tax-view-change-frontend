@@ -33,6 +33,7 @@ import views.html.PaymentHistory
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import enums.GatewayPage.PaymentHistoryPage
 
 @Singleton
 class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
@@ -60,7 +61,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       case Right(payments) =>
         auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
         Ok(paymentHistoryView(payments, CutOverCreditsEnabled=isEnabled(CutOverCredits),backUrl, user.saUtr,
-          btaNavPartial = user.btaNavPartial, isAgent = isAgent)).addingToSession(gatewayPage -> "paymentHistory")
+          btaNavPartial = user.btaNavPartial, isAgent = isAgent)).addingToSession(gatewayPage -> PaymentHistoryPage.name)
       case Left(_) => itvcErrorHandler.showInternalServerError()
     }
 
