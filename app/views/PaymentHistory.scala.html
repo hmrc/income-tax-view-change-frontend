@@ -114,7 +114,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                              <td class="govuk-table__cell">
                                 <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                                     @messages("paymentHistory.paymentToHmrc")
-                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                                    <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency)</span>
                                 </a>
                              </td>
 
