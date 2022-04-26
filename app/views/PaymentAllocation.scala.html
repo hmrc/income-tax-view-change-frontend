@@ -30,7 +30,7 @@
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
     CutOverCreditsEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage])(implicit request: Request[_], messages: Messages)
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @paymentAllocationInset = {
