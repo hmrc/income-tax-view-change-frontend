@@ -38,6 +38,7 @@ import views.html.PaymentAllocation
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
+import utils.FallBackBackLinks
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,7 +58,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                             (implicit override val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext,
                                              val implicitDateFormatter: ImplicitDateFormatterImpl,
-                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
+  with I18nSupport with FeatureSwitching with FallBackBackLinks {
 
   private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
@@ -74,7 +76,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations: PaymentAllocationViewModel) =>
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.map(_.getTaxYear))
-        val backUrl = getBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
+        val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
         if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
           Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
@@ -121,21 +123,4 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     }
   }
 
-  private def getBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String = (gatewayPageOpt, taxYearOpt) match {
-    case (Some(TaxYearSummaryPage), Some(taxYear)) =>
-      if (isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
-      else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case (Some(TaxYearSummaryPage), None) =>
-      if (isAgent) controllers.routes.HomeController.showAgent().url
-      else controllers.routes.HomeController.show(origin).url
-    case (Some(WhatYouOwePage), _) =>
-      if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
-      else controllers.routes.WhatYouOweController.show(origin).url
-    case (Some(PaymentHistoryPage), _) =>
-      if (isAgent) controllers.routes.PaymentHistoryController.showAgent().url
-      else controllers.routes.PaymentHistoryController.show(origin).url
-    case _ =>
-      if (isAgent) controllers.routes.HomeController.showAgent().url
-      else controllers.routes.HomeController.show(origin).url
-  }
 }

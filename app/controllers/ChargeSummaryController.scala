@@ -34,6 +34,7 @@ import play.api.mvc._
 import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.FallBackBackLinks
 import views.html.ChargeSummary
 
 import javax.inject.Inject
@@ -56,7 +57,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
 
   val action: ActionBuilder[MtdItUser, AnyContent] =
     checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial
@@ -141,7 +142,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
           Ok(chargeSummaryView(
             documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = backUrl(sessionGatewayPage, taxYear, origin, isAgent),
+            backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
             gatewayPage = sessionGatewayPage,
             paymentBreakdown = paymentBreakdown,
             chargeHistory = chargeHistory,
@@ -185,16 +186,5 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge
     ))
-  }
-
-  private def backUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String = gatewayPageOpt match {
-    case Some(TaxYearSummaryPage) => if(isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
-      else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case Some(WhatYouOwePage) => if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
-      else controllers.routes.WhatYouOweController.show(origin).url
-    case Some(PaymentHistoryPage) => if(isAgent) controllers.routes.PaymentHistoryController.showAgent().url
-      else controllers.routes.PaymentHistoryController.show(origin).url
-    case _ => if(isAgent) controllers.routes.HomeController.showAgent().url
-      else controllers.routes.HomeController.show(origin).url
   }
 }
