@@ -228,7 +228,8 @@
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true
 ) {
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {

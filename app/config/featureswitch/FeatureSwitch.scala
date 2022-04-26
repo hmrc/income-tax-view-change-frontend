@@ -35,7 +35,8 @@ object FeatureSwitch {
     NavBarFs,
     Class4UpliftEnabled,
     ForecastCalculation,
-    CutOverCredits
+    CutOverCredits,
+    CreditsRefundsRepay
   )
 
   def apply(str: String): FeatureSwitch =
@@ -92,3 +93,9 @@ case object CutOverCredits extends FeatureSwitch {
   override val name = s"$prefix.enable-cut-over-credit"
   override val displayText = "Cut-Over Credit (CESA to ETMP)"
 }
+
+case object CreditsRefundsRepay extends FeatureSwitch {
+  override val name = s"$prefix.enable-credits-refunds-repay"
+  override val displayText = "Credits/Refunds Repayment"
+}
+

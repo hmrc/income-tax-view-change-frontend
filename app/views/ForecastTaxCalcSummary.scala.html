@@ -34,7 +34,8 @@
     }
 }
 
-@mainTemplate(pageTitle = messages("forecast_taxCalc.heading"), backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial) {
+@mainTemplate(pageTitle = messages("forecast_taxCalc.heading"), backUrl = Some(backUrl), isAgent = isAgent,
+    btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("forecast_taxCalc.dates", s"${taxYear - 1}", s"$taxYear")</span>

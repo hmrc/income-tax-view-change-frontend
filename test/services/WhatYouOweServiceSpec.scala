@@ -143,7 +143,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(0.00, 2.00, 2.00),
+            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None),
             chargesList = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates()
           )
         }
@@ -157,7 +157,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
             chargesList = financialDetailsBalancingCharges.getAllDocumentDetailsWithDueDates()
           )
         }
@@ -171,7 +171,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00)
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None)
           )
         }
         "return a success empty response with outstanding amount zero and late payment interest amount zero" in {
@@ -182,7 +182,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               latePaymentInterestAmount = List(Some(0), Some(0)), interestOutstandingAmount = List(Some(0), Some(0))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00)
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None)
           )
         }
         "return a success POA2 only response with outstanding amount zero and late payment interest amount non-zero" in {
@@ -193,7 +193,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               latePaymentInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
             chargesList = List(DocumentDetailWithDueDate(
               DocumentDetail(currentYear, "1040000124", Some("ITSA - POA 2"), Some("documentText"), Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
@@ -224,7 +224,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
               codingDetails = Some(List(cd1, cd2)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
@@ -238,7 +238,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             ))))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
             chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")), codingOutEnabled = true),
               DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")), codingOutEnabled = true)),
             outstandingChargesModel = None,
@@ -268,7 +268,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
               codingDetails = Some(List(cd1)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
@@ -282,7 +282,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             ))))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
             chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24"))),
               DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")))),
             outstandingChargesModel = None,
@@ -299,7 +299,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       "a successful response is received in all tax year calls" in {
         when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
             codingDetails = None,
             documentDetails = whatYouOweCreditDocumentDetailList,
             financialDetails = List(
