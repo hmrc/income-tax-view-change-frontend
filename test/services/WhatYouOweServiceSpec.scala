@@ -301,7 +301,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           .thenReturn(Future.successful(List(FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
             codingDetails = None,
-            documentDetails = whatYouOweCreditDocumentDetailList,
+            documentDetails = creditDocumentDetailList,
             financialDetails = List(
               FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
                 Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
@@ -312,7 +312,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             )
           ))))
 
-        TestWhatYouOweService.getCreditCharges()(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweCreditDocumentDetailList
+        TestWhatYouOweService.getCreditCharges()(headerCarrier, mtdItUser).futureValue shouldBe creditDocumentDetailList
       }
     }
     "handle an error" when {
