@@ -16,6 +16,7 @@
 
 package views.helpers.injected
 
+import enums.GatewayPage.{GatewayPage, NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import testUtils.ViewSpec
 import views.html.helpers.injected.BackLinkWithFallback
 
@@ -23,10 +24,10 @@ class BackLinkWithFallbackSpec extends ViewSpec {
 
   val backLink: BackLinkWithFallback = app.injector.instanceOf[BackLinkWithFallback]
 
-  class Test extends Setup(backLink("testUrl"))
+  class Test extends Setup(backLink("testUrl", None))
+  class TestWithGatewayPage(page: Option[GatewayPage]) extends Setup(backLink("testUrl", page))
 
   "The BackLink" should {
-
     "generate a back link" which {
       "has the correct javascript link" in new Test {
         assert(document.select("script").html contains """<a id="back-js" class="govuk-back-link" href="javascript:history.back()">Back</a>""")
@@ -34,6 +35,31 @@ class BackLinkWithFallbackSpec extends ViewSpec {
       "has the correct noscript fallback url" in new Test {
         assert(document.select("noscript").text contains """id="back-fallback"""")
         assert(document.select("noscript").text contains "href=\"testUrl\"")
+      }
+      "has the correct noscript fallback link text" in new Test {
+        assert(document.select("noscript").text contains ">Back")
+      }
+    }
+
+    "generate a back link with gateway page" which {
+      "has the correct javascript link" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
+        assert(document.select("script").html contains """<a id="back-js" class="govuk-back-link" href="javascript:history.back()">Back</a>""")
+      }
+      "has the correct noscript fallback url" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
+        assert(document.select("noscript").text contains """id="back-fallback"""")
+        assert(document.select("noscript").text contains "href=\"testUrl\"")
+      }
+      "has the correct noscript fallback link text with Payment History Page" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
+        assert(document.select("noscript").text contains ">Back to payment history")
+      }
+      "has the correct noscript fallback link text with WhatYouOwe Page" in new TestWithGatewayPage(Some(WhatYouOwePage)) {
+        assert(document.select("noscript").text contains ">Back to what you owe")
+      }
+      "has the correct noscript fallback link text with TaxYearSummary Page" in new TestWithGatewayPage(Some(TaxYearSummaryPage)) {
+        assert(document.select("noscript").text contains ">Back to tax year summary")
+      }
+      "has the correct noscript fallback link text with NoMatch Page" in new TestWithGatewayPage(Some(NoMatch)) {
+        assert(document.select("noscript").text contains ">Back")
       }
     }
   }

@@ -23,6 +23,7 @@
 @import views.html.layouts.common.Scripts
 @import config.FrontendAppConfig
 @import views.html.helpers.injected.BackLinkWithFallback
+@import enums.GatewayPage._
 
 
 @this(
@@ -56,7 +57,8 @@
     form: Option[Form[_]] = None,
     btaNavPartial: Option[Html] = None,
     origin: Option[String] = None,
-    useFallbackBackLink: Boolean = false
+    useFallbackBackLink: Boolean = false,
+    gatewayPage: Option[GatewayPage] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
@@ -103,7 +105,7 @@
     <div class="nav-bar-wrapper">
         @languageSelection()
         @if(useFallbackBackLink) {
-            @backUrl.map(backLinkFallback(_))
+            @backUrl.map(backLinkFallback(_, gatewayPage))
         } else {
             @backUrl.map(backLink(_))
         }

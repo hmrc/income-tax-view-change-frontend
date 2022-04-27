@@ -213,6 +213,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
   "individual" when {
     "The charge summary view" should {
 
+      "have a fallback link" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
+        document.hasFallbackBacklinkTo("testBackURL")
+      }
+
       "have the correct heading for a POA 1" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
         document.select("h1").text() shouldBe Messages.poaHeading(2018, 1)
       }

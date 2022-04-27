@@ -21,27 +21,34 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import enums.GatewayPage._
 
 
 @this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
         paymentAllocationsForLpi: PaymentAllocationsForLpi, paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
         govukInsetText: GovukInsetText, link: link, appConfig: config.FrontendAppConfig)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String], CutOverCreditsEnabled: Boolean, isAgent: Boolean = false,
-btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
+    CutOverCreditsEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @paymentAllocationInset = {
     @p(){@messages("paymentAllocation.info")}
 }
+@pageTitle = @{
+    messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
+        "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading")
+}
 
 @mainTemplate(
-   pageTitle = messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading"),
+   pageTitle = pageTitle,
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true,
+    gatewayPage = gatewayPage
 ) {
-
 
  @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
           @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))

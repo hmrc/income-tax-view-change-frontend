@@ -43,6 +43,7 @@ trait MockPaymentAllocationView extends BeforeAndAfterEach with MockitoSugar {
       matches(CutOverCreditsEnabled),
       matches(isAgent),
       any(),
+      any(),
       any()
     )(any(), any()))
       .thenReturn(response)
