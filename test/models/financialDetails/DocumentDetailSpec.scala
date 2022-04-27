@@ -60,6 +60,9 @@ class DocumentDetailSpec extends UnitSpec {
 
     "originalAmountIsNotZeroOrNegative" should {
       "return false" when {
+        "original amount is not present" in {
+          fullDocumentDetailModel.copy(originalAmount = None).originalAmountIsNotZeroOrNegative shouldBe false
+        }
         "original amount is zero" in {
           fullDocumentDetailModel.copy(originalAmount = Some(0)).originalAmountIsNotZeroOrNegative shouldBe false
         }
