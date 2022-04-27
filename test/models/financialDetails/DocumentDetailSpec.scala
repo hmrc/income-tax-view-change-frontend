@@ -60,9 +60,6 @@ class DocumentDetailSpec extends UnitSpec {
 
     "originalAmountIsNotZeroOrNegative" should {
       "return false" when {
-        "original amount is not present" in {
-          fullDocumentDetailModel.copy(originalAmount = None).originalAmountIsNotZeroOrNegative shouldBe false
-        }
         "original amount is zero" in {
           fullDocumentDetailModel.copy(originalAmount = Some(0)).originalAmountIsNotZeroOrNegative shouldBe false
         }
@@ -71,6 +68,9 @@ class DocumentDetailSpec extends UnitSpec {
         }
       }
       "return true" when {
+        "original amount is not present" in {
+          fullDocumentDetailModel.copy(originalAmount = None).originalAmountIsNotZeroOrNegative shouldBe true
+        }
         "original amount is positive" in {
           fullDocumentDetailModel.copy(originalAmount = Some(20)).originalAmountIsNotZeroOrNegative shouldBe true
         }

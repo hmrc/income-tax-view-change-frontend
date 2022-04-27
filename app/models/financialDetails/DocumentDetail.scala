@@ -55,7 +55,6 @@ case class DocumentDetail(taxYear: String,
 
   def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
     case Some(amount) if amount <= 0 => false
-    case None => false
     case _ => true
   }
 
