@@ -132,7 +132,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
               row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
-              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${payment.transactionId.get}"
+              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.date.get).toLongDate} ${payment.amount.get.toCurrencyString}"
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"/report-quarterly/income-and-expenses/view/charges/payments-made?documentNumber=${payment.transactionId.get}"
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }
