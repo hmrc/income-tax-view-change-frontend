@@ -895,7 +895,7 @@ object FinancialDetailsTestConstants {
 
 
 
-  val whatYouOweCreditDocumentDetailList = List(
+  val creditDocumentDetailList = List(
     documentDetailModel(outstandingAmount = Some(BigDecimal(-100.00)), paymentLotItem = None, paymentLot = None),
     documentDetailModel(outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
   )

@@ -1049,13 +1049,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val cutOverCreditsMessage1 = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
     val cutOverCreditsMessage2 = "You have £500.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show cut over credits" when {
-      "user is an individual with the feature switch on" in new Setup(creditCharges = whatYouOweCreditDocumentDetailList,
+      "user is an individual with the feature switch on" in new Setup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), cutOverCreditsEnabled= true){
         pageDocument.body().select("p").get(6).text() shouldBe cutOverCreditsMessage1
         pageDocument.body().select("p").get(7).text() shouldBe cutOverCreditsMessage2
       }
 
-      "user is an agent with the feature switch on" in new AgentSetup(creditCharges =  whatYouOweCreditDocumentDetailList,
+      "user is an agent with the feature switch on" in new AgentSetup(creditCharges =  creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), cutOverCreditsEnabled= true){
         pageDocument.body().select("p").get(6).text() shouldBe cutOverCreditsMessage1
         pageDocument.body().select("p").get(7).text() shouldBe cutOverCreditsMessage2
@@ -1064,13 +1064,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "not show cut over credits" when {
-      "user is an individual with the feature switch off" in new Setup(creditCharges= whatYouOweCreditDocumentDetailList,
+      "user is an individual with the feature switch off" in new Setup(creditCharges= creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()){
         pageDocument.body().select("p").contains(cutOverCreditsMessage1) shouldBe false
         pageDocument.body().select("p").contains(cutOverCreditsMessage2) shouldBe false
       }
 
-      "user is an agent with the feature switch on" in new AgentSetup(creditCharges= whatYouOweCreditDocumentDetailList,
+      "user is an agent with the feature switch on" in new AgentSetup(creditCharges= creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.body().select("p").contains(cutOverCreditsMessage1) shouldBe false
         pageDocument.body().select("p").contains(cutOverCreditsMessage2) shouldBe false
