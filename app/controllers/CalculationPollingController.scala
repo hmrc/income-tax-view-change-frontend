@@ -17,28 +17,32 @@
 package controllers
 
 import auth.MtdItUserWithNino
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
+import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CalculationPollingService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CalculationPollingController @Inject()(authenticate: AuthenticationPredicate,
+                                             val authorisedFunctions: AuthorisedFunctions,
                                              checkSessionTimeout: SessionTimeoutPredicate,
                                              retrieveNino: NinoPredicate,
                                              pollCalculationService: CalculationPollingService,
-                                             val itvcErrorHandler: ItvcErrorHandler)
+                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                             (implicit val appConfig: FrontendAppConfig,
-                                             mcc: MessagesControllerComponents,
-                                             val executionContext: ExecutionContext)
-  extends BaseController with I18nSupport with FeatureSwitching {
+                                             mmcc: MessagesControllerComponents,
+                                             val ec: ExecutionContext)
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
@@ -73,4 +77,46 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
           Future.successful(itvcErrorHandler.showInternalServerError())
       }
   }
+
+  // TODO implement it
+  def calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = {
+    ???
+  }
+
+  // Agent Controller logic
+
+  /*def calculationPoller(taxYear: Int, isFinalCalc: Boolean): Action[AnyContent] = Authenticated.async { implicit request =>
+    implicit agent =>
+
+      lazy val successfulPollRedirect: Call = if (isFinalCalc) {
+        controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
+      } else {
+        controllers.agent.routes.TaxYearSummaryController.show(taxYear)
+      }
+
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
+        (request.session.get(SessionKeys.calculationId), user.nino, user.mtditid) match {
+          case (Some(calculationId), nino, mtditid) => {
+            Logger("application").info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
+            pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino, mtditid) flatMap {
+              case OK =>
+                Logger("application").info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
+                Future.successful(Redirect(successfulPollRedirect))
+              case _ =>
+                Logger("application").info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
+                Future.successful(itvcErrorHandler.showInternalServerError())
+            } recover {
+              case ex: Exception => {
+                Logger("application").error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage}")
+                itvcErrorHandler.showInternalServerError()
+              }
+            }
+          }
+          case _ =>
+            Logger("application").error(s"[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
+            Future.successful(itvcErrorHandler.showInternalServerError())
+        }
+      }
+  }*/
+
 }

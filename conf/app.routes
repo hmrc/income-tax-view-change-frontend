@@ -84,6 +84,7 @@ GET         /partial                                                      contro
 
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
+GET         /agents/calculation/:taxYear/submitted                        controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
 
 #Language Controller
 GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
@@ -101,6 +102,7 @@ GET         /agents/tax-overview                                          contro
 GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int, origin: Option[String] ?= None)
 POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int, origin: Option[String] ?= None)
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
+GET         /agents/:taxYear/final-tax-overview/calculate                 controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 
 #Final Tax URLs - agents
 GET         /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.showAgent(taxYear: Int)
