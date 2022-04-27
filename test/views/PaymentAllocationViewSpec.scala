@@ -194,9 +194,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
     }
 
-    "have a back link" in new PaymentAllocationSetup {
-      document.backLink.text shouldBe paymentAllocationMessages.backLink
-      document.hasBackLinkTo(controllers.routes.PaymentHistoryController.show().url)
+    "have a fallback link" in new PaymentAllocationSetup {
+      document.hasFallbackBacklinkTo(controllers.routes.PaymentHistoryController.show().url)
     }
 
     "have Payment allocations table" when {

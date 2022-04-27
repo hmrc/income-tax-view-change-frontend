@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import forms.utils.SessionKeys.gatewayPage
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails._
@@ -33,6 +34,7 @@ import play.api.mvc._
 import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.FallBackBackLinks
 import views.html.ChargeSummary
 
 import javax.inject.Inject
@@ -55,7 +57,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
 
   val action: ActionBuilder[MtdItUser, AnyContent] =
     checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial
@@ -115,7 +117,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                   chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String])
                                  (implicit user: MtdItUser[_]): Future[Result] = {
-    val backLocation = user.session.get(gatewayPage)
+    val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
     val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
 
@@ -140,7 +142,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
           Ok(chargeSummaryView(
             documentDetailWithDueDate = documentDetailWithDueDate,
-            backUrl = backUrl(backLocation, taxYear, origin, isAgent),
+            backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+            gatewayPage = sessionGatewayPage,
             paymentBreakdown = paymentBreakdown,
             chargeHistory = chargeHistory,
             paymentAllocations = paymentAllocations,
@@ -183,14 +186,5 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge
     ))
-  }
-
-  private def backUrl(backLocation: Option[String], taxYear: Int, origin: Option[String], isAgent: Boolean): String = backLocation match {
-    case Some("taxYearSummary") => if(isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
-      else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case Some("whatYouOwe") => if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
-      else controllers.routes.WhatYouOweController.show(origin).url
-    case _ => if(isAgent) controllers.routes.HomeController.showAgent().url
-      else controllers.routes.HomeController.show(origin).url
   }
 }

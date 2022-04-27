@@ -12,6 +12,12 @@ base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 
+# Fallback Back Links
+back.whatYouOwe = Yn ôl i yr hyn sydd arnoch
+back.paymentHistory = Yn ôl i hanes taliadau
+back.taxYearSummary = Yn ôl i crynodeb o’r flwyddyn dreth
+back.nomatch = Yn ôl
+
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Mae problem wedi codi
 agent.client_relationship_failure.info                          = Nid ydych wedi’ch awdurdodi i fwrw golwg dros wybodaeth y cleient hwn. {0} cyn i chi allu mewngofnodi i’r gwasanaeth hwn.

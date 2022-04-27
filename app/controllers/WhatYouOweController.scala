@@ -33,6 +33,7 @@ import views.html.WhatYouOwe
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import enums.GatewayPage.WhatYouOwePage
 
 class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
@@ -76,7 +77,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           isAgent = isAgent,
           cutOverCreditsEnabled = isEnabled(CutOverCredits),
           origin = origin)(user, user, messages)
-        ).addingToSession(gatewayPage -> "whatYouOwe")
+        ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
     } recover {
       case ex: Exception =>
