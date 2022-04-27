@@ -53,8 +53,8 @@ case class DocumentDetail(taxYear: String,
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
-  def originalAmountIsNotZero: Boolean = originalAmount match {
-    case Some(amount) if amount == 0 => false
+  def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
+    case Some(amount) if amount <= 0 => false
     case _ => true
   }
 
