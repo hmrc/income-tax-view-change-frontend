@@ -20,7 +20,16 @@ import play.api.libs.json.{Json, Reads, Writes}
 
 case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
                           overDueAmount: BigDecimal,
-                          totalBalance: BigDecimal)
+                          totalBalance: BigDecimal,
+                          availableCredit: Option[BigDecimal],
+                          firstPendingAmountRequested: Option[BigDecimal],
+                          secondPendingAmountRequested: Option[BigDecimal]
+                          ) {
+
+  val refundInProgress: Boolean = firstPendingAmountRequested.isDefined || secondPendingAmountRequested.isDefined
+}
+
+
 
 object BalanceDetails {
   implicit val writes: Writes[BalanceDetails] = Json.writes[BalanceDetails]

@@ -32,7 +32,8 @@
 @mainTemplate(
     pageTitle = messages("agent.confirmClient.heading"),
     backUrl = Some(backUrl),
-    isAgent = true
+    isAgent = true,
+    useFallbackBackLink = true
 ) {
 
     @h1(msg = "agent.confirmClient.heading")

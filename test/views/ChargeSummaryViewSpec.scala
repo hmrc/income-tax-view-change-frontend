@@ -197,7 +197,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
   )
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
     codingDetails = None,
     documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
@@ -212,6 +212,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   "individual" when {
     "The charge summary view" should {
+
+      "have a fallback link" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
+        document.hasFallbackBacklinkTo("testBackURL")
+      }
 
       "have the correct heading for a POA 1" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
         document.select("h1").text() shouldBe Messages.poaHeading(2018, 1)

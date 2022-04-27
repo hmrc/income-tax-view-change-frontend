@@ -14,12 +14,21 @@
  * limitations under the License.
  *@
 
+@import enums.GatewayPage.{WhatYouOwePage, NoMatch, GatewayPage}
+
 @this()
-@(href: String)(implicit messages: Messages)
+@(href: String, gatewayPageOpt: Option[GatewayPage] = None)(implicit messages: Messages)
+
+@getFallbackLinkText = @{
+  gatewayPageOpt match {
+    case Some(page) => messages(s"back.${page.name}")
+    case None => messages("base.back")
+  }
+}
 
 <script id="js-backlink">
     document.write('<a id="back-js" class="govuk-back-link" href="javascript:history.back()">@messages("base.back")</a>')
 </script>
 <noscript id="backlink-fallback">
-    <a id="back-fallback" class="govuk-back-link" href="@href">@messages("base.back")</a>
+    <a id="back-fallback" class="govuk-back-link" href="@href">@getFallbackLinkText</a>
 </noscript>

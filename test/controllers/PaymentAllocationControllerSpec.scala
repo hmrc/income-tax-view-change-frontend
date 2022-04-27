@@ -18,10 +18,10 @@ package controllers
 
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{FeatureSwitching, PaymentAllocation, CutOverCredits}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, PaymentAllocation}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatter
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -75,6 +75,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       mockAuditingService
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
+      app.injector.instanceOf[ImplicitDateFormatterImpl],
       appConfig)
   }
 

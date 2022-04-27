@@ -148,7 +148,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       "user's second or more year of migration and balance details contains all zero amounts" in {
         val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
-          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0)
+          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0, None, None, None)
         )
 
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
@@ -158,7 +158,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       "user's second or more year of migration and balance details contains some zero amounts" in {
         val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
-          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3)
+          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None)
         )
 
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
