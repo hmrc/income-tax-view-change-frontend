@@ -13,9 +13,9 @@ base.backToHome                                                 = Yn ôl i hafan
 base.continue                                                   = Yn eich blaen
 
 # Fallback Back Links
-back.whatYouOwe = Yn ôl i yr hyn sydd arnoch
-back.paymentHistory = Yn ôl i hanes taliadau
-back.taxYearSummary = Yn ôl i crynodeb o’r flwyddyn dreth
+back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
+back.paymentHistory = Yn ôl i Hanes taliadau
+back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
