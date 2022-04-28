@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.ItvcErrorHandler
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -32,10 +32,12 @@ class CalculationPollingControllerSpec extends TestSupport with MockCalculationP
 
   object TestCalculationPollingController extends CalculationPollingController(
     MockAuthenticationPredicate,
+    mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[NinoPredicate],
     mockCalculationPollingService,
-    app.injector.instanceOf[ItvcErrorHandler]
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[AgentItvcErrorHandler]
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
