@@ -50,7 +50,7 @@ class CreditServiceSpec extends TestSupport {
     "return a list of financial details credit charges" when {
       "a successful response is received in all tax year calls" in {
        val  financialDetailCreditCharge = FinancialDetailsModel(
-         balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(2.00), Some(4.00)),
+         balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(2.00), Some(4.00), Some(5.00)),
          codingDetails = None,
          documentDetails = creditDocumentDetailList,
          financialDetails = List(
