@@ -91,7 +91,7 @@ object FinancialDetailsIntegrationTestConstants {
 
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       None,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount)),
       financialDetails = List(financialDetail(taxYear))
@@ -158,7 +158,7 @@ object FinancialDetailsIntegrationTestConstants {
                                 latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
                                ): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       None,
       documentDetails = List(
         DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
@@ -197,7 +197,7 @@ object FinancialDetailsIntegrationTestConstants {
                                                      outstandingAmount: List[Option[BigDecimal]],
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       None,
       documentDetails = List(
         DocumentDetail(taxYear, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
@@ -391,7 +391,7 @@ object FinancialDetailsIntegrationTestConstants {
   )
 
   val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021","1040000123",
       Some("TRM New Charge"),None,Some(2000),Some(2000), LocalDate.parse("2018-03-29"), Some(80),None,None,Some(LocalDate.parse("2018-03-29")),
       Some(LocalDate.parse("2018-03-29")),Some(100),None,None,None),Some(LocalDate.parse("2018-03-29")),true,false,false),
@@ -404,44 +404,44 @@ object FinancialDetailsIntegrationTestConstants {
   )
 
   val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
   val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   val whatYouOweDataFullData: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataFullDataWithoutOutstandingCharges(overduePaymentsDunningLocks: List[String] = noDunningLock): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueData(overduePaymentsDunningLocks).getAllDocumentDetailsWithDueDates()
   )
 
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1))
       ++ List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(1))
       ++ List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweWithAZeroOutstandingAmount: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021","transId1",Some("ITSA- POA 1"),None,Some(1000),Some(3400),
       LocalDate.parse("2018-03-29"),None,None,None,None,None,None,None,None,None),Some(LocalDate.parse("2018-02-14")),false,false,false),
       DocumentDetailWithDueDate(DocumentDetail("2021","transId2",Some("ITSA- POA 1"),None,Some(100),Some(1000),LocalDate.parse("2018-03-29"),
@@ -449,12 +449,12 @@ object FinancialDetailsIntegrationTestConstants {
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     outstandingChargesModel = Some(outstandingChargesOverdueData))
 
-  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None), List.empty)
+  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), List.empty)
 
-  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))
 
   val testInvalidFinancialDetailsJson: JsValue = Json.obj(
