@@ -116,40 +116,4 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
     }
   }
 
-  // Agent Controller logic
-
-  /*def calculationPoller(taxYear: Int, isFinalCalc: Boolean): Action[AnyContent] = Authenticated.async { implicit request =>
-    implicit agent =>
-
-      lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-        controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
-      } else {
-        controllers.agent.routes.TaxYearSummaryController.show(taxYear)
-      }
-
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
-        (request.session.get(SessionKeys.calculationId), user.nino, user.mtditid) match {
-          case (Some(calculationId), nino, mtditid) => {
-            Logger("application").info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
-            pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino, mtditid) flatMap {
-              case OK =>
-                Logger("application").info(s"[CalculationPollingController][calculationPoller] Received OK response for calcId: $calculationId")
-                Future.successful(Redirect(successfulPollRedirect))
-              case _ =>
-                Logger("application").info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
-                Future.successful(itvcErrorHandler.showInternalServerError())
-            } recover {
-              case ex: Exception => {
-                Logger("application").error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage}")
-                itvcErrorHandler.showInternalServerError()
-              }
-            }
-          }
-          case _ =>
-            Logger("application").error(s"[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
-            Future.successful(itvcErrorHandler.showInternalServerError())
-        }
-      }
-  }*/
-
 }
