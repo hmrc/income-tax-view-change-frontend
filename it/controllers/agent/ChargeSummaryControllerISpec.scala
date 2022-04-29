@@ -333,7 +333,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )(
       status = OK,
       response = Json.toJson(FinancialDetailsModel(
-        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
         documentDetails = List(
           DocumentDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -381,7 +381,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       to = getCurrentTaxYearEnd.toString)(
       status = OK,
       response = Json.toJson(FinancialDetailsModel(
-        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
         documentDetails = List(
           DocumentDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,

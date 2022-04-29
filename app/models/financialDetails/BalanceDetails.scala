@@ -23,7 +23,8 @@ case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
                           totalBalance: BigDecimal,
                           availableCredit: Option[BigDecimal],
                           firstPendingAmountRequested: Option[BigDecimal],
-                          secondPendingAmountRequested: Option[BigDecimal]
+                          secondPendingAmountRequested: Option[BigDecimal],
+                          unallocatedCredit: Option[BigDecimal]
                           ) {
 
   val refundInProgress: Boolean = firstPendingAmountRequested.isDefined || secondPendingAmountRequested.isDefined

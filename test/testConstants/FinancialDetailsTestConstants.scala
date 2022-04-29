@@ -407,6 +407,7 @@ object FinancialDetailsTestConstants {
     totalBalance = 3.00,
     None,
     None,
+    None,
     None
   )
 
@@ -452,7 +453,7 @@ object FinancialDetailsTestConstants {
 
   def chargesWithAllocatedPaymentModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), lpiWithDunningBlock: Option[BigDecimal] = Some(100)): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None, paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock),
         documentDetailModel(9999, outstandingAmount = outstandingAmount.map(amount => -amount), paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLotItem"), lpiWithDunningBlock = lpiWithDunningBlock)),
@@ -461,7 +462,7 @@ object FinancialDetailsTestConstants {
     )
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     codingDetails = Some(List(CodingDetails("2018", BigDecimal("100.00"), "2019"))),
     documentDetails = List(
       DocumentDetail("2019", id1040000123, Some("TRM New Charge"), Some("documentText"), Some(10.33), Some(10.33), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
@@ -494,7 +495,7 @@ object FinancialDetailsTestConstants {
                                         mainType: List[Option[String]] = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
                                         outstandingAmount: List[Option[BigDecimal]] = List(Some(50), Some(75)),
                                         taxYear: String = LocalDate.now().getYear.toString,
-                                        balanceDetails: BalanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None)): FinancialDetailsModel =
+                                        balanceDetails: BalanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       codingDetails = None,
@@ -516,7 +517,7 @@ object FinancialDetailsTestConstants {
                                          outstandingAmount: List[Option[BigDecimal]],
                                          taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
@@ -540,7 +541,7 @@ object FinancialDetailsTestConstants {
                                             interestRate: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                             latePaymentInterestAmount: List[Option[BigDecimal]] = List(None, None)): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount.head),
@@ -554,7 +555,7 @@ object FinancialDetailsTestConstants {
 
   def testFinancialDetailsModelWithCodingOut(): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 0, taxYearCoding = "2020"))),
       documentDetails = List(
         DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
@@ -572,7 +573,7 @@ object FinancialDetailsTestConstants {
 
   def testFinancialDetailsModelWithPayeSACodingOut(): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 0, taxYearCoding = "2020"))),
       documentDetails = List(
         DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
@@ -590,7 +591,7 @@ object FinancialDetailsTestConstants {
 
   def testFinancialDetailsModelWithCancelledPayeSa(): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 0, taxYearCoding = "2020"))),
       documentDetails = List(
         DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
@@ -615,7 +616,7 @@ object FinancialDetailsTestConstants {
                                        interestRate: List[Option[BigDecimal]],
                                        latePaymentInterestAmount: List[Option[BigDecimal]]): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount.head),
@@ -637,7 +638,7 @@ object FinancialDetailsTestConstants {
                                                   lpiWithDunningBlock: Option[BigDecimal]
                                                  ): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningBlock = Some(1000)),
@@ -659,7 +660,7 @@ object FinancialDetailsTestConstants {
                                                       lpiWithDunningBlock: Option[BigDecimal]
                                                      ): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningBlock = Some(0)),
@@ -679,7 +680,7 @@ object FinancialDetailsTestConstants {
                                          interestOutstandingAmount: List[Option[BigDecimal]],
                                          interestRate: List[Option[BigDecimal]]): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25"))),
@@ -700,7 +701,7 @@ object FinancialDetailsTestConstants {
                                                      latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
                                                     ): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000123, documentDescription.head, Some("documentText"), outstandingAmount.head, Some(43.21), LocalDate.of(2018, 3, 29), interestOutstandingAmount(0), Some(100), Some("latePaymentInterestId"),
@@ -720,7 +721,7 @@ object FinancialDetailsTestConstants {
                                              outstandingAmount: Option[BigDecimal],
                                              taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = None,
       documentDetails = List(
         DocumentDetail(taxYear, id1040000124, documentDescription, Some("documentText"), outstandingAmount, Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100),
@@ -762,19 +763,19 @@ object FinancialDetailsTestConstants {
   def financialDetailsDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
     dueDate = dueDateMoreThan30Days,
     dunningLock = dunningLocks,
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None)
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None)
   )
 
   def financialDetailsDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
     dueDate = dueDateDueIn30Days,
     dunningLock = dunningLocks,
-    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None)
+    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None, None)
   )
 
   def financialDetailsOverdueData(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
     dueDate = dueDateOverdue,
     dunningLock = dunningLocks,
-    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None)
+    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None)
   )
 
   def financialDetailsOverdueDataWithInterest(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel =
@@ -829,46 +830,46 @@ object FinancialDetailsTestConstants {
   )
 
   def whatYouOweDataWithDataDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None, None),
     chargesList = financialDetailsDueIn30Days(dunningLocks).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head,
       financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   def whatYouOweDataWithOverdueData(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueData(dunningLocks).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
   def whatYouOweDataWithOverdueDataAndInterest(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueDataWithInterest(dunningLocks).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
 
   def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None),
     chargesList = financialDetailsDueInMoreThan30Days(dunningLocks).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head,
       financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None),
+    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None),
     chargesList =
       testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
         mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),

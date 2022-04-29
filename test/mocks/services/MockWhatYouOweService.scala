@@ -31,7 +31,7 @@ trait MockWhatYouOweService extends UnitSpec with MockitoSugar with BeforeAndAft
 
   val mockWhatYouOweService: WhatYouOweService = mock[WhatYouOweService]
 
-  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None))
+  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None))
 
   val oneOverdueBCDPaymentInWhatYouOweChargesList: WhatYouOweChargesList =
     emptyWhatYouOweChargesList.copy(

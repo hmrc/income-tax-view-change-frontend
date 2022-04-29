@@ -95,7 +95,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
 
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None), None, List.empty, List(fd1, fd2))
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), None, List.empty, List(fd1, fd2))
 
     "return the right due date" in {
       fdm.getDueDateFor(dd1).get.toString shouldBe "2017-02-28"
@@ -146,7 +146,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
 
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None), None, List(dd1, dd2), List(fd1, fd2, fd3, fd4))
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), None, List(dd1, dd2), List(fd1, fd2, fd3, fd4))
 
     "return a list of due dates" in {
       fdm.getAllDueDates.map(_.toString) shouldBe List("2017-01-31", "2017-02-28")
@@ -172,8 +172,8 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
 
     val codingDetailsList = List(CodingDetails("2018", BigDecimal("100.00"), "2019"), CodingDetails("2017", BigDecimal("100.00"), "2018"))
 
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None), Some(codingDetailsList), List(documentDetail1), List())
-    val fdmWithEmptyCodingDetail: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None), None, List(documentDetail1), List())
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), Some(codingDetailsList), List(documentDetail1), List())
+    val fdmWithEmptyCodingDetail: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), None, List(documentDetail1), List())
 
     "return the right DocumentDetailWithCodingDetails model matching tax year" in {
       fdm.getDocumentDetailWithCodingDetails(documentDetail1).get shouldBe DocumentDetailWithCodingDetails(

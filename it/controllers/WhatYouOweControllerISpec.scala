@@ -144,7 +144,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
@@ -250,7 +250,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
@@ -289,7 +289,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
@@ -328,7 +328,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val whatYouOweChargesList = {
             val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
             WhatYouOweChargesList(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
