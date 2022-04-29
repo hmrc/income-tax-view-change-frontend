@@ -36,7 +36,8 @@ object FeatureSwitch {
     Class4UpliftEnabled,
     ForecastCalculation,
     CutOverCredits,
-    CreditsRefundsRepay
+    CreditsRefundsRepay,
+    WhatYouOweCreditAmount
   )
 
   def apply(str: String): FeatureSwitch =
@@ -99,3 +100,7 @@ case object CreditsRefundsRepay extends FeatureSwitch {
   override val displayText = "Credits/Refunds Repayment"
 }
 
+case object WhatYouOweCreditAmount extends FeatureSwitch {
+  override val name = s"$prefix.enable-what-you-owe-credit-amount"
+  override val displayText = "What You Owe Credit Amount"
+}

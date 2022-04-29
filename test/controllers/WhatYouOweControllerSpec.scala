@@ -67,7 +67,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     List(documentDetailWithDueDateModel(2019))
       ++ List(documentDetailWithDueDateModel(2020))
       ++ List(documentDetailWithDueDateModel(2021)),
@@ -76,7 +76,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None), List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List.empty)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
