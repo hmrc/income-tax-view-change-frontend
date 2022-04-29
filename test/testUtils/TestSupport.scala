@@ -141,6 +141,17 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       utils.SessionKeys.confirmedClient -> "true"
     )
 
+  def fakeRequestConfirmedClientWithCalculationId(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> testMtditid,
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true",
+      forms.utils.SessionKeys.calculationId -> "1234567890"
+    )
+
   def fakeRequestConfirmedClientWithReferer(clientNino: String = "AA111111A", referer: String): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
       utils.SessionKeys.clientFirstName -> "Test",

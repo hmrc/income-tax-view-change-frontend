@@ -17,8 +17,8 @@
 package controllers
 
 import auth.MtdItUserWithNino
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
@@ -41,7 +41,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
                                              val itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                             (implicit val appConfig: FrontendAppConfig,
-                                             mmcc: MessagesControllerComponents,
+                                             implicit override val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
@@ -49,10 +49,11 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
                     isAgent: Boolean,
-                    successfulPollRedirect: Call)
+                    successfulPollRedirect: Call,
+                    calculationId: Option[String])
                    (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    (user.session.get(SessionKeys.calculationId), user.nino, user.mtditid) match {
-      case (Some(calculationId), nino, mtditid) => {
+    (calculationId, user.nino, user.mtditid) match {
+      case (Some(calculationId), nino, mtditid) =>
         Logger("application").info(s"[CalculationPollingController][calculationPoller] Polling started for $calculationId")
         pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino, mtditid) flatMap {
           case OK =>
@@ -62,12 +63,11 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
             Logger("application").info(s"[CalculationPollingController][calculationPoller] No calculation found for calcId: $calculationId")
             Future.successful(itvcErrorHandler.showInternalServerError())
         } recover {
-          case ex: Exception => {
+          case ex: Exception =>
             Logger("application").error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
-          }
         }
-      }
+
       case _ =>
         Logger("application").error(s"[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
         Future.successful(itvcErrorHandler.showInternalServerError())
@@ -89,7 +89,8 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
           isAgent = false,
-          successfulPollRedirect = successfulPollRedirect
+          successfulPollRedirect = successfulPollRedirect,
+          calculationId = user.session.get(SessionKeys.calculationId)
         )
     }
 
@@ -108,7 +109,8 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
           itcvErrorHandler = itvcErrorHandlerAgent,
           taxYear = taxYear,
           isAgent = true,
-          successfulPollRedirect = successfulPollRedirect
+          successfulPollRedirect = successfulPollRedirect,
+          calculationId = request.session.get(SessionKeys.calculationId)
         )(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly, implicitly)
 
     }
