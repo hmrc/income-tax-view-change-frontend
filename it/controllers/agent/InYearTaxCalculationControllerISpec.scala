@@ -106,13 +106,13 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val insetText = "#main-content > div > div > div > p"
 
-    val incomeRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a"
+    val incomeRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > th:nth-child(1) > div > a"
     val incomeRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td.govuk-table__cell.govuk-table__cell--numeric"
 
-    val allowanceRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a"
+    val allowanceRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > th:nth-child(1) > div > a"
     val allowanceRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td.govuk-table__cell.govuk-table__cell--numeric"
 
-    val taxIsDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td:nth-child(1)"
+    val taxIsDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > th:nth-child(1)"
     val taxIsDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td.govuk-table__cell.govuk-table__cell--numeric"
 
     val continueButton = "#continue-button"

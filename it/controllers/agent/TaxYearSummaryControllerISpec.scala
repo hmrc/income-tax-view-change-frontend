@@ -293,15 +293,16 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
+        println(s"\n\n ${result.body} \n\n")
         result should have(
           httpStatus(OK),
           pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")("Late payment interest for payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£100.00"),
@@ -312,14 +313,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
           ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")("Quarterly Update"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Property income"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "th:nth-of-type(1)")("Annual Update"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Test Trading Name"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
@@ -371,10 +372,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Late payment interest for payment on account 1 of 2 Payment under review"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£100.00"),
@@ -385,14 +386,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
           ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")("Quarterly Update"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Property income"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "th:nth-of-type(1)")("Annual Update"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Test Trading Name"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
@@ -490,23 +491,23 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#payments", "p")("No payments currently due."),
           elementTextBySelectorList("#updates", "div", "h3")(s"Due ${getCurrentTaxYearEnd.toLongDate}"),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
           ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Property income"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")("Quarterly Update"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Property income"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(3)")(
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "th:nth-of-type(1)")("Annual Update"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("Test Trading Name"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )
@@ -554,10 +555,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           pageTitleAgent(taxYearSummaryTitle),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(2)")("−£17,500.99"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(2)")("£12,500.00"),
-          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(2)")("£90,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("−£17,500.99"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(3)", "td:nth-of-type(1)")("£12,500.00"),
+          elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")("Late payment interest for payment on account 1 of 2"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(LocalDate.of(2021, 6, 24).toLongDateShort),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£100.00"),
@@ -568,9 +569,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
           ),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Annual Update"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("Test Trading Name"),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")(
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")("Annual Update"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Test Trading Name"),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.toLongDateShort}"
           )
         )

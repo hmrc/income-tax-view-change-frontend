@@ -260,10 +260,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due/forecast"
 
         document.select(".forecast_table tbody tr").size() shouldBe 3
-        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
         document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
         document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(3) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
         document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
@@ -343,7 +343,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the income row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val incomeLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(1) td:nth-child(1) a")
+        val incomeLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(1) th:nth-child(1) a")
         incomeLink.text shouldBe taxYearSummaryMessages.income
         incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe modelComplete(Some(false)).income.toCurrencyString
@@ -366,19 +366,19 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) td:nth-child(1) a")
+        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) th:nth-child(1) a")
         allowancesLink.text shouldBe taxYearSummaryMessages.allowancesAndDeductions
         allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
       }
 
       "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) td:nth-child(1)").text shouldBe taxYearSummaryMessages.totalIncomeDue
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) th:nth-child(1)").text shouldBe taxYearSummaryMessages.totalIncomeDue
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(3) td:nth-child(2)").text shouldBe modelComplete(Some(false)).totalTaxableIncome.toCurrencyString
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val totalTaxDueLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(4) td:nth-child(1) a")
+        val totalTaxDueLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(4) th:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearSummaryMessages.incomeTaxNationalInsuranceDue
         totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe modelComplete(Some(false)).taxDue.toCurrencyString
@@ -467,7 +467,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "display the Dunning lock subheading in the payments tab for multiple lines POA1 and Balancing payment" in new Setup(multipleDunningLockView()) {
         layoutContent.selectHead("#payments-table tbody tr:nth-child(1) div:nth-child(3)").text shouldBe taxYearSummaryMessages.paymentUnderReview
         layoutContent.selectHead("#payments-table tbody tr:nth-child(3) div:nth-child(3)").text shouldBe taxYearSummaryMessages.paymentUnderReview
-        layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) td:nth-child(1) div:nth-child(3)")
+        layoutContent.doesNotHave("#payments-table tbody tr:nth-child(4) th:nth-child(1) div:nth-child(3)")
       }
 
       "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(class2NicsView(codingOutEnabled = true)) {
@@ -576,9 +576,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
               divAccordion.selectHead("thead").selectNth("th", 2).text shouldBe taxYearSummaryMessages.updateIncomeSource
               divAccordion.selectHead("thead").selectNth("th", 3).text shouldBe taxYearSummaryMessages.updateDateSubmitted
               val row = divAccordion.selectHead("tbody").selectHead("tr")
-              row.selectNth("td", 1).text shouldBe taxYearSummaryMessages.updateType(testObligation.obligation.obligationType)
-              row.selectNth("td", 2).text shouldBe taxYearSummaryMessages.incomeType(testObligation.incomeType)
-              row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
+              row.selectNth("th", 1).text shouldBe taxYearSummaryMessages.updateType(testObligation.obligation.obligationType)
+              row.selectNth("td", 1).text shouldBe taxYearSummaryMessages.incomeType(testObligation.incomeType)
+              row.selectNth("td", 2).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
       }
@@ -629,10 +629,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due/forecast"
 
         document.select(".forecast_table tbody tr").size() shouldBe 3
-        document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
         document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
         document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(3) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
         document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
@@ -656,21 +656,21 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the income row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val incomeLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(1) a")
+        val incomeLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) th:nth-child(1) a")
         incomeLink.text shouldBe taxYearSummaryMessages.income
         incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(testYear).url
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe modelComplete(Some(false)).income.toCurrencyString
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) td:nth-child(1) a")
+        val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) th:nth-child(1) a")
         allowancesLink.text shouldBe taxYearSummaryMessages.allowancesAndDeductions
         allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(testYear).url
         layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val totalTaxDueLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) td:nth-child(1) a")
+        val totalTaxDueLink: Element = layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(4) th:nth-child(1) a")
         totalTaxDueLink.text shouldBe taxYearSummaryMessages.incomeTaxNationalInsuranceDue
 
         totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(testYear).url
