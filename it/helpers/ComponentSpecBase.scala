@@ -151,6 +151,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   object IncomeTaxViewChangeFrontend {
     def get(uri: String): WSResponse = buildClient(uri).get().futureValue
 
+    def getCreditAndRefunds(): WSResponse = get("/credit-and-refunds")
+
     def getTaxYears: WSResponse = get("/tax-years")
 
     def getCalculation(year: String): WSResponse = get(s"/calculation/$year")

@@ -754,4 +754,13 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
   }
 
+  //Tax Years Page Messages
+  object CreditAndRefunds {
+    val title = "Claim a refund"
+    val totalText = "Total"
+    val refundText = "Refund - in progress"
+    val paymentText = "payment"
+    val claimBtn = "Claim a Refund"
+    val checkBtn = "Check refund status"
+  }
 }

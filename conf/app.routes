@@ -119,3 +119,7 @@ GET         /agents/calculation/:taxYear/income/forecast                  contro
 #Forecast Tax Calc Summary
 GET         /calculation/:taxYear/tax-due/forecast                        controllers.ForecastTaxCalcSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/tax-due/forecast                 controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
+
+#Credits and Refunds
+GET          /credit-and-refunds                                           controllers.CreditAndRefundController.show(origin: Option[String] ?= None)
+GET          /agents/credit-and-refunds                                    controllers.CreditAndRefundController.showAgent()
