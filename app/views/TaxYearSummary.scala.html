@@ -109,20 +109,20 @@
         <tbody>
         @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.getOrElse(throw MissingFieldException("Due Date"))).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
             <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">
+                <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                     @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                         <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                     }
-                <div>
-                    @if(documentDetailWithDueDate.isLatePaymentInterest) {
-                        <a class="govuk-link govuk-!-font-weight-regular"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
-                    } else {
-                        <a class="govuk-link govuk-!-font-weight-regular"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
-                    }
-                </div>
+                    <div>
+                        @if(documentDetailWithDueDate.isLatePaymentInterest) {
+                            <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
+                        } else {
+                            <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
+                        }
+                    </div>
                     @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
                     @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
-                </td>
+                </th>
                 @if(documentDetailWithDueDate.isLatePaymentInterest) {
                     @documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.map { latePaymentInterestAmount =>
                         @documentDetailWithDueDate.dueDate.map { dueDate =>
@@ -188,7 +188,9 @@
             <tbody>
             @dueObligations.map { nextUpdateWithIncomeType =>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</td>
+                    <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
+                        <div>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</div>
+                    </th>
                     <td class="govuk-table__cell">@obligationsTypeHelper@{messages(nextUpdateWithIncomeType.incomeType)}</td>
                     <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
                 </tr>
@@ -226,7 +228,7 @@
             ),
             Seq(
                 TableRow(content = Text(messages("tax-year-summary.taxable-income"))),
-                TableRow(content = Text(forecastIncome), format = Some("numeric"))
+                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastIncome</span>"), format = Some("numeric"))
             ),
             Seq(
                 TableRow(content = HtmlContent(link(link = getForecastTaxDueHref(taxYear, isAgent),
@@ -241,7 +243,8 @@
         )),
         caption = Some(messages("tax-year-summary.forecast")),
         captionClasses = "govuk-table__caption--l",
-        classes = "forecast_table"
+        classes = "forecast_table",
+        firstCellIsHeader = true
     ))
 }
 
