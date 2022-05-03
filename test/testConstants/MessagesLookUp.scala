@@ -141,6 +141,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val backLink = "Back"
     val paymentHistoryHeading = "Payment history"
     val paymentHistoryAndCreditView = "Payment history"
+    val creditAndRefundAndCreditView = "Claim a refund"
 
     def viewPaymentsLinkWithDateRange(taxYear: Int): String = s"View your current ${taxYear - 1} to ${taxYear} return"
 
