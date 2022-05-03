@@ -40,11 +40,11 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
 
-  val urlFinalCalcFalse: String = s"http://localhost:$port" + controllers.agent.routes.CalculationPollingController
-    .calculationPoller(taxYear, isFinalCalc = false).url
+  val urlFinalCalcFalse: String = s"http://localhost:$port" + controllers.routes.CalculationPollingController
+    .calculationPollerAgent(taxYear, isFinalCalc = false).url
 
-  val urlFinalCalcTrue: String = s"http://localhost:$port" + controllers.agent.routes.CalculationPollingController
-    .calculationPoller(taxYear, isFinalCalc = true).url
+  val urlFinalCalcTrue: String = s"http://localhost:$port" + controllers.routes.CalculationPollingController
+    .calculationPollerAgent(taxYear, isFinalCalc = true).url
 
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
@@ -69,13 +69,13 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      Some(LocalDate.of(2018, 1, 1))
+      Some(LocalDate.of(2018,1,1))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        Some(LocalDate.of(2018, 1, 1))
+        Some(LocalDate.of(2018,1,1))
       )
     )
   )
@@ -102,7 +102,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
   lazy val playSessionCookieNoCalcId: String = bakeSessionCookie(clientDetailsWithConfirmationNoCalcId)
 
-  s"calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}" when {
+  s"calling GET ${controllers.routes.CalculationPollingController.calculationPollerAgent(testYearInt, isFinalCalc = false).url}" when {
 
     "the user is authorised with an active enrolment" should {
 
@@ -199,7 +199,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
   }
 
-  s"calling GET ${controllers.agent.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = true).url}" when {
+  s"calling GET ${controllers.routes.CalculationPollingController.calculationPollerAgent(testYearInt, isFinalCalc = true).url}" when {
 
     "the user is authorised with an active enrolment" should {
 
