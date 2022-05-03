@@ -14,9 +14,9 @@ base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
 
 # Fallback Back Links
-back.whatYouOwe = Back to what you owe
-back.paymentHistory = Back to payment history
-back.taxYearSummary = Back to tax year summary
+back.whatYouOwe = Back to What You Owe
+back.paymentHistory = Back to Payment History
+back.taxYearSummary = Back to Tax Year Summary
 back.nomatch = Back
 
 # Agent Base
