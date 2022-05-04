@@ -37,7 +37,8 @@ object FeatureSwitch {
     ForecastCalculation,
     CutOverCredits,
     CreditsRefundsRepay,
-    WhatYouOweCreditAmount
+    WhatYouOweCreditAmount,
+    R7bTxmEvents
   )
 
   def apply(str: String): FeatureSwitch =
@@ -104,3 +105,10 @@ case object WhatYouOweCreditAmount extends FeatureSwitch {
   override val name = s"$prefix.enable-what-you-owe-credit-amount"
   override val displayText = "What You Owe Credit Amount"
 }
+
+case object R7bTxmEvents extends FeatureSwitch {
+  override val name = s"$prefix.enable-R7b-Txm-Events"
+  override val displayText = "R7b Viewer TXM Events"
+}
+
+
