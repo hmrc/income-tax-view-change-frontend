@@ -66,7 +66,7 @@ class HomePageViewSpec extends TestSupport {
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false) {
+              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
@@ -78,7 +78,8 @@ class HomePageViewSpec extends TestSupport {
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
-      isAgent = isAgent
+      isAgent = isAgent,
+      creditAndRefundEnabled = creditAndRefundEnabled
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
@@ -216,6 +217,15 @@ class HomePageViewSpec extends TestSupport {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
         link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
+      }
+    }
+
+    "show the claim refund link" when {
+      "the claim a refund feature switch is on" in new Setup(creditAndRefundEnabled = true) {
+        val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.CreditAndRefundController.show().url)
+        link.map(_.text) shouldBe Some(homeMessages.creditAndRefundAndCreditView)
+
       }
     }
   }

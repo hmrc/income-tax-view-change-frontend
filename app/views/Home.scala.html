@@ -46,7 +46,8 @@
 	dunningLockExists: Boolean = false,
   	currentTaxYear: Int,
     isAgent: Boolean,
-    origin: Option[String] = None)(
+    origin: Option[String] = None,
+    creditAndRefundEnabled: Boolean)(
   	implicit request: Request[_],
 	messages: Messages,
   	user: auth.MtdItUser[_],
@@ -90,6 +91,14 @@
         } else {
             controllers.routes.PaymentHistoryController.show(origin).url
         }
+    }
+
+    @creditAndRefundsControllerURL = @{
+           if(isAgent) {
+               controllers.routes.CreditAndRefundController.showAgent().url
+           } else {
+               controllers.routes.CreditAndRefundController.show().url
+            }
     }
 
     @tiles() = {
@@ -230,6 +239,13 @@
                 messageKey = "home.paymentHistory.view"
 
             )
+    }
+
+    @if(creditAndRefundEnabled) {
+        @link(
+            link = creditAndRefundsControllerURL,
+            messageKey = "Claim a refund"
+        )
     }
 }
 }

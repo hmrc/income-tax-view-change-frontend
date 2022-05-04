@@ -89,7 +89,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,
       currentTaxYear,
-      isAgent
+      isAgent,
+      creditAndRefundEnabled = false
     )(FakeRequest(), implicitly, testMtdItUser, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))

@@ -72,7 +72,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
       isAgent = isAgent,
-      origin = origin
+      origin = origin,
+      creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)
     )
   }
 
