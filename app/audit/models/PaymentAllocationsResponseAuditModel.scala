@@ -67,6 +67,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
   private def paymentAllocationDetail(): JsObject = Json.obj() ++
     ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
     ("paymentMadeAmount", getPaymentMadeAmount) ++
+    paymentAllocationType() ++
     paymentAllocationsAudit() ++
     ("creditOnAccount", getCreditOnAccount)
 
@@ -94,6 +95,15 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
               _.to
             }.map(getTaxYearString))
       })
+    }
+  }
+  private def paymentAllocationType(): JsObject = {
+
+    if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)){
+      Json.obj("paymentType"-> "Payment made from earlier tax year")
+    }
+    else {
+      Json.obj("paymentType"->"Payment made to HMRC")
     }
   }
 
