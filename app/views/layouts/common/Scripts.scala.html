@@ -39,34 +39,33 @@ if(payButton) {
 </script>
 <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
 <script>
-    const openAllButton = document.getElementsByClassName('govuk-accordion__open-all')[0]
+    const showAllSpan = document.getElementsByClassName('govuk-accordion__show-all-text')[0]
+    const showAllButton = document.querySelector('.govuk-accordion__controls button')
     const accordionSections = document.getElementsByClassName('govuk-accordion__section')
-    const setAccordionMessage = function() {
-        if (openAllButton.getAttribute('aria-expanded') == 'false') {
-            openAllButton.textContent = "@messages("sections.open.all")"
-        } else {
-            openAllButton.textContent = "@messages("sections.close.all")"
-        }
+    const setAccordionMessages = function() {
+
+       // set main openall/showall message
+       if (showAllButton.getAttribute('aria-expanded') == 'false') {
+           showAllSpan.textContent = "@messages("sections.open.all")"
+       } else {
+           showAllSpan.textContent = "@messages("sections.close.all")"
+       }
+
+       // set section button messages
+       for (let i = 0; i <= accordionSections.length - 1; i++) {
+           const sectionButton = document.getElementsByClassName('govuk-accordion__section-button')[i]
+           const message = sectionButton.getAttribute('aria-expanded') == 'false' ? '@messages("sections.open")' : '@messages("sections.close")'
+           sectionButton.querySelector('span.govuk-accordion__section-toggle-text').textContent = message;
+       }
+
     }
-    const setAccordionMessageForSections = function() {
-        if (openAllButton.getAttribute('aria-expanded') == 'false') {
-            setTimeout(function() {
-                openAllButton.textContent = '@messages("sections.open.all")'
-                setAccordionMessage()
-            })
-        } else {
-            setTimeout(function() {
-                openAllButton.textContent = '@messages("sections.close.all")'
-                setAccordionMessage()
-            })
-        }
-        openAllButton.innerHTML = '<span class="govuk-visually-hidden"> sections</span>'
-    }
-    if(openAllButton) {
-        setAccordionMessage()
-        openAllButton.addEventListener("click", setAccordionMessage);
+    if(showAllButton) {
+        setAccordionMessages()
+        showAllButton.addEventListener("click", setAccordionMessages);
         for (let i = 0; i <= accordionSections.length - 1; i++) {
-            document.getElementsByClassName('govuk-accordion__section-button')[i].addEventListener("click", setAccordionMessageForSections);
+            document.getElementsByClassName('govuk-accordion__section-button')[i].addEventListener("click", function() {
+                setTimeout(setAccordionMessages, 0);
+            });
         }
     }
 </script>
