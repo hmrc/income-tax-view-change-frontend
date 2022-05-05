@@ -781,7 +781,8 @@ credit-and-refund.total                                           = Total
 credit-and-refund.refundProgress                                  = Refund - in progress
 credit-and-refund.payment                                         = payment
 credit-and-refund.details-intro                                   = What’s in your account
-credit-and-refund.claim-refund-btn                                = Claim a Refund
+credit-and-refund.no-credit                                       = You have no money in your account.
+credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
 
 #Language Selector

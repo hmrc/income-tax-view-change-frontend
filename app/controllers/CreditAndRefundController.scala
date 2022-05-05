@@ -62,6 +62,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val charges: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.map(
           financialDetails => (financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
         ).flatten
+
         Ok(view(charges, financialDetailsModel.head.balanceDetails, isAgent, backUrl)(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
