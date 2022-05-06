@@ -79,7 +79,7 @@
 }
 
 @unallocatedCreditParagraphContent(amount: String) = {
-    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = "https://www.gov.uk/tax-appeals",
+    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
         messageKey = messages("whatYouOwe.credit-overpaid-amount", amount) + ". ",
         id = Some("unallocated-credit-link")).toString() ))
