@@ -50,7 +50,6 @@
     isAgent: Boolean = false,
         origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
-
 @getPrefix(key: String) = @{
     if(isAgent) s"whatYouOwe.$key" else s"whatYouOwe.$key"
 }
@@ -77,15 +76,19 @@
     }
 }
 
+@creditAndRefundUrl = @{
+    if(isAgent) controllers.routes.CreditAndRefundController.showAgent().url
+    else controllers.routes.CreditAndRefundController.show().url
+}
+
 @unallocatedCreditParagraphContent(amount: String) = {
-    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
+    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl.toString,
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
         messageKey = messages("whatYouOwe.credit-overpaid-amount", amount) + ". ",
-        id = Some("unallocated-credit-link")).toString() ))
+        id = Some("unallocated-credit-link")).toString()))
 }
 
 @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
-
 
 @paymentTypesDropdown(classes: String) = {
     <details class="@classes" data-module="govuk-details">
