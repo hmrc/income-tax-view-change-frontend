@@ -80,7 +80,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with the payment history page" when {
     "the payment history feature switch is enabled" in {
-      enable(R7bTxmEvents)
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -94,7 +93,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleIndividual(paymentHistoryTitle)
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false, R7bTxmEvents = false).detail)
     }
 
     "return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
@@ -113,7 +112,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleIndividual(paymentHistoryTitle)
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true, R7bTxmEvents = true).detail)
     }
   }
 

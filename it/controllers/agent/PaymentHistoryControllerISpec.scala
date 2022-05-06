@@ -96,7 +96,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with the enter client utr page" when {
     s"return $OK" in {
-      enable(R7bTxmEvents)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -114,7 +113,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleAgent(paymentHistoryTitle)
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false, R7bTxmEvents = false).detail)
     }
 
     s"return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined $OK" in {
@@ -137,7 +136,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleAgent(paymentHistoryTitle)
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true, R7bTxmEvents = true).detail)
     }
 
   }

@@ -18,7 +18,7 @@ package audit.models
 
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import auth.MtdItUser
-import config.featureswitch.CutOverCredits
+import config.featureswitch.{CutOverCredits, R7bTxmEvents}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
@@ -45,7 +45,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     payments = Seq(
       Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None)
     ),
-    CutOverCreditsEnabled = false
+    CutOverCreditsEnabled = false,
+    R7bTxmEvents = false
   )
 
   def paymentHistoryAuditCutOverCredits(userType: Option[String] = Some("Agent")): PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
@@ -63,7 +64,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     payments = Seq(
       Payment(reference = Some("reference"), amount = Some(-10000.00), method = Some("method"), lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
     ),
-    CutOverCreditsEnabled = true
+    CutOverCreditsEnabled = true,
+    R7bTxmEvents = true
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
@@ -78,7 +80,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       arn = None
     ),
     payments = Seq.empty[Payment],
-    CutOverCreditsEnabled = false
+    CutOverCreditsEnabled = false,
+    R7bTxmEvents = false
   )
 
   "The PaymentHistoryRequestAuditModel" should {
@@ -138,7 +141,9 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
             "userType" -> "Individual",
             "paymentHistory" -> Json.arr(
               Json.obj(
-                "description" -> "Payment from an earlier tax year"
+                "description" -> "Payment from an earlier tax year",
+                "paymentDate" -> "2018-04-25",
+                "amount" -> -10000.00
               )
             )
           )
@@ -153,7 +158,9 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
             "agentReferenceNumber" -> testArn,
             "paymentHistory" -> Json.arr(
               Json.obj(
-                "description" -> "Payment from an earlier tax year"
+                "description" -> "Payment from an earlier tax year",
+                "paymentDate" -> "2018-04-25",
+                "amount" -> -10000.00
               )
             )
           )

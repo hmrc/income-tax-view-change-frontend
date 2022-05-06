@@ -59,9 +59,8 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     paymentHistoryService.getPaymentHistory.map {
       case Right(payments) =>
-        if (isEnabled(R7bTxmEvents)) {
-          auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, CutOverCreditsEnabled=isEnabled(CutOverCredits)))
-        }
+          auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents=isEnabled(R7bTxmEvents), CutOverCreditsEnabled=isEnabled(CutOverCredits)))
+
         Ok(paymentHistoryView(payments, CutOverCreditsEnabled=isEnabled(CutOverCredits),backUrl, user.saUtr,
           btaNavPartial = user.btaNavPartial, isAgent = isAgent)).addingToSession(gatewayPage -> PaymentHistoryPage.name)
       case Left(_) => itvcErrorHandler.showInternalServerError()
