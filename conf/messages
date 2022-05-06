@@ -771,7 +771,8 @@ inYear-tax-overview.agent.inset                                  = This calculat
 
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
-credit-and-refund.subHeading                                      = in your account.
+credit-and-refund.subHeading.has-credits                          = in your account.
+credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
 credit-and-refund.bullet-text-intro                               = You can:
 credit-and-refund.bullet-one-prt-1                                = leave this money in your account to automatically pay
 credit-and-refund.bullet-one-link                                 = what you owe

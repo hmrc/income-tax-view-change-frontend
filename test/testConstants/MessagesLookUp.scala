@@ -758,6 +758,8 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   //Tax Years Page Messages
   object CreditAndRefunds {
     val title = "Claim a refund"
+    val subHeadingWithCredits = "in your account."
+    val subHeadingWithoutCredits = "has been requested as a refund and is in progress."
     val noAvailableAmount = "You have no money in your account."
     val totalText = "Total"
     val refundText = "Refund - in progress"

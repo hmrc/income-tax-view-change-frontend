@@ -55,7 +55,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: BalanceDetails, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails], isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
@@ -74,10 +74,6 @@
     }
 }
 
-@total = @{
-    creditCharges.map(_._1.documentDetail.credit.get).foldLeft(BigDecimal(0))(_ + _) - balance.firstPendingAmountRequested.getOrElse(0) - balance.secondPendingAmountRequested.getOrElse(0)
-}
-
 @mainTemplate(
 pageTitle = messages("credit-and-refund.heading"),
 backUrl = Some(backUrl),
@@ -86,12 +82,18 @@ useFallbackBackLink = true
 ) {
 
 
-    @h1(msg = "credit-and-refund.heading")
+@h1(msg = "credit-and-refund.heading")
 
-@if(balance.availableCredit.getOrElse(0) != 0){
-        <h2 class="govuk-heading-m">@{balance.availableCredit.get.toCurrency}
-            <span class ="govuk-body"> @messages("credit-and-refund.subHeading")</span>
+@if(balance.isDefined){
+    @if(balance.get.availableCredit.get != 0){
+        <h2 class="govuk-heading-m">@{balance.get.availableCredit.get.toCurrency}
+            <span class ="govuk-body"> @messages("credit-and-refund.subHeading.has-credits")</span>
         </h2>
+    } else {
+        <h2 class="govuk-heading-m">@{balance.get.firstPendingAmountRequested.get.toCurrency}
+            <span class ="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
+        </h2>
+    }
 
     <details class="govuk-details" data-module="govuk-details">
         <summary class="govuk-details__summary">
@@ -110,30 +112,30 @@ useFallbackBackLink = true
             </div>
             }
 
-            @{balance.firstPendingAmountRequested map { amount =>
+            @{balance.get.firstPendingAmountRequested map { amount =>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
                 <dd class="govuk-summary-list__value">{amount.toCurrencyString}</dd>
             </div>
             }
             }
-            @{balance.secondPendingAmountRequested map { amount =>
+            @{balance.get.secondPendingAmountRequested map { amount =>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
                 <dd class="govuk-summary-list__value">{amount.toCurrencyString}</dd>
             </div>
             }
             }
-            @if(total != 0){
+            @if(balance.get.availableCredit.get != 0){
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@messages("credit-and-refund.total")</dt>
-                    <dd class="govuk-summary-list__value">@{balance.availableCredit.get.toCurrencyString}</dd>
+                    <dd class="govuk-summary-list__value">@{balance.get.availableCredit.get.toCurrencyString}</dd>
                 </div>
             }
         </dl>
         </div>
     </details>
-        @if(total != 0){
+        @if(balance.get.availableCredit.get != 0){
             @p(){@messages("credit-and-refund.bullet-text-intro")}
 
             <ul class="govuk-list govuk-list--bullet">
@@ -151,15 +153,16 @@ useFallbackBackLink = true
 } else {@p(){@messages("credit-and-refund.no-credit")}}
 
     <div class="govuk-button-group">
-        @if(balance.availableCredit.getOrElse(0) != 0 && total >= 0 && total != 0){
-            @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
-            messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
+        @if(balance.isDefined){
+            @if(balance.get.availableCredit.get != 0){
+                @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
+                messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
+            }
         }
 
-        @if(balance.refundInProgress) {
-                @link(link =  "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-status",
-                messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary", role=Some("button"))
-        }
+        @link(link =  "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-status",
+        messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary", role=Some("button"))
+
     </div>
 
 }
