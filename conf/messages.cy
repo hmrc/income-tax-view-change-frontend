@@ -13,9 +13,9 @@ base.backToHome                                                 = Yn ôl i hafan
 base.continue                                                   = Yn eich blaen
 
 # Fallback Back Links
-back.whatYouOwe = Yn ôl i yr hyn sydd arnoch
-back.paymentHistory = Yn ôl i hanes taliadau
-back.taxYearSummary = Yn ôl i crynodeb o’r flwyddyn dreth
+back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
+back.paymentHistory = Yn ôl i Hanes taliadau
+back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
@@ -452,7 +452,8 @@ nextUpdates.previousYears.link									= blynyddoedd treth
 
 sections.open.all												= Agor pob un
 sections.close.all												= Cau pob un
-
+sections.open												    = Agor
+sections.close												    = Cau
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm

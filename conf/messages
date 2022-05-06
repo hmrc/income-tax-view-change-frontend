@@ -14,9 +14,9 @@ base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
 
 # Fallback Back Links
-back.whatYouOwe = Back to what you owe
-back.paymentHistory = Back to payment history
-back.taxYearSummary = Back to tax year summary
+back.whatYouOwe = Back to What You Owe
+back.paymentHistory = Back to Payment History
+back.taxYearSummary = Back to Tax Year Summary
 back.nomatch = Back
 
 # Agent Base
@@ -91,6 +91,7 @@ home.your-returns.agent.description                             = Use this servi
 home.your-returns.updatesLink                                   = Update and submit your {0} to {1} return
 home.returns.viewLink                                           = View your current {0} to {1} return
 home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
+home.credAndRefund.view                                         = Claim a refund
 
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
@@ -481,8 +482,10 @@ nextUpdates.quarterly                                              = Quarterly u
 nextUpdates.crystallisedAll            							   = All income sources
 nextUpdates.propertyIncome            							   = Property income
 nextUpdates.business            							       = Business income
-sections.open.all												   = Open all
-sections.close.all												   = Close all
+sections.open.all												   = Show all
+sections.close.all												   = Hide all
+sections.open												       = Show
+sections.close												       = Hide
 
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
@@ -768,6 +771,22 @@ InYear-tax-overview.goToTaxAccount                               = Go to Income 
 ## InYear Tax Overview (Agent Content overrides)
 inYear-tax-overview.agent.heading                                = Your client’s tax overview 6 April {0} to {1}
 inYear-tax-overview.agent.inset                                  = This calculation is only based on your client’s completed updates for this tax year up to {0}. It is not their final tax bill for the year. It is a year to date calculation based on the information that has been entered so far.
+
+
+## credits and refunds
+credit-and-refund.heading                                         = Claim a refund
+credit-and-refund.subHeading                                      = in your account.
+credit-and-refund.bullet-text-intro                               = You can:
+credit-and-refund.bullet-one-prt-1                                = leave this money in your account to automatically pay
+credit-and-refund.bullet-one-link                                 = what you owe
+credit-and-refund.bullet-one-prt-2                                = on time
+credit-and-refund.bullet-two                                      = claim this money back and make any payments as normal
+credit-and-refund.total                                           = Total
+credit-and-refund.refundProgress                                  = Refund - in progress
+credit-and-refund.payment                                         = payment
+credit-and-refund.details-intro                                   = What’s in your account
+credit-and-refund.claim-refund-btn                                = Claim a Refund
+credit-and-refund.check-refund-btn                                = Check refund status
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English
