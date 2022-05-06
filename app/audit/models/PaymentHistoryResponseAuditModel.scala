@@ -23,13 +23,15 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
-                                            payments: Seq[Payment]) extends ExtendedAuditModel {
+                                            payments: Seq[Payment],
+                                            CutOverCreditsEnabled: Boolean) extends ExtendedAuditModel {
 
   override val transactionName: String = "payment-history-response"
   override val auditType: String = "PaymentHistoryResponse"
 
   private def paymentHistoryDetail(payment: Payment): JsObject =
-    Json.obj("description" -> "Payment Made to HMRC") ++
+    if(payment.credit.isDefined && CutOverCreditsEnabled) Json.obj("description" -> "Payment from an earlier tax year")
+    else Json.obj("description" -> "Payment Made to HMRC") ++
       ("paymentDate", payment.date) ++
       ("amount", payment.amount)
 

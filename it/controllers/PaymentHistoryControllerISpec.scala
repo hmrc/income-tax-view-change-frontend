@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
+import config.featureswitch.{CutOverCredits, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -41,6 +42,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   val paymentsFull2: Seq[Payment] = Seq(
     Payment(reference = Some("reference2"), amount = Some(200.00), method = Some("method2"), lot = Some("lot2"), lotItem = Some("lotItem2"), date = Some("2018-12-12"), Some("DOCID02"))
+  )
+
+  val paymentsnotFull: List[Payment] = List(
+    Payment(reference = Some("reference"), amount = Some(-10000.00), method = Some("method"), lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
   )
 
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
@@ -75,6 +80,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with the payment history page" when {
     "the payment history feature switch is enabled" in {
+      enable(R7bTxmEvents)
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -88,7 +94,26 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleIndividual(paymentHistoryTitle)
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false).detail)
+    }
+
+    "return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
+      enable(R7bTxmEvents)
+      enable(CutOverCredits)
+      isAuthorisedUser(authorised = true)
+      stubUserDetails()
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentsnotFull)
+
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
+
+      Then("The Payment History page is returned to the user")
+      result should have(
+        httpStatus(OK),
+        pageTitleIndividual(paymentHistoryTitle)
+      )
+
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true).detail)
     }
   }
 
