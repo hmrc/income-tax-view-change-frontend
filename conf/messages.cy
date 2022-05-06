@@ -470,7 +470,8 @@ nextUpdates.previousYears.link									= blynyddoedd treth
 
 sections.open.all												= Agor pob un
 sections.close.all												= Cau pob un
-
+sections.open												    = Agor
+sections.close												    = Cau
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm

@@ -86,6 +86,14 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     paymentHistoryView(paymentsnotFull, CutOverCreditsEnabled = true, "testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
+  val testMultiplePayments: List[Payment] = List(
+    Payment(Some("AAAAA"), Some(10000), Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("AAAAA"), Some(10000), Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("AAAAA"), Some(90000), Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02")),
+    Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
+  )
+
   "The payments history view with payment response model" should {
     "when the user has payment history for a single Year" should {
       s"have the title '${PaymentHistoryMessages.title}'" in new PaymentHistorySetup(testPayments) {
@@ -161,6 +169,23 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
         layoutContent.getElementById("paymentFromEarlierYear") shouldBe null
 
+      }
+
+      "display payment history by year with multiple payments for the same year" in new PaymentHistorySetup(testMultiplePayments) {
+        val orderedPayments: Map[Int, List[Payment]] = testMultiplePayments.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
+        for (((year, payments), index) <- orderedPayments.zipWithIndex) {
+          layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
+          val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
+          val tbody = sectionContent.selectHead("table > tbody")
+          payments.zipWithIndex.foreach {
+            case (payment, index) =>
+              val row = tbody.selectNth("tr", index + 1)
+              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
+              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.date.get).toLongDate} ${payment.amount.get.toCurrencyString} Item ${index + 1}"
+              row.selectNth("td", 2).select("a").attr("href") shouldBe s"/report-quarterly/income-and-expenses/view/charges/payments-made?documentNumber=${payment.transactionId.get}"
+              row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
+          }
+        }
       }
     }
   }

@@ -500,8 +500,10 @@ nextUpdates.quarterly                                              = Quarterly u
 nextUpdates.crystallisedAll            							   = All income sources
 nextUpdates.propertyIncome            							   = Property income
 nextUpdates.business            							       = Business income
-sections.open.all												   = Open all
-sections.close.all												   = Close all
+sections.open.all												   = Show all
+sections.close.all												   = Hide all
+sections.open												       = Show
+sections.close												       = Hide
 
 ## Payment Due Page ##
 paymentDue.heading                                                 = Payments due
