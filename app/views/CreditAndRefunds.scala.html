@@ -108,7 +108,7 @@ useFallbackBackLink = true
                 <dt class="govuk-summary-list__value">
                     <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
                 </dt>
-                <dd class="govuk-summary-list__value">@charge._1.documentDetail.credit.get.toCurrencyString</dd>
+                <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
             </div>
             }
 
