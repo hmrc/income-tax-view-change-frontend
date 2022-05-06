@@ -1050,7 +1050,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "show unallocated credits" when {
       "user is an individual with the feature switch on" in new Setup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
-        print(pageDocument.body().text())
         pageDocument.body().select("p").get(7).text() shouldBe unallocatedCreditMsg
       }
 
