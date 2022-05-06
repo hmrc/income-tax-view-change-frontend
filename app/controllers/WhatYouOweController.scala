@@ -75,7 +75,6 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           dunningLock = whatYouOweChargesList.hasDunningLock,
           codingOutEnabled = codingOutEnabled,
           isAgent = isAgent,
-          cutOverCreditsEnabled = isEnabled(CutOverCredits),
           whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
           origin = origin)(user, user, messages)
         ).addingToSession(gatewayPage -> WhatYouOwePage.name)

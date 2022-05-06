@@ -856,7 +856,7 @@ object FinancialDetailsTestConstants {
 
 
   def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, Some(BigDecimal(100.00))),
     chargesList = financialDetailsDueInMoreThan30Days(dunningLocks).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
