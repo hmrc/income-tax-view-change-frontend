@@ -78,6 +78,16 @@
     }
 }
 
+@unallocatedCreditParagraphContent(amount: String) = {
+    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = "https://www.gov.uk/tax-appeals",
+        outerMessage = messages("whatYouOwe.unallocated-credit-note"),
+        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount) + ". ",
+        id = Some("unallocated-credit-link")).toString() ))
+}
+
+@p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
+
+
 @paymentTypesDropdown(classes: String) = {
     <details class="@classes" data-module="govuk-details">
         <summary class="govuk-details__summary" id="payment-type-dropdown-title">
@@ -236,16 +246,6 @@
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph
-
-        @if(whatYouOweCreditAmountEnabled) {
-            @creditCharges.map { unallocatedCredit =>
-                @whatYouOweChargesList.balanceDetails.unallocatedCredit.map {unallocatedCreditAmt =>
-                    @p()(Html(getMessage("credit-overpaid",unallocatedCreditAmt.toCurrencyString)))}
-
-
-
-            }
-        }
     } else {
         <div>
 
@@ -347,21 +347,13 @@
           @if(!whatYouOweChargesList.isChargesListEmpty) {
               @saNoteParagraph
           }
-@*
-          @if(cutOverCreditsEnabled) {
-           @creditCharges.map { documentDetails =>
-            @documentDetails.credit.map { credit => @p()(Html(getMessage("credit-overpaid",credit.toCurrencyString)))}
-             }
-           }
-*@
-           @if(whatYouOweCreditAmountEnabled) {
-               @creditCharges.map { unallocatedCredit =>
-                   @whatYouOweChargesList.balanceDetails.unallocatedCredit.map {unallocatedCreditAmt =>
-                       @p()(Html(getMessage("credit-overpaid",unallocatedCreditAmt.toCurrencyString)))}
 
-                   @Some(BigDecimal(777.55)).map{ credit => @p()(Html(getMessage("credit-overpaid",credit.toCurrencyString)))}
-               }
-           }
+          @if(whatYouOweCreditAmountEnabled) {
+              @whatYouOweChargesList.balanceDetails.unallocatedCredit.map { unallocatedCreditAmt =>
+                  @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
+              }
+          }
+
 
     @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
       <div id="payment-button">
