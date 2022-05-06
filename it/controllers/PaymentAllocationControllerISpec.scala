@@ -96,7 +96,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           pageTitleIndividual(paymentAllocationTitle),
         )
 
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel, false).detail)
       }
     }
 
@@ -127,7 +127,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           elementTextBySelector("#payment-allocation-0 a")("Late payment interest for Balancing payment 9999")
         )
 
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel, false).detail)
       }
     }
   }

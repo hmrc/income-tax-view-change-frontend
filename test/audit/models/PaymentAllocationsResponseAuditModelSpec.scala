@@ -91,7 +91,26 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         userType = userType,
         arn = if (userType.contains("Agent")) Some(testArn) else None
       ),
-      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate)
+      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate),
+      false
+    )
+  }
+
+  def paymentAllocationsAuditFullFsOn(userType: Option[String] = Some("Agent")): PaymentAllocationsResponseAuditModel = {
+    PaymentAllocationsResponseAuditModel(
+      mtdItUser = MtdItUser(
+        mtditid = testMtditid,
+        nino = testNino,
+        userName = Some(Name(Some("firstName"), Some("lastName"))),
+        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+        btaNavPartial = None,
+        saUtr = Some(testSaUtr),
+        credId = Some(testCredId),
+        userType = userType,
+        arn = if (userType.contains("Agent")) Some(testArn) else None
+      ),
+      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate),
+      true
     )
   }
 
@@ -109,11 +128,30 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         userType = userType,
         arn = if (userType.contains("Agent")) Some(testArn) else None
       ),
-      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModelCredit, originalPaymentAllocationWithClearingDateCredit)
+      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModelCredit, originalPaymentAllocationWithClearingDateCredit),
+      false
     )
   }
 
-  "The PaymentAllocationsRequestAuditModel" should {
+  def paymentAllocationsAuditFullCreditFsOn(userType: Option[String] = Some("Agent")): PaymentAllocationsResponseAuditModel = {
+    PaymentAllocationsResponseAuditModel(
+      mtdItUser = MtdItUser(
+        mtditid = testMtditid,
+        nino = testNino,
+        userName = Some(Name(Some("firstName"), Some("lastName"))),
+        incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+        btaNavPartial = None,
+        saUtr = Some(testSaUtr),
+        credId = Some(testCredId),
+        userType = userType,
+        arn = if (userType.contains("Agent")) Some(testArn) else None
+      ),
+      paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModelCredit, originalPaymentAllocationWithClearingDateCredit),
+      true
+    )
+  }
+
+  "The PaymentAllocationsRequestAuditModel with R7bTxmEvents FS disabled" should {
 
     s"Have the correct transaction name of '$transactionName'" in {
       paymentAllocationsAuditFull().transactionName shouldBe transactionName
@@ -134,7 +172,6 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "userType" -> "Individual",
             "paymentMadeDate" -> "2017-02-28",
             "paymentMadeAmount" -> 23456.78,
-            "paymentType" -> "Payment made to HMRC",
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
@@ -148,6 +185,121 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         }
         "the user is an agent" in {
           paymentAllocationsAuditFull(userType = Some("Agent")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Agent",
+            "agentReferenceNumber" -> testArn,
+            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeAmount" -> 23456.78,
+            "paymentAllocations" -> Json.arr(
+              Json.obj(
+                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "dateAllocated" -> "2017-03-21",
+                "amount" -> 12345.67,
+                "taxYear" -> "2016 to 2017"
+              )
+            ),
+            "creditOnAccount" -> 543.32
+          )
+        }
+      }
+    }
+  }
+
+  "The PaymentAllocationsRequestAuditModel with Credit and R7bTxmEvents FS disabled" should {
+
+    s"Have the correct transaction name of '$transactionName'" in {
+      paymentAllocationsAuditFullCredit().transactionName shouldBe transactionName
+    }
+
+    s"Have the correct audit event type of '$auditEvent'" in {
+      paymentAllocationsAuditFullCredit().auditType shouldBe auditEvent
+    }
+
+    "Have the correct details for the audit event with Credit" when {
+      "the audit is full" when {
+        "the user is an individual" in {
+          paymentAllocationsAuditFullCredit(userType = Some("Individual")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Individual",
+            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeAmount" -> 23456.78,
+            "paymentAllocations" -> Json.arr(
+              Json.obj(
+                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "dateAllocated" -> "2017-03-21",
+                "amount" -> 12345.67,
+                "taxYear" -> "2016 to 2017"
+              )
+            ),
+            "creditOnAccount" -> 543.32
+          )
+        }
+        "the user is an agent" in {
+          paymentAllocationsAuditFullCredit(userType = Some("Agent")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Agent",
+            "agentReferenceNumber" -> testArn,
+            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeAmount" -> 23456.78,
+            "paymentAllocations" -> Json.arr(
+              Json.obj(
+                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "dateAllocated" -> "2017-03-21",
+                "amount" -> 12345.67,
+                "taxYear" -> "2016 to 2017"
+              )
+            ),
+            "creditOnAccount" -> 543.32
+          )
+        }
+      }
+    }
+  }
+
+  "The PaymentAllocationsRequestAuditModel with R7bTxmEvents FS enabled" should {
+
+    s"Have the correct transaction name of '$transactionName'" in {
+      paymentAllocationsAuditFullFsOn().transactionName shouldBe transactionName
+    }
+
+    s"Have the correct audit event type of '$auditEvent'" in {
+      paymentAllocationsAuditFullFsOn().auditType shouldBe auditEvent
+    }
+
+    "Have the correct details for the audit event" when {
+      "the audit is full" when {
+        "the user is an individual" in {
+          paymentAllocationsAuditFullFsOn(userType = Some("Individual")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Individual",
+            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeAmount" -> 23456.78,
+            "paymentType" -> "Payment made to HMRC",
+            "paymentAllocations" -> Json.arr(
+              Json.obj(
+                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "dateAllocated" -> "2017-03-21",
+                "amount" -> 12345.67,
+                "taxYear" -> "2016 to 2017"
+              )
+            ),
+            "creditOnAccount" -> 543.32
+          )
+        }
+        "the user is an agent" in {
+          paymentAllocationsAuditFullFsOn(userType = Some("Agent")).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,
@@ -172,20 +324,20 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     }
   }
 
-  "The PaymentAllocationsRequestAuditModel with Credit" should {
+  "The PaymentAllocationsRequestAuditModel with Credit and R7bTxmEvents FS enabled" should {
 
     s"Have the correct transaction name of '$transactionName'" in {
-      paymentAllocationsAuditFullCredit().transactionName shouldBe transactionName
+      paymentAllocationsAuditFullCreditFsOn().transactionName shouldBe transactionName
     }
 
     s"Have the correct audit event type of '$auditEvent'" in {
-      paymentAllocationsAuditFullCredit().auditType shouldBe auditEvent
+      paymentAllocationsAuditFullCreditFsOn().auditType shouldBe auditEvent
     }
 
     "Have the correct details for the audit event with Credit" when {
       "the audit is full" when {
         "the user is an individual" in {
-          paymentAllocationsAuditFullCredit(userType = Some("Individual")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFullCreditFsOn(userType = Some("Individual")).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,
@@ -206,7 +358,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
           )
         }
         "the user is an agent" in {
-          paymentAllocationsAuditFullCredit(userType = Some("Agent")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFullCreditFsOn(userType = Some("Agent")).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,

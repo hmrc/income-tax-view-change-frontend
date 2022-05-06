@@ -81,7 +81,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         } else {
-          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
+          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations, isEnabled(R7bTxmEvents)))
           Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
             CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
             isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage)(implicitly, messages))

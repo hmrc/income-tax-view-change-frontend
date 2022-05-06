@@ -23,11 +23,12 @@ import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, Paymen
 import models.paymentAllocations.AllocationDetail
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
-
 import java.time.LocalDate
 
+
 case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
-                                                paymentAllocations: PaymentAllocationViewModel)
+                                                paymentAllocations: PaymentAllocationViewModel,
+                                                R7bTxmEvents: Boolean)
   extends ExtendedAuditModel {
 
   override val transactionName: String = "payment-allocations-response"
@@ -98,13 +99,15 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
     }
   }
   private def paymentAllocationType(): JsObject = {
-
-    if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)){
-      Json.obj("paymentType"-> "Payment made from earlier tax year")
+    if (R7bTxmEvents) {
+      if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+        Json.obj("paymentType" -> "Payment made from earlier tax year")
+      }
+      else {
+        Json.obj("paymentType" -> "Payment made to HMRC")
+      }
     }
-    else {
-      Json.obj("paymentType"->"Payment made to HMRC")
-    }
+    else Json.obj()
   }
 
   override val detail: JsValue = userAuditDetails(mtdItUser) ++ paymentAllocationDetail()
