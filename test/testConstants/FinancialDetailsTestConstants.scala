@@ -763,7 +763,7 @@ object FinancialDetailsTestConstants {
   def financialDetailsDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
     dueDate = dueDateMoreThan30Days,
     dunningLock = dunningLocks,
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None)
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, Some(100.00))
   )
 
   def financialDetailsDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
