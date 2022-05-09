@@ -88,8 +88,6 @@
         id = Some("unallocated-credit-link")).toString()))
 }
 
-@p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
-
 @paymentTypesDropdown(classes: String) = {
     <details class="@classes" data-module="govuk-details">
         <summary class="govuk-details__summary" id="payment-type-dropdown-title">
