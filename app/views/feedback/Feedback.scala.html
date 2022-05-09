@@ -14,16 +14,100 @@
  * limitations under the License.
  *@
 
-@import config.FormPartialProvider
-@import views.html.templates.GovUkWrapper
+@import config.FrontendAppConfig
+@import views.html.helpers.injected.InputHelper
+@import views.html.helpers.injected.ContinueButton
+@import views.html.helpers.injected.ErrorSummary
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
 
-@this(govukWrapper: GovUkWrapper)
+@this(
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    p: p,
+    govukRadios: GovukRadios,
+    govukInput : GovukInput,
+    govukCharacterCount : GovukCharacterCount,
+    govukButton : GovukButton
+)
 
-@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
+@(isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@mainContent = {
-@formBody.getOrElse(formPartialProvider.getPartialContent(partialUrl))
+@mainTemplate(
+    pageTitle = messages("feedback.heading"),
+    isAgent = isAgent,
+    origin = origin) {
+
+    @h1(msg = "feedback.heading")
+
+    @p(){@messages("feedback.description")}
+
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("feedback.radiosDescription"))
+            ))
+        )),
+        idPrefix = Some("what-do-you-think-of-this-online-service"),
+        name = "what-do-you-think-of-this-online-service",
+        items = Seq(
+            RadioItem(
+                content = Text(messages("feedback.veryGood")),
+                value = Some("very-good")
+            ),
+            RadioItem(
+                content = Text(messages("feedback.good")),
+                value = Some("good")
+            ),
+            RadioItem(
+                content = Text(messages("feedback.neutral")),
+                value = Some("neutral")
+            ),
+            RadioItem(
+                content = Text(messages("feedback.bad")),
+                value = Some("bad")
+            ),
+            RadioItem(
+                content = Text(messages("feedback.veryBad")),
+                value = Some("very-bad")
+            )
+        )
+    ))
+
+    @govukInput(Input(
+        id = "full-name",
+        name = "full-name",
+        label = Label(
+            content = Text(messages("feedback.fullName"))
+        ),
+        autocomplete = Some("full-name")
+    ))
+
+    @govukInput(Input(
+        id = "email-address",
+        name = "email-address",
+        label = Label(
+        content = Text(messages("feedback.email"))
+        ),
+        autocomplete = Some("email-address")
+    ))
+
+    @govukCharacterCount(CharacterCount(
+        id = "comments",
+        name = "comments",
+        maxLength = Some(2000),
+        label = Label(
+            content = Text(messages("feedback.comments"))
+        ),
+        hint = Some(Hint(
+            content = Text(messages("feedback.comments.hint"))
+        ))
+    ))
+
+    @govukButton(Button(
+        content = Text(messages("feedback.send"))
+    ))
+
 }
-
-@govukWrapper(title = messages("feedback.title"), mainContent = mainContent)
-
