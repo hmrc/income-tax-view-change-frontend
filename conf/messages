@@ -703,7 +703,7 @@ paymentHistory.table.header.amount                              = Amount
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
-paymentAllocation.sa.info                                          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
+paymentAllocation.sa.info                                       = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
 paymentAllocation.earlyTaxYear.heading                          = Payment from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount

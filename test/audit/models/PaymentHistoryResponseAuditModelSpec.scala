@@ -18,6 +18,7 @@ package audit.models
 
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import auth.MtdItUser
+import config.featureswitch.{CutOverCredits, R7bTxmEvents}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.Json
@@ -43,7 +44,47 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     ),
     payments = Seq(
       Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None)
-    )
+    ),
+    CutOverCreditsEnabled = false,
+    R7bTxmEvents = false
+  )
+
+  def paymentHistoryAuditFullTxm(userType: Option[String] = Some("Agent")): PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
+    mtdItUser = MtdItUser(
+      mtditid = testMtditid,
+      nino = testNino,
+      userName = Some(Name(Some("firstName"), Some("lastName"))),
+      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+      btaNavPartial = None,
+      saUtr = Some(testSaUtr),
+      credId = Some(testCredId),
+      userType = userType,
+      arn = if (userType.contains("Agent")) Some(testArn) else None
+    ),
+    payments = Seq(
+      Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None)
+    ),
+    CutOverCreditsEnabled = true,
+    R7bTxmEvents = true
+  )
+
+  def paymentHistoryAuditCutOverCredits(userType: Option[String] = Some("Agent")): PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
+    mtdItUser = MtdItUser(
+      mtditid = testMtditid,
+      nino = testNino,
+      userName = Some(Name(Some("firstName"), Some("lastName"))),
+      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+      btaNavPartial = None,
+      saUtr = Some(testSaUtr),
+      credId = Some(testCredId),
+      userType = userType,
+      arn = if (userType.contains("Agent")) Some(testArn) else None
+    ),
+    payments = Seq(
+      Payment(reference = Some("reference"), amount = Some(-10000.00), method = Some("method"), lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
+    ),
+    CutOverCreditsEnabled = true,
+    R7bTxmEvents = true
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
@@ -57,7 +98,9 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       userType = None,
       arn = None
     ),
-    payments = Seq.empty[Payment]
+    payments = Seq.empty[Payment],
+    CutOverCreditsEnabled = false,
+    R7bTxmEvents = false
   )
 
   "The PaymentHistoryRequestAuditModel" should {
@@ -106,6 +149,79 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
           )
         }
       }
+
+      "the audit is full - returns payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" when {
+        "the user is an individual" in {
+          paymentHistoryAuditCutOverCredits(userType = Some("Individual")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Individual",
+            "paymentHistory" -> Json.arr(
+              Json.obj(
+                "description" -> "Payment from an earlier tax year",
+                "paymentDate" -> "2018-04-25",
+                "amount" -> -10000.00
+              )
+            )
+          )
+        }
+        "the user is an agent" in {
+          paymentHistoryAuditCutOverCredits(userType = Some("Agent")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Agent",
+            "agentReferenceNumber" -> testArn,
+            "paymentHistory" -> Json.arr(
+              Json.obj(
+                "description" -> "Payment from an earlier tax year",
+                "paymentDate" -> "2018-04-25",
+                "amount" -> -10000.00
+              )
+            )
+          )
+        }
+      }
+
+      "the audit is full - returns Payment Made to HMRC description when CutOverCreditsEnabled and R7bTxmEvents are enabled - credit is not defined" when {
+        "the user is an individual" in {
+          paymentHistoryAuditFullTxm(userType = Some("Individual")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Individual",
+            "paymentHistory" -> Json.arr(
+              Json.obj(
+                "paymentDate" -> "2018-02-01",
+                "description" -> "Payment Made to HMRC",
+                "amount" -> 100.00
+              )
+            )
+          )
+        }
+        "the user is an agent" in {
+          paymentHistoryAuditFullTxm(userType = Some("Agent")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Agent",
+            "agentReferenceNumber" -> testArn,
+            "paymentHistory" -> Json.arr(
+              Json.obj(
+                "paymentDate" -> "2018-02-01",
+                "description" -> "Payment Made to HMRC",
+                "amount" -> 100.00
+              )
+            )
+          )
+        }
+      }
+
       "the audit is empty" in {
         paymentHistoryAuditMin.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
