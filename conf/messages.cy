@@ -470,10 +470,10 @@ nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn 
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
 
-sections.open.all												= Agor pob un
-sections.close.all												= Cau pob un
-sections.open												    = Agor
-sections.close												    = Cau
+sections.open.all												= Dangos pob un
+sections.close.all												= Cuddio pob un
+sections.open												    = Dangos
+sections.close												    = Cuddio
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
@@ -677,6 +677,7 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau ar gyfer {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
+paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
@@ -728,6 +729,7 @@ pagehelp.opensInNewTabText                                      = ' (yn agor tab
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad a wnaed i CThEM
+paymentAllocation.earlyTaxYear.heading                          = Taliad o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
 paymentAllocation.info                                          = Bydd unrhyw daliadau a wneir yn cael eu dyrannu’n awtomatig tuag at gosbau a blynyddoedd treth cynharach cyn y flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
