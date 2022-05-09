@@ -28,6 +28,7 @@ import utils.Utilities._
 case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: List[DocumentDetailWithDueDate],
                                             updates: ObligationsModel,
+                                            R7bTxmEvents: Boolean,
                                             taxYearSummaryViewModel: Option[TaxYearSummaryViewModel] = None
                                             ) extends ExtendedAuditModel with ImplicitDateParser {
 
@@ -36,13 +37,15 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private val taxYearSummaryJson = Json.obj() ++
     ("calculationDate", taxYearSummaryViewModel.map(_.timestamp.map(_.toZonedDateTime.toLocalDate))) ++
-    ("totalDue", taxYearSummaryViewModel.map(_.taxDue))
+    ("calculationAmount", taxYearSummaryViewModel.map(_.taxDue))++
+    ("isCrystallised",taxYearSummaryViewModel.map(_.crystallised))
 
   private val calculationDetails: JsObject = Json.obj() ++
     ("income", taxYearSummaryViewModel.map(_.income)) ++
     ("allowancesAndDeductions", taxYearSummaryViewModel.map(_.deductions)) ++
     ("taxableIncome", taxYearSummaryViewModel.map(_.totalTaxableIncome)) ++
-    ("taxDue", taxYearSummaryViewModel.map(_.taxDue))
+    ("taxDue", taxYearSummaryViewModel.map(_.taxDue))++
+    ("calculationReason",taxYearSummaryViewModel.map(_.unattendedCalc))
 
   private def paymentsJson(docDateDetail: DocumentDetailWithDueDate): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail),
