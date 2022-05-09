@@ -50,16 +50,16 @@ class CreditServiceSpec extends TestSupport {
     "return a list of financial details credit charges" when {
       "a successful response is received in all tax year calls" in {
 
-        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditCharge)))
+        when(mockFinancialDetailsService.getAllCreditChargesandPaymentsFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
-        service.getCreditCharges()(headerCarrier, mtdItUser).futureValue shouldBe List(financialDetailCreditCharge)
+        service.getCreditCharges()(headerCarrier, mtdItUser).futureValue shouldBe List(financialDetailCreditAndRefundCharge)
       }
     }
 
     "handle an error" when {
       "the financial service has returned an error in all tax year calls" in {
-        when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
+        when(mockFinancialDetailsService.getAllCreditChargesandPaymentsFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsErrorModel(500, "INTERNAL_SERVER ERROR"))))
 
         val result = service.getCreditCharges()(headerCarrier, mtdItUser).failed.futureValue

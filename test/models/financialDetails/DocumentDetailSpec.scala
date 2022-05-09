@@ -190,5 +190,25 @@ class DocumentDetailSpec extends UnitSpec {
         }
       }
     }
+
+    "deriving the paymentOrChargeCredit value" should {
+      "produce a credit value" when {
+        "there is an outstanding amount and it is negative" in {
+          fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(-10.00))).paymentOrChargeCredit shouldBe Some(BigDecimal(10.00))
+        }
+      }
+
+      "produce no value" when {
+        "there is no outstanding amount" in {
+          fullDocumentDetailModel.copy(outstandingAmount = None, paymentLot = None,
+            paymentLotItem = None).paymentOrChargeCredit shouldBe None
+        }
+
+        "the outstanding amount is not negative" in {
+          fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(10.00)), paymentLot = None,
+            paymentLotItem = None).paymentOrChargeCredit shouldBe None
+        }
+      }
+    }
   }
 }
