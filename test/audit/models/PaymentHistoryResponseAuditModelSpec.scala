@@ -49,6 +49,25 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     R7bTxmEvents = false
   )
 
+  def paymentHistoryAuditFullTxm(userType: Option[String] = Some("Agent")): PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
+    mtdItUser = MtdItUser(
+      mtditid = testMtditid,
+      nino = testNino,
+      userName = Some(Name(Some("firstName"), Some("lastName"))),
+      incomeSources = IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+      btaNavPartial = None,
+      saUtr = Some(testSaUtr),
+      credId = Some(testCredId),
+      userType = userType,
+      arn = if (userType.contains("Agent")) Some(testArn) else None
+    ),
+    payments = Seq(
+      Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None)
+    ),
+    CutOverCreditsEnabled = true,
+    R7bTxmEvents = true
+  )
+
   def paymentHistoryAuditCutOverCredits(userType: Option[String] = Some("Agent")): PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
     mtdItUser = MtdItUser(
       mtditid = testMtditid,
@@ -161,6 +180,42 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
                 "description" -> "Payment from an earlier tax year",
                 "paymentDate" -> "2018-04-25",
                 "amount" -> -10000.00
+              )
+            )
+          )
+        }
+      }
+
+      "the audit is full - returns Payment Made to HMRC description when CutOverCreditsEnabled and R7bTxmEvents are enabled - credit is not defined" when {
+        "the user is an individual" in {
+          paymentHistoryAuditFullTxm(userType = Some("Individual")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Individual",
+            "paymentHistory" -> Json.arr(
+              Json.obj(
+                "paymentDate" -> "2018-02-01",
+                "description" -> "Payment Made to HMRC",
+                "amount" -> 100.00
+              )
+            )
+          )
+        }
+        "the user is an agent" in {
+          paymentHistoryAuditFullTxm(userType = Some("Agent")).detail shouldBe Json.obj(
+            "mtditid" -> testMtditid,
+            "nationalInsuranceNumber" -> testNino,
+            "saUtr" -> testSaUtr,
+            "credId" -> testCredId,
+            "userType" -> "Agent",
+            "agentReferenceNumber" -> testArn,
+            "paymentHistory" -> Json.arr(
+              Json.obj(
+                "paymentDate" -> "2018-02-01",
+                "description" -> "Payment Made to HMRC",
+                "amount" -> 100.00
               )
             )
           )
