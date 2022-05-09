@@ -1050,12 +1050,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "show unallocated credits" when {
       "user is an individual with the feature switch on" in new Setup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
-        pageDocument.body().select("p").get(7).text() shouldBe unallocatedCreditMsg
+        pageDocument.body().select("p").get(6).text() shouldBe unallocatedCreditMsg
       }
 
       "user is an agent with the feature switch on" in new AgentSetup(creditCharges =  creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
-        pageDocument.body().select("p").get(7).text() shouldBe unallocatedCreditMsg
+        pageDocument.body().select("p").get(6).text() shouldBe unallocatedCreditMsg
       }
     }
 
