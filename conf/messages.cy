@@ -51,6 +51,26 @@ bta.manage-account                                              = Rheoli’r cyf
 
 ## Feedback ##
 feedback.title                                                  = Rhoi adborth
+feedback.heading                                                = Anfon eich adborth
+feedback.description                                            = Rydym yn defnyddio’ch adborth i wella ein gwasanaethau.
+feedback.radiosDescription                                      = Beth yw eich barn am y gwasanaeth ar-lein hwn?
+feedback.radiosError                                            = Rhowch wybod i ni beth yw eich barn am y gwasanaeth
+feedback.veryGood                                               = Da iawn
+feedback.good                                                   = Da
+feedback.neutral                                                = Niwtral
+feedback.bad                                                    = Gwael
+feedback.veryBad                                                = Gwael iawn
+feedback.fullName                                               = Enw llawn
+feedback.fullName.error.enter                                   = Rhowch eich enw
+feedback.fullname.error.onlyInclude                             = Rhowch lythrennau neu atalnodi’n unig
+feedback.email                                                  = Cyfeiriad e-bost
+feedback.email.error                                            = Nodwch gyfeiriad e-bost yn y fformat cywir, megis enw@enghraifft.com
+feedback.comments                                               = Sylwadau
+feedback.comments.hint                                          = Peidiwch â chynnwys unrhyw wybodaeth bersonol nac ariannol. Er enghraifft, eich rhif Yswiriant Gwladol neu rif eich cerdyn credyd.
+feedback.comments.error                                         = Rhowch eich sylwadau
+feedback.send                                                   = Anfon
+feedback.thankYou                                               = Diolch
+feedback.received                                               = Mae eich adborth wedi dod i law.
 
 ## Home Page ##
 home.heading                                                    = Treth Incwm

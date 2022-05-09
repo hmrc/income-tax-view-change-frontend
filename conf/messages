@@ -65,6 +65,26 @@ bta.manage-account                                              = Manage account
 
 ## Feedback ##
 feedback.title                                                  = Give feedback
+feedback.heading                                                = Send your feedback
+feedback.description                                            = We use your feedback to make our services better.
+feedback.radiosDescription                                      = What do you think of this online service?
+feedback.radiosError                                            = Tell us what you think of the service
+feedback.veryGood                                               = Very good
+feedback.good                                                   = Good
+feedback.neutral                                                = Neutral
+feedback.bad                                                    = Bad
+feedback.veryBad                                                = Very bad
+feedback.fullName                                               = Full name
+feedback.fullName.error.enter                                   = Enter your full name
+feedback.fullname.error.onlyInclude                             = Full name must only include letters a to z, hyphens, full stops, commas, apostrophes and spaces
+feedback.email                                                  = Email address
+feedback.email.error                                            = Enter an email address in the correct format, like name@example.com
+feedback.comments                                               = Comments
+feedback.comments.hint                                          = Do not include personal or financial information. For example, your National Insurance number or credit card numbers.
+feedback.comments.error                                         = Enter your comments
+feedback.send                                                   = Send
+feedback.thankYou                                               = Thank you
+feedback.received                                               = Your feedback has been received.
 
 ## Home Page ##
 home.heading                                                    = Income Tax
