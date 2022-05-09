@@ -35,8 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
-                                   val feedbackView: views.html.feedback.Feedback,
-                                   val feedbackThankYouView: views.html.feedback.FeedbackThankYou,
+                                   val feedbackView: views.html.feedback.FeedbackOld,
+                                   val feedbackThankYouView: views.html.feedback.FeedbackThankYouOld,
                                    httpClient: HttpClient,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val formPartialRetriever: FormPartialProvider,
@@ -64,8 +64,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   def show: Action[AnyContent] = Action {
     implicit request =>
       (request.session.get(REFERER), request.headers.get(REFERER)) match {
-        case (None, Some(ref)) => Ok(feedbackView()).withSession(request.session + (REFERER -> ref))
-        case _ => Ok(feedbackView())
+        case (None, Some(ref)) => Ok(feedbackView(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
+        case _ => Ok(feedbackView(feedbackFormPartialUrl, None))
       }
   }
 
@@ -77,7 +77,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
           resp =>
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
-              case HttpStatus.BAD_REQUEST => BadRequest(feedbackView())
+              case HttpStatus.BAD_REQUEST => BadRequest(feedbackView(feedbackFormPartialUrl, Some(Html(resp.body))))
               case status => Logger("application").error(s"Unexpected status code from feedback form: $status"); InternalServerError
             }
         }

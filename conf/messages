@@ -83,6 +83,8 @@ feedback.comments                                               = Comments
 feedback.comments.hint                                          = Do not include personal or financial information. For example, your National Insurance number or credit card numbers.
 feedback.comments.error                                         = Enter your comments
 feedback.send                                                   = Send
+feedback.thankYou                                               = Thank you
+feedback.received                                               = Your feedback has been received.
 
 ## Home Page ##
 home.heading                                                    = Income Tax

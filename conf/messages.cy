@@ -69,6 +69,8 @@ feedback.comments                                               = Sylwadau
 feedback.comments.hint                                          = Peidiwch â chynnwys unrhyw wybodaeth bersonol nac ariannol. Er enghraifft, eich rhif Yswiriant Gwladol neu rif eich cerdyn credyd.
 feedback.comments.error                                         = Rhowch eich sylwadau
 feedback.send                                                   = Anfon
+feedback.thankYou                                               = Diolch
+feedback.received                                               = Mae eich adborth wedi dod i law.
 
 ## Home Page ##
 home.heading                                                    = Treth Incwm
