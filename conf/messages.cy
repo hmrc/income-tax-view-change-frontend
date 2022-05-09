@@ -450,8 +450,8 @@ nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn 
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
 
-sections.open.all												= Dangos POB UN
-sections.close.all												= Cuddio POB UN
+sections.open.all												= Dangos pob un
+sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
