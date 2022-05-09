@@ -901,10 +901,29 @@ object FinancialDetailsTestConstants {
     documentDetailModel(outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
   )
 
+  val creditAndRefundDocumentDetailList = List(
+    documentDetailModel(outstandingAmount = Some(BigDecimal(-100.00)), paymentLotItem = Some("1"), paymentLot = Some("01")),
+    documentDetailModel(outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = Some("2"), paymentLot = Some("02"))
+  )
+
   val financialDetailCreditCharge = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(2.00), Some(4.00), None),
     codingDetails = None,
     documentDetails = creditDocumentDetailList,
+    financialDetails = List(
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
+        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
+        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+      FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
+        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+    )
+  )
+
+  val financialDetailCreditAndRefundCharge = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(2.00), Some(4.00), None),
+    codingDetails = None,
+    documentDetails = creditAndRefundDocumentDetailList,
     financialDetails = List(
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
         Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
