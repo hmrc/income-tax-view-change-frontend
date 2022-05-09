@@ -50,7 +50,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   )
 
   val documentDetailWithDueDateFinancialDetailListModel: (DocumentDetailWithDueDate, FinancialDetail) = {
-    (documentDetailWithDueDateModel(paymentLot = None, outstandingAmount = Some(-1400.0)), financialDetail())
+    (documentDetailWithDueDateModel(paymentLot = None, originalAmount = Some(-1400.0)), financialDetail())
   }
 
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel),

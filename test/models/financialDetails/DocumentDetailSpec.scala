@@ -167,25 +167,25 @@ class DocumentDetailSpec extends UnitSpec {
 
     "deriving the credit value" should {
       "produce a credit value" when {
-        "there is an outstanding amount, it is negative and there is no payment Id or lot item" in {
-          fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(-10.00)), paymentLot = None,
+        "there is an original amount, it is negative and there is no payment Id or lot item" in {
+          fullDocumentDetailModel.copy(originalAmount = Some(BigDecimal(-10.00)), paymentLot = None,
             paymentLotItem = None).credit shouldBe Some(BigDecimal(10.00))
         }
       }
 
       "produce no value" when {
-        "there is no outstanding amount" in {
-          fullDocumentDetailModel.copy(outstandingAmount = None, paymentLot = None,
+        "there is no original amount" in {
+          fullDocumentDetailModel.copy(originalAmount = None, paymentLot = None,
             paymentLotItem = None).credit shouldBe None
         }
 
         "there is a payment Id and lot Item" in {
-          fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(-10.00)), paymentLot = Some("1"),
+          fullDocumentDetailModel.copy(originalAmount = Some(BigDecimal(-10.00)), paymentLot = Some("1"),
             paymentLotItem = Some("1")).credit shouldBe None
         }
 
         "the outstanding amount is not negative" in {
-          fullDocumentDetailModel.copy(outstandingAmount = Some(BigDecimal(10.00)), paymentLot = None,
+          fullDocumentDetailModel.copy(originalAmount = Some(BigDecimal(10.00)), paymentLot = None,
             paymentLotItem = None).credit shouldBe None
         }
       }
