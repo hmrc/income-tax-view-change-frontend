@@ -450,10 +450,10 @@ nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn 
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
 
-sections.open.all												= Agor pob un
-sections.close.all												= Cau pob un
-sections.open												    = Agor
-sections.close												    = Cau
+sections.open.all												= Dangos pob un
+sections.close.all												= Cuddio pob un
+sections.open												    = Dangos
+sections.close												    = Cuddio
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
