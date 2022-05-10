@@ -33,7 +33,7 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
   class Setup(isAgent: Boolean = false) {
     val paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargesModelWithCredit, Seq())
-    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(paymentAllocations, true, isAgent)
+    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(paymentAllocations, isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 

@@ -23,7 +23,7 @@
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
     link: link)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, CutOverCreditsEnabled: Boolean,
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel,
     isAgent: Boolean = false)(implicit messages: Messages)
 @import implicitDateFormatter._
 
@@ -32,16 +32,14 @@
     else controllers.routes.CreditAndRefundController.show().url
 }
 
-@paymentAllocations.paymentAllocationChargeModel.documentDetails.head.credit.map { credit =>
-     @if(CutOverCreditsEnabled) {
-         <tbody class="govuk-table__body">
-               <tr id="money-on-account">
-                   <td class="govuk-table__cell">
-                       @link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
-                   </td>
-                   <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
-                   <td class="govuk-table__cell">@{credit.abs.toCurrencyString}</td>
-               </tr>
-         </tbody>
-     }
+@paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount.map { outstandingAmount =>
+     <tbody class="govuk-table__body">
+           <tr id="money-on-account">
+               <td class="govuk-table__cell">
+                   @link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
+               </td>
+               <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
+               <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
+           </tr>
+     </tbody>
 }
