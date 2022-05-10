@@ -22,7 +22,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
 
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds
@@ -45,7 +45,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
 
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds
