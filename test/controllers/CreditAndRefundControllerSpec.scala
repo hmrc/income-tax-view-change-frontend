@@ -75,7 +75,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditCharge)))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())

@@ -65,6 +65,26 @@ bta.manage-account                                              = Manage account
 
 ## Feedback ##
 feedback.title                                                  = Give feedback
+feedback.heading                                                = Send your feedback
+feedback.description                                            = We use your feedback to make our services better.
+feedback.radiosDescription                                      = What do you think of this online service?
+feedback.radiosError                                            = Tell us what you think of the service
+feedback.veryGood                                               = Very good
+feedback.good                                                   = Good
+feedback.neutral                                                = Neutral
+feedback.bad                                                    = Bad
+feedback.veryBad                                                = Very bad
+feedback.fullName                                               = Full name
+feedback.fullName.error.enter                                   = Enter your full name
+feedback.fullname.error.onlyInclude                             = Full name must only include letters a to z, hyphens, full stops, commas, apostrophes and spaces
+feedback.email                                                  = Email address
+feedback.email.error                                            = Enter an email address in the correct format, like name@example.com
+feedback.comments                                               = Comments
+feedback.comments.hint                                          = Do not include personal or financial information. For example, your National Insurance number or credit card numbers.
+feedback.comments.error                                         = Enter your comments
+feedback.send                                                   = Send
+feedback.thankYou                                               = Thank you
+feedback.received                                               = Your feedback has been received.
 
 ## Home Page ##
 home.heading                                                    = Income Tax
@@ -703,7 +723,7 @@ paymentHistory.table.header.amount                              = Amount
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
-paymentAllocation.sa.info                                          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
+paymentAllocation.sa.info                                       = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
 paymentAllocation.earlyTaxYear.heading                          = Payment from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
@@ -773,7 +793,8 @@ inYear-tax-overview.agent.inset                                  = This calculat
 
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
-credit-and-refund.subHeading                                      = in your account.
+credit-and-refund.subHeading.has-credits                          = in your account.
+credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
 credit-and-refund.bullet-text-intro                               = You can:
 credit-and-refund.bullet-one-prt-1                                = leave this money in your account to automatically pay
 credit-and-refund.bullet-one-link                                 = what you owe
@@ -783,7 +804,8 @@ credit-and-refund.total                                           = Total
 credit-and-refund.refundProgress                                  = Refund - in progress
 credit-and-refund.payment                                         = payment
 credit-and-refund.details-intro                                   = What’s in your account
-credit-and-refund.claim-refund-btn                                = Claim a Refund
+credit-and-refund.no-credit                                       = You have no money in your account.
+credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
 
 #Language Selector
