@@ -3,12 +3,6 @@
 # Play frontend hmrc routes
 ->          /hmrc-frontend                                                hmrcfrontend.Routes
 
-# Play frontend hmrc route for Assets
-GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
-
-# Assets
-GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
-
 #Home Controller
 GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/income-tax-account                                    controllers.HomeController.showAgent
