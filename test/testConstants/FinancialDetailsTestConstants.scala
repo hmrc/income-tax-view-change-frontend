@@ -323,6 +323,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
+
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
                           documentText: Option[String] = Some("documentText"),
