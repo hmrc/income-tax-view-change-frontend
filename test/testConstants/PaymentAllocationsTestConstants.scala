@@ -37,6 +37,18 @@ object PaymentAllocationsTestConstants {
     paymentLotItem = Some("paymentLotItem")
   )
 
+  val documentDetailWithCredit: DocumentDetail = DocumentDetail(
+    taxYear = "2018",
+    transactionId = "id",
+    documentDescription = Some("documentDescription"),
+    documentText = Some("documentText"),
+    originalAmount = Some(-300.00),
+    outstandingAmount = Some(-200.00),
+    documentDate = LocalDate.of(2018, 3, 29),
+    paymentLot = None,
+    paymentLotItem = None
+  )
+
   val documentDetailNoPayment: DocumentDetail = DocumentDetail(
     taxYear = "2018",
     transactionId = "id",
@@ -227,6 +239,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
+  val paymentAllocationChargesModelWithCredit: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetailWithCredit), List(financialDetail))
   val paymentAllocationChargesModelNoPayment: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetailNoPayment), List(financialDetailNoPayment))
 
 

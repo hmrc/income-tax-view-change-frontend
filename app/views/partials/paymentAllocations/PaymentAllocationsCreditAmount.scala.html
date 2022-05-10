@@ -18,18 +18,27 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import exceptions.MissingFieldException
 @import models.paymentAllocationCharges._
+@import views.html.components.link
 
-@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(implicitDateFormatter: ImplicitDateFormatterImpl,
+    link: link)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, CutOverCreditsEnabled: Boolean)(implicit messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, CutOverCreditsEnabled: Boolean,
+    isAgent: Boolean = false)(implicit messages: Messages)
 @import implicitDateFormatter._
 
-@paymentAllocations.paymentAllocationChargeModel.documentDetails.head.credit.map { credit =>
-     @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-         <tbody class="govuk-table__body">
+@creditAndRefundUrl = @{
+    if(isAgent) controllers.routes.CreditAndRefundController.showAgent().url
+    else controllers.routes.CreditAndRefundController.show().url
+}
 
+@paymentAllocations.paymentAllocationChargeModel.documentDetails.head.credit.map { credit =>
+     @if(CutOverCreditsEnabled) {
+         <tbody class="govuk-table__body">
                <tr id="money-on-account">
-                   <td class="govuk-table__cell">@messages("paymentAllocation.moneyOnAccount")</td>
+                   <td class="govuk-table__cell">
+                       @link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
+                   </td>
                    <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
                    <td class="govuk-table__cell">@{credit.abs.toCurrencyString}</td>
                </tr>
