@@ -18,12 +18,12 @@ package audit.models
 
 import java.time.LocalDate
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
+import testConstants.FinancialDetailsTestConstants.{balanceDetails, dueDateOverdue, whatYouOwePartialChargesList}
 import auth.MtdItUser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsDefined, JsValue, Json}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -41,6 +41,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
   def testWhatYouOweResponseAuditModel(userType: Option[String] = Some("Agent"),
                                        yearOfMigration: Option[String] = Some("2015"),
                                        chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList,
+                                       auditFeatureSwitch: Boolean =false,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = MtdItUser(
       mtditid = testMtditid,
@@ -53,7 +54,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       userType = userType,
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
-    whatYouOweChargesList = chargesList
+    whatYouOweChargesList = chargesList,
+    auditFeatureSwitch
   )
 
   "The WhatYouOweResponseAuditModel" should {
@@ -165,6 +167,26 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           chargesList = chargesModelWithSomeBalanceDetails)) shouldBe Some(Json.obj(
           "totalBalance" -> 3.0
         ))
+      }
+    }
+
+    "produce a full audit Json model" when {
+      "the audit 7b feature switch is on" in {
+        val auditJson = testWhatYouOweResponseAuditModel(
+          auditFeatureSwitch = true, chargesList = whatYouOwePartialChargesList.copy(
+            balanceDetails = BalanceDetails(
+              balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None, Some(BigDecimal(-1000.0)))
+          )
+        )
+
+        (auditJson.detail \ "balanceDetails" \ "creditAmount").toString() shouldBe "JsDefined(-1000)"
+        (auditJson.detail \ "charges")(0) shouldBe Json.obj(
+          "chargeUnderReview" -> true,
+          "outstandingAmount" -> 42.5,
+          "chargeType" -> "Late payment interest for payment on account 1 of 2",
+          "dueDate" -> "2019-06-25",
+          "endTaxYear" -> 2022
+        )
       }
     }
   }
