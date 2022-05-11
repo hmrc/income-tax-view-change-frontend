@@ -323,6 +323,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
+
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
                           documentText: Option[String] = Some("documentText"),
@@ -763,7 +764,7 @@ object FinancialDetailsTestConstants {
   def financialDetailsDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
     dueDate = dueDateMoreThan30Days,
     dunningLock = dunningLocks,
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None)
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, Some(100.00))
   )
 
   def financialDetailsDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
@@ -856,7 +857,7 @@ object FinancialDetailsTestConstants {
 
 
   def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, Some(BigDecimal(100.00))),
     chargesList = financialDetailsDueInMoreThan30Days(dunningLocks).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
@@ -897,8 +898,8 @@ object FinancialDetailsTestConstants {
 
 
   val creditDocumentDetailList = List(
-    documentDetailModel(outstandingAmount = Some(BigDecimal(-100.00)), paymentLotItem = None, paymentLot = None),
-    documentDetailModel(outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
+    documentDetailModel(originalAmount = Some(BigDecimal(-100.00)), paymentLotItem = None, paymentLot = None),
+    documentDetailModel(originalAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
   )
 
   val creditAndRefundDocumentDetailList = List(

@@ -743,7 +743,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val tableDataDateAllocatedLpi = "N/A"
     val tableDataAmount = "£10.10"
     val tableDataAmountLpi = "£300.00"
-    val creditOnAccount = "Credit on account"
+    val creditOnAccount = "Money in your account"
     val creditOnAccountAmount = "£200.00"
     val moneyOnAccount = "Money in your account"
     val moneyOnAccountDate = "N/A"

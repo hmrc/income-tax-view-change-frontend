@@ -46,11 +46,10 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
-    cutOverCreditsEnabled: Boolean,
+    whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
         origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
-
 @getPrefix(key: String) = @{
     if(isAgent) s"whatYouOwe.$key" else s"whatYouOwe.$key"
 }
@@ -75,6 +74,18 @@
 
     </div>
     }
+}
+
+@creditAndRefundUrl = @{
+    if(isAgent) controllers.routes.CreditAndRefundController.showAgent().url
+    else controllers.routes.CreditAndRefundController.show().url
+}
+
+@unallocatedCreditParagraphContent(amount: String) = {
+    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
+        outerMessage = messages("whatYouOwe.unallocated-credit-note"),
+        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
+        id = Some("unallocated-credit-link")).toString()))
 }
 
 @paymentTypesDropdown(classes: String) = {
@@ -235,7 +246,6 @@
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph
-
     } else {
         <div>
 
@@ -338,11 +348,12 @@
               @saNoteParagraph
           }
 
-          @if(cutOverCreditsEnabled) {
-           @creditCharges.map { documentDetails =>
-            @documentDetails.credit.map { credit => @p()(Html(getMessage("credit-overpaid",credit.toCurrencyString)))}
-             }
-           }
+          @if(whatYouOweCreditAmountEnabled) {
+              @whatYouOweChargesList.balanceDetails.unallocatedCredit.map { unallocatedCreditAmt =>
+                  @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
+              }
+          }
+
 
     @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
       <div id="payment-button">

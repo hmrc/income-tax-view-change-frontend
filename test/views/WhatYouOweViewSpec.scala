@@ -46,7 +46,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               currentTaxYear: Int = LocalDate.now().getYear,
               hasLpiWithDunningBlock: Boolean = false,
               dunningLock: Boolean = false,
-              cutOverCreditsEnabled: Boolean = false,
+              whatYouOweCreditAmountEnabled: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true
              ) {
@@ -63,7 +63,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, cutOverCreditsEnabled)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -79,7 +79,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                    currentTaxYear: Int = LocalDate.now().getYear,
                    migrationYear: Int = LocalDate.now().getYear - 1,
                    codingOutEnabled: Boolean = true,
-                   cutOverCreditsEnabled: Boolean = false,
+                   whatYouOweCreditAmountEnabled: Boolean = false,
                    dunningLock: Boolean = false,
                    hasLpiWithDunningBlock: Boolean = false) {
 
@@ -106,7 +106,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
-      cutOverCreditsEnabled = cutOverCreditsEnabled,
+      whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       isAgent = true)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
@@ -1046,36 +1046,29 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   "what you owe view" should {
 
-    val cutOverCreditsMessage1 = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
-    val cutOverCreditsMessage2 = "You have £500.00 in your account. We’ll use this to pay the amount due on the next due date."
-    "show cut over credits" when {
+    val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
+    "show unallocated credits" when {
       "user is an individual with the feature switch on" in new Setup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(), cutOverCreditsEnabled= true){
-        pageDocument.body().select("p").get(6).text() shouldBe cutOverCreditsMessage1
-        pageDocument.body().select("p").get(7).text() shouldBe cutOverCreditsMessage2
+        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
+        pageDocument.body().select("p").get(6).text() shouldBe unallocatedCreditMsg
       }
 
       "user is an agent with the feature switch on" in new AgentSetup(creditCharges =  creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(), cutOverCreditsEnabled= true){
-        pageDocument.body().select("p").get(6).text() shouldBe cutOverCreditsMessage1
-        pageDocument.body().select("p").get(7).text() shouldBe cutOverCreditsMessage2
+        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
+        pageDocument.body().select("p").get(6).text() shouldBe unallocatedCreditMsg
       }
-
     }
 
-    "not show cut over credits" when {
+    "not show unallocated credits" when {
       "user is an individual with the feature switch off" in new Setup(creditCharges= creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()){
-        pageDocument.body().select("p").contains(cutOverCreditsMessage1) shouldBe false
-        pageDocument.body().select("p").contains(cutOverCreditsMessage2) shouldBe false
+        pageDocument.body().select("p").contains(unallocatedCreditMsg) shouldBe false
       }
 
       "user is an agent with the feature switch on" in new AgentSetup(creditCharges= creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.body().select("p").contains(cutOverCreditsMessage1) shouldBe false
-        pageDocument.body().select("p").contains(cutOverCreditsMessage2) shouldBe false
+        pageDocument.body().select("p").contains(unallocatedCreditMsg) shouldBe false
       }
-
     }
   }
 }
