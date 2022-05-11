@@ -31,7 +31,7 @@ trait TaxCalcFallBackBackLink {
       }
     } else {
       if(isAgent) {
-        controllers.agent.routes.TaxYearSummaryController.show(taxYear).url
+        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
       } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
     }
   }

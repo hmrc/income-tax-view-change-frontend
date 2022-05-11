@@ -103,7 +103,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
     }
 
   def backUrl(taxYear: Int, origin: Option[String], isAgent: Boolean): String =
-    if (isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url
+    if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
     else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
 
 }
