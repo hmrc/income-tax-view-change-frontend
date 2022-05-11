@@ -14,22 +14,33 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.GovUkWrapper
-@import config.FormPartialProvider
+@import config.FrontendAppConfig
+@import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(link: link, govukWrapper: GovUkWrapper)
 
-@(partialUrl: String, redirectUrl: String)(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
+@this(
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    p: p,
+    govukButton : GovukButton
+)
 
-@mainContent = {
-    @formPartialProvider.getPartialContent(partialUrl)
-    <div id="payment-button">
-        @link(link = redirectUrl,
-        messageKey = "base.back", classes = "button",
-        id = Some("back"),
-        ariaLabel = Some("Go back to the previous service"))
-    </div>
+@(backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+
+@mainTemplate(
+    pageTitle = messages("feedback.thankYou"),
+    isAgent = isAgent,
+    origin = origin) {
+
+    @h1(msg = "feedback.thankYou")
+
+    @p(){@messages("feedback.received")}
+
+    @govukButton(Button(
+        href = Some(backUrl),
+        content = Text(messages("base.back"))
+    ))
+
 }
-
-@govukWrapper(title = messages("feedback.title"), mainContent = mainContent)

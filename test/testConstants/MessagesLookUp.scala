@@ -747,7 +747,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val creditOnAccountAmount = "£200.00"
     val moneyOnAccount = "Money in your account"
     val moneyOnAccountDate = "N/A"
-    val moneyOnAccountAmount = "£200.00"
+    val moneyOnAccountAmount = "£300.00"
     val allocationsTableHeading = "Payment allocations"
     val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
     val allocationsTableCaption = "Payment allocations"
@@ -758,10 +758,13 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   //Tax Years Page Messages
   object CreditAndRefunds {
     val title = "Claim a refund"
+    val subHeadingWithCredits = "in your account."
+    val subHeadingWithoutCredits = "has been requested as a refund and is in progress."
+    val noAvailableAmount = "You have no money in your account."
     val totalText = "Total"
     val refundText = "Refund - in progress"
     val paymentText = "payment"
-    val claimBtn = "Claim a Refund"
+    val claimBtn = "Claim a refund"
     val checkBtn = "Check refund status"
   }
 }

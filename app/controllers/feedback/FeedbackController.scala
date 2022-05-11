@@ -35,8 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
-                                   val feedbackView: views.html.feedback.Feedback,
-                                   val feedbackThankYouView: views.html.feedback.FeedbackThankYou,
+                                   val feedbackView: views.html.feedback.FeedbackOld,
+                                   val feedbackThankYouView: views.html.feedback.FeedbackThankYouOld,
                                    httpClient: HttpClient,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val formPartialRetriever: FormPartialProvider,

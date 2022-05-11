@@ -30,8 +30,9 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
-
 import java.time.LocalDate
+
+import config.featureswitch.{CutOverCredits, R7bTxmEvents}
 
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
@@ -45,8 +46,11 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01"))
   )
 
-  val testArn: String = "1"
+  val paymentsnotFull: List[Payment] = List(
+    Payment(reference = Some("reference"), amount = Some(-10000.00), method = Some("method"), lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
+  )
 
+  val testArn: String = "1"
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
   val previousTaxYearEnd: Int = currentTaxYearEnd - 1
   val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
@@ -109,8 +113,32 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleAgent(paymentHistoryTitle)
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false, R7bTxmEvents = false).detail)
     }
+
+    s"return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined $OK" in {
+      enable(R7bTxmEvents)
+      enable(CutOverCredits)
+      stubAuthorisedAgentUser(authorised = true)
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+        status = OK,
+        response = incomeSourceDetailsModel
+      )
+
+      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsnotFull)
+
+      val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
+
+      Then("The Payment History page is returned to the user")
+      result should have(
+        httpStatus(OK),
+        pageTitleAgent(paymentHistoryTitle)
+      )
+
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true, R7bTxmEvents = true).detail)
+    }
+
   }
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {

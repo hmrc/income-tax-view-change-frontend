@@ -51,6 +51,26 @@ bta.manage-account                                              = Rheoli’r cyf
 
 ## Feedback ##
 feedback.title                                                  = Rhoi adborth
+feedback.heading                                                = Anfon eich adborth
+feedback.description                                            = Rydym yn defnyddio’ch adborth i wella ein gwasanaethau.
+feedback.radiosDescription                                      = Beth yw eich barn am y gwasanaeth ar-lein hwn?
+feedback.radiosError                                            = Rhowch wybod i ni beth yw eich barn am y gwasanaeth
+feedback.veryGood                                               = Da iawn
+feedback.good                                                   = Da
+feedback.neutral                                                = Niwtral
+feedback.bad                                                    = Gwael
+feedback.veryBad                                                = Gwael iawn
+feedback.fullName                                               = Enw llawn
+feedback.fullName.error.enter                                   = Rhowch eich enw
+feedback.fullname.error.onlyInclude                             = Rhowch lythrennau neu atalnodi’n unig
+feedback.email                                                  = Cyfeiriad e-bost
+feedback.email.error                                            = Nodwch gyfeiriad e-bost yn y fformat cywir, megis enw@enghraifft.com
+feedback.comments                                               = Sylwadau
+feedback.comments.hint                                          = Peidiwch â chynnwys unrhyw wybodaeth bersonol nac ariannol. Er enghraifft, eich rhif Yswiriant Gwladol neu rif eich cerdyn credyd.
+feedback.comments.error                                         = Rhowch eich sylwadau
+feedback.send                                                   = Anfon
+feedback.thankYou                                               = Diolch
+feedback.received                                               = Mae eich adborth wedi dod i law.
 
 ## Home Page ##
 home.heading                                                    = Treth Incwm
@@ -450,8 +470,8 @@ nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn 
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
 
-sections.open.all												= Dangos POB UN
-sections.close.all												= Cuddio POB UN
+sections.open.all												= Dangos pob un
+sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
@@ -525,6 +545,9 @@ whatYouOwe.over-due.interest-rate-2                             = Mae’n bosibl
 whatYouOwe.over-due.interest-rate.link                          = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar
 whatYouOwe.dunningLock.text                                     = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd oherwydd {0}
 whatYouOwe.dunningLock.link                                     = bod apêl ar y gweill yn erbyn penderfyniad treth
+whatYouOwe.credit-overpaid-prefix                               = Mae gennych
+whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
+whatYouOwe.unallocated-credit-note                              = Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -657,6 +680,7 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau ar gyfer {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
+paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
@@ -708,6 +732,7 @@ pagehelp.opensInNewTabText                                      = ' (yn agor tab
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad a wnaed i CThEM
+paymentAllocation.earlyTaxYear.heading                          = Taliad o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
 paymentAllocation.info                                          = Bydd unrhyw daliadau a wneir yn cael eu dyrannu’n awtomatig tuag at gosbau a blynyddoedd treth cynharach cyn y flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.

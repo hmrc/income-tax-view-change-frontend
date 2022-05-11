@@ -143,7 +143,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
           TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None),
+            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, Some(100)),
             chargesList = financialDetailsDueInMoreThan30Days().getAllDocumentDetailsWithDueDates()
           )
         }
