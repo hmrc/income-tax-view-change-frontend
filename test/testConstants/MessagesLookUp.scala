@@ -747,7 +747,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val creditOnAccountAmount = "£200.00"
     val moneyOnAccount = "Money in your account"
     val moneyOnAccountDate = "N/A"
-    val moneyOnAccountAmount = "£300.00"
+    val moneyOnAccountAmount = "£200.00"
     val allocationsTableHeading = "Payment allocations"
     val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
     val allocationsTableCaption = "Payment allocations"
