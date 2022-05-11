@@ -17,16 +17,19 @@
 package controllers.feedback
 
 import config.{FormPartialProvider, FrontendAppConfig}
-import play.api.Logger
-import play.api.http.{Status => HttpStatus}
+import forms.FeedbackForm
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
+import uk.gov.hmrc.govukfrontend.views.Implicits.RichInput
+import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
+import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichCharacterCount
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.charactercount.CharacterCount
+import uk.gov.hmrc.hmrcfrontend.views.implicits.RichCharacterCountSupport
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.partials._
+import views.html.feedback.{Feedback, FeedbackThankYou}
 
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
@@ -35,8 +38,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
-                                   val feedbackView: views.html.feedback.FeedbackOld,
-                                   val feedbackThankYouView: views.html.feedback.FeedbackThankYouOld,
+                                   val feedbackView: Feedback,
+                                   val feedbackThankYouView: FeedbackThankYou,
                                    httpClient: HttpClient,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val formPartialRetriever: FormPartialProvider,
@@ -63,35 +66,39 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
 
   def show: Action[AnyContent] = Action {
     implicit request =>
-      (request.session.get(REFERER), request.headers.get(REFERER)) match {
-        case (None, Some(ref)) => Ok(feedbackView(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
-        case _ => Ok(feedbackView(feedbackFormPartialUrl, None))
+      val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit())
+      request.headers.get(REFERER) match {
+        case Some(ref) => Ok(feedback).withSession(request.session + (REFERER -> ref))
+        case _ => Ok(feedback)
       }
   }
 
   def submit: Action[AnyContent] = Action.async {
     implicit request =>
-      request.body.asFormUrlEncoded.map { formData =>
-        httpClient.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
-          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec).map {
-          resp =>
-            resp.status match {
-              case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
-              case HttpStatus.BAD_REQUEST => BadRequest(feedbackView(feedbackFormPartialUrl, Some(Html(resp.body))))
-              case status => Logger("application").error(s"Unexpected status code from feedback form: $status"); InternalServerError
-            }
-        }
-      }.getOrElse {
-        Logger("application").error("Trying to submit an empty feedback form")
-        Future.successful(InternalServerError)
-      }
+      FeedbackForm.form.bindFromRequest().fold(
+        hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors, postAction = routes.FeedbackController.submit()))),
+        data => Future.successful(Redirect(routes.FeedbackController.thankyou()))
+      )
+//      request.body.asFormUrlEncoded.map { formData =>
+//        httpClient.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
+//          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec).map {
+//          resp =>
+//            resp.status match {
+//              case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
+//              case HttpStatus.BAD_REQUEST => BadRequest(feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit()))
+//              case status => Logger("application").error(s"Unexpected status code from feedback form: $status"); InternalServerError
+//            }
+//        }
+//      }.getOrElse {
+//        Logger("application").error("Trying to submit an empty feedback form")
+//        Future.successful(InternalServerError)
+//      }
   }
-
   def thankyou: Action[AnyContent] = Action {
     implicit request =>
       val ticketId = request.session.get(TICKET_ID).getOrElse("N/A")
       val referer = request.session.get(REFERER).getOrElse("/")
-      Ok(feedbackThankYouView(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
+      Ok(feedbackThankYouView(referer)).withSession(request.session - REFERER)
   }
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")

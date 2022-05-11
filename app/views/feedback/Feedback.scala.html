@@ -21,93 +21,81 @@
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.layouts.unifiedLayout
+@import views.html.helpers.injected.ErrorSummary
 @import views.html.components._
+@import forms.FeedbackForm
 
 @this(
     mainTemplate: unifiedLayout,
     h1: h1,
     p: p,
+    form: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    inputRadios: input_radios,
+    inputText: input_text,
+    inputCharacterCount: input_character_count,
     govukRadios: GovukRadios,
     govukInput : GovukInput,
     govukCharacterCount : GovukCharacterCount,
     govukButton : GovukButton
 )
 
-@(isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(feedbackForm: Form[FeedbackForm], postAction: Call, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @mainTemplate(
     pageTitle = messages("feedback.heading"),
+    form = Some(feedbackForm),
     isAgent = isAgent,
     origin = origin) {
+
+    @errorSummary(
+        form = feedbackForm
+    )
 
     @h1(msg = "feedback.heading")
 
     @p(){@messages("feedback.description")}
 
-    @govukRadios(Radios(
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("feedback.radiosDescription"))
-            ))
-        )),
-        idPrefix = Some("what-do-you-think-of-this-online-service"),
-        name = "what-do-you-think-of-this-online-service",
-        items = Seq(
-            RadioItem(
-                content = Text(messages("feedback.veryGood")),
-                value = Some("very-good")
-            ),
-            RadioItem(
-                content = Text(messages("feedback.good")),
-                value = Some("good")
-            ),
-            RadioItem(
-                content = Text(messages("feedback.neutral")),
-                value = Some("neutral")
-            ),
-            RadioItem(
-                content = Text(messages("feedback.bad")),
-                value = Some("bad")
-            ),
-            RadioItem(
-                content = Text(messages("feedback.veryBad")),
-                value = Some("very-bad")
+    @form(action = postAction, 'id -> "feedback-form") {
+        @inputRadios(
+            feedbackForm("feedback-rating"),
+            legend = messages("feedback.radiosDescription"),
+            items = Seq(
+                ("5", messages("feedback.veryGood")),
+                ("4", messages("feedback.good")),
+                ("3", messages("feedback.neutral")),
+                ("2", messages("feedback.bad")),
+                ("1", messages("feedback.veryBad"))
             )
         )
-    ))
 
-    @govukInput(Input(
-        id = "full-name",
-        name = "full-name",
-        label = Label(
-            content = Text(messages("feedback.fullName"))
-        ),
-        autocomplete = Some("full-name")
-    ))
+        @inputText(
+            feedbackForm("feedback-name"),
+            label = messages("feedback.fullName"),
+            spellcheck = Some(false),
+            autocomplete = Some("name")
+        )
 
-    @govukInput(Input(
-        id = "email-address",
-        name = "email-address",
-        label = Label(
-        content = Text(messages("feedback.email"))
-        ),
-        autocomplete = Some("email-address")
-    ))
+        @inputText(
+            feedbackForm("feedback-email"),
+            inputType = "email",
+            label = messages("feedback.email"),
+            spellcheck = Some(false),
+            autocomplete = Some("email")
+        )
 
-    @govukCharacterCount(CharacterCount(
-        id = "comments",
-        name = "comments",
-        maxLength = Some(2000),
-        label = Label(
-            content = Text(messages("feedback.comments"))
-        ),
-        hint = Some(Hint(
-            content = Text(messages("feedback.comments.hint"))
+        @inputCharacterCount(
+            feedbackForm("feedback-comments"),
+            id = "feedback-comments",
+            name = "feedback-comments",
+            label = messages("feedback.comments"),
+            maxLength = Some(2000),
+            hint = Some(messages("feedback.comments.hint"))
+        )
+
+        @govukButton(Button(
+            content = Text(messages("feedback.send"))
         ))
-    ))
-
-    @govukButton(Button(
-        content = Text(messages("feedback.send"))
-    ))
+    }
 
 }
