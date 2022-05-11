@@ -14,13 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.charactercount.CharacterCount
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
-@import uk.gov.hmrc.govukfrontend.views.Implicits._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcCharacterCount
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.CharacterCount
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Label, Text, Hint}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichCharacterCount
 
 
 @this(hmrcCharacterCount: HmrcCharacterCount)
@@ -35,15 +32,12 @@
     hint: Option[String] = None,
     classes: String = ""
 )(implicit messages: Messages)
-    @hmrcCharacterCount(CharacterCount(
-        id = id,
-        name = name,
-        label = Label(classes = labelClasses, content = Text(label)),
-        hint = hint.map(h => Hint(content = Text(h))),
-        errorMessage = field.error map { e =>
-            ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*)))
-        },
-        maxLength = maxLength,
-        classes = classes
-    )
+@hmrcCharacterCount(CharacterCount(
+    id = id,
+    name = name,
+    label = Label(classes = labelClasses, content = Text(label)),
+    hint = hint.map(h => Hint(content = Text(h))),
+    maxLength = maxLength,
+    classes = classes
+    ).withFormField(field)
 )
