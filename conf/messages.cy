@@ -547,7 +547,7 @@ whatYouOwe.dunningLock.text                                     = Mae un neu fwy
 whatYouOwe.dunningLock.link                                     = bod apêl ar y gweill yn erbyn penderfyniad treth
 whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
-whatYouOwe.unallocated-credit-note                              = Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
+whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
