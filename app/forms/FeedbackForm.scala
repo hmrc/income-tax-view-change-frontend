@@ -26,11 +26,12 @@ object FeedbackForm {
 
   val radiosEmptyError: String = "feedback.radiosError"
   val nameEmptyError: String = "feedback.fullName.error.empty"
-  val nameLengthError: String = "feedback.name.error.length"
+  val nameLengthError: String = "feedback.fullName.error.length"
   val nameInvalidError: String = "feedback.fullName.error.invalid"
   val emailInvalidError: String = "feedback.email.error"
   val emailLengthError: String = "feedback.email.error.length"
-  val commentsError: String = "feedback.comments.error"
+  val commentsEmptyError: String = "feedback.comments.error.empty"
+  val commentsEmptyLength: String = "feedback.comments.error.length"
 
   def validate(email: String): Boolean =
     email.split("@").toList match {
@@ -65,22 +66,19 @@ object FeedbackForm {
         .verifying(nameLengthError, name => name.length <= 70),
       "feedback-email" -> text
         .verifying(emailInvalidError, email => validate(email))
-        .verifying("feedback.email.error.length", email => email.length <= 255),
+        .verifying(emailLengthError, email => email.length <= 255),
       "feedback-comments" -> FieldMapping[String]()(new Formatter[String] {
 
         override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
           data.get(key) match {
             case Some(value) if value.trim.nonEmpty => Right(value.trim)
-            case Some(_) => Left(Seq(FormError(key, commentsError, Nil)))
-            case None => Left(Seq(FormError(key, commentsError, Nil)))
+            case Some(_) => Left(Seq(FormError(key, commentsEmptyError, Nil)))
+            case None => Left(Seq(FormError(key, commentsEmptyError, Nil)))
           }
         }
 
         override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
-      }).verifying("feedback.comments.error", comment => {
-        val result = comment.length <= 2000
-        result
-      })
+      }).verifying(commentsEmptyLength, comment => comment.length <= 2000)
     )(FeedbackForm.apply)(FeedbackForm.unapply)
   )
 }
