@@ -548,6 +548,9 @@ whatYouOwe.over-due.interest-rate-2                             = Mae’n bosibl
 whatYouOwe.over-due.interest-rate.link                          = gyfradd llog bresennol ar gyfer taliadau hwyr a chynnar
 whatYouOwe.dunningLock.text                                     = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd oherwydd {0}
 whatYouOwe.dunningLock.link                                     = bod apêl ar y gweill yn erbyn penderfyniad treth
+whatYouOwe.credit-overpaid-prefix                               = Mae gennych
+whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
+whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2

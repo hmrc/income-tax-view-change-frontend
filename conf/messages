@@ -589,7 +589,9 @@ whatYouOwe.codingOut-2                                             = {0} to {1} 
 whatYouOwe.codingOut-3                                             = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
 whatYouOwe.class2Nic.text                                          = Class 2 National Insurance
 whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled Self Assessment payment (through your PAYE tax code)
-whatYouOwe.credit-overpaid                                         = You have {0} in your account. We’ll use this to pay the amount due on the next due date.
+whatYouOwe.credit-overpaid-prefix                                  = You have
+whatYouOwe.credit-overpaid-amount                                  = {0} in your account
+whatYouOwe.unallocated-credit-note                                 = . We’ll use this to pay the amount due on the next due date.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
@@ -796,7 +798,8 @@ inYear-tax-overview.agent.inset                                  = This calculat
 
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
-credit-and-refund.subHeading                                      = in your account.
+credit-and-refund.subHeading.has-credits                          = in your account.
+credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
 credit-and-refund.bullet-text-intro                               = You can:
 credit-and-refund.bullet-one-prt-1                                = leave this money in your account to automatically pay
 credit-and-refund.bullet-one-link                                 = what you owe
@@ -806,7 +809,8 @@ credit-and-refund.total                                           = Total
 credit-and-refund.refundProgress                                  = Refund - in progress
 credit-and-refund.payment                                         = payment
 credit-and-refund.details-intro                                   = What’s in your account
-credit-and-refund.claim-refund-btn                                = Claim a Refund
+credit-and-refund.no-credit                                       = You have no money in your account.
+credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
 
 #Language Selector

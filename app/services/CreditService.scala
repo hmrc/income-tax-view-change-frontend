@@ -29,7 +29,7 @@ class CreditService @Inject()(val financialDetailsService: FinancialDetailsServi
                              (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
 
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[FinancialDetailsModel]]= {
-    financialDetailsService.getAllCreditFinancialDetails.map {
+    financialDetailsService.getAllCreditChargesandPaymentsFinancialDetails.map {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[CreditService][getCreditCharges] Error response while getting Unpaid financial details")
       case financialDetails: List[FinancialDetailsResponseModel] => financialDetails.asInstanceOf[List[FinancialDetailsModel]]

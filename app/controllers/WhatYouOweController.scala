@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, CutOverCredits, FeatureSwitching}
+import config.featureswitch.{CodingOut, CutOverCredits, FeatureSwitching, WhatYouOweCreditAmount, R7bTxmEvents}
 import config._
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -30,8 +30,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.WhatYouOwe
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 import enums.GatewayPage.WhatYouOwePage
 
@@ -60,7 +60,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList() flatMap {
       whatYouOweChargesList =>
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, isEnabled(R7bTxmEvents)))
 
         val codingOutEnabled = isEnabled(CodingOut)
 
@@ -75,7 +75,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           dunningLock = whatYouOweChargesList.hasDunningLock,
           codingOutEnabled = codingOutEnabled,
           isAgent = isAgent,
-          cutOverCreditsEnabled = isEnabled(CutOverCredits),
+          whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
           origin = origin)(user, user, messages)
         ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
