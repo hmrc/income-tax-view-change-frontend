@@ -588,7 +588,7 @@ whatYouOwe.class2Nic.text                                          = Class 2 Nat
 whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled Self Assessment payment (through your PAYE tax code)
 whatYouOwe.credit-overpaid-prefix                                  = You have
 whatYouOwe.credit-overpaid-amount                                  = {0} in your account
-whatYouOwe.unallocated-credit-note                                 = We’ll use this to pay the amount due on the next due date.
+whatYouOwe.unallocated-credit-note                                 = . We’ll use this to pay the amount due on the next due date.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
