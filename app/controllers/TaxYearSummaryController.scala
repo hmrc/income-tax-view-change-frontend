@@ -30,10 +30,11 @@ import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{CalculationService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.TaxYearSummary
 
 import java.net.URI
@@ -77,7 +78,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                    codingOutEnabled: Boolean,
                    backUrl: String,
                    origin: Option[String],
-                   isAgent: Boolean = false
+                   isAgent: Boolean
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
@@ -174,7 +175,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     ) flatMap {
       case obligationsModel: ObligationsModel => f(obligationsModel)
       case _ =>
-        if(isAgent) {
+        if (isAgent) {
           Logger("application").error(s"[TaxYearSummaryController][withObligationsModel] - Could not retrieve obligations for year: $taxYear")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
         } else {
@@ -200,51 +201,50 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     }
   }
 
-  private def showTaxYearSummary(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async {
-    implicit user =>
-      withTaxYearFinancials(taxYear, false) { charges =>
-        withObligationsModel(taxYear, false) { obligationsModel =>
-          val codingOutEnabled = isEnabled(CodingOut)
-          calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map { liabilityCalcResponse =>
-            view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
-              backUrl = getBackURL(user.headers.get(REFERER), origin), origin = origin)
-              .addingToSession(gatewayPage -> TaxYearSummaryPage.name)
-              .addingToSession(calcPagesBackPage -> "ITVC")
-          }
+  private def handleRequest(taxYear: Int, origin: Option[String], isAgent: Boolean)
+                           (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier,
+                            ec: ExecutionContext, messages: Messages): Future[Result] = {
+    withTaxYearFinancials(taxYear, isAgent) { charges =>
+      withObligationsModel(taxYear, isAgent) { obligationsModel =>
+        val codingOutEnabled: Boolean = isEnabled(CodingOut)
+        val mtdItId: String = if(isAgent) getClientMtditid else user.mtditid
+        val nino: String = if(isAgent) getClientNino else user.nino
+        calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear).map { liabilityCalcResponse =>
+          view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
+            backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
+            origin = origin, isAgent = isAgent)
+            .addingToSession(gatewayPage -> TaxYearSummaryPage.name)
+            .addingToSession(calcPagesBackPage -> "ITVC")
         }
-      }
-  }
-
-  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    if (taxYear.toString.matches("[0-9]{4}")) {
-      showTaxYearSummary(taxYear, origin)
-    } else {
-      action.async { implicit request =>
-        Future.successful(itvcErrorHandler.showInternalServerError())
       }
     }
   }
 
+  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {
+    implicit user =>
+      if (taxYear.toString.matches("[0-9]{4}")) {
+        handleRequest(taxYear, origin, false)
+      } else {
+        Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+  }
+
   def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
-        withTaxYearFinancials(taxYear, true) { documentDetailsWithDueDates =>
-          withObligationsModel(taxYear, true) { obligations =>
-            val codingOutEnabled = isEnabled(CodingOut)
-            calculationService.getLiabilityCalculationDetail(getClientMtditid, getClientNino, taxYear).map { liabilityCalcResponse =>
-              view(liabilityCalcResponse, documentDetailsWithDueDates, taxYear, obligations,
-                codingOutEnabled, getAgentBackURL(request.headers.get(REFERER)), None, true)
-                .addingToSession(gatewayPage -> "taxYearSummary")
-                .addingToSession(calcPagesBackPage -> "ITVC")(request)
-            }
-          }
+      if (taxYear.toString.matches("[0-9]{4}")) {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
+          handleRequest(taxYear, None, true)
         }
+      } else {
+        Future.successful(agentItvcErrorHandler.showInternalServerError())
       }
   }
 
   // Individual back urls
   def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+
   def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
+
   def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
