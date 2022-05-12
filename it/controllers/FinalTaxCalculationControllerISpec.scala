@@ -115,7 +115,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val contributionText = "Treth Incwm a chyfraniadau Yswiriant Gwladol"
 
-    val chargeInformationParagraph: String = "Gall y swm sydd angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr."
+    val chargeInformationParagraph: String = "Gall y swm y mae angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr."
 
     val continueButtonText = "Yn eich blaen"
   }
