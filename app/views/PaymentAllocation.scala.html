@@ -79,23 +79,26 @@
 
 @govukInsetText(InsetText(content = HtmlContent(paymentAllocationInset)))
 
-<h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
+@if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
 
-   <table class="govuk-table" id="payment-allocation-table">
-       <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
+} else {
+    <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
+
+    <table class="govuk-table" id="payment-allocation-table">
+        <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
 
         <thead class="govuk-table__head">
-           <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
-                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
-            </tr>
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
+            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
+        </tr>
         </thead>
-       @if(paymentAllocations.isLpiPayment) {
-           @paymentAllocationsForLpi(paymentAllocations, isAgent)
-       } else {
-           @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
-       }
-       @paymentAllocationsCreditAmount(paymentAllocations, CutOverCreditsEnabled)
-   </table>
-}
+        @if(paymentAllocations.isLpiPayment) {
+        @paymentAllocationsForLpi(paymentAllocations, isAgent)
+            } else {
+        @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+            }
+        @paymentAllocationsCreditAmount(paymentAllocations, CutOverCreditsEnabled)
+    </table> }
+    }
