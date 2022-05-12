@@ -25,6 +25,7 @@
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.partials.taxYearSummaryTabsPartial
 
 @this(
         mainTemplate: unifiedLayout,
@@ -35,7 +36,8 @@
         p: p,
         link: link,
         govukInsetText: GovukInsetText,
-        govukTable : GovukTable
+        govukTable : GovukTable,
+        taxYearSummaryTabsPartial: taxYearSummaryTabsPartial
 )
 
 @(taxYear: Int, modelOpt: Option[TaxYearSummaryViewModel], charges: List[DocumentDetailWithDueDate],
@@ -345,5 +347,10 @@
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="updates" role="tabpanel" aria-labelledby="tab_updates">
         @updatesContent
         </div>
+    </div>
+
+@* TODO finish with the Tabs component and remove the above HTML block  *@
+    <div>
+        @taxYearSummaryTabsPartial(2022, true, false)
     </div>
 }
