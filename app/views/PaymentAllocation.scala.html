@@ -94,11 +94,11 @@
             <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
         </tr>
         </thead>
-        @if(paymentAllocations.isLpiPayment) {
-        @paymentAllocationsForLpi(paymentAllocations, isAgent)
-            } else {
-        @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
-            }
-        @paymentAllocationsCreditAmount(paymentAllocations, CutOverCreditsEnabled)
-    </table> }
-    }
+       @if(paymentAllocations.isLpiPayment) {
+           @paymentAllocationsForLpi(paymentAllocations, isAgent)
+       } else {
+           @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+       }
+       @paymentAllocationsCreditAmount(paymentAllocations, isAgent)
+   </table> }
+}

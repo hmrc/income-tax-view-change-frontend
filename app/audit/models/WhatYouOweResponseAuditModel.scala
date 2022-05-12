@@ -24,8 +24,10 @@ import play.api.libs.json._
 import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
-                                        whatYouOweChargesList: WhatYouOweChargesList) extends ExtendedAuditModel {
+                                        whatYouOweChargesList: WhatYouOweChargesList,
+                                        R7bTxmEvents: Boolean) extends ExtendedAuditModel {
 
+  val currentTaxYear = user.incomeSources.getCurrentTaxEndYear
   override val transactionName: String = "what-you-owe-response"
   override val auditType: String = "WhatYouOweResponse"
 
@@ -36,16 +38,22 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     balanceDetailsJson ++
     Json.obj("charges" -> docDetailsListJson)
 
-
   private lazy val balanceDetailsJson: JsObject = {
     def onlyIfPositive(amount: BigDecimal): Option[BigDecimal] = Some(amount).filter(_ > 0)
 
-    lazy val fields: JsObject = Json.obj() ++
-      ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
-      ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
-      ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance))
+    val fields: JsObject = if(R7bTxmEvents) {
+      Json.obj() ++
+        ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
+        ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
+        ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance)) ++
+        Json.obj("creditAmount"-> whatYouOweChargesList.balanceDetails.unallocatedCredit.get)
+    } else {
+      Json.obj() ++
+        ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
+        ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
+        ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance))
+    }
 
-    val currentTaxYear = user.incomeSources.getCurrentTaxEndYear
     val secondOrMoreYearOfMigration = user.incomeSources.yearOfMigration.exists(currentTaxYear > _.toInt)
 
     if (secondOrMoreYearOfMigration && fields.values.nonEmpty) Json.obj("balanceDetails" -> fields)
@@ -56,13 +64,26 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     if(documentDetail.isLatePaymentInterest) documentDetail.interestRemainingToPay else documentDetail.remainingToPay
   }
 
-  private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = Json.obj(
-    "chargeUnderReview" -> docDateDetail.dunningLock,
-    "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
-  ) ++
-    ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
-    ("dueDate", docDateDetail.dueDate) ++
-    accruingInterestJson(docDateDetail.documentDetail)
+  private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = {
+    if (R7bTxmEvents) {
+      Json.obj(
+        "chargeUnderReview" -> docDateDetail.dunningLock,
+        "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
+      ) ++
+        ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
+        ("dueDate", docDateDetail.dueDate) ++
+        accruingInterestJson(docDateDetail.documentDetail) ++
+        Json.obj("endTaxYear" -> docDateDetail.documentDetail.taxYear.toInt)
+    } else {
+      Json.obj(
+        "chargeUnderReview" -> docDateDetail.dunningLock,
+        "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
+      ) ++
+        ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
+        ("dueDate", docDateDetail.dueDate) ++
+        accruingInterestJson(docDateDetail.documentDetail)
+    }
+  }
 
   private def accruingInterestJson(documentDetail: DocumentDetail): JsObject = {
     if (documentDetail.hasAccruingInterest) {
