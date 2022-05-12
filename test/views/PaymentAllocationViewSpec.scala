@@ -53,10 +53,20 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     List(financialDetail)
   )
 
+  val singleTestPaymentAllocationChargeWithOutstandingAmountZeroCredit: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+    List(documentDetailNoPaymentCredit.copy(outstandingAmount = Some(0))),
+    List(financialDetailNoPaymentCredit)
+  )
+
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
                                CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None) extends Setup(
     paymentAllocationView(viewModel, backUrl, saUtr = saUtr, CutOverCreditsEnabled = CutOverCreditsEnabled)) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  }
+
+  class PaymentAllocationSetupCreditZeroOutstanding(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"), CutOverCreditsEnabled = true)) {
+    paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
 
@@ -84,9 +94,17 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup() {
         document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
-
-
       }
+
+      "check that the heading section is not present when credit is defined but outstandingAmount is 0" in
+        new PaymentAllocationSetupCreditZeroOutstanding() {
+          document.getElementsByClass("govuk-heading-m").eq(0).text() shouldBe ""
+        }
+
+      "check that the allocation table section is not present when credit is defined but outstandingAmount is 0" in
+        new PaymentAllocationSetupCreditZeroOutstanding() {
+          document.getElementsByClass("govuk-table").eq(0).text() shouldBe ""
+        }
 
       "has table headers" in new PaymentAllocationSetup() {
         val allTableHeadings = document.selectHead("thead")
@@ -338,7 +356,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "The payments allocation view has NO payment allocation amount" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
+          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl, saUtr = None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
       }
@@ -347,7 +365,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
+          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr = None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Clearing Date"
       }
