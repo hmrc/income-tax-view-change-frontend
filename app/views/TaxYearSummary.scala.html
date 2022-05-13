@@ -307,7 +307,7 @@
             }
         </dl>
     }
-    <div class="govuk-tabs govuk-tabs-upper-padding" data-module="govuk-tabs">
+    @*<div class="govuk-tabs govuk-tabs-upper-padding" data-module="govuk-tabs">
         @h2(msg = messages("tax-year-summary.contents"), classes = "govuk-tabs__title")
         <ul class="govuk-tabs__list" role="tablist">
             <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
@@ -347,10 +347,8 @@
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="updates" role="tabpanel" aria-labelledby="tab_updates">
         @updatesContent
         </div>
-    </div>
+    </div>*@
 
 @* TODO finish with the Tabs component and remove the above HTML block  *@
-    <div>
-        @taxYearSummaryTabsPartial(2022, true, false)
-    </div>
+    @taxYearSummaryTabsPartial(true, false, showForecastData, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
 }
