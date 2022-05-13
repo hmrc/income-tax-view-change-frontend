@@ -21,7 +21,7 @@
 
 @taxCalculationItem() = @{
     TabItem(
-        id = Some("tax-calculation"),
+        id = Some("taxCalculation"),
         label = messages("tax-year-summary.tax-calculation"),
         panel = TabPanel(
             content = HtmlContent(taxCalculationContent)
@@ -78,6 +78,8 @@
 
 @if(isFinalCalc){
     @govukTabs(Tabs(
-        items = tableItems
+        items = tableItems,
+        classes = "govuk-tabs-upper-padding"
+
     ))
 }
