@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, R7bTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -84,7 +84,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       case liabilityCalc: LiabilityCalculationResponse =>
         val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalc)
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel)))
+          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel), isEnabled(R7bTxmEvents)))
 
         Logger("application").info(
           s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with Calc data")
@@ -102,7 +102,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, None))
+          mtdItUser, documentDetailsWithDueDates, obligations, None, isEnabled(R7bTxmEvents)))
 
         Logger("application").info(
           s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with No Calc data")

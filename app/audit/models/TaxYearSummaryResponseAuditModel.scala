@@ -28,15 +28,24 @@ import utils.Utilities._
 case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: List[DocumentDetailWithDueDate],
                                             updates: ObligationsModel,
-                                            taxYearSummaryViewModel: Option[TaxYearSummaryViewModel] = None
-                                            ) extends ExtendedAuditModel with ImplicitDateParser {
+                                            taxYearSummaryViewModel: Option[TaxYearSummaryViewModel] = None,
+                                            R7bTxmEvents: Boolean) extends ExtendedAuditModel with ImplicitDateParser {
 
   override val transactionName: String = "tax-year-overview-response"
   override val auditType: String = "TaxYearOverviewResponse"
 
-  private val taxYearSummaryJson = Json.obj() ++
-    ("calculationDate", taxYearSummaryViewModel.map(_.timestamp.map(_.toZonedDateTime.toLocalDate))) ++
-    ("totalDue", taxYearSummaryViewModel.map(_.taxDue))
+  private val taxYearSummaryJson = {
+    if (R7bTxmEvents) {
+      Json.obj() ++
+        ("calculationDate", taxYearSummaryViewModel.map(_.timestamp.map(_.toZonedDateTime.toLocalDate))) ++
+        ("calculationAmount", taxYearSummaryViewModel.map(_.taxDue)) ++
+        ("forecastAmount", taxYearSummaryViewModel.map(_.forecastIncome))
+    } else {
+      Json.obj() ++
+        ("calculationDate", taxYearSummaryViewModel.map(_.timestamp.map(_.toZonedDateTime.toLocalDate))) ++
+        ("totalDue", taxYearSummaryViewModel.map(_.taxDue))
+    }
+  }
 
   private val calculationDetails: JsObject = Json.obj() ++
     ("income", taxYearSummaryViewModel.map(_.income)) ++
@@ -51,6 +60,11 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
       ("amount", docDateDetail.documentDetail.originalAmount) ++
       ("dueDate", docDateDetail.dueDate)
   }
+
+  private val forecastJson: JsObject = Json.obj() ++
+      ("income", taxYearSummaryViewModel.map(_.forecastIncome)) ++
+      ("taxableIncome", taxYearSummaryViewModel.map(_.forecastIncome)) ++
+      ("taxDue", taxYearSummaryViewModel.map(_.forecastIncomeTaxAndNics))
 
   private def paymentsJsonLPI(docDateDetail: DocumentDetailWithDueDate): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail, latePaymentCharge = true),
@@ -90,11 +104,19 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
   private val updatesDetail: Seq[JsObject] = updates.allDeadlinesWithSource(true)(mtdItUser).map(updatesJson)
 
   override val detail: JsValue = {
+    if (R7bTxmEvents) {
+      userAuditDetails(mtdItUser) ++
+        Json.obj("taxYearOverview" -> taxYearSummaryJson,
+          "forecast" -> forecastJson,
+          "calculation" -> calculationDetails,
+          "payments" -> paymentsDetails,
+          "updates" -> updatesDetail)
+    } else {
     userAuditDetails(mtdItUser) ++
       Json.obj("taxYearOverview" -> taxYearSummaryJson,
         "calculation" -> calculationDetails,
         "payments" -> paymentsDetails,
         "updates" -> updatesDetail)
+    }
   }
-
 }
