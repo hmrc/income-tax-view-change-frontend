@@ -16,13 +16,21 @@
 
 package forms
 
-import play.api.data.{FieldMapping, Form, FormError}
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.format.Formatter
+import play.api.data.{FieldMapping, Form, FormError}
+import play.api.libs.json.{Json, OWrites}
 
 import scala.util.matching.Regex
 
 object FeedbackForm {
+
+  val feedbackRating: String = "feedback-rating"
+  val feedbackName: String = "feedback-name"
+  val feedbackEmail: String = "feedback-email"
+  val feedbackComments: String = "feedback-comments"
+  val feedbackCsrfToken: String = "csrfToken"
+  val feedbackReferrer: String = "referrer"
 
   val radiosEmptyError: String = "feedback.radiosError"
   val nameEmptyError: String = "feedback.fullName.error.empty"
@@ -58,16 +66,16 @@ object FeedbackForm {
 
   val form: Form[FeedbackForm] = Form[FeedbackForm](
     mapping(
-      "feedback-rating" -> optional(text)
+      feedbackRating -> optional(text)
         .verifying(radiosEmptyError, rating => rating.isDefined && rating.get.trim.nonEmpty),
-      "feedback-name" -> text
+      feedbackName -> text
         .verifying(nameEmptyError, name => name.trim.nonEmpty)
         .verifying(nameInvalidError, name => name.matches("""^[A-Za-z\-.,()'"\s]+$"""))
         .verifying(nameLengthError, name => name.length <= 70),
-      "feedback-email" -> text
+      feedbackEmail -> text
         .verifying(emailInvalidError, email => validate(email))
         .verifying(emailLengthError, email => email.length <= 255),
-      "feedback-comments" -> FieldMapping[String]()(new Formatter[String] {
+      feedbackComments -> FieldMapping[String]()(new Formatter[String] {
 
         override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
           data.get(key) match {
@@ -78,15 +86,28 @@ object FeedbackForm {
         }
 
         override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
-      }).verifying(commentsEmptyLength, comment => comment.length <= 2000)
+      }).verifying(commentsEmptyLength, comment => comment.length <= 2000),
+      feedbackCsrfToken -> text
     )(FeedbackForm.apply)(FeedbackForm.unapply)
   )
+
+  implicit val writes: OWrites[FeedbackForm] = Json.writes[FeedbackForm]
 }
 
 case class FeedbackForm(
                          experienceRating: Option[String],
                          name: String,
                          email: String,
-                         comments: String
-                       )
+                         comments: String,
+                         csrfToken: String
+                       ) {
+  def toFormMap(referrer: String): Map[String, Seq[String]] =
+    Map(FeedbackForm.feedbackRating -> Seq(experienceRating.getOrElse("N/A")),
+      FeedbackForm.feedbackName -> Seq(name),
+      FeedbackForm.feedbackEmail -> Seq(email),
+      FeedbackForm.feedbackComments -> Seq(comments),
+      FeedbackForm.feedbackCsrfToken -> Seq(csrfToken),
+      FeedbackForm.feedbackReferrer -> Seq(referrer)
+    )
+}
 

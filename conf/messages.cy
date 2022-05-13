@@ -674,6 +674,7 @@ upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd 
 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
+error.titlePattern.serviceName.govUk = Gwall: {0} - Cyfrif Treth Busnes - GOV.UK
 titlePattern.serviceName.itsa.govUk = {0} - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK
 
 ## Payment History Page ##

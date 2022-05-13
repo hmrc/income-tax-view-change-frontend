@@ -99,7 +99,7 @@
 }
 
 @beforeContentBlock = {
-    @phaseBanner("beta")
+    @phaseBanner("beta", isAgent)
     @hmrcBanner(Banner(CurrentLanguage()))
     @{btaNavPartial.getOrElse(())}
     <div class="nav-bar-wrapper">
@@ -133,8 +133,10 @@
         } else {
             messages("agent.title_pattern.service_name.govuk", pageTitle)
         }
-    } else {
-        messages("titlePattern.serviceName.govUk", pageTitle)
+    } else if(form.exists(_.hasErrors)) {
+            messages("error.titlePattern.serviceName.govUk", pageTitle)
+        } else {
+            messages("titlePattern.serviceName.govUk", pageTitle)
     }
 }
 

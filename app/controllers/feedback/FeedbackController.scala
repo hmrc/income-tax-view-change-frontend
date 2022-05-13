@@ -16,17 +16,17 @@
 
 package controllers.feedback
 
-import config.{FormPartialProvider, FrontendAppConfig}
+import auth.MtdItUser
+import config.{AgentItvcErrorHandler, FormPartialProvider, FrontendAppConfig, ItvcErrorHandler}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates._
 import forms.FeedbackForm
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.govukfrontend.views.Implicits.RichInput
-import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
-import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichCharacterCount
-import uk.gov.hmrc.hmrcfrontend.views.viewmodels.charactercount.CharacterCount
-import uk.gov.hmrc.hmrcfrontend.views.implicits.RichCharacterCountSupport
+import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.partials._
 import views.html.feedback.{Feedback, FeedbackThankYou}
@@ -38,67 +38,70 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
+                                   val checkSessionTimeout: SessionTimeoutPredicate,
+                                   val authenticate: AuthenticationPredicate,
+                                   val authorisedFunctions: AuthorisedFunctions,
+                                   val retrieveNino: NinoPredicate,
+                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                   val retrieveBtaNavBar: NavBarPredicate,
                                    val feedbackView: Feedback,
                                    val feedbackThankYouView: FeedbackThankYou,
                                    httpClient: HttpClient,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val formPartialRetriever: FormPartialProvider,
                                    val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter,
-                                   mcc: MessagesControllerComponents
-                                  ) extends FrontendController(mcc) with I18nSupport {
-
-  private val TICKET_ID = "ticketId"
-
-  def contactFormReferer(implicit request: Request[AnyContent]): String = request.headers.get(REFERER).getOrElse("")
-
-  def localSubmitUrl(implicit request: Request[AnyContent]): String = routes.FeedbackController.submit().url
+                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                   mcc: MessagesControllerComponents,
+                                   val itvcErrorHandler: ItvcErrorHandler,
+                                   val agentItvcErrorHandler: AgentItvcErrorHandler
+                                  ) extends ClientConfirmedController with I18nSupport {
 
 
-  private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =
-    s"${config.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/?submitUrl=${urlEncode(localSubmitUrl)}" +
-      s"&service=${urlEncode(config.contactFormServiceIdentifier)}&referer=${urlEncode(contactFormReferer)}"
-
-  private def feedbackHmrcSubmitPartialUrl(implicit request: Request[AnyContent]) =
-    s"${config.contactFrontendPartialBaseUrl}/contact/beta-feedback/form?resubmitUrl=${urlEncode(localSubmitUrl)}"
-
-  private def feedbackThankYouPartialUrl(ticketId: String)(implicit request: Request[AnyContent]) =
-    s"${config.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
-
-  def show: Action[AnyContent] = Action {
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit())
+      val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
       request.headers.get(REFERER) match {
-        case Some(ref) => Ok(feedback).withSession(request.session + (REFERER -> ref))
-        case _ => Ok(feedback)
+        case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
+        case _ => Future.successful(Ok(feedback))
       }
   }
 
-  def submit: Action[AnyContent] = Action.async {
+  def showAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() {
     implicit request =>
-      FeedbackForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors, postAction = routes.FeedbackController.submit()))),
-        data => Future.successful(Redirect(routes.FeedbackController.thankyou()))
-      )
-//      request.body.asFormUrlEncoded.map { formData =>
-//        httpClient.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
-//          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec).map {
-//          resp =>
-//            resp.status match {
-//              case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
-//              case HttpStatus.BAD_REQUEST => BadRequest(feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit()))
-//              case status => Logger("application").error(s"Unexpected status code from feedback form: $status"); InternalServerError
-//            }
-//        }
-//      }.getOrElse {
-//        Logger("application").error("Trying to submit an empty feedback form")
-//        Future.successful(InternalServerError)
-//      }
+      implicit user =>
+        val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit, isAgent = true)
+        request.headers.get(REFERER) match {
+          case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
+          case _ => Future.successful(Ok(feedback))
+        }
   }
-  def thankyou: Action[AnyContent] = Action {
+
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      val ticketId = request.session.get(TICKET_ID).getOrElse("N/A")
-      val referer = request.session.get(REFERER).getOrElse("/")
+      handleSubmit(isAgent = false)
+  }
+
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit agent =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+          implicit mtdItUser =>
+            handleSubmit(isAgent = true)
+        }
+  }
+
+  def thankYou: Action[AnyContent] = Action {
+    implicit request =>
+      val referer = request.session.get(REFERER).getOrElse(config.baseUrl)
       Ok(feedbackThankYouView(referer)).withSession(request.session - REFERER)
+  }
+
+  def thankYouAgent: Action[AnyContent] = Action {
+    implicit request =>
+      val referer = request.session.get(REFERER).getOrElse(config.agentBaseUrl)
+      Ok(feedbackThankYouView(referer, isAgent = true)).withSession(request.session - REFERER)
   }
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
@@ -107,6 +110,39 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     val hc = itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
     itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
   }
+
+  private def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    FeedbackForm.form.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
+        postAction = if (isAgent) routes.FeedbackController.submitAgent else routes.FeedbackController.submit))),
+      formData => {
+        httpClient.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData.toFormMap(user.headers.get(REFERER).getOrElse("N/A")))(
+          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec).map {
+          resp =>
+            resp.status match {
+              case OK if isAgent =>
+                Redirect(routes.FeedbackController.thankYouAgent)
+              case OK => Redirect(routes.FeedbackController.thankYou)
+              case status if isAgent =>
+                Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
+                agentItvcErrorHandler.showInternalServerError()
+              case status =>
+                Logger("application").error(s"Unexpected status code from feedback form: $status")
+                itvcErrorHandler.showInternalServerError()
+            }
+        }
+      }
+    )
+  }
+
+  lazy val feedbackHmrcSubmitPartialUrl: String =
+    s"${
+      config.contactFrontendPartialBaseUrl
+    }/contact/beta-feedback/submit?" +
+      s"service=${
+        urlEncode(config.contactFormServiceIdentifier)
+      }"
+
 
   implicit val readPartialsForm: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
     def read(method: String, url: String, response: HttpResponse): HttpResponse = response
