@@ -125,8 +125,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           result.status shouldBe SEE_OTHER
         }
 
-        s"redirect to '${controllers.agent.routes.TaxYearSummaryController.show(testTaxYear).url}''" in {
-          result.header("Location").head shouldBe controllers.agent.routes.TaxYearSummaryController.show(testTaxYear).url
+        s"redirect to '${controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url}''" in {
+          result.header("Location").head shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url
         }
 
       }
@@ -222,7 +222,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           result.status shouldBe SEE_OTHER
         }
 
-        s"redirect to '${controllers.agent.routes.TaxYearSummaryController.show(testTaxYear).url}''" in {
+        s"redirect to '${controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url}''" in {
           result.header("Location").head shouldBe controllers.routes.FinalTaxCalculationController.showAgent(testTaxYear).url
         }
 

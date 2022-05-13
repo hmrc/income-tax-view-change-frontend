@@ -22,7 +22,7 @@ trait FallBackBackLinks {
 
   def getPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String = (gatewayPageOpt, taxYearOpt) match {
     case (Some(TaxYearSummaryPage), Some(taxYear)) =>
-      if (isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
+      if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
       else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
     case (Some(TaxYearSummaryPage), None) =>
       if (isAgent) controllers.routes.HomeController.showAgent().url
@@ -39,7 +39,7 @@ trait FallBackBackLinks {
   }
 
   def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String = gatewayPageOpt match {
-    case Some(TaxYearSummaryPage) => if (isAgent) controllers.agent.routes.TaxYearSummaryController.show(taxYear).url + "#payments"
+    case Some(TaxYearSummaryPage) => if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
     else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
     case Some(WhatYouOwePage) => if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
     else controllers.routes.WhatYouOweController.show(origin).url

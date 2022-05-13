@@ -203,7 +203,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     None, Some("1234567890"), None, Some("Agent"), arn = Some("1")
   )(FakeRequest())
 
-  s"[IT-AGENT-TEST-1] GET ${routes.TaxYearSummaryController.show(getCurrentTaxYearEnd.getYear).url}" should {
+  s"[IT-AGENT-TEST-1] GET ${controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}" should {
     s" [IT-AGENT-TEST-1.1] redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       " [IT-AGENT-TEST-1.1.1] the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
@@ -254,7 +254,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     }
   }
 
-  s"[IT-AGENT-TEST-2] GET ${routes.TaxYearSummaryController.show(getCurrentTaxYearEnd.getYear).url}" should {
+  s"[IT-AGENT-TEST-2] GET ${controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}" should {
     " [IT-AGENT-TEST-2.1] return the tax year summary page" when {
       " [IT-AGENT-TEST-2.1.1] all calls were successful and returned data" in {
         stubAuthorisedAgentUser(authorised = true)
