@@ -84,7 +84,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations, isEnabled(R7bTxmEvents)))
           Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
             CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage)(implicitly, messages))
+            isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
+            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages))
         }
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
