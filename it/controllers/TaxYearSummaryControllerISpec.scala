@@ -559,7 +559,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull))))
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), false))
       }
 
 
@@ -800,7 +800,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
             None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), emptyPaymentsList, allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull))))
+          )(FakeRequest()), emptyPaymentsList, allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), false))
       }
 
       "financial details service returns an error" in {

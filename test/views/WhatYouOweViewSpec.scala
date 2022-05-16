@@ -1032,7 +1032,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.title() shouldBe AgentPaymentDue.title
         pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           LocalDate.now().getYear, "1040000124").url
-        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.agent.routes.TaxYearSummaryController.show(
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(
           LocalDate.now().getYear).url
       }
       "not have button Pay now with no chagres" in new AgentSetup(charges = noChargesModel) {
