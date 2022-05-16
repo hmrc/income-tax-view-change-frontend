@@ -248,7 +248,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   "taxYearSummary" when {
     "the user is an individual" should {
-      "display forecastdata when forecast data present" in new Setup(forecastCalcView()) {
+      "display forecast data when forecast data present" in new Setup(forecastCalcView()) {
         document.title shouldBe taxYearSummaryMessages.title
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
         document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
@@ -268,7 +268,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
 
-      "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {
+      "NOT display forecast data when showForecastData param is false" in new Setup(noForecastDataView()) {
         document.title shouldBe taxYearSummaryMessages.title
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
       }
