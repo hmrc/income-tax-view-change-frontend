@@ -219,7 +219,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       val header = s"Tax year 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear} Balancing payment collected through PAYE tax code"
       val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
       val summaryMessage = s"This is the remaining tax you owe for the ${getCurrentTaxYearEnd.getYear - 1} to ${getCurrentTaxYearEnd.getYear} tax year."
-      val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${getCurrentTaxYearEnd.getYear - 1} to ${getCurrentTaxYearEnd.getYear} tax year £2,500.00"
+      val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${getCurrentTaxYearEnd.getYear + 1} to ${getCurrentTaxYearEnd.getYear + 2} tax year £2,500.00"
 
       Given("the CodingOut feature switch is enabled")
       enable(CodingOut)
