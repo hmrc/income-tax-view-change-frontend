@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(govukTabs : GovukTabs)
-@(isAgent: Boolean, showForecastData: Boolean = false, taxCalculationContent: Html, paymentsContent: Html, forecastContent: Html, updatesContent: Html)(implicit messages: Messages)
+@(showForecastData: Boolean = false, taxCalculationContent: Html, paymentsContent: Html, forecastContent: Html, updatesContent: Html)(implicit messages: Messages)
 
 @taxCalculationTabItem() = @{
     TabItem(
