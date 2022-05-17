@@ -292,7 +292,7 @@
 
     @getReturnHref(year: Int) = @{
         if (isAgent) {
-            controllers.agent.routes.TaxYearSummaryController.show(year).url
+            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
         } else {
             controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
         }

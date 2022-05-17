@@ -41,18 +41,21 @@ case class DocumentDetail(taxYear: String,
 
   def credit: Option[BigDecimal] = originalAmount match {
     case None => None
-    case _ if(paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case Some(_) if(originalAmount.get == 0) => None
-    case Some(_) if(originalAmount.get > 0) => None
+    case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
+    case Some(_) if (originalAmount.get == 0) => None
+    case Some(_) if (originalAmount.get > 0) => None
     case Some(credit) => Some(credit * -1)
   }
 
   def paymentOrChargeCredit: Option[BigDecimal] = outstandingAmount match {
     case None => None
-    case Some(_) if(outstandingAmount.get == 0) => None
-    case Some(_) if(outstandingAmount.get > 0) => None
+    case Some(_) if (outstandingAmount.get == 0) => None
+    case Some(_) if (outstandingAmount.get > 0) => None
     case Some(credit) => Some(credit * -1)
   }
+
+  def outstandingAmountZero: Boolean =
+    outstandingAmount.getOrElse[BigDecimal](0) == 0
 
   def hasLpiWithDunningBlock: Boolean =
     lpiWithDunningBlock.isDefined && lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0

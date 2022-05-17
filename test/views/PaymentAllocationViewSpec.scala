@@ -53,14 +53,20 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     List(financialDetail)
   )
 
-  class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr= None, CutOverCreditsEnabled = false)) {
+  val singleTestPaymentAllocationChargeWithOutstandingAmountZeroCredit: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+    List(documentDetailNoPaymentCredit.copy(outstandingAmount = Some(0))),
+    List(financialDetailNoPaymentCredit)
+  )
+
+  class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
+                               CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr = saUtr, CutOverCreditsEnabled = CutOverCreditsEnabled)) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
-  class PaymentAllocationSetupTrue(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr= Some("1234567890"), CutOverCreditsEnabled = true)) {
-    paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  class PaymentAllocationSetupCreditZeroOutstanding(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"), CutOverCreditsEnabled = true)) {
+    paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
 
@@ -88,9 +94,17 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup() {
         document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
-
-
       }
+
+      "check that the heading section is not present when credit is defined but outstandingAmount is 0" in
+        new PaymentAllocationSetupCreditZeroOutstanding() {
+          document.getElementsByClass("govuk-heading-m").eq(0).text() shouldBe ""
+        }
+
+      "check that the allocation table section is not present when credit is defined but outstandingAmount is 0" in
+        new PaymentAllocationSetupCreditZeroOutstanding() {
+          document.getElementsByClass("govuk-table").eq(0).text() shouldBe ""
+        }
 
       "has table headers" in new PaymentAllocationSetup() {
         val allTableHeadings = document.selectHead("thead")
@@ -109,17 +123,18 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a Credit on account row within payment details" in new PaymentAllocationSetup() {
-        val allTableData = document.getElementById("credit-on-account").getElementsByTag("td")
-        allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
-        allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
+        val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
+        allTableData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
+        allTableData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
 
       }
 
       "should not have Credit on account row within payment details" in new PaymentAllocationSetup(paymentAllocationViewModel.copy(
         paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
-        document.getElementById("credit-on-account") shouldBe null
+        document.getElementById("money-on-account") shouldBe null
       }
-      "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in new PaymentAllocationSetupTrue(paymentAllocationViewModelNoPayment) {
+      "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
+        new PaymentAllocationSetup(paymentAllocationViewModelNoPayment, true, saUtr = Some("1234567890")) {
         document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.headingEarlier
         document.getElementById("sa-note-migrated").text shouldBe paymentAllocationMessages.saNote
         val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
@@ -127,13 +142,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         moneyOnAccountData.get(1).text() shouldBe paymentAllocationMessages.moneyOnAccountDate
         moneyOnAccountData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
       }
-      
-      "should not have money on account details when cutOverCredit FS enabled with payment items" in new PaymentAllocationSetupTrue() {
-        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
-        document.getElementById("sa-note-migrated") shouldBe null
-        document.getElementById("money-on-account") shouldBe null
 
-      }
     }
   }
   "Payment Allocation Page for LPI" should {
@@ -174,12 +183,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocationLpi
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocatedLpi
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmountLpi
-
-      }
-      "has no money on account data when cutOverCredit switch is enabled" in new PaymentAllocationSetupTrue(paymentAllocationViewModelLpi) {
-        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
-        document.getElementById("sa-note-migrated") shouldBe null
-        document.getElementById("money-on-account") shouldBe null
 
       }
     }
@@ -236,7 +239,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "poa1_5").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa1_6").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa1_7").url,
-          controllers.routes.ChargeSummaryController.show(2020, "poa1_8").url
+          controllers.routes.ChargeSummaryController.show(2020, "poa1_8").url,
+          controllers.routes.CreditAndRefundController.show().url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -251,7 +255,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
              |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
              |Class 4 National Insurance for payment on account 1 of 2 2020 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
-             |Credit on account £200.00
+             |Money in your account N/A £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -276,7 +280,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "poa2_5").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa2_6").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa2_7").url,
-          controllers.routes.ChargeSummaryController.show(2020, "poa2_8").url
+          controllers.routes.ChargeSummaryController.show(2020, "poa2_8").url,
+          controllers.routes.CreditAndRefundController.show().url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -291,7 +296,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
              |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
              |Class 4 National Insurance for payment on account 2 of 2 2020 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
-             |Credit on account £200.00
+             |Money in your account N/A £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -312,7 +317,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "bcd_3").url,
           controllers.routes.ChargeSummaryController.show(2019, "bcd_4").url,
           controllers.routes.ChargeSummaryController.show(2019, "bcd_5").url,
-          controllers.routes.ChargeSummaryController.show(2020, "bcd_6").url
+          controllers.routes.ChargeSummaryController.show(2020, "bcd_6").url,
+          controllers.routes.CreditAndRefundController.show().url
         )
 
         layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
@@ -325,30 +331,32 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Capital Gains Tax for Balancing payment 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
              |Student Loans for Balancing payment 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
              |Voluntary Class 2 National Insurance for Balancing payment 2020 Tax year 2019 to 2020 29 Aug 2019 £7,654.32
-             |Credit on account £200.00
+             |Money in your account N/A £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
+        println(layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
+          .eachAttr("href").asScala)
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
     }
 
     "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
-      val allTableData: Elements = document.getElementById("credit-on-account").getElementsByTag("td")
-      allTableData.get(0).text() shouldBe paymentAllocationMessages.creditOnAccount
-      allTableData.get(2).text() shouldBe paymentAllocationMessages.creditOnAccountAmount
+      val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
+      allTableData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
+      allTableData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
 
     }
 
     "not have Credit on account row within payment details" in new PaymentAllocationSetup(paymentAllocationViewModel.copy(
       paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
-      document.getElementById("credit-on-account") shouldBe null
+      document.getElementById("money-on-account") shouldBe null
     }
 
     "The payments allocation view has NO payment allocation amount" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
+          paymentAllocationView(paymentAllocationViewModelWithNoOriginalAmount, backUrl, saUtr = None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Allocation Amount"
       }
@@ -357,7 +365,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr= None, CutOverCreditsEnabled = false)
+          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr = None, CutOverCreditsEnabled = false)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Clearing Date"
       }

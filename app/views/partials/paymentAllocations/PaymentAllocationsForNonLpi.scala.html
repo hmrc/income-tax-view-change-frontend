@@ -49,16 +49,5 @@
     </tbody>
 
 }
-@paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount.map { outstandingAmount =>
-    @if(outstandingAmount != 0) {
-        <tbody class="govuk-table__body">
 
-            <tr id="credit-on-account">
-                <td class="govuk-table__cell">@messages("paymentAllocation.creditOnAccount")</td>
-                <td class="govuk-table__cell"></td>
-                <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
-            </tr>
-        </tbody>
-    }
-}
 

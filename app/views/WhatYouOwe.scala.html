@@ -84,7 +84,7 @@
 @unallocatedCreditParagraphContent(amount: String) = {
     @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
-        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount) + ". ",
+        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
         id = Some("unallocated-credit-link")).toString()))
 }
 
@@ -191,10 +191,10 @@
 
 @getReturnHref(year: Int) = @{
    if (isAgent) {
-       controllers.agent.routes.TaxYearSummaryController.show(year).url
-                } else {
-      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
-    }
+       controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
+   } else {
+       controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
+   }
 }
 
 @taxYearSummaryLink(year: Int, index:Int, id:String) = {

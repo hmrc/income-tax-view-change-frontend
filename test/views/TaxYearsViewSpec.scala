@@ -159,7 +159,7 @@ class TaxYearsViewSpec extends ViewSpec {
   "agent" when {
     "display the agent view return link" in new Setup(List(testYearPlusOne), true, isAgent = true) {
       document.getElementById(s"viewSummary-link-$testYearPlusOne").attr("href") shouldBe
-        controllers.agent.routes.TaxYearSummaryController.show(testYearPlusOne).url
+        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearPlusOne).url
     }
     "the paragraph explaining about previous Self Assessments" in new Setup(List(testYearPlusOne), isAgent = true) {
       layoutContent.select("#oldSa-para-agent").text shouldBe taxYears.saNoteAgent

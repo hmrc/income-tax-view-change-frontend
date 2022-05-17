@@ -547,7 +547,7 @@ whatYouOwe.dunningLock.text                                     = Mae un neu fwy
 whatYouOwe.dunningLock.link                                     = bod apêl ar y gweill yn erbyn penderfyniad treth
 whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
-whatYouOwe.unallocated-credit-note                              = Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
+whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -763,11 +763,11 @@ final-tax-overview.individual.heading                            = Eich trosolwg
 final-tax-overview.caption                                       = 6 Ebrill {0} i 5 Ebrill {1}
 final-tax-overview.inset.1                                       = Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch
 final-tax-overview.individual.inset.2                            = wirio eich Ffurflen Dreth Incwm.
-final-tax-overview.individual.chargeInfo.p                       = Gall y swm sydd angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr.
+final-tax-overview.individual.chargeInfo.p                       = Gall y swm y mae angen i chi ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar eich cyfrif, er enghraifft, llog taliad hwyr.
 
 ## Final Tax Overview (Agent Content overrides)
 final-tax-overview.agent.heading                                 = Trosolwg treth terfynol eich cleient
-final-tax-overview.agent.chargeInfo.p                            = Gall y swm sydd angen i’ch cleient ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar ei gyfrif, er enghraifft, llog taliad hwyr.
+final-tax-overview.agent.chargeInfo.p                            = Gall y swm y mae angen i’ch cleient ei dalu fod yn wahanol os oes taliadau neu ffioedd eraill ar ei gyfrif, er enghraifft, llog taliad hwyr.
 final-tax-overview.agent.inset.2                                 = wirio Ffurflen Dreth Incwm eich cleient.
 
 tax-year-summary.tax-due.finalCalc                             = Treth Incwm a chyfraniadau Yswiriant Gwladol

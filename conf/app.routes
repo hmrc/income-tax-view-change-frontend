@@ -18,8 +18,9 @@ GET         /agents                                                       contro
 GET         /next-updates                                                 controllers.NextUpdatesController.getNextUpdates(origin: Option[String] ?= None)
 GET         /agents/next-updates                                          controllers.NextUpdatesController.getNextUpdatesAgent
 
-#Calculation
+# Tax Year Summary
 GET         /calculation/:taxYear                                         controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
+GET         /agents/calculation/:taxYear                                  controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)
 
 #IncomeSummary
 GET         /calculation/:taxYear/income                                  controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int, origin: Option[String] ?= None)

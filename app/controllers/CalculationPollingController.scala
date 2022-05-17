@@ -101,7 +101,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
           controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
         } else {
-          controllers.agent.routes.TaxYearSummaryController.show(taxYear)
+          controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
         }
 
         handleRequest(
