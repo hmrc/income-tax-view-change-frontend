@@ -209,7 +209,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object TaxCalcBreakdown {
     val title = "Tax calculation - Business Tax account - GOV.UK"
     val agentTitle = "Tax calculation - Your client’s Income Tax details - GOV.UK"
-    val upliftMessage = "1.25 percentage point uplift in National Insurance contribution funds, NHS, health and social care"
+    val upliftMessage = "1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
 
