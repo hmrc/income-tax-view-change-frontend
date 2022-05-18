@@ -23,7 +23,7 @@
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
     link: link)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel,
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, creditsRefundsRepayEnabled: Boolean,
     isAgent: Boolean = false)(implicit messages: Messages)
 @import implicitDateFormatter._
 
@@ -32,12 +32,20 @@
     else controllers.routes.CreditAndRefundController.show().url
 }
 
+@getLink = @{
+    if (creditsRefundsRepayEnabled) {
+        link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
+    } else {
+        messages("paymentAllocation.moneyOnAccount")
+    }
+}
+
 @paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount.map { outstandingAmount =>
     @if(outstandingAmount != 0) {
          <tbody class="govuk-table__body">
                <tr id="money-on-account">
                    <td class="govuk-table__cell">
-                       @link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
+                       @getLink
                    </td>
                    <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
                    <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
