@@ -31,10 +31,10 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
   lazy val paymentAllocationsCreditAmount = app.injector.instanceOf[PaymentAllocationsCreditAmount]
 
-  class Setup(isAgent: Boolean = false) {
+  class Setup(isAgent: Boolean = false, creditsRefundsFSEnabled: Boolean = true) {
     val paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargesModelWithCredit, Seq())
-    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(paymentAllocations, isAgent)
-    val pageDocument: Document = Jsoup.parse(contentAsString(html))
+    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(paymentAllocations, creditsRefundsFSEnabled, isAgent)
+    val pageDocument: Document = Jsoup.parse("<table>" + contentAsString(html) + "</table>")
   }
 
   "Payment Allocations Credit Amount Partial" should {
@@ -48,6 +48,11 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
     "display the money in account row for AGENT" in new Setup(true) {
       pageDocument.select("a#money-on-account-link").size() shouldBe 1
       pageDocument.select("a#money-on-account-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/credit-and-refunds"
+    }
+
+    "not display link when credits and refunds page feature switch is disabled" in new Setup(false, false) {
+      pageDocument.select("a#money-on-account-link").size() shouldBe 0
+      pageDocument.select("tr#money-on-account > td:first-child").text() shouldBe "Money in your account"
     }
   }
 }

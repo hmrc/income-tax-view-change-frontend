@@ -59,8 +59,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
-                               CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr = saUtr, CutOverCreditsEnabled = CutOverCreditsEnabled)) {
+                               CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None,
+                               creditsRefundsRepayEnabled: Boolean = true) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr = saUtr, CutOverCreditsEnabled = CutOverCreditsEnabled,
+      creditsRefundsRepayEnabled = creditsRefundsRepayEnabled)) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
@@ -111,7 +113,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableHeadings.selectNth("th", 1).text() shouldBe paymentAllocationMessages.tableHeadings(0)
         allTableHeadings.selectNth("th", 2).text() shouldBe paymentAllocationMessages.tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe paymentAllocationMessages.tableHeadings(2)
-
       }
 
       "has a payment within the table" in new PaymentAllocationSetup() {
@@ -119,20 +120,28 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocation
         allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocated
         allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmount
-
       }
 
-      "has a Credit on account row within payment details" in new PaymentAllocationSetup() {
+      "has a Credit on account link row within payment details when refunds page FS enabled" in new PaymentAllocationSetup() {
         val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
+        document.select("a#money-on-account-link").size() shouldBe 1
         allTableData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
         allTableData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
+      }
 
+      "has a Credit on account text row within payment details when refunds page FS disabled" in
+        new PaymentAllocationSetup(creditsRefundsRepayEnabled = false) {
+        val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
+        document.select("a#money-on-account-link").size() shouldBe 0
+        allTableData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
+        allTableData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
       }
 
       "should not have Credit on account row within payment details" in new PaymentAllocationSetup(paymentAllocationViewModel.copy(
         paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
         document.getElementById("money-on-account") shouldBe null
       }
+
       "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
         new PaymentAllocationSetup(paymentAllocationViewModelNoPayment, true, saUtr = Some("1234567890")) {
         document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.headingEarlier

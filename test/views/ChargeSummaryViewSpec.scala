@@ -75,6 +75,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   }
 
+
   val typePOA1 = "SA Payment on Account 1"
   val typePOA2 = "SA Payment on Account 2"
   val typeBalCharge = "SA Balancing Charge"
@@ -646,8 +647,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
           val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
           val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
           val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
-          val remainingText = "Collected through your PAYE tax code for 2017 to 2018 tax year"
-          val payHistoryLine1 = "29 Mar 2018 Amount collected through your PAYE tax code for 2017 to 2018 tax year £2,500.00"
+          val remainingText = "Collected through your PAYE tax code for 2019 to 2020 tax year"
+          val payHistoryLine1 = "29 Mar 2018 Amount collected through your PAYE tax code for 2019 to 2020 tax year £2,500.00"
         }
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe CodingOutMessages.header
@@ -671,7 +672,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
           val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
           val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
           val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
-          val codingOutRemainingToPay = "(Collected through your PAYE tax code for 2017 to 2018 tax year)"
+          val codingOutRemainingToPay = "(Collected through your PAYE tax code for 2019 to 2020 tax year)"
         }
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe CodingOutMessages.header
