@@ -132,7 +132,7 @@ tax-year-summary.heading                                       = Crynodeb o’r 
 tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.total-due                                     = Cyfanswm sy’n ddyledus
-tax-year-summary.calc-from-last-time                           = Mae hyn yn seiliedig yn unig ar y ffigurau rydym wedi’u derbyn hyd at {0}. Nid dyma’ch bil treth terfynol.
+tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.tax-calculation                               = Cyfrifiad
 tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
@@ -164,7 +164,7 @@ tax-year-summary.forecast_total_title                          = 6 Ebrill {0} i 
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
 tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
 tax-year-summary.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
-tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 
 
 
