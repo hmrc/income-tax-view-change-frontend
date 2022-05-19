@@ -44,7 +44,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val title = s"$heading - Business Tax account - GOV.UK"
     val titleWhenAgentView = s"$heading - Your client’s Income Tax details - GOV.UK"
 
-    val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment online account (opens in new tab)."
+    val info = "To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous Self Assessment online account (opens in new tab)."
 
     def button(year: Int): String = s"$year payments"
 

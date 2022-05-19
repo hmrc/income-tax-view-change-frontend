@@ -722,6 +722,7 @@ paymentsHistory.CardRef                                         = Payment made b
 paymentHistory.table.header.date                                = Date
 paymentHistory.table.header.description                         = Description
 paymentHistory.table.header.amount                              = Amount
+PaymentHistory.classicSA                                        = To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
