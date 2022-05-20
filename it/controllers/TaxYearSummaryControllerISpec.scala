@@ -378,7 +378,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           "Tax and National Insurance contributions due £5,000.99" else ""
         val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-summary.forecast") else ""
         val forecastTotal = if (featureSwitchEnabled) "6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
-          " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " forecast amount £5,000.99" else ""
+          " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " forecast £5,000.99" else ""
         res should have(
           httpStatus(OK),
           pageTitleIndividual(taxYearSummaryTitle),
