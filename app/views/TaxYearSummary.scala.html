@@ -280,8 +280,9 @@
                 @if(model.crystallised.contains(true)) {
                     @messages("tax-year-summary.total-due")
                 } else {
-                    @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html{messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")})
-                    @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html(messages("tax-year-summary.tax-calculation").toLowerCase))
+                    @{
+                        messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")
+                    }
                 }
                 </dt>
 
@@ -292,8 +293,7 @@
             @if(showForecastData && modelOpt.isDefined) {
                 <div id="forecast_total" class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html(messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")))
-                        @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html(messages("tax-year-summary.forecast").toLowerCase))
+                        @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
                     </dt>
 
                     <dd class="govuk-summary-list__value">
