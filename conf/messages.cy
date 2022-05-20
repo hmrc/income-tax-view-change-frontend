@@ -132,7 +132,7 @@ tax-year-summary.heading                                       = Crynodeb o’r 
 tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.total-due                                     = Cyfanswm sy’n ddyledus
-tax-year-summary.calc-from-last-time                           = Mae hyn yn seiliedig yn unig ar y ffigurau rydym wedi’u derbyn hyd at {0}. Nid dyma’ch bil treth terfynol.
+tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.tax-calculation                               = Cyfrifiad
 tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
@@ -158,13 +158,13 @@ tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Cancelled Self 
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
-tax-year-summary.forecast_total_title                          = 6 Ebrill {0} i 5 Ebrill {1} rhagolwg swm
+tax-year-summary.forecast_total_title                          = 6 Ebrill {0} i 5 Ebrill {1} rhagolwg
 
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
 tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
 tax-year-summary.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
-tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 
 
 
@@ -173,8 +173,8 @@ income_breakdown.heading                                        = Incwm
 income_breakdown.table.header                                   = Math o incwm
 income_breakdown.table.header.amount                            = Swm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
-income_breakdown.guidance_software                              = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
-income_breakdown.table.employment	                              = Cyflog o bob cyflogaeth
+income_breakdown.guidance_software                              = Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
+income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
 income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
 income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
@@ -227,7 +227,7 @@ forecast_income.source_types.98                                = Rhodd Cymorth a
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
-deduction_breakdown.guidance_software                                  = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+deduction_breakdown.guidance_software                                  = Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
 deduction_breakdown.table.marriage_allowance_transfer                  = Trosglwyddiad Lwfans Priodasol
