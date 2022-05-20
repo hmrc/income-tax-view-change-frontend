@@ -16,17 +16,15 @@
 
 package views
 
-import config.featureswitch.{FeatureSwitching, ForecastCalculation}
+import config.featureswitch.FeatureSwitching
 import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
-import testConstants.BaseTestConstants.taxYear
 import testConstants.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
@@ -37,6 +35,7 @@ import java.time.LocalDate
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testYear: Int = 2018
+  val hrefForecastSelector: String = """a[href$="#forecast"]"""
 
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
@@ -248,10 +247,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   "taxYearSummary" when {
     "the user is an individual" should {
-      "display forecastdata when forecast data present" in new Setup(forecastCalcView()) {
+      "display forecast data when forecast data present" in new Setup(forecastCalcView()) {
         document.title shouldBe taxYearSummaryMessages.title
-        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
-        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
+        document.getOptionalSelector("#forecast").isDefined shouldBe true
+        assert(document.select(hrefForecastSelector).text.contains(messagesLookUp("tax-year-summary.forecast")))
 
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
@@ -268,7 +267,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
 
-      "NOT display forecastdata when showForecastData param is false" in new Setup(noForecastDataView()) {
+      "NOT display forecast data when showForecastData param is false" in new Setup(noForecastDataView()) {
         document.title shouldBe taxYearSummaryMessages.title
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
       }
@@ -314,9 +313,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "show three tabs with the correct tab headings" in new Setup(estimateView()) {
-        layoutContent.selectHead("#tab_taxCalculation").text shouldBe taxYearSummaryMessages.taxCalculationTab
-        layoutContent.selectHead("#tab_payments").text shouldBe taxYearSummaryMessages.payments
-        layoutContent.selectHead("#tab_updates").text shouldBe taxYearSummaryMessages.updates
+        layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxYearSummaryMessages.taxCalculationTab
+        layoutContent.selectHead( """a[href$="#payments"]""").text shouldBe taxYearSummaryMessages.payments
+        layoutContent.selectHead("""a[href$="#updates"]""").text shouldBe taxYearSummaryMessages.updates
       }
 
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
@@ -617,10 +616,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     }
     "the user is an agent" should {
 
-      "display forecastdata when forecast data present" in new Setup(forecastCalcView(isAgent = true)) {
+      "display forecast data when forecast data present" in new Setup(forecastCalcView(isAgent = true)) {
         document.title shouldBe taxYearSummaryMessages.agentTitle
-        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
-        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
+        document.getOptionalSelector("#forecast").isDefined shouldBe true
+        assert(document.select(hrefForecastSelector).text.contains(messagesLookUp("tax-year-summary.forecast")))
 
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
@@ -642,10 +641,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.getOptionalSelector("#tab_forecast").isDefined shouldBe false
       }
 
-      "display No forecastdata yet when calcData returns NOT_FOUND" in new Setup(forecastWithNoCalcData(isAgent = true)) {
+      "display No forecast data yet when calcData returns NOT_FOUND" in new Setup(forecastWithNoCalcData(isAgent = true)) {
         document.title shouldBe taxYearSummaryMessages.agentTitle
-        document.getOptionalSelector("#tab_forecast").isDefined shouldBe true
-        document.select("#tab_forecast").text.contains(messagesLookUp("tax-year-summary.forecast"))
+        document.getOptionalSelector("#forecast").isDefined shouldBe true
+        assert(document.select(hrefForecastSelector).text.contains(messagesLookUp("tax-year-summary.forecast")))
 
         document.select(".forecast_table h2").text.contains(messagesLookUp("forecast_taxCalc.noForecast.heading"))
         document.select(".forecast_table p").text.contains(messagesLookUp("forecast_taxCalc.noForecast.text"))
