@@ -150,7 +150,7 @@ tax-year-summary.calc-from-last-time                               = This is not
 tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
 tax-year-summary.total-due                                         = Total Due
 tax-year-summary.contents                                          = Contents
-tax-year-summary.tax-calculation.date                              = 6 April {0} to 5 January {1} calculation
+tax-year-summary.tax-calculation.date                              = 6 April {0} to 5 January {1}
 tax-year-summary.tax-calculation                                   = Calculation
 tax-year-summary.tax-calculation.no-calc                           = No calculation yet
 tax-year-summary.tax-calculation.no-calc.note                      = You will be able to see your latest tax year calculation here once you have sent an update.
@@ -183,7 +183,7 @@ tax-year-summary.payments.codingOut.text                           = Balancing p
 tax-year-summary.na                                                = N/A
 tax-year-summary.paye-tax-code                                     = PAYE tax code
 tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
-tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast amount
+tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1}
 
 
 ## Income Breakdown Page ##

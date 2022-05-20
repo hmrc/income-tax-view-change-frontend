@@ -280,22 +280,20 @@
                 @if(model.crystallised.contains(true)) {
                     @messages("tax-year-summary.total-due")
                 } else {
-                    @{
-                        messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")
-                    }
+                    @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html{messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")})
+                    @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html(messages("tax-year-summary.tax-calculation").toLowerCase))
                 }
                 </dt>
 
                 <dd class="govuk-summary-list__value">
-                @{
-                    model.taxDue.toCurrencyString
-                }
+                    @{model.taxDue.toCurrencyString}
                 </dd>
             </div>
             @if(showForecastData && modelOpt.isDefined) {
                 <div id="forecast_total" class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
+                        @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html(messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")))
+                        @p(classes = "govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0")(Html(messages("tax-year-summary.forecast").toLowerCase))
                     </dt>
 
                     <dd class="govuk-summary-list__value">
