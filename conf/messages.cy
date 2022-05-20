@@ -686,6 +686,7 @@ paymentHistory.paymentFromEarlierYear                           = Taliad o flwyd
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
+PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient

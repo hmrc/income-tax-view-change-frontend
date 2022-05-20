@@ -385,7 +385,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#forecast_total")(forecastTotal),
-          elementTextBySelector("#tab_forecast")(forecastTabHeader),
+          elementTextBySelector("""a[href$="#forecast"]""")(forecastTabHeader),
           elementTextBySelector(".forecast_table")(tableText)
         )
       }

@@ -1,0 +1,82 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(govukTabs : GovukTabs)
+@(showForecastData: Boolean = false, taxCalculationContent: Html, paymentsContent: Html, forecastContent: Html, updatesContent: Html)(implicit messages: Messages)
+
+@taxCalculationTabItem() = @{
+    TabItem(
+        id = Some("taxCalculation"),
+        label = messages("tax-year-summary.tax-calculation"),
+        panel = TabPanel(
+            content = HtmlContent(taxCalculationContent)
+        )
+    )
+}
+
+@forecastTabItem() = @{
+    TabItem(
+        id = Some("forecast"),
+        label = messages("tax-year-summary.forecast"),
+        panel = TabPanel(
+            content = HtmlContent(forecastContent)
+        )
+    )
+}
+
+@paymentsTabItem() = @{
+    TabItem(
+        id = Some("payments"),
+        label = messages("tax-year-summary.payments"),
+        panel = TabPanel(
+            content = HtmlContent(paymentsContent)
+        )
+    )
+}
+
+@updatesTabItem() = @{
+    TabItem(
+        id = Some("updates"),
+        label = messages("tax-year-summary.updates"),
+        panel = TabPanel(
+            content = HtmlContent(updatesContent)
+        )
+    )
+}
+
+@tableTabItems() = @{
+    if(showForecastData) {
+        Seq(
+            taxCalculationTabItem,
+            forecastTabItem,
+            paymentsTabItem,
+            updatesTabItem
+        )
+    } else {
+        Seq(
+            taxCalculationTabItem,
+            paymentsTabItem,
+            updatesTabItem
+        )
+    }
+}
+
+@govukTabs(Tabs(
+    items = tableTabItems,
+    classes = "govuk-tabs-upper-padding"
+))
