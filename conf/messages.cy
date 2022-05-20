@@ -227,7 +227,7 @@ forecast_income.source_types.98                                = Rhodd Cymorth a
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
-deduction_breakdown.guidance_software                                  = Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
+deduction_breakdown.guidance_software                                  = Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
 deduction_breakdown.table.marriage_allowance_transfer                  = Trosglwyddiad Lwfans Priodasol
