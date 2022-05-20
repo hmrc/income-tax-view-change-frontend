@@ -59,11 +59,20 @@
 }
 
 @saNoteParagraphContent(utr: String) = {
-    @p(id=Some("sa-note-migrated"))(Html(getMessage("sa-note") +
-        link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-        messageKey = getPrefix("sa-link"), id=Some("sa-note-migrated-link"),
-        rel=Some("noreferrer noopener"), target=Some("_blank")).toString())
-    )
+    @if(isAgent) {
+        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-1") + ". " + getMessage("sa-note-agent-2") +
+                link(link = appConfig.saForAgents, outerMessage = ". " + getMessage("sa-note-agent-3"),
+                    messageKey = getPrefix("sa-link-agent"), id = Some("sa-note-migrated-link"),
+                    rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
+        )
+    } else {
+        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note") +
+                link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
+                    messageKey = getPrefix("sa-link"), id = Some("sa-note-migrated-link"),
+                    rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
+        )
+    }
+
     @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
 }
 
@@ -338,8 +347,8 @@
                         @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codedOutDocumentDetail))))
                     <div>
                 } @if(whatYouOweChargesList.isChargesListEmpty) {
-                        @saNoteParagraph
-                        }
+                    @saNoteParagraph
+                }
             }
 
         </div>
