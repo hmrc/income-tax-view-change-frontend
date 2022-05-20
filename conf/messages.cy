@@ -19,10 +19,10 @@ back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = Mae problem wedi codi
-agent.client_relationship_failure.info                          = Nid ydych wedi’ch awdurdodi i fwrw golwg dros wybodaeth y cleient hwn. {0} cyn i chi allu mewngofnodi i’r gwasanaeth hwn.
-agent.client_relationship_failure.info.link                     = Mae’n rhaid i’ch cleient eich awdurdodi fel ei asiant
-agent.client_relationship_failure.enter_different_details       = Nodwch UTR cleient gwahanol
+agent.client_relationship_failure.heading                       = Mae angen caniatâd arnoch i fwrw golwg dros y cleient hwn
+agent.client_relationship_failure.info                          = Mae’n rhaid i’ch cleient {0} cyn i chi allu mewngofnodi i’r gwasanaeth hwn.Mae’n bosibl y byddwch am wirio Cyfeirnod Unigryw y Trethdalwr (UTR) i wneud yn siŵr mai dyma’r un iawn, neu chwilio am gleient arall.
+agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
+agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Mae problem wedi codi
@@ -691,8 +691,8 @@ agent.title_pattern.service_name.govuk                          = {0} - Treth In
 agent.error.title_pattern.service_name.govuk                    = Gwall: {0} - Treth Incwm fanylion eich cleient - GOV.UK
 
 # Agent - Enter clients details
-agent.enter_clients_utr.heading                                 = Beth yw Cyfeirnod Unigryw y Trethdalwr (UTR) eich cleient?
-agent.enter_clients_utr.info                                    = Dyma’r rhif 10 digid a gafodd wrth gofrestru ar gyfer Hunanasesiad. Er enghraifft, 1234567890.
+agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
+agent.enter_clients_utr.info                                    = Dyma’r Cyfeirnod Unigryw y Trethdalwr (UTR) 10 digid a gafodd wrth gofrestru ar gyfer Hunanasesiad. Er enghraifft, 1234567890
 agent.error.enter_clients_utr.empty                             = Nodwch Gyfeirnod Unigryw y Trethdalwr eich cleient
 agent.error.enter_clients_utr.length                            = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr eich cleient fod yn 10 digid
 agent.error.enter_clients_utr.non_numeric                       = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr gynnwys rhifau yn unig
@@ -700,7 +700,7 @@ agent.error.enter_clients_utr.non_numeric                       = Mae’n rhaid 
 ## Agent - Confirm Client
 agent.confirmClient.heading                                     = Cadarnhau manylion eich cleient
 agent.confirmClient.clientName                                  = Enw’r cleient
-agent.confirmClient.clientUtr                                   = Cyfeirnod Unigryw y Trethdalwr eich cleient
+agent.confirmClient.clientUtr                                   = Cyfeirnod Unigryw y Trethdalwr (UTR) y cleient
 agent.confirmClient.changeClient                                = Newid cleient
 agent.confirmClient.confirmContinue                             = Cadarnhau ac yn eich blaen
 
