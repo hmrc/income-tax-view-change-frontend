@@ -190,7 +190,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Allowances and deductions"
 
-    val guidance = "You can see more details in your record-keeping software."
+    val guidance = "Check your record-keeping software for more details."
 
     val deductionBreakdownHeader = "Allowance or deduction type"
     val deductionBreakdownHeaderAmount = "Amount"
