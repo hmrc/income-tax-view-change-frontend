@@ -61,6 +61,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[NavBarPredicate],
     mockFeedbackView,
     mockThankYouView,
+    mockItvcHeaderCarrierForPartialsConverter,
     mockHttpClient,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[MessagesControllerComponents],

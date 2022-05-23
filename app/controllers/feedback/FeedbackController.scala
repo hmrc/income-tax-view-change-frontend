@@ -26,7 +26,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.{HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 import views.html.feedback.{Feedback, FeedbackThankYou}
 
 import java.net.URLEncoder
@@ -44,6 +45,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val retrieveBtaNavBar: NavBarPredicate,
                                    val feedbackView: Feedback,
                                    val feedbackThankYouView: FeedbackThankYou,
+                                   val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter,
                                    val httpClient: HttpClient,
                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                    mcc: MessagesControllerComponents,
@@ -103,13 +105,18 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
 
+  private def partialsReadyHeaderCarrier(implicit request: Request[_]): HeaderCarrier = {
+    val hc = itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
+    itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
+  }
 
   private def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     FeedbackForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
         postAction = if (isAgent) routes.FeedbackController.submitAgent else routes.FeedbackController.submit))),
       formData => {
-        httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl, formData.toFormMap(user.headers.get(REFERER).getOrElse("N/A")))(readForm, hc, ec).map {
+        httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
+          formData.toFormMap(user.headers.get(REFERER).getOrElse("N/A")))(readForm, partialsReadyHeaderCarrier, ec).map {
           resp =>
             resp.status match {
               case OK if isAgent =>
