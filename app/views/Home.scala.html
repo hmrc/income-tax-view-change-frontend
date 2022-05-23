@@ -124,7 +124,11 @@
                 @h1(messages("home.agent.heading"), classes = "govuk-heading-xl margin-bottom-zero")
 
                 @p(classes = "govuk-hint margin-bottom-zero") {
-                    <span style="display:block">@messages("home.utr", user.saUtr.getOrElse(""))</span>
+                    @user.saUtr.map { utr =>
+                        <span style="display:block">
+                            @messages("home.unique.taxpayer.reference", utr)
+                        </span>
+                    }
                     <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
                     @user.userName.map(_.name) @user.userName.map(_.lastName)
                 }
@@ -158,7 +162,7 @@
 
                 @user.saUtr.map { utr =>
                     <div id="utr-reference-heading" class="form-hint heading-xl-addon">
-                        @messages("home.utr", utr)
+                        @messages("home.unique.taxpayer.reference", utr)
                     </div>
                 }
 
