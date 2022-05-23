@@ -19,7 +19,6 @@ package forms
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, Form, FormError}
-import play.api.libs.json.{Json, OWrites}
 
 import scala.util.matching.Regex
 
@@ -44,7 +43,7 @@ object FeedbackForm {
   def validate(email: String): Boolean =
     email.split("@").toList match {
       case name :: domain :: Nil => validateName(name) && (validateDomain(domain) || validateIp(domain))
-      case _                     => false
+      case _ => false
     }
 
   private def validateName(name: String): Boolean = {
@@ -90,8 +89,6 @@ object FeedbackForm {
       feedbackCsrfToken -> text
     )(FeedbackForm.apply)(FeedbackForm.unapply)
   )
-
-  implicit val writes: OWrites[FeedbackForm] = Json.writes[FeedbackForm]
 }
 
 case class FeedbackForm(
@@ -110,4 +107,3 @@ case class FeedbackForm(
       FeedbackForm.feedbackReferrer -> Seq(referrer)
     )
 }
-

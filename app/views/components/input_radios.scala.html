@@ -18,11 +18,7 @@
 
 @this(govukRadios: GovukRadios)
 
-@(
-    field: Field,
-    legend: String,
-    items: Seq[(String, String)]
-    )(implicit messages: Messages)
+@(field: Field, legend: String, items: Seq[(String, String)])(implicit messages: Messages)
 
 @govukRadios(Radios(
     fieldset = Some(Fieldset(

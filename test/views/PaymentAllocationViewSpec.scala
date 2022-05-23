@@ -334,8 +334,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Money in your account N/A £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        println(layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
-          .eachAttr("href").asScala)
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
