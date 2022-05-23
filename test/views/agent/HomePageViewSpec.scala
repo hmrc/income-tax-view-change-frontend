@@ -126,7 +126,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       s"have the hint with the users name '$testUserName' and utr '$testSaUtr' " in new Setup {
-        getHintNth() shouldBe Some(s"Unique Taxpayer Reference: $testSaUtr Client’s name $testUserName")
+        getHintNth() shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr Client’s name $testUserName")
       }
 
       "have an next payment due tile" which {
