@@ -91,7 +91,7 @@ home.heading                                                    = Income Tax
 home.agent.heading                                              = Your client’s Income Tax
 home.agent.changeClientLink                                     = Change client
 home.agent.visualHidden.clientsName                             = Client’s name
-home.unique.taxpayer.reference                                  = Unique Taxpayer Reference - {0}
+home.unique.taxpayer.reference                                  = Unique Taxpayer Reference (UTR): {0}
 home.utr                                                        = UTR: {0}
 home.payments.heading                                           = Next payments due
 home.payments.no-payments-due                                   = No payments due
@@ -286,7 +286,7 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
-taxCal_breakdown.table.uplift                                       = 1.25 percentage point uplift in National Insurance contribution funds NHS, health and social care
+taxCal_breakdown.table.uplift                                       = 1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
 taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
@@ -369,6 +369,7 @@ taxCal_breakdown.message.C22215                                 = Due to the lev
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
+taxCal_breakdown.message.C22219                                 = 1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care.
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Forecast tax calculation
@@ -527,7 +528,11 @@ whatYouOwe.payments-made-bullet-1.2                                = payment met
 whatYouOwe.payments-made-bullet-1.3                                = you use
 whatYouOwe.payments-made-bullet-2                                  = must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late
 whatYouOwe.sa-note                                                 = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
+whatYouOwe.sa-note-agent-1                                         = Your client may still have payments due for earlier Self Assessment tax years
+whatYouOwe.sa-note-agent-2                                         = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
+whatYouOwe.sa-note-agent-3                                         = This will be a different Government Gateway ID and password to your Agent Services account.
 whatYouOwe.sa-link                                                 = Self Assessment online account
+whatYouOwe.sa-link-agent                                           = Self Assessment for Agents account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
 whatYouOwe.dropdown.info                                           = What are the payment types?
 whatYouOwe.payment-days-note                                       = Payments can take up to 7 days to process.
