@@ -321,6 +321,8 @@ taxCal_breakdown.message.C22215                                 = Oherwydd lefel
 taxCal_breakdown.message.C22216                                 = Oherwydd lefel eich incwm, nid ydych yn gymwys ar gyfer Lwfans Priodasol mwyach, ac felly caiff eich hawliad ei ganslo.
 taxCal_breakdown.message.C22217                                 = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEM.
 taxCal_breakdown.message.C22218                                 = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
+taxCal_breakdown.message.C22219                                 = Mae’r cynnydd o 1.25 pwynt canrannol mewn cyfraniadau Yswiriant Gwladol yn ariannu’r GIG, iechyd a gofal cymdeithasol.
+
 
 taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
 taxCal_breakdown.table.head.reduction                           = Gostyngiad
