@@ -734,7 +734,6 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val backLink = "Back"
     val date = "31 January 2021"
     val amount = "£300.00"
-    val info = "Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years."
     val paymentAllocationHeading = "Payment allocations"
     val tableHeadings = Seq("Payment allocation", "Date allocated", "Amount")
     val tableDataPaymentAllocation = "Class 4 National Insurance for payment on account 1 of 2 2020 Tax year 2019 to 2020"
