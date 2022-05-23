@@ -43,7 +43,7 @@ case class IncomeBreakdownViewModel(
                                    )
 
 object IncomeBreakdownViewModel {
-  def apply(calcOpt: Option[Calculation]): Option[IncomeBreakdownViewModel] = {
+  def apply(calcOpt: Option[Calculation], enableNewStateBenefitsIncome: Boolean): Option[IncomeBreakdownViewModel] = {
     calcOpt match {
       case Some(c) =>
         Some(IncomeBreakdownViewModel(
@@ -66,7 +66,8 @@ object IncomeBreakdownViewModel {
           totalOfAllGains = c.chargeableEventGainsIncome.flatMap(cegi => Some(cegi.totalOfAllGains)),
           dividendsTaxableIncome = c.taxCalculation.flatMap(tc => Some(tc.incomeTax).flatMap(it => it.dividends.flatMap(d => Some(d.taxableIncome)))),
           totalOccupationalPensionIncome = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalOccupationalPensionIncome),
-          totalStateBenefitsIncome = c.stateBenefitsIncome.flatMap(sbi => sbi.totalStateBenefitsIncome),
+          totalStateBenefitsIncome = c.stateBenefitsIncome.flatMap(sbi =>
+            if (enableNewStateBenefitsIncome) sbi.totalStateBenefitsIncomeExcStatePensionLumpSum else sbi.totalStateBenefitsIncome),
           totalShareSchemesIncome = c.shareSchemesIncome.flatMap(ssi => Some(ssi.totalIncome)),
           totalIncomeReceived = c.taxCalculation.flatMap(tc => Some(tc.incomeTax).flatMap(it => Some(it.totalIncomeReceivedFromAllSources)))
         ))
