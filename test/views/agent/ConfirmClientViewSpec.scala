@@ -43,7 +43,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     val heading: String = "Confirm your client’s details"
     val backLink: String = "Back"
     val clientNameHeading: String = "Client’s name"
-    val clientUTRHeading: String = "Client’s Unique Taxpayer Reference"
+    val clientUTRHeading: String = "Client’s Unique Taxpayer Reference (UTR)"
     val changeClient: String = "Change Client"
     val confirmContinue: String = "Confirm and continue"
   }

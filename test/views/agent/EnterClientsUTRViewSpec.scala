@@ -25,10 +25,10 @@ import views.html.agent.EnterClientsUTR
 class EnterClientsUTRViewSpec extends ViewSpec {
 
   object EnterClientsUTRMessages {
-    val title = "What is your client’s Unique Taxpayer Reference? - Your client’s Income Tax details - GOV.UK"
+    val title = "What is your client’s UTR? - Your client’s Income Tax details - GOV.UK"
     val titleWithError = s"Error: $title"
-    val heading = "What is your client’s Unique Taxpayer Reference?"
-    val info = "This is the 10-digit number they received when they registered for Self Assessment. For example, 1234567890."
+    val heading = "What is your client’s UTR?"
+    val info = "This is the 10 digit Unique Taxpayer Reference (UTR) they received when they registered for Self Assessment. For example, 1234567890"
     val errorEmptyUTR = "Enter your client’s Unique Taxpayer Reference"
     val errorWrongLength = "Your client’s Unique Taxpayer Reference must be 10 digits long"
     val errorNonNumeric = "A Unique Taxpayer Reference must only contain numbers"

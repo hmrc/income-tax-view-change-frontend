@@ -66,6 +66,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleNotFound = "Page not found - 404"
   val titleProbWithService = "There is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
+  val titleNeedPermission = "You need permission to view this client"
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,

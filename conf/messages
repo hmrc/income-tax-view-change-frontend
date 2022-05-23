@@ -41,7 +41,7 @@ agent.confirmClient.confirmContinue                             = Confirm and co
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You need permission to view this client
-agent.client_relationship_failure.info                          = Your client needs to {0} before you can log in to this service.You may want to check the Unique Taxpayer Reference (UTR) to make sure it's the right one or look up another client.
+agent.client_relationship_failure.info                          = Your client needs to {0} before you can log in to this service.You may want to check the Unique Taxpayer Reference (UTR) to make sure it’s the right one or look up another client.
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Enter another UTR
 
