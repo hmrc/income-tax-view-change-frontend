@@ -24,12 +24,12 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
 
   "IncomeBreakdownViewModel model" when {
     "create a minimal IncomeBreakdownViewModel when there is a minimal Calculation" in {
-      IncomeBreakdownViewModel(Some(Calculation())) shouldBe Some(
+      IncomeBreakdownViewModel(Some(Calculation()), false) shouldBe Some(
         IncomeBreakdownViewModel(None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None))
     }
 
     "create a empty IncomeBreakdownViewModel when there is a no Calculation" in {
-      IncomeBreakdownViewModel(None) shouldBe None
+      IncomeBreakdownViewModel(None, false) shouldBe None
     }
 
     "successful successModelFull" should {
@@ -59,7 +59,35 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
           totalIncomeReceived = Some(12500)
         )
 
-        IncomeBreakdownViewModel(Some(liabilityCalculationModelSuccessFull.calculation.get)) shouldBe Some(expectedIncomeBreakdownViewModel)
+        IncomeBreakdownViewModel(Some(liabilityCalculationModelSuccessFull.calculation.get), false) shouldBe Some(expectedIncomeBreakdownViewModel)
+      }
+
+      "create a full IncomeBreakdownViewModel when there is a full Calculation and NewStateBenefitIncome FS is enabled" in {
+        val expectedIncomeBreakdownViewModel = IncomeBreakdownViewModel(
+          totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
+          totalBenefitsInKind = Some(5000.99),
+          totalEmploymentExpenses = Some(5000.99),
+          totalSelfEmploymentProfit = Some(12500),
+          totalPropertyProfit = Some(12500),
+          totalFHLPropertyProfit = Some(12500),
+          totalForeignPropertyProfit = Some(12500),
+          totalEeaFhlProfit = Some(12500),
+          chargeableForeignDividends = Some(12500),
+          chargeableForeignSavingsAndGains = Some(12500),
+          chargeableOverseasPensionsStateBenefitsRoyalties = Some(5000.99),
+          chargeableAllOtherIncomeReceivedWhilstAbroad = Some(5000.99),
+          totalOverseasIncomeAndGains = Some(5000.99),
+          totalForeignBenefitsAndGifts = Some(5000.99),
+          savingsAndGainsTaxableIncome = Some(12500),
+          totalOfAllGains = Some(12500),
+          dividendsTaxableIncome = Some(12500),
+          totalOccupationalPensionIncome = Some(5000.99),
+          totalStateBenefitsIncome = Some(9000.99),
+          totalShareSchemesIncome = Some(5000.99),
+          totalIncomeReceived = Some(12500)
+        )
+
+        IncomeBreakdownViewModel(Some(liabilityCalculationModelSuccessFull.calculation.get), true) shouldBe Some(expectedIncomeBreakdownViewModel)
       }
     }
   }
