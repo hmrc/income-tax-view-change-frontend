@@ -186,7 +186,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 pageTitleAgent(agentTitle),
                 elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
                 elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate),
-                elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
+                elementTextBySelector(".govUk-hint")("Unique Taxpayer Reference (UTR): 1234567890 Client’s name Test User")
               )
 
               verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
@@ -257,7 +257,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 pageTitleAgent(agentTitle),
                 elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
                 elementTextBySelector("#payments-tile p:nth-child(2)")("No payments due"),
-                elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
+                elementTextBySelector(".govUk-hint")("Unique Taxpayer Reference (UTR): 1234567890 Client’s name Test User")
               )
 
               verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
@@ -327,7 +327,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   pageTitleAgent(agentTitle),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-                  elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
+                  elementTextBySelector(".govUk-hint")("Unique Taxpayer Reference (UTR): 1234567890 Client’s name Test User")
                 )
 
                 verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
@@ -396,7 +396,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   pageTitleAgent(agentTitle),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(s"2 OVERDUE PAYMENTS"),
-                  elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
+                  elementTextBySelector(".govUk-hint")("Unique Taxpayer Reference (UTR): 1234567890 Client’s name Test User")
                 )
 
                 verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(LocalDate.now.minusDays(1) -> true)).detail)
@@ -484,7 +484,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 pageTitleAgent(agentTitle),
                 elementTextBySelector("#updates-tile p:nth-child(2)")("2 OVERDUE UPDATES"),
                 elementTextBySelector("#payments-tile p:nth-child(2)")("2 OVERDUE PAYMENTS"),
-                elementTextBySelector(".govUk-hint")("UTR: 1234567890 Client’s name Test User")
+                elementTextBySelector(".govUk-hint")("Unique Taxpayer Reference (UTR): 1234567890 Client’s name Test User")
               )
 
               verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
