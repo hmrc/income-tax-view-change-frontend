@@ -156,7 +156,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Income"
 
-    val guidance = "You can see more details in your record-keeping software."
+    val guidance = "Check your record-keeping software for more details."
     val incomeBreakdownHeader = "Income type"
     val incomeBreakdownHeaderAmount = "Amount"
     val employments = "Pay from all employments"
@@ -190,7 +190,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Allowances and deductions"
 
-    val guidance = "You can see more details in your record-keeping software."
+    val guidance = "Check your record-keeping software for more details."
 
     val deductionBreakdownHeader = "Allowance or deduction type"
     val deductionBreakdownHeaderAmount = "Amount"
@@ -209,7 +209,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   object TaxCalcBreakdown {
     val title = "Tax calculation - Business Tax account - GOV.UK"
     val agentTitle = "Tax calculation - Your client’s Income Tax details - GOV.UK"
-    val upliftMessage = "1.25 percentage point uplift in National Insurance contribution funds, NHS, health and social care"
+    val upliftMessage = "1.25 percentage point uplift in National Insurance contribution funds NHS, health and social care"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
 

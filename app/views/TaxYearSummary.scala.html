@@ -14,17 +14,18 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitCurrencyFormatter._
+@import _root_.implicits.ImplicitCurrencyFormatter._
 @import java.time.LocalDate
 @import models.nextUpdates.ObligationsModel
 @import models.financialDetails.DocumentDetailWithDueDate
-@import implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.partials.taxYearSummaryBreakdownPartial
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.partials.taxYearSummaryTabsPartial
 
 @this(
         mainTemplate: unifiedLayout,
@@ -35,7 +36,8 @@
         p: p,
         link: link,
         govukInsetText: GovukInsetText,
-        govukTable : GovukTable
+        govukTable : GovukTable,
+        taxYearSummaryTabsPartial: taxYearSummaryTabsPartial
 )
 
 @(taxYear: Int, modelOpt: Option[TaxYearSummaryViewModel], charges: List[DocumentDetailWithDueDate],
@@ -287,9 +289,7 @@
                 </dt>
 
                 <dd class="govuk-summary-list__value">
-                @{
-                    model.taxDue.toCurrencyString
-                }
+                    @{model.taxDue.toCurrencyString}
                 </dd>
             </div>
             @if(showForecastData && modelOpt.isDefined) {
@@ -305,45 +305,6 @@
             }
         </dl>
     }
-    <div class="govuk-tabs govuk-tabs-upper-padding" data-module="govuk-tabs">
-        @h2(msg = messages("tax-year-summary.contents"), classes = "govuk-tabs__title")
-        <ul class="govuk-tabs__list" role="tablist">
-            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
-                <a class="govuk-tabs__tab" href="#taxCalculation" id="tab_taxCalculation" role="tab" aria-controls="taxCalculation" aria-selected="true">
-                @messages("tax-year-summary.tax-calculation")
-                </a>
-            </li>
-            @if(showForecastData) {
-                <li class="govuk-tabs__list-item" role="presentation">
-                    <a class="govuk-tabs__tab" href="#forecast" id="tab_forecast" role="tab" aria-controls="forecast" aria-selected="false">
-                        @messages("tax-year-summary.forecast")
-                    </a>
-                </li>
-            }
-            <li class="govuk-tabs__list-item" role="presentation">
-                <a class="govuk-tabs__tab" href="#payments" id="tab_payments" role="tab" aria-controls="payments" aria-selected="false">
-                @messages("tax-year-summary.payments")
-                </a>
-            </li>
-            <li class="govuk-tabs__list-item" role="presentation">
-                <a class="govuk-tabs__tab" href="#updates" id="tab_updates" role="tab" aria-controls="updates" aria-selected="false">
-                @messages("tax-year-summary.updates")
-                </a>
-            </li>
-        </ul>
-        <div class="govuk-tabs__panel" id="taxCalculation" role="tabpanel" aria-labelledby="tab_taxCalculation">
-        @taxCalculationContent
-        </div>
-        @if(showForecastData) {
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="forecast" role="tabpanel" aria-labelledby="tab_forecast">
-                @forecastContent
-            </div>
-        }
-        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="payments" role="tabpanel" aria-labelledby="tab_payments">
-        @paymentsContent
-        </div>
-        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="updates" role="tabpanel" aria-labelledby="tab_updates">
-        @updatesContent
-        </div>
-    </div>
+
+    @taxYearSummaryTabsPartial(showForecastData, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
 }

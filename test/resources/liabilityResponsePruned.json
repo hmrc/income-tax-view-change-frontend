@@ -91,7 +91,8 @@
       "totalEmploymentExpenses" : 5000.99
     },
     "stateBenefitsIncome" : {
-      "totalStateBenefitsIncome" : 5000.99
+      "totalStateBenefitsIncome" : 5000.99,
+      "totalStateBenefitsIncomeExcStatePensionLumpSum" : 9000.99
     },
     "shareSchemesIncome" : {
       "totalIncome" : 5000.99

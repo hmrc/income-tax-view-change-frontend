@@ -128,8 +128,8 @@ object ShareSchemesIncome {
   implicit val format: OFormat[ShareSchemesIncome] = Json.format[ShareSchemesIncome]
 }
 
-case class StateBenefitsIncome(totalStateBenefitsIncome: Option[BigDecimal] = None)
-
+case class StateBenefitsIncome(totalStateBenefitsIncome: Option[BigDecimal] = None,
+                               totalStateBenefitsIncomeExcStatePensionLumpSum: Option[BigDecimal] = None)
 object StateBenefitsIncome {
   implicit val format: OFormat[StateBenefitsIncome] = Json.format[StateBenefitsIncome]
 }

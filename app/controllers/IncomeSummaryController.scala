@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import auth.MtdItUser
 import config._
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, NewStateBenefitIncome}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.utils.SessionKeys.calcPagesBackPage
@@ -68,7 +68,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
-        val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
+        val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation, isEnabled(NewStateBenefitIncome))
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
           liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         viewModel match {

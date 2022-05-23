@@ -73,6 +73,9 @@
 
 @taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
 @taxYearTo = @{documentDetail.taxYear}
+
+@taxYearFromCodingOut = @{(documentDetail.taxYear.toInt + 1).toString}
+@taxYearToCodingOut = @{(documentDetail.taxYear.toInt + 2).toString}
 @pageTitle = @{
     if (latePaymentInterestCharge) messages(s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}")
     else messages(s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
@@ -247,7 +250,7 @@
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
             <dd class="govuk-summary-list__value">@{
                 if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-                messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
+                messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
                 } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
                 else documentDetail.remainingToPay.toCurrency
                 }
@@ -273,7 +276,7 @@
         <p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
             @{
             if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-                messages("chargeSummary.codingOutRemainingToPay", taxYearFrom, taxYearTo)
+                messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
             } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
             else documentDetail.remainingToPay.toCurrency
             }
@@ -393,7 +396,7 @@
                 @if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
-                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFrom, taxYearTo)</td>
+                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFromCodingOut, taxYearToCodingOut)</td>
                         <td class="govuk-table__cell numeric">@{documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency}</td>
                     </tr>
                 }
