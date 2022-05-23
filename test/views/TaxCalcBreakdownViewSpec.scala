@@ -654,13 +654,14 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           Message("C22215", "message15"),
           Message("C22216", "message16"),
           Message("C22217", "message17"),
-          Message("C22218", "message18")
+          Message("C22218", "message18"),
+          Message("C22219", "message19")
         ))))
       ), taxYear2017, backUrl)
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 13
+      document.select(messageContentSelector).size shouldBe 14
       document.select(messageContentSelector).get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
       document.select(messageContentSelector).get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
       document.select(messageContentSelector).get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
@@ -674,6 +675,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(10).text shouldBe "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
       document.select(messageContentSelector).get(11).text shouldBe "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
       document.select(messageContentSelector).get(12).text shouldBe "The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation."
+      document.select(messageContentSelector).get(13).text shouldBe "1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care."
     }
 
     "provided with message C22201" in {
