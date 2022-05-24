@@ -25,8 +25,9 @@ agent.title_pattern.service_name.govuk                          = {0} - Your cli
 agent.error.title_pattern.service_name.govuk                    = Error: {0} - Your client’s Income Tax details - GOV.UK
 
 # Agent - Enter clients details
-agent.enter_clients_utr.heading                                 = What is your client’s Unique Taxpayer Reference?
-agent.enter_clients_utr.info                                    = This is the 10-digit number they received when they registered for Self Assessment. For example, 1234567890.
+agent.enter_clients_utr.heading                                 = What is your client’s UTR?
+agent.enter_clients_utr.info                                    = This is the 10 digit Unique Taxpayer Reference (UTR) they received when they registered for Self Assessment. For example, 1234567890
+
 agent.error.enter_clients_utr.empty                             = Enter your client’s Unique Taxpayer Reference
 agent.error.enter_clients_utr.length                            = Your client’s Unique Taxpayer Reference must be 10 digits long
 agent.error.enter_clients_utr.non_numeric                       = A Unique Taxpayer Reference must only contain numbers
@@ -34,15 +35,15 @@ agent.error.enter_clients_utr.non_numeric                       = A Unique Taxpa
 ## Agent - Confirm Client
 agent.confirmClient.heading                                     = Confirm your client’s details
 agent.confirmClient.clientName                                  = Client’s name
-agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference
+agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference (UTR)
 agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = There’s a problem
-agent.client_relationship_failure.info                          = You are not authorised to view this client’s information. Your client needs to {0} before you can log in to this service.
+agent.client_relationship_failure.heading                       = You need permission to view this client
+agent.client_relationship_failure.info                          = Your client needs to {0} before you can access this service. You may want to check the Unique Taxpayer Reference (UTR) to make sure it’s the right one or look up another client.
 agent.client_relationship_failure.info.link                     = authorise you as their agent
-agent.client_relationship_failure.enter_different_details       = Enter a different client’s details
+agent.client_relationship_failure.enter_different_details       = Enter another UTR
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = There’s a problem

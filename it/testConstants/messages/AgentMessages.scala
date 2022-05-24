@@ -18,8 +18,8 @@ package testConstants.messages
 
 object AgentMessages {
 
-  val clientUTRErrorTitle = "Error: What is your client’s Unique Taxpayer Reference?"
-  val clientUTRTitle = "What is your client’s Unique Taxpayer Reference?"
+  val clientUTRErrorTitle = "Error: What is your client’s UTR?"
+  val clientUTRTitle = "What is your client’s UTR?"
   val agentError = "You can't use this service yet"
   val confirmClientDetails = "Confirm your client’s details"
 }

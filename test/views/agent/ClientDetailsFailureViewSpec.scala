@@ -38,11 +38,11 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
   )
 
   object ClientRelationshipMessages {
-    val title: String = "There’s a problem - Your client’s Income Tax details - GOV.UK"
-    val heading: String = "There’s a problem"
-    val info: String = "You are not authorised to view this client’s information. Your client needs to authorise you as their agent (opens in new tab) before you can log in to this service."
+    val title: String = "You need permission to view this client - Your client’s Income Tax details - GOV.UK"
+    val heading: String = "You need permission to view this client"
+    val info: String = "Your client needs to authorise you as their agent (opens in new tab) before you can access this service. You may want to check the Unique Taxpayer Reference (UTR) to make sure it’s the right one or look up another client."
     val clientAuthorisationLink: String = "authorise you as their agent (opens in new tab)"
-    val enterDifferentDetails: String = "Enter a different client’s details"
+    val enterDifferentDetails: String = "Enter another UTR"
   }
 
   "The Client Relationship Failure page" should {
