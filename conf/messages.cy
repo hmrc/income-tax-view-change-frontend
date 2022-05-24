@@ -20,7 +20,7 @@ back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Mae angen caniatâd arnoch i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = Mae’n rhaid i’ch cleient {0} cyn i chi allu mewngofnodi i’r gwasanaeth hwn.Mae’n bosibl y byddwch am wirio Cyfeirnod Unigryw y Trethdalwr (UTR) i wneud yn siŵr mai dyma’r un iawn, neu chwilio am gleient arall.
+agent.client_relationship_failure.info                          = Mae’n rhaid i’ch cleient {0} cyn i chi allu cael at y gwasanaeth hwn. Mae’n bosibl y byddwch am wirio Cyfeirnod Unigryw y Trethdalwr (UTR) i wneud yn siŵr mai dyma’r un iawn, neu chwilio am gleient arall.
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
 
