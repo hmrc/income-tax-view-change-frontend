@@ -89,7 +89,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "checking there is the info text" in new PaymentAllocationSetup() {
-        document.getElementsByClass("govuk-inset-text").text shouldBe paymentAllocationMessages.info
+        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
       }
     }
 
@@ -170,7 +170,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "checking there is the info text" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByClass("govuk-inset-text").text shouldBe paymentAllocationMessages.info
+        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
       }
     }
 
