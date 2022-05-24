@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.FeedbackForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -64,10 +65,15 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  def showAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() {
+  lazy val notAnAgentPredicate = {
+    val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show()))
+    defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
+  }
+
+  def showAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
     implicit request =>
       implicit user =>
-        val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit, isAgent = true)
+        val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submitAgent(), isAgent = true)
         request.headers.get(REFERER) match {
           case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
           case _ => Future.successful(Ok(feedback))
@@ -77,16 +83,53 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      handleSubmit(isAgent = false)
+      FeedbackForm.form.bindFromRequest().fold(
+        hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
+          postAction = routes.FeedbackController.submit))),
+        formData => {
+          httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
+            formData.toFormMap(request.headers.get(REFERER).getOrElse("N/A")))(readForm, partialsReadyHeaderCarrier, ec).map {
+            resp =>
+              resp.status match {
+                case OK => Redirect(routes.FeedbackController.thankYou)
+                case status =>
+                  Logger("application").error(s"Unexpected status code from feedback form: $status")
+                  itvcErrorHandler.showInternalServerError()
+              }
+          }
+        }.recover {
+          case ex: Exception => {
+            Logger("application").error(s"Unexpected error code from feedback form: ${ex.toString}")
+            itvcErrorHandler.showInternalServerError()
+          }
+        }
+      )
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() {
+  def submitAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
     implicit request =>
       implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
-          implicit mtdItUser =>
-            handleSubmit(isAgent = true)
-        }
+        FeedbackForm.form.bindFromRequest().fold(
+          hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
+            postAction = routes.FeedbackController.submitAgent))),
+          formData => {
+            httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
+              formData.toFormMap(request.headers.get(REFERER).getOrElse("N/A")))(readForm, partialsReadyHeaderCarrier, ec).map {
+              resp =>
+                resp.status match {
+                  case OK => Redirect(routes.FeedbackController.thankYouAgent)
+                  case status =>
+                    Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
+                    agentItvcErrorHandler.showInternalServerError()
+                }
+            }
+          }.recover {
+            case ex: Exception => {
+              Logger("application").error(s"Unexpected error code from feedback form: ${ex.toString}")
+              itvcErrorHandler.showInternalServerError()
+            }
+          }
+        )
   }
 
   def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -96,7 +139,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       Ok(feedbackThankYouView(referer)).withSession(request.session - REFERER)
   }
 
-  def thankYouAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() {
+  def thankYouAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
     implicit request =>
       implicit user =>
         val referer = request.session.get(REFERER).getOrElse(config.agentBaseUrl)

@@ -165,14 +165,13 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
       }
     }
     "the user does not have an agent reference number" should {
-      "return Ok with technical difficulties" in {
+      "return SEE_OTHER with agent error controller redirect" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
-        mockShowOkTechnicalDifficulties()
 
         val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe OK
-        contentType(result) shouldBe Some(HTML)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
       }
     }
     "all data is returned successfully" should {
@@ -197,8 +196,6 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
     "feedback-rating" -> "2",
     "feedback-comments" -> "comments",
     "csrfToken" -> "token"
-    //      ,
-    //      "referrer"               -> "/test/referrer"
   )
 
 }
