@@ -313,7 +313,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     )
   ))
 
-  unauthorisedTest(s"/calculation/$testYear")
+  unauthorisedTest(s"/tax-year-summary/$testYear")
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,

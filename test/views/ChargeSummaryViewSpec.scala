@@ -279,7 +279,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
@@ -456,24 +456,24 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe Messages.interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
         document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
         document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {

@@ -255,8 +255,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
 
-        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/calculation/2018/income/forecast"
-        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due/forecast"
+        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/2018/forecast-income"
+        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/2018/forecast-tax-calculation"
 
         document.select(".forecast_table tbody tr").size() shouldBe 3
         document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
