@@ -158,12 +158,12 @@ tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Cancelled Self 
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
-tax-year-summary.forecast_total_title                          = 6 Ebrill {0} i 5 Ebrill {1} rhagolwg
+tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
 tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
-tax-year-summary.tax-calculation.date                          = Cyfrifiad o 6 Ebrill {0} hyd at 5 Ionawr {1}
+tax-year-summary.tax-calculation.date                          = Cyfrifiad 6 Ebrill {0} i 5 Ionawr {1}
 tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 
 
