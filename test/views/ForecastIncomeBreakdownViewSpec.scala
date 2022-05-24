@@ -209,6 +209,11 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
           }
         }
       }
+
+      "have the correct guidance" in new Setup(view) {
+        val guidance: Element = layoutContent.select("p").get(0)
+        guidance.text() shouldBe messagesLookUp("income_breakdown.guidance_software")
+      }
     }
   }
 }
