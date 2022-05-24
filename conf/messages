@@ -718,7 +718,8 @@ titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Retu
 ## Payment History Page ##
 
 paymentHistory.heading                                          = Payment history
-paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic
+paymentHistory.info                                             = To view your client's payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
+paymentHistory.info.2                                           = This will be a different Government Gateway ID and password to your Agent Services account.
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
