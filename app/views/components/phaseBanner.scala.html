@@ -30,17 +30,20 @@
 * limitations under the License.
 *@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components._
 
 @this(govukPhaseBanner: GovukPhaseBanner, appConfig: config.FrontendAppConfig, a: link)
 
-@(phase: String)(implicit messages: Messages)
+@(phase: String, isAgent: Boolean = false)(implicit messages: Messages)
+
+@feedbackUrl = @{
+    if(isAgent) appConfig.agentBetaFeedbackUrl
+    else appConfig.betaFeedbackUrl
+}
 
 @feedbackBanner = {
     @messages("betaBanner.newService")
     @messages("betaBanner.your")
-    @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback",
+    @a(link=feedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback",
 id=Some("feedback-url"))
     @messages("betaBanner.improve")
 }

@@ -39,10 +39,11 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   private lazy val contactHost: String = servicesConfig.getString(s"contact-frontend.host")
   private lazy val contactFrontendService: String = servicesConfig.baseUrl("contact-frontend")
   lazy val contactFormServiceIdentifier: String = "ITVC"
-  lazy val contactFrontendPartialBaseUrl: String = s"$contactFrontendService"
+  lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
   lazy val reportAProblemPartialUrl: String = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
+  lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
 
 
   //SA-API Config

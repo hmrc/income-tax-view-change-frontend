@@ -14,17 +14,22 @@
  * limitations under the License.
  *@
 
-@this()
-@(phaseId: String, isAgent: Boolean = false)
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@feedbackUrl = @{
-    if(isAgent) controllers.feedback.routes.FeedbackController.showAgent()
-    else controllers.feedback.routes.FeedbackController.show()
-}
+@this(govukRadios: GovukRadios)
 
-<div class="@{phaseId.toLowerCase}-banner">
-    <p>
-        <strong id="phase" class="phase-tag">@phaseId</strong>
-        <span>This is a new service – your <a href="@feedbackUrl">feedback</a> will help us to improve it.</span>
-    </p>
-</div>
+@(field: Field, legend: String, items: Seq[(String, String)])(implicit messages: Messages)
+
+@govukRadios(Radios(
+    fieldset = Some(Fieldset(
+        legend = Some(Legend(
+            content = Text(legend)
+        ))
+    )),
+    items = items map { case (value: String, label: String) =>
+        RadioItem(
+            content = Text(label),
+            value = Some(value)
+        )
+    }).withFormField(field)
+)

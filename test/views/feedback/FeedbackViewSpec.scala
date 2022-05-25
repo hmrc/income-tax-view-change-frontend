@@ -16,22 +16,23 @@
 
 package views.feedback
 
+import forms.FeedbackForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testUtils.TestSupport
+import testUtils.{TestSupport, ViewSpec}
 import views.html.feedback.Feedback
 
-class FeedbackViewSpec extends TestSupport {
+class FeedbackViewSpec extends ViewSpec {
 
   val feedbackView: Feedback = app.injector.instanceOf[Feedback]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
   class Setup(isAgent: Boolean = false) {
-    val view: Html = feedbackView(isAgent = isAgent)
+    val view: Html = feedbackView(FeedbackForm.form, testCall, isAgent)
     val document: Document = Jsoup.parse(view.toString())
   }
 
@@ -70,8 +71,8 @@ class FeedbackViewSpec extends TestSupport {
       }
 
       "have an input for Comments" in new Setup() {
-        document.select(".govuk-character-count label").text shouldBe msgs("feedback.comments")
-        document.select("#comments-hint").text shouldBe msgs("feedback.comments.hint")
+        document.select(".hmrc-character-count label").text shouldBe msgs("feedback.comments")
+        document.select("#feedback-comments-hint").text shouldBe msgs("feedback.comments.hint")
       }
 
       "have a send button" in new Setup() {
