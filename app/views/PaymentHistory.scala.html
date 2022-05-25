@@ -52,7 +52,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 }
 
-@paymentHistoryInfo(messageInfo: String, infoLink: String, infoLinkText: String) = {
+@paymentHistoryInfo(messageInfo: String, infoLink: => String, infoLinkText: String) = {
     @if(saUtr.isDefined) {
         @p() {
             @messages(messageInfo)
