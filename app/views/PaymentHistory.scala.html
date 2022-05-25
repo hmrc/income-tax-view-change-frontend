@@ -52,11 +52,11 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 }
 
-@paymentHistoryInfo(messageInfo: String, infoLink: String) = {
+@paymentHistoryInfo(messageInfo: String, infoLink: String, infoLinkText: String) = {
     @if(saUtr.isDefined) {
         @p() {
             @messages(messageInfo)
-            @link(link = infoLink, messageKey = "taxYears.oldSa.content.link",
+            @link(link = infoLink, messageKey = infoLinkText,
             outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
             @if(isAgent){
                 @messages(s"$messageInfo.2")
@@ -137,9 +137,9 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 
     @if(!isAgent) {
-        @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get))
+        @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
     } else {
-        @paymentHistoryInfo("paymentHistory.info", appConfig.saForAgents)
+        @paymentHistoryInfo("paymentHistory.info", appConfig.saForAgents, "taxYears.oldSa.agent.content.2")
     }
 
 }
