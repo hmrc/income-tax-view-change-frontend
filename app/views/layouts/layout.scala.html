@@ -76,7 +76,7 @@
 
 @if(timeout) {
     @hmrcTimeoutDialog(TimeoutDialog(
-        language = Some("en"),
+        language = Some(CurrentLanguage().code),
         timeout = Option(900),
         countdown = Option(120),
         keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
