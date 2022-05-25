@@ -293,7 +293,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         val result = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
-        println(s"\n\n ${result.body} \n\n")
         result should have(
           httpStatus(OK),
           pageTitleAgent(taxYearSummaryTitle),

@@ -89,7 +89,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "checking there is the info text" in new PaymentAllocationSetup() {
-        document.getElementsByClass("govuk-inset-text").text shouldBe paymentAllocationMessages.info
+        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
       }
     }
 
@@ -170,7 +170,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "checking there is the info text" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByClass("govuk-inset-text").text shouldBe paymentAllocationMessages.info
+        document.getElementsByClass("govuk-inset-text").text shouldBe messages("paymentAllocation.info")
       }
     }
 
@@ -343,8 +343,6 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |Money in your account N/A £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        println(layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
-          .eachAttr("href").asScala)
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }

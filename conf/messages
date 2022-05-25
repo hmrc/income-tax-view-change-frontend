@@ -76,13 +76,16 @@ feedback.neutral                                                = Neutral
 feedback.bad                                                    = Bad
 feedback.veryBad                                                = Very bad
 feedback.fullName                                               = Full name
-feedback.fullName.error.enter                                   = Enter your full name
-feedback.fullname.error.onlyInclude                             = Full name must only include letters a to z, hyphens, full stops, commas, apostrophes and spaces
+feedback.fullName.error.empty                                   = Enter your full name
+feedback.fullName.error.invalid                                 = Full name must only include letters a to z, hyphens, full stops, commas, apostrophes and spaces
+feedback.fullName.error.length                                  = Full name cannot be longer than 70 characters
 feedback.email                                                  = Email address
 feedback.email.error                                            = Enter an email address in the correct format, like name@example.com
+feedback.email.error.length                                     = Email address must be 255 characters or fewer
 feedback.comments                                               = Comments
 feedback.comments.hint                                          = Do not include personal or financial information. For example, your National Insurance number or credit card numbers.
-feedback.comments.error                                         = Enter your comments
+feedback.comments.error.empty                                   = Enter your comments
+feedback.comments.error.length                                  = The comment cannot be longer than 2000 characters
 feedback.send                                                   = Send
 feedback.thankYou                                               = Thank you
 feedback.received                                               = Your feedback has been received.
@@ -712,6 +715,7 @@ upliftFailure.bullet.3 = we could not match your details to our system
 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Business Tax account - GOV.UK
+error.titlePattern.serviceName.govUk = Error: {0} - Business Tax account - GOV.UK
 agent.titlePattern.serviceName.govUk = {0} - Your client’s Income Tax details - GOV.UK
 titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Return - GOV.UK
 
@@ -736,7 +740,7 @@ paymentAllocation.sa.info                                       = This is money 
 paymentAllocation.earlyTaxYear.heading                          = Payment from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
-paymentAllocation.info                                          = Any payments made will automatically be allocated towards penalties and earlier tax years before current and future tax years.
+paymentAllocation.info                                          = Payments are first allocated to penalties and earlier tax years, then current and future tax years.
 paymentAllocation.tableSection.heading                          = Payment allocations
 paymentAllocation.tableHead.allocation                          = Payment allocation
 paymentAllocation.tableHead.allocated-date                      = Date allocated

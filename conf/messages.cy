@@ -61,13 +61,16 @@ feedback.neutral                                                = Niwtral
 feedback.bad                                                    = Gwael
 feedback.veryBad                                                = Gwael iawn
 feedback.fullName                                               = Enw llawn
-feedback.fullName.error.enter                                   = Rhowch eich enw
-feedback.fullname.error.onlyInclude                             = Rhowch lythrennau neu atalnodi’n unig
+feedback.fullName.error.empty                                   = Rhowch eich enw
+feedback.fullName.error.invalid                                 = Rhowch lythrennau neu atalnodi’n unig
+feedback.fullName.error.length                                  = Ni all eich enw fod yn hirach na 70 o gymeriadau
 feedback.email                                                  = Cyfeiriad e-bost
 feedback.email.error                                            = Nodwch gyfeiriad e-bost yn y fformat cywir, megis enw@enghraifft.com
+feedback.email.error.length                                     = Ni all eich e-bost fod yn hirach na 255 o gymeriadau
 feedback.comments                                               = Sylwadau
 feedback.comments.hint                                          = Peidiwch â chynnwys unrhyw wybodaeth bersonol nac ariannol. Er enghraifft, eich rhif Yswiriant Gwladol neu rif eich cerdyn credyd.
-feedback.comments.error                                         = Rhowch eich sylwadau
+feedback.comments.error.empty                                   = Rhowch eich sylwadau
+feedback.comments.error.length                                  = Ni all y sylwadau fod yn hirach na 2000 o gymeriadau
 feedback.send                                                   = Anfon
 feedback.thankYou                                               = Diolch
 feedback.received                                               = Mae eich adborth wedi dod i law.
@@ -677,6 +680,7 @@ upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd 
 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
+error.titlePattern.serviceName.govUk = Gwall: {0} - Cyfrif Treth Busnes - GOV.UK
 titlePattern.serviceName.itsa.govUk = {0} - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK
 
 ## Payment History Page ##
@@ -743,7 +747,7 @@ paymentAllocation.heading                                       = Taliad a wnaed
 paymentAllocation.earlyTaxYear.heading                          = Taliad o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
-paymentAllocation.info                                          = Bydd unrhyw daliadau a wneir yn cael eu dyrannu’n awtomatig tuag at gosbau a blynyddoedd treth cynharach cyn y flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
+paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
 paymentAllocation.tableSection.heading                          = Dyraniadau taliad
 paymentAllocation.tableHead.allocation                          = Dyrannu taliad
 paymentAllocation.tableHead.allocated-date                      = Dyddiad dyrannu

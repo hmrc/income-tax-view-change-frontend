@@ -58,8 +58,11 @@ GET         /agents/tax-years/:taxYear/charge                             contro
 
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show
+GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent
 POST        /feedback                                                     controllers.feedback.FeedbackController.submit
-GET         /thankyou                                                     controllers.feedback.FeedbackController.thankyou
+POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent
+GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou
+GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent
 
 #Timeout Routes
 GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout

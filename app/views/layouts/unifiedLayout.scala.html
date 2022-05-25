@@ -27,7 +27,7 @@
 
 
 @this(
-    appConfig: config.FrontendAppConfig,
+    appConfig: FrontendAppConfig,
     reportAProblemLink: ReportAProblemLink,
     hmrcBanner: HmrcBanner,
     govukBackLink: GovukBackLink,
@@ -88,7 +88,7 @@
 
     @if(timeout) {
     @hmrcTimeoutDialog(TimeoutDialog(
-        language = Some("en"),
+        language = Some(CurrentLanguage().code),
         timeout = Option(900),
         countdown = Option(120),
         keepAliveUrl = Some("@controllers.timeout.routes.SessionTimeoutController.keepAlive().url"),
@@ -99,7 +99,7 @@
 }
 
 @beforeContentBlock = {
-    @phaseBanner("beta")
+    @phaseBanner("beta", isAgent)
     @hmrcBanner(Banner(CurrentLanguage()))
     @{btaNavPartial.getOrElse(())}
     <div class="nav-bar-wrapper">
@@ -133,8 +133,10 @@
         } else {
             messages("agent.title_pattern.service_name.govuk", pageTitle)
         }
-    } else {
-        messages("titlePattern.serviceName.govUk", pageTitle)
+    } else if(form.exists(_.hasErrors)) {
+            messages("error.titlePattern.serviceName.govUk", pageTitle)
+        } else {
+            messages("titlePattern.serviceName.govUk", pageTitle)
     }
 }
 
