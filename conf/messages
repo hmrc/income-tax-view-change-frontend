@@ -143,7 +143,7 @@ taxYears.table.options.heading                                 = Options
 taxYears.oldSa.content.text                                    = To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
 taxYears.oldSa.content.link                                    = Self Assessment online account
 taxYears.oldSa.agent.content.1								   = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
-taxYears.oldSa.agent.content.2								   = Self Assessment for Agents Account
+taxYears.oldSa.agent.content.2								   = Self Assessment for Agents account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your Agent Services account.
 
 ## Tax Year Summary ##
