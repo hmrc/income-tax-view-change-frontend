@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
-import testConstants.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
+import testConstants.MessagesLookUp.{HomePage => homeMessages}
 import testUtils.TestSupport
 import views.html.Home
 
@@ -106,7 +106,7 @@ class HomePageViewSpec extends TestSupport {
       document.title() shouldBe homeMessages.title
     }
     "display the language selection switch" in new Setup {
-      getTextOfElementById("switch-welsh") shouldBe Some(coreMessages.welsh)
+      getTextOfElementById("switch-welsh") shouldBe Some(messages("language-switcher.welsh"))
     }
 
     s"have the page heading '${homeMessages.heading}'" in new Setup {

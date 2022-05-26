@@ -16,8 +16,6 @@
 
 package views.agent
 
-import testConstants.BaseTestConstants._
-import testConstants.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
@@ -29,6 +27,8 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants._
+import testConstants.MessagesLookUp.{HomePage => homeMessages}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.Home
 
@@ -118,7 +118,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "display the language selection switch" in new Setup {
-        getTextOfElementById("switch-welsh") shouldBe Some(coreMessages.welsh)
+        getTextOfElementById("switch-welsh") shouldBe Some(messages("language-switcher.welsh"))
       }
 
       s"have the page heading '${homeMessages.agentHeading}'" in new Setup {

@@ -16,7 +16,6 @@
 
 package views.helpers.injected
 
-import testConstants.MessagesLookUp
 import testUtils.ViewSpec
 import views.html.helpers.injected.BackToHomeHelper
 
@@ -28,8 +27,8 @@ class BackToHomeHelperSpec extends ViewSpec {
 
   "The backToHomeHelper template" should {
 
-    s"Render the text ${MessagesLookUp.Base.backToHome}" in new Test {
-      document.backToHome.text shouldBe MessagesLookUp.Base.backToHome
+    s"Render the text ${messages("base.backToHome")}" in new Test {
+      document.backToHome.text shouldBe messages("base.backToHome")
     }
 
     "Have the correct link class of 'link-back'" in new Test {
