@@ -21,16 +21,13 @@ import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
 import models.financialDetails.Payment
-import testUtils.ViewSpec
-import views.html.PaymentHistory
-import java.time.LocalDate
-
-import config.featureswitch.{CutOverCredits, FeatureSwitching}
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
-import models.paymentAllocations.AllocationDetail
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
-import testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesModel, paymentAllocationViewModel}
+import testConstants.BaseTestConstants.appConfig.saForAgents
+import testUtils.ViewSpec
+import views.html.PaymentHistory
+
+import java.time.LocalDate
 
 
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -78,8 +75,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     Payment(reference = None, amount = None, method = None, lot = None, lotItem = None, date = None, transactionId = None)
   )
 
-  class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments, CutOverCreditsEnabled = false, "testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
+  class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890"), isAgent: Boolean = false) extends Setup(
+    paymentHistoryView(testPayments, CutOverCreditsEnabled = false, "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
   )
 
   class PaymentHistorySetup1(paymentsnotFull: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
@@ -93,6 +90,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02")),
     Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
   )
+
+  val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
   "The payments history view with payment response model" should {
     "when the user has payment history for a single Year" should {
@@ -188,6 +187,17 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         }
       }
     }
+  }
+
+  "The payments history view with payment response model when logged as an Agent" should {
+      s"have the information ${messages("paymentHistory.info")}" in new PaymentHistorySetup(testPayments, isAgent = true) {
+        layoutContent.select(Selectors.p).text shouldBe paymentHistoryMessageInfo
+        layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}", saForAgents)
+      }
+
+      s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(testPayments, None, isAgent = true) {
+        layoutContent.select("#payment-history-info").text should not be paymentHistoryMessageInfo
+      }
   }
 
   "The payments history view with an empty payment response model" should {

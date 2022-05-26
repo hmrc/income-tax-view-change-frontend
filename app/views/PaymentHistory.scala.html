@@ -52,6 +52,19 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 }
 
+@paymentHistoryInfo(messageInfo: String, infoLink: => String, infoLinkText: String) = {
+    @if(saUtr.isDefined) {
+        @p() {
+            @messages(messageInfo)
+            @link(link = infoLink, messageKey = infoLinkText,
+            outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
+            @if(isAgent){
+                @messages(s"$messageInfo.2")
+            }
+        }
+    }
+}
+
 @mainTemplate(
     pageTitle = messages("paymentHistory.heading"),
     backUrl = Some(backUrl),
@@ -62,16 +75,6 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
 
 @h1(msg = "paymentHistory.heading")
-
-@if(isAgent) {
-    @if(saUtr.isDefined) {
-        @p(){
-            @messages("paymentHistory.info")
-            @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-            outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
-        }
-    }
-}
 
 @if(payments.nonEmpty) {
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
@@ -134,13 +137,9 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 
     @if(!isAgent) {
-        @if(saUtr.isDefined) {
-            @p(){
-                @messages("PaymentHistory.classicSA")
-                @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-                    outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
-            }
-        }
+        @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
+    } else {
+        @paymentHistoryInfo("paymentHistory.info", appConfig.saForAgents, "taxYears.oldSa.agent.content.2")
     }
 
 }
