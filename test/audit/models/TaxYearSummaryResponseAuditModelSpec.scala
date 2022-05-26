@@ -35,7 +35,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
 
-  def taxYearSummaryViewModel(forecastIncome:Option[Int] = None,
+  def taxYearSummaryViewModel(forecastIncome: Option[Int] = None,
                               forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
     timestamp = Some("2017-07-06T12:34:56.789Z"),
     crystallised = Some(false),
@@ -46,7 +46,20 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
     totalTaxableIncome = 198500,
     forecastIncome = forecastIncome,
     forecastIncomeTaxAndNics = forecastIncomeTaxAndNics
-    )
+  )
+
+  def taxYearSummaryViewModelUnattendedCalc(forecastIncome: Option[Int] = None,
+                              forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+    timestamp = Some("2017-07-06T12:34:56.789Z"),
+    crystallised = Some(false),
+    unattendedCalc = true,
+    taxDue = 2010.00,
+    income = 199505,
+    deductions = 500.00,
+    totalTaxableIncome = 198500,
+    forecastIncome = forecastIncome,
+    forecastIncomeTaxAndNics = forecastIncomeTaxAndNics
+  )
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
     List(DocumentDetailWithDueDate(DocumentDetail("2020", "1040000123", Some("ITSA- POA 1"), Some("documentText"), Some(1400.0), Some(1400.0), LocalDate.parse("2018-03-29"),
@@ -120,6 +133,33 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
       payments = payments(paymentHasADunningLock),
       updates = updates,
       taxYearSummaryViewModel = Some(taxYearSummaryViewModel(
+        forecastIncome = forecastIncome,
+        forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
+      ),
+      R7bTxmEvents = featureSwitch7b
+    )
+
+  def taxYearOverviewResponseAuditUnattendedCalc(userType: Option[String] = Some("Agent"),
+                                       agentReferenceNumber: Option[String],
+                                       paymentHasADunningLock: Boolean = false,
+                                       featureSwitch7b: Boolean = false,
+                                       forecastIncome: Option[Int] = None,
+                                       forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
+    TaxYearSummaryResponseAuditModel(
+      mtdItUser = MtdItUser(
+        mtditid = "mtditid",
+        nino = "nino",
+        userName = Some(Name(Some("firstName"), Some("lastName"))),
+        incomeSources = IncomeSourceDetailsModel("mtditid", None, business, None),
+        btaNavPartial = None,
+        saUtr = Some("saUtr"),
+        credId = Some("credId"),
+        userType = userType,
+        arn = agentReferenceNumber
+      )(FakeRequest()),
+      payments = payments(paymentHasADunningLock),
+      updates = updates,
+      taxYearSummaryViewModel = Some(taxYearSummaryViewModelUnattendedCalc(
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
       ),
@@ -227,6 +267,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
     }
   }
 
+
   "TaxYear audit model" should {
     "present a full audit model" when {
       "the R7b feature switch is on" in {
@@ -238,6 +279,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
         )
 
         (auditJson.detail \ "taxYearOverview" \ "calculationAmount").toString() mustBe "JsDefined(2010)"
+        (auditJson.detail \ "taxYearOverview" \ "isCrystallised").toString() mustBe "JsDefined(false)"
         (auditJson.detail \ "taxYearOverview" \ "forecastAmount").toString() mustBe "JsDefined(2000)"
         (auditJson.detail \ "forecast").toOption.get mustBe
           Json.obj(
@@ -248,4 +290,39 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
       }
     }
   }
+
+  "TaxYear audit model test" should {
+    "present a full audit model test" when {
+      "the R7b feature switch is on test" in {
+        val auditJson = taxYearOverviewResponseAuditFull(
+          agentReferenceNumber = Some("1"),
+          featureSwitch7b = true,
+          forecastIncome = Some(2000),
+          forecastIncomeTaxAndNics = Some(120.0)
+        )
+        (auditJson.detail \ "calculation" \ "calculationReason").toString contains "customerRequest"
+        (auditJson.detail \ "calculation" \ "income").toString() mustBe "JsDefined(199505)"
+        (auditJson.detail \ "calculation" \ "allowancesAndDeductions").toString() mustBe "JsDefined(500)"
+        (auditJson.detail \ "calculation" \ "taxableIncome").toString() mustBe "JsDefined(198500)"
+        (auditJson.detail \ "calculation" \ "taxDue").toString() mustBe "JsDefined(2010)"
+      }
+    }
+
+    "present a full audit model test unattended" when {
+      "the R7b feature switch is on test" in {
+        val auditJson = taxYearOverviewResponseAuditUnattendedCalc(
+          agentReferenceNumber = Some("1"),
+          featureSwitch7b = true,
+          forecastIncome = Some(2000),
+          forecastIncomeTaxAndNics = Some(120.0)
+        )
+        (auditJson.detail \ "calculation" \ "calculationReason").toString contains "Unattended Calculation"
+        (auditJson.detail \ "calculation" \ "income").toString() mustBe "JsDefined(199505)"
+        (auditJson.detail \ "calculation" \ "allowancesAndDeductions").toString() mustBe "JsDefined(500)"
+        (auditJson.detail \ "calculation" \ "taxableIncome").toString() mustBe "JsDefined(198500)"
+        (auditJson.detail \ "calculation" \ "taxDue").toString() mustBe "JsDefined(2010)"
+      }
+    }
+  }
+
 }
