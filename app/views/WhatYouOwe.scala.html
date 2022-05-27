@@ -34,6 +34,7 @@
     h2: h2,
     p: p,
     link: link,
+    detailsDropdown: detailsDropdown,
     govukInsetText : GovukInsetText
 )
 
@@ -97,37 +98,31 @@
         id = Some("unallocated-credit-link")).toString()))
 }
 
-@paymentTypesDropdown(classes: String) = {
-    <details class="@classes" data-module="govuk-details">
-        <summary class="govuk-details__summary" id="payment-type-dropdown-title">
-            <span class="govuk-details__summary-text"> @getMessage("dropdown.info") </span>
-        </summary>
-
-        <div class="govuk-details__text" id="payment-details-content-0">
-            @h2(msg = getMessage("remaining-balance.heading"), optId=Some("remaining-balance-heading"))
-            <span id="remaining-balance-line1"> @getMessage("remaining-balance.line1")</span>
+@detailsContent= {
+        <div id="payment-details-content-0">
+            @h2(msg = "whatYouOwe.remaining-balance.heading", optId=Some("remaining-balance-heading"))
+            @p(id = Some("remaining-balance-line1"))(Html(messages("whatYouOwe.remaining-balance.line1")))
         </div>
 
-        <div class="govuk-details__text" id="payment-details-content-1">
-            @h2(msg = getMessage("payment-on-account.heading"), optId = Some("payment-on-account-heading"))
-            <span id="payment-on-account-line1"> @getMessage("payment-on-account.line1")</span>
+        <div id="payment-details-content-1">
+            @h2(msg = "whatYouOwe.payment-on-account.heading", optId = Some("payment-on-account-heading"))
+            @p(id = Some("payment-on-account-line1"))(Html(messages("whatYouOwe.payment-on-account.line1")))
         </div>
 
-        <div class="govuk-details__text" id="payment-details-content-2" >
-            @h2(msg = getMessage("late-payment-interest.heading"), optId = Some("late-payment-interest-heading"))
-            <span id="late-payment-interest-line1"> @getMessage("late-payment-interest.line1")</span>
+        <div id="payment-details-content-2" >
+            @h2(msg = "whatYouOwe.late-payment-interest.heading", optId = Some("late-payment-interest-heading"))
+            @p(id = Some("late-payment-interest-line1"))(Html(messages("whatYouOwe.late-payment-interest.line1")))
         </div>
 
-        <div class="govuk-details__text" id="payment-details-content-3" >
-            @h2(msg = getMessage("class2-nic.heading"), optId = Some("class2-nic-heading"))
-            <span id="class2-nic-line1"> @getMessage("class2-nic.line1")</span>
+        <div id="payment-details-content-3" >
+            @h2(msg = "whatYouOwe.class2-nic.heading", optId = Some("class2-nic-heading"))
+            @p(id = Some("class2-nic-line1"))(Html(messages("whatYouOwe.class2-nic.line1")))
         </div>
 
-        <div class="govuk-details__text" id="payment-details-content-4" >
-            @h2(msg = getMessage("cancelled-paye-sa.heading"), optId = Some("cancelled-paye-sa-heading"))
-            <span id="cancelled-paye-sa-line1"> @getMessage("cancelled-paye-sa.line1")</span>
+        <div id="payment-details-content-4" >
+            @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
+            @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1")))
         </div>
-    </details>
 }
 
 @dunningLockParagraph = {
@@ -337,15 +332,15 @@
             }
 
              @if(!whatYouOweChargesList.isChargesListEmpty) {
-                @paymentTypesDropdown(classes = "govuk-details govuk-!-margin-top-8")
-               @dunningLockParagraph
+                @detailsDropdown("whatYouOwe.dropdown.info", detailsContent)
+                @dunningLockParagraph
              }
 
             @if(codingOutEnabled) {
                 @whatYouOweChargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
                     <div id="coding-out-wrapper">
                         @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codedOutDocumentDetail))))
-                    <div>
+                    </div>
                 } @if(whatYouOweChargesList.isChargesListEmpty) {
                     @saNoteParagraph
                 }

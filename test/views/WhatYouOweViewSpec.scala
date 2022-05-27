@@ -308,7 +308,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
         "payment type drop down and content exists" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-          pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
+          pageDocument.select(".govuk-details__summary-text").text shouldBe whatYouOwe.dropDownInfo
           pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
           pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
           pageDocument.getElementById("payment-details-content-2").text shouldBe whatYouOwe.lpiHeading + " " + whatYouOwe.lpiLine1
@@ -388,7 +388,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
         "have payment type drop down details" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
-          pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
+          pageDocument.select(".govuk-details__summary-text").text shouldBe whatYouOwe.dropDownInfo
           pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
           pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
           pageDocument.getElementById("payment-details-content-2").text shouldBe whatYouOwe.lpiHeading + " " + whatYouOwe.lpiLine1
@@ -525,7 +525,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe whatYouOwe.overdueTag
         }
         "have payment type dropdown details and bullet point list" in new Setup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
-          pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
+          pageDocument.select(".govuk-details__summary-text").text shouldBe whatYouOwe.dropDownInfo
           pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
           pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
           pageDocument.getElementById("payment-details-content-2").text shouldBe whatYouOwe.lpiHeading + " " + whatYouOwe.lpiLine1
@@ -1050,24 +1050,24 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "show unallocated credits" when {
       "user is an individual with the feature switch on" in new Setup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
-        pageDocument.body().select("p").get(6).text() shouldBe unallocatedCreditMsg
+        pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
 
       "user is an agent with the feature switch on" in new AgentSetup(creditCharges =  creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
-        pageDocument.body().select("p").get(6).text() shouldBe unallocatedCreditMsg
+        pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
     }
 
     "not show unallocated credits" when {
       "user is an individual with the feature switch off" in new Setup(creditCharges= creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()){
-        pageDocument.body().select("p").contains(unallocatedCreditMsg) shouldBe false
+        pageDocument.getElementById("unallocated-credit-note") shouldBe null
       }
 
       "user is an agent with the feature switch on" in new AgentSetup(creditCharges= creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.body().select("p").contains(unallocatedCreditMsg) shouldBe false
+        pageDocument.getElementById("unallocated-credit-note") shouldBe null
       }
     }
   }
