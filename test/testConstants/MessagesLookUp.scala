@@ -20,57 +20,6 @@ import testConstants.FinancialDetailsTestConstants.{currentYear, currentYearMinu
 
 object MessagesLookUp { // scalastyle:off number.of.methods
 
-  //Tax Years Page Messages
-  object TaxYears {
-    val title = "Tax years - Business Tax account - GOV.UK"
-    val heading = "Tax years"
-    val noEstimates = "You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software."
-    val taxYear: (String, String) => String = (year, yearPlusOne) => s"6 April $year to 5 April $yearPlusOne"
-    val overdue = "OVERDUE"
-    val updateReturn = "Update return"
-    val viewSummary = "View summary"
-    val tableHeadingTaxYear = "Tax year"
-    val tableHeadingOptions = "Options"
-    val saLink = "Self Assessment online account (opens in new tab)"
-    val saLinkAgent = "Self Assessment for Agents account (opens in new tab)"
-    val saNote = s"To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous $saLink."
-    val saNoteAgent = s"To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your $saLinkAgent. This will be a different Government Gateway ID and password to your Agent Services account."
-  }
-
-  // Home Page Messages
-  object HomePage {
-    val title = "Income Tax - Business Tax account - GOV.UK"
-    val agentTitle = "Your client’s Income Tax - Your client’s Income Tax details - GOV.UK"
-    val heading = "Income Tax"
-    val agentHeading = "Your client’s Income Tax"
-
-    def taxpayerReference(utr: String): String = s"Unique Taxpayer Reference (UTR): $utr"
-
-    val updatesHeading = "Next updates due"
-    val paymentsHeading = "Next payments due"
-    val updatesLink = "View update deadlines"
-    val paymentLink = "Check what you owe"
-    val taxYearsHeading = "Returns"
-    val taxYearsLink = "View all tax years"
-    val viewPaymentslink = "View payment history"
-    val yourIncomeTaxReturnHeading = "Your Income Tax return"
-    val ManageYourIncomeTaxReturnHeading = "Manage Income Tax"
-    val yourIncomeTaxReturnDescription = "Send updates to HMRC and declare income for a tax year."
-    val sendUpdatesLink = "Send updates"
-    val submitYourReturnsLink = "Update and submit an Income Tax Return"
-    val saViewLandPServiceLink = "View your Self Assessment tax years"
-    val saViewLandPServiceDescription = "Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax."
-    val changeClientLink = "Change client"
-    val backLink = "Back"
-    val paymentHistoryHeading = "Payment history"
-    val paymentHistoryAndCreditView = "Payment history"
-    val creditAndRefundAndCreditView = "Claim a refund"
-
-    def viewPaymentsLinkWithDateRange(taxYear: Int): String = s"View your current ${taxYear - 1} to ${taxYear} return"
-
-    def viewUpdateAndSubmitLinkWithDateRange(taxYear: Int): String = s"Update and submit your ${taxYear - 1} to ${taxYear} return"
-  }
-
   object IncomeBreakdown {
     val title = "Income - Business Tax account - GOV.UK"
     val agentTitle = "Income - Your client’s Income Tax details - GOV.UK"
