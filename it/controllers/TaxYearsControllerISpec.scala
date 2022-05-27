@@ -25,11 +25,6 @@ import testConstants.messages.MyTaxYearsMessages.taxYearsTitle
 
 class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    enable(R7bTxmEvents)
-  }
-
   "Calling the TaxYearsController.viewTaxYears" when {
 
     "isAuthorisedUser with an active enrolment and income source has retrieved successfully" when {
