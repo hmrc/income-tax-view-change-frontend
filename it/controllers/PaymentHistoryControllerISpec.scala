@@ -34,6 +34,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    enable(R7bTxmEvents)
   }
 
   val paymentsFull: Seq[Payment] = Seq(

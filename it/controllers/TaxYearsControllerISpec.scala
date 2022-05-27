@@ -15,7 +15,7 @@
  */
 package controllers
 
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import play.api.http.Status._
@@ -24,6 +24,11 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.MyTaxYearsMessages.taxYearsTitle
 
 class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    enable(R7bTxmEvents)
+  }
 
   "Calling the TaxYearsController.viewTaxYears" when {
 
