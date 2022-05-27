@@ -15,7 +15,7 @@
  */
 package controllers
 
-import config.featureswitch.{FeatureSwitching, R7bTxmEvents}
+import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import play.api.http.Status._
