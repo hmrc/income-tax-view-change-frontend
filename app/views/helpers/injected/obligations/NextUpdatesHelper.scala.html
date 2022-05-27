@@ -25,7 +25,6 @@
 @import implicitDateFormatter.longDate
 
 @deadlineRow(deadline: NextUpdateModelWithIncomeType) = {
-
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">
 			@{if(deadline.obligation.obligationType == "Quarterly")  messages("nextUpdates.quarterly")}
@@ -34,7 +33,6 @@
 		</dt>
 		<dd class="govuk-summary-list__value">@{messages(deadline.incomeType)}</dd>
 	</div>
-
 }
 
 @getHeadingMessage(obligation: NextUpdateModel) = @{
@@ -44,32 +42,25 @@
 }
 
 @headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-
 	<h3 class="govuk-accordion__section-heading">
-							<span id="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}" aria-labelledby="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}">
-							@{collectedObligations._1._1.toLongDate}
-							</span>
+		<span class="govuk-!-font-size-24" id="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}" aria-labelledby="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}">
+			@{collectedObligations._1._1.toLongDate}
+		</span>
 	</h3>
-
-
 }
 
 @summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-<div class="govuk-body" id="accordion-with-summary-sections-summary-@{collectedObligations._2 + 1}">
-	@{if(collectedObligations._1._2.head.obligation.obligationType == "Quarterly") messages("nextUpdates.section.heading.updates", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
-	@{if(collectedObligations._1._2.head.obligation.obligationType != "Quarterly") messages("nextUpdates.section.heading.taxYear", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
-
-</div>
-	}
+	<div class="govuk-body" id="accordion-with-summary-sections-summary-@{collectedObligations._2 + 1}">
+		@getHeadingMessage(collectedObligations._1._2.head.obligation)
+	</div>
+}
 
 @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
 	<div class="govuk-accordion__section-content" id="accordion-with-summary-sections-content-@{collectedObligations._2 + 1}">
 		<dl class="govuk-summary-list">
-
 			@for(obligation <- collectedObligations._1._2) {
 				@deadlineRow(obligation)
 			}
-
 		</dl>
 	</div>
 
@@ -88,34 +79,4 @@
 @govukAccordion(Accordion(
 	id = "accordion-with-summary-sections",
 	items = getItems
-  ))
-
-
-	<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">
-		@for(collectedObligations <- obligations.obligationsByDate.zipWithIndex) {
-			<div class="govuk-accordion__section">
-				<div class="govuk-accordion__section-header">
-					<h3 class="govuk-accordion__section-heading">
-						<span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}" aria-labelledby="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}">
-						@{collectedObligations._1._1.toLongDate}
-						</span>
-					</h3>
-					<div class="govuk-accordion__section-summary govuk-body" id="accordion-with-summary-sections-summary-@{collectedObligations._2 + 1}">
-					@{if(collectedObligations._1._2.head.obligation.obligationType == "Quarterly") messages("nextUpdates.section.heading.updates", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
-					@{if(collectedObligations._1._2.head.obligation.obligationType != "Quarterly") messages("nextUpdates.section.heading.taxYear", collectedObligations._1._2.head.obligation.start.toLongDate, collectedObligations._1._2.head.obligation.end.toLongDate)}
-					</div>
-				</div>
-				<div class="govuk-accordion__section-content" id="accordion-with-summary-sections-content-@{collectedObligations._2 + 1}">
-					<dl class="govuk-summary-list">
-
-
-							@for(obligation <- collectedObligations._1._2) {
-								@deadlineRow(obligation)
-							}
-
-
-					</dl>
-				</div>
-			</div>
-		}
-	</div>
+))
