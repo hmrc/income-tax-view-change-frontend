@@ -20,64 +20,6 @@ import testConstants.FinancialDetailsTestConstants.{currentYear, currentYearMinu
 
 object MessagesLookUp { // scalastyle:off number.of.methods
 
-  object IncomeBreakdown {
-    val title = "Income - Business Tax account - GOV.UK"
-    val agentTitle = "Income - Your client’s Income Tax details - GOV.UK"
-
-    def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
-
-    def heading(taxYear: Int): String = s"${subHeading(taxYear)} Income"
-
-    val guidance = "Check your record-keeping software for more details."
-    val incomeBreakdownHeader = "Income type"
-    val incomeBreakdownHeaderAmount = "Amount"
-    val employments = "Pay from all employments"
-    val benefitsAndExpenses = "Benefits & expenses received"
-    val allowableExpenses = "Allowable expenses"
-    val selfEmployments = "Profit from all self employments"
-    val property = "Profit from UK land and property"
-    val bbsi = "Interest from UK banks, building societies and securities"
-    val dividends = "Dividends from UK companies"
-    val occupationalPensions = "Occupational pensions"
-    val stateBenefits = "State benefit income"
-    val profitUkFurnished = "Profit from UK furnished holiday lettings"
-    val profitFromForeignProperties = "Profit from overseas properties"
-    val profitFromEeaHoliday = "Profit from EEA holiday property lettings"
-    val foreignDividendsIncome = "Overseas dividends income"
-    val foreignSavingsIncome = "Overseas savings income"
-    val foreignPensions = "Overseas pensions"
-    val incomeReceivedAbroad = "Overseas income received whilst abroad"
-    val foreignincomeAndGains = "Overseas income and gains"
-    val foreignBenefitsAndGifts = "Overseas benefits and gifts"
-    val gainsOnInsurancePolicy = "Gains on life insurance polices"
-    val shareSchemes = "Share schemes"
-    val total = "Total income received"
-  }
-
-  object DeductionBreakdown {
-    val title = "Allowances and deductions - Business Tax account - GOV.UK"
-    val agentTitle = "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
-
-    def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
-
-    def heading(taxYear: Int): String = s"${subHeading(taxYear)} Allowances and deductions"
-
-    val guidance = "Check your record-keeping software for more details."
-
-    val deductionBreakdownHeader = "Allowance or deduction type"
-    val deductionBreakdownHeaderAmount = "Amount"
-    val personalAllowance = "Personal Allowance"
-    val marriageAllowanceTransfer = "Marriage Allowance Transfer"
-    val totalPensionContributions = "Pensions contributions"
-    val lossesAppliedToGeneralIncome = "Loss relief"
-    val giftOfInvestmentsAndPropertyToCharity = "Gift of investments and property to charity"
-    val annualPayments = "Annual Payments"
-    val loanInterest = "Qualifying loan interest"
-    val postCessasationTradeReceipts = "Post cessasation trade reciepts"
-    val tradeUnionPayments = "Trade Union payments"
-    val total = "Total allowances and deductions"
-  }
-
   object TaxCalcBreakdown {
     val title = "Tax calculation - Business Tax account - GOV.UK"
     val agentTitle = "Tax calculation - Your client’s Income Tax details - GOV.UK"
@@ -481,18 +423,5 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val allocationsTableCaption = "Payment allocations"
     val allocationsTableHeadersText: String = allocationsTableCaption + " " + allocationsTableHeaders.mkString(" ")
 
-  }
-
-  //Tax Years Page Messages
-  object CreditAndRefunds {
-    val title = "Claim a refund"
-    val subHeadingWithCredits = "in your account."
-    val subHeadingWithoutCredits = "has been requested as a refund and is in progress."
-    val noAvailableAmount = "You have no money in your account."
-    val totalText = "Total"
-    val refundText = "Refund - in progress"
-    val paymentText = "payment"
-    val claimBtn = "Claim a refund"
-    val checkBtn = "Check refund status"
   }
 }
