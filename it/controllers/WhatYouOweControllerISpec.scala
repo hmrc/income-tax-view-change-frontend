@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.CodingOut
+import config.featureswitch.{CodingOut, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
@@ -34,6 +34,11 @@ import java.time.LocalDate
 import testConstants.messages.WhatYouOweMessages.whatYouOwePageTitle
 
 class WhatYouOweControllerISpec extends ComponentSpecBase {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    enable(R7bTxmEvents)
+  }
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
