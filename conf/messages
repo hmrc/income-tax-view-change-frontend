@@ -55,7 +55,7 @@ agent.utr_error.reason.bullet2_link                             = Making Tax Dig
 agent.utr_error.go_back                                         = Go back and enter a different UTR
 
 ## Agent Error Page ##
-agent-error.heading                                            = You can''t use this service yet
+agent-error.heading                                            = You can’t use this service yet
 agent-error.note                                               = To use this service, you need to
 agent-error.link                                               = set up an agent services account
 

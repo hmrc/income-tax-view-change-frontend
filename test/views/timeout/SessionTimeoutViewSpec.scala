@@ -16,7 +16,6 @@
 
 package views.timeout
 
-import testConstants.MessagesLookUp.{Timeout => timeoutMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
@@ -34,18 +33,18 @@ class SessionTimeoutViewSpec extends TestSupport {
 
   "The Session timeout view" should {
 
-    s"have the title '${timeoutMessages.title}'" in {
-      document.title() shouldBe timeoutMessages.title
+    s"have the title ${messages("titlePattern.serviceName.govUk", messages("timeout.heading"))}" in {
+      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("timeout.heading"))
     }
 
-    s"have the H1 '${timeoutMessages.heading}'" in {
-      document.getElementsByTag("H1").text() shouldBe timeoutMessages.heading
+    s"have the H1 ${messages("timeout.heading")}" in {
+      document.getElementsByTag("H1").text() shouldBe messages("timeout.heading")
     }
 
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-in").text() shouldBe timeoutMessages.signIn
+        document.getElementById("sign-in").text() shouldBe s"${messages("timeout.signIn.1")} ${messages("sign in")} ${messages("using your Government Gateway ID.")}"
       }
 
       "has a link to sign-in page" in {

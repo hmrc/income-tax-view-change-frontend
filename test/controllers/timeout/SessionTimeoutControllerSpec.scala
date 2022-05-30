@@ -16,11 +16,9 @@
 
 package controllers.timeout
 
-import testConstants.MessagesLookUp.{Timeout => timeoutMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
@@ -47,8 +45,8 @@ class SessionTimeoutControllerSpec extends TestSupport {
       charset(result) shouldBe Some("utf-8")
     }
 
-    s"have the title '${timeoutMessages.title}'" in {
-      document.title() shouldBe timeoutMessages.title
+    s"have the title ${messages("titlePattern.serviceName.govUk", messages("timeout.heading"))}" in {
+      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("timeout.heading"))
     }
   }
 }

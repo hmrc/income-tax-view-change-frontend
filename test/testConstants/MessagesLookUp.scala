@@ -159,68 +159,68 @@ object MessagesLookUp { // scalastyle:off number.of.methods
   }
 
   // Estimated Tax Liability Page Messages
-  class Calculation(taxYear: Int) {
-    val heading = s"Tax estimate for ${taxYear - 1} - $taxYear"
-    val title = s"Tax estimate for ${taxYear - 1} - $taxYear - Business Tax account - GOV.UK"
+  /* class Calculation(taxYear: Int) {
+     val heading = s"Tax estimate for ${taxYear - 1} - $taxYear"
+     val title = s"Tax estimate for ${taxYear - 1} - $taxYear - Business Tax account - GOV.UK"
 
-    object Crystallised {
-      val heading = s"Income tax bill for ${taxYear - 1} to $taxYear"
-      val tabTitle = s"$heading - Business Tax account - GOV.UK"
-      val subHeading = s"Albert Einstein"
-      val utrHeading = "Unique Taxpayer Reference - XAIT0000123456"
+     object Crystallised {
+       val heading = s"Income tax bill for ${taxYear - 1} to $taxYear"
+       val tabTitle = s"$heading - Business Tax account - GOV.UK"
+       val subHeading = s"Albert Einstein"
+       val utrHeading = "Unique Taxpayer Reference - XAIT0000123456"
 
-      def noBreakdownContent(amount: String): String = s"Your total tax bill amount: $amount"
+       def noBreakdownContent(amount: String): String = s"Your total tax bill amount: $amount"
 
-      val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
-      val breakdownHeading = "How this figure was calculated"
-      val errors = "If there are any errors, you can make adjustments through your software."
-      val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
-      val payNow = "Pay now"
-      val payDeadline = s"You must pay by 31 January ${taxYear + 1} to avoid penalties."
+       val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
+       val breakdownHeading = "How this figure was calculated"
+       val errors = "If there are any errors, you can make adjustments through your software."
+       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
+       val payNow = "Pay now"
+       val payDeadline = s"You must pay by 31 January ${taxYear + 1} to avoid penalties."
 
-      def owed(amount: String): String = s"Tax left to pay: $amount"
-    }
+       def owed(amount: String): String = s"Tax left to pay: $amount"
+     }
 
-  }
+  } */
 
-  object NoNextUpdates {
+  /*object NoNextUpdates {
     val title = "Report deadlines - Business Tax account - GOV.UK"
     val heading = "Report deadlines"
     val noUpdates = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
-  }
+  }*/
 
   // Agent Error Messages
-  object AgentErrorMessages {
-    val heading: String = "You can't use this service yet"
+  /*object AgentErrorMessages {
+    val heading: String = "You can’t use this service yet"
     val title: String = s"$heading - Your client’s Income Tax details - GOV.UK"
     val setupAccountLink = "set up an agent services account (opens in new tab)"
     val notAnAgentNote: String = s"To use this service, you need to $setupAccountLink."
     val signOutButton: String = "Sign out"
-  }
+  }*/
 
   // Timeout Messages
-  object Timeout {
+  /*object Timeout {
     val title = "Your session has timed out - Business Tax account - GOV.UK"
     val heading = "Your session has timed out"
     val signIn = "To view your quarterly reporting details, you’ll have to sign in using your Government Gateway ID."
-  }
+  }*/
 
-  object BtaServiceInfoHeader {
+  /*object BtaServiceInfoHeader {
     val btaHome = "Business tax home"
     val btaMessages = "Messages"
     val btaManageAccount = "Manage account"
-  }
+  }*/
 
-  object BtaPartial {
+  /*object BtaPartial {
     val heading = "Income Tax reporting through software"
     val p1 = "You’ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return."
     val p2 = "You can view your report deadlines, bills and an estimate for the next tax year."
     val button = "View your Income Tax details"
-  }
+  }*/
 
   object NotEnrolled {
-    val title = "You can’t view this page - Business Tax account - GOV.UK"
-    val heading = "You can’t view this page"
+//    val title = "You can’t view this page - Business Tax account - GOV.UK"
+//    val heading = "You can’t view this page"
     val signUp = "You need to sign up for quarterly reporting before you can view this page."
   }
 

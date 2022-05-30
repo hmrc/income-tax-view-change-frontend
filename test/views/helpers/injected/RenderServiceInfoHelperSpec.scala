@@ -17,7 +17,6 @@
 package views.helpers.injected
 
 import testConstants.BaseTestConstants.testUserName
-import testConstants.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
 import testUtils.ViewSpec
 import views.html.helpers.injected.RenderServiceInfoHelper
 
@@ -38,8 +37,8 @@ class RenderServiceInfoHelperSpec extends ViewSpec {
 
       "have a link to BTA home" which {
 
-        s"should have the text '${btaServiceMessages.btaHome}'" in new Test() {
-          document.getElementById("service-info-home-link").text() shouldBe btaServiceMessages.btaHome
+        s"should have the text ${messages("bta.home")}" in new Test() {
+          document.getElementById("service-info-home-link").text() shouldBe messages("bta.home")
         }
 
         s"should have a link to '${appConfig.businessTaxAccount}'" in new Test() {
@@ -50,8 +49,8 @@ class RenderServiceInfoHelperSpec extends ViewSpec {
 
       "have a link to Manage Account" which {
 
-        s"should have the text '${btaServiceMessages.btaManageAccount}'" in new Test() {
-          document.getElementById("service-info-manage-account-link").text() shouldBe btaServiceMessages.btaManageAccount
+        s"should have the text ${messages("bta.manage-account")}" in new Test() {
+          document.getElementById("service-info-manage-account-link").text() shouldBe messages("bta.manage-account")
         }
 
         s"should have a link to '${appConfig.businessTaxAccount}'" in new Test() {
@@ -62,8 +61,8 @@ class RenderServiceInfoHelperSpec extends ViewSpec {
 
       "have a link to Messages" which {
 
-        s"should have the text '${btaServiceMessages.btaMessages}'" in new Test() {
-          document.getElementById("service-info-messages-link").text() shouldBe btaServiceMessages.btaMessages
+        s"should have the text ${messages("bta.messages")}" in new Test() {
+          document.getElementById("service-info-messages-link").text() shouldBe messages("bta.messages")
         }
 
         s"should have a link to '${appConfig.btaMessagesUrl}'" in new Test() {

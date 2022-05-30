@@ -22,7 +22,6 @@ import org.jsoup.Jsoup
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.MessagesLookUp.{AgentErrorMessages => pageMessages}
 import testUtils.TestSupport
 import views.html.errorPages.AgentError
 
@@ -56,9 +55,9 @@ class AgentErrorControllerSpec extends TestSupport
       charset(result) shouldBe Some("utf-8")
     }
 
-    s"have the title '${pageMessages.title}'" in {
+    s"have the title ${messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))}" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      document.title() shouldBe pageMessages.title
+      document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))
     }
   }
 

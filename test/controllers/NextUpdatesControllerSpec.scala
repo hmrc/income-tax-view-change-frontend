@@ -16,18 +16,14 @@
 
 package controllers
 
-import java.time.LocalDate
-
-import testConstants.BaseTestConstants
-import testConstants.MessagesLookUp.{NoNextUpdates, Obligations => obligationsMessages}
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
-import mocks.auth.MockFrontendAuthorisedFunctions
-import config.{ItvcErrorHandler}
+import config.ItvcErrorHandler
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import mocks.MockItvcErrorHandler
+import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
-import mocks.MockItvcErrorHandler
 import mocks.views.agent.MockNextUpdates
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.jsoup.Jsoup
@@ -39,11 +35,14 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.NextUpdatesService
+import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.MessagesLookUp.{Obligations => obligationsMessages}
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.{NextUpdates, NoNextUpdates}
 
-import scala.concurrent.{Future}
+import java.time.LocalDate
+import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockFrontendAuthorisedFunctions
@@ -278,15 +277,15 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NoNextUpdates page" in {
-            document.title shouldBe NoNextUpdates.title
+            document.title shouldBe messages("titlePattern.serviceName.govUk", messages("obligations.heading"))
           }
 
-          s"have the heading '${NoNextUpdates.heading}'" in {
-            document.select("h1").text() shouldBe NoNextUpdates.heading
+          s"have the heading ${messages("obligations.heading")}" in {
+            document.select("h1").text() shouldBe messages("obligations.heading")
           }
 
-          s"have the correct no next updates message '${NoNextUpdates.noUpdates}'" in {
-            document.select("p.govuk-body").text shouldBe NoNextUpdates.noUpdates
+          s"have the correct no next updates message ${messages("obligations.noReports")}" in {
+            document.select("p.govuk-body").text shouldBe messages("obligations.noReports")
           }
         }
 
