@@ -22,7 +22,6 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
   object TaxCalcBreakdown {
     val title = "Tax calculation - Business Tax account - GOV.UK"
-    val agentTitle = "Tax calculation - Your client’s Income Tax details - GOV.UK"
     val upliftMessage = "1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
@@ -34,7 +33,6 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val sectionHeadingDividends: String = "Dividends"
     val sectionHeadingLumpSums: String = "Employment lump sums"
     val sectionHeadingGainsOnLifePolicies: String = "Gains on life policies"
-    val sectionHeadingNIC4: String = "Class 4 National Insurance"
     val sectionHeadingAdditionalChar: String = "Additional charges"
     val sectionHeadingNationalInsuranceContributionsChar: String = "National Insurance contributions"
     val sectionHeadingTaxReductions: String = "Tax reductions"
@@ -158,182 +156,9 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     val inYearAdjustmentCodedInLaterTaxYear = "Outstanding debt collected through PAYE"
   }
 
-  // Estimated Tax Liability Page Messages
-  /* class Calculation(taxYear: Int) {
-     val heading = s"Tax estimate for ${taxYear - 1} - $taxYear"
-     val title = s"Tax estimate for ${taxYear - 1} - $taxYear - Business Tax account - GOV.UK"
-
-     object Crystallised {
-       val heading = s"Income tax bill for ${taxYear - 1} to $taxYear"
-       val tabTitle = s"$heading - Business Tax account - GOV.UK"
-       val subHeading = s"Albert Einstein"
-       val utrHeading = "Unique Taxpayer Reference - XAIT0000123456"
-
-       def noBreakdownContent(amount: String): String = s"Your total tax bill amount: $amount"
-
-       val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
-       val breakdownHeading = "How this figure was calculated"
-       val errors = "If there are any errors, you can make adjustments through your software."
-       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
-       val payNow = "Pay now"
-       val payDeadline = s"You must pay by 31 January ${taxYear + 1} to avoid penalties."
-
-       def owed(amount: String): String = s"Tax left to pay: $amount"
-     }
-
-  } */
-
-  /*object NoNextUpdates {
-    val title = "Report deadlines - Business Tax account - GOV.UK"
-    val heading = "Report deadlines"
-    val noUpdates = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
-  }*/
-
-  // Agent Error Messages
-  /*object AgentErrorMessages {
-    val heading: String = "You can’t use this service yet"
-    val title: String = s"$heading - Your client’s Income Tax details - GOV.UK"
-    val setupAccountLink = "set up an agent services account (opens in new tab)"
-    val notAnAgentNote: String = s"To use this service, you need to $setupAccountLink."
-    val signOutButton: String = "Sign out"
-  }*/
-
-  // Timeout Messages
-  /*object Timeout {
-    val title = "Your session has timed out - Business Tax account - GOV.UK"
-    val heading = "Your session has timed out"
-    val signIn = "To view your quarterly reporting details, you’ll have to sign in using your Government Gateway ID."
-  }*/
-
-  /*object BtaServiceInfoHeader {
-    val btaHome = "Business tax home"
-    val btaMessages = "Messages"
-    val btaManageAccount = "Manage account"
-  }*/
-
-  /*object BtaPartial {
-    val heading = "Income Tax reporting through software"
-    val p1 = "You’ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return."
-    val p2 = "You can view your report deadlines, bills and an estimate for the next tax year."
-    val button = "View your Income Tax details"
-  }*/
-
   object NotEnrolled {
-//    val title = "You can’t view this page - Business Tax account - GOV.UK"
-//    val heading = "You can’t view this page"
+    // todo it's not available in messages
     val signUp = "You need to sign up for quarterly reporting before you can view this page."
-  }
-
-  object CustomNotFound {
-    val title = "There is a problem - Business Tax account - GOV.UK"
-    val AgentTitle = "There is a problem - Your client’s Income Tax details - GOV.UK"
-    val heading = "There is a problem"
-    val content = "The page you’re trying to view has changed"
-    val homepageLinkText = "Return to Making Tax Digital for Income Tax"
-  }
-
-  //NextUpdates Page Messages
-  object Obligations {
-    val title = "Updates - Business Tax account - GOV.UK"
-    val nextTitle = "Next updates - Business Tax account - GOV.UK"
-    val heading = "Updates"
-    val previousObligations = "Previously submitted updates"
-    val tabOne = "Updates due"
-    //    val tabTwo = "Previously submitted updates"
-    val subTitle = "Updates due"
-    val annualDropdownListOne = "In the annual update you must declare that the 4 quarterly updates you submitted are correct or amend any errors."
-    val annualDropdownListTwo = "Using your accounting software , you need to submit one annual update for each source of income at the end of its accounting period."
-    val quarterlyDropdownLine1 = "A quarterly update sets out the income and expenses for each 3-month period."
-    val quarterlyDropdownLine2 = "Using your accounting software, you must submit 4 quarterly updates in a year for each source of income."
-    val finalDeclerationDetails = "Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your accounting software."
-    val quarterlyDropDown = "What is a quarterly update?"
-    val annualDropDown = "What is an annual update?"
-    val finalDeclarationDropDown = "What is a final declaration?"
-    val declarationsHeading = "Final declaration"
-    val quarterlyHeading = "Quarterly updates"
-    val annualHeading = "Annual updates"
-    val finalDeclarationHeading = "Final Declaration"
-    val propertyIncome = "Property Income"
-
-    def fromToDates(from: String, to: String) = s"$from to $to"
-
-    val dueOn = "Due on:"
-    val crystallisedHeading = "Whole tax year (final check)"
-  }
-
-  object WhatYouOwe {
-    val title = "What you owe - Business Tax account - GOV.UK"
-    val heading = "What you owe"
-    val noPaymentsDue = "You have no payments due."
-    val saLink = "Self Assessment online account (opens in new tab)"
-    val saNote = s"You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
-    val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
-    val dropDownInfo = "What are the payment types?"
-    val paymentDaysNote = "Payments can take up to 7 days to process."
-    val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
-    val paymentUnderReviewParaLink = "there is a current appeal against a tax decision (opens in new tab)."
-    val paymentUnderReviewPara = s"One or more of your payments are currently under review because $paymentUnderReviewParaLink"
-
-    def preMtdPayments(from: String, to: String) = s"$from to $to"
-
-    val paymentType = "Payment type"
-    val taxYearSummary = "Tax year summary"
-    val amountDue = "Amount due"
-
-    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
-    val paymentprocessingbullet2 = "must reach us by the due date - you’ll be charged interest and may have to pay a penalty if your payment is late"
-    val paymentsMade = "Any payments you make:"
-    val poa1Text = "Payment on account 1 of 2"
-    val latePoa1Text = "Late payment interest for payment on account 1 of 2"
-    val poa2Text = "Payment on account 2 of 2"
-    val latePoa2Text = "Late payment interest for payment on account 2 of 2"
-    val remainingBalance = "Balancing payment"
-    val preMTDRemainingBalance = "Balancing payment (Pre-Making Tax Digital)"
-    val lateRemainingBalance = "Late payment interest for Balancing payment"
-    val remainingBalanceLine1 = "The Balancing payment is the tax you still need to pay for a tax year."
-    val interestOnRemainingBalance = "Interest on Balancing payment"
-    val paymentUnderReview = "Payment under review"
-
-    def interestOnRemainingBalanceYear(from: String, to: String) = s"From $from to $to"
-
-    val poaHeading = "Payment on account"
-    val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
-    val lpiHeading = "Late payment interest"
-    val lpiLine1 = "This is interest you owe for a late payment."
-    val nic2Heading = "Class 2 National Insurance"
-    val nic2Line1 = "This is a payment specifically for your Class 2 National Insurance contributions."
-    val cancelledPAYEHeading = "Cancelled PAYE Self Assessment"
-    val cancelledPAYELine1 = "You have previously agreed to pay some of your self assessment tax through your PAYE tax code. HMRC has been unable to collect all of these payments from you, so this is the balancing payment you need to pay."
-    val overduePayments = "Overdue payments"
-    val overduePaymentsDue = "Overdue payments"
-    val overdueTag = "OVERDUE"
-    val dueInThirtyDays = "Due within 30 days"
-    val futurePayments = "Future payments"
-    val totalPaymentsDue = "Total payments"
-
-    val poa1WithTaxYear = s"$poa1Text $currentYear"
-    val poa1WithTaxYearOverdue = s"$overdueTag $poa1Text $currentYear"
-    val poa2WithTaxYear = s"$poa2Text $currentYear"
-    val poa2WithTaxYearOverdue = s"$overdueTag $poa2Text $currentYear"
-    val poa1WithTaxYearAndUnderReview = s"$poa1Text $currentYear $paymentUnderReview"
-    val poa1WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa1Text $currentYear $paymentUnderReview"
-    val poa2WithTaxYearAndUnderReview = s"$poa2Text $currentYear $paymentUnderReview"
-    val poa2WithTaxYearOverdueAndUnderReview = s"$overdueTag $poa2Text $currentYear $paymentUnderReview"
-
-    def interestFromToDate(from: String, to: String, rate: String) = s"Interest for late payment $from to $to at $rate%"
-
-    val interestRatesLink = "current interest rate for late and early payments (opens in new tab)"
-    val interestRatesPara = s"Any overdue payment interest is at the $interestRatesLink. The rate may have changed since the interest was first charged."
-
-    def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
-
-    def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
-
-
-    val dueDate = "Due date"
-    val payNow = "Make a payment"
-
-    def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
 
   object AgentPaymentDue {
@@ -394,34 +219,5 @@ object MessagesLookUp { // scalastyle:off number.of.methods
     def taxYearSummaryText(from: String, to: String): String = s"$from to $to Tax year"
 
     val dueDate = "Due date"
-  }
-
-  object PaymentAllocation {
-    val title = "Payment made to HMRC - Business Tax account - GOV.UK"
-    val heading = "Payment made to HMRC"
-    val headingEarlier = "Payment from an earlier tax year"
-    val saLink = "Self Assessment online account (opens in new tab)"
-    val saNote = s"This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous $saLink."
-    val backLink = "Back"
-    val date = "31 January 2021"
-    val amount = "£300.00"
-    val paymentAllocationHeading = "Payment allocations"
-    val tableHeadings = Seq("Payment allocation", "Date allocated", "Amount")
-    val tableDataPaymentAllocation = "Class 4 National Insurance for payment on account 1 of 2 2020 Tax year 2019 to 2020"
-    val tableDataPaymentAllocationLpi = "Late payment interest for Balancing payment 2020 Tax year 2019 to 2020"
-    val tableDataDateAllocated = "31 Jan 2021"
-    val tableDataDateAllocatedLpi = "N/A"
-    val tableDataAmount = "£10.10"
-    val tableDataAmountLpi = "£300.00"
-    val creditOnAccount = "Money in your account"
-    val creditOnAccountAmount = "£200.00"
-    val moneyOnAccount = "Money in your account"
-    val moneyOnAccountDate = "N/A"
-    val moneyOnAccountAmount = "£200.00"
-    val allocationsTableHeading = "Payment allocations"
-    val allocationsTableHeaders = Seq("Payment allocation", "Date allocated", "Amount")
-    val allocationsTableCaption = "Payment allocations"
-    val allocationsTableHeadersText: String = allocationsTableCaption + " " + allocationsTableHeaders.mkString(" ")
-
   }
 }

@@ -16,24 +16,19 @@
 
 package views
 
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import testConstants.PaymentAllocationsTestConstants.{singleTestPaymentAllocationChargeWithOutstandingAmountZero, _}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
-import models.financialDetails.DocumentDetail
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
-import play.twirl.api.Html
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import testConstants.PaymentAllocationsTestConstants._
 import testUtils.ViewSpec
 import views.html.PaymentAllocation
-import testConstants.MessagesLookUp.{PaymentAllocation => paymentAllocationMessages}
 
 import scala.collection.JavaConverters._
 
@@ -58,6 +53,16 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     List(financialDetailNoPaymentCredit)
   )
 
+  val heading: String = messages("paymentAllocation.heading")
+  val date: String = "31 January 2021"
+  val amount: String = "£300.00"
+  val paymentAllocationHeading: String = messages("paymentAllocation.tableSection.heading")
+  val tableHeadings: Seq[String] = Seq(messages("paymentAllocation.tableHead.allocation"), messages("paymentAllocation.tableHead.allocated-date"), messages("paymentAllocation.tableHead.amount"))
+  val moneyOnAccount: String = messages("paymentAllocation.moneyOnAccount")
+  val moneyOnAccountAmount: String = "£200.00"
+  val allocationsTableHeading: String = "Payment allocations"
+  val allocationsTableHeadersText: String = s"$paymentAllocationHeading ${tableHeadings.mkString(" ")}"
+
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
                                CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None,
                                creditsRefundsRepayEnabled: Boolean = true) extends Setup(
@@ -75,17 +80,17 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   "Payment Allocation Page for non LPI" should {
     "check that the first section information is present" when {
       "checking the heading" in new PaymentAllocationSetup() {
-        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+        document.getElementsByTag("h1").text shouldBe heading
       }
 
-      s"have the correct date of ${paymentAllocationMessages.date}" in new PaymentAllocationSetup {
+      s"have the correct date of $date" in new PaymentAllocationSetup {
         document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").eq(0).text shouldBe paymentAllocationMessages.date
+          .getElementsByTag("dd").eq(0).text shouldBe date
       }
 
-      s"have the correct Amount of ${paymentAllocationMessages.amount}" in new PaymentAllocationSetup {
+      s"have the correct Amount of $amount" in new PaymentAllocationSetup {
         document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").last.text shouldBe paymentAllocationMessages.amount
+          .getElementsByTag("dd").last.text shouldBe amount
       }
 
       "checking there is the info text" in new PaymentAllocationSetup() {
@@ -95,7 +100,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup() {
-        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
+        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationHeading
       }
 
       "check that the heading section is not present when credit is defined but outstandingAmount is 0" in
@@ -110,31 +115,31 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has table headers" in new PaymentAllocationSetup() {
         val allTableHeadings = document.selectHead("thead")
-        allTableHeadings.selectNth("th", 1).text() shouldBe paymentAllocationMessages.tableHeadings(0)
-        allTableHeadings.selectNth("th", 2).text() shouldBe paymentAllocationMessages.tableHeadings(1)
-        allTableHeadings.selectNth("th", 3).text() shouldBe paymentAllocationMessages.tableHeadings(2)
+        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
+        allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
+        allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
       }
 
       "has a payment within the table" in new PaymentAllocationSetup() {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocation
-        allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocated
-        allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmount
+        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")} 2020 ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 2).text() shouldBe "31 Jan 2021"
+        allTableData.selectNth("td", 3).text() shouldBe "£10.10"
       }
 
       "has a Credit on account link row within payment details when refunds page FS enabled" in new PaymentAllocationSetup() {
         val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
         document.select("a#money-on-account-link").size() shouldBe 1
-        allTableData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
-        allTableData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
+        allTableData.get(0).text() shouldBe moneyOnAccount
+        allTableData.get(2).text() shouldBe moneyOnAccountAmount
       }
 
       "has a Credit on account text row within payment details when refunds page FS disabled" in
         new PaymentAllocationSetup(creditsRefundsRepayEnabled = false) {
         val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
         document.select("a#money-on-account-link").size() shouldBe 0
-        allTableData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
-        allTableData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
+        allTableData.get(0).text() shouldBe moneyOnAccount
+        allTableData.get(2).text() shouldBe moneyOnAccountAmount
       }
 
       "should not have Credit on account row within payment details" in new PaymentAllocationSetup(paymentAllocationViewModel.copy(
@@ -144,12 +149,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
         new PaymentAllocationSetup(paymentAllocationViewModelNoPayment, true, saUtr = Some("1234567890")) {
-        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.headingEarlier
-        document.getElementById("sa-note-migrated").text shouldBe paymentAllocationMessages.saNote
+        document.getElementsByTag("h1").text shouldBe messages("paymentAllocation.earlyTaxYear.heading")
+        document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
         val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-        moneyOnAccountData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
-        moneyOnAccountData.get(1).text() shouldBe paymentAllocationMessages.moneyOnAccountDate
-        moneyOnAccountData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
+        moneyOnAccountData.get(0).text() shouldBe moneyOnAccount
+        moneyOnAccountData.get(1).text() shouldBe "N/A"
+        moneyOnAccountData.get(2).text() shouldBe moneyOnAccountAmount
       }
 
     }
@@ -157,16 +162,16 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   "Payment Allocation Page for LPI" should {
     "check that the first section information is present" when {
       "checking the heading" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+        document.getElementsByTag("h1").text shouldBe heading
       }
-      s"have the correct date of ${paymentAllocationMessages.date}" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+      s"have the correct date of $date" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").eq(0).text shouldBe paymentAllocationMessages.date
+          .getElementsByTag("dd").eq(0).text shouldBe date
       }
 
-      s"have the correct Amount of ${paymentAllocationMessages.amount}" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+      s"have the correct Amount of $amount" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").last.text shouldBe paymentAllocationMessages.amount
+          .getElementsByTag("dd").last.text shouldBe amount
       }
 
       "checking there is the info text" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
@@ -176,34 +181,34 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationMessages.paymentAllocationHeading
+        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationHeading
       }
 
       "has table headers" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableHeadings = document.selectHead("thead")
-        allTableHeadings.selectNth("th", 1).text() shouldBe paymentAllocationMessages.tableHeadings(0)
-        allTableHeadings.selectNth("th", 2).text() shouldBe paymentAllocationMessages.tableHeadings(1)
-        allTableHeadings.selectNth("th", 3).text() shouldBe paymentAllocationMessages.tableHeadings(2)
+        allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
+        allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
+        allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
 
       }
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe paymentAllocationMessages.tableDataPaymentAllocationLpi
-        allTableData.selectNth("td", 2).text() shouldBe paymentAllocationMessages.tableDataDateAllocatedLpi
-        allTableData.selectNth("td", 3).text() shouldBe paymentAllocationMessages.tableDataAmountLpi
+        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")} 2020 ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 2).text() shouldBe messages("paymentAllocation.na")
+        allTableData.selectNth("td", 3).text() shouldBe "£300.00"
 
       }
     }
   }
 
   "Payment Allocation Page" should {
-    s"have the title: ${paymentAllocationMessages.title}" in new PaymentAllocationSetup {
-      document.title() shouldBe paymentAllocationMessages.title
+    s"have the title: ${messages("titlePattern.serviceName.govUk", messages("paymentAllocation.heading"))}" in new PaymentAllocationSetup {
+      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("paymentAllocation.heading"))
     }
 
-    s"have the heading: ${paymentAllocationMessages.heading}" in new PaymentAllocationSetup {
-      document.getElementsByTag("h1").text shouldBe paymentAllocationMessages.heading
+    s"have the heading: $heading" in new PaymentAllocationSetup {
+      document.getElementsByTag("h1").text shouldBe heading
     }
 
     "have a fallback link" in new PaymentAllocationSetup {
@@ -252,10 +257,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.CreditAndRefundController.show().url
         )
 
-        layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
+        layoutContent.h2.text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
-             |${paymentAllocationMessages.allocationsTableHeadersText}
+             |$allocationsTableHeadersText
              |Income Tax for payment on account 1 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
              |Income Tax for payment on account 1 of 2 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
              |Income Tax for payment on account 1 of 2 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
@@ -293,10 +298,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.CreditAndRefundController.show().url
         )
 
-        layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
+        layoutContent.h2.text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
-             |${paymentAllocationMessages.allocationsTableHeadersText}
+             |$allocationsTableHeadersText
              |Income Tax for payment on account 2 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
              |Income Tax for payment on account 2 of 2 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
              |Income Tax for payment on account 2 of 2 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
@@ -330,10 +335,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.CreditAndRefundController.show().url
         )
 
-        layoutContent.h2.text() shouldBe paymentAllocationMessages.allocationsTableHeading
+        layoutContent.h2.text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
-             |${paymentAllocationMessages.allocationsTableHeadersText}
+             |$allocationsTableHeadersText
              |Income Tax for Balancing payment 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
              |Class 4 National Insurance for Balancing payment 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
              |Class 2 National Insurance for Balancing payment 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
@@ -350,8 +355,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
       val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-      allTableData.get(0).text() shouldBe paymentAllocationMessages.moneyOnAccount
-      allTableData.get(2).text() shouldBe paymentAllocationMessages.moneyOnAccountAmount
+      allTableData.get(0).text() shouldBe moneyOnAccount
+      allTableData.get(2).text() shouldBe moneyOnAccountAmount
 
     }
 

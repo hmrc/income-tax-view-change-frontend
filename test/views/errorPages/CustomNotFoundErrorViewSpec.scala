@@ -17,7 +17,6 @@
 package views.errorPages
 
 import play.twirl.api.Html
-import testConstants.MessagesLookUp.{CustomNotFound => pageMessages}
 import testUtils.ViewSpec
 import views.html.errorPages.CustomNotFoundError
 
@@ -27,20 +26,20 @@ class CustomNotFoundErrorViewSpec extends ViewSpec {
 
   "The Agent Error page" should {
 
-    s"have the title: ${pageMessages.title}" in new Setup(customNotFoundErrorView) {
-      document.title shouldBe pageMessages.title
+    s"have the title: ${messages("titlePattern.serviceName.govUk", messages("base.error_summary.heading"))}" in new Setup(customNotFoundErrorView) {
+      document.title shouldBe messages("titlePattern.serviceName.govUk", messages("base.error_summary.heading"))
     }
 
-    s"have the heading: ${pageMessages.heading}" in new Setup(customNotFoundErrorView) {
-      document hasPageHeading pageMessages.heading
+    s"have the heading: ${messages("error.custom.heading")}" in new Setup(customNotFoundErrorView) {
+      document hasPageHeading messages("error.custom.heading")
     }
 
     s"have a paragraph stating" in new Setup(customNotFoundErrorView) {
-      layoutContent.select(Selectors.p).text shouldBe pageMessages.content
+      layoutContent.select(Selectors.p).text shouldBe messages("error.custom.message")
     }
 
     s"have a link in to the homepage" in new Setup(customNotFoundErrorView) {
-      layoutContent.select(Selectors.link).first().text shouldBe pageMessages.homepageLinkText
+      layoutContent.select(Selectors.link).first().text shouldBe messages("error.custom.link")
       layoutContent.select(Selectors.link).first().attr("href") shouldBe controllers.routes.HomeController.show().url
     }
   }
