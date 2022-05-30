@@ -137,16 +137,6 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
     @h1(msg = "paymentHistory.heading")
 
-    @if(isAgent) {
-        @if(saUtr.isDefined) {
-            @p(){
-                @messages("paymentHistory.info")
-                @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-                outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
-            }
-        }
-    }
-
     @if(payments.nonEmpty) {
 
         @govukAccordion(Accordion(
@@ -156,7 +146,9 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 
     @if(!isAgent) {
-        @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
+        @if(saUtr.isDefined) {
+            @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
+        }
     } else {
         @paymentHistoryInfo("paymentHistory.info", appConfig.saForAgents, "taxYears.oldSa.agent.content.2")
     }
