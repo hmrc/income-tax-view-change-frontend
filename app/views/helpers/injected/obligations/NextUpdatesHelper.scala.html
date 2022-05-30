@@ -43,20 +43,20 @@
 
 @headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
 	<h3 class="govuk-accordion__section-heading">
-		<span class="govuk-!-font-size-24" id="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}" aria-labelledby="accordion-with-summary-sections-heading-@{collectedObligations._2 + 1}">
+		<span class="govuk-!-font-size-24">
 			@{collectedObligations._1._1.toLongDate}
 		</span>
 	</h3>
 }
 
 @summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<div class="govuk-body" id="accordion-with-summary-sections-summary-@{collectedObligations._2 + 1}">
+	<div class="govuk-body">
 		@getHeadingMessage(collectedObligations._1._2.head.obligation)
 	</div>
 }
 
 @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<div class="govuk-accordion__section-content" id="accordion-with-summary-sections-content-@{collectedObligations._2 + 1}">
+	<div class="govuk-accordion__section-content">
 		<dl class="govuk-summary-list">
 			@for(obligation <- collectedObligations._1._2) {
 				@deadlineRow(obligation)
