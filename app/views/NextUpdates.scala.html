@@ -24,8 +24,10 @@
 @this(
 	mainTemplate: unifiedLayout,
 	h1: h1,
+	h2: h2,
 	p: p,
 	link: link,
+	detailsDropdown: detailsDropdown,
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
@@ -46,28 +48,7 @@
 
 	@p(){@messages("nextUpdates.info")}
 
-	<details class="govuk-details" data-module="govuk-details">
-
-		<summary class="govuk-details__summary" id="Update-dropdown-title">
-			<span class="govuk-details__summary-text"> @messages("nextUpdates.dropdown.info") </span>
-		</summary>
-
-		<div class="govuk-details__text" id="details-content-0">
-			<h2 id="quarterlyReturns-heading" class="govuk-heading-m">@messages("obligations.quarterlyUpdates")</h2>
-			@p(id = Some("quarterly-dropdown-line1"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
-			@p(id = Some("quarterly-dropdown-line2"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
-		</div>
-		<div class="govuk-details__text" id="details-content-1">
-			<h2 id="annualUpdates-heading" class="govuk-heading-m">@messages("obligations.annualUpdates")</h2>
-			@p(id = Some("annual-dropdown-line1"))(Html(messages("nextUpdates.dropdown.annualReturn.text")))
-			@p(id = Some("annual-dropdown-line2"))(Html(messages("nextUpdates.dropdown.annualReturn.text.lin2")))
-		</div>
-		<div class="govuk-details__text" id="details-content-2">
-			<h2 id="finalDeclaration-heading" class="govuk-heading-m">@messages("obligations.finalDeclarationUpdate")</h2>
-			@p(id = Some("final-declaration-line1"))(Html(messages("nextUpdates.dropdown.finalDeclaration.text")))
-		</div>
-
-	</details>
+	@detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 
 	<h2 class="govuk-heading-m">@messages("nextUpdates.sub-heading")</h2>
 
@@ -85,4 +66,21 @@
      }
 		@messages("nextUpdates.previousYears.textTwo")
 	}
+}
+
+@detailsContent = {
+	<div id="details-content-0">
+		@h2(msg = "obligations.quarterlyUpdates", optId = Some("quarterlyReturns-heading"))
+		@p(id = Some("quarterly-dropdown-line1"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
+		@p(id = Some("quarterly-dropdown-line2"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
+	</div>
+	<div id="details-content-1">
+		@h2(msg = "obligations.annualUpdates", optId = Some("annualUpdates-heading"))
+		@p(id = Some("annual-dropdown-line1"))(Html(messages("nextUpdates.dropdown.annualReturn.text")))
+		@p(id = Some("annual-dropdown-line2"))(Html(messages("nextUpdates.dropdown.annualReturn.text.lin2")))
+	</div>
+	<div id="details-content-2">
+		@h2(msg = "obligations.finalDeclarationUpdate", optId = Some("finalDeclaration-heading"))
+		@p(id = Some("final-declaration-line1"))(Html(messages("nextUpdates.dropdown.finalDeclaration.text")))
+	</div>
 }
