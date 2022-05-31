@@ -18,15 +18,14 @@ package views
 
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.TaxBands
-import models.liabilitycalculation.{Message, Messages}
-import testConstants.NewCalcBreakdownUnitTestConstants._
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
+import models.liabilitycalculation.{Message, Messages}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
-import testConstants.MessagesLookUp.TaxCalcBreakdown
+import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.ViewSpec
 import views.html.TaxCalcBreakdown
 
@@ -37,7 +36,7 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
   override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html =
     app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl, class4UpliftEnabled = class4UpliftEnabled)
 
-  override val expectedPageTitle: String = TaxCalcBreakdown.title
+  override val expectedPageTitle: String = messages("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
 
   override val pageContentSelector = "#main-content"
 
@@ -50,6 +49,20 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
   val taxYear2017: Int = 2017
+  val sectionHeadingPPP: String = messages("taxCal_breakdown.pay_pensions_profit")
+  val sectionHeadingLumpSums: String = messages("taxCal_breakdown.lumpSums")
+  val sectionHeadingGainsOnLifePolicies: String = messages("taxCal_breakdown.gains_life_policies")
+  val sectionHeadingAdditionalChar: String = messages("taxCal_breakdown.additional_charges")
+  val sectionHeadingNationalInsuranceContributionsChar: String = messages("taxCal_breakdown.national_insurance_contributions")
+  val sectionHeadingTaxReductions: String = messages("taxCal_breakdown.table.tax_reductions")
+  val reductionTableHeader: String = messages("taxCal_breakdown.table.head.reduction")
+  val amountTableHeader: String = messages("taxCal_breakdown.table.amount")
+  val rateBandTableHeader: String = messages("taxCal_breakdown.table.head.rate_band")
+  val nationalInsuranceTypeTableHeader: String = messages("taxCal_breakdown.table.head.national_insurance_type")
+  val voluntaryNic2: String = messages("taxCal_breakdown.table.nic2.true")
+  val Nic4New_ZRT: String = messages("taxCal_breakdown.table.nic4", "£2,000.00", "1")
+  val Nic4New_BRT: String = messages("taxCal_breakdown.table.nic4", "£3,000.00", "2")
+  val Nic4New_HRT: String = messages("taxCal_breakdown.table.nic4", "£5,000.00", "3")
 
   def backUrl: String
 
@@ -159,15 +172,15 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingPPP,
+          expectedCaption = sectionHeadingPPP,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.scotlandRateTableHead, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.pPP_Scot_SRT, "£2,000.00"),
-            (2, TaxCalcBreakdown.pPP_Scot_BRT, "£4,000.00"),
-            (3, TaxCalcBreakdown.pPP_Scot_IRT, "£45,000.00"),
-            (4, TaxCalcBreakdown.pPP_Scot_HRT, "£40,000.00"),
-            (5, TaxCalcBreakdown.pPP_Scot_ART, "£22,500.00")
+            (0, messages("taxCal_breakdown.table.head.rates.scotland"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.SRT", "£20,000.00", "10.0"), "£2,000.00"),
+            (2, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
+            (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (5, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00")
           )
         )
 
@@ -188,15 +201,15 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingLumpSums,
+          expectedCaption = sectionHeadingLumpSums,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.scotlandRateTableHead, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.ls_Scot_SRT, "£2,000.00"),
-            (2, TaxCalcBreakdown.ls_Scot_BRT, "£4,000.00"),
-            (3, TaxCalcBreakdown.ls_Scot_IRT, "£45,000.00"),
-            (4, TaxCalcBreakdown.ls_Scot_HRT, "£40,000.00"),
-            (5, TaxCalcBreakdown.ls_Scot_ART, "£22,500.00")
+            (0, messages("taxCal_breakdown.table.head.rates.scotland"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.SRT", "£20,000.00", "10.0"), "£2,000.00"),
+            (2, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
+            (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (5, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00")
           )
         )
 
@@ -218,15 +231,15 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies,
+          expectedCaption = sectionHeadingGainsOnLifePolicies,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.gols_Scot_SRT, "£2,000.00"),
-            (2, TaxCalcBreakdown.gols_Scot_BRT, "£4,000.00"),
-            (3, TaxCalcBreakdown.gols_Scot_IRT, "£45,000.00"),
-            (4, TaxCalcBreakdown.gols_Scot_HRT, "£40,000.00"),
-            (5, TaxCalcBreakdown.gols_Scot_ART, "£22,500.00")
+            (0, rateBandTableHeader, amountTableHeader),
+            (1, messages("taxCal_breakdown.table.SRT", "£20,000.00", "10.0"), "£2,000.00"),
+            (2, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
+            (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (5, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00")
           )
         )
 
@@ -250,13 +263,13 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear2017)
-        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear2017)
+        pageContent(pageContentSelector) hasPageHeading s"${messages("taxCal_breakdown.dates", s"${taxYear2017 - 1}", s"$taxYear2017")} ${messages("taxCal_breakdown.heading")}"
+        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe messages("taxCal_breakdown.dates", s"${taxYear2017 - 1}", s"$taxYear2017")
       }
 
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = pageContent(pageContentSelector).getElementById("explanation")
-        guidance.text() shouldBe TaxCalcBreakdown.guidance
+        guidance.text() shouldBe s"${messages("taxCal_breakdown.explanation")} £0.00"
       }
     }
 
@@ -286,26 +299,26 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        pageContent(pageContentSelector) hasPageHeading TaxCalcBreakdown.heading(taxYear)
-        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe TaxCalcBreakdown.subHeading(taxYear)
+        pageContent(pageContentSelector) hasPageHeading s"${messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")} ${messages("taxCal_breakdown.heading")}"
+        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
       }
 
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = pageContent(pageContentSelector).getElementById("explanation")
-        guidance.text() shouldBe TaxCalcBreakdown.guidance
+        guidance.text() shouldBe s"${messages("taxCal_breakdown.explanation")} £0.00"
       }
 
       "have a Pay, pensions and profit table" which {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingPPP,
+          expectedCaption = sectionHeadingPPP,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.ukRateTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.pPP_BRT, "£4,000.00"),
-            (2, TaxCalcBreakdown.pPP_HRT, "£40,000.00"),
-            (3, TaxCalcBreakdown.pPP_ART, "£22,500.00")
+            (0, messages("taxCal_breakdown.table.head.rates.uk"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (2, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (3, messages("taxCal_breakdown.table.ART", "£50,000.00", "45.0"), "£22,500.00")
           )
         )
 
@@ -313,7 +326,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Pay, pensions and profit Income" which {
         "has no Pay, pensions and profit heading" in new Setup(zeroIncome) {
-          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingPPP
+          pageContent(pageContentSelector).select("caption").text should not include sectionHeadingPPP
         }
       }
 
@@ -321,16 +334,16 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 2,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingSavings,
+          expectedCaption = messages("taxCal_breakdown.savings"),
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.saving_SSR, "£0.00"),
-            (2, TaxCalcBreakdown.saving_ZRTBR, "£0.00"),
-            (3, TaxCalcBreakdown.saving_BRT, "£2.00"),
-            (4, TaxCalcBreakdown.saving_ZRTHR, "£0.00"),
-            (5, TaxCalcBreakdown.saving_HRT, "£800.00"),
-            (6, TaxCalcBreakdown.saving_ART, "£5,000.00")
+            (0, rateBandTableHeader, amountTableHeader),
+            (1, messages("taxCal_breakdown.table.SSR", "£1.00", "0.0"), "£0.00"),
+            (2, messages("taxCal_breakdown.table.ZRTBR", "£20.00", "0.0"), "£0.00"),
+            (3, messages("taxCal_breakdown.table.BRT", "£20.00", "10.0"), "£2.00"),
+            (4, messages("taxCal_breakdown.table.ZRTHR", "£10,000.00", "0.0"), "£0.00"),
+            (5, messages("taxCal_breakdown.table.HRT", "£2,000.00", "40.0"), "£800.00"),
+            (6, messages("taxCal_breakdown.table.ART", "£100,000.00", "50.0"), "£5,000.00")
           )
         )
 
@@ -338,7 +351,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Savings and Gains Income" which {
         "has no Savings and Gains heading" in new Setup(zeroIncome) {
-          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingSavings
+          pageContent(pageContentSelector).select("caption").text should not include messages("taxCal_breakdown.savings")
         }
       }
 
@@ -346,16 +359,16 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 3,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingDividends,
+          expectedCaption = messages("taxCal_breakdown.dividends"),
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.dividend_ZRTBR, "£0.00"),
-            (2, TaxCalcBreakdown.dividend_BRT, "£75.00"),
-            (3, TaxCalcBreakdown.dividend_ZRTHR, "£0.00"),
-            (4, TaxCalcBreakdown.dividend_HRT, "£750.00"),
-            (5, TaxCalcBreakdown.dividend_ZRTAR, "£0.00"),
-            (6, TaxCalcBreakdown.dividend_ART, "£1,143.00")
+            (0, rateBandTableHeader, amountTableHeader),
+            (1, messages("taxCal_breakdown.table.ZRTBR", "£1,000.00", "0"), "£0.00"),
+            (2, messages("taxCal_breakdown.table.BRT", "£1,000.00", "7.5"), "£75.00"),
+            (3, messages("taxCal_breakdown.table.ZRTHR", "£2,000.00", "0"), "£0.00"),
+            (4, messages("taxCal_breakdown.table.HRT", "£2,000.00", "37.5"), "£750.00"),
+            (5, messages("taxCal_breakdown.table.ZRTAR", "£3,000.00", "0"), "£0.00"),
+            (6, messages("taxCal_breakdown.table.ART", "£3,000.00", "38.1"), "£1,143.00")
           )
         )
 
@@ -363,7 +376,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Dividend Income" which {
         "has no dividend heading" in new Setup(zeroIncome) {
-          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingDividends
+          pageContent(pageContentSelector).select("caption").text should not include messages("taxCal_breakdown.dividends")
         }
       }
 
@@ -371,13 +384,13 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 4,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingLumpSums,
+          expectedCaption = sectionHeadingLumpSums,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.ukRateTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.ls_BRT, "£4,000.00"),
-            (2, TaxCalcBreakdown.ls_HRT, "£40,000.00"),
-            (3, TaxCalcBreakdown.ls_ART, "£22,500.00")
+            (0, messages("taxCal_breakdown.table.head.rates.uk"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (2, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (3, messages("taxCal_breakdown.table.ART", "£50,000.00", "45.0"), "£22,500.00")
           )
         )
 
@@ -385,7 +398,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Lump Sum Income" which {
         "has no Lump Sum heading" in new Setup(zeroIncome) {
-          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingLumpSums
+          pageContent(pageContentSelector).select("caption").text should not include sectionHeadingLumpSums
         }
       }
 
@@ -393,13 +406,13 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 5,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies,
+          expectedCaption = sectionHeadingGainsOnLifePolicies,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.rateBandTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.gols_BRT, "£4,000.00"),
-            (2, TaxCalcBreakdown.gols_HRT, "£40,000.00"),
-            (3, TaxCalcBreakdown.gols_ART, "£22,500.00")
+            (0, rateBandTableHeader, amountTableHeader),
+            (1, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
+            (2, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
+            (3, messages("taxCal_breakdown.table.ART", "£50,000.00", "45.0"), "£22,500.00")
           )
         )
 
@@ -407,37 +420,37 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have no Gains on Life Policy Income" which {
         "has no Gains on Life Policy heading" in new Setup(zeroIncome) {
-          pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies
+          pageContent(pageContentSelector).select("caption").text should not include sectionHeadingGainsOnLifePolicies
         }
       }
 
       "have no Tax reductions table and heading when there is no any reductions value" in new Setup(viewNone) {
-        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingTaxReductions
+        pageContent(pageContentSelector).select("caption").text should not include sectionHeadingTaxReductions
       }
 
       "have a Tax reductions table" which {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 6,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedCaption = sectionHeadingTaxReductions,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.marriageAllowanceTransfer, "−£252.00"),
-            (2, TaxCalcBreakdown.deficiencyRelief, "−£1,000.00"),
-            (3, TaxCalcBreakdown.topSlicingRelief, "−£1,200.00"),
-            (4, TaxCalcBreakdown.vctRelief, "−£2,000.00"),
-            (5, TaxCalcBreakdown.eisRelief, "−£3,000.00"),
-            (6, TaxCalcBreakdown.seedRelief, "−£4,000.00"),
-            (7, TaxCalcBreakdown.citRelief, "−£5,000.00"),
-            (8, TaxCalcBreakdown.sitRelief, "−£6,000.00"),
-            (9, TaxCalcBreakdown.maintenanceRelief, "−£7,000.00"),
-            (10, TaxCalcBreakdown.reliefForFinanceCosts, "−£5,000.00"),
-            (11, TaxCalcBreakdown.notionalTax, "−£7,000.00"),
-            (12, TaxCalcBreakdown.foreignTaxCreditRelief, "−£6,000.00"),
-            (13, TaxCalcBreakdown.reliefClaimedOnQualifyingDis, "−£8,000.00"),
-            (14, TaxCalcBreakdown.nonDeductibleLoanInterest, "−£9,000.00"),
-            (15, TaxCalcBreakdown.incomeTaxDueAfterTaxReductions, "£2,000.00")
+            (0, reductionTableHeader, amountTableHeader),
+            (1, messages("deduction_breakdown.table.marriage_allowance_transfer"), "−£252.00"),
+            (2, messages("taxCal_breakdown.table.deficiencyRelief"), "−£1,000.00"),
+            (3, messages("taxCal_breakdown.table.top_slicing_relief"), "−£1,200.00"),
+            (4, messages("taxCal_breakdown.table.vctSubscriptions"), "−£2,000.00"),
+            (5, messages("taxCal_breakdown.table.eisSubscriptions"), "−£3,000.00"),
+            (6, messages("taxCal_breakdown.table.seedEnterpriseInvestment"), "−£4,000.00"),
+            (7, messages("taxCal_breakdown.table.communityInvestment"), "−£5,000.00"),
+            (8, messages("taxCal_breakdown.table.socialEnterpriseInvestment"), "−£6,000.00"),
+            (9, messages("taxCal_breakdown.table.maintenancePayments"), "−£7,000.00"),
+            (10, messages("taxCal_breakdown.table.property_finance_relief"), "−£5,000.00"),
+            (11, messages("taxCal_breakdown.table.total_notional_tax"), "−£7,000.00"),
+            (12, messages("taxCal_breakdown.table.total_foreign_tax_credit_relief"), "−£6,000.00"),
+            (13, messages("taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities"), "−£8,000.00"),
+            (14, messages("taxCal_breakdown.table.nonDeductibleLoanInterest"), "−£9,000.00"),
+            (15, messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions"), "£2,000.00")
           )
         )
 
@@ -446,11 +459,11 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "have a Tax reductions table when only MarriageAllowanceTransfer is set" which {
         shouldHaveACorrectTableContent(viewMarriageAllowanceTransfer)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedCaption = sectionHeadingTaxReductions,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.marriageAllowanceTransfer, "−£1,234.00"),
+            (0, reductionTableHeader, amountTableHeader),
+            (1, messages("deduction_breakdown.table.marriage_allowance_transfer"), "−£1,234.00"),
           )
         )
       }
@@ -458,17 +471,17 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "have a Tax reductions table when only TopSlicingRelief is set" which {
         shouldHaveACorrectTableContent(viewTopSlicingRelief)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingTaxReductions,
+          expectedCaption = sectionHeadingTaxReductions,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.reductionTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.topSlicingRelief, "−£2,345.00"),
+            (0, reductionTableHeader, amountTableHeader),
+            (1, messages("taxCal_breakdown.table.top_slicing_relief"), "−£2,345.00"),
           )
         )
       }
 
       "have no additional charges table and heading when there is no any other charges value" in new Setup(viewNone) {
-        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingAdditionalChar
+        pageContent(pageContentSelector).select("caption").text should not include sectionHeadingAdditionalChar
       }
 
       "have an additional charges table" which {
@@ -479,33 +492,33 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
         }
 
         "has a table header section" in new Setup(view) {
           val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(0)
-          row.select("th").first().text() shouldBe TaxCalcBreakdown.chargeTypeTableHeader
-          row.select("th").last().text() shouldBe TaxCalcBreakdown.amountTableHeader
+          row.select("th").first().text() shouldBe messages("taxCal_breakdown.table.head.charge_type")
+          row.select("th").last().text() shouldBe amountTableHeader
         }
 
         "has only a Gift Aid line with the correct heading and table" in new Setup(viewAdChGiftAid) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.GiftAid
+          row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.giftAidTax")
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 
         "has only a Pensions Saving line with the correct heading and table" in new Setup(viewAdChPensionSavings) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.PensionSavings
+          row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges")
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 
         "has only a Pensions Lump Sum line with the correct heading and table" in new Setup(viewAdChPensionLumpSum) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
-          row.select("td").first().text() shouldBe TaxCalcBreakdown.PensionLumpSum
+          row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.statePensionLumpSumCharges")
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 
@@ -514,14 +527,14 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "have a National Insurance contributions table" which {
         shouldHaveACorrectTableContent(view)(
           tableNumber = 8,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedCaption = sectionHeadingNationalInsuranceContributionsChar,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.Nic4New_ZRT, "£100.00"),
-            (2, TaxCalcBreakdown.Nic4New_BRT, "£200.00"),
-            (3, TaxCalcBreakdown.Nic4New_HRT, "£300.00"),
-            (4, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
+            (0, nationalInsuranceTypeTableHeader, amountTableHeader),
+            (1, Nic4New_ZRT, "£100.00"),
+            (2, Nic4New_BRT, "£200.00"),
+            (3, Nic4New_HRT, "£300.00"),
+            (4, voluntaryNic2, "£10,000.00")
           )
         )
       }
@@ -529,14 +542,14 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "have a National Insurance contributions table with Uplift message when Class4Uplift is enabled" which {
         shouldHaveACorrectTableContent(viewWithClass4UpliftEnabled)(
           tableNumber = 8,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedCaption = sectionHeadingNationalInsuranceContributionsChar,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.Nic4New_ZRT, "£100.00"),
-            (2, TaxCalcBreakdown.Nic4NewWithUplift_BRT, "£200.00"),
-            (3, TaxCalcBreakdown.Nic4NewWithUplift_HRT, "£300.00"),
-            (4, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
+            (0, nationalInsuranceTypeTableHeader, amountTableHeader),
+            (1, Nic4New_ZRT, "£100.00"),
+            (2, s"$Nic4New_BRT ${messages("taxCal_breakdown.table.uplift")}", "£200.00"),
+            (3, s"$Nic4New_HRT ${messages("taxCal_breakdown.table.uplift")}", "£300.00"),
+            (4, voluntaryNic2, "£10,000.00")
           )
         )
       }
@@ -544,11 +557,11 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "have a Nics table showing Class 2 Nics when the voluntaryClass2Contributions flag is false" which {
         shouldHaveACorrectTableContent(viewNic2)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedCaption = sectionHeadingNationalInsuranceContributionsChar,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.Nic2, "£10,000.00")
+            (0, nationalInsuranceTypeTableHeader, amountTableHeader),
+            (1, messages("tax-year-summary.payments.class2Nic.text"), "£10,000.00")
           )
         )
       }
@@ -556,42 +569,42 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "have a Nics table showing Voluntary Class 2 Nics when the voluntaryClass2Contributions flag is true" which {
         shouldHaveACorrectTableContent(viewVoluntaryNic2)(
           tableNumber = 1,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar,
+          expectedCaption = sectionHeadingNationalInsuranceContributionsChar,
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.nationalInsuranceTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.VoluntaryNic2, "£10,000.00")
+            (0, nationalInsuranceTypeTableHeader, amountTableHeader),
+            (1, voluntaryNic2, "£10,000.00")
           )
         )
       }
 
       "have no National Insurance contributions table and heading when there is no Nic4 or Nic2 data" in new Setup(viewNone) {
-        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingNationalInsuranceContributionsChar
+        pageContent(pageContentSelector).select("caption").text should not include sectionHeadingNationalInsuranceContributionsChar
       }
 
       "have no Capital Gains Tax table and heading when there is no any CGT value" in new Setup(zeroIncome) {
-        pageContent(pageContentSelector).select("caption").text should not include TaxCalcBreakdown.sectionHeadingCapitalGainsTax
+        pageContent(pageContentSelector).select("caption").text should not include messages("taxCal_breakdown.table.capital_gains_tax")
       }
 
       "have a Capital Gains Tax table" which {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 9,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingCapitalGainsTax,
+          expectedCaption = messages("taxCal_breakdown.table.capital_gains_tax"),
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.cgtTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.taxableCapitalGains, "£1,234.56"),
-            (2, TaxCalcBreakdown.assetsDisposalsAndInvestorsRelief, "£1,000.00"),
-            (3, TaxCalcBreakdown.propertyAndInterest_LRT, "£3,600.00"),
-            (4, TaxCalcBreakdown.propertyAndInterest_HRT, "£8,400.00"),
-            (5, TaxCalcBreakdown.otherGains_LRT, "£2,200.00"),
-            (6, TaxCalcBreakdown.otherGains_HRT, "£3,360.00"),
-            (7, TaxCalcBreakdown.capitalGainsTaxAdj, "£123.45"),
-            (8, TaxCalcBreakdown.foreignTaxCreditReliefOnCG, "−£2,345.67"),
-            (9, TaxCalcBreakdown.taxOnGainsAlreadyPaid, "−£3,456.78"),
-            (10, TaxCalcBreakdown.capitalGainsTaxDue, "£4,567.89"),
-            (11, TaxCalcBreakdown.capitalGainsTaxOverpaid, "£234.56")
+            (0, messages("taxCal_breakdown.table.head.cgt_type"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.cgt.taxable_capital_gains"), "£1,234.56"),
+            (2, messages("taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single", "£10,000.00", "10.0"), "£1,000.00"),
+            (3, messages("taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate", "£20,000.00", "18.0"), "£3,600.00"),
+            (4, messages("taxCal_breakdown.table.cgt.property_and_interest.band.higherRate", "£30,000.00", "28.0"), "£8,400.00"),
+            (5, messages("taxCal_breakdown.table.cgt.other_gains.band.lowerRate", "£11,000.00", "20.0"), "£2,200.00"),
+            (6, messages("taxCal_breakdown.table.cgt.other_gains.band.higherRate", "£12,000.00", "28.0"), "£3,360.00"),
+            (7, messages("taxCal_breakdown.table.cgt.adjustment"), "£123.45"),
+            (8, messages("taxCal_breakdown.table.cgt.foreign_tax_credit_relief"), "−£2,345.67"),
+            (9, messages("taxCal_breakdown.table.cgt.already_paid"), "−£3,456.78"),
+            (10, messages("taxCal_breakdown.table.cgt.due"), "£4,567.89"),
+            (11, messages("taxCal_breakdown.table.cgt.overpaid"), "£234.56")
           )
         )
 
@@ -601,13 +614,13 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 10,
-          expectedCaption = TaxCalcBreakdown.otherCharges,
+          expectedCaption = messages("taxCal_breakdown.table.other_charges"),
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.chargeTypeTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.totalStudentLoansRepaymentAmount, "£5,000.00"),
-            (2, TaxCalcBreakdown.payeUnderpaymentsCodedOut, "£254.00"),
-            (3, TaxCalcBreakdown.saUnderpaymentsCodedOut, "£400.00")
+            (0, messages("taxCal_breakdown.table.head.charge_type"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount"), "£5,000.00"),
+            (2, messages("taxCal_breakdown.table.payeUnderpaymentsCodedOut", "2017", "2018"), "£254.00"),
+            (3, messages("taxCal_breakdown.table.saUnderpaymentsCodedOut", "2017", "2018"), "£400.00")
           )
         )
       }
@@ -616,20 +629,20 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
         shouldHaveACorrectTableContent(view)(
           tableNumber = 11,
-          expectedCaption = TaxCalcBreakdown.sectionHeadingAdditionalDeduc,
+          expectedCaption = messages("taxCal_breakdown.taxDeductedAtSource"),
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
-            (0, TaxCalcBreakdown.deductionsTableHeader, TaxCalcBreakdown.amountTableHeader),
-            (1, TaxCalcBreakdown.inYearAdjustmentCodedInLaterTaxYear, "−£900.00"),
-            (2, TaxCalcBreakdown.employments, "−£100.00"),
-            (3, TaxCalcBreakdown.ukPensions, "−£200.00"),
-            (4, TaxCalcBreakdown.stateBenefits, "−£300.00"),
-            (5, TaxCalcBreakdown.cis, "−£400.00"),
-            (6, TaxCalcBreakdown.ukLandAndProperty, "−£500.00"),
-            (7, TaxCalcBreakdown.specialWithholdingTax, "−£600.00"),
-            (8, TaxCalcBreakdown.voidISAs, "−£700.00"),
-            (9, TaxCalcBreakdown.BBSI, "−£800.00"),
-            (10, TaxCalcBreakdown.totalDeductions, "£1,000.00")
+            (0, messages("taxCal_breakdown.table.head.deduction"), amountTableHeader),
+            (1, messages("taxCal_breakdown.table.taxDeductedAtSource.inYearAdjustment"), "−£900.00"),
+            (2, messages("taxCal_breakdown.table.taxDeductedAtSource.payeEmployments"), "−£100.00"),
+            (3, messages("taxCal_breakdown.table.taxDeductedAtSource.ukPensions"), "−£200.00"),
+            (4, messages("taxCal_breakdown.table.taxDeductedAtSource.stateBenefits"), "−£300.00"),
+            (5, messages("taxCal_breakdown.table.taxDeductedAtSource.cis"), "−£400.00"),
+            (6, messages("taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty"), "−£500.00"),
+            (7, messages("taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax"), "−£600.00"),
+            (8, messages("taxCal_breakdown.table.taxDeductedAtSource.voidISAs"), "−£700.00"),
+            (9, messages("taxCal_breakdown.table.banks_and_building_societies"), "−£800.00"),
+            (10, messages("taxCal_breakdown.table.taxDeductedAtSource.total"), "£1,000.00")
           )
         )
 

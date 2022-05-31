@@ -19,7 +19,6 @@ package views.notEnrolled
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.test.Helpers._
-import testConstants.MessagesLookUp.{NotEnrolled => notEnrolledMessages}
 import testUtils.TestSupport
 import views.html.notEnrolled.NotEnrolled
 
@@ -44,7 +43,7 @@ class NotEnrolledViewSpec extends TestSupport {
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-up").text() shouldBe notEnrolledMessages.signUp
+        document.getElementById("sign-up").text() shouldBe "You need to sign up for quarterly reporting before you can view this page."
       }
 
       "has a link to sign-in page" in {

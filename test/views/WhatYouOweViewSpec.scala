@@ -29,7 +29,6 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.MessagesLookUp.AgentPaymentDue
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.WhatYouOwe
@@ -1064,9 +1063,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   "agent" when {
     "The What you owe view with financial details model" when {
       s"have the title '${
-        AgentPaymentDue.title
+        messages("agent.title_pattern.service_name.govuk", messages("whatYouOwe.heading"))
       }'" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.title() shouldBe AgentPaymentDue.title
+        pageDocument.title() shouldBe messages("agent.title_pattern.service_name.govuk", messages("whatYouOwe.heading"))
         pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(
