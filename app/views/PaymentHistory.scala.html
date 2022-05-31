@@ -68,14 +68,14 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @headingContent(year: Int) = {
-        <span id="accordion-with-summary-sections-heading-@year" aria-labelledby="accordion-with-summary-sections-heading-@year">
+        <span id="accordion-with-summary-sections-heading-@year" >
             @messages("paymentHistory.button", year.toString)
         </span>
 }
 
 @bodyContent(year: Int, yearPayments: List[Payment], index: Int) = {
 
-    <table class="govuk-table" id="accordion-default-content-@{index + 1}">
+    <table class="govuk-table">
         <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
