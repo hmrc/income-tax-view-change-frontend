@@ -42,17 +42,13 @@
 }
 
 @headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<h3 class="govuk-accordion__section-heading">
-		<span class="govuk-!-font-size-24">
-			@{collectedObligations._1._1.toLongDate}
-		</span>
-	</h3>
+	<span class="govuk-!-font-size-24">
+		@{collectedObligations._1._1.toLongDate}
+	</span>
 }
 
 @summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<div class="govuk-body">
-		@getHeadingMessage(collectedObligations._1._2.head.obligation)
-	</div>
+	@getHeadingMessage(collectedObligations._1._2.head.obligation)
 }
 
 @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
