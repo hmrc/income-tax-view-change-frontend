@@ -16,7 +16,7 @@ val playPartialsVersion       = "8.2.0-play-28"
 val playUiVersion             = "9.8.0-play-28"
 val playFrontendHMRCVersion   = "3.15.0-play-28"
 val playLanguageVersion       = "5.1.0-play-28"
-val catsVersion               = "0.9.0"
+val catsVersion               = "0.9.1"
 
 val scalaTestPlusVersion      = "5.0.0"
 val pegdownVersion            = "1.6.0"
