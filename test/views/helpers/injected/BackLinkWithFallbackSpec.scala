@@ -50,16 +50,16 @@ class BackLinkWithFallbackSpec extends ViewSpec {
         assert(document.select("noscript").text contains "href=\"testUrl\"")
       }
       "has the correct noscript fallback link text with Payment History Page" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
-        assert(document.select("noscript").text contains ">Back to Payment History")
+        assert(document.select("noscript").text contains s">${messages("Back to Payment History")}")
       }
       "has the correct noscript fallback link text with WhatYouOwe Page" in new TestWithGatewayPage(Some(WhatYouOwePage)) {
-        assert(document.select("noscript").text contains ">Back to What You Owe")
+        assert(document.select("noscript").text contains s">${messages("Back to What You Owe")}")
       }
       "has the correct noscript fallback link text with TaxYearSummary Page" in new TestWithGatewayPage(Some(TaxYearSummaryPage)) {
-        assert(document.select("noscript").text contains ">Back to Tax Year Summary")
+        assert(document.select("noscript").text contains s">${messages("back.taxYearSummary")}")
       }
       "has the correct noscript fallback link text with NoMatch Page" in new TestWithGatewayPage(Some(NoMatch)) {
-        assert(document.select("noscript").text contains ">Back")
+        assert(document.select("noscript").text contains s">${messages("back.nomatch")}")
       }
     }
   }

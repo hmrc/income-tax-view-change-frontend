@@ -43,7 +43,7 @@ class NotEnrolledViewSpec extends TestSupport {
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-up").text() shouldBe "You need to sign up for quarterly reporting before you can view this page."
+        document.getElementById("sign-up").text() shouldBe  s"${messages("not_enrolled.sign-up.1")} ${messages("not_enrolled.sign-up.2")} ${messages("not_enrolled.sign-up.3")}"
       }
 
       "has a link to sign-in page" in {

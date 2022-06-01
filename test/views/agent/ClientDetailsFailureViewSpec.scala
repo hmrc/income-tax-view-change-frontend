@@ -38,20 +38,20 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
   )
 
   object ClientRelationshipMessages {
-    val title: String = "You need permission to view this client - Your client’s Income Tax details - GOV.UK"
-    val heading: String = "You need permission to view this client"
-    val info: String = "Your client needs to authorise you as their agent (opens in new tab) before you can access this service. You may want to check the Unique Taxpayer Reference (UTR) to make sure it’s the right one or look up another client."
-    val clientAuthorisationLink: String = "authorise you as their agent (opens in new tab)"
-    val enterDifferentDetails: String = "Enter another UTR"
+    val heading: String = messages("agent.client_relationship_failure.heading")
+    val title: String = messages("agent.titlePattern.serviceName.govUk", heading)
+    val info: String = messages("agent.client_relationship_failure.info", s"${messages("agent.client_relationship_failure.info.link")}${messages("pagehelp.opensInNewTabText")}")
+    val clientAuthorisationLink: String = s"${messages("agent.client_relationship_failure.info.link")}${messages("pagehelp.opensInNewTabText")}"
+    val enterDifferentDetails: String = messages("agent.client_relationship_failure.enter_different_details")
   }
 
   "The Client Relationship Failure page" should {
 
-    s"have the title '${ClientRelationshipMessages.title}'" in new ClientRelationshipFailureSetup {
+    s"have the title ${ClientRelationshipMessages.title}" in new ClientRelationshipFailureSetup {
       document.title shouldBe ClientRelationshipMessages.title
     }
 
-    s"have the heading '${ClientRelationshipMessages.heading}'" in new ClientRelationshipFailureSetup {
+    s"have the heading ${ClientRelationshipMessages.heading}" in new ClientRelationshipFailureSetup {
       layoutContent hasPageHeading ClientRelationshipMessages.heading
     }
 

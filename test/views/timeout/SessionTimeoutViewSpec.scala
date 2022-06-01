@@ -44,7 +44,7 @@ class SessionTimeoutViewSpec extends TestSupport {
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-in").text() shouldBe s"${messages("timeout.signIn.1")} ${messages("sign in")} ${messages("using your Government Gateway ID.")}"
+        document.getElementById("sign-in").text() shouldBe s"${messages("timeout.signIn.1")} ${messages("timeout.signIn.2")} ${messages("timeout.signIn.3")}"
       }
 
       "has a link to sign-in page" in {

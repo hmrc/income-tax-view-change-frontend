@@ -47,8 +47,8 @@ class NextUpdatesHelperSpec extends TestSupport {
   )))
 
   object Messages {
-    val quarterlyUpdateDue = "Update for: 1 July 2017 to 30 September 2017"
-    val nonQuarterlyUpdateDue = "Tax year: 1 October 2017 to 30 October 2018"
+    val quarterlyUpdateDue: String = messages("nextUpdates.section.heading.updates", "1 July 2017", "30 September 2017")
+    val nonQuarterlyUpdateDue: String = messages("nextUpdates.section.heading.taxYear", "1 October 2017", "30 October 2018")
   }
 
   "Next updates helper" should {
@@ -65,7 +65,7 @@ class NextUpdatesHelperSpec extends TestSupport {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(1)")
 
       section.select("dl").size() shouldBe 1
-      section.select("dl dt").text() shouldBe "Quarterly update"
+      section.select("dl dt").text() shouldBe messages("nextUpdates.quarterly")
       section.select("dl dd").text() shouldBe testTradeName
     }
 

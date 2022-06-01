@@ -75,9 +75,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   }
 
-
-  val typePOA1 = "SA Payment on Account 1"
-  val typePOA2 = "SA Payment on Account 2"
+  val typePOA1 = s"SA ${messages("whatYouOwe.payment-on-account.heading")} 1"
+  val typePOA2 = s"SA ${messages("whatYouOwe.payment-on-account.heading")} 2"
   val typeBalCharge = "SA Balancing Charge"
 
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
@@ -99,53 +98,53 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def cancelledSaPayeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Cancelled Self Assessment payment (through your PAYE tax code)"
 
-    val dueDate = "Due date"
-    val interestPeriod = "Interest period"
-    val fullPaymentAmount = "Full payment amount"
-    val paymentAmount = "Payment amount"
-    val remainingToPay = "Remaining to pay"
-    val paymentBreakdownHeading = "Payment breakdown"
-    val chargeHistoryHeading = "Payment history"
-    val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
-    val codingOutHeader = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
-    val codingOutInsetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
+    val dueDate: String = messages("chargeSummary.dueDate")
+    val interestPeriod: String = messages("chargeSummary.lpi.interestPeriod")
+    val fullPaymentAmount: String = messages("chargeSummary.paymentAmount")
+    val paymentAmount: String = messages("chargeSummary.paymentAmountCodingOut")
+    val remainingToPay: String = messages("chargeSummary.remainingDue")
+    val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
+    val chargeHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
+    val historyRowPOA1Created: String =  s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
+    val codingOutHeader: String = s"Tax year ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
+    val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet1-3")}"
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
-    val balancingChargeCreated = "Balancing payment created"
-    val balancingChargeInterestCreated = "Late payment interest for Balancing payment created"
+    val balancingChargeCreated: String = messages("chargeSummary.chargeHistory.created.balancingCharge.text")
+    val balancingChargeInterestCreated: String = messages("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
 
     def paymentOnAccountAmended(number: Int) = s"Payment on account $number of 2 reduced due to amended return"
 
-    val balancingChargeAmended = "Balancing payment reduced due to amended return"
+    val balancingChargeAmended: String = messages("chargeSummary.chargeHistory.amend.balancingCharge.text")
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
-    def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
+    def class2NicTaxYear(year: Int) =  messages("chargeSummary.nic2TaxYear", s"${year - 1}", s"$year")
 
-    val class2NicChargeCreated = "Class 2 National Insurance created"
-    val cancelledSaPayeCreated = "Cancelled Self Assessment payment (through your PAYE tax code) created"
+    val class2NicChargeCreated: String = messages("chargeSummary.chargeHistory.created.class2Nic.text")
+    val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
 
-    def payeTaxCodeText(year: Int) = s"Check if your PAYE tax code has changed for the ${year - 1} to $year tax year."
+    def payeTaxCodeText(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", s"${year - 1}", s"$year")}"
 
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
-    val cancelledPayeTaxCodeInsetText = "You have previously agreed to pay some of your Self Assessment bill through your PAYE tax code (opens in new tab). HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay."
+    val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")}${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
-    def remainingTaxYouOwe(year: Int) = s"This is the remaining tax you owe for the ${year - 1} to $year tax year."
+    def remainingTaxYouOwe(year: Int) = messages("chargeSummary.codingOutMessage", s"${year - 1}", s"$year")
 
-    val balancingChargeRequest = "Balancing payment reduced by taxpayer request"
-    val dunningLockBannerHeader = "Important"
-    val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)."
-    val interestLinkFirstWord = "View"
-    val interestLinkText = "what you owe"
-    val interestLinkFullText = "to check if you have any interest on this payment"
+    val balancingChargeRequest: String = messages("chargeSummary.chargeHistory.request.balancingCharge.text")
+    val dunningLockBannerHeader: String = messages("chargeSummary.dunning.locks.banner.title")
+    val dunningLockBannerLink: String = s"${messages("chargeSummary.dunning.locks.banner.linkText")}${messages("pagehelp.opensInNewTabText")}."
+    val interestLinkFirstWord: String = messages("chargeSummary.whatYouOwe.textOne")
+    val interestLinkText: String = messages("chargeSummary.whatYouOwe.linkText")
+    val interestLinkFullText: String = messages("chargeSummary.interestLocks.text")
+    val cancelledPAYESelfAssessment: String = messages("whatYouOwe.cancelled-paye-sa.heading")
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
-      s"$dunningLockBannerLink You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
+      s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
   }
 
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "amended return")
@@ -254,12 +253,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
       }
 
-      "have the correct heading for a Cancelled PAYE Self Assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+      s"have the correct heading for a Cancelled PAYE Self Assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         document.select("h1").text() shouldBe Messages.cancelledSaPayeHeading(2018)
       }
 
       "have a paragraphs explaining Cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), codingOutEnabled = true) {
         document.select("#check-paye-para").text() shouldBe Messages.payeTaxCodeText(2018)
         document.select("#paye-tax-code-link").attr("href") shouldBe Messages.payeTaxCodeLink
         document.select("#cancelled-coding-out-notice").text() shouldBe Messages.cancelledPayeTaxCodeInsetText
@@ -267,13 +266,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       }
 
-      "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+      "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 May 2019")
         verifySummaryListRow(2, Messages.paymentAmount, "£1,400.00")
         verifySummaryListRow(3, Messages.remainingToPay, "£1,400.00")
       }
 
-      "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+      "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
       }
 
@@ -287,16 +286,16 @@ class ChargeSummaryViewSpec extends ViewSpec {
         document.doesNotHave(Selectors.id("heading-payment-breakdown"))
       }
 
-      "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+      "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         document.select("div#payment-link-2018").text() shouldBe msgs("paymentDue.payNow")
       }
 
       "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
         document.select("main h2").text shouldBe Messages.chargeHistoryHeading
       }
 
-      "display only the charge creation item when no history found for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+      "display only the charge creation item when no history found for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(1)").text() shouldBe "29 Mar 2018"
         document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.cancelledSaPayeCreated
@@ -623,7 +622,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
         }
 
       }
-
+      // TODO needs to be fixed
       "hide payment allocations in history table" when {
         "allocations enabled but list is empty" when {
           "chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
