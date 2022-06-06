@@ -40,6 +40,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val paymentText: String = messages("credit-and-refund.payment")
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
+  val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("titlePattern.serviceName.govUk", creditAndRefundHeading)
+  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("agent.title_pattern.service_name.govuk", creditAndRefundHeading)
 
  def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
                          secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
@@ -74,7 +76,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     "display the page" when {
       "a user has requested a refund" in new Setup(){
 
-        document.title() shouldBe creditAndRefundHeading + " - Business Tax account - GOV.UK"
+        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("h2").first().select("span").text() shouldBe subHeadingWithCredits
         document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
@@ -89,7 +91,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))){
 
-        document.title() shouldBe creditAndRefundHeading + " - Business Tax account - GOV.UK"
+        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("h2").first().select("span").text() shouldBe subHeadingWithCredits
         document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
@@ -105,7 +107,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
                   balance = Some(balanceDetailsModel(availableCredit = Some(0)))
         ){
 
-        document.title() shouldBe creditAndRefundHeading + " - Business Tax account - GOV.UK"
+        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("h2").first().select("span").text().contains(subHeadingWithCredits) shouldBe false
         document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
@@ -119,7 +121,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "a user has no available credit or current pending refunds" in
         new Setup(balance = None){
 
-          document.title() shouldBe creditAndRefundHeading + " - Business Tax account - GOV.UK"
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("p").last.text() shouldBe messages("credit-and-refund.no-credit")
 
@@ -133,7 +135,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     "display the page" when {
       "correct data is provided" in new Setup(isAgent = true){
 
-        document.title() shouldBe creditAndRefundHeading + " - Your client’s Income Tax details - GOV.UK"
+        document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
         document.select("dt").first().select("a").attr("href") shouldBe link

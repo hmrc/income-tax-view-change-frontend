@@ -60,8 +60,16 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val tableHeadings: Seq[String] = Seq(messages("paymentAllocation.tableHead.allocation"), messages("paymentAllocation.tableHead.allocated-date"), messages("paymentAllocation.tableHead.amount"))
   val moneyOnAccount: String = messages("paymentAllocation.moneyOnAccount")
   val moneyOnAccountAmount: String = "£200.00"
-  val allocationsTableHeading: String = "Payment allocations"
+  val allocationsTableHeading: String = messages("paymentAllocation.tableSection.heading")
   val allocationsTableHeadersText: String = s"$paymentAllocationHeading ${tableHeadings.mkString(" ")}"
+  val paymentAllocationsPoa1IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa1.incomeTax")
+  val paymentAllocationsPoa2IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa2.incomeTax")
+  val paymentAllocationsPoa1Nic4: String = messages("paymentAllocation.paymentAllocations.poa1.nic4")
+  val paymentAllocationsPoa2Nic4: String = messages("paymentAllocation.paymentAllocations.poa2.nic4")
+  val moneyOnAccountNA: String = s"${messages("paymentAllocation.moneyOnAccount")} ${messages("paymentAllocation.na")}"
+  val paymentAllocationTaxYearFrom2017to2018: String = messages("paymentAllocation.taxYear", "2017", "2018")
+  val paymentAllocationTaxYearFrom2018to2019: String = messages("paymentAllocation.taxYear", "2018", "2019")
+  val paymentAllocationTaxYearFrom2019to2020: String = messages("paymentAllocation.taxYear", "2019", "2020")
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
                                CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None,
@@ -261,15 +269,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |Income Tax for payment on account 1 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
-             |Income Tax for payment on account 1 of 2 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
-             |Income Tax for payment on account 1 of 2 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
-             |Income Tax for payment on account 1 of 2 2019 Tax year 2018 to 2019 30 Jun 2019 £4,567.89
-             |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
-             |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
-             |Class 4 National Insurance for payment on account 1 of 2 2019 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
-             |Class 4 National Insurance for payment on account 1 of 2 2020 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
-             |Money in your account N/A £200.00
+             |$paymentAllocationsPoa1IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
+             |$paymentAllocationsPoa1IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
+             |$paymentAllocationsPoa1IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
+             |$paymentAllocationsPoa1IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
+             |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
+             |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
+             |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
+             |$paymentAllocationsPoa1Nic4 2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
+             |$moneyOnAccountNA £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -302,15 +310,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |Income Tax for payment on account 2 of 2 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
-             |Income Tax for payment on account 2 of 2 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
-             |Income Tax for payment on account 2 of 2 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
-             |Income Tax for payment on account 2 of 2 2019 Tax year 2018 to 2019 30 Jun 2019 £4,567.89
-             |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
-             |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
-             |Class 4 National Insurance for payment on account 2 of 2 2019 Tax year 2018 to 2019 29 Aug 2019 £7,654.32
-             |Class 4 National Insurance for payment on account 2 of 2 2020 Tax year 2019 to 2020 30 Aug 2019 £6,543.21
-             |Money in your account N/A £200.00
+             |$paymentAllocationsPoa2IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
+             |$paymentAllocationsPoa2IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
+             |$paymentAllocationsPoa2IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
+             |$paymentAllocationsPoa2IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
+             |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
+             |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
+             |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
+             |$paymentAllocationsPoa2Nic4 2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
+             |$moneyOnAccountNA £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -339,13 +347,13 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |Income Tax for Balancing payment 2018 Tax year 2017 to 2018 27 Jun 2019 £1,234.56
-             |Class 4 National Insurance for Balancing payment 2018 Tax year 2017 to 2018 28 Jun 2019 £2,345.67
-             |Class 2 National Insurance for Balancing payment 2019 Tax year 2018 to 2019 29 Jun 2019 £3,456.78
-             |Capital Gains Tax for Balancing payment 2019 Tax year 2018 to 2019 27 Aug 2019 £9,876.54
-             |Student Loans for Balancing payment 2019 Tax year 2018 to 2019 28 Aug 2019 £8,765.43
-             |Voluntary Class 2 National Insurance for Balancing payment 2020 Tax year 2019 to 2020 29 Aug 2019 £7,654.32
-             |Money in your account N/A £200.00
+             |${messages("paymentAllocation.paymentAllocations.bcd.incomeTax")} 2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
+             |${messages("paymentAllocation.paymentAllocations.bcd.nic4")} 2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
+             |${messages("paymentAllocation.paymentAllocations.bcd.nic2")} 2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
+             |${messages("paymentAllocation.paymentAllocations.bcd.cgt")} 2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
+             |${messages("paymentAllocation.paymentAllocations.bcd.sl")} 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
+             |${messages("paymentAllocation.paymentAllocations.bcd.vcnic2")} 2020 $paymentAllocationTaxYearFrom2019to2020 29 Aug 2019 £7,654.32
+             |$moneyOnAccountNA £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)

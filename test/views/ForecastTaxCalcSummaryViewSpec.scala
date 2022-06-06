@@ -27,7 +27,7 @@ import views.html.ForecastTaxCalcSummary
 class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
-  val forecastTaxCalc = "Forecast tax calculation"
+  val forecastTaxCalc: String = messages("forecast_taxCalc.heading")
 
   val endOfYearEstimateModel: EndOfYearEstimate = EndOfYearEstimate(
     incomeSource = None,

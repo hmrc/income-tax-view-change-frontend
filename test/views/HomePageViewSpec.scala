@@ -58,12 +58,12 @@ class HomePageViewSpec extends TestSupport {
 
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
   val updateDateLongDate = "1 January 2018"
-  val multipleOverdueUpdates = "3 OVERDUE UPDATES"
+  val multipleOverdueUpdates = s"${messages("home.updates.overdue.updates", "3")}"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
   val paymentDateLongDate = "31 January 2019"
-  val multipleOverduePayments = "3 OVERDUE PAYMENTS"
-  val overdueMessage = "! Warning You have overdue payments. You may be charged interest on these until they are paid in full."
-  val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
+  val multipleOverduePayments = s"${messages("home.updates.overdue.payments", "3")}"
+  val overdueMessage = s"! Warning ${messages("home.agent.overdue.message")}"
+  val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,

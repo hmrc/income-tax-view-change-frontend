@@ -26,7 +26,7 @@ import views.html.DeductionBreakdown
 class DeductionBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
-  val deductions = "Allowances and deductions"
+  val deductions: String = messages("deduction_breakdown.heading")
   val personalAllowance: String = messages("deduction_breakdown.table.personal_allowance")
 
   def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
