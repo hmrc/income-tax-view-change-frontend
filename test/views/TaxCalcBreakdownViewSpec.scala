@@ -675,20 +675,20 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 14
-      document.select(messageContentSelector).get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
-      document.select(messageContentSelector).get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
-      document.select(messageContentSelector).get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
-      document.select(messageContentSelector).get(3).text shouldBe "Your payroll giving amount has been included in your adjusted taxable income"
-      document.select(messageContentSelector).get(4).text shouldBe "Employment related expenses are capped at the total amount of employment income"
-      document.select(messageContentSelector).get(5).text shouldBe "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
-      document.select(messageContentSelector).get(6).text shouldBe "Employment and Deduction related expenses have been limited to employment income."
-      document.select(messageContentSelector).get(7).text shouldBe "Due to your employed earnings, paying Class 2 Voluntary may not be beneficial."
-      document.select(messageContentSelector).get(8).text shouldBe "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
-      document.select(messageContentSelector).get(9).text shouldBe "Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation."
-      document.select(messageContentSelector).get(10).text shouldBe "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
-      document.select(messageContentSelector).get(11).text shouldBe "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
-      document.select(messageContentSelector).get(12).text shouldBe "The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation."
-      document.select(messageContentSelector).get(13).text shouldBe "1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care."
+      document.select(messageContentSelector).get(0).text shouldBe messages("taxCal_breakdown.message.C22202")
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22203")
+      document.select(messageContentSelector).get(2).text shouldBe messages("taxCal_breakdown.message.C22206")
+      document.select(messageContentSelector).get(3).text shouldBe messages("taxCal_breakdown.message.C22207")
+      document.select(messageContentSelector).get(4).text shouldBe messages("taxCal_breakdown.message.C22210")
+      document.select(messageContentSelector).get(5).text shouldBe messages("taxCal_breakdown.message.C22211")
+      document.select(messageContentSelector).get(6).text shouldBe messages("taxCal_breakdown.message.C22212")
+      document.select(messageContentSelector).get(7).text shouldBe messages("taxCal_breakdown.message.C22213")
+      document.select(messageContentSelector).get(8).text shouldBe messages("taxCal_breakdown.message.C22214")
+      document.select(messageContentSelector).get(9).text shouldBe messages("taxCal_breakdown.message.C22215")
+      document.select(messageContentSelector).get(10).text shouldBe messages("taxCal_breakdown.message.C22216")
+      document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.C22217")
+      document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.C22218")
+      document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.C22219")
     }
 
     "provided with message C22201" in {
@@ -711,7 +711,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.98 to £15,000.00 for Gift Aid payments"
+      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22201", "£5,000.98", "£15,000.00")
     }
 
     "A C22201 message" when {
@@ -769,7 +769,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Total loss from all income sources was capped at £1,000.00"
+      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22205", "£1,000.00")
     }
 
     "A C22205 message" when {
@@ -810,7 +810,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
+      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22208", "£5,000.99", "£15,000.00")
     }
 
     "A C22208 message" when {
@@ -876,7 +876,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
+      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22209", "£5,000.99", "£15,000.00")
     }
 
     "A C22209 message" when {
