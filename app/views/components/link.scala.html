@@ -30,11 +30,7 @@
 )(implicit messages: Messages)
 
 <a href="@link" class="@classes" @id.map(id => s"id=$id") @if(rel.isDefined){rel="@rel.map(c=>s"$c")"} @target.map(target => s"target=$target")
-    @role.map(role => s"role=$role")
-    @if(ariaLabel.isDefined) {
-            aria-label="@ariaLabel.map(label=>s"$label")">
-    } else {
-       aria-label="@messages(messageKey).replaceAll(" ", "-")@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText").replaceAll(" ", "-")}">
-    }
+    @role.map(role => s"role=$role")>
+
 
     @messages(messageKey)@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>@outerMessage
