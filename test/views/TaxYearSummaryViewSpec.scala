@@ -285,7 +285,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.selectHead("span").text.contains(taxYearSummaryMessages.secondaryHeading)
       }
 
-      "display the calculation date" in new Setup(estimateView()) {
+      "display the calculation date and title" in new Setup(estimateView()) {
+        layoutContent.h2.selectFirst("h2").text().contains(taxYearSummaryMessages.taxCalculationHeading)
         layoutContent.selectHead("dl > div:nth-child(1) > dt:nth-child(1)").text shouldBe taxYearSummaryMessages.calculationDate
         layoutContent.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe taxYearSummaryMessages.calcDate
       }
