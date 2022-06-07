@@ -105,7 +105,7 @@ home.agent.overdue.message                                      = Mae gennych da
 home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
-
+home.credAndRefund.view                                         = Hawlio ad-daliad
 
 
 ## Recruitment Banner ##
