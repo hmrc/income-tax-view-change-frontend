@@ -24,9 +24,17 @@
 @import enums.GatewayPage._
 
 
-@this(mainTemplate: unifiedLayout, paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
-        paymentAllocationsForLpi: PaymentAllocationsForLpi, paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount, implicitDateFormatter: ImplicitDateFormatterImpl, h1:h1, p:p,
-        govukInsetText: GovukInsetText, link: link, appConfig: config.FrontendAppConfig)
+@this(mainTemplate: unifiedLayout,
+      paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+      paymentAllocationsForLpi: PaymentAllocationsForLpi,
+      paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
+      implicitDateFormatter: ImplicitDateFormatterImpl,
+      h1:h1,
+      p:p,
+      govukInsetText: GovukInsetText,
+      link: link,
+      appConfig: config.FrontendAppConfig
+)
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
     CutOverCreditsEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
@@ -37,13 +45,14 @@
 @paymentAllocationInset = {
     @p(){@messages("paymentAllocation.info")}
 }
+
 @pageTitle = @{
     messages(if (CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
         "paymentAllocation.earlyTaxYear.heading" else "paymentAllocation.heading")
 }
 
 @mainTemplate(
-   pageTitle = pageTitle,
+    pageTitle = pageTitle,
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
@@ -51,54 +60,52 @@
     gatewayPage = gatewayPage
 ) {
 
- @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-          @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
- } else {
-          @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
- }
-
-  @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-    @p(id=Some("sa-note-migrated")){
-       @messages("paymentAllocation.sa.info")
-       @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-        outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank"))
+    @if(CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+        @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
+    } else {
+        @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
     }
-  }
+
+    @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+        @p(id=Some("sa-note-migrated")){
+        @messages("paymentAllocation.sa.info")
+        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
+        outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank"))
+        }
+    }
 
 
     <dl class="govuk-summary-list" id="payment-allocation-charge-table">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
-                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.getOrElse(throw MissingFieldException("Financial Details Sub Item")).head.dueDate.getOrElse(throw MissingFieldException("Payment Allocation Due Date")).toLocalDate.toLongDate}</dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>
-                <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.getOrElse(throw MissingFieldException("Payment Allocation Amount")).abs.toCurrencyString}</dd>
-
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
+            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.getOrElse(throw MissingFieldException("Financial Details Sub Item")).head.dueDate.getOrElse(throw MissingFieldException("Payment Allocation Due Date")).toLocalDate.toLongDate}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>
+            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.getOrElse(throw MissingFieldException("Payment Allocation Amount")).abs.toCurrencyString}</dd>
         </div>
     </dl>
 
 @govukInsetText(InsetText(content = HtmlContent(paymentAllocationInset)))
 
-@if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+    @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
 
-} else {
+    } else {
     <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 
     <table class="govuk-table" id="payment-allocation-table">
         <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
-
         <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
-        </tr>
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
+                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
+                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
+            </tr>
         </thead>
        @if(paymentAllocations.isLpiPayment) {
-           @paymentAllocationsForLpi(paymentAllocations, isAgent)
+            @paymentAllocationsForLpi(paymentAllocations, isAgent)
        } else {
-           @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+            @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
        }
        @paymentAllocationsCreditAmount(paymentAllocations, creditsRefundsRepayEnabled, isAgent)
    </table> }
