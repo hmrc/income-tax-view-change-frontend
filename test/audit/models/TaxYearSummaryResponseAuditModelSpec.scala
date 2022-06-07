@@ -23,17 +23,23 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.scalatest.{MustMatchers, WordSpecLike}
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.taxYear
+import testConstants.BaseTestConstants.{app, taxYear}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
 class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatchers {
 
+  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
+  val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
+  val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
+  val updateTypeEops: String = messages("updateTab.updateType.eops")
 
   def taxYearSummaryViewModel(forecastIncome:Option[Int] = None,
                               forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
@@ -165,20 +171,20 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
           "payments" -> Seq(Json.obj(
             "amount" -> 1400,
             "dueDate" -> "2019-05-15",
-            "paymentType" -> "Payment on account 1 of 2",
+            "paymentType" -> paymentsPaymentOnAccount1,
             "underReview" -> false,
             "status" -> "unpaid"
           ), Json.obj(
             "amount" -> 100,
             "dueDate" -> "2019-05-15",
-            "paymentType" -> "Late payment interest for payment on account 1 of 2",
+            "paymentType" -> paymentsLpiPaymentOnAccount1,
             "underReview" -> false,
             "status" -> "part-paid"
           )),
           "updates" -> Seq(Json.obj(
             "incomeSource" -> "Test Trading Name",
             "dateSubmitted" -> LocalDate.now.toString,
-            "updateType" -> "Annual Update"
+            "updateType" -> updateTypeEops
           ))
         )
       }
@@ -207,20 +213,20 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
           "payments" -> Seq(Json.obj(
             "amount" -> 1400,
             "dueDate" -> "2019-05-15",
-            "paymentType" -> "Payment on account 1 of 2",
+            "paymentType" -> paymentsPaymentOnAccount1,
             "underReview" -> true,
             "status" -> "unpaid"
           ), Json.obj(
             "amount" -> 100,
             "dueDate" -> "2019-05-15",
-            "paymentType" -> "Late payment interest for payment on account 1 of 2",
+            "paymentType" -> paymentsLpiPaymentOnAccount1,
             "underReview" -> true,
             "status" -> "part-paid"
           )),
           "updates" -> Seq(Json.obj(
             "incomeSource" -> "Test Trading Name",
             "dateSubmitted" -> LocalDate.now.toString,
-            "updateType" -> "Annual Update"
+            "updateType" -> updateTypeEops
           ))
         )
       }
