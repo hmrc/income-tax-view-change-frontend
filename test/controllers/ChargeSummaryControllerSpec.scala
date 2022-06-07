@@ -90,12 +90,12 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     )
   }
 
-  val errorHeading = "Sorry, there is a problem with the service"
-  val successHeading = "Tax year 6 April 2017 to 5 April 2018 Payment on account 1 of 2"
-  val dunningLocksBannerHeading = "Important"
-  val paymentBreakdownHeading = "Payment breakdown"
-  val paymentHistoryHeading = "Payment history"
-  val lateInterestSuccessHeading = "Tax year 6 April 2017 to 5 April 2018 Late payment interest on payment on account 1 of 2"
+  val errorHeading: String = messages("standardError.heading")
+  val successHeading = s"Tax year 6 April 2017 to 5 April 2018 ${messages("chargeSummary.paymentOnAccount1.text")}"
+  val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
+  val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
+  val paymentHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
+  val lateInterestSuccessHeading = s"Tax year 6 April 2017 to 5 April 2018 ${messages("chargeSummary.lpi.paymentOnAccount1.text")}"
 
   "The ChargeSummaryController for Individuals" should {
 

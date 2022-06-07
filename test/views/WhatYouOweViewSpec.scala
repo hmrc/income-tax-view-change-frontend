@@ -38,6 +38,7 @@ import java.time.LocalDate
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
   val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
+
   val whatYouOweTitle: String = messages("titlePattern.serviceName.govUk", messages("whatYouOwe.heading"))
   val whatYouOweHeading: String = messages("whatYouOwe.heading")
   val noPaymentsDue: String = messages("whatYouOwe.no-payments-due")
@@ -63,11 +64,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poaLine1: String = messages("whatYouOwe.payment-on-account.line1")
   val lpiHeading: String = messages("whatYouOwe.late-payment-interest.heading")
   val lpiLine1: String = messages("whatYouOwe.late-payment-interest.line1")
-  val overdueTag: String = "OVERDUE"
+  val overdueTag: String = messages("whatYouOwe.over-due")
   val poa1WithTaxYearAndUnderReview: String = s"$poa1Text $currentYear $paymentUnderReview"
   val poa1WithTaxYearOverdueAndUnderReview: String = s"$overdueTag $poa1Text $currentYear $paymentUnderReview"
   val dueDate: String = messages("whatYouOwe.tableHead.due-date")
   val payNow: String = messages("whatYouOwe.payNow")
+  val saPaymentOnAccount1: String = "SA Payment on Account 1"
+  val saPaymentOnAccount2: String = "SA Payment on Account 2"
+  val itsaPOA1: String = "ITSA- POA 1"
+  val itsaPOA2: String = "ITSA - POA 2"
+  val cancelledPayeSelfAssessment: String = "Cancelled Self Assessment payment (through your PAYE tax code)"
 
   def interestFromToDate(from: String, to: String, rate: String) =
     s"${messages("whatYouOwe.over-due.interest.line1")} ${messages("whatYouOwe.over-due.interest.line2", from, to, rate)}"
@@ -147,8 +153,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   def financialDetailsOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): FinancialDetailsModel = testFinancialDetailsModelWithInterest(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
+    mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     dueDate = dueDateOverdue,
     dunningLock = noDunningLocks,
     outstandingAmount = List(Some(50), Some(75)),
@@ -159,8 +165,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def financialDetailsOverdueWithLpi(latePaymentInterest: List[Option[BigDecimal]], dunningLock: List[Option[String]]): FinancialDetailsModel = testFinancialDetailsModelWithLPI(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
+    mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
     dunningLock = dunningLock,
     outstandingAmount = List(Some(50), Some(75)),
@@ -170,8 +176,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def financialDetailsOverdueWithLpiDunningBlock(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
+    mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString,
@@ -181,8 +187,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def financialDetailsOverdueWithLpiDunningBlockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningBlock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
+    mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
     outstandingAmount = List(Some(50), Some(75)),
     taxYear = LocalDate.now().getYear.toString,
@@ -233,8 +239,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   val codingOutAmount = 444.23
-  val codingOutHeader = "Collected through PAYE tax code"
-  val codingOutNotice = "You have £444.23 of tax for the 2020 to 2021 tax year being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically."
+  val codingOutHeader: String = messages("whatYouOwe.codingOutHeading")
+  val codingOutNotice = s"${messages("whatYouOwe.codingOut-1a")} £444.23 ${messages("whatYouOwe.codingOut-1b")} ${messages("whatYouOwe.codingOut-2", "2020", "2021")} ${messages("whatYouOwe.codingOut-3")}"
 
   val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
@@ -583,8 +589,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
             val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-            overduePaymentsTableRow1.select("td").get(1).text() shouldBe overdueTag + " " +
-              latePoa1Text + s" $currentYear"
+            overduePaymentsTableRow1.select("td").get(1).text() shouldBe s"$overdueTag $latePoa1Text $currentYear"
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
@@ -995,7 +1000,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
         pageDocument.getElementById("coding-out-notice") shouldBe null
-        pageDocument.getElementById("due-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
+        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.getElementById("coding-out-summary-link") shouldBe null
       }
@@ -1013,7 +1018,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
         pageDocument.getElementById("coding-out-notice") shouldBe null
         pageDocument.getElementById("due-0") should not be null
-        pageDocument.getElementById("due-0").text().contains("Cancelled Self Assessment payment (through your PAYE tax code)") shouldBe true
+        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.getElementById("coding-out-summary-link") shouldBe null
       }

@@ -23,13 +23,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
 import views.html.ChargeSummary
-import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
-import testConstants.PaymentAllocationsTestConstants.documentDetail
+
 import java.time.LocalDate
 
 class ChargeSummaryViewSpec extends ViewSpec {
@@ -75,8 +75,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   }
 
-  val typePOA1 = s"SA ${messages("whatYouOwe.payment-on-account.heading")} 1"
-  val typePOA2 = s"SA ${messages("whatYouOwe.payment-on-account.heading")} 2"
+  val typePOA1 = "SA Payment on Account 1"
+  val typePOA2 = "SA Payment on Account 2"
   val typeBalCharge = "SA Balancing Charge"
 
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =

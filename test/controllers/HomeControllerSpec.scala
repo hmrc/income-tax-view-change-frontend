@@ -93,10 +93,9 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     )
     when(mockDateService.getCurrentDate) thenReturn LocalDate.now()
 
-    val overdueWarningMessageDunningLockTrue: String =
-      "You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
-    val overdueWarningMessageDunningLockFalse: String = "You have overdue payments. You may be charged interest on these until they are paid in full."
-    val expectedOverDuePaymentsText = "OVERDUE 31 January 2019"
+    val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
+    val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
+    val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
     val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
@@ -107,7 +106,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
   val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.true")
   val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.false")
-  val expectedOverDuePaymentsText = "OVERDUE 31 January 2019"
+  val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
+  val twoOverduePayments: String = messages("home.overdue.date.payment.count", "2")
 
 
   object TestHomeController extends HomeController(
@@ -155,7 +155,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe homePageTitle
-        document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
+        document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
       }
 
       "there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
@@ -171,7 +171,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe homePageTitle
-        document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 31 January 2019"
+        document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
       }
 
       "display number of payments due when there are multiple payment due and dunning locks" in new Setup {
@@ -208,8 +208,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe homePageTitle
-        document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
-        document.select("#overdue-warning").text shouldBe "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
+        document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+        document.select("#overdue-warning").text shouldBe s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
       }
 
       "display number of payments due when there are multiple payment due without dunning lock and filter out payments" in new Setup {
@@ -254,8 +254,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe homePageTitle
-        document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
-        document.select("#overdue-warning").text shouldBe "! Warning You have overdue payments. You may be charged interest on these until they are paid in full."
+        document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+        document.select("#overdue-warning").text shouldBe s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
       }
 
       "Not display the next payment due date" when {
@@ -439,7 +439,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe "OVERDUE 15 June 2018"
+            document.select("#payments-tile p:nth-child(2)").text shouldBe s"${messages("home.overdue.date")} 15 June 2018"
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
           }
           "display the home page with right details and without dunning lock warning and one overdue payment from CESA" in {
@@ -458,7 +458,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
           }
           "display the home page with right details and with dunning lock warning and two overdue payments" in {
 
@@ -476,7 +476,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
           }
           "display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in {
@@ -496,7 +496,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe "3 OVERDUE PAYMENTS"
+            document.select("#payments-tile p:nth-child(2)").text shouldBe messages("home.overdue.date.payment.count", "3")
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
           }
           "display the home page with right details and with dunning lock warning and one overdue payments from CESA" in {
@@ -515,7 +515,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
           }
           "display the home page with right details and without dunning lock warning and one overdue payments from CESA" in {
@@ -534,7 +534,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             contentType(result) shouldBe Some(HTML)
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe "2 OVERDUE PAYMENTS"
+            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
             document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
           }
         }
