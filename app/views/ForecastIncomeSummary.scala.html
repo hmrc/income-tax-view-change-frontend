@@ -60,17 +60,17 @@
                 @messages("forecast_income.heading")
             </caption>
             <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("forecast_income.table.header")</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter govuk-table__header--numeric">@messages("forecast_income.table.header.amount")</th>
-            </tr>
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">@messages("forecast_income.table.header")</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter govuk-table__header--numeric">@messages("forecast_income.table.header.amount")</th>
+                </tr>
             </thead>
             <tbody class = "govuk-table__body">
                 @getIncomeSources(endOfYearEstimateModel.incomeSource)
-            <tr class="govuk-table__row">
-                <td class="govuk-table__header total-section">@messages("forecast_income.total")</td>
-                <td class="govuk-table__header govuk-table__header--numeric total-section">@BigDecimal(endOfYearEstimateModel.totalEstimatedIncome.getOrElse(0)).toCurrency</td>
-            </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__header total-section">@messages("forecast_income.total")</td>
+                    <td class="govuk-table__header govuk-table__header--numeric total-section">@BigDecimal(endOfYearEstimateModel.totalEstimatedIncome.getOrElse(0)).toCurrency</td>
+                </tr>
             </tbody>
         </table>
 
