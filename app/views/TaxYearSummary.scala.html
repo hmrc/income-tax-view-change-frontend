@@ -293,7 +293,7 @@
             @if(showForecastData && modelOpt.isDefined) {
                 <div id="forecast_total" class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        @messages("tax-year-summary.f orecast_total_title", s"${taxYear - 1}", s"$taxYear")
+                        @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @model.forecastIncomeTaxAndNics.get.toCurrencyString
