@@ -24,7 +24,6 @@
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 
@@ -74,7 +73,6 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @bodyContent(year: Int, yearPayments: List[Payment], index: Int) = {
-
     <table class="govuk-table govuk-!-margin-bottom-3">
         <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
         <thead class="govuk-table__head">
@@ -100,21 +98,18 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
           } else if(!payment.credit.isDefined){
            <tr class = "govuk-table__row">
              <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
-
              <td class="govuk-table__cell">
                 <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                     @messages("paymentHistory.paymentToHmrc")
                     <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
                 </a>
              </td>
-
              <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
            </tr>
           }
         }
         </tbody>
     </table>
-
 }
 
 @getItems = @{
@@ -134,11 +129,9 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
-
     @h1(msg = "paymentHistory.heading")
 
     @if(payments.nonEmpty) {
-
         @govukAccordion(Accordion(
             id = "accordion-default",
             items = getItems
