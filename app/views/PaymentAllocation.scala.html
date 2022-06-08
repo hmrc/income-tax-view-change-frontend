@@ -68,9 +68,10 @@
 
     @if(saUtr.isDefined && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
         @p(id=Some("sa-note-migrated")){
-        @messages("paymentAllocation.sa.info")
-        @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-        outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank"))
+            @messages("paymentAllocation.sa.info")
+            @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
+            outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank")
+            )
         }
     }
 
@@ -91,22 +92,22 @@
     @if(paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) && CutOverCreditsEnabled && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
 
     } else {
-    <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
+        <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
 
-    <table class="govuk-table" id="payment-allocation-table">
-        <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
-                <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
-            </tr>
-        </thead>
-       @if(paymentAllocations.isLpiPayment) {
-            @paymentAllocationsForLpi(paymentAllocations, isAgent)
-       } else {
-            @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
-       }
-       @paymentAllocationsCreditAmount(paymentAllocations, creditsRefundsRepayEnabled, isAgent)
-   </table> }
+        <table class="govuk-table" id="payment-allocation-table">
+            <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocation")</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">@messages("paymentAllocation.tableHead.allocated-date")</th>
+                    <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.amount")</th>
+                </tr>
+            </thead>
+            @if(paymentAllocations.isLpiPayment) {
+                @paymentAllocationsForLpi(paymentAllocations, isAgent)
+            } else {
+                @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+            }
+            @paymentAllocationsCreditAmount(paymentAllocations, creditsRefundsRepayEnabled, isAgent)
+        </table> }
 }
