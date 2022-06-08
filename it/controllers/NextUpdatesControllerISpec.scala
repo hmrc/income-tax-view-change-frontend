@@ -159,8 +159,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         res should have(
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Update for: 6 April 2017 to 5 July 2017"),
           elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
-          elementTextBySelector("#accordion-with-summary-sections-content-1 div:nth-child(1)")(expectedValue = "Quarterly update business"),
-          elementTextBySelector("#accordion-with-summary-sections-content-1 div:nth-child(2)")(expectedValue = "Quarterly update secondBusiness"),
+          elementTextBySelector("#accordion-with-summary-sections-content-1 > dl div:nth-child(1)")(expectedValue = "Quarterly update business"),
+          elementTextBySelector("#accordion-with-summary-sections-content-1 > dl div:nth-child(2)")(expectedValue = "Quarterly update secondBusiness"),
         )
 
       }

@@ -7,7 +7,7 @@ import testConstants.PaymentAllocationIntegrationTestConstants._
 import audit.models.PaymentAllocationsResponseAuditModel
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
@@ -22,6 +22,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
   override def beforeEach(): Unit = {
     super.beforeEach()
     enable(PaymentAllocation)
+    enable(R7bTxmEvents)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(

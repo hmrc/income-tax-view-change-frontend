@@ -14,16 +14,13 @@
  * limitations under the License.
  *@
 
-@import config.FormPartialProvider
-@import views.html.templates.GovUkWrapper
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(govukWrapper: GovUkWrapper)
+@this(govukDetails : GovukDetails)
 
-@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialProvider: FormPartialProvider, messages: Messages)
+@(summary: String, content: Html)(implicit messages: Messages)
 
-@mainContent = {
-@formBody.getOrElse(formPartialProvider.getPartialContent(partialUrl))
-}
-
-@govukWrapper(title = messages("feedback.title"), mainContent = mainContent)
-
+@govukDetails(Details(
+    summary = Text(messages(summary)),
+    content = HtmlContent(content)
+))

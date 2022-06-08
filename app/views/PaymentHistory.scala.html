@@ -23,7 +23,7 @@
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails._
-
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 
@@ -33,7 +33,8 @@
       implicitDateFormatter: ImplicitDateFormatterImpl,
       h1: h1,
       p: p,
-      link: link
+      link: link,
+      govukAccordion : GovukAccordion
 )
 
 @(payments: List[Payment], CutOverCreditsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
@@ -65,6 +66,62 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 }
 
+@headingContent(year: Int) = {
+        <span id="accordion-with-summary-sections-heading-@year" >
+            @messages("paymentHistory.button", year.toString)
+        </span>
+}
+
+@bodyContent(year: Int, yearPayments: List[Payment], index: Int) = {
+    <table class="govuk-table govuk-!-margin-bottom-3">
+        <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.date")</th>
+                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.description")</th>
+                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.amount")</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for((payment, index) <- yearPayments.zipWithIndex) {
+          @if(CutOverCreditsEnabled && payment.credit.isDefined){
+            <tr class = "govuk-table__row">
+              <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+              <td class="govuk-table__cell" id="paymentFromEarlierYear">
+                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
+                    @messages("paymentHistory.paymentFromEarlierYear")
+                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                </a>
+              </td>
+              <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
+            </tr>
+          } else if(!payment.credit.isDefined){
+           <tr class = "govuk-table__row">
+             <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+             <td class="govuk-table__cell">
+                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
+                    @messages("paymentHistory.paymentToHmrc")
+                    <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
+                </a>
+             </td>
+             <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
+           </tr>
+          }
+        }
+        </tbody>
+    </table>
+}
+
+@getItems = @{
+    groupedPayments.zipWithIndex.map{
+        case ((year: Int, yearPayments: List[Payment]), index) =>
+            Section(
+                headingContent = HtmlContent(headingContent(year)),
+                content = HtmlContent(bodyContent(year, yearPayments, index))
+            )
+	}
+}
+
 @mainTemplate(
     pageTitle = messages("paymentHistory.heading"),
     backUrl = Some(backUrl),
@@ -72,72 +129,19 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
+    @h1(msg = "paymentHistory.heading")
 
-
-@h1(msg = "paymentHistory.heading")
-
-@if(payments.nonEmpty) {
-    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
-
-        @for(((year, yearPayments), index) <- groupedPayments.zipWithIndex) {
-            <div class="govuk-accordion__section">
-                <div class="govuk-accordion__section-header">
-                    <h2 class="govuk-accordion__section-heading">
-                        <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@year" aria-labelledby="accordion-with-summary-sections-heading-@year">
-                        @messages("paymentHistory.button", year.toString)
-                        </span>
-                    </h2>
-                </div>
-                <div class="govuk-accordion__section-content" id="accordion-default-content-@{
-                    index + 1
-                }">
-                    <table class="govuk-table">
-                        <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.date")</th>
-                                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.description")</th>
-                                <th scope="col" class="govuk-table__header">@messages("paymentHistory.table.header.amount")</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @for((payment, index) <- yearPayments.zipWithIndex) {
-                          @if(CutOverCreditsEnabled && payment.credit.isDefined){
-                            <tr class = "govuk-table__row">
-                              <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
-                              <td class="govuk-table__cell" id="paymentFromEarlierYear">
-                                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                                    @messages("paymentHistory.paymentFromEarlierYear")
-                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
-                                </a>
-                              </td>
-                              <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
-                            </tr>
-                          } else if(!payment.credit.isDefined){
-                           <tr class = "govuk-table__row">
-                             <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
-
-                             <td class="govuk-table__cell">
-                                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                                    @messages("paymentHistory.paymentToHmrc")
-                                    <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
-                                </a>
-                             </td>
-
-                             <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
-                           </tr>
-                          }
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        }
-    </div>
+    @if(payments.nonEmpty) {
+        @govukAccordion(Accordion(
+            id = "accordion-default",
+            items = getItems
+        ))
     }
 
     @if(!isAgent) {
-        @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
+        @if(saUtr.isDefined) {
+            @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
+        }
     } else {
         @paymentHistoryInfo("paymentHistory.info", appConfig.saForAgents, "taxYears.oldSa.agent.content.2")
     }

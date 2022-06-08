@@ -18,8 +18,9 @@
 
 @()(implicit messages: Messages)
 
-<script src='@controllers.routes.Assets.at("lib/govuk-frontend/govuk/all.js")'></script>
-<script src='@controllers.routes.Assets.at("lib/hmrc-frontend/hmrc/all.js")'></script>
+<script src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
+<script src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+
 <script>
 window.GOVUKFrontend.initAll();
 window.HMRCFrontend.initAll();
@@ -37,7 +38,7 @@ if(payButton) {
     payButton.addEventListener('keydown', handleKeyDown)
 }
 </script>
-<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc_custom.css")'>
+<link rel="stylesheet" type="text/css" href='@routes.Assets.versioned("stylesheets/itvc_custom.css")'>
 <script>
     const showAllSpan = document.getElementsByClassName('govuk-accordion__show-all-text')[0]
     const showAllButton = document.querySelector('.govuk-accordion__controls button')

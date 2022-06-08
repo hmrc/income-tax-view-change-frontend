@@ -17,14 +17,15 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
 
-@this(govukWarningText : GovukWarningText)
+@this(govukWarningText : GovukWarningText, h2: h2)
 @(overview: TaxYearSummaryViewModel, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None, origin: Option[String] = None)(implicit messages: Messages)
 
 @if(isFinalCalc){
-
+  @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l")
     <table class="govuk-table" id="income-deductions-contributions-table">
-        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-summary.tax-calculation")</caption>
+        <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("tax-year-summary.section")</th>
@@ -93,9 +94,9 @@
             content = Text(messages("tax-year-summary.tax-calculation.unattended-calc"))
         ))
     }
-
+   @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l")
     <table class="govuk-table" id="income-deductions-contributions-table">
-        <caption class="govuk-table__caption govuk-table__caption--l">@messages("tax-year-summary.tax-calculation")</caption>
+        <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("tax-year-summary.section")</th>

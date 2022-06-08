@@ -57,7 +57,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
     }
 
     "display the earliest due date first" in new Setup(obligationsModel) {
-      pageDocument.select(".govuk-accordion__section:nth-of-type(1) h3").text() shouldBe "30 October 2017"
+      pageDocument.select(".govuk-accordion__section:nth-of-type(1) h2").text() shouldBe "30 October 2017"
     }
 
     "display the updates under the first deadline" in new Setup(obligationsModel) {
@@ -69,7 +69,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
     }
 
     "display the later due date" in new Setup(obligationsModel) {
-      pageDocument.select(".govuk-accordion__section:nth-of-type(2) h3").text() shouldBe "31 October 2017"
+      pageDocument.select(".govuk-accordion__section:nth-of-type(2) h2").text() shouldBe "31 October 2017"
     }
 
     "display the updates under the second deadline" in new Setup(obligationsModel) {
