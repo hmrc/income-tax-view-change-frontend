@@ -349,10 +349,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
         "payment type drop down and content exists" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-          pageDocument.select(".govuk-details__summary-text").text shouldBe whatYouOwe.dropDownInfo
-          pageDocument.getElementById("payment-details-content-0").text shouldBe whatYouOwe.remainingBalance + " " + whatYouOwe.remainingBalanceLine1
-          pageDocument.getElementById("payment-details-content-1").text shouldBe whatYouOwe.poaHeading + " " + whatYouOwe.poaLine1
-          pageDocument.getElementById("payment-details-content-2").text shouldBe whatYouOwe.lpiHeading + " " + whatYouOwe.lpiLine1
+          pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
+          pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1"
+          pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1"
+          pageDocument.getElementById("payment-details-content-2").text shouldBe s"$lpiHeading $lpiLine1"
 
         }
         "should have payment processing bullets when payment due in more than 30 days" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
@@ -429,10 +429,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
         "have payment type drop down details" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
-          pageDocument.select(".govuk-details__summary-text").text shouldBe whatYouOwe.dropDownInfo
-          pageDocument.getElementById("payment-details-content-0").text shouldBe remainingBalance + " " + remainingBalanceLine1
-          pageDocument.getElementById("payment-details-content-1").text shouldBe poaHeading + " " + poaLine1
-          pageDocument.getElementById("payment-details-content-2").text shouldBe lpiHeading + " " + lpiLine1
+          pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
+          pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1"
+          pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1"
+          pageDocument.getElementById("payment-details-content-2").text shouldBe s"$lpiHeading $lpiLine1"
           pageDocument.getElementById("payment-details-content-3").text shouldBe messages("whatYouOwe.class2-nic.heading") + " " + messages("whatYouOwe.class2-nic.line1")
           pageDocument.getElementById("payment-details-content-4").text shouldBe messages("whatYouOwe.cancelled-paye-sa.heading") + " " + messages("whatYouOwe.cancelled-paye-sa.line1")
 
