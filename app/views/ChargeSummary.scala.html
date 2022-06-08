@@ -344,7 +344,7 @@
 
     @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
         <div id="payment-link-@{taxYearTo}">
-            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)">
+            <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)">
                 @messages("paymentDue.payNow")
                 <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", taxYearFrom, taxYearTo)</span>
             </a>
