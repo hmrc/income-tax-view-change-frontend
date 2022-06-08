@@ -105,7 +105,7 @@ home.agent.overdue.message                                      = Mae gennych da
 home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
-
+home.credAndRefund.view                                         = Hawlio ad-daliad
 
 
 ## Recruitment Banner ##
@@ -755,6 +755,7 @@ paymentAllocation.tableHead.amount                              = Swm
 paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 paymentAllocation.na                                            = Amh
+paymentAllocation.moneyOnAccount                                = Arian yn eich cyfrif
 
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 1 o 2
 paymentAllocation.paymentAllocations.poa1.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2

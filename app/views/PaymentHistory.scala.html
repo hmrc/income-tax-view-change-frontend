@@ -75,7 +75,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
 @bodyContent(year: Int, yearPayments: List[Payment], index: Int) = {
 
-    <table class="govuk-table">
+    <table class="govuk-table govuk-!-margin-bottom-3">
         <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">

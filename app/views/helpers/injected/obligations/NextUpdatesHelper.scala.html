@@ -52,14 +52,11 @@
 }
 
 @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<div class="govuk-accordion__section-content">
-		<dl class="govuk-summary-list">
-			@for(obligation <- collectedObligations._1._2) {
-				@deadlineRow(obligation)
-			}
-		</dl>
-	</div>
-
+	<dl class="govuk-summary-list govuk-!-margin-bottom-3">
+		@for(obligation <- collectedObligations._1._2) {
+			@deadlineRow(obligation)
+		}
+	</dl>
 }
 
 @getItems = @{

@@ -519,7 +519,7 @@ paymentDue.due                                                     = Due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Make a payment
 paymentDue.view-bill-aria                                          = View bill for Tax year {0} to {1}
-paymentDue.pay-now-aria                                            = Pay now for Tax year {0} to {1}
+paymentDue.pay-now-hidden                                          = for Tax year {0} to {1}
 paymentDue.no-bills                                                = No payments due.
 
 
