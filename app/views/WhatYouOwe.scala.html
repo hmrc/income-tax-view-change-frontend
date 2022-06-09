@@ -52,11 +52,11 @@
         origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 @getPrefix(key: String) = @{
-    if(isAgent) s"whatYouOwe.$key" else s"whatYouOwe.$key"
+    s"whatYouOwe.$key"
 }
 
 @getMessage(key: String, args: String*) = @{
-    if(isAgent) messages(s"whatYouOwe.$key", args: _*) else messages(s"whatYouOwe.$key", args: _*)
+    messages(s"whatYouOwe.$key", args: _*)
 }
 
 @saNoteParagraphContent(utr: String) = {
