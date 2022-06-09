@@ -81,7 +81,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
-  val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
+  val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
     def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,

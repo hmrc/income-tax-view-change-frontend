@@ -50,7 +50,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
       }
     }
 
-    unauthorisedTest("/calculation/" + testYear + "/tax-due/forecast")
+    unauthorisedTest("/" + testYear + "/forecast-tax-calculation")
   }
 
 }

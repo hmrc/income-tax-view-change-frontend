@@ -94,7 +94,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
-        val backlink = "/report-quarterly/income-and-expenses/view/calculation/2018"
+        val backlink = "/report-quarterly/income-and-expenses/view/tax-year-summary/2018"
         val endOfYearEstimateModel = liabilityCalculationModelSuccessFull.calculation.get.endOfYearEstimate.get
         val expectedContent: String = forecastIncomeView(
           endOfYearEstimateModel = endOfYearEstimateModel,
