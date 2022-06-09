@@ -16,7 +16,6 @@
 
 package views
 
-import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
@@ -29,7 +28,6 @@ import play.twirl.api.HtmlFormat
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditAndRefunds
-import testConstants.MessagesLookUp.{CreditAndRefunds => creditAndRefunds}
 
 
 class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
@@ -37,6 +35,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundView: CreditAndRefunds = app.injector.instanceOf[CreditAndRefunds]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
+  val creditAndRefundHeading: String = messages("credit-and-refund.heading")
+  val subHeadingWithCredits: String = messages("credit-and-refund.subHeading.has-credits")
+  val paymentText: String = messages("credit-and-refund.payment")
+  val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
+  val checkBtn: String = messages("credit-and-refund.check-refund-btn")
+  val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("titlePattern.serviceName.govUk", creditAndRefundHeading)
+  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("agent.title_pattern.service_name.govuk", creditAndRefundHeading)
 
  def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
                          secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
@@ -71,29 +76,29 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     "display the page" when {
       "a user has requested a refund" in new Setup(){
 
-        document.title() shouldBe creditAndRefunds.title + " - Business Tax account - GOV.UK"
-        layoutContent.selectHead("h1").text shouldBe creditAndRefunds.title
-        document.select("h2").first().select("span").text() shouldBe creditAndRefunds.subHeadingWithCredits
-        document.select("dt").first().text() shouldBe s"15 May 2019 ${creditAndRefunds.paymentText}"
+        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+        layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+        document.select("h2").first().select("span").text() shouldBe subHeadingWithCredits
+        document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
         document.select("dt").first().select("a").attr("href") shouldBe link
         document.select("dt").last().text().contains("Total") shouldBe true
 
-        document.getElementsByClass("govuk-button").first().text() shouldBe creditAndRefunds.claimBtn
-        document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe creditAndRefunds.checkBtn
+        document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+        document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
 
 
       }
 
       "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))){
 
-        document.title() shouldBe creditAndRefunds.title + " - Business Tax account - GOV.UK"
-        layoutContent.selectHead("h1").text shouldBe creditAndRefunds.title
-        document.select("h2").first().select("span").text() shouldBe creditAndRefunds.subHeadingWithCredits
-        document.select("dt").first().text() shouldBe s"15 May 2019 ${creditAndRefunds.paymentText}"
+        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+        layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+        document.select("h2").first().select("span").text() shouldBe subHeadingWithCredits
+        document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
         document.select("dt").first().select("a").attr("href") shouldBe link
         document.select("dt").last().text().contains("Total") shouldBe true
 
-        document.getElementsByClass("govuk-button").first().text() shouldBe creditAndRefunds.claimBtn
+        document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
 
       }
 
@@ -102,25 +107,25 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
                   balance = Some(balanceDetailsModel(availableCredit = Some(0)))
         ){
 
-        document.title() shouldBe creditAndRefunds.title + " - Business Tax account - GOV.UK"
-        layoutContent.selectHead("h1").text shouldBe creditAndRefunds.title
-        document.select("h2").first().select("span").text().contains(creditAndRefunds.subHeadingWithCredits) shouldBe false
-        document.select("dt").first().text() shouldBe s"15 May 2019 ${creditAndRefunds.paymentText}"
+        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+        layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+        document.select("h2").first().select("span").text().contains(subHeadingWithCredits) shouldBe false
+        document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
         document.select("dt").first().select("a").attr("href") shouldBe link
         document.select("dt").last().text().contains("Total") shouldBe false
         document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
-        document.getElementsByClass("govuk-button").first().text() shouldBe creditAndRefunds.checkBtn
+        document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
       }
 
       "a user has no available credit or current pending refunds" in
         new Setup(balance = None){
 
-          document.title() shouldBe creditAndRefunds.title + " - Business Tax account - GOV.UK"
-          layoutContent.selectHead("h1").text shouldBe creditAndRefunds.title
-          document.select("p").last.text() shouldBe creditAndRefunds.noAvailableAmount
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("p").last.text() shouldBe messages("credit-and-refund.no-credit")
 
-          document.getElementsByClass("govuk-button").first().text() shouldBe creditAndRefunds.checkBtn
+          document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
     }
   }
@@ -130,13 +135,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     "display the page" when {
       "correct data is provided" in new Setup(isAgent = true){
 
-        document.title() shouldBe creditAndRefunds.title + " - Your client’s Income Tax details - GOV.UK"
-        layoutContent.selectHead("h1").text shouldBe creditAndRefunds.title
-        document.select("dt").first().text() shouldBe s"15 May 2019 ${creditAndRefunds.paymentText}"
+        document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
+        layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+        document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
         document.select("dt").first().select("a").attr("href") shouldBe link
 
-        document.getElementsByClass("govuk-button").first().text() shouldBe creditAndRefunds.claimBtn
-        document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe creditAndRefunds.checkBtn
+        document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+        document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
 
       }
     }

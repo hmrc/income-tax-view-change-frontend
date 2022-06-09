@@ -35,13 +35,13 @@ class UTRErrorViewSpec extends ViewSpec {
   )
 
   object utrErrorMessages {
-    val title: String = "There’s a problem - Your client’s Income Tax details - GOV.UK"
-    val heading: String = "There’s a problem"
-    val utrWrong: String = s"The UTR you have entered $testClientUtr may be wrong because:"
-    val reasonBullet1: String = "you have entered it incorrectly"
-    val reasonBullet2Link: String = "Making Tax Digital for Income Tax (opens in new tab)"
-    val reasonBullet2: String = s"you or your client have not signed up to $reasonBullet2Link yet"
-    val goBackButton: String = "Go back and enter a different UTR"
+    val heading: String = messages("agent.utr_error.heading")
+    val title: String = messages("agent.title_pattern.service_name.govuk", heading)
+    val utrWrong: String = s"${messages("agent.utr_error.utr_wrong.part1")} $testClientUtr ${messages("agent.utr_error.utr_wrong.part2")}"
+    val reasonBullet1: String = messages("agent.utr_error.reason.bullet1")
+    val reasonBullet2Link: String = s"${messages("agent.utr_error.reason.bullet2_link")}${messages("pagehelp.opensInNewTabText")}"
+    val reasonBullet2: String = messages("agent.utr_error.reason.bullet2", reasonBullet2Link)
+    val goBackButton: String = messages("agent.utr_error.go_back")
   }
 
   "The UTR Error page" should {

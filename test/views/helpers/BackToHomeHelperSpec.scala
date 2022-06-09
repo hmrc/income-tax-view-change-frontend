@@ -16,7 +16,6 @@
 
 package views.helpers
 
-import testConstants.MessagesLookUp
 import org.jsoup.Jsoup
 import testUtils.TestSupport
 import views.html.helpers.injected.BackToHomeHelper
@@ -31,8 +30,8 @@ class BackToHomeHelperSpec extends TestSupport {
     lazy val document = Jsoup.parse(view.body)
     lazy val backToHomeLink = document.getElementById("back")
 
-    s"Render the text ${MessagesLookUp.Base.backToHome}" in {
-      backToHomeLink.text shouldBe MessagesLookUp.Base.backToHome
+    s"Render the text ${messages("base.backToHome")}" in {
+      backToHomeLink.text shouldBe messages("base.backToHome")
     }
 
     "Have the correct link class of 'link-back'" in {

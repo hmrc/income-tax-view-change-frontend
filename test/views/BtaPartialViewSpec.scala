@@ -18,7 +18,6 @@ package views
 
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
-import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import testUtils.TestSupport
 import views.html.navBar.BtaPartial
 
@@ -30,16 +29,16 @@ class BtaPartialViewSpec extends TestSupport {
 
   "The BtaPartial view" should {
 
-    s"have the heading '${btaPartialMessages.heading}'" in {
-      document.getElementById("it-quarterly-reporting-heading").text shouldBe btaPartialMessages.heading
+    s"have the heading ${messages("bta_partial.heading")}" in {
+      document.getElementById("it-quarterly-reporting-heading").text shouldBe messages("bta_partial.heading")
     }
 
-    s"have the correct p1 message '${btaPartialMessages.p1}'" in {
-      document.getElementById("it-quarterly-reporting-p1").text shouldBe btaPartialMessages.p1
+    s"have the correct p1 message ${messages("bta_partial.p1")}" in {
+      document.getElementById("it-quarterly-reporting-p1").text shouldBe messages("bta_partial.p1")
     }
 
-    s"have the correct p2 message '${btaPartialMessages.p2}'" in {
-      document.getElementById("it-quarterly-reporting-p2").text shouldBe btaPartialMessages.p2
+    s"have the correct p2 message ${messages("bta_partial.p2")}" in {
+      document.getElementById("it-quarterly-reporting-p2").text shouldBe messages("bta_partial.p2")
     }
 
     s"have have a button to the ITVC home page" which {
@@ -50,8 +49,8 @@ class BtaPartialViewSpec extends TestSupport {
         homeButton.attr("href") shouldBe appConfig.homePageUrl
       }
 
-      s"has the correct button text of '${btaPartialMessages.button}'" in {
-        homeButton.text shouldBe btaPartialMessages.button
+      s"has the correct button text of ${messages("bta_partial.home_button")}" in {
+        homeButton.text shouldBe messages("bta_partial.home_button")
       }
 
       "has the correct button class of 'govuk-button'" in {

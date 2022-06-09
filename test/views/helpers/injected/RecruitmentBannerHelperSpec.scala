@@ -16,7 +16,6 @@
 
 package views.helpers.injected
 
-import testConstants.MessagesLookUp
 import testUtils.ViewSpec
 import views.html.helpers.injected.RecruitmentBannerHelper
 
@@ -28,15 +27,15 @@ class RecruitmentBannerHelperSpec extends ViewSpec {
 
   "The recruitment banner" should {
 
-    s"have the correct header message '${MessagesLookUp.RecruitmentBanner.text}'" in new Test {
-      document.getElementById("recruitment-banner-text").text shouldBe MessagesLookUp.RecruitmentBanner.text
+    s"have the correct header message '${messages("banner.recruitment.text")}'" in new Test {
+      document.getElementById("recruitment-banner-text").text shouldBe messages("banner.recruitment.text")
     }
-    s"have the correct link text '${MessagesLookUp.RecruitmentBanner.link}' and url ${appConfig.enterSurveyUrl}" in new Test {
-      document.getElementById("recruitment-banner-link").text shouldBe MessagesLookUp.RecruitmentBanner.link
+    s"have the correct link text '${messages("banner.recruitment.link")}' and url ${appConfig.enterSurveyUrl}" in new Test {
+      document.getElementById("recruitment-banner-link").text shouldBe messages("banner.recruitment.link")
       document.getElementById("recruitment-banner-link").attr("href") shouldBe appConfig.enterSurveyUrl
     }
-    s"have the correct dismiss text '${MessagesLookUp.RecruitmentBanner.dismiss}'" in new Test {
-      document.getElementById("recruitment-banner-dismiss").text shouldBe MessagesLookUp.RecruitmentBanner.dismiss
+    s"have the correct dismiss text '${messages("banner.recruitment.dismiss")}'" in new Test {
+      document.getElementById("recruitment-banner-dismiss").text shouldBe messages("banner.recruitment.dismiss")
     }
 
   }

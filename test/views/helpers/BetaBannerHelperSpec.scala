@@ -29,17 +29,17 @@ class BetaBannerHelperSpec extends TestSupport {
     lazy val view = betaBanner()(implicitly)
     lazy val document = Jsoup.parse(view.body)
 
-    "have the BETA label" in {
-      document.getElementsByClass("phase-tag").text shouldBe "BETA"
+    s"have the ${messages("base.phase")} label" in {
+      document.getElementsByClass("phase-tag").text shouldBe messages("base.phase")
     }
 
     "have the correct content" in {
       document.getElementsByClass("beta-banner").addClass("span").text shouldBe
-        "BETA This is a new service – your feedback will help us to improve it."
+        s"${messages("betaBanner.beta")} ${messages("betaBanner.newService")} ${messages("betaBanner.your")} ${messages("betaBanner.feedback")} ${messages("betaBanner.improve")}"
     }
 
     "have the correct link text" in {
-      document.getElementById("feedback-link").text shouldBe "feedback"
+      document.getElementById("feedback-link").text shouldBe messages("betaBanner.feedback")
     }
 
     "have the correct link location" in {

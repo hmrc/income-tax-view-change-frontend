@@ -73,7 +73,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "render the Not Found page" in {
-          document.title() shouldBe "Page not found - 404 - Business Tax account - GOV.UK"
+          document.title() shouldBe messages("titlePattern.serviceName.govUk", "Page not found - 404")
         }
       }
     }
@@ -95,7 +95,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "render the forecast tax calc summary page" in {
-          document.title() shouldBe "Forecast tax calculation - Business Tax account - GOV.UK"
+          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
         }
       }
 
@@ -152,7 +152,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "return the forecast tax calc summary page" in {
-          document.title() shouldBe "Page not found - 404 - Your client’s Income Tax details - GOV.UK"
+          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", "Page not found - 404")
         }
       }
     }
@@ -176,7 +176,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "return the forecast tax calc summary page" in {
-          document.title() shouldBe "Forecast tax calculation - Your client’s Income Tax details - GOV.UK"
+          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
         }
       }
 

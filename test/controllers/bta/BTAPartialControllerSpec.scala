@@ -21,7 +21,6 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import testUtils.TestSupport
 import views.html.navBar.BtaPartial
 
@@ -53,7 +52,7 @@ class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredic
       }
 
       "render the BTA partial" in {
-        document.getElementById("it-quarterly-reporting-heading").text() shouldBe btaPartialMessages.heading
+        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages("bta_partial.heading")
       }
     }
 

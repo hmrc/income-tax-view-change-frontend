@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
-class NextUpdatesHelperSpec extends TestSupport {
+class  NextUpdatesHelperSpec extends TestSupport {
 
   class Setup(currentObligations: ObligationsModel) {
     val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
@@ -46,8 +46,8 @@ class NextUpdatesHelperSpec extends TestSupport {
   )))
 
   object Messages {
-    val quarterlyUpdateDue = "Update for: 1 July 2017 to 30 September 2017"
-    val nonQuarterlyUpdateDue = "Tax year: 1 October 2017 to 30 October 2018"
+    val quarterlyUpdateDue: String = messages("nextUpdates.section.heading.updates", "1 July 2017", "30 September 2017")
+    val nonQuarterlyUpdateDue: String = messages("nextUpdates.section.heading.taxYear", "1 October 2017", "30 October 2018")
   }
 
   "Next updates helper" should {
@@ -76,7 +76,7 @@ class NextUpdatesHelperSpec extends TestSupport {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
 
       section.select("dl").size() shouldBe 1
-      section.select("dl dt").text() shouldBe "Annual Update"
+      section.select("dl dt").text() shouldBe messages("nextUpdates.eops")
       section.select("dl dd").text() shouldBe testTradeName
     }
 

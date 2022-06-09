@@ -17,13 +17,12 @@
 package controllers
 
 import controllers.errors.NotEnrolledController
-import testConstants.MessagesLookUp.{NotEnrolled => notEnrolleMessages}
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.notEnrolled.NotEnrolled
-import play.api.test.Helpers._
 
 class NotEnrolledControllerSpec extends TestSupport {
 
@@ -41,7 +40,7 @@ class NotEnrolledControllerSpec extends TestSupport {
     }
 
     "show the not_enrolled page" in {
-      document.getElementById("page-heading").text() shouldBe notEnrolleMessages.heading
+      document.getElementById("page-heading").text() shouldBe messages("not_enrolled.heading")
     }
 
   }

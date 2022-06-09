@@ -162,15 +162,15 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = forecastIncomeTemplate(viewModelFull, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe messagesLookUp("forecast_income.heading") + " - Business Tax account - GOV.UK"
+        document title() shouldBe  messages("titlePattern.serviceName.govUk", messages("forecast_income.heading"))
       }
 
       "have the correct heading" in new Setup(view) {
-        layoutContent hasPageHeading s"${messagesLookUp("forecast_income.dates", "2016", "2017")} ${messagesLookUp("forecast_income.heading")}"
+        layoutContent hasPageHeading s"${messages("forecast_income.dates", "2016", "2017")} ${messages("forecast_income.heading")}"
       }
 
       "have the correct caption" in new Setup(view) {
-        layoutContent.selectHead(" caption").text.contains(messagesLookUp("forecast_income.heading"))
+        layoutContent.selectHead(" caption").text.contains(messages("forecast_income.heading"))
       }
 
       "have a forecasted income table" which {
@@ -212,7 +212,7 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
 
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = layoutContent.select("p").get(0)
-        guidance.text() shouldBe messagesLookUp("income_breakdown.guidance_software")
+        guidance.text() shouldBe messages("income_breakdown.guidance_software")
       }
     }
   }

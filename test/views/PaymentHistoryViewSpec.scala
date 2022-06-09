@@ -37,23 +37,23 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val paymentHistoryView: PaymentHistory = app.injector.instanceOf[PaymentHistory]
 
   object PaymentHistoryMessages {
-    val heading = "Payment history"
-    val title = s"$heading - Business Tax account - GOV.UK"
-    val titleWhenAgentView = s"$heading - Your client’s Income Tax details - GOV.UK"
+    val heading: String = messages("paymentHistory.heading")
+    val title: String = messages("titlePattern.serviceName.govUk", heading)
+    val titleWhenAgentView: String = messages("agent.titlePattern.serviceName.govUk", heading)
 
-    val info = "To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous Self Assessment online account (opens in new tab)."
+    val info: String = s"${messages("PaymentHistory.classicSA")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
 
     def button(year: Int): String = s"$year payments"
 
-    val paymentToHmrc = "Payment made to HMRC"
-    val CardRef = "Payment made by debit card ref:"
-    val earlierPaymentToHMRC = "Payment from an earlier tax year"
+    val paymentToHmrc: String = messages("paymentHistory.paymentToHmrc")
+    val CardRef: String = messages("paymentsHistory.CardRef")
+    val earlierPaymentToHMRC: String = messages("paymentAllocation.earlyTaxYear.heading")
 
-    val paymentHeadingDate = "Date"
-    val paymentHeadingDescription = "Description"
-    val paymentHeadingAmount = "Amount"
+    val paymentHeadingDate: String = messages("paymentHistory.table.header.date")
+    val paymentHeadingDescription: String = messages("paymentHistory.table.header.description")
+    val paymentHeadingAmount: String = messages("paymentHistory.table.header.amount")
     val partialH2Heading = "payments"
-    val saLink = "Self Assessment online account (opens in new tab)"
+    val saLink: String = s"${messages("whatYouOwe.sa-link")}${messages("pagehelp.opensInNewTabText")}"
   }
 
   val testPayments: List[Payment] = List(

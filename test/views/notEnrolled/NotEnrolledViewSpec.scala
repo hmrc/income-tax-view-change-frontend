@@ -16,7 +16,6 @@
 
 package views.notEnrolled
 
-import testConstants.MessagesLookUp.{NotEnrolled => notEnrolledMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.test.Helpers._
@@ -33,18 +32,18 @@ class NotEnrolledViewSpec extends TestSupport {
 
   "The Not Enrolled view" should {
 
-    s"have the title '${notEnrolledMessages.title}'" in {
-      document.title() shouldBe notEnrolledMessages.title
+    s"have the title ${messages("titlePattern.serviceName.govUk", messages("not_enrolled.heading"))}" in {
+      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("not_enrolled.heading"))
     }
 
-    s"have the H1 '${notEnrolledMessages.heading}'" in {
-      document.getElementsByTag("H1").text() shouldBe notEnrolledMessages.heading
+    s"have the H1 ${messages("not_enrolled.heading")}" in {
+      document.getElementsByTag("H1").text() shouldBe messages("not_enrolled.heading")
     }
 
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-up").text() shouldBe notEnrolledMessages.signUp
+        document.getElementById("sign-up").text() shouldBe  s"${messages("not_enrolled.sign-up.1")} ${messages("not_enrolled.sign-up.2")} ${messages("not_enrolled.sign-up.3")}"
       }
 
       "has a link to sign-in page" in {

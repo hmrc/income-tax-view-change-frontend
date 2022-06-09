@@ -39,13 +39,13 @@ class ConfirmClientViewSpec extends ViewSpec {
   )
 
   object confirmClientMessages {
-    val title: String = "Confirm your client’s details - Your client’s Income Tax details - GOV.UK"
-    val heading: String = "Confirm your client’s details"
-    val backLink: String = "Back"
-    val clientNameHeading: String = "Client’s name"
-    val clientUTRHeading: String = "Client’s Unique Taxpayer Reference (UTR)"
-    val changeClient: String = "Change Client"
-    val confirmContinue: String = "Confirm and continue"
+    val heading: String = messages("agent.confirmClient.heading")
+    val title: String = messages("agent.title_pattern.service_name.govuk", heading)
+    val backLink: String = messages("base.back")
+    val clientNameHeading: String = messages("agent.confirmClient.clientName")
+    val clientUTRHeading: String = messages("agent.confirmClient.clientUtr")
+    val changeClient: String = messages("agent.confirmClient.changeClient")
+    val confirmContinue: String = messages("agent.confirmClient.confirmContinue")
   }
 
   "The Confirm Client page" should {
