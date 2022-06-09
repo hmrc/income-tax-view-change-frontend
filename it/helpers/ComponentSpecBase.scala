@@ -152,11 +152,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   object IncomeTaxViewChangeFrontend {
     def get(uri: String): WSResponse = buildClient(uri).get().futureValue
 
-    def getCreditAndRefunds(): WSResponse = get("/credit-and-refunds")
+    def getCreditAndRefunds(): WSResponse = get("/claim-refund")
 
     def getTaxYears: WSResponse = get("/tax-years")
 
-    def getCalculation(year: String): WSResponse = get(s"/calculation/$year")
+    def getCalculation(year: String): WSResponse = get(s"/tax-year-summary/$year")
 
     def getCalculationPoller(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse =
       getWithCalcIdInSession(s"${if (isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
@@ -169,15 +169,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): Future[WSResponse] =
       getWithCalcIdInSessionAndWithoutAwait(s"${if (isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
 
-    def getIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income")
+    def getIncomeSummary(year: String): WSResponse = get(s"/$year/income")
 
-    def getForecastIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income/forecast")
+    def getForecastIncomeSummary(year: String): WSResponse = get(s"/$year/forecast-income")
 
-    def getTaxDueSummary(year: String): WSResponse = get(s"/calculation/$year/tax-due")
+    def getTaxDueSummary(year: String): WSResponse = get(s"/$year/tax-calculation")
 
-    def getForecastTaxCalcSummary(year: String): WSResponse = get(s"/calculation/$year/tax-due/forecast")
+    def getForecastTaxCalcSummary(year: String): WSResponse = get(s"/$year/forecast-tax-calculation")
 
-    def getDeductionsSummary(year: String): WSResponse = get(s"/calculation/$year/deductions")
+    def getDeductionsSummary(year: String): WSResponse = get(s"/$year/allowances-and-deductions")
 
     def getNextUpdates: WSResponse = get(s"/next-updates")
 
@@ -187,7 +187,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getHome: WSResponse = get("/")
 
-    def getPaymentsDue: WSResponse = get("/payments-owed")
+    def getPaymentsDue: WSResponse = get("/what-you-owe")
 
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 
@@ -195,9 +195,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
 
-    def getPaymentHistory: WSResponse = get(s"/payments/history")
+    def getPaymentHistory: WSResponse = get(s"/payment-refund-history")
 
-    def getPaymentAllocationCharges(docNumber: String): WSResponse = get(s"/charges/payments-made?documentNumber=$docNumber")
+    def getPaymentAllocationCharges(docNumber: String): WSResponse = get(s"/payment-made-to-hmrc?documentNumber=$docNumber")
   }
 
   def unauthorisedTest(uri: String): Unit = {

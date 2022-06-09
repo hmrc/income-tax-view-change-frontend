@@ -71,7 +71,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   }
 
   "displaying individual credit and refund page" should {
-    val link = "/report-quarterly/income-and-expenses/view/charges/payments-made?documentNumber=1040000123"
+    val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
 
     "display the page" when {
       "a user has requested a refund" in new Setup(){

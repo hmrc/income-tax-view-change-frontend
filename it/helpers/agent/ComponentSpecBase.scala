@@ -144,21 +144,21 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
-    def getEnterClientsUTR: WSResponse = get("/client-utr")
+    def getEnterClientsUTR: WSResponse = get("/client-unique-taxpayer-reference ")
 
-    def postEnterClientsUTR(answer: Option[String]): WSResponse = post("/client-utr")(
+    def postEnterClientsUTR(answer: Option[String]): WSResponse = post("/client-unique-taxpayer-reference")(
       answer.fold(Map.empty[String, Seq[String]])(
         utr => ClientsUTRForm.form.fill(utr).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
 
-    def getConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/confirm-client", clientDetails)
+    def getConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/confirm-client-details", clientDetails)
 
-    def postConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = post("/confirm-client", clientDetails)(Map.empty)
+    def postConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = post("/confirm-client-details", clientDetails)(Map.empty)
 
     def getPaymentsDue: WSResponse = get("/payments-owed")
 
-    def getClientRelationshipFailure: WSResponse = get("/client-relationship-problem")
+    def getClientRelationshipFailure: WSResponse = get("/need-permission-to-view")
 
     def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/utr-problem", clientUTR)
 
@@ -167,10 +167,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postUTRError: WSResponse = post("/utr-problem")(Map.empty)
 
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/income-tax-account", additionalCookies)
+      getWithClientDetailsInSession("/agents/client-income-tax", additionalCookies)
 
     def getCreditAndRefunds(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/credit-and-refunds", additionalCookies)
+      getWithClientDetailsInSession("/agents/claim-refund", additionalCookies)
 
     def getPaymentsDue(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/payments-owed", additionalCookies)

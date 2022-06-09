@@ -82,18 +82,18 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val incomeText = "Income"
     val incomeAmount = "£12,500.00"
-    val incomeLink = "/report-quarterly/income-and-expenses/view/calculation/2018/income"
+    val incomeLink = "/report-quarterly/income-and-expenses/view/2018/income"
 
     val allowanceText = "Allowances and deductions"
     val allowanceAmount = "−£17,500.99"
-    val allowanceLink = "/report-quarterly/income-and-expenses/view/calculation/2018/deductions"
+    val allowanceLink = "/report-quarterly/income-and-expenses/view/2018/allowances-and-deductions"
 
     val taxIsDueText = "Total taxable income"
     val taxIsDueAmount = "£12,500.00"
 
     val contributionText = "Income Tax and National Insurance contributions"
     val contributionAmount = "£90,500.99"
-    val contributionLink = "/report-quarterly/income-and-expenses/view/calculation/2018/tax-due"
+    val contributionLink = "/report-quarterly/income-and-expenses/view/2018/tax-calculation"
 
     val chargeInformationParagraph: String = "The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest."
 
