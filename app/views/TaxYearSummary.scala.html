@@ -41,9 +41,9 @@
 )
 
 @(taxYear: Int, modelOpt: Option[TaxYearSummaryViewModel], charges: List[DocumentDetailWithDueDate],
-        obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean,
-        showForecastData: Boolean = false, origin: Option[String] = None
-        )(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+    obligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, codingOutEnabled: Boolean,
+    showForecastData: Boolean = false, origin: Option[String] = None
+  )(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
