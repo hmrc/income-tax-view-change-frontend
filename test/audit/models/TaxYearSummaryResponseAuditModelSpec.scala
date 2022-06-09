@@ -22,18 +22,16 @@ import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
-import org.scalatest.{MustMatchers, WordSpecLike}
-import play.api.i18n.{Messages, MessagesApi}
+import org.scalatest.WordSpecLike
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{app, taxYear}
+import testConstants.BaseTestConstants.taxYear
+import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatchers {
-
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport {
 
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
@@ -177,13 +175,13 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
     s"have the correct transaction name of '$transactionName'" in {
       taxYearOverviewResponseAuditFull(
         agentReferenceNumber = Some("1")
-      ).transactionName mustBe transactionName
+      ).transactionName shouldBe transactionName
     }
 
     s"have the correct audit type of '$auditType'" in {
       taxYearOverviewResponseAuditFull(
         agentReferenceNumber = Some("1")
-      ).auditType mustBe auditType
+      ).auditType shouldBe auditType
     }
 
     "have the correct details for the audit event" when {
@@ -191,7 +189,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
         taxYearOverviewResponseAuditFull(
           userType = Some("Agent"),
           agentReferenceNumber = Some("agentReferenceNumber"),
-        ).detail mustBe Json.obj(
+        ).detail shouldBe Json.obj(
           "nationalInsuranceNumber" -> "nino",
           "mtditid" -> "mtditid",
           "saUtr" -> "saUtr",
@@ -234,7 +232,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
           userType = Some("Individual"),
           agentReferenceNumber = None,
           paymentHasADunningLock = true
-        ).detail mustBe Json.obj(
+        ).detail shouldBe Json.obj(
           "nationalInsuranceNumber" -> "nino",
           "mtditid" -> "mtditid",
           "saUtr" -> "saUtr",
@@ -284,10 +282,10 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
           forecastIncomeTaxAndNics = Some(120.0)
         )
 
-        (auditJson.detail \ "taxYearOverview" \ "calculationAmount").toString() mustBe "JsDefined(2010)"
-        (auditJson.detail \ "taxYearOverview" \ "isCrystallised").toString() mustBe "JsDefined(false)"
-        (auditJson.detail \ "taxYearOverview" \ "forecastAmount").toString() mustBe "JsDefined(2000)"
-        (auditJson.detail \ "forecast").toOption.get mustBe
+        (auditJson.detail \ "taxYearOverview" \ "calculationAmount").toString() shouldBe "JsDefined(2010)"
+        (auditJson.detail \ "taxYearOverview" \ "isCrystallised").toString() shouldBe "JsDefined(false)"
+        (auditJson.detail \ "taxYearOverview" \ "forecastAmount").toString() shouldBe "JsDefined(2000)"
+        (auditJson.detail \ "forecast").toOption.get shouldBe
           Json.obj(
             "income" -> 2000,
             "taxableIncome" -> 2000,
@@ -307,10 +305,10 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
           forecastIncomeTaxAndNics = Some(120.0)
         )
         (auditJson.detail \ "calculation" \ "calculationReason").toString contains "customerRequest"
-        (auditJson.detail \ "calculation" \ "income").toString() mustBe "JsDefined(199505)"
-        (auditJson.detail \ "calculation" \ "allowancesAndDeductions").toString() mustBe "JsDefined(500)"
-        (auditJson.detail \ "calculation" \ "taxableIncome").toString() mustBe "JsDefined(198500)"
-        (auditJson.detail \ "calculation" \ "taxDue").toString() mustBe "JsDefined(2010)"
+        (auditJson.detail \ "calculation" \ "income").toString() shouldBe "JsDefined(199505)"
+        (auditJson.detail \ "calculation" \ "allowancesAndDeductions").toString() shouldBe "JsDefined(500)"
+        (auditJson.detail \ "calculation" \ "taxableIncome").toString() shouldBe "JsDefined(198500)"
+        (auditJson.detail \ "calculation" \ "taxDue").toString() shouldBe "JsDefined(2010)"
       }
     }
 
@@ -323,10 +321,10 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with MustMatcher
           forecastIncomeTaxAndNics = Some(120.0)
         )
         (auditJson.detail \ "calculation" \ "calculationReason").toString contains "Unattended Calculation"
-        (auditJson.detail \ "calculation" \ "income").toString() mustBe "JsDefined(199505)"
-        (auditJson.detail \ "calculation" \ "allowancesAndDeductions").toString() mustBe "JsDefined(500)"
-        (auditJson.detail \ "calculation" \ "taxableIncome").toString() mustBe "JsDefined(198500)"
-        (auditJson.detail \ "calculation" \ "taxDue").toString() mustBe "JsDefined(2010)"
+        (auditJson.detail \ "calculation" \ "income").toString() shouldBe "JsDefined(199505)"
+        (auditJson.detail \ "calculation" \ "allowancesAndDeductions").toString() shouldBe "JsDefined(500)"
+        (auditJson.detail \ "calculation" \ "taxableIncome").toString() shouldBe "JsDefined(198500)"
+        (auditJson.detail \ "calculation" \ "taxDue").toString() shouldBe "JsDefined(2010)"
       }
     }
   }
