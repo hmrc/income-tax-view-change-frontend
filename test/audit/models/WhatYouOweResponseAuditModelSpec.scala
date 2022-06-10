@@ -31,7 +31,9 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
-
+  val lpiPaymentOnAccount1: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
+  val paymentOnAccount1: String = messages("whatYouOwe.paymentOnAccount1.text")
+  val paymentOnAccount2: String = messages("whatYouOwe.paymentOnAccount2.text")
 
   val dueDateInFuture: String = LocalDate.now().plusDays(45).toString
   val dueDateIsSoon: String = LocalDate.now().plusDays(1).toString
@@ -82,13 +84,13 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
         ),
         "charges" -> Json.arr(
           Json.obj(
-            "chargeType" -> "Late payment interest for payment on account 1 of 2",
+            "chargeType" -> lpiPaymentOnAccount1,
             "dueDate" -> Some(LocalDate.parse("2019-06-25")),
             "outstandingAmount" -> 42.5,
             "chargeUnderReview" -> true
           ),
           Json.obj(
-            "chargeType" -> "Payment on account 2 of 2",
+            "chargeType" -> paymentOnAccount2,
             "dueDate" -> dueDateOverdue(1).get,
             "outstandingAmount" -> 75,
             "accruingInterest" -> 24.05,
@@ -98,7 +100,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "chargeUnderReview" -> false
           ),
           Json.obj(
-            "chargeType" -> "Payment on account 2 of 2",
+            "chargeType" -> paymentOnAccount2,
             "dueDate" -> dueDateIsSoon,
             "outstandingAmount" -> 100,
             "accruingInterest" -> 100,
@@ -108,7 +110,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "chargeUnderReview" -> false
           ),
           Json.obj(
-            "chargeType" -> "Payment on account 1 of 2",
+            "chargeType" -> paymentOnAccount1,
             "dueDate" -> dueDateInFuture,
             "outstandingAmount" -> 125,
             "accruingInterest" -> 100,
@@ -183,7 +185,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
         (auditJson.detail \ "charges")(0) shouldBe Json.obj(
           "chargeUnderReview" -> true,
           "outstandingAmount" -> 42.5,
-          "chargeType" -> "Late payment interest for payment on account 1 of 2",
+          "chargeType" -> lpiPaymentOnAccount1,
           "dueDate" -> "2019-06-25",
           "endTaxYear" -> 2022
         )

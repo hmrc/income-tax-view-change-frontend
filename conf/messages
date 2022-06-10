@@ -309,7 +309,7 @@ taxCal_breakdown.table.head.rates.uk                                = UK rates f
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
 
 taxCal_breakdown.table.cgt.taxable_capital_gains                    = Taxable Capital Gains
-taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief and or Investors'' Relief gains ({0} at {1}%)
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief and or Investors’ Relief gains ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate     = Residential property and carried interest basic rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.higherRate    = Residential property and carried interest higher rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.other_gains.band.lowerRate               = Other gains basic rate ({0} at {1}%)

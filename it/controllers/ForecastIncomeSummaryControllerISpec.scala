@@ -67,7 +67,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
       }
     }
 
-    unauthorisedTest("/calculation/" + testYear + "/income")
+    unauthorisedTest("/" + testYear + "/forecast-income")
 
   }
 }

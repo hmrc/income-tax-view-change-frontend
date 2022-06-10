@@ -54,7 +54,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
       }
     }
 
-    unauthorisedTest("/calculation/" + testYear + "/deductions")
+    unauthorisedTest("/" + testYear + "/allowances-and-deductions")
 
   }
 }

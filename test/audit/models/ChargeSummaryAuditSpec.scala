@@ -17,7 +17,6 @@
 package audit.models
 
 import java.time.LocalDate
-
 import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetail
 import auth.MtdItUser
@@ -26,10 +25,14 @@ import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, Finan
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.Logger
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
+
+  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val transactionName: String = "charge-summary"
   val auditType: String = "ChargeSummary"
@@ -188,25 +191,25 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
             "nationalInsuranceNumber" -> "nino",
             "paymentBreakdown" -> Json.arr(
               Json.obj(
-                "breakdownType" -> "Income Tax",
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.incomeTax"),
                 "total" -> 123.45,
                 "chargeUnderReview" -> true,
                 "interestLock" -> true
               ),
               Json.obj(
-                "breakdownType" -> "Class 2 National Insurance",
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.nic2"),
                 "total" -> 2345.67,
                 "chargeUnderReview" -> false,
                 "interestLock" -> true
               ),
               Json.obj(
-                "breakdownType" -> "Voluntary Class 2 National Insurance",
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.vcnic2"),
                 "total" -> 3456.78,
                 "chargeUnderReview" -> true,
                 "interestLock" -> false
               ),
               Json.obj(
-                "breakdownType" -> "Capital Gains Tax",
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.cgt"),
                 "total" -> 9876.54,
                 "chargeUnderReview" -> false,
                 "interestLock" -> false
@@ -216,22 +219,22 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               Json.obj(
                 "amount" -> 1500,
                 "date" -> "2018-03-30",
-                "description" -> "Income Tax for payment on account 1 of 2"),
+                "description" -> messages("paymentAllocation.paymentAllocations.poa1.incomeTax")),
               Json.obj(
                 "amount" -> 1600,
                 "date" -> "2018-03-31",
-                "description" -> "Class 4 National Insurance for payment on account 1 of 2")
+                "description" -> messages("paymentAllocation.paymentAllocations.poa1.nic4"))
             ),
             "agentReferenceNumber" -> "agentReferenceNumber",
             "chargeHistory" -> Json.arr(
               Json.obj(
                 "date" -> "2018-07-06",
-                "description" -> "Payment on account 1 of 2 reduced due to amended return",
+                "description" -> messages("chargeSummary.chargeHistory.amend.paymentOnAccount1.text"),
                 "amount" -> 1500
               ),
               Json.obj(
                 "date" -> "2018-07-06",
-                "description" -> "Payment on account 1 of 2 reduced by taxpayer request",
+                "description" -> messages("chargeSummary.chargeHistory.request.paymentOnAccount1.text"),
                 "amount" -> 1500
               )
             ),
@@ -242,6 +245,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
         }
 
         "there are late payment charge details" in {
+
           chargeSummaryAuditFull(
             userType = Some("Agent"),
             docDateDetailWithInterest,
@@ -268,7 +272,6 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
             "credId" -> "credId",
             "mtditid" -> "mtditid"
           )
-
         }
 
         "the charge summary audit has minimal details" in {

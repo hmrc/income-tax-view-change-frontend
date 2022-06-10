@@ -35,6 +35,8 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   with MockAuthenticationPredicate with FeatureSwitching with MockAuditingService with MockItvcErrorHandler {
 
   val testYear: Int = 2020
+  val allowancesAndDeductionsServiceNameIndividual: String = messages("titlePattern.serviceName.govUk", messages("deduction_breakdown.heading"))
+  val allowancesAndDeductionsServiceNameAgent: String = messages("agent.titlePattern.serviceName.govUk", messages("deduction_breakdown.heading"))
 
   object TestDeductionsSummaryController extends DeductionsSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -69,7 +71,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       "render the Allowances and Deductions page" in {
         mockCalculationSuccessFullNew(testMtditid)
         status(result) shouldBe Status.OK
-        document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
+        document.title() shouldBe allowancesAndDeductionsServiceNameIndividual
         document.getElementById("total-value").text() shouldBe "£17,500.99"
       }
     }
@@ -82,7 +84,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       "render the Allowances and Deductions page" in {
         mockCalculationSuccessMinimalNew(testMtditid)
         status(result) shouldBe Status.OK
-        document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
+        document.title() shouldBe allowancesAndDeductionsServiceNameIndividual
         document.getElementById("total-value").text() shouldBe "£0.00"
       }
     }
@@ -106,7 +108,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       val document = result.toHtmlDocument
 
       status(result) shouldBe Status.OK
-      document.title() shouldBe "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+      document.title() shouldBe allowancesAndDeductionsServiceNameAgent
       document.getElementById("total-value").text() shouldBe "£17,500.99"
     }
 
@@ -118,7 +120,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       val document = result.toHtmlDocument
 
       status(result) shouldBe Status.OK
-      document.title() shouldBe "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
+      document.title() shouldBe allowancesAndDeductionsServiceNameAgent
       document.getElementById("total-value").text() shouldBe "£0.00"
     }
 

@@ -25,15 +25,15 @@ import views.html.agent.EnterClientsUTR
 class EnterClientsUTRViewSpec extends ViewSpec {
 
   object EnterClientsUTRMessages {
-    val title = "What is your client’s UTR? - Your client’s Income Tax details - GOV.UK"
-    val titleWithError = s"Error: $title"
-    val heading = "What is your client’s UTR?"
-    val info = "This is the 10 digit Unique Taxpayer Reference (UTR) they received when they registered for Self Assessment. For example, 1234567890"
-    val errorEmptyUTR = "Enter your client’s Unique Taxpayer Reference"
-    val errorWrongLength = "Your client’s Unique Taxpayer Reference must be 10 digits long"
-    val errorNonNumeric = "A Unique Taxpayer Reference must only contain numbers"
-    val continue = "Continue"
-    val errorPrefix = "Error:"
+    val heading: String =  messages("agent.enter_clients_utr.heading")
+    val title: String = messages("agent.title_pattern.service_name.govuk", heading)
+    val titleWithError: String = s"${messages("base.error-prefix")} $title"
+    val info: String = messages{"agent.enter_clients_utr.info"}
+    val errorEmptyUTR: String =  messages("agent.error.enter_clients_utr.empty")
+    val errorWrongLength: String = messages("agent.error.enter_clients_utr.length")
+    val errorNonNumeric: String = messages("agent.error.enter_clients_utr.non_numeric")
+    val continue: String = messages("base.continue")
+    val errorPrefix: String = messages("base.error-prefix")
   }
 
   val enterClientsUTR: EnterClientsUTR = app.injector.instanceOf[EnterClientsUTR]

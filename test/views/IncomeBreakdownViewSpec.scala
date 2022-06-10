@@ -18,7 +18,6 @@ package views
 
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.jsoup.nodes.Element
-import testConstants.MessagesLookUp.IncomeBreakdown
 import testUtils.ViewSpec
 import views.html.IncomeBreakdown
 
@@ -78,6 +77,10 @@ class IncomeBreakdownViewSpec extends ViewSpec {
     totalIncomeReceived = Some(10010.10)
   )
 
+  def subHeading(taxYear: Int): String = messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
+
+  def heading(taxYear: Int): String = s"${subHeading(taxYear)} ${messages("income_breakdown.heading")}"
+
 
   "The income breakdown view" when {
 
@@ -87,7 +90,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = incomeBreakdown(emptyIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe IncomeBreakdown.title
+        document title() shouldBe messages("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
       }
 
       "have a fallback backlink" in new Setup(view) {
@@ -95,8 +98,8 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        layoutContent hasPageHeading IncomeBreakdown.heading(taxYear)
-        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe IncomeBreakdown.subHeading(taxYear)
+        layoutContent hasPageHeading heading(taxYear)
+        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe subHeading(taxYear)
       }
 
       "have the correct caption" in new Setup(view) {
@@ -105,7 +108,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
 
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = layoutContent.select("p").get(0)
-        guidance.text() shouldBe IncomeBreakdown.guidance
+        guidance.text() shouldBe messages("income_breakdown.guidance_software")
       }
 
       "have an income table" which {
@@ -115,13 +118,13 @@ class IncomeBreakdownViewSpec extends ViewSpec {
         }
         "has a table header and amount section" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe IncomeBreakdown.incomeBreakdownHeader
-          row.select("th").last().text() shouldBe IncomeBreakdown.incomeBreakdownHeaderAmount
+          row.select("th").first().text() shouldBe messages("income_breakdown.table.header")
+          row.select("th").last().text() shouldBe messages("income_breakdown.table.header.amount")
         }
 
         "has a total line with a zero value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(1)
-          row.select("td").first().text() shouldBe IncomeBreakdown.total
+          row.select("td").first().text() shouldBe messages("income_breakdown.total")
           row.select("td").last().text() shouldBe "£0.00"
         }
       }
@@ -133,12 +136,12 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = incomeBreakdown(fullIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe IncomeBreakdown.title
+        document title() shouldBe messages("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
       }
 
       "have the correct heading" in new Setup(view) {
-        layoutContent hasPageHeading IncomeBreakdown.heading(taxYear)
-        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe IncomeBreakdown.subHeading(taxYear)
+        layoutContent hasPageHeading heading(taxYear)
+        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe subHeading(taxYear)
       }
 
       "have the correct caption" in new Setup(view) {
@@ -147,7 +150,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
 
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = layoutContent.select("p").get(0)
-        guidance.text() shouldBe IncomeBreakdown.guidance
+        guidance.text() shouldBe messages("income_breakdown.guidance_software")
       }
 
       "have an income table" which {
@@ -157,132 +160,132 @@ class IncomeBreakdownViewSpec extends ViewSpec {
         }
         "has a table header and amount section" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(0)
-          row.select("th").first().text() shouldBe IncomeBreakdown.incomeBreakdownHeader
-          row.select("th").last().text() shouldBe IncomeBreakdown.incomeBreakdownHeaderAmount
+          row.select("th").first().text() shouldBe messages("income_breakdown.table.header")
+          row.select("th").last().text() shouldBe messages("income_breakdown.table.header.amount")
         }
         "has a employment income line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(1)
-          row.select("td").first().text() shouldBe IncomeBreakdown.employments
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.employment")
           row.select("td").last().text() shouldBe "£5,005.05"
         }
 
         "has a benefits and expenses income line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(2)
-          row.select("td").first().text() shouldBe IncomeBreakdown.benefitsAndExpenses
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.benefits_received")
           row.select("td").last().text() shouldBe "£6,006.06"
         }
 
         "has an allowable expenses line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(3)
-          row.select("td").first().text() shouldBe IncomeBreakdown.allowableExpenses
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.allowable_expenses")
           row.select("td").last().text() shouldBe "−£7,007.07"
         }
 
         "has a total self-employment profit line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(4)
-          row.select("td").first().text() shouldBe IncomeBreakdown.selfEmployments
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.self_employment")
           row.select("td").last().text() shouldBe "£1,001.01"
         }
 
         "has a total property profit line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(5)
-          row.select("td").first().text() shouldBe IncomeBreakdown.property
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.property")
           row.select("td").last().text() shouldBe "£2,002.02"
         }
 
         "has an Profit from UK furnished line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(6)
-          row.select("td").first().text() shouldBe IncomeBreakdown.profitUkFurnished
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_uk_furnished_holiday")
           row.select("td").last().text() shouldBe "£6,003.00"
         }
 
         "has an Profit from foreign properties line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(7)
-          row.select("td").first().text() shouldBe IncomeBreakdown.profitFromForeignProperties
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_foreign_property")
           row.select("td").last().text() shouldBe "£6,004.00"
         }
 
         "has an Profit from Eea holiday line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(8)
-          row.select("td").first().text() shouldBe IncomeBreakdown.profitFromEeaHoliday
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_eea_holiday")
           row.select("td").last().text() shouldBe "£6,005.00"
         }
 
         "has an foreign dividends income line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(9)
-          row.select("td").first().text() shouldBe IncomeBreakdown.foreignDividendsIncome
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_dividends_income")
           row.select("td").last().text() shouldBe "£7,026.00"
         }
 
         "has an foreign savings income line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(10)
-          row.select("td").first().text() shouldBe IncomeBreakdown.foreignSavingsIncome
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_saving_income")
           row.select("td").last().text() shouldBe "£7,019.00"
         }
 
         "has an foreign pensions line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(11)
-          row.select("td").first().text() shouldBe IncomeBreakdown.foreignPensions
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_pensions")
           row.select("td").last().text() shouldBe "£6,006.00"
         }
 
         "has an foreign income received whilst abroad line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(12)
-          row.select("td").first().text() shouldBe IncomeBreakdown.incomeReceivedAbroad
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_income_abroad")
           row.select("td").last().text() shouldBe "£6,007.00"
         }
 
         "has an foreign income and gains line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(13)
-          row.select("td").first().text() shouldBe IncomeBreakdown.foreignincomeAndGains
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_income_gains")
           row.select("td").last().text() shouldBe "£6,008.00"
         }
 
         "has an foreign benefits and gifts line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(14)
-          row.select("td").first().text() shouldBe IncomeBreakdown.foreignBenefitsAndGifts
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_benefits_gifts")
           row.select("td").last().text() shouldBe "£6,009.00"
         }
 
         "has a total savings profit line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(15)
-          row.select("td").first().text() shouldBe IncomeBreakdown.bbsi
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.bbsi")
           row.select("td").last().text() shouldBe "£3,003.03"
         }
 
         "has an gains on life insurance policies line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(16)
-          row.select("td").first().text() shouldBe IncomeBreakdown.gainsOnInsurancePolicy
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.gains_insurance")
           row.select("td").last().text() shouldBe "£7,015.00"
         }
 
         "has a total dividends profit line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(17)
-          row.select("td").first().text() shouldBe IncomeBreakdown.dividends
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.dividends")
           row.select("td").last().text() shouldBe "£4,004.04"
         }
 
         "has an occupational pensions line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(18)
-          row.select("td").first().text() shouldBe IncomeBreakdown.occupationalPensions
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.occupational_pensions")
           row.select("td").last().text() shouldBe "£8,008.08"
         }
 
         "has an state benefits line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(19)
-          row.select("td").first().text() shouldBe IncomeBreakdown.stateBenefits
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.state_benefit")
           row.select("td").last().text() shouldBe "£9,009.09"
         }
 
         "has an share scheme line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(20)
-          row.select("td").first().text() shouldBe IncomeBreakdown.shareSchemes
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.share_schemes")
           row.select("td").last().text() shouldBe "£6,010.00"
         }
 
         "has a total line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(21)
-          row.select("td").first().text() shouldBe IncomeBreakdown.total
+          row.select("td").first().text() shouldBe messages("income_breakdown.total")
           row.select("td").last().text() shouldBe "£10,010.10"
         }
       }

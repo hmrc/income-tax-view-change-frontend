@@ -16,41 +16,43 @@
 
 package views.errorPages
 
-import testConstants.MessagesLookUp.{AgentErrorMessages => pageMessages}
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.errorPages.AgentError
 
 class AgentErrorViewSpec extends ViewSpec {
 
+  val setupAccountLink: String = s"${messages("agent-error.link")}${messages("pagehelp.opensInNewTabText")}"
+  val notAnAgentNote: String = s"${messages("agent-error.note")} $setupAccountLink."
+
   def agentErrorView: Html = app.injector.instanceOf[AgentError].apply()
 
   "The Agent Error page" should {
 
-    s"have the title: ${pageMessages.title}" in new Setup(agentErrorView) {
-      document.title shouldBe pageMessages.title
+    s"have the title: ${messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))}" in new Setup(agentErrorView) {
+      document.title shouldBe messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))
     }
 
-    s"have the heading: ${pageMessages.heading}" in new Setup(agentErrorView) {
-      document hasPageHeading pageMessages.heading
+    s"have the heading: ${messages("agent-error.heading")}" in new Setup(agentErrorView) {
+      document hasPageHeading messages("agent-error.heading")
     }
 
     "not have a back link" in new Setup(agentErrorView) {
       document doesNotHave Selectors.backLink
     }
 
-    s"have a paragraph stating: ${pageMessages.notAnAgentNote}" in new Setup(agentErrorView) {
-      layoutContent.select(Selectors.p).text shouldBe pageMessages.notAnAgentNote
+    s"have a paragraph stating: $notAnAgentNote" in new Setup(agentErrorView) {
+      layoutContent.select(Selectors.p).text shouldBe notAnAgentNote
     }
 
-    s"have a link in the paragraph: ${pageMessages.setupAccountLink}" in new Setup(agentErrorView) {
+    s"have a link in the paragraph: $setupAccountLink" in new Setup(agentErrorView) {
       layoutContent.selectFirst(Selectors.p)
-        .hasCorrectLink(pageMessages.setupAccountLink, "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account")
+        .hasCorrectLink(setupAccountLink, "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account")
     }
 
-    s"have a sign out button stating: ${pageMessages.signOutButton}" in new Setup(agentErrorView) {
+    s"have a sign out button stating: ${messages("base.sign-out")}" in new Setup(agentErrorView) {
       val signoutLinkButton = layoutContent.select("a[class=govuk-button]")
-      signoutLinkButton.text shouldBe pageMessages.signOutButton
+      signoutLinkButton.text shouldBe messages("base.sign-out")
       signoutLinkButton.attr("href") shouldBe controllers.routes.SignOutController.signOut().url
     }
 

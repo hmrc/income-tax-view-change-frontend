@@ -36,18 +36,18 @@ class NextUpdatesViewSpec extends TestSupport {
   }
 
   object obligationsMessages {
-    val heading: String = "Next updates"
-    val title: String = s"$heading - Business Tax account - GOV.UK"
-    val summary: String = "What are the update types?"
-    val summaryQuarterly: String = "Quarterly updates"
-    val quarterlyLine1: String = "A quarterly update is a record of all your business income in a 3 month period."
-    val quarterlyLine2: String = "Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income."
-    val annualLine1: String = "In an annual update you need to declare that the 4 quarterly updates you have sent are correct. You can also change any previous errors."
-    val annualLine2: String = "Using your record-keeping software, you need to send one annual update for each source of income at the end of each accounting period."
-    val declarationLine1: String = "Your final declaration confirms that the annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software."
-    val summaryAnnual: String = "Annual updates"
-    val summaryDeclaration: String = "Final declaration"
-    val info: String = "To view previously submitted updates visit the tax years page."
+    val heading: String = messages("nextUpdates.heading")
+    val title: String = messages("titlePattern.serviceName.govUk", heading)
+    val summary: String = messages("nextUpdates.dropdown.info")
+    val summaryQuarterly: String = messages("obligations.quarterlyUpdates")
+    val quarterlyLine1: String = messages("nextUpdates.dropdown.quarterlyReturn.text")
+    val quarterlyLine2: String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
+    val annualLine1: String = messages("nextUpdates.dropdown.annualReturn.text")
+    val annualLine2: String = messages("nextUpdates.dropdown.annualReturn.text.lin2")
+    val declarationLine1: String = messages("nextUpdates.dropdown.finalDeclaration.text")
+    val summaryAnnual: String = messages("obligations.annualUpdates")
+    val summaryDeclaration: String = messages("obligations.finalDeclarationUpdate")
+    val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
   }
 
   lazy val obligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel(

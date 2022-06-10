@@ -23,20 +23,19 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
-import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.twirl.api.Html
+import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
 import views.html.ChargeSummary
-import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
-import testConstants.PaymentAllocationsTestConstants.documentDetail
+
 import java.time.LocalDate
 
 class ChargeSummaryViewSpec extends ViewSpec {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
-  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val lang: Lang = Lang("GB")
+
+  import Messages._
 
   class Setup(documentDetail: DocumentDetail,
               dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
@@ -75,11 +74,6 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
   }
 
-
-  val typePOA1 = "SA Payment on Account 1"
-  val typePOA2 = "SA Payment on Account 2"
-  val typeBalCharge = "SA Balancing Charge"
-
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
@@ -87,65 +81,76 @@ class ChargeSummaryViewSpec extends ViewSpec {
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   object Messages {
-    def poaHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Payment on account $number of 2"
+    val typePOA1 = "SA Payment on Account 1"
+    val typePOA2 = "SA Payment on Account 2"
+    val typeBalCharge = "SA Balancing Charge"
+    val taxYearHeading: String = messages("taxYears.table.taxYear.heading")
+    val balancingCharge: String = messages("chargeSummary.balancingCharge.text")
+    val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
+    val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", "2017", "2018")
+    val chargeSummaryCodingOutHeading2017To2018: String = s"$taxYearHeading 6 April 2017 to 5 April 2018 ${messages("chargeSummary.codingOut.text")}"
+    val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
+    val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
-    def poaInterestHeading(year: Int, number: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
+    def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Payment on account $number of 2"
 
-    def balancingChargeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Balancing payment"
+    def poaInterestHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Late payment interest on payment on account $number of 2"
 
-    def balancingChargeInterestHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Late payment interest on Balancing payment"
+    def balancingChargeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $balancingCharge"
 
-    def class2NicHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Class 2 National Insurance"
+    def balancingChargeInterestHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${messages("chargeSummary.lpi.balancingCharge.text")}"
 
-    def cancelledSaPayeHeading(year: Int) = s"Tax year 6 April ${year - 1} to 5 April $year Cancelled Self Assessment payment (through your PAYE tax code)"
+    def class2NicHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year $paymentBreakdownNic2"
 
-    val dueDate = "Due date"
-    val interestPeriod = "Interest period"
-    val fullPaymentAmount = "Full payment amount"
-    val paymentAmount = "Payment amount"
-    val remainingToPay = "Remaining to pay"
-    val paymentBreakdownHeading = "Payment breakdown"
-    val chargeHistoryHeading = "Payment history"
-    val historyRowPOA1Created = "29 Mar 2018 Payment on account 1 of 2 created £1,400.00"
-    val codingOutHeader = "Tax year 6 April 2017 to 5 April 2018 PAYE self assessment"
-    val codingOutInsetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-    val paymentprocessingbullet1 = "may take up to 5 working days to process, depending on what payment method (opens in new tab) you use"
+    def cancelledSaPayeHeading(year: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year ${messages("chargeSummary.cancelledPayeSelfAssessment.text")}"
+
+    val dueDate: String = messages("chargeSummary.dueDate")
+    val interestPeriod: String = messages("chargeSummary.lpi.interestPeriod")
+    val fullPaymentAmount: String = messages("chargeSummary.paymentAmount")
+    val paymentAmount: String = messages("chargeSummary.paymentAmountCodingOut")
+    val remainingToPay: String = messages("chargeSummary.remainingDue")
+    val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
+    val chargeHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
+    val historyRowPOA1Created: String =  s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
+    val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
+    val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet1-3")}"
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
     def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
 
-    val balancingChargeCreated = "Balancing payment created"
-    val balancingChargeInterestCreated = "Late payment interest for Balancing payment created"
+    val balancingChargeCreated: String = messages("chargeSummary.chargeHistory.created.balancingCharge.text")
+    val balancingChargeInterestCreated: String = messages("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
 
     def paymentOnAccountAmended(number: Int) = s"Payment on account $number of 2 reduced due to amended return"
 
-    val balancingChargeAmended = "Balancing payment reduced due to amended return"
+    val balancingChargeAmended: String = messages("chargeSummary.chargeHistory.amend.balancingCharge.text")
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
-    def class2NicTaxYear(year: Int) = s"This is the Class 2 National Insurance payment for the ${year - 1} to $year tax year."
+    def class2NicTaxYear(year: Int) =  messages("chargeSummary.nic2TaxYear", s"${year - 1}", s"$year")
 
-    val class2NicChargeCreated = "Class 2 National Insurance created"
-    val cancelledSaPayeCreated = "Cancelled Self Assessment payment (through your PAYE tax code) created"
+    val class2NicChargeCreated: String = messages("chargeSummary.chargeHistory.created.class2Nic.text")
+    val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
 
-    def payeTaxCodeText(year: Int) = s"Check if your PAYE tax code has changed for the ${year - 1} to $year tax year."
+    def payeTaxCodeText(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", s"${year - 1}", s"$year")}"
 
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
-    val cancelledPayeTaxCodeInsetText = "You have previously agreed to pay some of your Self Assessment bill through your PAYE tax code (opens in new tab). HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay."
+    val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")}${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
-    def remainingTaxYouOwe(year: Int) = s"This is the remaining tax you owe for the ${year - 1} to $year tax year."
+    def remainingTaxYouOwe(year: Int) = messages("chargeSummary.codingOutMessage", s"${year - 1}", s"$year")
 
-    val balancingChargeRequest = "Balancing payment reduced by taxpayer request"
-    val dunningLockBannerHeader = "Important"
-    val dunningLockBannerLink = "This tax decision is being reviewed (opens in new tab)."
-    val interestLinkFirstWord = "View"
-    val interestLinkText = "what you owe"
-    val interestLinkFullText = "to check if you have any interest on this payment"
+    val balancingChargeRequest: String = messages("chargeSummary.chargeHistory.request.balancingCharge.text")
+    val dunningLockBannerHeader: String = messages("chargeSummary.dunning.locks.banner.title")
+    val dunningLockBannerLink: String = s"${messages("chargeSummary.dunning.locks.banner.linkText")}${messages("pagehelp.opensInNewTabText")}."
+    val interestLinkFirstWord: String = messages("chargeSummary.whatYouOwe.textOne")
+    val interestLinkText: String = messages("chargeSummary.whatYouOwe.linkText")
+    val interestLinkFullText: String = messages("chargeSummary.interestLocks.text")
+    val cancelledPAYESelfAssessment: String = messages("whatYouOwe.cancelled-paye-sa.heading")
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
-      s"$dunningLockBannerLink You still need to pay the total of $formattedAmount as you may be charged interest if not paid by $date."
+      s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
   }
 
   val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "amended return")
@@ -205,10 +210,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
   )
 
   def checkPaymentProcessingInfo(document: Document): Unit = {
-    document.select("#payment-days-note").text() shouldBe msgs("chargeSummary.payment-days-note")
+    document.select("#payment-days-note").text() shouldBe messages("chargeSummary.payment-days-note")
     document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe
-      s"${msgs("chargeSummary.payments-bullet1-1")} ${msgs("chargeSummary.payments-bullet1-2")} ${msgs("chargeSummary.payments-bullet1-3")}"
-    document.select("#payment-processing-bullets li:nth-child(2)").text() shouldBe msgs("chargeSummary.payments-bullet2")
+      s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("chargeSummary.payments-bullet1-3")}"
+    document.select("#payment-processing-bullets li:nth-child(2)").text() shouldBe messages("chargeSummary.payments-bullet2")
   }
 
   "individual" when {
@@ -219,68 +224,68 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have the correct heading for a POA 1" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
-        document.select("h1").text() shouldBe Messages.poaHeading(2018, 1)
+        document.select("h1").text() shouldBe poaHeading(2018, 1)
       }
 
       "have the correct heading for a POA 2" in new Setup(documentDetailModel(documentDescription = Some("ITSA - POA 2"))) {
-        document.select("h1").text() shouldBe Messages.poaHeading(2018, 2)
+        document.select("h1").text() shouldBe poaHeading(2018, 2)
       }
 
       "have the correct heading for a new balancing charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"))) {
-        document.select("h1").text() shouldBe Messages.balancingChargeHeading(2019)
+        document.select("h1").text() shouldBe balancingChargeHeading(2019)
       }
 
       "have the correct heading for an amend balancing charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM Amend Charge"))) {
-        document.select("h1").text() shouldBe Messages.balancingChargeHeading(2019)
+        document.select("h1").text() shouldBe balancingChargeHeading(2019)
       }
 
       "have the correct heading for a POA 1 late interest charge" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe Messages.poaInterestHeading(2018, 1)
+        document.select("h1").text() shouldBe poaInterestHeading(2018, 1)
       }
 
       "have the correct heading for a POA 2 late interest charge" in new Setup(documentDetailModel(documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe Messages.poaInterestHeading(2018, 2)
+        document.select("h1").text() shouldBe poaInterestHeading(2018, 2)
       }
 
-      "have the correct heading for a Class 2 National Insurance charge when coding out FS is enabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true) {
-        document.select("h1").text() shouldBe Messages.class2NicHeading(2018)
+      s"have the correct heading for a $paymentBreakdownNic2 charge when coding out FS is enabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2)), codingOutEnabled = true) {
+        document.select("h1").text() shouldBe class2NicHeading(2018)
       }
 
-      "have the correct heading for a Class 2 National Insurance charge when coding out FS is disabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
-        document.select("h1").text() shouldBe Messages.balancingChargeHeading(2018)
+      s"have the correct heading for a $paymentBreakdownNic2 charge when coding out FS is disabled" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
+        document.select("h1").text() shouldBe balancingChargeHeading(2018)
       }
 
-      "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), lpiWithDunningBlock = None), codingOutEnabled = true) {
-        document.select("#main-content p:nth-child(2)").text() shouldBe Messages.class2NicTaxYear(2018)
+      "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        document.select("#main-content p:nth-child(2)").text() shouldBe class2NicTaxYear(2018)
       }
 
-      "have the correct heading for a Cancelled PAYE Self Assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        document.select("h1").text() shouldBe Messages.cancelledSaPayeHeading(2018)
+      s"have the correct heading for a Cancelled PAYE Self Assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
+        document.select("h1").text() shouldBe cancelledSaPayeHeading(2018)
       }
 
       "have a paragraphs explaining Cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), codingOutEnabled = true) {
-        document.select("#check-paye-para").text() shouldBe Messages.payeTaxCodeText(2018)
-        document.select("#paye-tax-code-link").attr("href") shouldBe Messages.payeTaxCodeLink
-        document.select("#cancelled-coding-out-notice").text() shouldBe Messages.cancelledPayeTaxCodeInsetText
-        document.select("#cancelled-coding-out-notice a").attr("href") shouldBe Messages.cancellledPayeTaxCodeInsetLink
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), codingOutEnabled = true) {
+        document.select("#check-paye-para").text() shouldBe payeTaxCodeText(2018)
+        document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
+        document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
+        document.select("#cancelled-coding-out-notice a").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
 
       }
 
-      "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 May 2019")
-        verifySummaryListRow(2, Messages.paymentAmount, "£1,400.00")
-        verifySummaryListRow(3, Messages.remainingToPay, "£1,400.00")
+      "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
+        verifySummaryListRow(1, dueDate, "OVERDUE 15 May 2019")
+        verifySummaryListRow(2, paymentAmount, "£1,400.00")
+        verifySummaryListRow(3, remainingToPay, "£1,400.00")
       }
 
-      "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
+      "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
       }
 
       "what you page link with text for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#main-content p a").text() shouldBe interestLinkText
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
       "not display the Payment breakdown list for cancelled PAYE self assessment" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
@@ -288,27 +293,27 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
-        document.select("div#payment-link-2018").text() shouldBe s"${msgs("paymentDue.payNow")} ${msgs("paymentDue.pay-now-hidden", "2017", "2018")}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
-        document.select("main h2").text shouldBe Messages.chargeHistoryHeading
+        documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdown, codingOutEnabled = true) {
+        document.select("main h2").text shouldBe chargeHistoryHeading
       }
 
-      "display only the charge creation item when no history found for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true) {
+      "display only the charge creation item when no history found for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(1)").text() shouldBe "29 Mar 2018"
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.cancelledSaPayeCreated
+        document.select("tbody tr td:nth-child(2)").text() shouldBe cancelledSaPayeCreated
         document.select("tbody tr td:nth-child(3)").text() shouldBe "£1,400.00"
       }
 
       "have the correct heading for a new balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe Messages.balancingChargeInterestHeading(2019)
+        document.select("h1").text() shouldBe balancingChargeInterestHeading(2019)
       }
 
       "have the correct heading for an amend balancing charge late interest charge" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM Amend Charge")), latePaymentInterestCharge = true) {
-        document.select("h1").text() shouldBe Messages.balancingChargeInterestHeading(2019)
+        document.select("h1").text() shouldBe balancingChargeInterestHeading(2019)
       }
 
       "not display a notification banner when there are no dunning locks in payment breakdown" in new Setup(
@@ -319,15 +324,15 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "display a notification banner when there are dunning locks in payment breakdown" which {
 
-        s"has the '${Messages.dunningLockBannerHeader}' heading" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithDunningLocks) {
+        s"has the '${dunningLockBannerHeader}' heading" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithDunningLocks) {
           document.selectById("dunningLocksBanner")
-            .select(Selectors.h2).text() shouldBe Messages.dunningLockBannerHeader
+            .select(Selectors.h2).text() shouldBe dunningLockBannerHeader
         }
 
         "has the link for Payment under review which opens in new tab" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithDunningLocks) {
           val link: Elements = document.selectById("dunningLocksBanner").select(Selectors.link)
 
-          link.text() shouldBe Messages.dunningLockBannerLink
+          link.text() shouldBe dunningLockBannerLink
           link.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
           link.attr("target") shouldBe "_blank"
         }
@@ -337,59 +342,59 @@ class ChargeSummaryViewSpec extends ViewSpec {
             outstandingAmount = Some(1600)), paymentBreakdown = paymentBreakdownWithDunningLocks) {
 
             document.selectById("dunningLocksBanner")
-              .selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£1,600.00", "15 May 2019")
+              .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£1,600.00", "15 May 2019")
           }
 
           "display 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new Setup(
             documentDetailModel(outstandingAmount = Some(0)), paymentBreakdown = paymentBreakdownWithDunningLocks) {
 
             document.selectById("dunningLocksBanner")
-              .selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£0.00", "15 May 2019")
+              .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£0.00", "15 May 2019")
           }
 
           "display the original amount if no cleared or outstanding amount is present" in new Setup(
             documentDetailModel(outstandingAmount = None, originalAmount = Some(1700)), paymentBreakdown = paymentBreakdownWithDunningLocks) {
 
             document.selectById("dunningLocksBanner")
-              .selectNth(Selectors.div, 2).text() shouldBe Messages.dunningLockBannerText("£1,700.00", "15 May 2019")
+              .selectNth(Selectors.div, 2).text() shouldBe dunningLockBannerText("£1,700.00", "15 May 2019")
           }
         }
       }
 
       "display a due date" in new Setup(documentDetailModel()) {
-        verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 May 2019")
+        verifySummaryListRow(1, dueDate, "OVERDUE 15 May 2019")
       }
 
       "display the correct due date for an interest charge" in new Setup(documentDetailModel(), latePaymentInterestCharge = true) {
-        verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 June 2018")
+        verifySummaryListRow(1, dueDate, "OVERDUE 15 June 2018")
       }
 
       "display an interest period for a late interest charge" in new Setup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
-        verifySummaryListRow(2, Messages.interestPeriod, "29 Mar 2018 to 15 Jun 2018")
+        verifySummaryListRow(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
       }
 
       "display a charge amount" in new Setup(documentDetailModel(originalAmount = Some(1500))) {
-        verifySummaryListRow(2, Messages.fullPaymentAmount, "£1,500.00")
+        verifySummaryListRow(2, fullPaymentAmount, "£1,500.00")
       }
 
       "display a charge amount for a late interest charge" in new Setup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
-        verifySummaryListRow(3, Messages.fullPaymentAmount, "£100.00")
+        verifySummaryListRow(3, fullPaymentAmount, "£100.00")
       }
 
       "display a remaining amount" in new Setup(documentDetailModel(outstandingAmount = Some(1600))) {
-        verifySummaryListRow(3, Messages.remainingToPay, "£1,600.00")
+        verifySummaryListRow(3, remainingToPay, "£1,600.00")
       }
 
       "display a remaining amount for a late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(1600)), latePaymentInterestCharge = true) {
-        verifySummaryListRow(4, Messages.remainingToPay, "£80.00")
+        verifySummaryListRow(4, remainingToPay, "£80.00")
       }
 
       "display a remaining amount of 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
-        verifySummaryListRow(3, Messages.remainingToPay, "£0.00")
+        verifySummaryListRow(3, remainingToPay, "£0.00")
       }
 
       "display the original amount if no cleared or outstanding amount is present" in new Setup(documentDetailModel(outstandingAmount = None, originalAmount = Some(1700))) {
-        verifySummaryListRow(3, Messages.remainingToPay, "£1,700.00")
+        verifySummaryListRow(3, remainingToPay, "£1,700.00")
       }
 
       "not display the Payment breakdown list when payments breakdown is empty" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
@@ -399,12 +404,12 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "display the Payment breakdown list" which {
 
         "has a correct heading" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-          document.selectById("heading-payment-breakdown").text shouldBe Messages.paymentBreakdownHeading
+          document.selectById("heading-payment-breakdown").text shouldBe paymentBreakdownHeading
         }
 
         "has payment rows with charge types and original amounts" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
           verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
-          verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67")
+          verifyPaymentBreakdownRow(2, paymentBreakdownNic2, "£2,345.67")
           verifyPaymentBreakdownRow(3, "Voluntary Class 2 National Insurance", "£3,456.78")
           verifyPaymentBreakdownRow(4, "Class 4 National Insurance", "£5,678.90")
           verifyPaymentBreakdownRow(5, "Capital Gains Tax", "£9,876.54")
@@ -413,7 +418,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
         "has payment rows with Under review note when there are dunning locks on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithDunningLocks) {
           verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
-          verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 Under review")
+          verifyPaymentBreakdownRow(2, paymentBreakdownNic2, "£2,345.67 Under review")
           verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 Under review")
           verifyPaymentBreakdownRow(4, "Student Loans", "£543.21")
         }
@@ -426,58 +431,58 @@ class ChargeSummaryViewSpec extends ViewSpec {
         "has at least one record with an interest lock" which {
 
           "has payment rows with Under review note when there are dunning locks on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithMixedLocks) {
-            verifyPaymentBreakdownRow(1, "Income Tax", "£123.45 We are charging you interest on this payment")
-            verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 Under review We are not currently charging interest on this payment")
+            verifyPaymentBreakdownRow(1, "Income Tax", s"£123.45 $paymentBreakdownInterestLocksCharging")
+            verifyPaymentBreakdownRow(2, paymentBreakdownNic2, s"£2,345.67 ${messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")} ${messages("chargeSummary.paymentBreakdown.interestLocks.notCharging")}")
           }
 
           "has payment rows with appropriate messages for each row" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithInterestLocks) {
-            verifyPaymentBreakdownRow(1, "Income Tax", "£123.45 We are charging you interest on this payment")
-            verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67 We are not currently charging interest on this payment")
-            verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 We have previously charged you interest on this payment")
-            verifyPaymentBreakdownRow(4, "Student Loans", "£543.21 We are charging you interest on this payment")
+            verifyPaymentBreakdownRow(1, "Income Tax", s"£123.45 $paymentBreakdownInterestLocksCharging")
+            verifyPaymentBreakdownRow(2, paymentBreakdownNic2, s"£2,345.67 ${messages("chargeSummary.paymentBreakdown.interestLocks.notCharging")}")
+            verifyPaymentBreakdownRow(3, "Capital Gains Tax", s"£9,876.54 ${messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged")}")
+            verifyPaymentBreakdownRow(4, "Student Loans", s"£543.21 $paymentBreakdownInterestLocksCharging")
           }
 
         }
         "has no records that have an interest lock applied" should {
           "has payment rows but no interest lock message when there are no interest locks but there's accrued interest on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
             verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
-            verifyPaymentBreakdownRow(2, "Class 2 National Insurance", "£2,345.67")
+            verifyPaymentBreakdownRow(2, paymentBreakdownNic2, "£2,345.67")
           }
         }
       }
 
       "have a payment link when an outstanding amount is to be paid" in new Setup(documentDetailModel()) {
-        document.select("div#payment-link-2018").text() shouldBe s"${msgs("paymentDue.payNow")} ${msgs("paymentDue.pay-now-hidden", "2017", "2018")}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
-        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#main-content p a").text() shouldBe interestLinkText
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest) {
-        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
-        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#main-content p a").text() shouldBe interestLinkText
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
         document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock) {
         document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payments-owed"
+        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("div#payment-link-2018").text() shouldBe s"${msgs("paymentDue.payNow")} ${msgs("paymentDue.pay-now-hidden", "2017", "2018")}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
@@ -486,91 +491,91 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new Setup(
         documentDetailModel(lpiWithDunningBlock = None, outstandingAmount = Some(0))) {
-        document.select("main h2").text shouldBe Messages.chargeHistoryHeading
+        document.select("main h2").text shouldBe chargeHistoryHeading
       }
 
       "display a charge history heading as an h3 when there is a Payment Breakdown" in new Setup(
         documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("main h3").text shouldBe Messages.chargeHistoryHeading
+        document.select("main h3").text shouldBe chargeHistoryHeading
       }
 
       "display only the charge creation item when no history found for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(1)").text() shouldBe "29 Mar 2018"
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.paymentOnAccountCreated(1)
+        document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)
         document.select("tbody tr td:nth-child(3)").text() shouldBe "£1,400.00"
       }
 
       "display only the charge creation item when no history found for a payment on account 2 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2"))) {
         document.select("tbody tr").size() shouldBe 1
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.paymentOnAccountCreated(2)
+        document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountCreated(2)
       }
 
       "display only the charge creation item when no history found for a new balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM New Charge"))) {
         document.select("tbody tr").size() shouldBe 1
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.balancingChargeCreated
+        document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeCreated
       }
 
-      "display only the charge creation item for a Class 2 National Insurance charge" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")), codingOutEnabled = true) {
+      s"display only the charge creation item for a $paymentBreakdownNic2 charge" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2)), codingOutEnabled = true) {
         document.select("tbody tr").size() shouldBe 1
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.class2NicChargeCreated
+        document.select("tbody tr td:nth-child(2)").text() shouldBe class2NicChargeCreated
       }
 
       "display only the charge creation item for a payment on account 1 of 2 late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(0)), latePaymentInterestCharge = true) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.paymentOnAccountInterestCreated(1)
+        document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(1)
         document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
       }
 
       "display only the charge creation item for a payment on account 2 of 2 late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2")), latePaymentInterestCharge = true) {
         document.select("tbody tr").size() shouldBe 1
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.paymentOnAccountInterestCreated(2)
+        document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(2)
       }
 
       "display only the charge creation item for a new balancing charge late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM New Charge")), latePaymentInterestCharge = true) {
         document.select("tbody tr").size() shouldBe 1
-        document.select("tbody tr td:nth-child(2)").text() shouldBe Messages.balancingChargeInterestCreated
+        document.select("tbody tr td:nth-child(2)").text() shouldBe balancingChargeInterestCreated
       }
 
       "display the charge creation item when history is found and allocations are disabled" in new Setup(documentDetailModel(outstandingAmount = Some(0)),
         chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock[PaymentsWithChargeType])) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
-        document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountCreated(1)
+        document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)
         document.select("tbody tr:nth-child(1) td:nth-child(3)").text() shouldBe "£1,400.00"
       }
 
       "display the correct message for an amended charge for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(amendedChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(2) td:nth-child(1)").text() shouldBe "6 Jul 2018"
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountAmended(1)
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(1)
         document.select("tbody tr:nth-child(2) td:nth-child(3)").text() shouldBe "£1,500.00"
       }
 
       "display the correct message for an amended charge for a payment on account 2 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2")), chargeHistory = List(amendedChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountAmended(2)
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountAmended(2)
       }
 
       "display the correct message for an amended charge for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge")), chargeHistory = List(amendedChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeAmended
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeAmended
       }
 
       "display the correct message for a customer requested change for a payment on account 1 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0)), chargeHistory = List(customerRequestChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountRequest(1)
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(1)
       }
 
       "display the correct message for a customer requested change for a payment on account 2 of 2" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("ITSA - POA 2")), chargeHistory = List(customerRequestChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.paymentOnAccountRequest(2)
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(2)
       }
 
       "display the correct message for a customer requested change for a balancing charge" in new Setup(documentDetailModel(outstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge")), chargeHistory = List(customerRequestChargeHistoryModel)) {
         document.select("tbody tr").size() shouldBe 2
-        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe Messages.balancingChargeRequest
+        document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe balancingChargeRequest
       }
 
       "show payment allocations in history table" when {
@@ -607,7 +612,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
           "chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
             chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
-            verifyPaymentHistoryContent(Messages.historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
+            verifyPaymentHistoryContent(historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
           }
 
           "chargeHistory enabled with a matching link to the payment allocations page" in new Setup(documentDetailModel(),
@@ -623,12 +628,11 @@ class ChargeSummaryViewSpec extends ViewSpec {
         }
 
       }
-
       "hide payment allocations in history table" when {
         "allocations enabled but list is empty" when {
           "chargeHistory enabled, having Payment created in the first row" in new Setup(documentDetailModel(),
             chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = Nil) {
-            verifyPaymentHistoryContent(Messages.historyRowPOA1Created)
+            verifyPaymentHistoryContent(historyRowPOA1Created)
           }
 
           "chargeHistory disabled, not showing the table at all" in new Setup(documentDetailModel(),
@@ -642,24 +646,17 @@ class ChargeSummaryViewSpec extends ViewSpec {
         val documentDetailCodingOut = documentDetailModel(transactionId = "CODINGOUT02",
           documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
-        object CodingOutMessages {
-          val header = "Tax year 6 April 2017 to 5 April 2018 Balancing payment collected through PAYE tax code"
-          val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-          val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
-          val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
-          val remainingText = "Collected through your PAYE tax code for 2019 to 2020 tax year"
-          val payHistoryLine1 = "29 Mar 2018 Amount collected through your PAYE tax code for 2019 to 2020 tax year £2,500.00"
-        }
+
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
-          document.select("h1").text() shouldBe CodingOutMessages.header
-          document.select("#check-paye-para").text() shouldBe Messages.payeTaxCodeText(2018)
-          document.select("#paye-tax-code-link").attr("href") shouldBe Messages.payeTaxCodeLink
-          document.select("#coding-out-notice").text() shouldBe CodingOutMessages.insetPara
-          document.select("#coding-out-message").text() shouldBe CodingOutMessages.summaryMessage
-          document.select("#coding-out-notice-link").attr("href") shouldBe CodingOutMessages.noticeLink
+          document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
+          document.select("#check-paye-para").text() shouldBe payeTaxCodeText(2018)
+          document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
+          document.select("#coding-out-notice").text() shouldBe insetPara
+          document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018
+          document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
           document.select("a.govuk-button").size() shouldBe 0
           document.select(".govuk-table tbody tr").size() shouldBe 1
-          document.select(".govuk-table tbody tr").get(0).text() shouldBe CodingOutMessages.payHistoryLine1
+          document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
         }
       }
 
@@ -667,28 +664,22 @@ class ChargeSummaryViewSpec extends ViewSpec {
         val documentDetailCodingOut = documentDetailModel(transactionId = "CODINGOUT02",
           documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(2500.00),
           originalAmount = Some(2500.00))
-        object CodingOutMessages {
-          val header = "Tax year 6 April 2017 to 5 April 2018 Balancing payment collected through PAYE tax code"
-          val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-          val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
-          val noticeLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
-          val codingOutRemainingToPay = "(Collected through your PAYE tax code for 2019 to 2020 tax year)"
-        }
+
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
-          document.select("h1").text() shouldBe CodingOutMessages.header
-          document.select("#coding-out-notice").text() shouldBe CodingOutMessages.insetPara
-          document.select("#coding-out-message").text() shouldBe CodingOutMessages.summaryMessage
-          document.select("#coding-out-notice-link").attr("href") shouldBe CodingOutMessages.noticeLink
+          document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
+          document.select("#coding-out-notice").text() shouldBe insetPara
+          document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018
+          document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
           document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
-          document.selectById("codingOutRemainingToPay").text() shouldBe CodingOutMessages.codingOutRemainingToPay
+          document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")
           document.select("a.govuk-button").size() shouldBe 0
           document.select(".govuk-table tbody tr").size() shouldBe 1
         }
         "Coding Out is Disabled" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
-          document.select("h1").text() shouldBe "Tax year 6 April 2018 to 5 April 2019 Balancing payment"
-          verifySummaryListRow(1, Messages.dueDate, "OVERDUE 15 May 2019")
-          verifySummaryListRow(2, Messages.fullPaymentAmount, "£1,400.00")
-          verifySummaryListRow(3, Messages.remainingToPay, "£1,400.00")
+          document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 $balancingCharge"
+          verifySummaryListRow(1, dueDate, "OVERDUE 15 May 2019")
+          verifySummaryListRow(2, fullPaymentAmount, "£1,400.00")
+          verifySummaryListRow(3, remainingToPay, "£1,400.00")
           document.select("#coding-out-notice").text() shouldBe ""
           document.select("#coding-out-message").text() shouldBe ""
           document.select("#coding-out-notice-link").attr("href") shouldBe ""
@@ -719,19 +710,19 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe Messages.paymentprocessingbullet1
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
+        document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkText} ${interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe Messages.interestLinkText
+        document.select("#main-content p a").text() shouldBe interestLinkText
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
-        document.select("#p-interest-locks-msg").text() shouldBe s"${Messages.interestLinkFirstWord} ${Messages.interestLinkText} ${Messages.interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkText} ${interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
