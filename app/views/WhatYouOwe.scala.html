@@ -79,7 +79,7 @@
 }
 
 @saNoteParagraph = {
-@utr.map { utr =>
+    @utr.map { utr =>
         <div id="payments-due-note">
             @govukInsetText(InsetText(content = HtmlContent(saNoteParagraphContent(utr))))
         </div>
@@ -190,7 +190,6 @@
     }
     paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
     linkSuffix = getLinkSuffix())
-
 }
 
 @getReturnHref(year: Int) = @{
@@ -220,7 +219,6 @@
                     <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
                 </div>
             }
-
             @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,
                 rowId = rowId2)
 
@@ -232,7 +230,6 @@
             }
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index, id)</td>
-
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
             if(isOverduePayment && documentDetailWithDueDate.documentDetail.isLatePaymentInterest) {
                 documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
@@ -262,46 +259,46 @@
                         <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("payments-due")</caption>
                         @tableHead("over-due-payments-table-head")
                         <tbody class="govuk-table__body">
-                          @if(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
-                              <tr class="govuk-table__row " id="balancing-charge-type-0">
-                                  <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).toLongDateShort</td>
-                                  <td class="govuk-table__cell govuk-!-width-one-half">
-                                      @if(LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).isBefore(LocalDate.now())) {
-                                          <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
-                                      }
-                                      @p(id=Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
-                                      @p(id=Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
-                                  </td>
-                                  <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                                  @getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)
-                                  </td>
-                                  <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
-                                      whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency
-                                  }</td>
-                              </tr>
-                              @if(whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
-                                      && LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).isBefore(LocalDate.now())) {
-                                  <tr class="govuk-table__row" id="balancing-charge-type-1">
-                                      <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
-                                      <td class="govuk-table__cell govuk-!-width-one-half">
-                                          @getMessage("balancingCharge.interest.line1.text")
-                                          <div>
-                                          @getMessage("balancingCharge.interest.line2.text",
-                                              LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).toLongDateShort,
-                                              LocalDate.now().toLongDateShort
-                                          )
-                                          </div>
-                                      </td>
-                                      <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                                      @getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)
-                                      </td>
-                                      <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
-                                          whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.getOrElse(throw MissingFieldException("ACI Charge with Tie Breaker")).chargeAmount.toCurrency
-                                      }
-                                      </td>
-                                  </tr>
-                              }
-                          }
+                            @if(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
+                                <tr class="govuk-table__row " id="balancing-charge-type-0">
+                                    <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).toLongDateShort</td>
+                                    <td class="govuk-table__cell govuk-!-width-one-half">
+                                        @if(LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).isBefore(LocalDate.now())) {
+                                            <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
+                                        }
+                                        @p(id=Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
+                                        @p(id=Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
+                                    </td>
+                                    <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
+                                    @getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)
+                                    </td>
+                                    <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
+                                        whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency
+                                    }</td>
+                                </tr>
+                                @if(whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
+                                        && LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).isBefore(LocalDate.now())) {
+                                    <tr class="govuk-table__row" id="balancing-charge-type-1">
+                                        <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
+                                        <td class="govuk-table__cell govuk-!-width-one-half">
+                                            @getMessage("balancingCharge.interest.line1.text")
+                                            <div>
+                                            @getMessage("balancingCharge.interest.line2.text",
+                                                LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).toLongDateShort,
+                                                LocalDate.now().toLongDateShort
+                                            )
+                                            </div>
+                                        </td>
+                                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
+                                        @getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)
+                                        </td>
+                                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
+                                            whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.getOrElse(throw MissingFieldException("ACI Charge with Tie Breaker")).chargeAmount.toCurrency
+                                        }
+                                        </td>
+                                    </tr>
+                                }
+                            }
                             @if(whatYouOweChargesList.chargesList.nonEmpty){
                                 @for((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) {
                                     @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue, index, "taxYearSummary-link")
