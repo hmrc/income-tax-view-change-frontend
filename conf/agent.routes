@@ -4,8 +4,8 @@
 GET         /language/:lang                                               controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
 
 # Enter Clients UTR
-GET         /client-unique-taxpayer-reference                             controllers.agent.EnterClientsUTRController.show
-POST        /client-unique-taxpayer-reference                             controllers.agent.EnterClientsUTRController.submit
+GET         /client-utr                                                    controllers.agent.EnterClientsUTRController.show
+POST        /client-utr                                                    controllers.agent.EnterClientsUTRController.submit
 
 # Confirm Client
 GET         /confirm-client-details                                        controllers.agent.ConfirmClientUTRController.show

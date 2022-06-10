@@ -144,7 +144,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
-    def getEnterClientsUTR: WSResponse = get("/client-unique-taxpayer-reference ")
+    def getEnterClientsUTR: WSResponse = get("/client-utr")
 
     def postEnterClientsUTR(answer: Option[String]): WSResponse = post("/client-unique-taxpayer-reference")(
       answer.fold(Map.empty[String, Seq[String]])(

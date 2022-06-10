@@ -131,7 +131,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   }
 
   "displaying agent credit and refund page" should {
-    val link = "/report-quarterly/income-and-expenses/view/agents/charges/payments-made?documentNumber=1040000123"
+    val link = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
     "display the page" when {
       "correct data is provided" in new Setup(isAgent = true){
 
