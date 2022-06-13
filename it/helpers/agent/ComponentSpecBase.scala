@@ -29,6 +29,7 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
@@ -49,6 +50,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockUrl: String = s"http://$mockHost:$mockPort"
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
+
+  implicit val lang: Lang = Lang("GB")
+  val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
 
 
   def config: Map[String, String] = Map(

@@ -3,11 +3,10 @@ package controllers
 
 import config.featureswitch.CreditsRefundsRepay
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
-import testConstants.messages.CreditAndRefunds.creditAndRefundsPageTitle
 
 import java.time.LocalDate
 
@@ -32,7 +31,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(creditAndRefundsPageTitle)
+          pageTitleIndividual("credit-and-refund.heading")
         )
       }
     }
@@ -55,7 +54,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual("There is a problem")
+          pageTitleIndividual(messagesAPI("error.custom.heading"))
         )
       }
     }

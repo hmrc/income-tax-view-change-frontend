@@ -16,12 +16,15 @@
 
 package helpers
 
+import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.scalatest._
 import org.scalatest.matchers._
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 
 import scala.annotation.tailrec
 import scala.collection.JavaConverters._
@@ -67,12 +70,12 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleIndividual(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleIndividual(messageKey: String): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-        val expectedTitle = expectedValue + " - Business Tax account - GOV.UK"
+        val expectedTitle = messagesAPI("titlePattern.serviceName.govUk", messagesAPI(messageKey))
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
           body.title == expectedTitle,
@@ -83,12 +86,13 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleAgent(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleAgent(messageKey: String, isError: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-        val expectedTitle = expectedValue + " - Your client’s Income Tax details - GOV.UK"
+        val titlePattern: String = if(isError) "agent.error.title_pattern.service_name.govuk" else "agent.title_pattern.service_name.govuk"
+        val expectedTitle = messagesAPI(titlePattern, messagesAPI(messageKey))
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
           body.title == expectedTitle,

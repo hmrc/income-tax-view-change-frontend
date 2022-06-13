@@ -58,7 +58,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
         Then(s"Technical difficulties are shown with status $OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(messagesAPI("standardError.heading"))
         )
       }
     }
@@ -103,9 +103,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent("Forecast tax calculation"),
-          elementTextBySelector("h1")("6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
-            " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " Forecast tax calculation")
+          pageTitleAgent(messagesAPI("forecast_taxCalc.heading"))
         )
       }
     }

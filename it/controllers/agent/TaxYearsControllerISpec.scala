@@ -26,7 +26,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.MyTaxYearsMessages.taxYearsTitle
 
 import java.time.LocalDate
 
@@ -141,7 +140,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(taxYearsTitle),
+          pageTitleAgent("taxYears.heading"),
           elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
             expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
           ),

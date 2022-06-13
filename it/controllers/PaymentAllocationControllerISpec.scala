@@ -1,21 +1,20 @@
 
 package controllers
 
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.PaymentAllocationIntegrationTestConstants._
 import audit.models.PaymentAllocationsResponseAuditModel
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation, R7bTxmEvents}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-import testConstants.messages.PaymentAllocationMessages.paymentAllocationTitle
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.PaymentAllocationIntegrationTestConstants._
 
 class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -94,7 +93,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         Then("The Payment allocation page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(paymentAllocationTitle),
+          pageTitleIndividual("paymentAllocation.heading"),
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel, false).detail)
@@ -122,7 +121,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         Then("The Payment allocation page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(paymentAllocationTitle),
+          pageTitleIndividual("paymentAllocation.heading"),
           elementAttributeBySelector("#payment-allocation-0 a", "href")(
             "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&latePaymentCharge=true"),
           elementTextBySelector("#payment-allocation-0 a")("Late payment interest for Balancing payment 9999")

@@ -17,7 +17,7 @@ package controllers.agent
 
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.titleTechError
 import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -25,7 +25,6 @@ import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.AgentMessages.{clientUTRErrorTitle, clientUTRTitle}
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -64,7 +63,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       Then("The enter client's utr page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(clientUTRTitle)
+        pageTitleAgent("agent.enter_clients_utr.heading")
       )
     }
   }
@@ -92,7 +91,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent("standardError.heading")
         )
       }
     }
@@ -105,7 +104,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(clientUTRErrorTitle)
+          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
         )
       }
       "an empty utr string is submitted" in {
@@ -116,7 +115,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(clientUTRErrorTitle)
+          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
         )
       }
       "a utr containing non-digits is submitted" in {
@@ -127,7 +126,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(clientUTRErrorTitle)
+          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
         )
       }
       "a utr which has less than 10 digits is submitted" in {
@@ -138,7 +137,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(clientUTRErrorTitle)
+          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
         )
       }
       "a utr which has more than 10 digits is submitted" in {
@@ -149,7 +148,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent(clientUTRErrorTitle)
+          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
         )
       }
     }

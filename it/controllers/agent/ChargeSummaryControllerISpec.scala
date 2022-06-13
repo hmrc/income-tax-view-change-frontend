@@ -31,7 +31,6 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.ChargeSummaryMessages.{lpiPoa1, poa1Title, saPayment}
 
 import java.time.LocalDate
 
@@ -62,6 +61,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val currentYear: Int = LocalDate.now().getYear
   val testArn: String = "1"
 
+  val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
+  val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+
   s"GET ok" should {
     "load the page with right data for Payments Breakdown" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
@@ -82,10 +84,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
-        elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
-        elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("#heading-payment-breakdown")(messagesAPI("chargeSummary.paymentBreakdown.heading")),
+        elementTextBySelector("dl:nth-of-type(2) dd span")(messagesAPI("chargeSummary.paymentBreakdown.dunningLocks.underReview")),
+        elementTextBySelector("dl:nth-of-type(2) dd div")(messagesAPI("chargeSummary.paymentBreakdown.interestLocks.notCharging"))
       )
     }
 
@@ -115,8 +117,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("main h2")("Important Payment breakdown")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown)
       )
     }
 
@@ -148,8 +150,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("main h2")("Important Payment breakdown")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown)
       )
     }
 
@@ -167,9 +169,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("main h2")("Important Payment breakdown"),
-        elementTextBySelector("main h3")("Payment history")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown),
+        elementTextBySelector("main h3")(paymentHistory)
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -210,8 +212,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(lpiPoa1),
-        elementTextBySelector("main h2")("Payment history")
+        pageTitleAgent("chargeSummary.lpi.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(paymentHistory)
       )
     }
 
@@ -237,7 +239,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(saPayment),
+        pageTitleAgent("tax-year-summary.payments.codingOut.text"),
         elementTextBySelector("h1")(header),
         elementTextBySelector("#coding-out-notice")(insetPara),
         elementTextBySelector("#coding-out-message")(summaryMessage),
@@ -266,7 +268,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title)
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text")
       )
     }
 
@@ -291,7 +293,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title)
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text")
       )
     }
 

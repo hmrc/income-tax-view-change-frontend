@@ -18,7 +18,6 @@ package controllers.errors
 
 import helpers.agent.ComponentSpecBase
 import play.api.http.Status._
-import testConstants.messages.AgentMessages.agentError
 
 class AgentErrorControllerISpec extends ComponentSpecBase {
 
@@ -37,7 +36,7 @@ class AgentErrorControllerISpec extends ComponentSpecBase {
         Then("I can see the correct page")
         res should have(
           httpStatus(OK),
-          pageTitleAgent(agentError)
+          pageTitleAgent("agent-error.heading")
         )
       }
     }

@@ -33,7 +33,6 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
 import testConstants.messages.TaxYearSummaryMessages
-import testConstants.messages.TaxYearSummaryMessages.taxYearSummaryTitle
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -385,7 +384,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " forecast £5,000.99" else ""
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#forecast_total")(forecastTotal),
@@ -458,7 +457,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
@@ -533,7 +532,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
@@ -618,7 +617,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")("Balancing payment"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")("Overdue Class 2 National Insurance")
 
@@ -676,7 +675,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Class 2 National Insurance"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
 
@@ -737,7 +736,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Balancing payment"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")("Class 2 National Insurance"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "a")("Cancelled Self Assessment payment (through your PAYE tax code)")
@@ -797,7 +796,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("Page is displayed with no payments due")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("#payments p")("No payments currently due.")
         )
 
@@ -891,7 +890,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("h1.govuk-heading-xl")(headingStr),
           elementTextByID("no-calc-data-header")(TaxYearSummaryMessages.headingNoCalcData),
           elementTextByID("no-calc-data-note")(TaxYearSummaryMessages.noCalcDataNote)

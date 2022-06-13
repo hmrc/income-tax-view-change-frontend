@@ -19,6 +19,7 @@ package controllers.agent
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
+import config.featureswitch.{CutOverCredits, R7bTxmEvents}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -28,11 +29,9 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
-import java.time.LocalDate
 
-import config.featureswitch.{CutOverCredits, R7bTxmEvents}
+import java.time.LocalDate
 
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
@@ -110,7 +109,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(paymentHistoryTitle)
+        pageTitleAgent("paymentHistory.heading")
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false, R7bTxmEvents = false).detail)
@@ -133,7 +132,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(paymentHistoryTitle)
+        pageTitleAgent("paymentHistory.heading")
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true, R7bTxmEvents = true).detail)

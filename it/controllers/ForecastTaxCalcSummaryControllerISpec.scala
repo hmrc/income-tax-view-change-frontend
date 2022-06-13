@@ -30,8 +30,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual("Forecast tax calculation"),
-          elementTextBySelector("h1")("6 April 2017 to 5 April 2018 Forecast tax calculation")
+          pageTitleIndividual(messagesAPI("forecast_taxCalc.heading"))
         )
       }
 
@@ -44,8 +43,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         res should have (
           httpStatus(NOT_FOUND),
-          pageTitleIndividual("Page not found - 404"),
-          elementTextBySelector("h1")("This page can’t be found")
+          pageTitleIndividual("Page not found - 404")
         )
       }
     }

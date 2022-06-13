@@ -70,9 +70,9 @@ class HomeControllerISpec extends ComponentSpecBase {
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(title),
-          elementTextBySelector("#updates-tile p:nth-child(2)")("4 OVERDUE UPDATES"),
-          elementTextBySelector("#payments-tile p:nth-child(2)")("6 OVERDUE PAYMENTS")
+          pageTitleIndividual("home.heading"),
+          elementTextBySelector("#updates-tile p:nth-child(2)")(messagesAPI("home.overdue.date.update.count", "4")),
+          elementTextBySelector("#payments-tile p:nth-child(2)")(messagesAPI("home.overdue.date.payment.count", "6"))
         )
 
         verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
