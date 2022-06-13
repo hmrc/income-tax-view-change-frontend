@@ -48,4 +48,4 @@ GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial    
 
 ->          /                                                                                          prod.Routes
 
-POST        /report-quarterly/income-and-expenses/view/test-only/calc-id-to-session/:calculationId    testOnly.controllers.SessionAlterationController.addCalcId(calculationId: String)
+GET        /report-quarterly/income-and-expenses/view/test-only/calc-id-to-session/:calculationId    testOnly.controllers.SessionAlterationController.addCalcId(calculationId: String)
