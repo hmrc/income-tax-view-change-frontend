@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.titleTechError
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
@@ -34,6 +34,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
+import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -89,7 +90,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent("standardError.heading")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -254,7 +255,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 httpStatus(OK),
                 pageTitleAgent("home.agent.heading"),
                 elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
-                elementTextBySelector("#payments-tile p:nth-child(2)")(messagesAPI("home.payments.no-payments-due"))
+                elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
               )
 
               verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
@@ -322,8 +323,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 result should have(
                   httpStatus(OK),
                   pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"${messagesAPI("home.overdue.date")} ${LocalDate.now.minusDays(1).toLongDate}"),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(s"${messagesAPI("home.overdue.date")} ${LocalDate.now.minusDays(1).toLongDate}")
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${LocalDate.now.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${LocalDate.now.minusDays(1).toLongDate}")
                 )
 
                 verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
@@ -390,8 +391,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 result should have(
                   httpStatus(OK),
                   pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"OVERDUE ${LocalDate.now.minusDays(1).toLongDate}"),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(messagesAPI("home.overdue.date.payment.count", "2"))
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${LocalDate.now.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
                 )
 
                 verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(LocalDate.now.minusDays(1) -> true)).detail)
@@ -477,8 +478,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               result should have(
                 httpStatus(OK),
                 pageTitleAgent("home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(messagesAPI("home.overdue.date.update.count", "2")),
-                elementTextBySelector("#payments-tile p:nth-child(2)")(messagesAPI("home.overdue.date.payment.count", "2"))
+                elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
               )
 
               verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
@@ -521,7 +522,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitleAgent("standardError.heading")
+            pageTitleAgent(titleInternalServer)
           )
 
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -542,7 +543,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent("standardError.heading")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }

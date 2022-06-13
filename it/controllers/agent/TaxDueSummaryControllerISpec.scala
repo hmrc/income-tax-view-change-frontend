@@ -168,7 +168,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       res should have(
         httpStatus(OK),
         pageTitleAgent("taxCal_breakdown.heading"),
-        elementTextByID("additional_charges")(messagesAPI("taxCal_breakdown.additional_charges"))
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -191,7 +191,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       res should have(
         httpStatus(OK),
         pageTitleAgent("taxCal_breakdown.heading"),
-        elementTextByID("additional_charges")(messagesAPI("taxCal_breakdown.additional_charges"))
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -214,7 +214,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       res should have(
         httpStatus(OK),
         pageTitleAgent("taxCal_breakdown.heading"),
-        elementTextByID("additional_charges")(messagesAPI("taxCal_breakdown.additional_charges"))
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -240,7 +240,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )
 
       res shouldNot have(
-        elementTextByID("additional_charges")("Additional charges")
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -263,7 +263,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       res should have(
         httpStatus(OK),
         pageTitleAgent("taxCal_breakdown.heading"),
-        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messagesAPI("taxCal_breakdown.table.nic2.false"))
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(nonVoluntaryClass2Nics)
       )
     }
 
@@ -286,7 +286,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       res should have(
         httpStatus(OK),
         pageTitleAgent("taxCal_breakdown.heading"),
-        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messagesAPI("taxCal_breakdown.table.nic2.true"))
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(voluntaryClass2Nics)
       )
     }
   }

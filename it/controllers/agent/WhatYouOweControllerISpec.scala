@@ -16,6 +16,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
+import testConstants.messages.WhatYouOweMessages.underReview
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -469,7 +470,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
 
-        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")(messagesAPI("whatYouOwe.paymentUnderReview")),
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")(underReview),
         elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")("")
       )
     }
@@ -507,8 +508,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         httpStatus(OK),
         pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")(messagesAPI("whatYouOwe.paymentUnderReview")),
-        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")(messagesAPI("whatYouOwe.paymentUnderReview"))
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")(underReview),
+        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")(underReview)
       )
     }
   }

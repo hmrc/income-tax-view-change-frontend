@@ -22,7 +22,6 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
-import testConstants.messages.{NextUpdatesMessages => obligationsMessages}
 
 class NextUpdatesControllerISpec extends ComponentSpecBase {
 

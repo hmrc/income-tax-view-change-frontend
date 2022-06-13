@@ -24,7 +24,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
 
 
-        val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds
+        val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")

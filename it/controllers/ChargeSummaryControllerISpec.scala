@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, lpiCreated, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 
 import java.time.LocalDate
 
@@ -81,9 +82,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
-        elementTextBySelector("#heading-payment-breakdown")(messagesAPI("chargeSummary.paymentBreakdown.heading")),
-        elementTextBySelector("dl:nth-of-type(2) dd span")(messagesAPI("chargeSummary.paymentBreakdown.dunningLocks.underReview")),
-        elementTextBySelector("dl:nth-of-type(2) dd div")(messagesAPI("chargeSummary.paymentBreakdown.interestLocks.notCharging"))
+        elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
+        elementTextBySelector("dl:nth-of-type(2) dd span")(underReview),
+        elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -213,8 +214,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
-        elementTextBySelector("main h3")(paymentHistory),
-        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(messagesAPI("chargeSummary.lpi.chargeHistory.created.balancingCharge.text"))
+        elementTextBySelector("main h2")(paymentHistory),
+        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
       )
     }
 
@@ -337,10 +338,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       res should have(
         httpStatus(OK),
         pageTitleIndividual("tax-year-summary.payments.codingOut.text"),
-        elementTextBySelector("h1")(header),
-        elementTextBySelector("#coding-out-notice")(insetPara),
-        elementTextBySelector("#coding-out-message")(summaryMessage),
-        elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1)
+        elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
+        elementTextBySelector("#coding-out-message")(codingOutMessage(2017, 2018))
       )
     }
   }

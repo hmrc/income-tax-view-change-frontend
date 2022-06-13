@@ -4,7 +4,7 @@ package controllers.agent
 import config.featureswitch.ForecastCalculation
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxCalculationStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -58,7 +58,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
         Then(s"Technical difficulties are shown with status $OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(messagesAPI("standardError.heading"))
+          pageTitleAgent(titleInternalServer)
         )
       }
     }
@@ -103,7 +103,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(messagesAPI("forecast_taxCalc.heading"))
+          pageTitleAgent("forecast_taxCalc.heading")
         )
       }
     }

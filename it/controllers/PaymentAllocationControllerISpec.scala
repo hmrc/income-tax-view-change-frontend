@@ -124,7 +124,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           pageTitleIndividual("paymentAllocation.heading"),
           elementAttributeBySelector("#payment-allocation-0 a", "href")(
             "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&latePaymentCharge=true"),
-          elementTextBySelector("#payment-allocation-0 a")("Late payment interest for Balancing payment 9999")
+          elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} 9999")
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel, false).detail)

@@ -30,7 +30,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(messagesAPI("forecast_taxCalc.heading"))
+          pageTitleIndividual("forecast_taxCalc.heading")
         )
       }
 

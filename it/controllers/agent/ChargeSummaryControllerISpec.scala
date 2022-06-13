@@ -31,6 +31,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 
 import java.time.LocalDate
 
@@ -85,9 +86,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
-        elementTextBySelector("#heading-payment-breakdown")(messagesAPI("chargeSummary.paymentBreakdown.heading")),
-        elementTextBySelector("dl:nth-of-type(2) dd span")(messagesAPI("chargeSummary.paymentBreakdown.dunningLocks.underReview")),
-        elementTextBySelector("dl:nth-of-type(2) dd div")(messagesAPI("chargeSummary.paymentBreakdown.interestLocks.notCharging"))
+        elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
+        elementTextBySelector("dl:nth-of-type(2) dd span")(underReview),
+        elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
       )
     }
 
@@ -218,10 +219,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
 
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      val header = s"Tax year 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear} Balancing payment collected through PAYE tax code"
-      val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-      val summaryMessage = s"This is the remaining tax you owe for the ${getCurrentTaxYearEnd.getYear - 1} to ${getCurrentTaxYearEnd.getYear} tax year."
-      val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${getCurrentTaxYearEnd.getYear + 1} to ${getCurrentTaxYearEnd.getYear + 2} tax year £2,500.00"
 
       Given("the CodingOut feature switch is enabled")
       enable(CodingOut)
@@ -240,10 +237,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       result should have(
         httpStatus(OK),
         pageTitleAgent("tax-year-summary.payments.codingOut.text"),
-        elementTextBySelector("h1")(header),
-        elementTextBySelector("#coding-out-notice")(insetPara),
-        elementTextBySelector("#coding-out-message")(summaryMessage),
-        elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1)
+        elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
+        elementTextBySelector("#coding-out-message")(codingOutMessage(getCurrentTaxYearEnd.getYear - 1, getCurrentTaxYearEnd.getYear))
       )
     }
 

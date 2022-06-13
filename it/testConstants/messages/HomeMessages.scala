@@ -16,8 +16,14 @@
 
 package testConstants.messages
 
+import helpers.servicemocks.AuthStub.{messagesAPI, lang}
+
 object HomeMessages {
 
-  val title = "Income Tax"
-  val agentTitle = "Your client’s Income Tax"
+  val noPaymentsDue: String = messagesAPI("home.payments.no-payments-due")
+  val overdue: String = messagesAPI("home.overdue.date")
+  def overduePayments(numberOverdue: String): String = messagesAPI("home.overdue.date.payment.count", numberOverdue)
+
+  def overdueUpdates(numberOverdue: String): String = messagesAPI("home.overdue.date.update.count", numberOverdue)
+
 }

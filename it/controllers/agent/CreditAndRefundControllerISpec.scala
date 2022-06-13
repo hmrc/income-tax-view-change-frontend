@@ -64,7 +64,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual("There is a problem")
+          pageTitleIndividual(messagesAPI("error.custom.heading"))
         )
       }
     }

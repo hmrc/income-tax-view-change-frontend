@@ -17,7 +17,7 @@ package controllers.agent
 
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.titleTechError
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -91,7 +91,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent("standardError.heading")
+          pageTitleAgent(titleInternalServer)
         )
       }
     }

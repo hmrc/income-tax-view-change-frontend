@@ -71,8 +71,8 @@ class HomeControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual("home.heading"),
-          elementTextBySelector("#updates-tile p:nth-child(2)")(messagesAPI("home.overdue.date.update.count", "4")),
-          elementTextBySelector("#payments-tile p:nth-child(2)")(messagesAPI("home.overdue.date.payment.count", "6"))
+          elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates("4")),
+          elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments("6"))
         )
 
         verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)

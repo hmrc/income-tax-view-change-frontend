@@ -144,7 +144,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent("Forecast income")
+          pageTitleAgent("forecast_income.heading")
         )
       }
     }

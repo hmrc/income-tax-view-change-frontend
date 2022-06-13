@@ -46,7 +46,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(messagesAPI("forecast_income.heading"))
+          pageTitleIndividual("forecast_income.heading")
         )
       }
 
