@@ -14,45 +14,73 @@
  * limitations under the License.
  *@
 
-@import cats.syntax.eq._
 @import cats.instances.string._
-
+@import cats.syntax.eq._
 
 @this()
 @()(implicit messages: Messages)
 
 <script>
-    function getFragmentParam() {
-        if (window.location.hash) {
-            return "?fragment=" + window.location.hash.replace('#', '')
-        } else {
-            return ""
+        function getFragmentParam() {
+            if (window.location.hash) {
+                return "?fragment=" + window.location.hash.replace('#', '')
+            } else {
+                return ""
+            }
         }
-    }
-    function switchTo(url) {
-        window.location = url + getFragmentParam()
-    }
-</script>
 
+        function switchTo(url) {
+            window.location = url + getFragmentParam()
+        }
+</script>
+@*<script id="js-backlink">*@
+@* document.write('<a id="back-js" class="govuk-back-link" href="javascript:history.back()">@messages("base.back")</a>')*@
+@*</script>*@
+@*<noscript id="backlink-fallback">*@
+@* <a id="back-fallback" class="govuk-back-link" href="@href">@getFallbackLinkText</a>*@
+@*</noscript>*@
+@* *@
 @if(messages.lang.code === "en") {
-    <nav class="hmrc-language-select" aria-label="Language switcher">
-        <ul class="hmrc-language-select__list">
-            <li class="hmrc-language-select__list-item">
-                <span aria-current="true">English</span>
-            </li>
-            <li class="hmrc-language-select__list-item">
-                <a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
-                   hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
-                    <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
-                    <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <script>
+            <!--
+            document.write(`<nav class="hmrc-language-select" aria-label="Language switcher">
+                <ul class="hmrc-language-select__list">
+                    <li class="hmrc-language-select__list-item">
+                        <span aria-current="true">English</span>
+                    </li>
+                    <li class="hmrc-language-select__list-item">
+                        <a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
+                           hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
+                            <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                            <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            `)
+            -->
+    </script>
+    <noscript>
+        <nav class="hmrc-language-select" aria-label="Language switcher">
+            <ul class="hmrc-language-select__list">
+                <li class="hmrc-language-select__list-item">
+                    <span aria-current="true">English</span>
+                </li>
+                <li class="hmrc-language-select__list-item">
+                    <a href="@controllers.routes.ItvcLanguageController.switchToWelsh(None)"
+                    hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
+                        <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                        <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </noscript>
 
 } else {
-
-    <nav class="hmrc-language-select" aria-label="Switcher iaith">
+    <script>
+            <!--
+            document.write(`<nav class="hmrc-language-select" aria-label="Switcher iaith">
         <ul class="hmrc-language-select__list">
             <li class="hmrc-language-select__list-item">
                 <a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToEnglish(None)')"
@@ -65,8 +93,25 @@
                 <span aria-current="true">Cymraeg</span>
             </li>
         </ul>
-    </nav>
-
+    </nav>`)
+            -->
+    </script>
+    <noscript>
+        <nav class="hmrc-language-select" aria-label="Switcher iaith">
+            <ul class="hmrc-language-select__list">
+                <li class="hmrc-language-select__list-item">
+                    <a href="@controllers.routes.ItvcLanguageController.switchToEnglish(None)"
+                    hreflang="en" lang="en" rel="alternate" class="govuk-link">
+                        <span class="govuk-visually-hidden">Change the language to English</span>
+                        <span aria-hidden="true">English</span>
+                    </a>
+                </li>
+                <li class="hmrc-language-select__list-item">
+                    <span aria-current="true">Cymraeg</span>
+                </li>
+            </ul>
+        </nav>
+    </noscript>
 }
 
 
