@@ -52,7 +52,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase {
       }
     }
 
-    unauthorisedTest("/calculation/" + testYear + "/income")
+    unauthorisedTest("/" + testYear + "/income")
 
   }
 }

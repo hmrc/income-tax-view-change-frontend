@@ -56,7 +56,11 @@
 }
 
 @formCall = @{
-    controllers.routes.HomeController.show(origin)
+    if(isAgent){
+        controllers.routes.HomeController.showAgent
+    } else {
+        controllers.routes.HomeController.show(origin)
+    }
 }
     
 @layout(

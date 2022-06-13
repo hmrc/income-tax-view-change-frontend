@@ -16,10 +16,9 @@
 
 package views.helpers
 
-import testConstants.BaseTestConstants._
-import testConstants.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
 import org.jsoup.Jsoup
 import play.twirl.api.Html
+import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import views.html.helpers.injected.RenderServiceInfoHelper
 
@@ -43,8 +42,8 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
         lazy val homeLink = document.getElementById("service-info-home-link")
 
-        s"should have the text '${btaServiceMessages.btaHome}'" in {
-          homeLink.text() shouldBe btaServiceMessages.btaHome
+        s"should have the text '${messages("bta.home")}'" in {
+          homeLink.text() shouldBe messages("bta.home")
         }
 
         s"should have a link to '${appConfig.businessTaxAccount}'" in {
@@ -57,8 +56,8 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
         lazy val manageAccountLink = document.getElementById("service-info-manage-account-link")
 
-        s"should have the text '${btaServiceMessages.btaManageAccount}'" in {
-          manageAccountLink.text() shouldBe btaServiceMessages.btaManageAccount
+        s"should have the text ${messages("bta.manage-account")}" in {
+          manageAccountLink.text() shouldBe messages("bta.manage-account")
         }
 
         s"should have a link to '${appConfig.businessTaxAccount}'" in {
@@ -71,8 +70,8 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
         lazy val messagesLink = document.getElementById("service-info-messages-link")
 
-        s"should have the text '${btaServiceMessages.btaMessages}'" in {
-          messagesLink.text() shouldBe btaServiceMessages.btaMessages
+        s"should have the text ${messages("bta.messages")}" in {
+          messagesLink.text() shouldBe messages("bta.messages")
         }
 
         s"should have a link to '${appConfig.btaMessagesUrl}'" in {

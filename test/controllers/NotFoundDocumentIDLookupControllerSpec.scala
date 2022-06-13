@@ -21,7 +21,6 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.MessagesLookUp.{CustomNotFound => customNotFound}
 import testUtils.TestSupport
 import views.html.errorPages.CustomNotFoundError
 
@@ -42,7 +41,7 @@ class NotFoundDocumentIDLookupControllerSpec extends TestSupport {
     }
 
     "show the CustomNotFound page" in {
-      document.getElementsByTag("h1").text() shouldBe customNotFound.heading
+      document.getElementsByTag("h1").text() shouldBe messages("error.custom.heading")
     }
 
   }

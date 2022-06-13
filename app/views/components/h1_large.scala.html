@@ -19,7 +19,7 @@
 @(msg: String, classes: String = "govuk-heading-l", id: Option[String] = None)(implicit messages: Messages)
 
 @if(id.isDefined){
-<h1 class="@classes" id="@id">@messages(msg)</h1>
+    <h1 class="@classes" id="@id">@messages(msg)</h1>
 } else{
-<h1 class="@classes">@messages(msg)</h1>
+    <h1 class="@classes">@messages(msg)</h1>
 }

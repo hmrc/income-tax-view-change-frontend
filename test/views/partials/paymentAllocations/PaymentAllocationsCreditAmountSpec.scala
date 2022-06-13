@@ -41,18 +41,18 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
     "display the money in account row" in new Setup() {
       pageDocument.select("a#money-on-account-link").size() shouldBe 1
-      pageDocument.select("a#money-on-account-link").text() shouldBe "Money in your account"
-      pageDocument.select("a#money-on-account-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/credit-and-refunds"
+      pageDocument.select("a#money-on-account-link").text() shouldBe messages("paymentAllocation.moneyOnAccount")
+      pageDocument.select("a#money-on-account-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/claim-refund"
     }
 
     "display the money in account row for AGENT" in new Setup(true) {
       pageDocument.select("a#money-on-account-link").size() shouldBe 1
-      pageDocument.select("a#money-on-account-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/credit-and-refunds"
+      pageDocument.select("a#money-on-account-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/claim-refund"
     }
 
     "not display link when credits and refunds page feature switch is disabled" in new Setup(false, false) {
       pageDocument.select("a#money-on-account-link").size() shouldBe 0
-      pageDocument.select("tr#money-on-account > td:first-child").text() shouldBe "Money in your account"
+      pageDocument.select("tr#money-on-account > td:first-child").text() shouldBe messages("paymentAllocation.moneyOnAccount")
     }
   }
 }

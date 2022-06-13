@@ -16,7 +16,6 @@
 
 package views
 
-import testConstants.MessagesLookUp.{NoNextUpdates => NoNextUpdates}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,23 +29,25 @@ class NoNextUpdatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val NoNextUpdatesView = app.injector.instanceOf[NoNextUpdates]
+  val NoNextUpdatesView: NoNextUpdates = app.injector.instanceOf[NoNextUpdates]
+
+  val heading: String = messages("obligations.heading")
 
   "The NoNextUpdates view" should {
 
     lazy val page: Html = NoNextUpdatesView("testBackURL")(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
-    s"have the title '${NoNextUpdates.title}'" in {
-      document.title() shouldBe NoNextUpdates.title
+    s"have the title ${messages("titlePattern.serviceName.govUk", heading)}" in {
+      document.title() shouldBe messages("titlePattern.serviceName.govUk", heading)
     }
 
-    s"have the heading '${NoNextUpdates.heading}'" in {
-      document.select("h1").text() shouldBe NoNextUpdates.heading
+    s"have the heading $heading" in {
+      document.select("h1").text() shouldBe heading
     }
 
     s"have the text the correct content text" in {
-      document.select("p.govuk-body").text() shouldBe NoNextUpdates.noUpdates
+      document.select("p.govuk-body").text() shouldBe messages("obligations.noReports")
     }
 
   }

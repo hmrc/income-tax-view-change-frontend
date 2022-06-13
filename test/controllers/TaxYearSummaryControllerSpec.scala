@@ -17,8 +17,8 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.MockItvcErrorHandler
@@ -33,8 +33,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusOne, testYearPlusTwo}
-import testConstants.FinancialDetailsTestConstants.{documentDetailClass2Nic, documentDetailPaye, financialDetails, financialDetailsModel, fullDocumentDetailWithDueDateModel, testFinancialDetailsErrorModel}
-import testConstants.MessagesLookUp
+import testConstants.FinancialDetailsTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -70,8 +69,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
 
-  lazy val messagesLookUp = new MessagesLookUp.Calculation(testTaxYear)
-
   val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel, fullDocumentDetailWithDueDateModel.copy(
     dueDate = fullDocumentDetailWithDueDateModel.documentDetail.interestEndDate, isLatePaymentInterest = true))
   val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
@@ -81,7 +78,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
-  val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
+  val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
     def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,

@@ -16,8 +16,8 @@
 
 package controllers
 
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import config.featureswitch.FeatureSwitching
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -31,9 +31,8 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.CalculationService
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import testConstants.IncomeSourceDetailsTestConstants._
-import testConstants.MessagesLookUp
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
@@ -63,8 +62,6 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter]
   )
-
-  lazy val CalcMessages = new MessagesLookUp.Calculation(testTaxYear)
 
   ".viewTaxYears" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {

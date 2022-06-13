@@ -84,7 +84,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe "Page not found - 404 - Business Tax account - GOV.UK"
+          document.title() shouldBe messages("titlePattern.serviceName.govUk", "Page not found - 404")
         }
       }
     }
@@ -94,7 +94,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
-        val backlink = "/report-quarterly/income-and-expenses/view/calculation/2018"
+        val backlink = "/report-quarterly/income-and-expenses/view/tax-year-summary/2018"
         val endOfYearEstimateModel = liabilityCalculationModelSuccessFull.calculation.get.endOfYearEstimate.get
         val expectedContent: String = forecastIncomeView(
           endOfYearEstimateModel = endOfYearEstimateModel,
@@ -116,7 +116,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe "Forecast income - Business Tax account - GOV.UK"
+          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_income.heading"))
           contentAsString(result) shouldBe expectedContent
         }
       }
@@ -177,7 +177,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe "Page not found - 404 - Your client’s Income Tax details - GOV.UK"
+          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", "Page not found - 404")
         }
       }
     }
@@ -187,7 +187,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
-        val backlink = "/report-quarterly/income-and-expenses/view/agents/calculation/2018"
+        val backlink = "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018"
         val endOfYearEstimateModel = liabilityCalculationModelSuccessFull.calculation.get.endOfYearEstimate.get
         val expectedContent: String = forecastIncomeView(
           endOfYearEstimateModel = endOfYearEstimateModel,
@@ -210,7 +210,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe "Forecast income - Your client’s Income Tax details - GOV.UK"
+          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("forecast_income.heading"))
           contentAsString(result) shouldBe expectedContent
         }
       }

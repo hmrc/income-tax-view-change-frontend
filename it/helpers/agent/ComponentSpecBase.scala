@@ -156,13 +156,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
-    def getConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/confirm-client", clientDetails)
+    def getConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/confirm-client-details", clientDetails)
 
-    def postConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = post("/confirm-client", clientDetails)(Map.empty)
+    def postConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = post("/confirm-client-details", clientDetails)(Map.empty)
 
     def getPaymentsDue: WSResponse = get("/payments-owed")
 
-    def getClientRelationshipFailure: WSResponse = get("/client-relationship-problem")
+    def getClientRelationshipFailure: WSResponse = get("/need-permission-to-view")
 
     def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/utr-problem", clientUTR)
 
@@ -171,40 +171,40 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postUTRError: WSResponse = post("/utr-problem")(Map.empty)
 
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/income-tax-account", additionalCookies)
+      getWithClientDetailsInSession("/agents/client-income-tax", additionalCookies)
 
     def getCreditAndRefunds(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/credit-and-refunds", additionalCookies)
+      getWithClientDetailsInSession("/agents/claim-refund", additionalCookies)
 
     def getPaymentsDue(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/payments-owed", additionalCookies)
+      getWithClientDetailsInSession("/agents/what-you-owe", additionalCookies)
 
     def getTaxYearSummary(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession(s"/agents/calculation/$taxYear", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/tax-year-summary/$taxYear", additionalCookies)
 
     def getIncomeSummaryAgent(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession(s"/agents/calculation/$taxYear/income", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/$taxYear/income", additionalCookies)
 
     def getForecastIncomeSummaryAgent(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession(s"/agents/calculation/$taxYear/income/forecast", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/$taxYear/forecast-income", additionalCookies)
 
     def getTaxCalcBreakdown(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession(s"/agents/calculation/$taxYear/tax-due", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/$taxYear/tax-calculation", additionalCookies)
 
     def getForecastTaxCalcSummary(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession(s"/agents/calculation/$taxYear/tax-due/forecast", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/$taxYear/forecast-tax-calculation", additionalCookies)
 
     def getChargeSummary(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id", additionalCookies)
 
     def getPaymentHistory(additionalCookies: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/agents/payments/history", additionalCookies)
+      getWithClientDetailsInSession("/agents/payment-refund-history", additionalCookies)
 
     def getPaymentAllocation(docNumber: String, additionCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession(s"/agents/charges/payments-made?documentNumber=$docNumber", additionCookies)
+      getWithClientDetailsInSession(s"/agents/payment-made-to-hmrc?documentNumber=$docNumber", additionCookies)
 
     def getDeductionsSummary(year: String, additionalCookies: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession(s"/agents/calculation/$year/deductions", additionalCookies)
+      getWithClientDetailsInSession(s"/agents/$year/allowances-and-deductions", additionalCookies)
 
     def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)

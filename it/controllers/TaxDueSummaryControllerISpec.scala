@@ -219,7 +219,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
   }
 
-  unauthorisedTest("/calculation/" + testYear + "/tax-due")
+  unauthorisedTest("/" + testYear + "/tax-calculation")
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {

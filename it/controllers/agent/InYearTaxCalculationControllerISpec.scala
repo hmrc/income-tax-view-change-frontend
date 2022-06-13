@@ -128,11 +128,11 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val incomeText = "Income"
     val incomeAmount = "£12,500.00"
-    val incomeLink = s"/report-quarterly/income-and-expenses/view/agents/calculation/$taxYear/income"
+    val incomeLink = s"/report-quarterly/income-and-expenses/view/agents/$taxYear/income"
 
     val allowanceText = "Allowances and deductions"
     val allowanceAmount = "−£17,500.99"
-    val allowanceLink = s"/report-quarterly/income-and-expenses/view/agents/calculation/$taxYear/deductions"
+    val allowanceLink = s"/report-quarterly/income-and-expenses/view/agents/$taxYear/allowances-and-deductions"
 
     val taxableIncome = "Total income on which tax is due"
     val taxableIncomeAmount = "£12,500.00"
@@ -152,11 +152,11 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val incomeText = "Incwm"
     val incomeAmount = "£12,500.00"
-    val incomeLink = s"/report-quarterly/income-and-expenses/view/agents/calculation/$taxYear/income"
+    val incomeLink = s"/report-quarterly/income-and-expenses/view/agents/$taxYear/income"
 
     val allowanceText = "Lwfansau a didyniadau"
     val allowanceAmount = "−£17,500.99"
-    val allowanceLink = s"/report-quarterly/income-and-expenses/view/agents/calculation/$taxYear/deductions"
+    val allowanceLink = s"/report-quarterly/income-and-expenses/view/agents/$taxYear/allowances-and-deductions"
 
     val taxIsDueText = "Cyfanswm yr incwm y mae treth yn ddyledus arno"
     val taxIsDueAmount = "£12,500.00"

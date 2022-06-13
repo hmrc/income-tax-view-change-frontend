@@ -4,15 +4,15 @@
 GET         /language/:lang                                               controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
 
 # Enter Clients UTR
-GET         /client-utr                                                   controllers.agent.EnterClientsUTRController.show
-POST        /client-utr                                                   controllers.agent.EnterClientsUTRController.submit
+GET         /client-utr                                                    controllers.agent.EnterClientsUTRController.show
+POST        /client-utr                                                    controllers.agent.EnterClientsUTRController.submit
 
 # Confirm Client
-GET         /confirm-client                                               controllers.agent.ConfirmClientUTRController.show
-POST        /confirm-client                                               controllers.agent.ConfirmClientUTRController.submit
+GET         /confirm-client-details                                        controllers.agent.ConfirmClientUTRController.show
+POST        /confirm-client-details                                        controllers.agent.ConfirmClientUTRController.submit
 
 # Client Relationship Failure
-GET         /client-relationship-problem                                  controllers.agent.ClientRelationshipFailureController.show
+GET         /need-permission-to-view                                       controllers.agent.ClientRelationshipFailureController.show
 
 # UTR Error
 GET         /utr-problem                                                  controllers.agent.UTRErrorController.show

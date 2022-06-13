@@ -20,10 +20,10 @@
 @(href: String, gatewayPageOpt: Option[GatewayPage] = None)(implicit messages: Messages)
 
 @getFallbackLinkText = @{
-  gatewayPageOpt match {
-    case Some(page) => messages(s"back.${page.name}")
-    case None => messages("base.back")
-  }
+    gatewayPageOpt match {
+        case Some(page) => messages(s"back.${page.name}")
+        case None => messages("base.back")
+    }
 }
 
 <script id="js-backlink">

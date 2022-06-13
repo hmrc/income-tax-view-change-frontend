@@ -16,8 +16,6 @@
 
 package views.agent
 
-import testConstants.BaseTestConstants._
-import testConstants.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
@@ -29,6 +27,7 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.html.Home
 
@@ -113,16 +112,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
       }
 
-      s"have the title '${homeMessages.agentTitle}'" in new Setup() {
-        document.title() shouldBe homeMessages.agentTitle
+      s"have the title ${messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))}" in new Setup() {
+        document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))
       }
 
       "display the language selection switch" in new Setup {
-        getTextOfElementById("switch-welsh") shouldBe Some(coreMessages.welsh)
+        getTextOfElementById("switch-welsh") shouldBe Some(messages("language-switcher.welsh"))
       }
 
-      s"have the page heading '${homeMessages.agentHeading}'" in new Setup {
-        document.select("h1").text() shouldBe homeMessages.agentHeading
+      s"have the page heading ${messages("home.agent.heading")}" in new Setup {
+        document.select("h1").text() shouldBe messages("home.agent.heading")
       }
 
       s"have the hint with the users name '$testUserName' and utr '$testSaUtr' " in new Setup {
@@ -131,7 +130,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
       "have an next payment due tile" which {
         "has a heading" in new Setup {
-          getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentsHeading)
+          getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(messages("home.payments.heading"))
         }
         "has content of the next payment due" which {
           "is overdue" in new Setup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = Some(1)) {
@@ -153,8 +152,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to check what you owe" in new Setup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments-owed")
-          link.map(_.text) shouldBe Some(homeMessages.paymentLink)
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/what-you-owe")
+          link.map(_.text) shouldBe Some(messages("home.payments.view"))
         }
       }
 
@@ -174,7 +173,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
       "have an next updates due tile" which {
         "has a heading" in new Setup {
-          getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(homeMessages.updatesHeading)
+          getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
         }
         "has content of the next update due" which {
           "is overdue" in new Setup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(1)) {
@@ -190,44 +189,44 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         "has a link to view updates" in new Setup {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
-          link.map(_.text) shouldBe Some(homeMessages.updatesLink)
+          link.map(_.text) shouldBe Some(messages("home.updates.view"))
         }
       }
 
       "have a returns tile" which {
         "has a heading" in new Setup {
-          getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
+          getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(messages("home.tax-years.heading"))
         }
         "has a link to the view payments page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(currentTaxYear).url)
-          link.map(_.text) shouldBe Some(homeMessages.viewPaymentsLinkWithDateRange(currentTaxYear))
+          link.map(_.text) shouldBe Some(s"${messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
         }
         "has a link to the update and submit page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-          link.map(_.text) shouldBe Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
+          link.map(_.text) shouldBe Some(s"${messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
         }
         "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) should not be Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-          link.map(_.text) should not be Some(homeMessages.viewUpdateAndSubmitLinkWithDateRange(currentTaxYear))
+          link.map(_.text) should not be Some(s"${messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
         }
         "has a link to the tax years page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears().url)
-          link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
+          link.map(_.text) shouldBe Some(messages("home.tax-years.view"))
         }
       }
 
       "have a payment history tile" which {
         "has a heading" in new Setup {
-          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentHistoryHeading)
+          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
         }
         "has a link to the payment history page" in new Setup {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
-          link.map(_.text) shouldBe Some(homeMessages.paymentHistoryAndCreditView)
+          link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
       }
 
@@ -235,7 +234,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
         val link: Option[Elements] = getElementById("changeClientLink").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/remove-client-sessions")
-        link.map(_.text) shouldBe Some(homeMessages.changeClientLink)
+        link.map(_.text) shouldBe Some(messages("home.agent.changeClientLink"))
       }
     }
 

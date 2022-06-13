@@ -53,7 +53,7 @@ class RoutesSpec extends TestSupport {
   //Calculation
   "The URL for the CalculationController.renderCalculationPage(year) action" should {
     s"be equal to $contextRoute/calculation/2018" in {
-      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2018).url shouldBe s"$contextRoute/calculation/2018"
+      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2018).url shouldBe s"$contextRoute/tax-year-summary/2018"
     }
   }
 

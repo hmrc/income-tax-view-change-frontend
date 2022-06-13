@@ -29,6 +29,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "payment-history-response"
   val auditEvent = "PaymentHistoryResponse"
+  val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
   def paymentHistoryAuditFull(userType: Option[String] = Some("Agent")): PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
     mtdItUser = MtdItUser(
@@ -160,7 +161,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
             "userType" -> "Individual",
             "paymentHistory" -> Json.arr(
               Json.obj(
-                "description" -> "Payment from an earlier tax year",
+                "description" -> paymentFromEarlierYear,
                 "paymentDate" -> "2018-04-25",
                 "amount" -> -10000.00
               )
@@ -177,7 +178,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
             "agentReferenceNumber" -> testArn,
             "paymentHistory" -> Json.arr(
               Json.obj(
-                "description" -> "Payment from an earlier tax year",
+                "description" -> paymentFromEarlierYear,
                 "paymentDate" -> "2018-04-25",
                 "amount" -> -10000.00
               )

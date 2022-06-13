@@ -38,9 +38,10 @@
     govukInsetText : GovukInsetText
 )
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
-    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType], payments: FinancialDetailsModel,
-    chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean, latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-        origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None
+    paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
+    payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
+    latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None
     )(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -229,37 +230,41 @@
         @if(latePaymentInterestCharge) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
-                <dd class="govuk-summary-list__value">@messages("chargeSummary.lpi.interestPeriod.dates", documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort, documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
+                <dd class="govuk-summary-list__value">
+                    @messages("chargeSummary.lpi.interestPeriod.dates",
+                        documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
+                        documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
             </div>
         }
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@{
-                if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
-                messages("chargeSummary.paymentAmountCodingOut")
-                } else messages("chargeSummary.paymentAmount")
+            <dt class="govuk-summary-list__key">
+                @{
+                    if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
+                        messages("chargeSummary.paymentAmountCodingOut")
+                    } else messages("chargeSummary.paymentAmount")
                 }
             </dt>
             <dd class="govuk-summary-list__value">
                 @{
-                if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-                else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+                    if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+                    else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
                 }
             </dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
-            <dd class="govuk-summary-list__value">@{
-                if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-                messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-                } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
-                else documentDetail.remainingToPay.toCurrency
+            <dd class="govuk-summary-list__value">
+                @{
+                    if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+                        messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+                    } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+                    else documentDetail.remainingToPay.toCurrency
                 }
             </dd>
         </div>
         }
 
     </dl>
-
 
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
         <p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
@@ -271,14 +276,12 @@
             }
         </p>
 
-
-
         <p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
             @{
-            if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-                messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-            } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
-            else documentDetail.remainingToPay.toCurrency
+                if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+                    messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+                } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+                else documentDetail.remainingToPay.toCurrency
             }
 
         </p>
@@ -289,7 +292,9 @@
         <dl class="govuk-summary-list govuk-!-margin-bottom-8">
             @for(financialDetail <- paymentBreakdown) {
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.getOrElse(throw MissingFieldException("Message Key For Charge Type"))}")</dt>
+                    <dt class="govuk-summary-list__key">
+                        @messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.getOrElse(throw MissingFieldException("Message Key For Charge Type"))}")
+                    </dt>
                     <dd class="govuk-summary-list__value">
                         @financialDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
                         @if(financialDetail.dunningLockExists) {
@@ -304,9 +309,15 @@
                             }
                         }
                         @if(hasInterestLocks){
-                            @if(!financialDetail.interestLockExists){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.charging") </div>}
-                            @if(financialDetail.interestLockExists && !financialDetail.hasAccruedInterest){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.notCharging") </div>}
-                            @if(financialDetail.interestLockExists && financialDetail.hasAccruedInterest){<div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged") </div>}
+                            @if(!financialDetail.interestLockExists){
+                                <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.charging") </div>
+                            }
+                            @if(financialDetail.interestLockExists && !financialDetail.hasAccruedInterest){
+                                <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.notCharging") </div>
+                            }
+                            @if(financialDetail.interestLockExists && financialDetail.hasAccruedInterest){
+                                <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged") </div>
+                            }
                         }
                     </dd>
                 </div>
@@ -330,8 +341,7 @@
     @if(hasInterestLocks && hasAccruedInterest) {
         @p(id=Some("p-interest-locks-msg")){
             @messages("chargeSummary.whatYouOwe.textOne")
-            @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText"
-)
+            @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
             @messages("chargeSummary.interestLocks.text")
         }
     } else {
@@ -344,7 +354,7 @@
 
     @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
         <div id="payment-link-@{taxYearTo}">
-            <a class="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)">
+            <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)">
                 @messages("paymentDue.payNow")
                 <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", taxYearFrom, taxYearTo)</span>
             </a>
@@ -380,7 +390,9 @@
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
                             documentDetail.documentDate.toLongDateShort
                         }</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")</td>
+                        <td class="govuk-table__cell">
+                            @messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
+                        </td>
                         <td class="govuk-table__cell numeric">@{
                             documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
                         }</td>

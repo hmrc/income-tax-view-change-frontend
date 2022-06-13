@@ -32,6 +32,8 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "payment-allocations-response"
   val auditEvent = "PaymentAllocations"
+  val poa1IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa1.incomeTax")
+
   private val fd1 = FinancialDetail(
     taxYear = "2017",
     chargeType = Some("ITSA- POA 1"),
@@ -174,7 +176,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
@@ -195,7 +197,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
@@ -231,7 +233,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
@@ -252,7 +254,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
@@ -289,7 +291,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentType" -> "Payment made to HMRC",
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
@@ -311,7 +313,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentType" -> "Payment made to HMRC",
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
@@ -348,7 +350,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentType" -> "Payment made from earlier tax year",
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
@@ -370,7 +372,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "paymentType" -> "Payment made from earlier tax year",
             "paymentAllocations" -> Json.arr(
               Json.obj(
-                "paymentAllocationDescription" -> "Income Tax for payment on account 1 of 2",
+                "paymentAllocationDescription" -> poa1IncomeTax,
                 "dateAllocated" -> "2017-03-21",
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"

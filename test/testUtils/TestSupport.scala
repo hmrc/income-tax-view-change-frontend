@@ -16,25 +16,23 @@
 
 package testUtils
 
-import testConstants.BaseTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
 import implicits.ImplicitDateFormatterImpl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Result}
-import play.api.test.{FakeRequest, Injecting}
 import play.api.test.Helpers._
+import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
-import play.twirl.api.Html
+import testConstants.BaseTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -46,8 +44,8 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with MaterializerSupport with Injecting {
   this: Suite =>
 
-  import play.twirl.api.Html
   import org.scalactic.Equality
+  import play.twirl.api.Html
 
   implicit val htmlEq =
     new Equality[Html] {
