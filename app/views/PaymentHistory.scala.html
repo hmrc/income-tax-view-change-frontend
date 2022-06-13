@@ -1,31 +1,25 @@
 @*
- * Copyright 2022 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
-@import models.financialDetails.Payment
-@import java.time.LocalDate
-@import implicits.ImplicitCurrencyFormatter._
-@import implicits.ImplicitDateFormatter
-@import implicits.ImplicitDateFormatterImpl
+* Copyright 2022 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import exceptions.MissingFieldException
-@import models.financialDetails.DocumentDetailWithDueDate
-@import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails._
+@import models.financialDetails.Payment
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import views.html.layouts.unifiedLayout
+
+@import java.time.LocalDate
 
 @this(
         mainTemplate: unifiedLayout,
@@ -34,15 +28,15 @@
         h1: h1,
         p: p,
         link: link,
-        govukAccordion : GovukAccordion
+        govukAccordion: GovukAccordion
 )
 
 @(payments: List[Payment], CutOverCreditsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
         btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
-@import implicitDateFormatter.longDate
+
 
 @groupedPayments = @{
-    payments.groupBy[Int]{payment => LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear}.toList.sortBy(_._1).reverse
+    payments.groupBy[Int] { payment => LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear }.toList.sortBy(_._1).reverse
 }
 
 @getControllerHref(payment: Payment, isAgent: Boolean) = @{
@@ -58,8 +52,8 @@
     @p() {
         @messages(messageInfo)
         @link(link = infoLink, messageKey = infoLinkText,
-            outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
-        @if(isAgent){
+            outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
+        @if(isAgent) {
             @messages(s"$messageInfo.2")
         }
     }
@@ -84,7 +78,7 @@
         </thead>
         <tbody>
         @for((payment, index) <- yearPayments.zipWithIndex) {
-            @if(CutOverCreditsEnabled && payment.credit.isDefined){
+            @if(CutOverCreditsEnabled && payment.credit.isDefined) {
                 <tr class = "govuk-table__row">
                     <td class = "govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
                     <td class="govuk-table__cell" id="paymentFromEarlierYear">
@@ -101,7 +95,9 @@
                 <td class="govuk-table__cell">
                     <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                         @messages("paymentHistory.paymentToHmrc")
-                    <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
+                    <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1) {
+                        Item @(index + 1)
+                    }</span>
                     </a>
                 </td>
                 <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency) </td>
@@ -113,7 +109,7 @@
 }
 
 @getItems = @{
-    groupedPayments.zipWithIndex.map{
+    groupedPayments.zipWithIndex.map {
         case ((year: Int, yearPayments: List[Payment]), index) =>
             Section(
                 headingContent = HtmlContent(headingContent(year)),
