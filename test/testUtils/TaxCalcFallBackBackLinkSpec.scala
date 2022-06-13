@@ -63,7 +63,7 @@ class TaxCalcFallBackBackLinkSpec extends TestSupport with TaxCalcFallBackBackLi
       }
       "user IS an agent" should {
         "provide the correct url" in new Test {
-          val expectedURL = "/report-quarterly/income-and-expenses/view/agents/calculation/2022"
+          val expectedURL = "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2022"
           getFallbackUrl(calcPageBackLink = Some("ITVC"), isAgent = true,
             isCrystallised = true, taxYear = 2022, origin = None) shouldBe expectedURL
         }

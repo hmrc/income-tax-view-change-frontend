@@ -82,7 +82,7 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
       removedSessionKeys.foreach(key => result.futureValue.header.headers.get(key) shouldBe None)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-unique-taxpayer-reference")
+      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
 
     }
   }

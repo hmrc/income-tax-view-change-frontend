@@ -30,7 +30,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent PaymentHistory link" in {
         val url = getPaymentAllocationBackUrl(Some(PaymentHistoryPage), None, None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/payments/history"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
       }
 
       "return Tax Year Summary link" in {
@@ -45,7 +45,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return Agent Tax Year Summary link" in {
         val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(2018), None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/calculation/2018#payments"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018#payments"
       }
 
       "return What You Owe link" in {
@@ -55,7 +55,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return Agent What You Owe link" in {
         val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
       }
 
       "return homepage link if NoMatchPage" in {
@@ -76,7 +76,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent PaymentHistory link" in {
         val url = getChargeSummaryBackUrl(Some(PaymentHistoryPage), 2018, None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/payments/history"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
       }
 
       "return Tax Year Summary link" in {
@@ -86,7 +86,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return Agent Tax Year Summary link" in {
         val url = getChargeSummaryBackUrl(Some(TaxYearSummaryPage), 2018, None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/calculation/2018#payments"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018#payments"
       }
 
       "return What You Owe link" in {
@@ -96,7 +96,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return Agent What You Owe link" in {
         val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), 2018, None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
       }
 
       "return homepage link if NoMatchPage" in {
