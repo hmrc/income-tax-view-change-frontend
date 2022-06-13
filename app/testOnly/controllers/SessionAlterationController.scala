@@ -16,16 +16,12 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import forms.utils.SessionKeys.calculationId
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class SessionAlterationController(implicit mcc: MessagesControllerComponents,
-                                  val appConfig: FrontendAppConfig)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class SessionAlterationController(implicit mcc: MessagesControllerComponents)
+  extends FrontendController(mcc) {
 
   def addCalcId(value: String): Action[AnyContent] = Action { implicit request =>
     Ok(value)
