@@ -21,14 +21,14 @@
 
 @defining(List(Option(address.addressLine1), address.addressLine2, address.addressLine3, address.addressLine4, address.postCode).flatten) { addressLines =>
 
-    <dt id="business-address" class="cya-question">
-        @messages("business.businessAddress")
-    </dt>
-    <dd class="cya-answer">
-        @addressLines.zipWithIndex.map {
-            case (line: String, index: Int) => {
-                <div id="address-line-@{index+1}">@line</div>
-            }
+<dt id="business-address" class="cya-question">
+    @messages("business.businessAddress")
+</dt>
+<dd class="cya-answer">
+    @addressLines.zipWithIndex.map {
+        case (line: String, index: Int) => {
+            <div id="address-line-@{index+1}">@line</div>
         }
-    </dd>
+    }
+</dd>
 }

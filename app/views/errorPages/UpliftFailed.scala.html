@@ -17,11 +17,13 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 
-@this(  mainTemplate: unifiedLayout,
-        h1: h1,
-        p: p,
-        link: link,
-        list: bulletPointList)
+@this(
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    p: p,
+    link: link,
+    list: bulletPointList
+)
 
 @()(implicit request : Request[_], messages: Messages)
 

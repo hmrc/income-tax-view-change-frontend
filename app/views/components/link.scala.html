@@ -31,6 +31,4 @@
 
 <a href="@link" class="@classes" @id.map(id => s"id=$id") @if(rel.isDefined){rel="@rel.map(c=>s"$c")"} @target.map(target => s"target=$target")
     @role.map(role => s"role=$role")>
-
-
     @messages(messageKey)@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>@outerMessage
