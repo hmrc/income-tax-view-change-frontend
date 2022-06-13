@@ -18,59 +18,53 @@
 @import views.helpers.RadioOption
 
 @this(
-  fieldErrorHelper: FieldErrorHelper
+    fieldErrorHelper: FieldErrorHelper
 )
 
-@(field: Field,
-  legend: String,
-  options: Seq[RadioOption],
-  parentForm: Option[Form[_]] = None,
-  inline: Boolean = false,
-  fieldSetClass: Option[String] = None,
-  useTextForValue: Boolean = false
-)(implicit messages: Messages)
+@(field: Field, legend: String, options: Seq[RadioOption], parentForm: Option[Form[_]] = None, inline: Boolean = false,
+fieldSetClass: Option[String] = None, useTextForValue: Boolean = false)(implicit messages: Messages)
 
 @import forms.validation.ErrorMessageHelper._
 
 @fieldSetClassValue = @{
-  (inline, fieldSetClass) match {
-    case (false, _ )       => fieldSetClass.fold(Html(""))(cls => Html(s"""class="$cls""""))
-    case (true, Some(cls)) => Html(s"""class="inline $cls"""")
-    case _                 => Html(s"""class="inline"""")
-  }
+    (inline, fieldSetClass) match {
+        case (false, _ )       => fieldSetClass.fold(Html(""))(cls => Html(s"""class="$cls""""))
+        case (true, Some(cls)) => Html(s"""class="inline $cls"""")
+        case _                 => Html(s"""class="inline"""")
+    }
 }
 
 @isSelected(option: String) = {
-  @field.value match {
-    case Some(`option`) => {checked="checked"}
-    case _ => {}
-  }
+    @field.value match {
+        case Some(`option`) => {checked="checked"}
+        case _ => {}
+    }
 }
 
 @hasError = @{
-  val fieldError = getFieldError(field, parentForm)
-  fieldError match {
-    case Some(_) => true
-    case _ => false
-  }
+    val fieldError = getFieldError(field, parentForm)
+    fieldError match {
+        case Some(_) => true
+        case _ => false
+    }
 }
 
 @valueAttr(option: RadioOption) = @{
-  useTextForValue match {
-    case true => option.message
-    case false => option.optionName
-  }
+    useTextForValue match {
+        case true => option.message
+        case false => option.optionName
+    }
 }
 
 <div class="form-group form-field@if(hasError) { form-field--error}">
-  <fieldset @fieldSetClassValue>
-    <legend class="visuallyhidden" id="@field.name">@legend</legend>
-    @fieldErrorHelper(field, parentForm)
-    @for(option <- options) {
-      <label class="block-label selection-button-radio@option.classes.fold("")(x=>" "+x)" for="@{field.name}-@option.optionName">
-      <input id="@{field.name}-@option.optionName" type="radio" name="@field.name" value="@valueAttr(option)" @isSelected(option.optionName)>
-      @Html(option.message)
-      </label>
-    }
-  </fieldset>
+    <fieldset @fieldSetClassValue>
+        <legend class="visuallyhidden" id="@field.name">@legend</legend>
+        @fieldErrorHelper(field, parentForm)
+        @for(option <- options) {
+            <label class="block-label selection-button-radio@option.classes.fold("")(x=>" "+x)" for="@{field.name}-@option.optionName">
+            <input id="@{field.name}-@option.optionName" type="radio" name="@field.name" value="@valueAttr(option)" @isSelected(option.optionName)>
+            @Html(option.message)
+            </label>
+        }
+    </fieldset>
 </div>

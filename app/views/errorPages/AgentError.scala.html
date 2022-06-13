@@ -17,11 +17,13 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 
-@this(  mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
-        h1: h1,
-        p: p,
-        link: link)
+@this(
+    mainTemplate: unifiedLayout,
+    appConfig: config.FrontendAppConfig,
+    h1: h1,
+    p: p,
+    link: link
+)
 
 @()(implicit request : Request[_], messages: Messages)
 
@@ -35,7 +37,6 @@
         @messages("agent-error.note")
         @link(link = appConfig.setUpAgentServicesAccountUrl, messageKey = "agent-error.link", target = Some("_blank"), rel=Some("noreferrer noopener"), outerMessage = ".")
     }
-
 
     <div>
         @link(link = controllers.routes.SignOutController.signOut.url, messageKey = "base.sign-out",

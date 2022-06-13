@@ -15,38 +15,35 @@
  *@
 
 @this(
-  fieldErrorHelper: FieldErrorHelper
+    fieldErrorHelper: FieldErrorHelper
 )
-@(field: Field,
-  parentForm: Option[Form[_]] = None,
-  maxLength: Option[Int] = None,
-  cols: Option[Int] = Some(45),
-  rows: Option[Int] = Some(100)
-)(implicit messages: Messages)
+
+@(field: Field, parentForm: Option[Form[_]] = None, maxLength: Option[Int] = None, cols: Option[Int] = Some(45),
+rows: Option[Int] = Some(100))(implicit messages: Messages)
 @import forms.validation.ErrorMessageHelper._
 
 @textArea() = {
-  <textarea @maxLength.fold("")(x => s"maxlength=$x data-char-field ") name="@field.name" id="@field.name" cols="@cols" rows="@rows"></textarea>
+    <textarea @maxLength.fold("")(x => s"maxlength=$x data-char-field ") name="@field.name" id="@field.name" cols="@cols" rows="@rows"></textarea>
 }
 
 @hasError = @{
-  val fieldError = getFieldError(field, parentForm)
-  fieldError match {
-    case Some(_) => true
-    case _ => false
-  }
+    val fieldError = getFieldError(field, parentForm)
+    fieldError match {
+        case Some(_) => true
+        case _ => false
+    }
 }
 
 <div class="form-group form-field@if(hasError) { form-field--error}">
-  @fieldErrorHelper(field, parentForm)
-  @maxLength match {
-    case Some(mLen) => {
-      <div class="char-counter" data-char-counter>
-        @textArea()
-      </div>
+    @fieldErrorHelper(field, parentForm)
+    @maxLength match {
+        case Some(mLen) => {
+            <div class="char-counter" data-char-counter>
+                @textArea()
+            </div>
+        }
+        case _ => {
+            @textArea()
+        }
     }
-    case _ => {
-      @textArea()
-    }
-  }
 </div>

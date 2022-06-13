@@ -21,15 +21,15 @@
 
 <a id="service-info-home-link" class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides" href="@appConfig.businessTaxAccount">@messages("bta.home")</a>
 <ul id="service-info-list" class="service-info__item service-info__right list--collapse">
-  @if(userName.nonEmpty) {
-    <li class="list__item">
-      <span id="service-info-user-name" class="bold-xsmall">@userName</span>
+    @if(userName.nonEmpty) {
+        <li class="list__item">
+            <span id="service-info-user-name" class="bold-xsmall">@userName</span>
+        </li>
+    }
+    <li class="list__item soft--left">
+        <a id="service-info-manage-account-link" href="@appConfig.btaManageAccountUrl">@messages("bta.manage-account")</a>
     </li>
-  }
-  <li class="list__item soft--left">
-    <a id="service-info-manage-account-link" href="@appConfig.btaManageAccountUrl">@messages("bta.manage-account")</a>
-  </li>
-  <li class="list__item soft--left">
-    <a id="service-info-messages-link" href="@appConfig.btaMessagesUrl">@messages("bta.messages")</a>
-  </li>
+    <li class="list__item soft--left">
+        <a id="service-info-messages-link" href="@appConfig.btaMessagesUrl">@messages("bta.messages")</a>
+    </li>
 </ul>
