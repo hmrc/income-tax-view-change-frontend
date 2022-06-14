@@ -16,13 +16,17 @@
 
 package testConstants.messages
 
+import helpers.servicemocks.AuthStub.{messagesAPI, lang}
+
 object ChargeSummaryMessages {
 
-  val balancingPaymentTitle = "Balancing payment"
-  val poa1Title = "Payment on account 1 of 2"
-  val poa2Title = "Payment on account 2 of 2"
-  val lpiBalancingPayment = "Late payment interest on Balancing payment"
-  val lpiPoa1 = "Late payment interest on payment on account 1 of 2"
-  val lpiPoa2 = "Late payment interest on payment on account 2 of 2"
-  val saPayment = "Balancing payment collected through PAYE tax code"
+  val paymentBreakdownHeading: String = messagesAPI("chargeSummary.paymentBreakdown.heading")
+  val underReview: String = messagesAPI("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+  val notCurrentlyChargingInterest: String = messagesAPI("chargeSummary.paymentBreakdown.interestLocks.notCharging")
+
+  val lpiCreated: String = messagesAPI("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
+
+  val codingOutInsetPara: String = s"${messagesAPI("chargeSummary.codingOutInset-1")} ${messagesAPI("chargeSummary.codingOutInset-2")}" +
+    s"${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.codingOutInset-3")}"
+  def codingOutMessage(from: Int, to: Int): String = messagesAPI("chargeSummary.codingOutMessage", from.toString, to.toString)
 }

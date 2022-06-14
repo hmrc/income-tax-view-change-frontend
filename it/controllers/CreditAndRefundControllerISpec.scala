@@ -3,11 +3,10 @@ package controllers
 
 import config.featureswitch.CreditsRefundsRepay
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
-import testConstants.messages.CreditAndRefunds.creditAndRefundsPageTitle
 
 import java.time.LocalDate
 
@@ -25,14 +24,14 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
 
 
-        val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds
+        val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(creditAndRefundsPageTitle)
+          pageTitleIndividual("credit-and-refund.heading")
         )
       }
     }
@@ -55,7 +54,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual("There is a problem")
+          pageTitleIndividual(messagesAPI("error.custom.heading"))
         )
       }
     }

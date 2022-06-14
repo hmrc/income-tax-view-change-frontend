@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.ChargeSummaryMessages.{lpiPoa1, poa1Title, saPayment}
+import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 
 import java.time.LocalDate
 
@@ -62,6 +62,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val currentYear: Int = LocalDate.now().getYear
   val testArn: String = "1"
 
+  val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
+  val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+
   s"GET ok" should {
     "load the page with right data for Payments Breakdown" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
@@ -82,10 +85,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
-        elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
-        elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
+        elementTextBySelector("dl:nth-of-type(2) dd span")(underReview),
+        elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
       )
     }
 
@@ -115,8 +118,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("main h2")("Important Payment breakdown")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown)
       )
     }
 
@@ -148,8 +151,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("main h2")("Important Payment breakdown")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown)
       )
     }
 
@@ -167,9 +170,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title),
-        elementTextBySelector("main h2")("Important Payment breakdown"),
-        elementTextBySelector("main h3")("Payment history")
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown),
+        elementTextBySelector("main h3")(paymentHistory)
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -210,16 +213,12 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(lpiPoa1),
-        elementTextBySelector("main h2")("Payment history")
+        pageTitleAgent("chargeSummary.lpi.paymentOnAccount1.text"),
+        elementTextBySelector("main h2")(paymentHistory)
       )
     }
 
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      val header = s"Tax year 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear} Balancing payment collected through PAYE tax code"
-      val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-      val summaryMessage = s"This is the remaining tax you owe for the ${getCurrentTaxYearEnd.getYear - 1} to ${getCurrentTaxYearEnd.getYear} tax year."
-      val payHistoryLine1 = s"29 Mar 2018 Amount collected through your PAYE tax code for ${getCurrentTaxYearEnd.getYear + 1} to ${getCurrentTaxYearEnd.getYear + 2} tax year £2,500.00"
 
       Given("the CodingOut feature switch is enabled")
       enable(CodingOut)
@@ -237,11 +236,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(saPayment),
-        elementTextBySelector("h1")(header),
-        elementTextBySelector("#coding-out-notice")(insetPara),
-        elementTextBySelector("#coding-out-message")(summaryMessage),
-        elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1)
+        pageTitleAgent("tax-year-summary.payments.codingOut.text"),
+        elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
+        elementTextBySelector("#coding-out-message")(codingOutMessage(getCurrentTaxYearEnd.getYear - 1, getCurrentTaxYearEnd.getYear))
       )
     }
 
@@ -266,7 +263,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title)
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text")
       )
     }
 
@@ -291,7 +288,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(poa1Title)
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text")
       )
     }
 

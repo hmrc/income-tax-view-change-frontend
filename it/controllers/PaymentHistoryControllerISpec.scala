@@ -28,7 +28,6 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.PaymentHistoryMessages.paymentHistoryTitle
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
@@ -91,7 +90,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleIndividual(paymentHistoryTitle)
+        pageTitleIndividual("paymentHistory.heading")
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false, R7bTxmEvents = false).detail)
@@ -110,7 +109,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleIndividual(paymentHistoryTitle)
+        pageTitleIndividual("paymentHistory.heading")
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true, R7bTxmEvents = true).detail)

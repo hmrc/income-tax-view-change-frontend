@@ -7,7 +7,6 @@ import helpers.servicemocks.AuthStub.titleInternalServer
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.clientDetailsWithoutConfirmation
-import testConstants.messages.AgentMessages.confirmClientDetails
 
 class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -63,7 +62,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       Then("The confirm client's utr page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(confirmClientDetails)
+        pageTitleAgent("agent.confirmClient.heading")
       )
     }
   }

@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 import testConstants.NewCalcDataIntegrationTestConstants._
-import testConstants.messages.TaxDueSummaryMessages.taxDueSummaryTitle
+import testConstants.messages.TaxDueSummaryMessages.{additionCharges, nonVoluntaryClass2Nics, voluntaryClass2Nics}
 import testConstants.messages.{TaxDueSummaryMessages => messages}
 
 
@@ -67,9 +67,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxDueSummaryTitle),
-          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-          elementTextByID("additional_charges")("Additional charges")
+          pageTitleIndividual("taxCal_breakdown.heading"),
+          elementTextByID("additional_charges")(additionCharges)
         )
       }
     }
@@ -93,9 +92,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(taxDueSummaryTitle),
-        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextByID("additional_charges")("Additional charges")
+        pageTitleIndividual("taxCal_breakdown.heading"),
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -118,9 +116,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(taxDueSummaryTitle),
-        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextByID("additional_charges")("Additional charges")
+        pageTitleIndividual("taxCal_breakdown.heading"),
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -143,9 +140,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(taxDueSummaryTitle),
-        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextByID("additional_charges")("Additional charges")
+        pageTitleIndividual("taxCal_breakdown.heading"),
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -168,12 +164,11 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(taxDueSummaryTitle),
-        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation")
+        pageTitleIndividual("taxCal_breakdown.heading")
       )
 
       res shouldNot have(
-        elementTextByID("additional_charges")("Additional charges")
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -195,9 +190,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(taxDueSummaryTitle),
-        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages.nonVoluntaryClass2Nics)
+        pageTitleIndividual("taxCal_breakdown.heading"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(nonVoluntaryClass2Nics)
       )
     }
 
@@ -219,9 +213,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(taxDueSummaryTitle),
-        elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages.voluntaryClass2Nics)
+        pageTitleIndividual("taxCal_breakdown.heading"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(voluntaryClass2Nics)
       )
     }
   }

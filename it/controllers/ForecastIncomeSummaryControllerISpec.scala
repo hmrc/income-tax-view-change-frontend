@@ -46,8 +46,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual("Forecast income"),
-          elementTextBySelector("h1")("6 April 2017 to 5 April 2018 Forecast income")
+          pageTitleIndividual("forecast_income.heading")
         )
       }
 
@@ -61,8 +60,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(NOT_FOUND),
-          pageTitleIndividual("Page not found - 404"),
-          elementTextBySelector("h1")("This page can’t be found")
+          pageTitleIndividual("Page not found - 404")
         )
       }
     }

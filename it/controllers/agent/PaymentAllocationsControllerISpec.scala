@@ -6,7 +6,7 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentAllocation}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleNotFound}
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
@@ -18,7 +18,6 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PaymentAllocationIntegrationTestConstants._
-import testConstants.messages.PaymentAllocationMessages.paymentAllocationTitle
 
 import java.time.LocalDate
 
@@ -142,7 +141,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent(paymentAllocationTitle)
+        pageTitleAgent("paymentAllocation.heading")
       )
 
       verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel, false).detail)

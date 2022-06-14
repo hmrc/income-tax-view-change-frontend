@@ -16,17 +16,27 @@
 
 package testConstants.messages
 
+import helpers.servicemocks.AuthStub.{lang, messagesAPI}
+
 object TaxYearSummaryMessages {
 
-  val taxYearSummaryTitle: String = "Tax year summary"
-  val heading: String = "Tax year summary"
-  val headingNoCalcData: String = "No calculation yet"
-  val noCalcDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update."
+  val noCalcHeading: String = messagesAPI("tax-year-summary.tax-calculation.no-calc")
+  val noCalcNote: String = messagesAPI("tax-year-summary.tax-calculation.no-calc.note")
 
-  def titleOld(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
+  val underReview: String = messagesAPI("tax-year-summary.payments.paymentUnderReview")
+  val overdue: String = messagesAPI("tax-year-summary.payments.overdue")
+  val poa1Lpi: String = messagesAPI("tax-year-summary.payments.lpi.paymentOnAccount1.text")
+  val poa1: String = messagesAPI("tax-year-summary.payments.paymentOnAccount1.text")
+  val poa2: String = messagesAPI("tax-year-summary.payments.paymentOnAccount2.text")
+  val balancingPayment: String = messagesAPI("tax-year-summary.payments.balancingCharge.text")
+  val class2Nic: String = messagesAPI("tax-year-summary.payments.class2Nic.text")
+  val cancelledPayeSA: String = messagesAPI("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
+  val noPaymentsDue: String = messagesAPI("tax-year-summary.payments.no-payments")
 
-  def headingOld(firstYear: Int, secondYear: Int): String = s"Tax year summary 6 April $firstYear to 5 April $secondYear"
+  def updateTabDue(dueDate: String): String = messagesAPI("updateTab.due", dueDate)
+  val quarterlyUpdate: String = messagesAPI("updateTab.updateType.quarterly")
+  val annualUpdate: String = messagesAPI("updateTab.updateType.eops")
+  val propertyIncome: String = messagesAPI("updateTab.obligationType.property")
 
-  def calculationDateOld(date: String): String = s"Calculation date: $date"
 
 }

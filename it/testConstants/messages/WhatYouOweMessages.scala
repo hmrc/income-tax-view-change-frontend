@@ -16,8 +16,10 @@
 
 package testConstants.messages
 
+import helpers.servicemocks.AuthStub.{messagesAPI, lang}
+
 object WhatYouOweMessages {
 
-  val whatYouOwePageTitle: String = "What you owe"
+  val underReview: String = messagesAPI("whatYouOwe.paymentUnderReview")
 
 }

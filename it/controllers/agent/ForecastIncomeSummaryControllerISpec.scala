@@ -29,9 +29,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
-import testConstants.messages.IncomeSummaryMessages.{incomeSummaryAgentHeading, incomeSummaryTitle}
 
 import java.time.LocalDate
 
@@ -146,9 +144,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent("Forecast income"),
-          elementTextBySelector("h1")("6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
-            " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " Forecast income")
+          pageTitleAgent("forecast_income.heading")
         )
       }
     }

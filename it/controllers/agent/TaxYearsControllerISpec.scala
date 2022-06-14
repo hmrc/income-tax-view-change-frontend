@@ -26,7 +26,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.MyTaxYearsMessages.taxYearsTitle
+import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, viewSummary}
 
 import java.time.LocalDate
 
@@ -138,19 +138,14 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         )
 
         val result = IncomeTaxViewChangeFrontend.getTaxYears(clientDetailsWithConfirmation)
+        val taxYear = taxYearMessage(from = getCurrentTaxYearEnd.getYear - 1, to = getCurrentTaxYearEnd.getYear)
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(taxYearsTitle),
-          elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
-            expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-          ),
-          elementTextBySelectorList(s"#viewSummary-link-${getCurrentTaxYearEnd.getYear}")(
-            expectedValue = s"View summary 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-          ),
-          elementTextBySelectorList(s"#updateReturn-link-${getCurrentTaxYearEnd.getYear}")(
-            expectedValue = s"Update return 6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
-          )
+          pageTitleAgent("taxYears.heading"),
+          elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(expectedValue = taxYear),
+          elementTextBySelectorList(s"#viewSummary-link-${getCurrentTaxYearEnd.getYear}")(expectedValue = s"$viewSummary $taxYear"),
+          elementTextBySelectorList(s"#updateReturn-link-${getCurrentTaxYearEnd.getYear}")(expectedValue = s"$updateReturn $taxYear")
         )
 
       }

@@ -1,19 +1,15 @@
 
 package controllers.agent
 
-import auth.MtdItUser
 import config.featureswitch.CreditsRefundsRepay
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, getCurrentTaxYearEnd, testMtditid, testNino, testSaUtr, testTaxYear}
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson, testValidFinancialDetailsModelJsonCodingOut}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
 import testConstants.OutstandingChargesIntegrationTestConstants.validOutStandingChargeResponseJsonWithAciAndBcdCharges
-import testConstants.messages.CreditAndRefunds.creditAndRefundsPageTitle
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -43,7 +39,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent(creditAndRefundsPageTitle)
+          pageTitleAgent("credit-and-refund.heading")
         )
       }
     }
@@ -68,7 +64,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual("There is a problem")
+          pageTitleIndividual(messagesAPI("error.custom.heading"))
         )
       }
     }

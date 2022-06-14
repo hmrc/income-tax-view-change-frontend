@@ -4,7 +4,7 @@ package controllers.agent
 import config.featureswitch.ForecastCalculation
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxCalculationStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -103,9 +103,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent("Forecast tax calculation"),
-          elementTextBySelector("h1")("6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
-            " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " Forecast tax calculation")
+          pageTitleAgent("forecast_taxCalc.heading")
         )
       }
     }
