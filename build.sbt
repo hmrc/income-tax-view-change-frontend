@@ -24,7 +24,7 @@ val jsoupVersion              = "1.11.3"
 val mockitoVersion            = "2.27.0"
 val scalaMockVersion          = "3.5.0"
 val wiremockVersion           = "2.26.1"
-val scalaCheck                = "1.14.1"
+val scalaCheckVersion         = "1.14.1"
 
 val compile = Seq(
   ws,
@@ -44,7 +44,7 @@ val compile = Seq(
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
-  "org.scalacheck" %% "scalacheck" % "1.14.1" % scope,
+  "org.scalacheck" %% "scalacheck" % scalaCheckVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,

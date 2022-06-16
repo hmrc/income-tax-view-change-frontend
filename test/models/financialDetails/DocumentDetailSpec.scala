@@ -24,29 +24,6 @@ import scala.util.Random
 
 class DocumentDetailSpec extends UnitSpec {
 
-  val validMfaCreditDescription = Gen.oneOf(
-    "ITSA Overpayment Relief",
-    "ITSA Standalone Claim",
-    "ITSA Averaging Adjustment",
-    "ITSA Literary Artistic Spread",
-    "ITSA Loss Relief Claim",
-    "ITSA Post Cessation Claim",
-    "ITSA Pension Relief Claim",
-    "ITSA PAYE in year Repayment",
-    "ITSA NPS Overpayment",
-    "ITSA In year Rept pension schm",
-    "ITSA Increase in PAYE Credit",
-    "ITSA CIS Non Resident Subbie",
-    "ITSA CIS Incorrect Deductions",
-    "ITSA Stand Alone Assessment",
-    "ITSA Infml Dschrg Cntrct Sett",
-    "ITSA Third Party Rept - FIS",
-    "ITSA CGT Adjustments",
-    "ITSA EIS Carry Back Claims",
-    "ITSA Calc Error Correction",
-    "ITSA Misc Credit"
-  )
-
   "DocumentDetail" when {
 
     "calling predicate hasAccruingInterest" should {
@@ -235,31 +212,6 @@ class DocumentDetailSpec extends UnitSpec {
             paymentLotItem = None).paymentOrChargeCredit shouldBe None
         }
       }
-    }
-
-    "validMFACredit" should {
-
-      "return false" when {
-        "documentDescription is 'ITSA- POA 1'" in {
-          fullDocumentDetailModel.validMFACreditDescription() shouldBe false
-        }
-        "documentDescription is '~random alpha-numeric string'" in {
-          fullDocumentDetailModel
-            .copy(documentDescription = Some(Random.alphanumeric.take(20).mkString("")))
-            .validMFACreditDescription() shouldBe false
-        }
-      }
-      "return true" when {
-        val documentDetail: String = validMfaCreditDescription.sample.getOrElse("ITSA Misc Credit")
-        s"documentDescription is '$documentDetail'" in {
-          fullDocumentDetailModel
-            .copy(documentDescription = Some(documentDetail))
-            .validMFACreditDescription() shouldBe true
-        }
-
-
-      }
-
     }
   }
 }
