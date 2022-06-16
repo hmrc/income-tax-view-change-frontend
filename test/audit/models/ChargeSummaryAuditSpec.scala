@@ -63,7 +63,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
     PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), method = Some("method"),
+      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
         lot = Some("lot"), lotItem = Some("lotItem"), date = Some(date), transactionId = None)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 

@@ -26,6 +26,7 @@ case class PaymentsError(status: Int, error: String) extends PaymentsResponse
 
 case class Payment(reference: Option[String],
                    amount: Option[BigDecimal],
+                   outstandingAmount: Option[BigDecimal],
                    method: Option[String],
                    lot: Option[String],
                    lotItem: Option[String],

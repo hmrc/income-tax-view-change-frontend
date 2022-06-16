@@ -23,7 +23,8 @@ import play.api.libs.json.{JsObject, JsSuccess, Json}
 
 class PaymentSpec extends WordSpecLike with Matchers {
 
-  val paymentFull: Payment = Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("date"), Some("DOCID01"))
+  val paymentFull: Payment = Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
+    method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("date"), Some("DOCID01"))
 
   val paymentFullJson: JsObject = Json.obj(
     "reference" -> "reference",
@@ -35,7 +36,7 @@ class PaymentSpec extends WordSpecLike with Matchers {
     "transactionId" -> "DOCID01"
   )
 
-  val paymentMinimal: Payment = Payment(None, None, None, None, None, None, None)
+  val paymentMinimal: Payment = Payment(None, None, None, None, None, None, None, None)
 
   val paymentMinimalJson: JsObject = Json.obj()
 
