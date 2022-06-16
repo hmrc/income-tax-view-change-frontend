@@ -46,7 +46,6 @@ case class Payment(reference: Option[String],
 
 object Payment {
   implicit val format: Format[Payment] = Json.format[Payment]
-
 }
 
 case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[String], chargeType: Option[String]) {
