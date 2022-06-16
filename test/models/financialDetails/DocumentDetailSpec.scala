@@ -16,11 +16,8 @@
 
 package models.financialDetails
 
-import org.scalacheck.Gen
 import testConstants.FinancialDetailsTestConstants.fullDocumentDetailModel
 import testUtils.UnitSpec
-
-import scala.util.Random
 
 class DocumentDetailSpec extends UnitSpec {
 
