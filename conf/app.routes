@@ -130,3 +130,7 @@ GET         /agents/:taxYear/forecast-tax-calculation                     contro
 #Credits and Refunds
 GET          /claim-refund                                                controllers.CreditAndRefundController.show(origin: Option[String] ?= None)
 GET          /agents/claim-refund                                         controllers.CreditAndRefundController.showAgent()
+
+#Credits
+GET         /credits                                                    controllers.CreditsController.showTaxYears(origin: Option[String] ?= None)
+GET         /agents/credits                                             controllers.CreditsController.showAgentTaxYears
