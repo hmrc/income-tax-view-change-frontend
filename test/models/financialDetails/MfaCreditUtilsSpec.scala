@@ -17,11 +17,11 @@
 package models.financialDetails
 
 import org.scalacheck.{Gen, Properties}
-import testConstants.FinancialDetailsTestConstants.fullDocumentDetailModel
 
-object DocumentDetailMfaValidationSpec extends Properties("DocumentDetail_validMFACreditDescription") {
+object MfaCreditUtilsSpec extends Properties("MfaCreditUtils_validMFACreditDescription") {
 
     import org.scalacheck.Prop.forAll
+    import MfaCreditUtils.validMFACreditDescription
 
     val validMfaCreditDescription = Gen.oneOf(
       "ITSA Overpayment Relief",
@@ -47,15 +47,11 @@ object DocumentDetailMfaValidationSpec extends Properties("DocumentDetail_validM
     )
 
     property("ValidMFACreditDescription") = forAll(validMfaCreditDescription) { documentDescription =>
-      fullDocumentDetailModel
-        .copy(documentDescription = Some(documentDescription))
-        .validMFACreditDescription()
+        validMFACreditDescription(Some(documentDescription))
     }
 
   property("Not_validMFACreditDescription") = forAll{ ( documentDescription : String) =>
-    fullDocumentDetailModel
-      .copy(documentDescription = Some(documentDescription))
-      .validMFACreditDescription() == false
+    !validMFACreditDescription(Some(documentDescription))
   }
 
 }

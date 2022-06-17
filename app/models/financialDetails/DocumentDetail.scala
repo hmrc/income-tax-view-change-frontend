@@ -18,7 +18,6 @@ package models.financialDetails
 
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
-
 import java.time.LocalDate
 
 case class DocumentDetail(taxYear: String,
@@ -166,12 +165,8 @@ case class DocumentDetail(taxYear: String,
       "unknownCharge"
   }
 
-  def validMFACreditDescription(): Boolean = {
-    import DocumentDetail.mfaCreditDescription
-    this.documentDescription
-      .map(mfaCreditDescription.values.toList.contains(_))
-      .getOrElse(false)
-  }
+  def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
+
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
@@ -181,26 +176,5 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
 
 object DocumentDetail {
   implicit val format: Format[DocumentDetail] = Json.format[DocumentDetail]
-  private val mfaCreditDescription: Map[Int, String] = Map(
-    4004 -> "ITSA Overpayment Relief",
-    4005 -> "ITSA Standalone Claim",
-    4006 -> "ITSA Averaging Adjustment",
-    4007 -> "ITSA Literary Artistic Spread",
-    4008 -> "ITSA Loss Relief Claim",
-    4009 -> "ITSA Post Cessation Claim",
-    4025 -> "ITSA Pension Relief Claim",
-    4011 -> "ITSA PAYE in year Repayment",
-    4012 -> "ITSA NPS Overpayment",
-    4013 -> "ITSA In year Rept pension schm",
-    4014 -> "ITSA Increase in PAYE Credit",
-    4015 -> "ITSA CIS Non Resident Subbie",
-    4016 -> "ITSA CIS Incorrect Deductions",
-    4017 -> "ITSA Stand Alone Assessment",
-    4018 -> "ITSA Infml Dschrg Cntrct Sett",
-    4019 -> "ITSA Third Party Rept - FIS",
-    4024 -> "ITSA CGT Adjustments",
-    4021 -> "ITSA EIS Carry Back Claims",
-    4022 -> "ITSA Calc Error Correction",
-    4023 -> "ITSA Misc Credit"
-  )
+
 }
