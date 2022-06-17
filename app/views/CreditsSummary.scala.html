@@ -1,0 +1,155 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.financialDetails.WhatYouOweChargesList
+@import java.time.LocalDate
+@import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails._
+@import auth.MtdItUser
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        detailsDropdown: detailsDropdown,
+        govukInsetText: GovukInsetText
+)
+@* TODO implement it *@
+@(/*creditCharges: List[DocumentDetail],*/
+        backUrl: String,
+        utr: Option[String],
+        btaNavPartial: Option[Html] = None,
+        enableMfaCreditsAndDebits: Boolean,
+        isAgent: Boolean = false,
+        origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"credits.$key", args: _*)
+}
+
+
+@getReturnHref(year: Int) = @{
+    if(isAgent) {
+        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
+    } else {
+        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
+    }
+}
+
+@tableHead(headId: String) = {
+    <thead class="govuk-table__head" id="@headId">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.date")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.type")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.status")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.status")</th>
+        </tr>
+    </thead>
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true
+) {
+    @* TODO implement it *@
+    @h1(msg = "credits.heading", id = Some("page-heading"))
+    <div>
+        <div id="payments-due-table">
+            <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("credits.heading")</caption>
+                @tableHead("over-due-payments-table-head")
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row " id="balancing-charge-type-0">
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">Some Date</td>
+                        <td class="govuk-table__cell govuk-!-width-one-half">
+                            @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
+                            @p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
+                        </td>
+                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">Some Tax year summary</td>
+                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">Some Amount Due</td>
+                    </tr>
+
+                    @* @if(whatYouOweChargesList.chargesList.nonEmpty){
+                    @for((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) {
+                    @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue, index, "taxYearSummary-link")
+                    @if(charge.isOverdue && charge.documentDetail.hasAccruingInterest) {
+                    <tr class="govuk-table__row" id=@(s"charge-interest-$index")>
+                    <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
+                    <td class="govuk-table__cell govuk-!-width-one-half">
+                    @getMessage("over-due.interest.line1")
+                    <div>
+                    @getMessage("over-due.interest.line2",
+                    charge.documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Overdue Payment Interest From Date")).toLongDateShort,
+                    charge.documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Overdue Payment Interest End Date")).toLongDateShort,
+                    charge.documentDetail.interestRate.getOrElse(throw MissingFieldException("Overdue Payment Interest Rate")).toString
+                    )
+                    </div>
+                    </td>
+                    <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
+                    @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
+                    </td>
+                    <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
+                    charge.documentDetail.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
+                    }</td>
+                    </tr>
+                    }
+                    }
+                    } *@
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    @link(
+        link = creditAndRefundsControllerURL,
+        messageKey = "home.credAndRefund.view"
+    )
+
+}
+
+
+
+@getCodingOutHref(taxYear: Int, transactionId: String) = @{
+    if(isAgent) {
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, transactionId)
+    } else {
+        controllers.routes.ChargeSummaryController.show(taxYear, transactionId, origin = origin)
+    }
+}
+
+@creditAndRefundsControllerURL = @{
+    if(isAgent) {
+        controllers.routes.CreditAndRefundController.showAgent().url
+    } else {
+        controllers.routes.CreditAndRefundController.show().url
+    }
+}

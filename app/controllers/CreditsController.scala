@@ -26,13 +26,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.Credits
+import views.html.CreditsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 // TODO implement it
-class CreditsController @Inject()(creditsView: Credits,
+class CreditsController @Inject()(creditsView: CreditsSummary,
                                   val authorisedFunctions: AuthorisedFunctions,
                                   incomeSourceDetailsService: IncomeSourceDetailsService)
                                  (implicit val appConfig: FrontendAppConfig,

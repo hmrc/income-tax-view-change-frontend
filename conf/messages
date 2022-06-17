@@ -403,8 +403,12 @@ obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
-## Credits Page ##
+## Credits Summary Page ##
 credits.heading                                                 = Credits
+credits.tableHead.date                                          = Date
+credits.tableHead.type                                          = Type
+credits.tableHead.status                                        = Status
+credits.tableHead.status                                        = Amount
 
 ## Previous Obligations ##
 previous-obligations.no-previous-obligations                    = No previously submitted updates
